@@ -343,7 +343,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * return the mapped gauge status, if it doesn't exist add it
      * @param ga
      */
-    private getGaugeStatus(ga: GaugeSettings): GaugeStatus {
+    public getGaugeStatus(ga: GaugeSettings): GaugeStatus {
         if (this.mapGaugeStatus[ga.id]) {
             return this.mapGaugeStatus[ga.id];
         } else {

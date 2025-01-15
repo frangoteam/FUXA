@@ -78,8 +78,6 @@
                             [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 80px"
                             [cpPosition]="'bottom'" (colorPickerChange)="onChangeValue('content', $event)" />
                     </div>
-                <!-- </div>
-                <div class="block mt5"> -->
                     <div class="my-form-field ml10">
                         <span>{{'pipe.property-content-space' | translate}}</span>
                         <input numberOnly
@@ -91,6 +89,45 @@
                                class="style-size">
                     </div>
                 </div>
+                <div class="element-property-header">
+                    <span>{{'pipe.property-style-animation' | translate}}</span>
+                </div>
+                <ng-container *ngIf="options.imageAnimation; else imageAnimVoid">
+                    <div class="my-form-field block mt5 image-animation">
+                        <img src="{{options.imageAnimation.imageUrl}}" style="max-width: 80%;">
+                        <button mat-icon-button (click)="onClearImage()" matTooltip="{{'pipe.property-style-animation-image-remove' | translate}}">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                    </div>
+                    <div class="my-form-field inbk">
+                        <span>{{'pipe.property-style-animation-count' | translate}}</span>
+                        <input numberOnly
+                               [(ngModel)]="options.imageAnimation.count"
+                               (change)="onChangeValue('imageAnimation', options.imageAnimation)"
+                               min="1"
+                               step="1"
+                               type="number"
+                               class="style-size">
+                    </div>
+                    <div class="my-form-field inbk ml10">
+                        <span>{{'pipe.property-style-animation-delay' | translate}}</span>
+                        <input numberOnly
+                               [(ngModel)]="options.imageAnimation.delay"
+                               (change)="onChangeValue('imageAnimation', options.imageAnimation)"
+                               min="0"
+                               step="100"
+                               type="number"
+                               class="style-size">
+                    </div>
+                </ng-container>
+                <ng-template #imageAnimVoid>
+                    <div class="my-form-field block mt5 image-animation">
+                        <!-- <span>{{'pipe.property-style-animation' | translate}}</span> -->
+                        <mat-select placeholder="{{'pipe.property-style-animation-image' | translate}}" (click)="imagefile.click();" >
+                        </mat-select>
+                        <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept=".svg,image/svg+xml" />
+                    </div>
+                </ng-template>
             </mat-tab>
             <!-- <mat-tab label="{{'editor.settings-events' | translate}}">
                 <div class="events-toolbox">
