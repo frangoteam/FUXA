@@ -835,7 +835,7 @@ export class GaugesManager {
             let gauge = HtmlButtonComponent.initElement(ga);
             return gauge || true;
         } else if (ga.type.startsWith(PipeComponent.TypeTag)) {
-            let gauge = PipeComponent.initElement(ga, isview);
+            let gauge = PipeComponent.initElement(ga, isview, parent?.getGaugeStatus(ga));
             this.mapGauges[ga.id] = gauge;
             return gauge || true;
         } else {

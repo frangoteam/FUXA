@@ -55,27 +55,29 @@ export class PipeComponent {
         return true;
     }
 
-    static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: PipeStatus | GaugeStatus) {
+    static processValue(gaugeSettings: GaugeSettings, svgElement: any, signal: Variable, gaugeStatus: PipeStatus | GaugeStatus) {
         try {
-            if (svgele.node) {
-                let clr = '';
-                let value = parseFloat(sig.value);
+            if (svgElement.node) {
+                let value = parseFloat(signal.value);
                 if (Number.isNaN(value)) {
                     // maybe boolean
-                    value = Number(sig.value);
+                    value = Number(signal.value);
                 } else {
                     value = parseFloat(value.toFixed(5));
                 }
-                if (ga.property) {
+                if (gaugeSettings.property) {
                     let defaultColor = new GaugePropertyColor();
-                    defaultColor.fill = ga.property?.options?.pipe;
-                    defaultColor.stroke = ga.property?.options.content;
+                    defaultColor.fill = gaugeSettings.property?.options?.pipe;
+                    defaultColor.stroke = gaugeSettings.property?.options.content;
 
                     // check actions
-                    if (ga.property.actions) {
-                        ga.property.actions.forEach(act => {
-                            if (act.variableId === sig.id) {
-                                PipeComponent.processAction(act, svgele, value, gaugeStatus, defaultColor);
+                    if (gaugeSettings.property.actions) {
+                        gaugeSettings.property.actions.forEach(action => {
+                            if (action.variableId === signal.id) {
+                                const inRange = PipeComponent.processAction(action, svgElement, value, gaugeStatus, defaultColor);
+                                if (gaugeSettings.property?.options?.imageAnimation && inRange) {
+                                    PipeComponent.runImageAction(gaugeSettings, action, svgElement.node, gaugeStatus);
+                                }
                             }
                         });
                     }
@@ -86,7 +88,7 @@ export class PipeComponent {
         }
     }
 
-    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: PipeStatus | GaugeStatus, defaultColor?: GaugePropertyColor) {
+    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: PipeStatus | GaugeStatus, defaultColor?: GaugePropertyColor): boolean {
         let actValue = GaugeBaseComponent.checkBitmask(act.bitmask, value);
         if (this.actionsType[act.type] === this.actionsType.blink) {
             let element = SVG.adopt(svgele.node);
@@ -97,7 +99,9 @@ export class PipeComponent {
         } else if (act.range.min <= actValue && act.range.max >= actValue) {
             var element = SVG.adopt(svgele.node);
             PipeComponent.runMyAction(element, act.type, gaugeStatus);
+            return true;
         }
+        return false;
     }
 
     static runMyAction(element, type, gaugeStatus: GaugeStatus) {
@@ -105,6 +109,9 @@ export class PipeComponent {
             if (gaugeStatus.actionRef?.timer) {
                 clearTimeout(gaugeStatus.actionRef.timer);
                 gaugeStatus.actionRef.timer = null;
+            }
+            if (gaugeStatus.actionRef?.animr) {
+                gaugeStatus.actionRef.animr.stop();
             }
         } else {
             if (gaugeStatus.actionRef?.timer) {
@@ -124,7 +131,9 @@ export class PipeComponent {
                         eletoanim.style.strokeDashoffset = len;
                         len--;
                     }, 20);
-                    gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout };
+                    gaugeStatus.actionRef ??= new GaugeActionStatus(type);
+                    gaugeStatus.actionRef.timer = timeout;
+                    gaugeStatus.actionRef.type = type;
                 } else if (PipeComponent.actionsType[type] === PipeComponent.actionsType.anticlockwise) {
                     eletoanim.style.display = 'unset';
                     let timeout = setInterval(() => {
@@ -132,10 +141,34 @@ export class PipeComponent {
                         eletoanim.style.strokeDashoffset = len;
                         len++;
                     }, 20);
-                    gaugeStatus.actionRef = <GaugeActionStatus>{ type: type, timer: timeout };
+                    gaugeStatus.actionRef ??= new GaugeActionStatus(type);
+                    gaugeStatus.actionRef.timer = timeout;
+                    gaugeStatus.actionRef.type = type;
+
                 } else if (PipeComponent.actionsType[type] === PipeComponent.actionsType.hidecontent) {
                     eletoanim.style.display = 'none';
                 }
+            }
+        }
+    }
+
+    static async runImageAction(gaugeSettings: GaugeSettings, action: GaugeAction, svgElement: any, gaugeStatus: PipeStatus | GaugeStatus) {
+        if (!gaugeStatus.actionRef?.animr) {
+            gaugeStatus.actionRef ??= new GaugeActionStatus(action.type);
+            PipeComponent.removeImageChildren(svgElement);
+            let anim = await loadSvgAnimation(gaugeSettings, svgElement, true, 'forward');
+            gaugeStatus.actionRef.animr = anim;
+        }
+        if (PipeComponent.actionsType[action.type] === PipeComponent.actionsType.stop) {
+            gaugeStatus.actionRef.animr.stop();
+        } else {
+            if (PipeComponent.actionsType[action.type] === PipeComponent.actionsType.clockwise) {
+                gaugeStatus.actionRef.animr.setDirection('forward');
+            } else if (PipeComponent.actionsType[action.type] === PipeComponent.actionsType.anticlockwise) {
+                gaugeStatus.actionRef.animr.setDirection('reverse');
+            }
+            if (!gaugeStatus.actionRef.animr.isRunning) {
+                gaugeStatus.actionRef.animr.start();
             }
         }
     }
@@ -162,7 +195,6 @@ export class PipeComponent {
             // save action (dummy) id and colors to restore on break
             try {
                 const actId = GaugeBaseComponent.getBlinkActionId(act);
-                //gaugeStatus.actionBlinkRef.spool = { bk: elePipe.style.backgroundColor, clr: eleContent.style.color, actId: actId };
                 gaugeStatus.actionBlinkRef.spool = { fill: elePipe.getAttribute('stroke'), stroke: eleContent.getAttribute('stroke'), actId: actId };
             } catch (err) {
                 console.error(err);
@@ -202,44 +234,32 @@ export class PipeComponent {
         }
     }
 
-    static initElement(gaugeSettings: GaugeSettings, isView: boolean) {
+    static initElement(gaugeSettings: GaugeSettings, isView: boolean, gaugeStatus?: GaugeStatus) {
         let ele = document.getElementById(gaugeSettings.id);
         if (ele) {
-            // clear all children
-            let imageInPathForAnimation = Utils.searchTreeStartWith(ele, PipeComponent.prefixAnimation);
-            if (imageInPathForAnimation) {
-                ele.removeChild(imageInPathForAnimation);
-            }
-            const imagesBuffer = Utils.childrenStartWith(ele, 'svg_');
-            imagesBuffer.forEach((img) => {
-                ele.removeChild(img);
-            });
+            PipeComponent.removeImageChildren(ele);
             if (gaugeSettings.property?.options?.imageAnimation as PipeImageAnimation) {
-                let path = Utils.searchTreeStartWith(ele, PipeComponent.prefixC);
-                fetch(gaugeSettings.property.options.imageAnimation.imageUrl)
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(`Failed to load SVG: ${response.statusText}`);
-                        }
-                        return response.text();
-                    })
-                    .then((svgContent) => {
-                        const parser = new DOMParser();
-                        const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
-                        imageInPathForAnimation = svgDoc.documentElement;
-                        imageInPathForAnimation.setAttribute('id', Utils.getShortGUID('svg_'));
-                        const imageInPath = new ImageInPath(imageInPathForAnimation, path, gaugeSettings.property.options.imageAnimation.count);
-                        const anim = new ImageInPathAnimation(imageInPath, gaugeSettings.property.options.imageAnimation.delay, isView);
-                        anim.start();
-                    })
-                    .catch((error) => {
-                        console.error('Error loading SVG:', error);
-                    });
+                loadSvgAnimation(gaugeSettings, ele, isView).then(anim => {
+                    anim.stop();
+                }).catch(error => {
+                    console.error('Error occurred while initializing animation:', error);
+                });
             }
         }
         return ele;
     }
 
+    static removeImageChildren(svgElement: any) {
+        // clear all children
+        let imageInPathForAnimation = Utils.searchTreeStartWith(svgElement, PipeComponent.prefixAnimation);
+        if (imageInPathForAnimation) {
+            svgElement.removeChild(imageInPathForAnimation);
+        }
+        const imagesBuffer = Utils.childrenStartWith(svgElement, 'svg_');
+        imagesBuffer.forEach((img) => {
+            svgElement.removeChild(img);
+        });
+    }
     static resize(gaugeSettings: GaugeSettings) {
         PipeComponent.initElement(gaugeSettings, false);
     }
@@ -250,6 +270,43 @@ export class PipeComponent {
         PipeComponent.initElement(gaugeSettings, false);
         return result;
     }
+}
+
+function loadSvgAnimation(gaugeSettings: any,
+                          ele: any,
+                          isView: boolean,
+                          direction: 'forward' | 'reverse' = 'forward'): Promise<ImageInPathAnimation | null> {
+    let path = Utils.searchTreeStartWith(ele, PipeComponent.prefixC);
+    if (!path) {
+        return Promise.resolve(null);
+    }
+    return fetch(gaugeSettings.property.options.imageAnimation.imageUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Failed to load SVG: ${response.statusText}`);
+            }
+            return response.text();
+        })
+        .then(svgContent => {
+            const parser = new DOMParser();
+            const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
+            const imageInPathForAnimation = svgDoc.documentElement;
+            imageInPathForAnimation.setAttribute('id', Utils.getShortGUID('svg_'));
+
+            const imageInPath = new ImageInPath(
+                imageInPathForAnimation,
+                path,
+                gaugeSettings.property.options.imageAnimation.count
+            );
+            const anim = new ImageInPathAnimation(
+                imageInPath,
+                gaugeSettings.property.options.imageAnimation.delay,
+                isView,
+                direction
+            );
+            anim.initialize();
+            return anim;
+        });
 }
 
 export class PipeOptions {
@@ -317,26 +374,65 @@ class ImageInPathAnimation {
     private tZero: number = 0;
     private multiImageInPath: ImageInPath;
     private loop: boolean;
+    private direction: 'forward' | 'reverse';
+    private isRunning: boolean = false;
+    private animationFrameId: number | null = null;
 
-    constructor(_multiImageInPath: ImageInPath, duration: number, loop: boolean = true) {
+    constructor(
+        _multiImageInPath: ImageInPath,
+        duration: number,
+        loop: boolean = true,
+        direction: 'forward' | 'reverse' = 'forward'
+    ) {
         this.multiImageInPath = _multiImageInPath;
         this.duration = duration;
         this.loop = loop;
+        this.direction = direction;
+    }
+
+    initialize(): void {
+        const progress = this.direction === 'forward' ? 0 : 1;
+        this.multiImageInPath.move(progress);
     }
 
     start(): void {
+        if (this.isRunning) {
+            return;
+        }
+        this.isRunning = true;
         this.tZero = Date.now();
         requestAnimationFrame(() => this.run());
     }
 
+    stop(): void {
+        if (this.animationFrameId !== null) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+        this.isRunning = false;
+    }
+
+    setDirection(direction: 'forward' | 'reverse'): void {
+        this.direction = direction;
+    }
+
     private run(): void {
+        if (!this.isRunning) {
+            return;
+        }
         const elapsed = Date.now() - this.tZero;
-        const progress = (elapsed / this.duration) % 1;
+        let progress = elapsed / this.duration;
 
-        this.multiImageInPath.move(progress);
+        let adjustedProgress = progress % 1;
 
-        if (this.loop && progress < 1) {
-            requestAnimationFrame(() => this.run());
+        if (this.direction === 'reverse') {
+            adjustedProgress = 1 - adjustedProgress;
+        }
+
+        this.multiImageInPath.move(adjustedProgress);
+
+        if (this.loop || progress < 1) {
+            this.animationFrameId = requestAnimationFrame(() => this.run());
         } else {
             this.onFinish();
         }
