@@ -788,15 +788,16 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             return;
         }
         card = new CardModel(id);
-
-        if (options.relativeFrom && options.relativeFrom == GaugeEventRelativeFromType.window) {
-            card.x = Utils.isNumeric(options.left) ? parseInt(options.left) : 0;
-            card.y = Utils.isNumeric(options.top) ? parseInt(options.top) : 0;
-        } else {
-            card.x = event.clientX + (Utils.isNumeric(options.left) ? parseInt(options.left) : 0);
-            card.y = event.clientY + (Utils.isNumeric(options.top) ? parseInt(options.top) : 0);
+        card.x = Utils.isNumeric(options.left) ? parseInt(options.left) : 0;
+        card.y = Utils.isNumeric(options.top) ? parseInt(options.top) : 0;
+        if (options.relativeFrom !== GaugeEventRelativeFromType.window) {
+            if (event?.clientX) {
+                card.x += event?.clientX;
+            }
+            if (event?.clientY) {
+                card.y += event?.clientY;
+            }
         }
-
         if (this.hmi.layout.hidenavigation) {
             card.y -= 48;
         }
