@@ -440,22 +440,20 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         let clickTimeout;
 
         if (svgele) {
+            let dblclickEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.dblclick);
             let clickEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.click);
-            if (clickEvents && clickEvents.length > 0) {
+            if (clickEvents?.length > 0) {
                 svgele.click(function(ev) {
                     clearTimeout(clickTimeout);
                     clickTimeout = setTimeout(function() {
                         self.runEvents(self, ga, ev, clickEvents);
-                    }, 200);
+                    }, dblclickEvents?.length > 0 ? 200 : 0);
                 });
                 svgele.touchstart(function(ev) {
                     self.runEvents(self, ga, ev, clickEvents);
                     ev.preventDefault();
                 });
-            }
-
-            let dblclickEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.dblclick);
-            if (dblclickEvents && dblclickEvents.length > 0) {
+            } else if (dblclickEvents?.length > 0) {
                 svgele.dblclick(function(ev) {
                     clearTimeout(clickTimeout);
                     self.runEvents(self, ga, ev, dblclickEvents);
@@ -464,7 +462,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 
             let mouseDownEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
-            if (mouseDownEvents && mouseDownEvents.length > 0) {
+            if (mouseDownEvents?.length > 0) {
                 svgele.mousedown(function(ev) {
                     self.runEvents(self, ga, ev, mouseDownEvents);
                 });
@@ -474,7 +472,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
             }
             let mouseUpEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseup);
-            if (mouseUpEvents && mouseUpEvents.length > 0) {
+            if (mouseUpEvents?.length > 0) {
                 svgele.mouseup(function(ev) {
                     self.runEvents(self, ga, ev, mouseUpEvents);
                 });
@@ -484,13 +482,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
             }
             let mouseOverEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseover);
-            if (mouseOverEvents && mouseOverEvents.length > 0) {
+            if (mouseOverEvents?.length > 0) {
                 svgele.mouseover(function(ev) {
                     self.runEvents(self, ga, ev, mouseOverEvents);
                 });
             }
             let mouseOutEvents = self.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseout);
-            if (mouseOutEvents && mouseOutEvents.length > 0) {
+            if (mouseOutEvents?.length > 0) {
                 svgele.mouseout(function(ev) {
                     self.runEvents(self, ga, ev, mouseOutEvents);
                 });
