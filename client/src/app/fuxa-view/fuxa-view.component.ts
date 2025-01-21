@@ -227,7 +227,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @HostListener('window:resize', ['$event'])
     onResize(event?) {
         let hmi = this.projectService.getHmi();
-        if (hmi && hmi.layout && ZoomModeType[hmi.layout.zoom] === ZoomModeType.autoresize) {
+        if (hmi && hmi.layout && ZoomModeType[hmi.layout.zoom] === ZoomModeType.autoresize && !this.child) {
             Utils.resizeViewRev(this.dataContainer.nativeElement, this.dataContainer.nativeElement.parentElement?.parentElement, 'stretch');
         }
     }
