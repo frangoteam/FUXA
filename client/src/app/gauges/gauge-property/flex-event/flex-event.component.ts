@@ -38,7 +38,8 @@ export class FlexEventComponent implements OnInit {
     eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
 
     events: GaugeEvent[];
-    eventType = {};
+    eventType = <GaugeEventType>{};
+
     setValueType = GaugeEventSetValueType;
     enterActionType = {};
     actionType: typeof GaugeEventActionType | typeof ViewEventActionType = GaugeEventActionType;
@@ -52,7 +53,11 @@ export class FlexEventComponent implements OnInit {
     eventOnWindows = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oncard);
     viewPanels: PanelData[];
 
-    constructor(private translateService: TranslateService) {
+    eventOnOpenTab = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onOpenTab);
+    eventOnIframe = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oniframe);
+
+    constructor(
+        private translateService: TranslateService) {
     }
 
     ngOnInit() {
@@ -151,6 +156,10 @@ export class FlexEventComponent implements OnInit {
         return this.eventWithPosition.indexOf(eventAction) !== -1;
     }
 
+    withWindows(eventAction: GaugeEventActionType) {
+        return eventAction !== this.eventOnOpenTab;
+    }
+
     withSetValue(action) {
         let a = Object.keys(this.actionType).indexOf(action);
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.onSetValue);
@@ -170,6 +179,14 @@ export class FlexEventComponent implements OnInit {
     }
 
     withAddress(action) {
+        let a = Object.keys(this.actionType).indexOf(action);
+        let b = Object.values(this.actionType).indexOf(GaugeEventActionType.oniframe);
+        let c = Object.values(this.actionType).indexOf(GaugeEventActionType.oncard);
+        let tab = Object.values(this.actionType).indexOf(GaugeEventActionType.onOpenTab);
+        return a > -1 && (a === b || a === c || a === tab);
+    }
+
+    withSize(action) {
         let a = Object.keys(this.actionType).indexOf(action);
         let b = Object.values(this.actionType).indexOf(GaugeEventActionType.oniframe);
         let c = Object.values(this.actionType).indexOf(GaugeEventActionType.oncard);

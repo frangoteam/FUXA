@@ -25,6 +25,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../_services/project.service';
 import { NgxTouchKeyboardDirective } from '../framework/ngx-touch-keyboard/ngx-touch-keyboard.directive';
 import { HmiService } from '../_services/hmi.service';
+import { EndPointApi } from '../_helpers/endpointapi';
 import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.component';
 import { FuxaViewDialogComponent, FuxaViewDialogData } from './fuxa-view-dialog/fuxa-view-dialog.component';
 import { LegacyDialogPosition as DialogPosition, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
@@ -57,6 +58,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     eventViewToPanel = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onViewToPanel);
     eventRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
+    eventOpenTab = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onOpenTab);
+    endPointConfig = EndPointApi.getURL();
     scriptParameterValue = Utils.getEnumKey(ScriptParamType, ScriptParamType.value);
 
     cards: CardModel[] = [];
@@ -522,6 +525,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 self.onMonitor(ga, ev, events[i].actparam, events[i].actoptions);
             } else if (events[i].action === this.eventRunScript) {
                 self.onRunScript(events[i]);
+            } else if (events[i].action === this.eventOpenTab) {
+                self.onOpenTab(events[i], events[i].actoptions);
             } else if (events[i].action === this.eventViewToPanel) {
                 self.onSetViewToPanel(events[i]);
             }
@@ -811,6 +816,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.cards.push(card);
         }
+    }
+
+    onOpenTab(event: GaugeEvent, options: any) {
+        let link = event.actoptions?.addressType === 'resource' ?  this.endPointConfig + '/' + event.actoptions.resource : event.actparam;
+        window.open(link,  options.newTab ? '_blank' : '_self');
     }
 
     openIframe(id: string, event: any, link: string, options: any) {

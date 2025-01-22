@@ -13,7 +13,7 @@
                 </mat-option>
             </mat-select>
         </div>
-        <div class="my-form-field" style="width: 140px;padding-left: 20px">
+        <div class="my-form-field ml15" style="width: 140px;">
             <span>{{'gauges.property-event-action' | translate}}</span>
             <mat-select [(value)]="item.action" (change)="item.actparam = '';">
                 <ng-container *ngIf="!isEnterOrSelect(item.type); else enterOrSelectAction">
@@ -83,19 +83,19 @@
         <flex-variables-mapping [(mapping)]="item.actoptions['variablesMapping']" [view]="getView(item.actparam)" [data]="data"></flex-variables-mapping>
     </div>
     <div style="display: inline-block" *ngIf="withSetInput(item.action)">
-        <div class="my-form-field" style="width: 260px;padding-left: 20px;">
+        <div class="my-form-field ml15" style="width: 260px;">
             <span>{{'gauges.property-event-input' | translate}}</span>
             <mat-select [(value)]="item.actparam">
                 <mat-option *ngFor="let v of inputs; index as i" [value]="v.id">{{v.name}}</mat-option>
             </mat-select>
         </div>
     </div>
-    <div style="display: inline-block" *ngIf="withSetValue(item.action)">
-        <div class="my-form-field" style="padding-left: 20px;">
+    <div class="inbk ml15" *ngIf="withSetValue(item.action)">
+        <div class="my-form-field">
             <span>{{'gauges.property-event-value' | translate}}</span>
             <input [(ngModel)]="item.actparam" type="text" style="width: 180px">
         </div>
-        <div class="my-form-field" style="padding-left: 13px;">
+        <div class="my-form-field ml10">
             <span>{{'gauges.property-event-function' | translate}}</span>
             <mat-select [(value)]="item.actoptions.function" style="width: 80px;">
                 <mat-option *ngFor="let ev of setValueType | enumToArray" [value]="ev.key">
@@ -118,24 +118,26 @@
                        [withStaticValue]="false">
         </flex-variable>
     </div>
-    <div style="display: inline-block" *ngIf="withAddress(item.action)">
-        <div class="my-form-field" style="padding-left: 20px;">
+    <div class="inbk ml15" *ngIf="withAddress(item.action)">
+        <div class="my-form-field">
             <span>{{'gauges.property-event-address' | translate}}</span>
-            <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
+            <input [(ngModel)]="item.actparam" type="text" style="width: 240px">
         </div>
-        <div *ngIf="eventOnWindows === item.action" class="my-form-field lbk ml20 tac" style="max-width: 70px">
+        <div *ngIf="eventOnOpenTab === item.action" class="my-form-field lbk ml20 tac" style="max-width: 70px">
             <span>{{'gauges.property-event-newtab' | translate}}</span>
             <mat-slide-toggle color="primary" [(ngModel)]="item.actoptions.newTab"></mat-slide-toggle>
         </div>
         <div *ngIf="withAddress(item.action)" style="display: table; padding-left: 20px; padding-top: 5px;">
-            <div class="my-form-field">
-                <span>{{'gauges.property-event-width' | translate}}</span>
-                <input numberOnly [(ngModel)]="item.actoptions.width" type="number" style="width: 60px">
-            </div>
-            <div class="my-form-field ml10">
-                <span>{{'gauges.property-event-height' | translate}}</span>
-                <input numberOnly [(ngModel)]="item.actoptions.height" type="number" style="width: 60px">
-            </div>
+            <ng-container *ngIf="withSize(item.action)">
+                <div class="my-form-field">
+                    <span>{{'gauges.property-event-width' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.actoptions.width" type="number" style="width: 60px">
+                </div>
+                <div class="my-form-field ml10">
+                    <span>{{'gauges.property-event-height' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.actoptions.height" type="number" style="width: 60px">
+                </div>
+            </ng-container>
             <div class="my-form-field ml10" *ngIf="withScale(item.action)">
                 <span>{{'gauges.property-event-scale' | translate}}</span>
                 <input numberOnly [(ngModel)]="item.actoptions.scale" type="number" style="width: 60px">

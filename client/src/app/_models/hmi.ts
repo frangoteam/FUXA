@@ -277,7 +277,7 @@ export class GaugeEvent {
     type: string;
     action: string;
     actparam: string;
-    actoptions = {};
+    actoptions = <any>{};
 }
 
 export class ViewEvent {
@@ -365,6 +365,7 @@ export enum GaugeEventType {
 export enum GaugeEventActionType {
     onpage = 'shapes.event-onpage',
     onwindow = 'shapes.event-onwindow',
+    onOpenTab = 'shapes.event-onopentab',
     ondialog = 'shapes.event-ondialog',
     oniframe = 'shapes.event-oniframe',
     oncard = 'shapes.event-oncard',     // wrong name exchange with 'onwindow'
