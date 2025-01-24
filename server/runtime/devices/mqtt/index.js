@@ -284,6 +284,7 @@ function MQTTclient(_data, _logger, _events, _runtime) {
      */
     this.getValue = function (id) {
         if (varsValue[id]) {
+            console.log('getValue ', varsValue[id] ? varsValue[id].value : null);
             return { id: id, value: varsValue[id].value, ts: lastTimestampValue };
         }
         return null;
@@ -301,6 +302,7 @@ function MQTTclient(_data, _logger, _events, _runtime) {
      */
     this.setValue = async function (tagId, value) {
         if (client && client.connected) {
+            console.log('setValue in ', varsValue[tagId] ? varsValue[tagId].value : null);
             var tag = data.tags[tagId];
             if (tag) {
                 if (tag.options) {
@@ -319,7 +321,8 @@ function MQTTclient(_data, _logger, _events, _runtime) {
                 }
                 tag.changed = true;
                 _publishValues([tag]);
-                // logger.info(`'${data.name}' setValue(${tagId}, ${value})`, true, true);
+                //logger.info(`'${data.name}' setValue(${tagId}, ${value}) - varsValue: ${varsValue[tagId]}`, false, true);
+                console.log('setValue out  ', varsValue[tagId] ? varsValue[tagId].value : null);
                 return true;
             }
         }
@@ -379,6 +382,7 @@ function MQTTclient(_data, _logger, _events, _runtime) {
                                 for (var i = 0; i < topicsMap[topicAddr].length; i++) {
                                     var id = topicsMap[topicAddr][i].id;
                                     var oldvalue = data.tags[id].rawValue;
+                                    console.log(`mqtt onMessage ${topicAddr} = ${msg}`);
                                     data.tags[id].rawValue = msg.toString();
                                     data.tags[id].timestamp = new Date().getTime();
                                     data.tags[id].changed = oldvalue !== data.tags[id].rawValue;
@@ -452,6 +456,7 @@ function MQTTclient(_data, _logger, _events, _runtime) {
      */
     var _clearVarsValue = function () {
         for (var id in varsValue) {
+            console.log('_clearVarsValue ', varsValue[id] ? varsValue[id].value : null);
             varsValue[id].value = null;
         }
         _emitValues(varsValue);
@@ -467,6 +472,7 @@ function MQTTclient(_data, _logger, _events, _runtime) {
         for (var id in data.tags) {
             if (!utils.isNullOrUndefined(data.tags[id].rawValue)) {
                 data.tags[id].value = await deviceUtils.tagValueCompose(data.tags[id].rawValue, varsValue[id] ? varsValue[id].value : null, data.tags[id], runtime);
+                console.log('_checkVarsChanged ', varsValue[id] ? varsValue[id].value : null);
                 if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
                     result[id] = data.tags[id];
                 }

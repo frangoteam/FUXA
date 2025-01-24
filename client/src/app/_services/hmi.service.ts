@@ -87,6 +87,7 @@ export class HmiService {
             this.variables[sigId] = new Variable(sigId, null, null);
         }
         this.variables[sigId].value = this.getValueInFunction(this.variables[sigId].value, value, fnc);
+        console.log('putSignalValue.->this.variables ', this.variables[sigId].value);
         if (this.socket) {
             let device = this.projectService.getDeviceFromTagId(sigId);
             if (device) {
