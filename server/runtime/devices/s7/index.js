@@ -98,6 +98,8 @@ function S7client(_data, _logger, _events, _runtime) {
      */
     this.polling = async function () {
         if (_checkWorking(true)) {
+            const start_readVars = performance.now();
+            console.log(`[${new Date().toISOString()}] Start polling`);
             var readVarsfnc = [];
             for (var dbnum in db) {
                 readVarsfnc.push(_readDB(parseInt(dbnum), Object.values(db[dbnum].Items)));
@@ -107,9 +109,13 @@ function S7client(_data, _logger, _events, _runtime) {
                     readVarsfnc.push(_readVars(chunk));
                 })
             }
+            const after_readVars = performance.now();
             try {
+                const execute_readVars = performance.now();
                 const result = await Promise.all(readVarsfnc);
+                const after_execute_readVars = performance.now();
                 _checkWorking(false);
+                const update_vars = performance.now();
                 if (result.length) {
                     let varsValueChanged = await _updateVarsValue(result);
                     lastTimestampValue = new Date().getTime();
@@ -123,6 +129,11 @@ function S7client(_data, _logger, _events, _runtime) {
                 if (lastStatus !== 'connect-ok') {
                     _emitStatus('connect-ok');
                 }
+                const after_update_vars = performance.now();
+                console.log(`prepare_readVars: ${after_readVars - start_readVars} ms`);
+                console.log(`execute_readVars: ${after_execute_readVars - execute_readVars} ms`);
+                console.log(`update_varsValue: ${after_update_vars - update_vars} ms`);
+                console.log(`-------`);
             } catch (reason) {
                 if (reason && reason.stack) {
                     logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
@@ -224,6 +235,8 @@ function S7client(_data, _logger, _events, _runtime) {
      * Read the current Tag object, write the value in object and send to SPS
      */
     this.setValue = async function (sigid, value) {
+        const start_setValue = performance.now();
+        console.log(`--->>> [${new Date().toISOString()}] Start setValue`);
         var item = _getTagItem(data.tags[sigid]);
         if (item) {
             value = await deviceUtils.tagRawCalculator(value, data.tags[sigid], runtime);
@@ -237,6 +250,8 @@ function S7client(_data, _logger, _events, _runtime) {
                     logger.error(`'${data.name}' _writeVars error! ${reason}`);
                 }
             });
+            const after_setValue = performance.now();
+            console.log(`--->>> setValue: ${after_setValue - start_setValue} ms`);
             return true;
         }
         return false;
@@ -415,13 +430,13 @@ function S7client(_data, _logger, _events, _runtime) {
     var _checkWorking = function (check) {
         if (check && working) {
             overloading++;
-            logger.warn(`'${data.name}' working (connection || polling) overload! ${overloading}`);
-            // !The driver don't give the break connection
-            if (overloading >= 3) {
-                s7client.Disconnect();
-            } else {
+            // logger.warn(`'${data.name}' working (connection || polling) overload! ${overloading}`);
+            // // !The driver don't give the break connection
+            // if (overloading >= 3) {
+            //     s7client.Disconnect();
+            // } else {
                 return false;
-            }
+            // }
         }
         working = check;
         overloading = 0;
