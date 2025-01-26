@@ -75,9 +75,11 @@
     "dlg.menuitem-link": "Link by Click",
     "dlg.menuitem-alarms": "Alarms by Click",
     "dlg.menuitem-address": "Link address",
+    "dlg.menuitem-icons-filter": "Icons Filter",
 
     "dlg.headeritem-title": "Header Item",
     "dlg.headeritem-icon": "Icon",
+    "dlg.headeritem-icons-filter": "Icons Filter",
 
     "dlg.docproperty-title": "View properties",
     "dlg.docproperty-name": "Name",

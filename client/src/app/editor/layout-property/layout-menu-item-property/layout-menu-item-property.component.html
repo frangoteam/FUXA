@@ -4,7 +4,9 @@
     <div mat-dialog-content>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span>{{'dlg.menuitem-icon' | translate}}</span>
-            <mat-select [(value)]="data.item.icon" style="width: 60px; height: 30px" #iconsel>
+            <mat-select [(value)]="data.item.icon"
+                        style="width: 60px; height: 30px"
+                        #iconsel>
                 <mat-select-trigger>
                     <mat-icon>{{iconsel.value}}</mat-icon>
                 </mat-select-trigger>
@@ -12,7 +14,20 @@
                     {{'dlg.menuitem-image' | translate}}
                     <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/png|jpg|svg" />
                 </mat-option>
-                <mat-option *ngFor="let icon of icons$ | async" [value]="icon" (click)="data.item.image = ''" style="display: inline-block !important;">
+                <mat-option>
+                    <div class="my-form-field">
+                        <input
+                            matInput
+                            [(ngModel)]="filterText"
+                            (input)="onFilterChange()"
+                            (click)="$event.stopPropagation()"
+                            (keydown)="$event.stopPropagation()"
+                            placeholder="{{'dlg.menuitem-icons-filter' | translate}}"
+                            type="text"
+                            autocomplete="off"/>
+                    </div>
+                </mat-option>
+                <mat-option *ngFor="let icon of filteredIcons$ | async" [value]="icon" (click)="data.item.image = ''" style="display: inline-block !important;">
                     <mat-icon class="">{{ icon }}</mat-icon>
                 </mat-option>
             </mat-select>
