@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { SelOptionType, SelOptionsComponent } from '../../../gui-helpers/sel-options/sel-options.component';
-import { Observable, Subject, map, of, takeUntil } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, combineLatest, map, of, takeUntil } from 'rxjs';
 import { Define } from '../../../_helpers/define';
 import { Role, UserGroups } from '../../../_models/user';
 import { LinkType } from '../../../_models/hmi';
@@ -13,12 +13,15 @@ import { SettingsService } from '../../../_services/settings.service';
 @Component({
     selector: 'app-layout-menu-item-property',
     templateUrl: './layout-menu-item-property.component.html',
-    styleUrls: ['./layout-menu-item-property.component.css']
+    styleUrls: ['./layout-menu-item-property.component.scss']
 })
 export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy {
 	selected = [];
     options = [];
     icons$: Observable<string[]>;
+    filteredIcons$: Observable<string[]>;
+    filterText = '';
+    private filterTextSubject = new BehaviorSubject<string>('');
     linkAddress = LinkType.address;
     linkAlarms = LinkType.alarms;
     private destroy$ = new Subject<void>();
@@ -31,10 +34,20 @@ export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy
                 private settingsService: SettingsService,
                 public dialogRef: MatDialogRef<LayoutMenuItemPropertyComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
+
         this.icons$ = of(Define.MaterialIconsRegular).pipe(
-          map((data: string) => data.split('\n')),
-          map(lines => lines.map(line => line.split(' ')[0])),
-          map(names => names.filter(name => !!name))
+            map((data: string) => data.split('\n')),
+            map(lines => lines.map(line => line.split(' ')[0])),
+            map(names => names.filter(name => !!name))
+        );
+
+        this.filteredIcons$ = combineLatest([
+            this.icons$,
+            this.filterTextSubject.asObservable()
+        ]).pipe(
+            map(([icons, filterText]) =>
+                icons.filter(icon => icon.toLowerCase().includes(filterText.toLowerCase()))
+            )
         );
     }
 
@@ -108,5 +121,9 @@ export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy
                 reader.readAsDataURL(event.target.files[0]);
             }
         }
+    }
+
+    onFilterChange() {
+        this.filterTextSubject.next(this.filterText);
     }
 }

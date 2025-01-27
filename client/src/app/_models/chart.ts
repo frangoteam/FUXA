@@ -18,11 +18,13 @@ export class ChartLine {
     spangaps?: boolean;
     zones?: ChartLineZone[];
 }
+
 export interface ChartLineZone {
     min: number;
     max: number;
-    color: string;
-    fill?: string;
+    stroke: string;
+    fill: string;
+
 }
 
 export enum ChartViewType {

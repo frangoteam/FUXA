@@ -1,6 +1,8 @@
 {
     "/resources": {
-      "target": "http://localhost:1881",
-      "secure": false
+      "target": "http://127.0.0.1:1881",
+      "secure": false,
+      "logLevel": "debug",
+      "changeOrigin": true
     }
 }

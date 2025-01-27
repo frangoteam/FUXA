@@ -1,0 +1,20 @@
+:host {
+    .container {
+        width: 340px;
+    }
+
+    .block-input {
+        display: block;
+        width: 100%;
+
+        input {
+            width: calc(100% - 5px);
+        }
+    }
+
+    .block-zones {
+        display: block;
+        max-height: 220px;
+        overflow-y: auto;
+    }
+}

@@ -178,6 +178,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public resize(height?: number, width?: number) {
+        if (!this.chartPanel) {
+            return;
+        }
         let chart = this.chartPanel.nativeElement;
         if (!height && chart.offsetParent) {
             height = chart.offsetParent.clientHeight;
@@ -290,14 +293,24 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             if (line.linewidth) {
                 serie.width = line.linewidth;
             }
-            if (line.zones.length > 1) {
-                const zonescolor = this.generateColorZones(line.zones, line.color);
-                const zonesfill = this.generateFillZones(line.zones, line.fill);
-                if (zonescolor) {
-                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zonescolor, true);
+
+            if (line.zones?.some(zone => zone.fill)) {
+                const zones = this.generateZones(line.zones, 'fill', line.fill);
+                if (zones) {
+                    serie.fill = (self, seriesIndex) => {
+                        let fill = this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
+                        return  fill || line.fill;
+                    };
                 }
-                if (zonesfill) {
-                   serie.fill = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zonesfill, true);
+            }
+            else if (line.fill) {
+                serie.fill = line.fill;
+            }
+            if (line.zones?.some(zone => zone.stroke)) {
+                const zones = this.generateZones(line.zones, 'stroke', line.color);
+                if (zones) {
+                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || line.color;
+
                 }
             }
             serie.lineInterpolation = line.lineInterpolation;
@@ -313,31 +326,13 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private generateColorZones(ranges: ChartLineZone[], baseColor: string): Zone[] {
-        const result: Zone[] = [];
-        const sortedRanges = ranges.sort((a, b) => a.min - b.min);
-        result.push([-Infinity, baseColor]);
-        sortedRanges.forEach((range, index) => {
-            result.push([range.min, range.color]);
-            if (index < sortedRanges.length - 1) {
-                const nextMin = sortedRanges[index + 1].min;
-                if (range.max < nextMin) {
-                    result.push([range.max, baseColor]);
-                }
-            } else {
-                result.push([range.max, baseColor]);
-            }
-        });
-        
-        return result;
-    }
 
-    private generateFillZones(ranges: ChartLineZone[], baseColor: string): Zone[] {
+    private generateZones(ranges: ChartLineZone[], attribute: string, baseColor: string): Zone[] {
         const result: Zone[] = [];
         const sortedRanges = ranges.sort((a, b) => a.min - b.min);
         result.push([-Infinity, baseColor]);
         sortedRanges.forEach((range, index) => {
-            result.push([range.min, range.fill]);
+            result.push([range.min, range[attribute]]);
             if (index < sortedRanges.length - 1) {
                 const nextMin = sortedRanges[index + 1].min;
                 if (range.max < nextMin) {
@@ -347,7 +342,6 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 result.push([range.max, baseColor]);
             }
         });
-        
         return result;
     }
 
@@ -635,3 +629,4 @@ interface ValueDictionary {
 }
 
 type Zone = [number, string];
+

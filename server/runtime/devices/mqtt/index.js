@@ -578,7 +578,6 @@ function MQTTclient(_data, _logger, _events, _runtime) {
                     client.publish(tags[key].address, JSON.stringify(obj), topicOptions);
                 } else if (tags[key].value !== undefined) {   // whitout payload
                     client.publish(tags[key].address, tags[key].value.toString(), topicOptions);
-                    tags[key].value = null;
                 }
             } catch (err) {
                 console.error(err);

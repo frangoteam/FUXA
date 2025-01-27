@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from '@ang
 import { Utils } from '../../_helpers/utils';
 
 import { Series, Options, Legend } from './uPlot';
+import { ChartLineZone } from '../../_models/chart';
 
 declare const uPlot: any;
 declare const placement: any;
@@ -375,6 +376,24 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         };
     }
 
+    getColorForValue(ranges: ChartLineZone[], value: number): string {
+        // Sort ranges by the min value (just in case)
+        const sortedRanges = ranges.sort((a, b) => a.min - b.min);
+
+        // Iterate through the sorted ranges to find the corresponding color for the value
+        for (let i = 0; i < sortedRanges.length; i++) {
+            const range = sortedRanges[i];
+
+            // Check if the value falls within the range
+            if (value >= range.min && value <= range.max) {
+                return range.stroke;  // Return the corresponding color
+            }
+        }
+
+        // If no range was found for the value, return a default color (base color)
+        return 'red';  // Or any other default color you prefer
+    }
+
     scaleGradient(u, scaleKey, ori, scaleStops, discrete = false) {
         let scale = u.scales[scaleKey];
 
@@ -430,6 +449,9 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             x1 = maxStopPos;
         }
 
+        if (Number.isNaN(y0) || Number.isNaN(y1)) {
+            return null;
+        }
         let grd = this.uplot.ctx.createLinearGradient(x0, y0, x1, y1);
 
         let prevColor;

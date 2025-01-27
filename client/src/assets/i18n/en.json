@@ -75,9 +75,11 @@
     "dlg.menuitem-link": "Link by Click",
     "dlg.menuitem-alarms": "Alarms by Click",
     "dlg.menuitem-address": "Link address",
+    "dlg.menuitem-icons-filter": "Icons Filter",
 
     "dlg.headeritem-title": "Header Item",
     "dlg.headeritem-icon": "Icon",
+    "dlg.headeritem-icons-filter": "Icons Filter",
 
     "dlg.docproperty-title": "View properties",
     "dlg.docproperty-name": "Name",
@@ -248,9 +250,15 @@
     "chart.config-interpo-stepAfter": "step after",
     "chart.config-interpo-stepBefore": "step before",
     "chart.config-interpo-spline": "spline",
+
     "chart.config-line-width": "Line Width",
     "chart.config-line-gap": "Fill Gaps",
+
     "chart.config-line-add-zone": "Add Zone",
+    "chart.config-line-zone-min": "Min",
+    "chart.config-line-zone-max": "Max",
+    "chart.config-line-zone-stroke": "Stroke",
+    "chart.config-line-zone-fill": "Fill",
 
     "chart.property-data": "Data",
     "chart.property-props": "Property",
@@ -756,6 +764,10 @@
     "pipe.property-content-color": "Content color",
     "pipe.property-content-space": "Content dash",
     "pipe.action-hide-content": "Hide content",
+    "pipe.property-style-animation": "Animation Image",
+    "pipe.property-style-animation-image": "Select Image (SVG)",
+    "pipe.property-style-animation-count": "Image count",
+    "pipe.property-style-animation-delay": "Animation delay (msec.)",
 
     "slider.property-props": "Property",
     "slider.property-horizontal": "Horizontal",
@@ -1045,6 +1057,7 @@
     "gauges.property-event-destination-relative-from": "Relative from",
     "gauges.property-event-destination-panel": "Panel",
     "gauges.property-event-destination-hide-close": "Hide Close",
+    "gauges.property-event-newtab": "New Tab",
     "gauges.property-event-single-card": "Single Card",
     "gauges.property-event-value": "Value",
     "gauges.property-event-function": "Function",

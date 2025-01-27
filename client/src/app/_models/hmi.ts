@@ -277,7 +277,7 @@ export class GaugeEvent {
     type: string;
     action: string;
     actparam: string;
-    actoptions = {};
+    actoptions = <any>{};
 }
 
 export class ViewEvent {
@@ -341,9 +341,9 @@ export class GaugeStatus {
 
 export class GaugeActionStatus {
     type: string;
-    timer: any = null;
-    animr: any = null;
-    spool: any;
+    timer?: any = null;
+    animr?: any = null;
+    spool?: any;
     constructor(type: string) {
         this.type = type;
     }
@@ -352,7 +352,7 @@ export class GaugeActionStatus {
 /** Gouges and Shapes mouse events */
 export enum GaugeEventType {
     click = 'shapes.event-click',
-    dblclick = 'shapes.event-dblclick',    
+    dblclick = 'shapes.event-dblclick',
     mousedown = 'shapes.event-mousedown',
     mouseup = 'shapes.event-mouseup',
     mouseover = 'shapes.event-mouseover',
@@ -365,6 +365,7 @@ export enum GaugeEventType {
 export enum GaugeEventActionType {
     onpage = 'shapes.event-onpage',
     onwindow = 'shapes.event-onwindow',
+    onOpenTab = 'shapes.event-onopentab',
     ondialog = 'shapes.event-ondialog',
     oniframe = 'shapes.event-oniframe',
     oncard = 'shapes.event-oncard',     // wrong name exchange with 'onwindow'
