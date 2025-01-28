@@ -1,6 +1,6 @@
 /**
  *  Module to manage the users in a database
- *  Table: 'users' 
+ *  Table: 'users'
  */
 
 'use strict';
@@ -17,8 +17,8 @@ var db_usr;         // Database of users
 
 /**
  * Init and bind the database resource
- * @param {*} _settings 
- * @param {*} _log 
+ * @param {*} _settings
+ * @param {*} _log
  */
 function init(_settings, _log) {
     settings = _settings;
@@ -115,13 +115,15 @@ function setDefault() {
  */
 function getUsers(user) {
     return new Promise(function (resolve, reject) {
-        var sql = "SELECT username, fullname, groups, info FROM users";
+        var sql = "SELECT username, fullname, password, groups, info FROM users";
+        var params = [];
         if (user && user.username) {
-            sql = "SELECT username, fullname, password, groups, info FROM users WHERE username = '" + user.username + "'";
+            sql += " WHERE username = ?";
+            params = [user.username];
         }
-        db_usr.all(sql, function (err, rows) {
-            if (err) {
-                reject(err);
+        db_usr.all(sql, params, (error, rows) => {
+            if (error) {
+                reject(error);
             } else {
                 resolve(rows);
             }
@@ -214,7 +216,7 @@ function setRoles(roles) {
                     logger.error(`usrstorage.set role failed! ${err}`);
                     reject();
                 }
-            }); 
+            });
         }
         resolve();
     });
