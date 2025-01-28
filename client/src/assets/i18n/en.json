@@ -250,6 +250,10 @@
     "chart.config-interpo-stepAfter": "step after",
     "chart.config-interpo-stepBefore": "step before",
     "chart.config-interpo-spline": "spline",
+
+    "chart.config-line-width": "Line Width",
+    "chart.config-line-gap": "Fill Gaps",
+
     "chart.config-line-add-zone": "Add Zone",
     "chart.config-line-zone-min": "Min",
     "chart.config-line-zone-max": "Max",
@@ -1155,6 +1159,7 @@
     "bag.property-format-digits": "Format digits",
     "bag.property-zones": "Zones",
     "bag.property-color": "Color",
+    "bag.property-fill": "Fill",
 
     "alarms.list-title": "Alarms settings",
     "alarms.list-name": "Name",
@@ -1206,10 +1211,12 @@
     "alarm.action-onsetview": "Set View",
     "alarm.action-onsetvalue": "Set Value",
     "alarm.action-onRunScript": "Run Script",
+    "alarm.action-toastmessage": "Show Message",
     "alarm.action-sendMsg": "Send Message",
     "alarm.property-action-type": "Action type",
     "alarm.property-action-value": "Value to set",
     "alarm.property-action-destination": "View to show",
+    "alarm.property-action-toastmessage": "Message to show",
 
     "notifications.list-title": "Notifications settings",
     "notifications.list-name": "Name",

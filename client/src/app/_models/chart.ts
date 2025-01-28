@@ -14,6 +14,8 @@ export class ChartLine {
     fill?: string;
     yaxis: number;
     lineInterpolation?: number;
+    linewidth?: number;
+    spangaps?: boolean;
     zones?: ChartLineZone[];
 }
 
@@ -22,6 +24,7 @@ export interface ChartLineZone {
     max: number;
     stroke: string;
     fill: string;
+
 }
 
 export enum ChartViewType {
