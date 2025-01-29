@@ -551,30 +551,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.fuxaview.openDialog(null, act.params, {});
                 } else if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.setView)) {
                     this.onGoToPage(act.params);
-                } else if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.toastmessage)) {
+                } else if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.toastMessage)) {
                     var msg = act.params;
-                
-                    // Function to show the toast
-                    let showToastLoop = () => {
-                        // Check if the toast with the same message is already being displayed
-                        const resetOnDuplicate = true;  // Reset the duplicate toast
-                        const countDuplicates = false; // Do not count duplicates
-                
-                        // Use findDuplicate to check if the toast already exists
-                        const duplicateToast = this.toastr.findDuplicate('', msg, resetOnDuplicate, countDuplicates);
-                
-                        if (!duplicateToast) {
-                            // If no duplicate exists, show the toast
-                            this.toastr.warning(msg, '', {
-                                timeOut: 7000,  // Toast duration before fading out
-                                closeButton: false,
-                                disableTimeOut: false
-                            });
-                        } 
-                    };
-                    showToastLoop();
-                    // Set an interval to show the toast every 12 seconds
-                    setInterval(() => { showToastLoop(); }, 12000);  // Wait for 12 seconds before showing the toast again
+                    // Check if the toast with the same message is already being displayed
+                    const resetOnDuplicate = true;  // Reset the duplicate toast
+                    // Use findDuplicate to check if the toast already exists
+                    const duplicateToast = this.toastr.findDuplicate('', msg, resetOnDuplicate, false);
+                    if (!duplicateToast) {
+                        const toastType = act.options?.type ?? 'info';
+                        // If no duplicate exists, show the toast
+                        this.toastr[toastType](msg, '', {
+                            timeOut: 3000,
+                            closeButton: true,
+                            disableTimeOut: true
+                        });
+                    }
                 }
             });
         }

@@ -284,14 +284,12 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 serie.scale = '1';
             }
-            if (line.spangaps){
-                serie.spanGaps = true;
-            }
+            serie.spanGaps = line.spanGaps ?? false;
             if (line.fill) {
                 serie.fill = line.fill;
             }
-            if (line.linewidth) {
-                serie.width = line.linewidth;
+            if (line.lineWidth) {
+                serie.width = line.lineWidth;
             }
 
             if (line.zones?.some(zone => zone.fill)) {
@@ -310,7 +308,6 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 const zones = this.generateZones(line.zones, 'stroke', line.color);
                 if (zones) {
                     serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || line.color;
-
                 }
             }
             serie.lineInterpolation = line.lineInterpolation;
@@ -325,7 +322,6 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.nguplot.setSample();
         }
     }
-
 
     private generateZones(ranges: ChartLineZone[], attribute: string, baseColor: string): Zone[] {
         const result: Zone[] = [];
@@ -629,4 +625,3 @@ interface ValueDictionary {
 }
 
 type Zone = [number, string];
-

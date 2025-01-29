@@ -78,7 +78,7 @@ function AlarmsManager(_runtime) {
                             var action = actionsProperty[alr.nametype];
                             if (action.subproperty) {
                                 if (action.subproperty.type === ActionsTypes.POPUP || action.subproperty.type === ActionsTypes.SET_VIEW || action.subproperty.type === ActionsTypes.TOAST_MESSAGE) {
-                                    result.actions.push({ type: action.subproperty.type, params: action.subproperty.actparam })
+                                    result.actions.push({ type: action.subproperty.type, params: action.subproperty.actparam, options: action.subproperty.actoptions });
                                 }
                             }
                         }
@@ -708,6 +708,6 @@ const ActionsTypes = {
     SET_VALUE: 'setValue',
     SET_VIEW: 'setView',
     SEND_MSG: 'sendMsg',
-    TOAST_MESSAGE: 'toastmessage',
+    TOAST_MESSAGE: 'toastMessage',
     RUN_SCRIPT: 'runScript'
 }

@@ -164,6 +164,8 @@ export class ChartConfigComponent implements OnInit {
                 fill: line.fill,
                 lineInterpolationType: this.lineInterpolationType,
                 zones: line.zones,
+                lineWidth: line.lineWidth,
+                spanGaps: line.spanGaps
             }
         });
         dialogRef.afterClosed().subscribe((result: ChartLine) => {
@@ -174,6 +176,8 @@ export class ChartConfigComponent implements OnInit {
                 line.lineInterpolation = result.lineInterpolation;
                 line.fill = result.fill;
                 line.zones = result.zones;
+                line.lineWidth = result.lineWidth;
+                line.spanGaps = result.spanGaps;
             }
         });
     }
