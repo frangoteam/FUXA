@@ -92,6 +92,8 @@ function S7client(_data, _logger, _events, _runtime) {
         });
     }
 
+    const delay = ms => { return new Promise(resolve => setTimeout(resolve, ms)) };
+
     /**
      * Read values in polling mode
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
@@ -101,23 +103,23 @@ function S7client(_data, _logger, _events, _runtime) {
             const start_readVars = performance.now();
             console.log(`[${new Date().toISOString()}] Start polling`);
             var readVarsfnc = [];
+            var readResult = [];
             for (var dbnum in db) {
-                readVarsfnc.push(_readDB(parseInt(dbnum), Object.values(db[dbnum].Items)));
+                readResult.push(await _readDB(parseInt(dbnum), Object.values(db[dbnum].Items)));
+                await delay(20);
             }
             if (Object.keys(mixItemsMap).length) {
-                utils.chunkArray(Object.values(mixItemsMap), MAX_MIX_ITEM).forEach((chunk) => {
-                    readVarsfnc.push(_readVars(chunk));
+                utils.chunkArray(Object.values(mixItemsMap), MAX_MIX_ITEM).forEach(async (chunk) => {
+                    readResult.push(await _readVars(chunk));
                 })
             }
             const after_readVars = performance.now();
             try {
-                const execute_readVars = performance.now();
-                const result = await Promise.all(readVarsfnc);
-                const after_execute_readVars = performance.now();
+                //const result = await Promise.all(readVarsfnc);
                 _checkWorking(false);
                 const update_vars = performance.now();
-                if (result.length) {
-                    let varsValueChanged = await _updateVarsValue(result);
+                if (readResult.length) {
+                    let varsValueChanged = await _updateVarsValue(readResult);
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
                     if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
@@ -131,7 +133,6 @@ function S7client(_data, _logger, _events, _runtime) {
                 }
                 const after_update_vars = performance.now();
                 console.log(`prepare_readVars: ${after_readVars - start_readVars} ms`);
-                console.log(`execute_readVars: ${after_execute_readVars - execute_readVars} ms`);
                 console.log(`update_varsValue: ${after_update_vars - update_vars} ms`);
                 console.log(`-------`);
             } catch (reason) {
