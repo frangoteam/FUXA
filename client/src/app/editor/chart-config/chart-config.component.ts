@@ -183,7 +183,7 @@ export class ChartConfigComponent implements OnInit {
                 line.fill = result.fill;
                 line.zones = result.zones;
                 line.lineWidth = result.lineWidth;
-                line.spanGaps = result.spanGaps;
+                line.spanGaps = result.spanGaps ?? false;
             }
         });
     }

@@ -284,7 +284,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 serie.scale = '1';
             }
-            serie.spanGaps = line.spanGaps ?? false;
+            serie.spanGaps = Utils.isNullOrUndefined(line.spanGaps) ? true : line.spanGaps;
             if (line.fill) {
                 serie.fill = line.fill;
             }
