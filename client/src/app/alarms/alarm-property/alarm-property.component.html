@@ -275,6 +275,21 @@
                                         </mat-select>
                                     </div>
                                 </div>
+                                <div class="inbk" *ngIf="item.type === actionToastMessage">
+                                    <div class="my-form-field ml20">
+                                        <span>{{'alarm.property-action-toastMessage' | translate}}</span>
+                                        <input [(ngModel)]="item.actparam" type="text" style="width: 260px">
+                                    </div>
+                                    <div class="my-form-field ml10" style="width: 100px;">
+                                        <span>{{'alarm.property-action-toastType' | translate}}</span>
+                                        <mat-select [(value)]="item.actoptions['type']">
+                                            <mat-option [value]="'error'">error</mat-option>
+                                            <mat-option [value]="'warning'">warning</mat-option>
+                                            <mat-option [value]="'success'">success</mat-option>
+                                            <mat-option [value]="'info'">info</mat-option>
+                                        </mat-select>
+                                    </div>
+                                </div>
                                 <div style="float:right">
                                     <button mat-icon-button (click)="onAlarmAction(i)">
                                         <mat-icon>clear</mat-icon>

@@ -25,7 +25,9 @@ export class ChartLinePropertyComponent implements OnInit {
             name: [{value: this.data.name, disabled: true }, Validators.required],
             label: [this.data.label, Validators.required],
             yaxis: [this.data.yaxis],
-            lineInterpolation: [this.data.lineInterpolation]
+            lineInterpolation: [this.data.lineInterpolation],
+            lineWidth: [this.data.lineWidth],
+            spanGaps: [this.data.spanGaps]
         });
     }
 

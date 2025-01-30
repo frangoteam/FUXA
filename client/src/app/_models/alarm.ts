@@ -147,6 +147,7 @@ export enum AlarmActionsType {
     setView = 'alarm.action-onsetview',
     setValue = 'alarm.action-onsetvalue',
     runScript = 'alarm.action-onRunScript',
+    toastMessage = 'alarm.action-toastMessage'
     // sendMsg = 'alarm.action-onsendmsg',
 }
 

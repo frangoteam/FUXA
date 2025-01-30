@@ -33,6 +33,8 @@ import { Script, ScriptMode } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
 // declare var panzoom: any;
 
+import { ToastrService } from 'ngx-toastr';
+
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
@@ -84,6 +86,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private hmiService: HmiService,
+        private toastr: ToastrService,
         private scriptService: ScriptService,
         private authService: AuthService,
         public gaugesManager: GaugesManager) {
@@ -548,6 +551,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.fuxaview.openDialog(null, act.params, {});
                 } else if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.setView)) {
                     this.onGoToPage(act.params);
+                } else if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.toastMessage)) {
+                    var msg = act.params;
+                    // Check if the toast with the same message is already being displayed
+                    const resetOnDuplicate = true;  // Reset the duplicate toast
+                    // Use findDuplicate to check if the toast already exists
+                    const duplicateToast = this.toastr.findDuplicate('', msg, resetOnDuplicate, false);
+                    if (!duplicateToast) {
+                        const toastType = act.options?.type ?? 'info';
+                        // If no duplicate exists, show the toast
+                        this.toastr[toastType](msg, '', {
+                            timeOut: 3000,
+                            closeButton: true,
+                            disableTimeOut: true
+                        });
+                    }
                 }
             });
         }
