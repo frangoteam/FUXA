@@ -140,8 +140,14 @@ export class ChartConfigComponent implements OnInit {
                     if (tag) {
                         let exist = chart.lines.find(line => line.id === tag.id);
                         if (!exist) {
-                            const myCopiedObject: ChartLine = {id: tag.id, name: this.getTagLabel(tag), device: device.name, color: this.getNextColor(),
-                                label: this.getTagLabel(tag), yaxis: 1 };
+                            const myCopiedObject = <ChartLine>{
+                                id: tag.id,
+                                name: this.getTagLabel(tag),
+                                device: device.name,
+                                color: this.getNextColor(),
+                                label: this.getTagLabel(tag), yaxis: 1,
+                                spanGaps: true
+                            };
                             chart.lines.push(myCopiedObject);
                         }
                     }

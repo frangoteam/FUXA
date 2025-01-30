@@ -15,7 +15,7 @@ export class ChartLine {
     yaxis: number;
     lineInterpolation?: number;
     lineWidth?: number;
-    spanGaps?: boolean;
+    spanGaps = true;
     zones?: ChartLineZone[];
 }
 
