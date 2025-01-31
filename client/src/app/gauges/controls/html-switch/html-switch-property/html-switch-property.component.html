@@ -5,7 +5,7 @@
         <mat-tab label="{{'gauges.property-props' | translate}}">
             <div style="height: 500px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
                 <div class="block">
-                    <flex-auth [name]="name" [permission]="property.permission" #flexauth></flex-auth>
+                    <flex-auth [name]="name" [permission]="property.permission" [permissionRoles]="property.permissionRoles" #flexauth></flex-auth>
                 </div>
                 <div class="block">
                     <flex-head [data]="data" [property]="property" #flexhead [withStaticValue]="false" [withBitmask]="withBitmask"></flex-head>
@@ -90,7 +90,7 @@
                                 {{font}}
                             </mat-option>
                         </mat-select>
-                    </div>                    
+                    </div>
                 </div>
                 <div class="field-row" style="position: absolute;height:210px;width:650px;margin-top: 16px;max-width: 650px; max-height: 210px;overflow: hidden;">
                     <ngx-switch #switcher style="position: absolute;left: 50%;top: 50%;transform: translateX(-50%) translateY(-50%);" [style.width]="switchWidth + 'px'"
