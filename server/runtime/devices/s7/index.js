@@ -100,49 +100,67 @@ function S7client(_data, _logger, _events, _runtime) {
      */
     this.polling = async function () {
         if (_checkWorking(true)) {
+            const pause = 20;
             const start_readVars = performance.now();
             console.log(`[${new Date().toISOString()}] Start polling`);
-            var readVarsfnc = [];
-            var readResult = [];
             for (var dbnum in db) {
-                readResult.push(await _readDB(parseInt(dbnum), Object.values(db[dbnum].Items)));
-                await delay(20);
+                const start_readVars = performance.now();
+                var readResult = [];
+                try {
+                    readResult.push(await _readDB(parseInt(dbnum), Object.values(db[dbnum].Items)));
+                    if (readResult.length) {
+                        let varsValueChanged = await _updateVarsValue(readResult);
+                        lastTimestampValue = new Date().getTime();
+                        _emitValues(varsValue);
+                        if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                            this.addDaq(varsValueChanged, data.name, data.id);
+                        }
+                    } else {
+                        // console.error('not');
+                    }
+                    await delay(pause);
+                } catch (reason) {
+                    if (reason && reason.stack) {
+                        logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
+                    } else {
+                        logger.error(`'${data.name}' _readVars error! ${reason}`);
+                    }
+                };
+                const update_vars = performance.now();
+                console.log(`_readVars: ${update_vars - start_readVars} ms`);
             }
             if (Object.keys(mixItemsMap).length) {
                 utils.chunkArray(Object.values(mixItemsMap), MAX_MIX_ITEM).forEach(async (chunk) => {
-                    readResult.push(await _readVars(chunk));
+                    const start_readVars = performance.now();
+                    var readResult = [];
+                    try {
+                        readResult.push(await _readVars(chunk));
+                        if (readResult.length) {
+                            let varsValueChanged = await _updateVarsValue(readResult);
+                            lastTimestampValue = new Date().getTime();
+                            _emitValues(varsValue);
+                            if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+                                this.addDaq(varsValueChanged, data.name, data.id);
+                            }
+                        } else {
+                            // console.error('not');
+                        }
+                        await delay(pause);
+                    } catch (reason) {
+                        if (reason && reason.stack) {
+                            logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
+                        } else {
+                            logger.error(`'${data.name}' _readVars error! ${reason}`);
+                        }
+                    };
+                    const update_vars = performance.now();
+                    console.log(`_readVars: ${update_vars - start_readVars} ms`);
                 })
             }
-            const after_readVars = performance.now();
-            try {
-                //const result = await Promise.all(readVarsfnc);
-                _checkWorking(false);
-                const update_vars = performance.now();
-                if (readResult.length) {
-                    let varsValueChanged = await _updateVarsValue(readResult);
-                    lastTimestampValue = new Date().getTime();
-                    _emitValues(varsValue);
-                    if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
-                        this.addDaq(varsValueChanged, data.name, data.id);
-                    }
-                } else {
-                    // console.error('not');
-                }
-                if (lastStatus !== 'connect-ok') {
-                    _emitStatus('connect-ok');
-                }
-                const after_update_vars = performance.now();
-                console.log(`prepare_readVars: ${after_readVars - start_readVars} ms`);
-                console.log(`update_varsValue: ${after_update_vars - update_vars} ms`);
-                console.log(`-------`);
-            } catch (reason) {
-                if (reason && reason.stack) {
-                    logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
-                } else {
-                    logger.error(`'${data.name}' _readVars error! ${reason}`);
-                }
-                _checkWorking(false);
-            };
+            _checkWorking(false);
+            if (lastStatus !== 'connect-ok') {
+                _emitStatus('connect-ok');
+            }
         } else {
             _emitStatus('connect-busy');
         }
