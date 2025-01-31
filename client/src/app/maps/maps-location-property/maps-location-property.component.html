@@ -1,0 +1,18 @@
+<form [formGroup]="formGroup" class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'maps.location-property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field item-block">
+            <span>*{{'maps.location-property-name' | translate}}</span>
+            <input formControlName="name" type="text">
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'maps.location-property-description' | translate}}</span>
+            <input formControlName="description" type="text">
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action mt10">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button [disabled]="formGroup.invalid" (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

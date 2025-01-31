@@ -23,6 +23,7 @@ import { Utils } from '../_helpers/utils';
 
 import * as FileSaver from 'file-saver';
 import { Report } from '../_models/report';
+import { MapsLocation } from '../_models/maps';
 
 @Injectable()
 export class ProjectService {
@@ -607,6 +608,67 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelNotification, notification, this.projectData).subscribe(result => {
+                observer.next();
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+    //#endregion
+
+    //#region Maps Locations
+    /**
+     * get maps locations
+     */
+    getMapsLocations() {
+        return (this.projectData?.mapsLocations) ? this.projectData.mapsLocations : [];
+    }
+
+    /**
+     * save the maps location to project
+     */
+    setMapsLocation(newLocation: MapsLocation, oldLocation?: MapsLocation) {
+        return new Observable((observer) => {
+            if (!this.projectData.mapsLocations) {
+                this.projectData.mapsLocations = [];
+            }
+            let exist = this.projectData.mapsLocations.find(ml => ml.id === newLocation.id);
+            if (exist) {
+                exist.name = newLocation.name;
+                exist.description = newLocation.description;
+            } else {
+                this.projectData.mapsLocations.push(newLocation);
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.SetMapsLocation, newLocation, this.projectData).subscribe(result => {
+                if (oldLocation?.id && newLocation.id !== oldLocation.id) {
+                    this.removeMapsLocation(oldLocation).subscribe(result => {
+                        observer.next();
+                    });
+                } else {
+                    observer.next();
+                }
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+
+    /**
+     * remove the maps location from project
+     */
+    removeMapsLocation(location: MapsLocation) {
+        return new Observable((observer) => {
+            for (let i = 0; i < this.projectData.mapsLocations?.length; i++) {
+                if (this.projectData.mapsLocations[i].id === location.id) {
+                    this.projectData.mapsLocations.splice(i, 1);
+                    break;
+                }
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.DelMapsLocation, location, this.projectData).subscribe(result => {
                 observer.next();
             }, err => {
                 console.error(err);

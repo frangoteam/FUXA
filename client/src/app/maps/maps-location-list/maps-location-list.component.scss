@@ -1,0 +1,28 @@
+:host {
+    .header-panel {
+        background-color: var(--headerBackground);
+        color: var(--headerColor);
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: 36px;
+        width: 100%;
+        text-align: center;
+        line-height: 36px;
+        border-bottom: 1px solid var(--headerBorder);
+
+        mat-icon {
+            display: inline-block;
+            vertical-align: text-top;
+        }
+    }
+
+    .work-panel {
+        position: absolute;
+        top: 37px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        background-color: var(--workPanelBackground);
+    }
+}
