@@ -106,8 +106,9 @@ function S7client(_data, _logger, _events, _runtime) {
             for (var dbnum in db) {
                 const start_readVars = performance.now();
                 var readResult = [];
+                const items = Object.values(db[dbnum].Items);
                 try {
-                    readResult.push(await _readDB(parseInt(dbnum), Object.values(db[dbnum].Items)));
+                    readResult.push(await _readDB(parseInt(dbnum), items));
                     if (readResult.length) {
                         let varsValueChanged = await _updateVarsValue(readResult);
                         lastTimestampValue = new Date().getTime();
@@ -127,7 +128,7 @@ function S7client(_data, _logger, _events, _runtime) {
                     }
                 };
                 const update_vars = performance.now();
-                console.log(`_readVars: ${update_vars - start_readVars} ms`);
+                console.log(`_readVars: DB.${dbnum}-${items.length} ${update_vars - start_readVars} ms`);
             }
             if (Object.keys(mixItemsMap).length) {
                 utils.chunkArray(Object.values(mixItemsMap), MAX_MIX_ITEM).forEach(async (chunk) => {
@@ -154,7 +155,7 @@ function S7client(_data, _logger, _events, _runtime) {
                         }
                     };
                     const update_vars = performance.now();
-                    console.log(`_readVars: ${update_vars - start_readVars} ms`);
+                    console.log(`_readVars: ${chunk} ${update_vars - start_readVars} ms`);
                 })
             }
             _checkWorking(false);
