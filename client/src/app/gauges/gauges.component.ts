@@ -34,6 +34,7 @@ import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
 import { HtmlImageComponent } from './controls/html-image/html-image.component';
 import { PanelComponent } from './controls/panel/panel.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
+import { AuthService } from '../_services/auth.service';
 
 @Injectable()
 export class GaugesManager {
@@ -73,6 +74,7 @@ export class GaugesManager {
         HtmlImageComponent, PanelComponent];
 
     constructor(private hmiService: HmiService,
+        private authService: AuthService,
         private winRef: WindowRef) {
         // subscription to the change of variable value, then emit to the gauges of fuxa-view
         this.hmiService.onVariableChanged.subscribe(sig => {
@@ -806,7 +808,7 @@ export class GaugesManager {
             let gauge = GaugeProgressComponent.initElement(ga);
             return gauge || true;
         } else if (ga.type.startsWith(HtmlSwitchComponent.TypeTag)) {
-            let gauge = HtmlSwitchComponent.initElement(ga, res, ref, isview);
+            let gauge = HtmlSwitchComponent.initElement(ga, res, ref, this.authService.checkPermission.bind(this.authService));
             this.mapGauges[ga.id] = gauge;
             return gauge;
         } else if (ga.type.startsWith(HtmlTableComponent.TypeTag)) {
