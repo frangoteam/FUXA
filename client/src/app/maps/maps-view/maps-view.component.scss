@@ -1,0 +1,22 @@
+:host {
+    .container {
+        width: 100%;
+        height: 100%;
+
+        .tools_panel {
+            display: inline-flex;
+            width: 100%; height: 37px;
+            // background-color: var(--headerBackground);
+            // color: var(--headerColor);
+        }
+        #map {
+            // width: 100%;
+            // height: 100%;
+            position: absolute;
+            top: 37px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+        }
+    }
+}

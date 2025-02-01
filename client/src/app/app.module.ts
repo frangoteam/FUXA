@@ -208,6 +208,7 @@ import { ActionPropertyService } from './gauges/gauge-property/action-properties
 import { MapsLocationListComponent } from './maps/maps-location-list/maps-location-list.component';
 import { MapsLocationsService } from './_services/maps-locations.service';
 import { MapsLocationPropertyComponent } from './maps/maps-location-property/maps-location-property.component';
+import { MapsViewComponent } from './maps/maps-view/maps-view.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -368,7 +369,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ResizeDirective,
         EditorViewsListComponent,
         MapsLocationListComponent,
-        MapsLocationPropertyComponent
+        MapsLocationPropertyComponent,
+        MapsViewComponent
     ],
     imports: [
         BrowserModule,
