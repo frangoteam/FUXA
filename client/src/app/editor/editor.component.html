@@ -827,21 +827,26 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="editorMode === editorModeType.CARDS" style="width:100%; height:100%">
-                <div class="tools_panel" style="display: inline-flex; width: 100%; height: 37px;">
-                    <div class="main-btn-sep" style="display: inline-block;"></div>
-                    <button mat-button class="main-btn" style="display: inline-block;" matTooltip="{{'editor.tools-launch-title' | translate}}" (click)="onStartCurrent()">
-                        <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
-                    </button>
-                </div>
-                <div style="position: absolute; top: 37px; left: 0px;right: 0px; bottom: 0px; background-color: rgba(247, 247, 247, 1);">
-                    <app-cards-view #cardsview [edit]="true" [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager"
-                                (editCard)="editCardsWidget($event)" (save)="onSaveProject()"></app-cards-view>
-                    <!-- <div class="grid-stack"></div> -->
-                    <button mat-fab color="primary" (click)="addCard()" class="fab-add">
-                        <mat-icon class="">add</mat-icon>
-                    </button>
-                </div>
+            <div style="width:100%; height:100%">
+                <ng-container *ngIf="editorMode === editorModeType.CARDS">
+                    <div class="tools_panel" style="display: inline-flex; width: 100%; height: 37px;">
+                        <div class="main-btn-sep" style="display: inline-block;"></div>
+                        <button mat-button class="main-btn" style="display: inline-block;" matTooltip="{{'editor.tools-launch-title' | translate}}" (click)="onStartCurrent()">
+                            <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
+                        </button>
+                    </div>
+                    <div style="position: absolute; top: 37px; left: 0px;right: 0px; bottom: 0px; background-color: rgba(247, 247, 247, 1);">
+                        <app-cards-view #cardsview [edit]="true" [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager"
+                                    (editCard)="editCardsWidget($event)" (save)="onSaveProject()"></app-cards-view>
+                        <!-- <div class="grid-stack"></div> -->
+                        <button mat-fab color="primary" (click)="addCard()" class="fab-add">
+                            <mat-icon class="">add</mat-icon>
+                        </button>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="editorMode === editorModeType.MAPS">
+
+                </ng-container>
             </div>
         </mat-drawer-content>
         <!-- work area END -->

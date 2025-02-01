@@ -36,7 +36,8 @@ export class View {
 
 export enum ViewType {
     svg = 'svg',
-    cards ='cards'
+    cards = 'cards',
+    maps = 'maps'
 }
 
 export class LayoutSettings {

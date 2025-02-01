@@ -1,7 +1,7 @@
 <div *ngIf="views && views.length <= 0">
     <br>
 </div>
-<div *ngFor="let item of getViewsSorted()" 
+<div *ngFor="let item of getViewsSorted()"
      (click)="onSelectView(item, false)"
      [ngClass]="{'leftbar-item-active': isViewActive(item)}"
      class="leftbar-item pointer">
@@ -14,6 +14,11 @@
               matTooltip="{{'editor.view-cards' | translate}}"
               class="leftbar-item-type">
         grid_view
+    </mat-icon>
+    <mat-icon *ngIf="item.type === mapsViewType"
+              matTooltip="{{'editor.view-maps' | translate}}"
+              class="leftbar-item-type">
+        map
     </mat-icon>
     <span class="view-item-text"
           matTooltip="{{item.name}}">
@@ -28,7 +33,7 @@
         <button mat-menu-item (click)="onDeleteView(item)">{{'editor.view-delete' | translate}}</button>
         <button mat-menu-item (click)="onRenameView(item)">{{'editor.view-rename' | translate}}</button>
         <button mat-menu-item (click)="onPropertyView(item)">{{'editor.view-property' | translate}}</button>
-        <button mat-menu-item (click)="onCloneView(item)" *ngIf="item.type !== cardViewType">{{'editor.view-clone' | translate}}</button>
-        <button mat-menu-item (click)="onExportView(item)" *ngIf="item.type !== cardViewType">{{'editor.view-export' | translate}}</button>
+        <button mat-menu-item (click)="onCloneView(item)" *ngIf="item.type !== cardViewType && item.type !== mapsViewType">{{'editor.view-clone' | translate}}</button>
+        <button mat-menu-item (click)="onExportView(item)" *ngIf="item.type !== cardViewType && item.type !== mapsViewType">{{'editor.view-export' | translate}}</button>
     </mat-menu>
 </div>
