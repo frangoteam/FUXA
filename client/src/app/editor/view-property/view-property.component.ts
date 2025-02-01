@@ -37,7 +37,7 @@ export class ViewPropertyComponent implements OnInit, OnDestroy {
                 private translateService: TranslateService,
                 private projectService: ProjectService,
                 public dialogRef: MatDialogRef<ViewPropertyComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: ViewPropertyType) {
+                @Inject(MAT_DIALOG_DATA) public data: ViewPropertyType & { newView: boolean}) {
 
         this.scripts = this.projectService.getScripts();
         for (let i = 0; i < this.propSizeType.length; i++) {
@@ -69,6 +69,9 @@ export class ViewPropertyComponent implements OnInit, OnDestroy {
             startWith(this.formGroup.controls.type.value)
         ).subscribe(type => {
             this.tabEvents.disabled = type === ViewType.cards;
+            if (type === ViewType.cards && this.data.newView && this.data.profile.bkcolor === '#ffffffff') {
+                this.data.profile.bkcolor = '#E6E6E6';
+            }
         });
     }
 
