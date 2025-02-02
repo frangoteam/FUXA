@@ -7,17 +7,17 @@
      class="leftbar-item pointer">
     <mat-icon *ngIf="!item.type || item.type === svgViewType"
               matTooltip="{{'editor.view-svg' | translate}}"
-              class="leftbar-item-type">
+              class="leftbar-item-type item-icon-view">
         wysiwyg
     </mat-icon>
     <mat-icon *ngIf="item.type === cardViewType"
               matTooltip="{{'editor.view-cards' | translate}}"
-              class="leftbar-item-type">
+              class="leftbar-item-type item-icon-cards">
         grid_view
     </mat-icon>
     <mat-icon *ngIf="item.type === mapsViewType"
               matTooltip="{{'editor.view-maps' | translate}}"
-              class="leftbar-item-type">
+              class="leftbar-item-type item-icon-maps">
         map
     </mat-icon>
     <span class="view-item-text"
