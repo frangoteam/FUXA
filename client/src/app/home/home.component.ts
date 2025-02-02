@@ -68,7 +68,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     viewAsAlarms = LinkType.alarms;
     alarmPanelWidth = '100%';
     serverErrorBanner$: Observable<boolean>;
-    cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
+    cardViewType = ViewType.cards;
+    mapsViewType = ViewType.maps;
     gridOptions = <GridsterConfig>new GridOptions();
     intervalsScript = new Intervals();
     currentDateTime: Date = new Date();

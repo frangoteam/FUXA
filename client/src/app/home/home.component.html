@@ -104,13 +104,16 @@
 							[view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager">
 						</app-cards-view>
 					</ng-container>
+					<ng-container *ngSwitchCase="mapsViewType">
+						<app-maps-view [hmi]="hmi" [gaugesManager]="gaugesManager"></app-maps-view>
+					</ng-container>
 					<ng-container *ngSwitchDefault>
 						<app-fuxa-view #fuxaview class="home-body" id="home" [view]="homeView"
 								[hmi]="hmi" [gaugesManager]="gaugesManager" (ongoto)="onGoToPage($event)">
-							</app-fuxa-view>
-						</ng-container>
+						</app-fuxa-view>
 					</ng-container>
 				</ng-container>
+			</ng-container>
 			<ng-container *ngFor="let iframe of iframes">
 				<app-iframe [link]="iframe.link" class="home-body" [style.display]="iframe.hide ? 'none' : 'block'" style="width:100%; height:100%"></app-iframe>
 			</ng-container>
