@@ -683,7 +683,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private eventForScript(events: GaugeEvent[], value: any) {
-        events.forEach(ev => {
+        events?.forEach(ev => {
             if (value) {
                 let parameters = <ScriptParam[]>ev.actoptions[SCRIPT_PARAMS_MAP];
                 parameters.forEach(param => {
