@@ -293,14 +293,9 @@ export class ProjectService {
      * @param view
      */
     setView(view: View, notify = false) {
-        let v = null;
-        for (let i = 0; i < this.projectData.hmi.views.length; i++) {
-            if (this.projectData.hmi.views[i].id === view.id) {
-                v = this.projectData.hmi.views[i];
-            }
-        }
-        if (v) {
-            v = view;
+        const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
+        if (existingView) {
+            Object.assign(existingView, view);
         } else {
             this.projectData.hmi.views.push(view);
         }
@@ -312,6 +307,19 @@ export class ProjectService {
             console.error(err);
             this.notifySaveError(err);
         });
+    }
+
+    async setViewAsync(view: View, notify = false): Promise<void> {
+        const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
+        if (existingView) {
+            Object.assign(existingView, view);
+        } else {
+            this.projectData.hmi.views.push(view);
+        }
+        await firstValueFrom(this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData));
+        if (notify) {
+            this.notifySuccessMessage('msg.project-save-success');
+        }
     }
 
     /**
@@ -622,8 +630,14 @@ export class ProjectService {
     /**
      * get maps locations
      */
-    getMapsLocations() {
-        return (this.projectData?.mapsLocations) ? this.projectData.mapsLocations : [];
+    getMapsLocations(filter?: string[]): MapsLocation[] {
+        if (!this.projectData?.mapsLocations) {
+            return [];
+        }
+        if (filter && filter.length > 0) {
+            return this.projectData.mapsLocations.filter(location => filter.includes(location.id));
+        }
+        return this.projectData.mapsLocations;
     }
 
     /**

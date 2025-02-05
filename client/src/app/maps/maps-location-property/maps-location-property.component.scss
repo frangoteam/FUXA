@@ -15,6 +15,12 @@
                     width: calc(100% - 5px);
                 }
             }
+
+            .form-input-dual {
+                div {
+                    width: 40%;
+                }
+            }
         }
     }
 }

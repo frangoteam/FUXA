@@ -27,6 +27,8 @@ export class MapsLocationPropertyComponent implements OnInit {
     ngOnInit() {
         this.formGroup = this.fb.group({
             name: [this.location.name, Validators.required],
+            latitude: [this.location.latitude],
+            longitude: [this.location.longitude],
             description: [this.location.description],
         });
         this.formGroup.controls.name.addValidators(this.isValidName());

@@ -1,9 +1,19 @@
 <div class="container">
-    <div class="tools_panel">
-        <!-- <div class="main-btn-sep" style="display: inline-block;"></div>
-        <button mat-button class="main-btn" style="display: inline-block;" matTooltip="{{'editor.tools-launch-title' | translate}}" (click)="onStartCurrent()">
+    <div *ngIf="editMode" class="tools_panel">
+        <div class="main-btn-sep" style="display: inline-block;">
+        </div>
+        <button mat-button class="main-btn" style="display: inline-block;" matTooltip="{{'editor.tools-launch-title' | translate}}"
+                (click)="onStartCurrent()">
             <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
-        </button> -->
+        </button>
     </div>
-    <div id="map"></div>
+    <div id="map" [ngStyle]="{'top.px': editMode ? 37 : 0}"></div>
 </div>
+
+<button #menuTrigger="matMenuTrigger" mat-button [matMenuTriggerFor]="contextMenu" class="hidden-trigger">
+</button>
+<mat-menu #contextMenu="matMenu" [overlapTrigger]="false">
+    <button mat-menu-item (click)="addLocation()">
+        {{'maps.edit-add-location' | translate}}
+    </button>
+</mat-menu>

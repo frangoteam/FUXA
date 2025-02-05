@@ -216,7 +216,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.homeView = view;
                 this.changeDetector.detectChanges();
                 this.setBackground();
-                if (this.homeView.type !== this.cardViewType) {
+                if (this.homeView.type !== this.cardViewType && this.homeView.type !== this.mapsViewType) {
                     this.checkZoom();
                     this.fuxaview.hmi.layout = this.hmi.layout;
                     this.fuxaview.loadHmi(this.homeView);

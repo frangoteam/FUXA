@@ -6,7 +6,17 @@
             <span>*{{'maps.location-property-name' | translate}}</span>
             <input formControlName="name" type="text">
         </div>
-        <div class="my-form-field item-block mt10">
+        <div class="form-input-dual mt5">
+            <div class="my-form-field inbk">
+                <span>{{'maps.location-property-latitude' | translate}}</span>
+                <input formControlName="latitude" type="text">
+            </div>
+            <div class="my-form-field inbk ml20">
+                <span>{{'maps.location-property-longitude' | translate}}</span>
+                <input formControlName="longitude" type="text">
+            </div>
+        </div>
+        <div class="my-form-field item-block mt5">
             <span>{{'maps.location-property-description' | translate}}</span>
             <input formControlName="description" type="text">
         </div>

@@ -1424,6 +1424,9 @@
     "maps.location-property-title": "Location",
     "maps.location-property-name": "Name",
     "maps.location-property-description": "Description",
+    "maps.location-property-latitude": "Latitude",
+    "maps.location-property-longitude": "Longitude",
+    "maps.edit-add-location": "Add Location",
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",

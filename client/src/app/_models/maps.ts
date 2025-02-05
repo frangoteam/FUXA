@@ -2,6 +2,8 @@
 export class MapsLocation {
     id: string;
     name: string;
+    latitude: number;
+    longitude: number;
     description: string;
 
     constructor(_id: string) {
