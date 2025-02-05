@@ -531,15 +531,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.checkSvgElementsMap(true);
                     this.winRef.nativeWindow.svgEditor.resetUndoStack();
                 }, 500);
-            } else if (this.cardsview) {
-                this.cardsview.view = view;
-                this.cardsview.reload();
+            } else if (this.isCardsEditMode(this.editorMode)) {
+                // this.cardsview.view = view;
+                // this.cardsview.reload();
             }
         }
     }
 
     private isSvgEditMode(editMode: EditorModeType) {
         return editMode !== EditorModeType.CARDS && editMode !== EditorModeType.MAPS;
+    }
+
+    private isCardsEditMode(editMode: EditorModeType) {
+        return editMode === EditorModeType.CARDS;
     }
 
     /**
