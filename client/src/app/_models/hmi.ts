@@ -1,6 +1,7 @@
 import { GridType } from 'angular-gridster2';
 import { Device, DeviceType, Tag } from './device';
 import { WidgetPropertyVariable } from '../_helpers/svg-utils';
+import { MapsLocation } from './maps';
 
 export class Hmi {
     /** Layout for navigation menu, header bar, ...  */
@@ -200,6 +201,7 @@ export class GaugeSettings {
 
 export class ViewProperty {
     events: GaugeEvent[] = [];
+    startLocation?: MapsLocation;
 }
 export class GaugeProperty {
     variableId: string;

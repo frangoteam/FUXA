@@ -501,6 +501,7 @@
 
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
+    "editor.view-maps": "Maps",
     "editor.views": "Views",
     "editor.resources": "Resources",
     "editor.view-delete": "Delete",
@@ -1427,6 +1428,10 @@
     "maps.location-property-latitude": "Latitude",
     "maps.location-property-longitude": "Longitude",
     "maps.edit-add-location": "Add Location",
+    "maps.edit-edit-location": "Edit Location",
+    "maps.edit-remove-location": "Remove Location",
+    "maps.edit-start-location": "Set as start Location",
+    "maps.edit-start-location-saved": "Start Location saved",
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",

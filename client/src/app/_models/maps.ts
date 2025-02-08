@@ -4,7 +4,7 @@ export class MapsLocation {
     name: string;
     latitude: number;
     longitude: number;
-    description: string;
+    description?: string;
 
     constructor(_id: string) {
         this.id = _id;

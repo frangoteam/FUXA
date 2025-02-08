@@ -3,13 +3,15 @@ import * as L from 'leaflet';
 import { GaugesManager } from '../../gauges/gauges.component';
 import { FuxaViewComponent } from '../../fuxa-view/fuxa-view.component';
 import { ProjectService } from '../../_services/project.service';
-import { Hmi, View } from '../../_models/hmi';
+import { Hmi, View, ViewProperty } from '../../_models/hmi';
 import { Subject, takeUntil } from 'rxjs';
 import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
 import { MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
 import { MapsLocation, MAPSLOCATION_PREFIX } from '../../_models/maps';
 import { MapsLocationPropertyComponent } from '../maps-location-property/maps-location-property.component';
 import { Utils } from '../../_helpers/utils';
+import { TranslateService } from '@ngx-translate/core';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-maps-view',
@@ -39,6 +41,8 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         private dialog: MatDialog,
         private projectService: ProjectService,
         private appRef: ApplicationRef,
+        private translateService: TranslateService,
+        private toastr: ToastrService
     ) { }
 
     ngOnInit() {
@@ -50,8 +54,11 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         //     container.remove(); // Rimuove il div esistente
         // }
         // this.mapContainer.nativeElement.innerHTML = '';
-        // this.map = L.map(this.mapContainer.nativeElement).setView([45.4642, 9.1900], 13); // Milano
-        this.map = L.map('map').setView([45.4642, 9.1900], 13); // Milano
+        let startLocation: L.LatLngExpression = [46.9466746335407, 7.444236656153662]; // Bern
+        if (this.view.property?.startLocation) {
+            startLocation = [this.view.property.startLocation.latitude, this.view.property.startLocation.longitude];
+        }
+        this.map = L.map('map').setView(startLocation, 13); // Bern
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; FUXA'
@@ -67,12 +74,6 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.editMode) {
             this.initEditMode();
         }
-
-        // const locations = [
-        //     { lat: 45.4642, lng: 9.1900 }, // Milano
-        //     { lat: 45.4786, lng: 9.2302 },
-        //     { lat: 45.4500, lng: 9.1800 }
-        // ];
 
         // locations.forEach(loc => {
         //     const marker = L.marker([loc.lat, loc.lng]).addTo(this.map);
@@ -107,7 +108,14 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.locations = this.view?.svgcontent ? this.projectService.getMapsLocations(JSON.parse(this.view.svgcontent)) : [];
         this.clearMarker();
         this.locations.forEach(loc => {
-            const marker = L.marker([loc.latitude, loc.longitude]).addTo(this.map);
+            const marker = L.marker([loc.latitude, loc.longitude])
+                            .addTo(this.map);
+
+            marker.bindTooltip(`${loc.name}`, {
+                permanent: true,
+                direction: 'top',
+                // className: "marker-label"
+            });
             marker.on('click', () => {
                 this.showFuxaViewPopup(loc.latitude, loc.longitude);
             });
@@ -168,7 +176,13 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onSetStartLocation() {
-        console.log('onSetStartLocation');
+        this.view.property ??= new ViewProperty();
+        this.view.property.startLocation = new MapsLocation(Utils.getGUID(MAPSLOCATION_PREFIX));
+        this.view.property.startLocation.latitude = this.lastClickLatLng.lat;
+        this.view.property.startLocation.longitude = this.lastClickLatLng.lng;
+        this.projectService.setViewAsync(this.view).then(() => {
+            this.toastr.success(this.translateService.instant('maps.edit-start-location-saved'));
+        });
     }
 
     private clearMarker() {
