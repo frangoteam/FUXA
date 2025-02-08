@@ -981,11 +981,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     onAddDoc() {
         let dialogRef = this.dialog.open(ViewPropertyComponent, {
             position: { top: '60px' },
-            data: <ViewPropertyType> {
+            data: <ViewPropertyType & { newView: boolean}> {
                 name: '',
                 profile: new DocProfile(),
                 type: ViewType.svg,
-                existingNames: this.hmi.views.map((v) => v.name)
+                existingNames: this.hmi.views.map((v) => v.name),
+                newView: true
             }
         });
 
