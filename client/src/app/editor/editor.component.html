@@ -845,7 +845,7 @@
                     </div>
                 </ng-container>
                 <ng-container *ngIf="editorMode === editorModeType.MAPS">
-                    <app-maps-view [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager" [editMode]="true"></app-maps-view>
+                    <app-maps-view #mapsView [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager" [editMode]="true"></app-maps-view>
                 </ng-container>
             </div>
         </mat-drawer-content>

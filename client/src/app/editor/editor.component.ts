@@ -39,6 +39,7 @@ import { ViewPropertyComponent, ViewPropertyType } from './view-property/view-pr
 import { HtmlImageComponent } from '../gauges/controls/html-image/html-image.component';
 import { LibWidgetsService } from '../resources/lib-widgets/lib-widgets.service';
 import { PipePropertyData } from '../gauges/controls/pipe/pipe-property/pipe-property.component';
+import { MapsViewComponent } from '../maps/maps-view/maps-view.component';
 
 declare var Gauge: any;
 
@@ -65,6 +66,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('sidePanel', {static: false}) sidePanel: MatDrawer;
     @ViewChild('svgSelectorPanel', {static: false}) svgSelectorPanel: MatDrawer;
     @ViewChild('svgpreview', {static: false}) svgPreview: ElementRef;
+    @ViewChild('mapsView', {static: false}) mapsView: MapsViewComponent;
 
     svgElementSelected: ISvgElement = null;
     svgElements: ISvgElement[] = [];
@@ -371,9 +373,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             //     delete temp[i]['background'];
             // }
             // return JSON.stringify(temp);
-        } else {
-            return this.winRef.nativeWindow.svgEditor.getSvgString();
+        } else if (this.currentView.type === ViewType.maps) {
+            return this.currentView.svgcontent;
         }
+        return this.winRef.nativeWindow.svgEditor.getSvgString();
     }
 
     /**
@@ -531,9 +534,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.checkSvgElementsMap(true);
                     this.winRef.nativeWindow.svgEditor.resetUndoStack();
                 }, 500);
-            } else if (this.isCardsEditMode(this.editorMode)) {
-                // this.cardsview.view = view;
-                // this.cardsview.reload();
+            } else if (this.isCardsEditMode(this.editorMode) && this.cardsview) {
+                this.cardsview.view = view;
+                this.cardsview.reload();
+            } else if (this.isMapsEditMode(this.editorMode) && this.mapsView) {
+                this.mapsView.view = view;
+                this.mapsView.reload();
             }
         }
     }
@@ -544,6 +550,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private isCardsEditMode(editMode: EditorModeType) {
         return editMode === EditorModeType.CARDS;
+    }
+
+    private isMapsEditMode(editMode: EditorModeType) {
+        return editMode === EditorModeType.MAPS;
     }
 
     /**

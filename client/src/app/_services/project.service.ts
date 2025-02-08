@@ -634,7 +634,7 @@ export class ProjectService {
         if (!this.projectData?.mapsLocations) {
             return [];
         }
-        if (filter && filter.length > 0) {
+        if (filter) {
             return this.projectData.mapsLocations.filter(location => filter.includes(location.id));
         }
         return this.projectData.mapsLocations;

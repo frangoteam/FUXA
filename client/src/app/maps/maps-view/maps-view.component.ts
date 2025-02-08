@@ -25,7 +25,9 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
     @ViewChild('menuTrigger', { read: ElementRef }) menuTriggerButton!: ElementRef;
 
-    private map!: L.Map;
+    @ViewChild('mapContainer', { static: false }) mapContainer!: ElementRef;
+    private map: L.Map | null = null;
+
     private destroy$ = new Subject<void>();
     lastClickLatLng!: L.LatLng;
     menuPosition = { x: '0px', y: '0px' };
@@ -43,6 +45,12 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
+        // const container = L.DomUtil.get('map'); // Controlla se il contenitore esiste
+        // if (container) {
+        //     container.remove(); // Rimuove il div esistente
+        // }
+        // this.mapContainer.nativeElement.innerHTML = '';
+        // this.map = L.map(this.mapContainer.nativeElement).setView([45.4642, 9.1900], 13); // Milano
         this.map = L.map('map').setView([45.4642, 9.1900], 13); // Milano
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -81,6 +89,10 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.destroy$.complete();
     }
 
+    reload() {
+        this.loadMapsResources();
+    }
+
     initEditMode() {
         this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
             this.showContextMenu(event);
@@ -92,7 +104,14 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     loadMapsResources() {
         this.hmi = this.projectService.getHmi();
-        this.locations = this.projectService.getMapsLocations(JSON.parse(this.view.svgcontent ?? '[]'));
+        this.locations = this.view?.svgcontent ? this.projectService.getMapsLocations(JSON.parse(this.view.svgcontent)) : [];
+        this.clearMarker();
+        this.locations.forEach(loc => {
+            const marker = L.marker([loc.latitude, loc.longitude]).addTo(this.map);
+            marker.on('click', () => {
+                this.showFuxaViewPopup(loc.latitude, loc.longitude);
+            });
+        });
     }
 
     showContextMenu(event: L.LeafletMouseEvent): void {
@@ -114,9 +133,7 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         container.className = 'popup-container';
 
         const factory = this.resolver.resolveComponentFactory(FuxaViewComponent);
-        // const componentRef = viewContainerRef.createComponent(factory);
         const componentRef = factory.create(this.injector);
-        // componentRef.changeDetectorRef.detectChanges();
 
         componentRef.instance.gaugesManager = this.gaugesManager;
         componentRef.instance.hmi = this.hmi;
@@ -135,11 +152,31 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
             .openOn(this.map);
     }
 
-    addLocation() {
+    onAddLocation() {
         let location = new MapsLocation(Utils.getGUID(MAPSLOCATION_PREFIX));
         location.latitude = this.lastClickLatLng.lat;
         location.longitude = this.lastClickLatLng.lng;
         this.editLocation(location);
+    }
+
+    onEditLocation() {
+        console.log('onEditLocation');
+    }
+
+    onRemoveLocation() {
+        console.log('onRemoveLocation');
+    }
+
+    onSetStartLocation() {
+        console.log('onSetStartLocation');
+    }
+
+    private clearMarker() {
+        this.map.eachLayer(layer => {
+            if (layer instanceof L.Marker) {
+                this.map.removeLayer(layer);
+            }
+        });
     }
 
     private editLocation(location?: MapsLocation) {
@@ -153,7 +190,7 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.projectService.setMapsLocation(result, location).subscribe(() => {
                     if (!this.locations.find(loc => loc.id === location.id)) {
                         this.locations.push(location);
-                        this.view.svgcontent = JSON.stringify(this.locations);
+                        this.view.svgcontent = JSON.stringify(this.locations.map(loc => loc.id));
                         this.projectService.setViewAsync(this.view).then(() => {
                             this.loadMapsResources();
                         });
