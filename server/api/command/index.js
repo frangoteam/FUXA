@@ -71,9 +71,9 @@ module.exports = {
             const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api get getTagValue: Tocken Expired");
-            } else if (!authJwt.haveAdminPermission(permission)) {
-                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
-                runtime.logger.error("api get getTagValue: Unauthorized");
+            // } else if (!authJwt.haveAdminPermission(permission)) {
+                // res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                // runtime.logger.error("api get getTagValue: Unauthorized");
             } else {
                 try {
                     var tagsIds = JSON.parse(req.query.ids);
@@ -115,9 +115,9 @@ module.exports = {
             const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post setTagValue: Tocken Expired");
-            } else if (!authJwt.haveAdminPermission(permission)) {
-                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
-                runtime.logger.error("api post setTagValue: Unauthorized");
+            // } else if (!authJwt.haveAdminPermission(permission)) {
+                // res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                // runtime.logger.error("api post setTagValue: Unauthorized");
             } else {
                 try {
                     if (req.body.tags) {
