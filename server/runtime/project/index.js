@@ -132,6 +132,16 @@ function load() {
                                 logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.REPORTS}' ${err}`);
                                 callback(err);
                             });
+                        },
+                        // step 6 get MapsLocations
+                        function (callback) {
+                            getMapsLocations().then(locations => {
+                                data.mapsLocations = locations;
+                                callback();
+                            }).catch(function (err) {
+                                logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.LOCATIONS}' ${err}`);
+                                callback(err);
+                            });
                         }
                     ],
                     async function (err) {
@@ -236,6 +246,14 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.REPORTS;
                 section.name = value.id;
                 toremove = removeReport(value);
+            } else if (cmd === ProjectDataCmdType.SetMapsLocation) {
+                section.table = prjstorage.TableType.LOCATIONS;
+                section.name = value.id;
+                setMapsLocation(value);
+            } else if (cmd === ProjectDataCmdType.DelMapsLocation) {
+                section.table = prjstorage.TableType.LOCATIONS;
+                section.name = value.id;
+                toremove = removeMapsLocation(value);
             } else {
                 logger.error(`prjstorage.setdata failed! '${section.table}'`);
                 reject('prjstorage.failed-to-setdata: Command not found!');
@@ -532,6 +550,44 @@ function removeNotification(notification) {
 }
 
 /**
+ * Set or add if not exist (check with location.id) the MapsLocation in Project
+ * @param {*} location
+ */
+function setMapsLocation(location) {
+    if (!data.mapsLocations) {
+        data.mapsLocations = [];
+    }
+    var pos = -1;
+    for (var i = 0; i < data.mapsLocations.length; i++) {
+        if (data.mapsLocations[i].id === location.id) {
+            pos = i;
+        }
+    }
+    if (pos >= 0) {
+        data.mapsLocations[pos] = location;
+    } else {
+        data.mapsLocations.push(location);
+    }
+}
+
+/**
+ * Remove the Maps Locations from Project
+ * @param {*} location
+ */
+function removeMapsLocation(location) {
+    if (data.mapsLocations) {
+        var pos = -1;
+        for (var i = 0; i < data.mapsLocations.length; i++) {
+            if (data.mapsLocations[i].id === location.id) {
+                data.mapsLocations.splice(i, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
  * Get the project data in accordance with autorization
  */
 function getProject(userId, userPermission) {
@@ -619,6 +675,13 @@ function setProject(prjcontent) {
                         if (reports && reports.length) {
                             for (var i = 0; i < reports.length; i++) {
                                 scs.push({ table: prjstorage.TableType.REPORTS, name: reports[i].id, value: reports[i] });
+                            }
+                        }
+                    } else if (key === 'mapsLocations') {
+                        var locations = prjcontent[key];
+                        if (locations && locations.length) {
+                            for (var i = 0; i < locations.length; i++) {
+                                scs.push({ table: prjstorage.TableType.LOCATIONS, name: locations[i].id, value: locations[i] });
                             }
                         }
                     } else {
@@ -789,6 +852,28 @@ function getAlarms() {
 }
 
 /**
+ * Get the Maps Locations
+ */
+function getMapsLocations() {
+    return new Promise(function (resolve, reject) {
+        prjstorage.getSection(prjstorage.TableType.LOCATIONS).then(drows => {
+            if (drows.length > 0) {
+                var locations = [];
+                for (var id = 0; id < drows.length; id++) {
+                    locations.push(JSON.parse(drows[id].value));
+                }
+                resolve(locations);
+            } else {
+                resolve();
+            }
+        }).catch(function (err) {
+            logger.error(`project.prjstorage.get-mapsLocations failed! '${prjstorage.TableType.LOCATIONS} ${err}'`);
+            reject(err);
+        });
+    });
+}
+
+/**
  * Set the device property
  */
 function setDeviceProperty(query) {
@@ -950,6 +1035,8 @@ const ProjectDataCmdType = {
     DelScript: 'del-script',
     SetReport: 'set-report',
     DelReport: 'del-report',
+    SetMapsLocation:'set-maps-location',
+    DelMapsLocation: 'del-maps-location',
 }
 
 module.exports = {

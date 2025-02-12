@@ -23,6 +23,7 @@ import { Utils } from '../_helpers/utils';
 
 import * as FileSaver from 'file-saver';
 import { Report } from '../_models/report';
+import { MapsLocation } from '../_models/maps';
 
 @Injectable()
 export class ProjectService {
@@ -292,14 +293,9 @@ export class ProjectService {
      * @param view
      */
     setView(view: View, notify = false) {
-        let v = null;
-        for (let i = 0; i < this.projectData.hmi.views.length; i++) {
-            if (this.projectData.hmi.views[i].id === view.id) {
-                v = this.projectData.hmi.views[i];
-            }
-        }
-        if (v) {
-            v = view;
+        const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
+        if (existingView) {
+            Object.assign(existingView, view);
         } else {
             this.projectData.hmi.views.push(view);
         }
@@ -311,6 +307,19 @@ export class ProjectService {
             console.error(err);
             this.notifySaveError(err);
         });
+    }
+
+    async setViewAsync(view: View, notify = false): Promise<void> {
+        const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
+        if (existingView) {
+            Object.assign(existingView, view);
+        } else {
+            this.projectData.hmi.views.push(view);
+        }
+        await firstValueFrom(this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData));
+        if (notify) {
+            this.notifySuccessMessage('msg.project-save-success');
+        }
     }
 
     /**
@@ -607,6 +616,72 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelNotification, notification, this.projectData).subscribe(result => {
+                observer.next();
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+    //#endregion
+
+    //#region Maps Locations
+    /**
+     * get maps locations
+     */
+    getMapsLocations(filter?: string[]): MapsLocation[] {
+        if (!this.projectData?.mapsLocations) {
+            return [];
+        }
+        if (filter) {
+            return this.projectData.mapsLocations.filter(location => filter.includes(location.id));
+        }
+        return this.projectData.mapsLocations;
+    }
+
+    /**
+     * save the maps location to project
+     */
+    setMapsLocation(newLocation: MapsLocation, oldLocation?: MapsLocation) {
+        return new Observable((observer) => {
+            if (!this.projectData.mapsLocations) {
+                this.projectData.mapsLocations = [];
+            }
+            let exist = this.projectData.mapsLocations.find(ml => ml.id === newLocation.id);
+            if (exist) {
+                Object.assign(exist, newLocation);
+            } else {
+                this.projectData.mapsLocations.push(newLocation);
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.SetMapsLocation, newLocation, this.projectData).subscribe(result => {
+                if (oldLocation?.id && newLocation.id !== oldLocation.id) {
+                    this.removeMapsLocation(oldLocation).subscribe(result => {
+                        observer.next();
+                    });
+                } else {
+                    observer.next();
+                }
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+
+    /**
+     * remove the maps location from project
+     */
+    removeMapsLocation(location: MapsLocation) {
+        return new Observable((observer) => {
+            for (let i = 0; i < this.projectData.mapsLocations?.length; i++) {
+                if (this.projectData.mapsLocations[i].id === location.id) {
+                    this.projectData.mapsLocations.splice(i, 1);
+                    break;
+                }
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.DelMapsLocation, location, this.projectData).subscribe(result => {
                 observer.next();
             }, err => {
                 console.error(err);

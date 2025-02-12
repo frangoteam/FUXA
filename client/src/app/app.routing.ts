@@ -17,6 +17,7 @@ import { TextListComponent } from './text-list/text-list.component';
 import { DEVICE_READONLY } from './_models/hmi';
 import { ReportListComponent } from './reports/report-list/report-list.component';
 import { UsersRolesComponent } from './users/users-roles/users-roles.component';
+import { MapsLocationListComponent } from './maps/maps-location-list/maps-location-list.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent},//, canActivate: [AuthGuard] },
@@ -37,6 +38,7 @@ const appRoutes: Routes = [
     { path: 'logs', component: LogsViewComponent, canActivate: [AuthGuard] },
     { path: 'events', component: LogsViewComponent, canActivate: [AuthGuard] },
     { path: 'view', component: ViewComponent },
+    { path: 'mapsLocations', component: MapsLocationListComponent, canActivate: [AuthGuard] },
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' }

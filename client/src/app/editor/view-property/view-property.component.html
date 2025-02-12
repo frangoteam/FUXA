@@ -62,7 +62,7 @@
                             type="number">
                     </div>
                 </div>
-                <div class="my-form-field item-block mt5">
+                <div *ngIf="formGroup.controls.type?.value !== viewType.maps" class="my-form-field item-block mt5">
                     <span>{{'dlg.docproperty-background' | translate}}</span>
                     <input style="width: 292px; border: 1px solid rgba(0,0,0,0.2); height:15px !important" readonly
                         [(colorPicker)]="data.profile.bkcolor" class="input-color" title="Change stroke color"

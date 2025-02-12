@@ -55,7 +55,7 @@ export class ViewPropertyComponent implements OnInit, OnDestroy {
             align: [this.data.profile.align],
             gridType: [this.data.profile.gridType],
         });
-        if (this.data.type !== ViewType.cards) {
+        if (this.data.type !== ViewType.cards && this.data.type !== ViewType.maps) {
             this.formGroup.controls.width.setValidators(Validators.required);
             this.formGroup.controls.height.setValidators(Validators.required);
         }
@@ -68,7 +68,7 @@ export class ViewPropertyComponent implements OnInit, OnDestroy {
             takeUntil(this.destroy$),
             startWith(this.formGroup.controls.type.value)
         ).subscribe(type => {
-            this.tabEvents.disabled = type === ViewType.cards;
+            this.tabEvents.disabled = type === ViewType.cards || type === ViewType.maps;
             if (type === ViewType.cards && this.data.newView && this.data.profile.bkcolor === '#ffffffff') {
                 this.data.profile.bkcolor = '#E6E6E6';
             }
