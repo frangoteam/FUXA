@@ -32,8 +32,13 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private destroy$ = new Subject<void>();
     lastClickLatLng!: L.LatLng;
+    lastClickMarker?: L.Marker;
+
     menuPosition = { x: '0px', y: '0px' };
     private locations: MapsLocation[] = [];
+
+    private openPopups = [];
+    private currentPopup: L.Popup | null = null;
 
     constructor(
         private resolver: ComponentFactoryResolver,
@@ -49,11 +54,6 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit(): void {
-        // const container = L.DomUtil.get('map'); // Controlla se il contenitore esiste
-        // if (container) {
-        //     container.remove(); // Rimuove il div esistente
-        // }
-        // this.mapContainer.nativeElement.innerHTML = '';
         let startLocation: L.LatLngExpression = [46.9466746335407, 7.444236656153662]; // Bern
         if (this.view.property?.startLocation) {
             startLocation = [this.view.property.startLocation.latitude, this.view.property.startLocation.longitude];
@@ -71,18 +71,7 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.loadMapsResources();
         });
 
-        if (this.editMode) {
-            this.initEditMode();
-        }
-
-        // locations.forEach(loc => {
-        //     const marker = L.marker([loc.lat, loc.lng]).addTo(this.map);
-        //     marker.on('click', () => {
-        //         this.showFuxaViewPopup(loc.lat, loc.lng);
-        //     });
-        // });
-
-
+        this.initMapEvents();
     }
 
     ngOnDestroy() {
@@ -94,7 +83,7 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loadMapsResources();
     }
 
-    initEditMode() {
+    initMapEvents() {
         this.map.on('contextmenu', (event: L.LeafletMouseEvent) => {
             this.showContextMenu(event);
         });
@@ -110,21 +99,40 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.locations.forEach(loc => {
             const marker = L.marker([loc.latitude, loc.longitude])
                             .addTo(this.map);
-
+            marker['locationId'] = loc.id;
             marker.bindTooltip(`${loc.name}`, {
                 permanent: true,
                 direction: 'top',
                 // className: "marker-label"
             });
             marker.on('click', () => {
-                this.showFuxaViewPopup(loc.latitude, loc.longitude);
+                this.showFuxaViewPopup(loc);
             });
+
+            marker.on('contextmenu', (event) => {
+                this.showContextMenu(event, marker);
+            });
+        });
+        this.map.on('popupopen', (e) => {
+            this.openPopups.push(e.popup);
+        });
+        this.map.on('popupclose', (e) => {
+            const index = this.openPopups.indexOf(e.popup);
+            if (index > -1) {
+                this.openPopups.splice(index, 1);
+            }
+            e.popup = null;
         });
     }
 
-    showContextMenu(event: L.LeafletMouseEvent): void {
-        this.lastClickLatLng = event.latlng;
+    closeAllPopups() {
+        this.openPopups.forEach(popup => popup.close());
+        this.openPopups.length = 0;
+    }
 
+    showContextMenu(event: L.LeafletMouseEvent, marker?: L.Marker): void {
+        this.lastClickLatLng = event.latlng;
+        this.lastClickMarker = marker;
         const mapContainer = this.map.getContainer().getBoundingClientRect();
         const posX = event.originalEvent.clientX - mapContainer.left;
         const posY = event.originalEvent.clientY - mapContainer.top;
@@ -136,28 +144,52 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.menuTrigger.openMenu();
     }
 
-    showFuxaViewPopup(lat: number, lng: number) {
-        const container = document.createElement('div');
-        container.className = 'popup-container';
+    showFuxaViewPopup(location: MapsLocation) {
+        if (this.currentPopup) {
+            this.currentPopup.on('remove', () => {
+                this.currentPopup = null;
+                this.createAndShowPopup(location);
+            });
+            this.map.closePopup(this.currentPopup);
+        } else {
+            this.createAndShowPopup(location);
+        }
+    }
 
-        const factory = this.resolver.resolveComponentFactory(FuxaViewComponent);
-        const componentRef = factory.create(this.injector);
+    createAndShowPopup(location: MapsLocation) {
+        setTimeout(() => {
+            let viewIdToBind = 'map' + location.viewId;
+            if (document.getElementById(viewIdToBind)) {
+                return;
+            }
+            const container = document.createElement('div');
+            const factory = this.resolver.resolveComponentFactory(FuxaViewComponent);
+            const componentRef = factory.create(this.injector);
 
-        componentRef.instance.gaugesManager = this.gaugesManager;
-        componentRef.instance.hmi = this.hmi;
-        componentRef.instance.view = this.hmi.views.find(view => view.name === 'Dlg');
+            componentRef.instance.gaugesManager = this.gaugesManager;
+            componentRef.instance.hmi = this.hmi;
+            componentRef.instance.view = this.hmi.views.find(view => view.id === location.viewId);
+            container.setAttribute('id', viewIdToBind);
+            this.appRef.attachView(componentRef.hostView);
+            container.appendChild((componentRef.hostView as any).rootNodes[0]);
 
-        this.appRef.attachView(componentRef.hostView);
-        container.appendChild((componentRef.hostView as any).rootNodes[0]);
+            container.style.width = componentRef.instance.view.profile.width + 'px';
 
-        container.style.width = componentRef.instance.view.profile.width + 'px';
-        container.style.minWidth = '450px';
-        container.style.backgroundColor = 'white';
+            this.currentPopup = L.popup({
+                autoClose: false,
+                closeOnClick: false,
+                }).setLatLng([location.latitude, location.longitude])
+                .setContent(container)
+                .openOn(this.map);
 
-        L.popup()
-            .setLatLng([lat, lng])
-            .setContent(container)
-            .openOn(this.map);
+            this.currentPopup.on('remove', () => {
+                this.currentPopup = null;
+            });
+        }, 250);
+    }
+
+    onCloseAllPopup() {
+        this.closeAllPopups();
     }
 
     onAddLocation() {
@@ -168,11 +200,25 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onEditLocation() {
-        console.log('onEditLocation');
+        var location = this.locations.find(loc => loc.id === this.lastClickMarker['locationId']);
+        if (location) {
+            this.editLocation(location);
+        }
     }
 
     onRemoveLocation() {
-        console.log('onRemoveLocation');
+        if (this.lastClickMarker) {
+            var locationIndex = this.locations.findIndex(loc => loc.id === this.lastClickMarker['locationId']);
+            if (locationIndex !== -1) {
+                this.locations.splice(locationIndex, 1);
+                this.view.svgcontent = JSON.stringify(this.locations.map(loc => loc.id));
+                this.projectService.setViewAsync(this.view).then(() => {
+                    this.map.removeLayer(this.lastClickMarker);
+                    this.lastClickMarker = null;
+                    this.loadMapsResources();
+                });
+            }
+        }
     }
 
     onSetStartLocation() {

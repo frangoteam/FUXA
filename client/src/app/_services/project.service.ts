@@ -650,8 +650,7 @@ export class ProjectService {
             }
             let exist = this.projectData.mapsLocations.find(ml => ml.id === newLocation.id);
             if (exist) {
-                exist.name = newLocation.name;
-                exist.description = newLocation.description;
+                Object.assign(exist, newLocation);
             } else {
                 this.projectData.mapsLocations.push(newLocation);
             }

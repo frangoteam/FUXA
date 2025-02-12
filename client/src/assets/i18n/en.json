@@ -1427,11 +1427,13 @@
     "maps.location-property-description": "Description",
     "maps.location-property-latitude": "Latitude",
     "maps.location-property-longitude": "Longitude",
+    "maps.location-property-view": "View",
     "maps.edit-add-location": "Add Location",
     "maps.edit-edit-location": "Edit Location",
     "maps.edit-remove-location": "Remove Location",
     "maps.edit-start-location": "Set as start Location",
     "maps.edit-start-location-saved": "Start Location saved",
+    "maps.close-popups": "Close all popups",
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",

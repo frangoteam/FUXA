@@ -77,15 +77,14 @@ export class MapsLocationListComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     private editLocation(location?: MapsLocation) {
-		let locationSource: MapsLocation = location ? JSON.parse(JSON.stringify(location)) : null;
 		let dialogRef = this.dialog.open(MapsLocationPropertyComponent, {
 			position: { top: '60px' },
             disableClose: true,
-            data: locationSource,
+            data: location,
 		});
 		dialogRef.afterClosed().subscribe(result => {
 			if (result) {
-                this.projectService.setMapsLocation(result, locationSource).subscribe(() => {
+                this.projectService.setMapsLocation(result, location).subscribe(() => {
                     this.loadLocations();
                 });
 			}

@@ -17,13 +17,21 @@
             bottom: 0px;
         }
 
-        .popup-container {
-            // width: 300px;
-            // height: 200px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 8px;
-            padding: 10px;
+        ::ng-deep .leaflet-popup-content-wrapper {
+            padding: unset;
+            border-radius: unset;
+            background-color: transparent;
+        }
+
+        ::ng-deep .leaflet-popup-content {
+            width: auto !important;
+            border-radius: unset;
+            margin: unset;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        ::ng-deep .leaflet-popup-close-button {
+            font-size: 24px;
         }
 
         .hidden-trigger {
