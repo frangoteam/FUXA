@@ -501,6 +501,7 @@
 
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
+    "editor.view-maps": "Maps",
     "editor.views": "Views",
     "editor.resources": "Resources",
     "editor.view-delete": "Delete",
@@ -1418,6 +1419,22 @@
     "report.chart-width": "Width",
     "report.chart-height": "Height",
 
+    "maps.locations-list-title": "Locations settings",
+    "maps.locations-list-name": "Name",
+    "maps.locations-list-description": "Description",
+    "maps.location-property-title": "Location",
+    "maps.location-property-name": "Name",
+    "maps.location-property-description": "Description",
+    "maps.location-property-latitude": "Latitude",
+    "maps.location-property-longitude": "Longitude",
+    "maps.location-property-view": "View",
+    "maps.edit-add-location": "Add Location",
+    "maps.edit-edit-location": "Edit Location",
+    "maps.edit-remove-location": "Remove Location",
+    "maps.edit-start-location": "Set as start Location",
+    "maps.edit-start-location-saved": "Start Location saved",
+    "maps.close-popups": "Close all popups",
+
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",
 
@@ -1490,6 +1507,7 @@
     "dlg.setup-alarms": "Alarms",
     "dlg.setup-line-charts": "Line charts",
     "dlg.setup-bar-charts": "Bar charts",
+    "dlg.setup-maps-locations": "Locations",
     "dlg.setup-layout": "Layout",
     "dlg.setup-plugins": "Plugins",
     "dlg.setup-scripts": "Scripts",
@@ -1626,5 +1644,7 @@
     "msg.view-name-exist": "View name exist!",
     "msg.notification-name-exist": "Notification name exist!",
     "msg.file-remove": "Would you like to remove '{{value}}'?",
-    "msg.notification-remove": "Would you like to remove Notification '{{value}}'?"
+    "msg.notification-remove": "Would you like to remove Notification '{{value}}'?",
+    "msg.maps-location-remove": "Would you like to remove Maps Location '{{value}}'?",
+    "msg.maps-location-name-exist": "The Maps Location name already exist!"
 }

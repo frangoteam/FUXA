@@ -1,11 +1,11 @@
 <div #mapContainer class="container">
     <div *ngIf="editMode" class="tools_panel">
-        <div class="main-btn-sep" style="display: inline-block;">
+        <!-- <div class="main-btn-sep" style="display: inline-block;">
         </div>
         <button mat-button class="main-btn" style="display: inline-block;" matTooltip="{{'editor.tools-launch-title' | translate}}"
                 (click)="onStartCurrent()">
             <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
-        </button>
+        </button> -->
     </div>
     <div id="map" [ngStyle]="{'top.px': editMode ? 37 : 0}"></div>
 </div>

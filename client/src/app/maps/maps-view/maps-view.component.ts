@@ -96,17 +96,20 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.hmi = this.projectService.getHmi();
         this.locations = this.view?.svgcontent ? this.projectService.getMapsLocations(JSON.parse(this.view.svgcontent)) : [];
         this.clearMarker();
+        const newIcon = L.icon({
+            iconUrl: 'assets/images/marker-icon.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 45],
+            popupAnchor: [0, -34]
+        });
         this.locations.forEach(loc => {
             const marker = L.marker([loc.latitude, loc.longitude])
                             .addTo(this.map);
             marker['locationId'] = loc.id;
-            marker.bindTooltip(`${loc.name}`, {
-                permanent: true,
-                direction: 'top',
-                // className: "marker-label"
-            });
+            this.openMarkerTooltip(marker, loc);
+            marker.setIcon(newIcon);
             marker.on('click', () => {
-                this.showFuxaViewPopup(loc);
+                this.showFuxaViewPopup(loc, marker);
             });
 
             marker.on('contextmenu', (event) => {
@@ -122,6 +125,15 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.openPopups.splice(index, 1);
             }
             e.popup = null;
+        });
+    }
+
+    private openMarkerTooltip(marker: L.Marker, location: MapsLocation) {
+        marker.bindTooltip(`${location.name}`, {
+            permanent: false,
+            direction: 'top',
+            offset: [2, -35],
+            // className: "marker-label"
         });
     }
 
@@ -144,19 +156,19 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.menuTrigger.openMenu();
     }
 
-    showFuxaViewPopup(location: MapsLocation) {
+    showFuxaViewPopup(location: MapsLocation, marker: L.Marker) {
         if (this.currentPopup) {
             this.currentPopup.on('remove', () => {
                 this.currentPopup = null;
-                this.createAndShowPopup(location);
+                this.createAndShowPopup(location, marker);
             });
             this.map.closePopup(this.currentPopup);
         } else {
-            this.createAndShowPopup(location);
+            this.createAndShowPopup(location, marker);
         }
     }
 
-    createAndShowPopup(location: MapsLocation) {
+    createAndShowPopup(location: MapsLocation, marker?: L.Marker) {
         setTimeout(() => {
             let viewIdToBind = 'map' + location.viewId;
             if (document.getElementById(viewIdToBind)) {
@@ -176,12 +188,12 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
             container.style.width = componentRef.instance.view.profile.width + 'px';
 
             this.currentPopup = L.popup({
-                autoClose: false,
-                closeOnClick: false,
+                    autoClose: false,
+                    closeOnClick: false,
+                    offset: L.point(0, -20)
                 }).setLatLng([location.latitude, location.longitude])
                 .setContent(container)
                 .openOn(this.map);
-
             this.currentPopup.on('remove', () => {
                 this.currentPopup = null;
             });
@@ -254,6 +266,8 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.projectService.setViewAsync(this.view).then(() => {
                             this.loadMapsResources();
                         });
+                    } else {
+                        this.loadMapsResources();
                     }
                 });
 			}
