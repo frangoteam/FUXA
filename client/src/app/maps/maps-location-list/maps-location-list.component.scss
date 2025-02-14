@@ -25,4 +25,24 @@
         bottom: 0px;
         background-color: var(--workPanelBackground);
     }
+
+    .mat-column-select {
+        overflow: visible;
+        flex: 0 0 80px;
+    }
+
+    .mat-column-name {
+        flex: 1 1 200px;
+    }
+
+    .mat-column-view {
+        flex: 1 1 140px;
+    }
+
+    .mat-column-description {
+        flex: 1 1 140px;
+    }
+    .mat-column-remove {
+        flex: 0 0 60px;
+    }
 }

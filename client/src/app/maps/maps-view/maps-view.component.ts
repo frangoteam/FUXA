@@ -1,4 +1,4 @@
-import { AfterViewInit, ApplicationRef, Component, ComponentFactoryResolver, ElementRef, Injector, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, ApplicationRef, Component, ComponentFactoryResolver, ElementRef, Injector, Input, OnDestroy, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
 import { GaugesManager } from '../../gauges/gauges.component';
 import { FuxaViewComponent } from '../../fuxa-view/fuxa-view.component';
@@ -18,7 +18,7 @@ import { ToastrService } from 'ngx-toastr';
     templateUrl: './maps-view.component.html',
     styleUrls: ['./maps-view.component.scss']
 })
-export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MapsViewComponent implements AfterViewInit, OnDestroy {
 
     @Input() view: View;
     @Input() hmi: Hmi;
@@ -50,15 +50,12 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         private toastr: ToastrService
     ) { }
 
-    ngOnInit() {
-    }
-
     ngAfterViewInit(): void {
         let startLocation: L.LatLngExpression = [46.9466746335407, 7.444236656153662]; // Bern
         if (this.view.property?.startLocation) {
             startLocation = [this.view.property.startLocation.latitude, this.view.property.startLocation.longitude];
         }
-        this.map = L.map('map').setView(startLocation, 13); // Bern
+        this.map = L.map('map').setView(startLocation, this.view.property?.startZoom || 13); // Bern
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; FUXA'
@@ -98,6 +95,7 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.clearMarker();
         const newIcon = L.icon({
             iconUrl: 'assets/images/marker-icon.png',
+            shadowUrl: 'assets/images/marker-shadow.png',
             iconSize: [25, 41],
             iconAnchor: [12, 45],
             popupAnchor: [0, -34]
@@ -170,8 +168,8 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     createAndShowPopup(location: MapsLocation, marker?: L.Marker) {
         setTimeout(() => {
-            let viewIdToBind = 'map' + location.viewId;
-            if (document.getElementById(viewIdToBind)) {
+            let viewIdToBind = 'map' + location?.viewId;
+            if (!location?.viewId || document.getElementById(viewIdToBind)) {
                 return;
             }
             const container = document.createElement('div');
@@ -238,6 +236,7 @@ export class MapsViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.view.property.startLocation = new MapsLocation(Utils.getGUID(MAPSLOCATION_PREFIX));
         this.view.property.startLocation.latitude = this.lastClickLatLng.lat;
         this.view.property.startLocation.longitude = this.lastClickLatLng.lng;
+        this.view.property.startZoom = this.map.getZoom();
         this.projectService.setViewAsync(this.view).then(() => {
             this.toastr.success(this.translateService.instant('maps.edit-start-location-saved'));
         });

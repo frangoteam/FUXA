@@ -202,6 +202,7 @@ export class GaugeSettings {
 export class ViewProperty {
     events: GaugeEvent[] = [];
     startLocation?: MapsLocation;
+    startZoom?: number;
 }
 export class GaugeProperty {
     variableId: string;

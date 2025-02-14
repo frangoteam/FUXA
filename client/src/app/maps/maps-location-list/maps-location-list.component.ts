@@ -16,10 +16,11 @@ import { MapsLocationPropertyComponent } from '../maps-location-property/maps-lo
 })
 export class MapsLocationListComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    displayedColumns = ['select', 'name', 'description', 'remove'];
+    displayedColumns = ['select', 'name', 'view', 'description', 'remove'];
     dataSource = new MatTableDataSource([]);
 
 	locations: MapsLocation[];
+    viewNameMap: { [key: string]: string } = {};
     private destroy$ = new Subject<void>();
 
     @ViewChild(MatTable, {static: true}) table: MatTable<any>;
@@ -72,7 +73,15 @@ export class MapsLocationListComponent implements OnInit, AfterViewInit, OnDestr
         });
 	}
 
+    getViewName(viewId: string) {
+        return this.viewNameMap[viewId];
+    }
+
     private loadLocations() {
+        this.viewNameMap = this.projectService.getViews().reduce((acc, obj) => {
+            acc[obj.id] = obj.name;
+            return acc;
+        }, {} as { [key: string]: string });
         this.dataSource.data = this.projectService.getMapsLocations();
     }
 

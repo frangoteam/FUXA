@@ -22,7 +22,10 @@
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'maps.locations-list-name' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
             </ng-container>
-
+            <ng-container matColumnDef="view">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'maps.locations-list-view' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{getViewName(element.viewId)}} </mat-cell>
+            </ng-container>
             <ng-container matColumnDef="description">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'maps.locations-list-description' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>

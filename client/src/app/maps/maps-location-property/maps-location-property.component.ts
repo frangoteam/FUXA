@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../../_services/project.service';
 import { MapsLocation, MAPSLOCATION_PREFIX } from '../../_models/maps';
 import { Utils } from '../../_helpers/utils';
-import { View } from '../../_models/hmi';
+import { View, ViewType } from '../../_models/hmi';
 
 @Component({
     selector: 'app-maps-location-property',
@@ -27,7 +27,7 @@ export class MapsLocationPropertyComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.views = this.projectService.getViews();
+        this.views = this.projectService.getViews()?.filter(view => view.type !== ViewType.maps);
         this.formGroup = this.fb.group({
             name: [this.location.name, Validators.required],
             latitude: [this.location.latitude],
