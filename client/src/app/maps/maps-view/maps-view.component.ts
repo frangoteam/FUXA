@@ -12,6 +12,7 @@ import { MapsLocationPropertyComponent } from '../maps-location-property/maps-lo
 import { Utils } from '../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
+import { MapsLocationImportComponent } from '../maps-location-import/maps-location-import.component';
 
 @Component({
     selector: 'app-maps-view',
@@ -242,6 +243,19 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
         });
     }
 
+    onImportLocation() {
+		let dialogRef = this.dialog.open(MapsLocationImportComponent, {
+			position: { top: '60px' },
+            disableClose: true,
+            data: this.locations,
+		});
+		dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.insertLocations(result);
+            }
+        });
+    }
+
     private clearMarker() {
         this.map.eachLayer(layer => {
             if (layer instanceof L.Marker) {
@@ -260,11 +274,7 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
 			if (result) {
                 this.projectService.setMapsLocation(result, location).subscribe(() => {
                     if (!this.locations.find(loc => loc.id === location.id)) {
-                        this.locations.push(location);
-                        this.view.svgcontent = JSON.stringify(this.locations.map(loc => loc.id));
-                        this.projectService.setViewAsync(this.view).then(() => {
-                            this.loadMapsResources();
-                        });
+                        this.insertLocations(location);
                     } else {
                         this.loadMapsResources();
                     }
@@ -272,4 +282,12 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
 			}
 		});
 	}
+
+    private insertLocations(location: MapsLocation) {
+        this.locations.push(location);
+        this.view.svgcontent = JSON.stringify(this.locations.map(loc => loc.id));
+        this.projectService.setViewAsync(this.view).then(() => {
+            this.loadMapsResources();
+        });
+    }
 }

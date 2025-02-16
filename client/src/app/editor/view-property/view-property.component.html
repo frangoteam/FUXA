@@ -11,9 +11,9 @@
                 <div class="my-form-field item-block mt5">
                     <span>{{'dlg.docproperty-type' | translate}}</span>
                     <mat-select formControlName="type" placeholder="{{'dlg.doctype' | translate}}">
-                        <mat-option *ngFor="let type of viewType | enumToArray" [value]="type.key">
-                            {{ 'editor.view-' + type.value | translate }}
-                        </mat-option>
+                        <mat-option [value]="viewType.svg">{{'editor.view-svg' | translate}}</mat-option>
+                        <mat-option [value]="viewType.cards">{{'editor.view-cards' | translate}}</mat-option>
+                        <mat-option [value]="viewType.maps">{{'editor.view-maps' | translate}}</mat-option>
                     </mat-select>
                 </div>
                 <div *ngIf="formGroup.controls.type?.value === viewType.svg">

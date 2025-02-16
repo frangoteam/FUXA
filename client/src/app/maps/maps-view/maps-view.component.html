@@ -17,6 +17,9 @@
         <button *ngIf="editMode" mat-menu-item (click)="onAddLocation()">
             {{'maps.edit-add-location' | translate}}
         </button>
+        <button *ngIf="editMode" mat-menu-item (click)="onImportLocation()">
+            {{'maps.edit-import-location' | translate}}
+        </button>
     </ng-container>
     <ng-container *ngIf="lastClickMarker">
         <button *ngIf="editMode" mat-menu-item (click)="onEditLocation()">

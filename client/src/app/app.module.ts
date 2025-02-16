@@ -209,6 +209,7 @@ import { MapsLocationListComponent } from './maps/maps-location-list/maps-locati
 import { MapsLocationsService } from './_services/maps-locations.service';
 import { MapsLocationPropertyComponent } from './maps/maps-location-property/maps-location-property.component';
 import { MapsViewComponent } from './maps/maps-view/maps-view.component';
+import { MapsLocationImportComponent } from './maps/maps-location-import/maps-location-import.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -370,7 +371,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         EditorViewsListComponent,
         MapsLocationListComponent,
         MapsLocationPropertyComponent,
-        MapsViewComponent
+        MapsViewComponent,
+        MapsLocationImportComponent
     ],
     imports: [
         BrowserModule,

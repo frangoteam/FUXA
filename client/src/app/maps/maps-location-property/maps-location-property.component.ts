@@ -18,7 +18,8 @@ export class MapsLocationPropertyComponent implements OnInit {
     formGroup: UntypedFormGroup;
     views: View[] = [];
 
-    constructor(public dialogRef: MatDialogRef<MapsLocationPropertyComponent>,
+    constructor(
+        public dialogRef: MatDialogRef<MapsLocationPropertyComponent>,
         private fb: UntypedFormBuilder,
         private translateService: TranslateService,
         private projectService: ProjectService,
