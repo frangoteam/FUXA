@@ -769,6 +769,7 @@
     "device.property-certificate": "Zertifikat",
     "device.property-certificate-key": "Privater Schlüssel",
     "device.property-certificate-ca": "CA-Zertifikat",
+    "device.property-nopolling": "ereignis basiert",
     "device.security-none": "Keine",
     "device.security-sign": "Signieren",
     "device.security-signandencrypt": "Signieren & Verschlüsseln",

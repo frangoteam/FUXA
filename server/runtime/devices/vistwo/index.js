@@ -220,6 +220,8 @@ function DeviceVistwo(_data, _logger, _events) {
      */
     this.setValue = function (tagid, value) {
 //      console.error('vistwo: setValue currently not supported');
+        if ( client )
+            client.send(`{"cmd":"RSPV","handle":${data.tags[tagid].label},"value":"${value}"}`);
     }
 
     /**
