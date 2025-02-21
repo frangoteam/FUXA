@@ -238,6 +238,7 @@ export enum DeviceType {
     ModbusRTU = 'ModbusRTU',
     ModbusTCP = 'ModbusTCP',
     WebAPI = 'WebAPI',
+    Vistwo = 'Vistwo',
     MQTTclient = 'MQTTclient',
     internal = 'internal',
     EthernetIP = 'EthernetIP',
