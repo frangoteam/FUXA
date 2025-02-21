@@ -17,13 +17,26 @@
             </div>
         </div>
         <div class="my-form-field mt5">
-            <span>{{'maps.location-property-view' | translate}}</span>
+            <span>{{'maps.location-property-card' | translate}}</span>
             <mat-select formControlName="viewId">
                 <mat-option [value]=""></mat-option>
                 <mat-option *ngFor="let view of views" [value]="view.id">
                     {{ view.name }}
                 </mat-option>
             </mat-select>
+        </div>
+        <div class="my-form-field mt5">
+            <span>{{'maps.location-property-view' | translate}}</span>
+            <mat-select formControlName="pageId">
+                <mat-option [value]=""></mat-option>
+                <mat-option *ngFor="let view of views" [value]="view.id">
+                    {{ view.name }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field item-block mt5">
+            <span>{{'maps.location-property-url' | translate}}</span>
+            <input formControlName="url" type="text">
         </div>
         <div class="my-form-field item-block mt5">
             <span>{{'maps.location-property-description' | translate}}</span>

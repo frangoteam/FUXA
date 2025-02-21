@@ -1,4 +1,4 @@
-import { AfterViewInit, ApplicationRef, Component, ComponentFactoryResolver, ElementRef, Injector, Input, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, ApplicationRef, Component, ComponentFactoryResolver, ElementRef, EventEmitter, Injector, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import * as L from 'leaflet';
 import { GaugesManager } from '../../gauges/gauges.component';
 import { FuxaViewComponent } from '../../fuxa-view/fuxa-view.component';
@@ -6,13 +6,14 @@ import { ProjectService } from '../../_services/project.service';
 import { Hmi, View, ViewProperty } from '../../_models/hmi';
 import { Subject, takeUntil } from 'rxjs';
 import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
-import { MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MapsLocation, MAPSLOCATION_PREFIX } from '../../_models/maps';
 import { MapsLocationPropertyComponent } from '../maps-location-property/maps-location-property.component';
 import { Utils } from '../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { MapsLocationImportComponent } from '../maps-location-import/maps-location-import.component';
+import { MapsFabButtonMenuComponent } from './maps-fab-button-menu/maps-fab-button-menu.component';
 
 @Component({
     selector: 'app-maps-view',
@@ -25,6 +26,8 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
     @Input() hmi: Hmi;
     @Input() gaugesManager: GaugesManager;        // gauges.component
     @Input() editMode: boolean;
+    @Output() onGoTo: EventEmitter<string> = new EventEmitter<string>();
+
     @ViewChild(MatMenuTrigger) menuTrigger!: MatMenuTrigger;
     @ViewChild('menuTrigger', { read: ElementRef }) menuTriggerButton!: ElementRef;
 
@@ -37,6 +40,7 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
 
     menuPosition = { x: '0px', y: '0px' };
     private locations: MapsLocation[] = [];
+    lastClickMapLocation?: MapsLocation;
 
     private openPopups = [];
     private currentPopup: L.Popup | null = null;
@@ -103,12 +107,12 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
         });
         this.locations.forEach(loc => {
             const marker = L.marker([loc.latitude, loc.longitude])
-                            .addTo(this.map);
+                .addTo(this.map);
             marker['locationId'] = loc.id;
             this.openMarkerTooltip(marker, loc);
             marker.setIcon(newIcon);
             marker.on('click', () => {
-                this.showFuxaViewPopup(loc, marker);
+                this.onClickMarker(loc, marker);
             });
 
             marker.on('contextmenu', (event) => {
@@ -155,19 +159,75 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
         this.menuTrigger.openMenu();
     }
 
-    showFuxaViewPopup(location: MapsLocation, marker: L.Marker) {
+    onClickMarker(location: MapsLocation, marker: L.Marker) {
         if (this.currentPopup) {
             this.currentPopup.on('remove', () => {
                 this.currentPopup = null;
-                this.createAndShowPopup(location, marker);
+                this.showPopup(location, marker);
             });
             this.map.closePopup(this.currentPopup);
         } else {
-            this.createAndShowPopup(location, marker);
+            this.showPopup(location, marker);
         }
     }
 
-    createAndShowPopup(location: MapsLocation, marker?: L.Marker) {
+    showPopup(location: MapsLocation, marker: L.Marker) {
+        this.lastClickMapLocation = location;
+        if (!this.isToOpenMenu()) {
+            this.createCardPopup(location, marker);
+        } else {
+            this.showFabButton(location, marker);
+        }
+    }
+
+    showFabButton(location: MapsLocation, marker: L.Marker) {
+        const container = document.createElement('div');
+        const factory = this.resolver.resolveComponentFactory(MapsFabButtonMenuComponent);
+        const componentRef = factory.create(this.injector);
+        this.appRef.attachView(componentRef.hostView);
+        container.appendChild((componentRef.hostView as any).rootNodes[0]);
+        container.style.width = '40px';
+        var buttons = [];
+        if (location.viewId) {
+            buttons.push({
+                icon: 'chat_bubble_outline', action: () => {
+                    this.map.closePopup(this.currentPopup);
+                    this.createCardPopup(location, marker);
+                }
+            });
+        }
+        if (location.pageId) {
+            buttons.push({
+                icon: 'arrow_outward', action: () => {
+                    this.map.closePopup(this.currentPopup);
+                    this.onGoTo?.emit(location.pageId);
+                }
+            });
+        }
+        if (location.url) {
+            buttons.push({
+                icon: 'open_in_new', action: () => {
+                    this.map.closePopup(this.currentPopup);
+                    window.open(location.url, '_blank');
+                }
+            });
+        }
+        componentRef.instance.buttons = buttons;
+
+        this.currentPopup = L.popup({
+            closeButton: false,
+            autoClose: false,
+            closeOnClick: true,
+            offset: L.point(0, 0),
+        }).setLatLng([location.latitude, location.longitude])
+            .setContent(container)
+            .openOn(this.map);
+        this.currentPopup.on('remove', () => {
+            this.currentPopup = null;
+        });
+    }
+
+    createCardPopup(location: MapsLocation, marker?: L.Marker) {
         setTimeout(() => {
             let viewIdToBind = 'map' + location?.viewId;
             if (!location?.viewId || document.getElementById(viewIdToBind)) {
@@ -187,10 +247,10 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             container.style.width = componentRef.instance.view.profile.width + 'px';
 
             this.currentPopup = L.popup({
-                    autoClose: false,
-                    closeOnClick: false,
-                    offset: L.point(0, -20)
-                }).setLatLng([location.latitude, location.longitude])
+                autoClose: false,
+                closeOnClick: false,
+                offset: L.point(0, -20)
+            }).setLatLng([location.latitude, location.longitude])
                 .setContent(container)
                 .openOn(this.map);
             this.currentPopup.on('remove', () => {
@@ -244,16 +304,25 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
     }
 
     onImportLocation() {
-		let dialogRef = this.dialog.open(MapsLocationImportComponent, {
-			position: { top: '60px' },
+        let dialogRef = this.dialog.open(MapsLocationImportComponent, {
+            position: { top: '60px' },
             disableClose: true,
             data: this.locations,
-		});
-		dialogRef.afterClosed().subscribe(result => {
+        });
+        dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 this.insertLocations(result);
             }
         });
+    }
+
+    isToOpenMenu(): boolean {
+        if (!this.lastClickMapLocation) {
+            return false;
+        }
+        const fields = [this.lastClickMapLocation.pageId, this.lastClickMapLocation.url];
+        const definedCount = fields.filter(field => field !== undefined && field !== null && field !== '').length;
+        return definedCount >= 1;
     }
 
     private clearMarker() {
@@ -265,13 +334,13 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
     }
 
     private editLocation(location?: MapsLocation) {
-		let dialogRef = this.dialog.open(MapsLocationPropertyComponent, {
-			position: { top: '60px' },
+        let dialogRef = this.dialog.open(MapsLocationPropertyComponent, {
+            position: { top: '60px' },
             disableClose: true,
             data: location,
-		});
-		dialogRef.afterClosed().subscribe(result => {
-			if (result) {
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
                 this.projectService.setMapsLocation(result, location).subscribe(() => {
                     if (!this.locations.find(loc => loc.id === location.id)) {
                         this.insertLocations(location);
@@ -279,9 +348,9 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
                         this.loadMapsResources();
                     }
                 });
-			}
-		});
-	}
+            }
+        });
+    }
 
     private insertLocations(location: MapsLocation) {
         this.locations.push(location);

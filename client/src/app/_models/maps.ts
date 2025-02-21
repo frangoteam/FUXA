@@ -6,6 +6,8 @@ export class MapsLocation {
     longitude: number;
     description?: string;
     viewId?: string;
+    pageId?: string;
+    url?: string;
 
     constructor(_id: string) {
         this.id = _id;

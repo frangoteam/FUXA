@@ -34,6 +34,8 @@ export class MapsLocationPropertyComponent implements OnInit {
             latitude: [this.location.latitude],
             longitude: [this.location.longitude],
             viewId: [this.location.viewId],
+            pageId: [this.location.pageId],
+            url: [this.location.url],
             description: [this.location.description],
         });
         this.formGroup.controls.name.addValidators(this.isValidName());

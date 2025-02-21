@@ -327,7 +327,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 oldsel = this.hmi.views[0].name;
             }
             for (let i = 0; i < this.hmi.views.length; i++) {
-                if (this.hmi.views[i].name === oldsel) {
+                if (this.hmi.views[i].name === oldsel && this.hmi.views[i].type !== ViewType.maps) {
                     this.onSelectView(this.hmi.views[i]);
                     break;
                 }
