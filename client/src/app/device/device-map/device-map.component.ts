@@ -142,6 +142,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
             }, error => {
             });
             this.plugins.push(DeviceType.WebAPI);
+            this.plugins.push(DeviceType.Vistwo);
             this.plugins.push(DeviceType.MQTTclient);
             this.plugins.push(DeviceType.internal);
         } else {
@@ -499,6 +500,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                         device.property.slot = parseInt(tempdevice.property.slot);
                         device.property.rack = parseInt(tempdevice.property.rack);
                         device.property.slaveid = tempdevice.property.slaveid;
+                        device.property.nopolling = tempdevice.property.nopolling;
                         device.property.baudrate = tempdevice.property.baudrate;
                         device.property.databits = tempdevice.property.databits;
                         device.property.stopbits = tempdevice.property.stopbits;
