@@ -904,6 +904,7 @@
     "device.property-certificate": "Certificate",
     "device.property-certificate-key": "Private Key",
     "device.property-certificate-ca": "CA Certificate",
+    "device.property-nopolling": "event driven",
     "device.security-none": "None",
     "device.security-sign": "Sign",
     "device.security-signandencrypt": "Sign & Encrypt",
