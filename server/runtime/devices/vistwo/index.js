@@ -41,6 +41,8 @@ function DeviceVistwo(_data, _logger, _events) {
 //      console.log('vistwo: url '+data.property.address);
 //      console.log('vistwo: ev-driven '+data.property.nopolling);
         return new Promise(function (resolve, reject) {
+            if ( !data.property.address || data.property.address == '' )
+                data.property.address='127.0.0.1';
             client = new ws.WebSocket(`ws://${data.property.address}:9926`);
             client.on('error', function() {
 //              console.log('ERROR');
