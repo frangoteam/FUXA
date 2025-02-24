@@ -16,8 +16,8 @@ export class MapsFabButtonMenuComponent implements AfterViewInit {
     ) { }
 
     ngAfterViewInit() {
-        this.changeDetector.detectChanges();
         this.toggleMenu();
+        this.changeDetector.detectChanges();
     }
 
     toggleMenu() {

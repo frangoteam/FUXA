@@ -240,6 +240,7 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             componentRef.instance.gaugesManager = this.gaugesManager;
             componentRef.instance.hmi = this.hmi;
             componentRef.instance.view = this.hmi.views.find(view => view.id === location.viewId);
+            componentRef.instance.child = true;
             container.setAttribute('id', viewIdToBind);
             this.appRef.attachView(componentRef.hostView);
             container.appendChild((componentRef.hostView as any).rootNodes[0]);
