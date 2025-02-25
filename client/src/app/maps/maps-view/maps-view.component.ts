@@ -74,6 +74,9 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
         });
 
         this.initMapEvents();
+        setTimeout(() => {
+            this.map.invalidateSize();
+        }, 100);
     }
 
     ngOnDestroy() {
