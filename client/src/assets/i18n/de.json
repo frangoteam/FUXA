@@ -817,6 +817,7 @@
     "device.tag-property-type": "Typ",
     "device.tag-property-address": "Adresse (z. B. db5.dbb3 db4.dbx2.0 MB7)",
     "device.tag-property-address-sample": "Adresse",
+    "device.tag-property-address-vistwo": "vistwo-PVname (z.B. /sinus)",
     "device.tag-property-min": "Min",
     "device.tag-property-max": "Max",
     "device.tag-property-divisor": "Divisor",
