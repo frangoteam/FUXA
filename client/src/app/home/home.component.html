@@ -101,7 +101,7 @@
 				<ng-container [ngSwitch]="homeView.type">
 					<ng-container *ngSwitchCase="cardViewType">
 						<app-cards-view #cardsview [edit]="false" [options]="gridOptions"
-							[view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager">
+							[view]="homeView" [hmi]="hmi" [gaugesManager]="gaugesManager" (onGoTo)="onGoToPage($event)">
 						</app-cards-view>
 					</ng-container>
 					<ng-container *ngSwitchCase="mapsViewType">

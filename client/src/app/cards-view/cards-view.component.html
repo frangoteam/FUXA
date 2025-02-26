@@ -4,7 +4,14 @@
             <div *ngIf="item.content" class="card-content">
                 <div [ngSwitch]="item.card.type"  [style.transform]="'scale(' + item.card.zoom + ')'">
                     <div *ngSwitchCase="cardType.view">
-                        <app-fuxa-view class="lab-body" id="fuxaView{{i}}" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+                        <ng-container [ngSwitch]="item.content?.type">
+                            <ng-container *ngSwitchCase="mapsViewType">
+                                <app-maps-view [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager" (onGoTo)="onGoToPage($event)"></app-maps-view>
+                            </ng-container>
+                            <ng-container *ngSwitchDefault>
+                                <app-fuxa-view class="lab-body" id="fuxaView{{i}}" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+                            </ng-container>
+                        </ng-container>
                     </div>
                     <div *ngSwitchCase="cardType.alarms">
                         <app-alarm-view #alarmsview [fullview]="true" [showInContainer]="true" [autostart]="true"></app-alarm-view>
