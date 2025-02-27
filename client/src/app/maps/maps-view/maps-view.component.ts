@@ -60,23 +60,24 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
         if (this.view.property?.startLocation) {
             startLocation = [this.view.property.startLocation.latitude, this.view.property.startLocation.longitude];
         }
-        this.map = L.map('map').setView(startLocation, this.view.property?.startZoom || 13); // Bern
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; FUXA'
-        }).addTo(this.map);
-
-        this.loadMapsResources();
-        this.projectService.onLoadHmi.pipe(
-            takeUntil(this.destroy$),
-        ).subscribe(_ => {
-            this.loadMapsResources();
-        });
-
-        this.initMapEvents();
         setTimeout(() => {
+            this.map = L.map('map').setView(startLocation, this.view.property?.startZoom || 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; FUXA'
+            }).addTo(this.map);
+
+            this.loadMapsResources();
+            this.projectService.onLoadHmi.pipe(
+                takeUntil(this.destroy$),
+            ).subscribe(_ => {
+                this.loadMapsResources();
+            });
+
+            this.initMapEvents();
             this.map.invalidateSize();
-        }, 100);
+        }, 200);
     }
 
     ngOnDestroy() {
