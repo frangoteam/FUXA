@@ -283,6 +283,7 @@
     "chart.property-date-last-range": "Date range",
     "chart.property-refresh-interval": "Refresh interval (min.)",
     "chart.property-hide-toolbar": "Hide toolbar",
+    "chart.property-thouch-zoom": "Thouch Zoom",
     "chart.property-load-old-values": "Load history",
     "chart.property-date.format": "Date format",
     "chart.property-time.format": "Time format",
