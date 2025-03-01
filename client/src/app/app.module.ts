@@ -205,6 +205,12 @@ import { UsersRoleEditComponent } from './users/users-role-edit/users-role-edit.
 import { UsersRolesComponent } from './users/users-roles/users-roles.component';
 import { ActionPropertiesDialogComponent } from './gauges/gauge-property/action-properties-dialog/action-properties-dialog.component';
 import { ActionPropertyService } from './gauges/gauge-property/action-properties-dialog/action-property.service';
+import { MapsLocationListComponent } from './maps/maps-location-list/maps-location-list.component';
+import { MapsLocationsService } from './_services/maps-locations.service';
+import { MapsLocationPropertyComponent } from './maps/maps-location-property/maps-location-property.component';
+import { MapsViewComponent } from './maps/maps-view/maps-view.component';
+import { MapsLocationImportComponent } from './maps/maps-location-import/maps-location-import.component';
+import { MapsFabButtonMenuComponent } from './maps/maps-view/maps-fab-button-menu/maps-fab-button-menu.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -363,7 +369,12 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         WebcamPlayerComponent,
         WebcamPlayerDialogComponent,
         ResizeDirective,
-        EditorViewsListComponent
+        EditorViewsListComponent,
+        MapsLocationListComponent,
+        MapsLocationPropertyComponent,
+        MapsViewComponent,
+        MapsLocationImportComponent,
+        MapsFabButtonMenuComponent
     ],
     imports: [
         BrowserModule,
@@ -432,6 +443,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         MyFileService,
         ReportsService,
         ActionPropertyService,
+        MapsLocationsService,
         {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
     ],
     bootstrap: [AppComponent]

@@ -105,7 +105,6 @@ function Device(data, runtime) {
         currentCmd = DeviceCmdEnum.START;
         if (status === DeviceStatusEnum.INIT) {
             logger.info(`'${property.name}' start`);
-            this.restoreValues();
             var self = this;
             this.checkStatus();
             deviceCheckStatus = setInterval(function () {
@@ -148,6 +147,7 @@ function Device(data, runtime) {
             this.connect().then(() => {
                 tryToConnect = 0;
                 status = DeviceStatusEnum.IDLE;
+                self.restoreValues();
             }).catch(function (err) {
                 logger.error(`'${property.name}' connect error! ${err} (${tryToConnect})`);
                 if (tryToConnect++ > 3) {

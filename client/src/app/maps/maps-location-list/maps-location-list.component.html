@@ -1,0 +1,51 @@
+<div class="header-panel">
+    <mat-icon>location_on</mat-icon>
+    {{'maps.locations-list-title' | translate}}
+</div>
+<div class="work-panel">
+    <div class="container">
+        <mat-table #table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
+                    <button mat-icon-button (click)="onAddLocation()" class="remove">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
+                    <button mat-icon-button (click)="onEditLocation(element)" class="remove">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'maps.locations-list-name' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="view">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'maps.locations-list-view' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{getViewName(element.viewId)}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="description">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'maps.locations-list-description' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element"> {{element.description}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="remove">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-icon-button (click)="$event.stopPropagation();onRemoveLocation(element)" class="remove">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
+        </mat-table>
+    </div>
+</div>
+
+<button mat-fab color="primary" (click)="onAddLocation()" class="fab-add">
+    <mat-icon class="">add</mat-icon>
+</button>

@@ -11,9 +11,9 @@
                 <div class="my-form-field item-block mt5">
                     <span>{{'dlg.docproperty-type' | translate}}</span>
                     <mat-select formControlName="type" placeholder="{{'dlg.doctype' | translate}}">
-                        <mat-option *ngFor="let type of viewType | enumToArray" [value]="type.key">
-                            {{ 'editor.view-' + type.value | translate }}
-                        </mat-option>
+                        <mat-option [value]="viewType.svg">{{'editor.view-svg' | translate}}</mat-option>
+                        <mat-option [value]="viewType.cards">{{'editor.view-cards' | translate}}</mat-option>
+                        <mat-option [value]="viewType.maps">{{'editor.view-maps' | translate}}</mat-option>
                     </mat-select>
                 </div>
                 <div *ngIf="formGroup.controls.type?.value === viewType.svg">
@@ -62,7 +62,7 @@
                             type="number">
                     </div>
                 </div>
-                <div class="my-form-field item-block mt5">
+                <div *ngIf="formGroup.controls.type?.value !== viewType.maps" class="my-form-field item-block mt5">
                     <span>{{'dlg.docproperty-background' | translate}}</span>
                     <input style="width: 292px; border: 1px solid rgba(0,0,0,0.2); height:15px !important" readonly
                         [(colorPicker)]="data.profile.bkcolor" class="input-color" title="Change stroke color"

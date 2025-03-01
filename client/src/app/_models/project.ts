@@ -8,6 +8,7 @@ import { Text } from './text';
 import { Utils } from '../_helpers/utils';
 import { Script } from './script';
 import { Report } from './report';
+import { MapsLocation } from './maps';
 
 export class ProjectData {
     version = '1.01';
@@ -35,6 +36,8 @@ export class ProjectData {
     texts: Text[] = [];
     /** Plugins, name, version */
     plugin: Plugin[] = [];
+    /** Maps location */
+    mapsLocations: MapsLocation[] = [];
 }
 
 export enum ProjectDataCmdType {
@@ -55,6 +58,8 @@ export enum ProjectDataCmdType {
     DelScript = 'del-script',
     SetReport = 'set-report',
     DelReport = 'del-report',
+    SetMapsLocation = 'set-maps-location',
+    DelMapsLocation = 'del-maps-location',
 }
 
 

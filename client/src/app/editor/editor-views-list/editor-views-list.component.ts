@@ -27,6 +27,7 @@ export class EditorViewsListComponent {
 
     cardViewType = ViewType.cards;
     svgViewType = ViewType.svg;
+    mapsViewType = ViewType.maps;
 
     constructor(private projectService: ProjectService,
         private translateService: TranslateService,

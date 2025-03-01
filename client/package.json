@@ -1,6 +1,6 @@
 {
   "name": "fuxa",
-  "version": "1.2.4-2162",
+  "version": "1.2.4-2188",
   "keywords": [],
   "author": "frangoteam <info@frangoteam.org>",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
@@ -42,6 +42,7 @@
     "codemirror": "^5.65.12",
     "fecha": "^4.2.3",
     "file-saver": "2.0.5",
+    "leaflet": "^1.9.4",
     "material-icons": "^1.13.2",
     "moment": "^2.29.4",
     "ng2-charts": "^4.1.1",
@@ -71,6 +72,7 @@
     "@types/codemirror": "^5.60.7",
     "@types/jasmine": "~3.8.0",
     "@types/jasminewd2": "~2.0.3",
+    "@types/leaflet": "^1.9.16",
     "@types/node": "^12.11.1",
     "@typescript-eslint/eslint-plugin": "5.48.2",
     "@typescript-eslint/parser": "5.48.2",
