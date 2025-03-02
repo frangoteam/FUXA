@@ -845,6 +845,7 @@
     "device.list-remove-all": "Remove all Tags",
     "device.list-options": "Tag options",
     "device.list-clipboard": "Copy Tag object to clipboard",
+    "device.list-direction": "Direction",
 
     "devices.export": "Export Devices",
     "devices.export-json": "JSON",
@@ -970,6 +971,11 @@
     "device.tag-property-digits": "Decimal",
     "device.tag-property-initvalue": "Init value",
     "device.tag-property-description": "Description",
+    "device.tag-property-direction": "Direction",
+    "device.tag-property-edge": "Edge",
+    "device.tag-property-gpio": "GPIO Number",
+
+
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "Value:",
     "device-tag-dialog-title": "Tag Selection",
