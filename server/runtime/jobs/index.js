@@ -142,11 +142,15 @@ function JobsManager(_runtime) {
             runtime.project.getReports().then(function (result) {
                 if (result) {
                     result.forEach(rptProperty => {
-                        if (rptProperty.scheduling !== Report.ReportSchedulingType.none) {
-                            var report = Report.create(rptProperty, runtime);
-                            var job = new Job(report, JobType.Report);
-                            jobsList.push(job);
-                        }
+                        var report = Report.create(rptProperty, runtime);
+                        var job = new Job(report, JobType.Report);
+                        jobsList.push(job);
+                        // If we check to create the Job then we won't be able to force the report
+                        // if (rptProperty.scheduling !== Report.ReportSchedulingType.none) {
+                        //     var report = Report.create(rptProperty, runtime);
+                        //     var job = new Job(report, JobType.Report);
+                        //     jobsList.push(job);
+                        // }
                     });
                 }
                 resolve();
