@@ -262,7 +262,15 @@ try {
 
 // Http Server for client UI
 var allowCrossDomain = function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
+    const origin = req.headers.origin;
+    const allowedOrigins = settings.allowedOrigins || ["*"];
+
+    if (allowedOrigins.includes("*")) {
+        res.header('Access-Control-Allow-Origin', '*');
+    } else if (allowedOrigins.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
+    }
+
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header('Access-Control-Allow-Headers', 'x-access-token, x-auth-user, Origin, Content-Type, Accept');
 
