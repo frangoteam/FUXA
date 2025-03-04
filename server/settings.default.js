@@ -1,7 +1,7 @@
 
 module.exports = {
     // Version to manage update
-    version: 1.1,
+    version: 1.2,
 
     // Standard language (editor)
     language: 'en',
@@ -56,6 +56,12 @@ module.exports = {
     // that should be served at http://localhost:1881/.
     // Default: '/client/dist'
     //httpStatic: '/usr/home/fuxa/dist',
+
+    // CORS (Cross-Origin Resource Sharing)
+    // Used to enable CORS for all HTTP request
+    // "allowedOrigins": ["https://example.com", "https://dashboard.example.com"]
+    // Default: ["*"]
+    "allowedOrigins": ["*"]
 
     // The maximum size of HTTP request that will be accepted by the runtime api.
     // Default: 15mb
