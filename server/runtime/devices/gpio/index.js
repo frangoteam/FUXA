@@ -44,20 +44,26 @@ function GpioClient(_data, _logger, _events, _runtime) {
      */
     this.disconnect = function () {
         return new Promise(function (resolve, reject) {
-            data.tags.forEach(function (tag) {
+            for(var tagId in data.tags){
+                var tag = data.tags[tagId]
                 if (gpioMap[tag.id]) {
                     try {
                         gpioMap[tag.id].unexport()
                     } catch (err) {
                     }
                 }
-            })
+            }
             _clearVarsValue()
             _emitStatus('connect-off');
             resolve(true);
         });
     }
 
+    function _readGpio(tagId,gpio){
+        return new Promise((resolve, reject) => {
+            resolve({id: tagId, value: gpio.readSync()});
+        })
+    }
     /**
      * Read values in polling mode
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
@@ -66,17 +72,7 @@ function GpioClient(_data, _logger, _events, _runtime) {
         var readVarsfnc = [];
 
         for (var gpio in gpioMap) {
-            readVarsfnc.push(await function (gpio) {
-                return new Promise((resolve, reject) => {
-                    gpio.read(function (err, value) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve({id: gpio.id, value: value});
-                        }
-                    })
-                })
-            });
+            readVarsfnc.push(await _readGpio(gpio,gpioMap[gpio]));
         }
 
         try {
@@ -102,20 +98,27 @@ function GpioClient(_data, _logger, _events, _runtime) {
         data = JSON.parse(JSON.stringify(_data));
         gpioMap = {};
         varsValue = [];
-        data.tags.forEach(function (tag) {
+        // console.log(data)
+        for(var tagId in data.tags){
+            var tag = data.tags[tagId]
+            try{
             gpioMap[tag.id] = new Gpio(tag.address, tag.direction, tag.edge);
+            }catch(err){
+                logger.error(`load GPIO failed ${tag.address}`,err)
+                continue
+            }
             tagMap[tag.id] = tag;
             // use interrupts
             if (tag.edge && tag.edge !== 'none') {
                 gpioMap[tag.id].watch((err, val) => {
                     if (err) {
-                        console.error(`read gpio[${tag.id}] err`, err);
+                        logger.error(`read gpio[${tag.id}] err`, err);
                     } else {
                         _updateVarsValue([{id: tag.id, value: val}]);
                     }
                 })
             }
-        })
+        }
         logger.info(`'${data.name}' data loaded `, true);
     }
 
@@ -225,7 +228,7 @@ function GpioClient(_data, _logger, _events, _runtime) {
         var changed = {};
         vars.forEach((val) => {
             if (!utils.isNullOrUndefined(val)) {
-                var valueChanged = varsValue[val.id].value !== val.value;
+                var valueChanged = !varsValue[val.id] ||varsValue[val.id].value !== val.value;
                 varsValue[val.id] = {
                     id: val.id,
                     value: val.value,
@@ -281,13 +284,13 @@ function GpioClient(_data, _logger, _events, _runtime) {
 
 module.exports = {
     init: function (settings) {
-        try {
-            Gpio = require('onoff').Gpio;
-        } catch {
-        }
+        
     },
     create: function (data, logger, events, manager, runtime) {
-
+        // To use with plugin
+        try { Gpio = require('onoff').Gpio; } catch { }
+        if (!Gpio && manager) { try { Gpio = manager.require('onoff').Gpio; } catch { } }
+        if (!Gpio) return null;
         return new GpioClient(data, logger, events, runtime);
     }
 }
