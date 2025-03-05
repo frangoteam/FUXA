@@ -309,5 +309,34 @@ var utils = module.exports = {
         const date = new Date();
         date.setDate(date.getDate() - dayToAdd);
         return date;
+    },
+    /**
+     * Check and parse the value return converted value
+     * @param {*} value as string
+     */
+    parseValue: function(value, type){
+        if (type === 'number') {
+            return parseFloat(value);
+        } else if (type === 'boolean') {
+            if (typeof value === 'string') {
+                return value.toLowerCase() !== 'false';
+            }
+            return Boolean(value);
+        } else if (type === 'string') {
+            return value;
+        } else {
+            let val = parseFloat(value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(value);
+                // maybe string
+                if (Number.isNaN(val)) {
+                    val = value;
+                }
+            } else {
+                val = parseFloat(val.toFixed(5));
+            }
+            return val;
+        }
     }
 }
