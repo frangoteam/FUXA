@@ -28,7 +28,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'logger', 'options', 'remove'];
     readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'description', 'options', 'remove'];
-    readonly defGpipColumns = ['select', 'name', 'device', 'address', 'direction', 'value', 'timestamp', 'description', 'options', 'remove'];
+    readonly defGpipColumns = ['select', 'name', 'device', 'address', 'direction', 'value', 'timestamp', 'description', 'logger', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
     readonly defInternalRowWidth = 1200;
