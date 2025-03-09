@@ -17,8 +17,8 @@
                         <span>{{'chart.property-chart' | translate}}</span>
                         <mat-select [formControl]="chartCtrl" (selectionChange)="onChartChanged()">
                             <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
-                            <mat-option [value]=""></mat-option>
-                            <mat-option (click)="onEditNewChart();">{{'chart.property-newchart' | translate}}</mat-option>
+                            <mat-option [value]="" class="chart-filter-option"></mat-option>
+                            <mat-option (click)="onEditNewChart();" class="chart-filter-option">{{'chart.property-newchart' | translate}}</mat-option>
                             <mat-option *ngFor="let chart of filteredChart | async" [value]="chart" class="chart-filter-option">
                                 {{ chart.name }}
                             </mat-option>
