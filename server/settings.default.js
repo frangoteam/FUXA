@@ -90,4 +90,8 @@ module.exports = {
     // Enable GPIO in Raspberry
     // To enable only by Raspberry Host
 
+    //Location to output webcam capture
+    webcamShotsDir: '_webcamShots',
+
+
 }
