@@ -39,7 +39,7 @@ export class Device {
         id: 'Device id, GUID',
         name: 'Device name',
         enabled: 'Enabled',
-        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | ADSclient | Gpio | WebCam | Vistwo',
+        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP |Gpio ｜WebCam',
         polling: 'Polling interval in millisec., check changed value after ask value, by OPCUA there is a monitor',
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
@@ -235,12 +235,10 @@ export enum DeviceType {
     ModbusRTU = 'ModbusRTU',
     ModbusTCP = 'ModbusTCP',
     WebAPI = 'WebAPI',
-    Vistwo = 'Vistwo',
     MQTTclient = 'MQTTclient',
     internal = 'internal',
     EthernetIP = 'EthernetIP',
     ODBC = 'ODBC',
-    ADSclient = 'ADSclient',
     GPIO = 'GPIO',
     // Template: 'template'
     WebCam = 'WebCam',
@@ -294,12 +292,6 @@ export enum OpcUaTagType {
     DateTime = 'DateTime',
     Guid = 'Guid',
     ByteString = 'ByteString'
-}
-
-export enum AdsClientTagType {
-    Number = 'number',
-    Boolean = 'boolean',
-    String = 'string'
 }
 
 export enum ModbusOptionType {
@@ -533,7 +525,7 @@ export class DevicesUtils {
         let result = `${DevicesUtils.lineDevice}${DevicesUtils.columnDelimiter}`;
         dkeys.forEach(dk => {
             if (dk !== 'property') {
-                let text = (device[dk]) ? device[dk].toString() : '';
+                let text = (device[dk]) ? device[dk].toString() : '' || '';
                 result += `${text.replace(new RegExp(DevicesUtils.columnDelimiter, 'g'), DevicesUtils.columnMaske)}${DevicesUtils.columnDelimiter}`;
             }
         });
@@ -554,8 +546,8 @@ export class DevicesUtils {
         device.name = items[2].replace(new RegExp(DevicesUtils.columnMaske, 'g'), DevicesUtils.columnDelimiter);
         device.enabled = items[3].toLowerCase() === 'true' ? true : false;
         device.type = <DeviceType>items[4];
-        device.polling = parseInt(items[5]) || 1000;
-        device.property = <DeviceNetProperty>{
+        device.polling = parseInt(items[5]) || 1000,
+        device.property = <DeviceNetProperty> {
             address: items[6],
             port: items[7],
             slot: items[8],
@@ -605,45 +597,16 @@ export class DevicesUtils {
         if (tag.options && Utils.isJson(tag.options)) {
             tag.options = JSON.parse(tag.options);
         }
-        tag.daq = <TagDaq>{
-            enabled: Utils.Boolify(items[12]) ? true : false,
+        tag.daq = <TagDaq> {
+            enabled:  Utils.Boolify(items[12]) ? true : false,
             changed: true,
             interval: parseInt(items[13]) || 60
         };
         return { tag, deviceId };
     }
     //#endregion
-
-    //#region Placeholder
-    static placeholderToTag(variableId: string, tags: Tag[]): Tag {
-        const placeholder = DevicesUtils.getPlaceholderContent(variableId);
-        if (placeholder.firstContent) {
-            return tags?.find(t => t.name === placeholder.firstContent);
-        }
-        return null;
-    }
-
-    static getPlaceholderContent(text: string): Placeholder {
-        const firstAt = text.indexOf('@');
-        if (firstAt === -1) {
-            return { firstContent: null, secondContent: null };
-        }
-        const secondAt = text.indexOf('@', firstAt + 1);
-        if (secondAt === -1) {
-            const firstContent = text.substring(firstAt + 1).trim();
-            return { firstContent, secondContent: null };
-        }
-        const firstContent = text.substring(firstAt + 1, secondAt).trim();
-        const secondContent = text.substring(secondAt + 1).trim();
-        return { firstContent, secondContent };
-    }
-    //# endregion
 }
 
-export interface Placeholder {
-    firstContent: string;
-    secondContent?: string;
-}
 
 export enum DeviceViewModeType {
     tags = 'tags',
