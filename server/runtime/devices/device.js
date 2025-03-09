@@ -565,6 +565,7 @@ var DeviceEnum = {
     GPIO: 'GPIO',
     internal: 'internal',
     // Template: 'template'
+    WebCam: 'WebCam'
 }
 
 /**

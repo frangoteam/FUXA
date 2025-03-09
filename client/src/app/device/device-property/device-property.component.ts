@@ -265,7 +265,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	onDeviceTypeChanged() {
-		if (this.data.device.type === DeviceType.WebAPI) {
+		if (this.data.device.type === DeviceType.WebAPI || this.data.device.type === DeviceType.WebCam) {
 			this.pollingType = this.pollingWebApiType;
 		} else {
 			this.pollingType = this.pollingPlcType;
