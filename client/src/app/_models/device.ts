@@ -39,7 +39,7 @@ export class Device {
         id: 'Device id, GUID',
         name: 'Device name',
         enabled: 'Enabled',
-        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP',
+        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | WebCam',
         polling: 'Polling interval in millisec., check changed value after ask value, by OPCUA there is a monitor',
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
@@ -230,8 +230,9 @@ export enum DeviceType {
     MQTTclient = 'MQTTclient',
     internal = 'internal',
     EthernetIP = 'EthernetIP',
-    ODBC = 'ODBC'
+    ODBC = 'ODBC',
     // Template: 'template'
+    WebCam = 'WebCam',
 }
 
 export enum TagType {

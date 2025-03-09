@@ -100,6 +100,7 @@ try {
     settings.imagesFileDir = path.resolve(rootDir, '_images');
     settings.widgetsFileDir = path.resolve(rootDir, '_widgets');
     settings.reportsDir = path.resolve(rootDir, '_reports');
+    settings.webcamShotsDir = path.resolve(rootDir, settings.webcamShotsDir);
 
     // check new settings from default and merge if not defined
     var defSettings = require(path.join(__dirname, 'settings.default.js'));
@@ -209,6 +210,10 @@ if (!fs.existsSync(settings.imagesFileDir)) {
 // Check widgets resources folder
 if (!fs.existsSync(settings.widgetsFileDir)) {
     fs.mkdirSync(settings.widgetsFileDir);
+}
+// Check webcam shots  folder
+if (!fs.existsSync(settings.webcamShotsDir)) {
+    fs.mkdirSync(settings.webcamShotsDir);
 }
 
 // Server settings

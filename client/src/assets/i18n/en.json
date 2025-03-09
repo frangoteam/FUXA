@@ -1005,6 +1005,8 @@
     "device.tag-scale-write-script-tooltip": "Script to transform value before write to client",
     "device.tag-scale-write-script-params": "Enter Write Script Parameter Values",
     "device.tag-scale-script-params-tooltip": "JSON formated array of parameters with values to pass to script",
+    "device.tag-property-webcam-device": "Webcam device",
+
 
 
     "device.connect-ok": "Ok",

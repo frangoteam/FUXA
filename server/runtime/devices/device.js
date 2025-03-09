@@ -526,6 +526,7 @@ var DeviceEnum = {
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
     // Template: 'template'
+    WebCam: 'WebCam'
 }
 
 /**

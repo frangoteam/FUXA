@@ -33,6 +33,8 @@ plugins['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8', PluginGroupType.
 // plugins['onoff'] = new Plugin('onoff', './raspy', 'Raspberry', '6.0.1');
 plugins['chart.js'] = new Plugin('chart.js', './chartjs', 'Chart', '2.9.4', PluginGroupType.chartReport);
 plugins['chartjs-node-canvas'] = new Plugin('chartjs-node-canvas', 'chartjs-canvas', 'Chart', '3.2.0', PluginGroupType.chartReport);
+plugins['node-webcam'] = new Plugin('node-webcam', './node-webcam', 'WebCam', '0.8.2', PluginGroupType.connectionDevice, true);
+
 
 /**
  * Init plugin resource
