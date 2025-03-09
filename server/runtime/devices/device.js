@@ -536,6 +536,7 @@ var DeviceEnum = {
     ODBC: 'ODBC',
     GPIO: 'GPIO',
     // Template: 'template'
+    WebCam: 'WebCam'
 }
 
 /**

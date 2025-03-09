@@ -814,6 +814,7 @@
     "device.tag-raw-high": "原始高",
     "device.tag-scaled-low": "按比例的低",
     "device.tag-scaled-high": "按比例的高",
+    "device.tag-property-webcam-device": "摄像头地址",
 
     "device.connect-ok": "OK",
     "device.connect-error": "错误",
