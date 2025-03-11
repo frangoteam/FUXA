@@ -86,19 +86,21 @@ function init(_io, _api, _settings, _log, eventsMain) {
         socket.tagsClientSubscriptions = [];
         // check authorizations
         if (settings.secureEnabled && !settings.secureOnlyEditor) {
-            const token = socket.handshake.query.token;
-            if (!token || token === 'null') {
-                socket.disconnect();
-                logger.error(`Token is missing!`);
-            } else {
-                try {
-                    const authenticated = await api.authJwt.verify(token);
-                    if (!authenticated) {
-                        logger.error(`Token error!`);
-                        socket.disconnect();
-                    }
-                } catch (error) {
-                    logger.error(`Token error: ${error}`);
+            var token = socket.handshake.query.token;
+            if (!socket.handshake.query.token || socket.handshake.query.token === 'null') {
+                token = api.authJwt.getGuestToken();
+            }
+            try {
+                const authenticated = await api.authJwt.verify(token);
+                if (!authenticated && token !== api.authJwt.getGuestToken()) {
+                    logger.error(`Token is missing!`);
+                    socket.disconnect();
+                } else {
+                    logger.info(`Client connected with ${token === api.authJwt.getGuestToken() ? 'guest access' : 'authenticated token'}`);
+                }
+            } catch (error) {
+                logger.error(`Token error: ${error}`);
+                if (token !== api.authJwt.getGuestToken()) {
                     socket.disconnect();
                 }
             }
