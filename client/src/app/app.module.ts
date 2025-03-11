@@ -42,7 +42,7 @@ import { ScriptListComponent } from './scripts/script-list/script-list.component
 import { ScriptEditorComponent } from './scripts/script-editor/script-editor.component';
 import { ScriptSchedulingComponent } from './scripts/script-scheduling/script-scheduling.component';
 import { ScriptPermissionComponent } from './scripts/script-permission/script-permission.component';
-import { TextListComponent, DialogItemText } from './text-list/text-list.component';
+import { TextListComponent, DialogItemText } from './language/text-list/text-list.component';
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';

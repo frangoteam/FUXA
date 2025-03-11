@@ -6,13 +6,13 @@ import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subscription } from 'rxjs';
 
-import { ProjectService } from '../_services/project.service';
-import { Text } from '../_models/text';
+import { ProjectService } from '../../_services/project.service';
+import { Text } from '../../_models/text';
 
 @Component({
     selector: 'app-text-list',
     templateUrl: './text-list.component.html',
-    styleUrls: ['./text-list.component.css']
+    styleUrls: ['./text-list.component.scss']
 })
 export class TextListComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -87,7 +87,7 @@ export class TextListComponent implements OnInit, AfterViewInit, OnDestroy {
 @Component({
     selector: 'dialog-item-text',
     templateUrl: './item-text.dialog.html',
-    styleUrls: ['./text-list.component.css']
+    styleUrls: ['./text-list.component.scss']
 })
 export class DialogItemText {
 

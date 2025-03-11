@@ -1467,7 +1467,7 @@
     "resource.list-title-fonts": "Fonts list",
     "resources.lib-widgets": "Widgets",
 
-    "texts.list-title": "Texts settings",
+    "texts.list-title": "Language settings",
     "texts.list-filter": "Filter",
     "texts.list-filter-group": "Group",
     "texts.list-id": "ID",
@@ -1524,6 +1524,7 @@
     "dlg.setup-events": "Events",
     "dlg.setup-resources": "Resources",
     "dlg.setup-fonts": "Fonts",
+    "dlg.setup-language": "Language",
     "dlg.app-settings-title": "Settings",
     "dlg.app-settings-system": "System",
     "dlg.app-settings-smtp": "SMTP",

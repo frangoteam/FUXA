@@ -13,7 +13,7 @@ import { LogsViewComponent } from './logs-view/logs-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
 import { NotificationListComponent } from './notifications/notification-list/notification-list.component';
 import { ScriptListComponent } from './scripts/script-list/script-list.component';
-import { TextListComponent } from './text-list/text-list.component';
+import { TextListComponent } from './language/text-list/text-list.component';
 import { DEVICE_READONLY } from './_models/hmi';
 import { ReportListComponent } from './reports/report-list/report-list.component';
 import { UsersRolesComponent } from './users/users-roles/users-roles.component';
@@ -34,7 +34,7 @@ const appRoutes: Routes = [
     { path: 'notifications', component: NotificationListComponent, canActivate: [AuthGuard] },
     { path: 'scripts', component: ScriptListComponent, canActivate: [AuthGuard] },
     { path: 'reports', component: ReportListComponent, canActivate: [AuthGuard] },
-    { path: 'text', component: TextListComponent, canActivate: [AuthGuard] },
+    { path: 'language', component: TextListComponent, canActivate: [AuthGuard] },
     { path: 'logs', component: LogsViewComponent, canActivate: [AuthGuard] },
     { path: 'events', component: LogsViewComponent, canActivate: [AuthGuard] },
     { path: 'view', component: ViewComponent },
