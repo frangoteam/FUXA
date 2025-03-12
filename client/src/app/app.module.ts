@@ -42,7 +42,7 @@ import { ScriptListComponent } from './scripts/script-list/script-list.component
 import { ScriptEditorComponent } from './scripts/script-editor/script-editor.component';
 import { ScriptSchedulingComponent } from './scripts/script-scheduling/script-scheduling.component';
 import { ScriptPermissionComponent } from './scripts/script-permission/script-permission.component';
-import { TextListComponent, DialogItemText } from './language/text-list/text-list.component';
+import { LanguageTextListComponent } from './language/language-text-list/language-text-list.component';
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
@@ -211,6 +211,8 @@ import { MapsLocationPropertyComponent } from './maps/maps-location-property/map
 import { MapsViewComponent } from './maps/maps-view/maps-view.component';
 import { MapsLocationImportComponent } from './maps/maps-location-import/maps-location-import.component';
 import { MapsFabButtonMenuComponent } from './maps/maps-view/maps-fab-button-menu/maps-fab-button-menu.component';
+import { LanguageTypePropertyComponent } from './language/language-type-property/language-type-property.component';
+import { LanguageTextPropertyComponent } from './language/language-text-property/language-text-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -328,7 +330,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ReportListComponent,
         ReportEditorComponent,
         ScriptEditorParamComponent,
-        TextListComponent,
+        LanguageTextListComponent,
         LogsViewComponent,
         NgxGaugeComponent,
         NgxNouisliderComponent,
@@ -342,7 +344,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         LoginComponent,
         DialogUserInfo,
         ViewComponent,
-        DialogItemText,
         NgxUplotComponent,
         ChartUplotComponent,
         CardsViewComponent,
@@ -374,7 +375,10 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         MapsLocationPropertyComponent,
         MapsViewComponent,
         MapsLocationImportComponent,
-        MapsFabButtonMenuComponent
+        MapsFabButtonMenuComponent,
+        LanguageTypePropertyComponent,
+        LanguageTextPropertyComponent,
+        LanguageTextListComponent
     ],
     imports: [
         BrowserModule,

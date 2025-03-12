@@ -10,7 +10,7 @@ import { Graph } from '../_models/graph';
 import { Alarm, AlarmBaseType, AlarmQuery, AlarmsFilter } from '../_models/alarm';
 import { Notification } from '../_models/notification';
 import { Script } from '../_models/script';
-import { Text } from '../_models/text';
+import { Language, Text } from '../_models/language';
 import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag, FuxaServer, TagSystemType, TAG_PREFIX, ServerTagType, TagDevice } from '../_models/device';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -867,6 +867,28 @@ export class ProjectService {
             }
         }
         this.storage.setServerProjectData(ProjectDataCmdType.DelText, text, this.projectData).subscribe(result => {
+        }, err => {
+            console.error(err);
+            this.notifySaveError(err);
+        });
+    }
+    //#endregion
+
+    //#region Languages resource
+    /**
+     * get languages resource
+     */
+    getLanguages() {
+        return (this.projectData) ? (this.projectData.languages) ? this.projectData.languages : [] : null;
+    }
+
+    /**
+     * save the text to project
+     * @param text
+     */
+    setLanguages(languages: Language[]) {
+        this.projectData.languages = languages;
+        this.storage.setServerProjectData(ProjectDataCmdType.Languages, languages, this.projectData).subscribe(result => {
         }, err => {
             console.error(err);
             this.notifySaveError(err);

@@ -7,7 +7,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Subscription } from 'rxjs';
 
 import { ProjectService } from '../../_services/project.service';
-import { Text } from '../../_models/text';
+import { Text } from '../../_models/language';
 
 @Component({
     selector: 'app-text-list',

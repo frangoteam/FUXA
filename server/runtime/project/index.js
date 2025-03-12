@@ -202,6 +202,10 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.GENERAL;
                 section.name = cmd;
                 setCharts(value);
+            } else if (cmd === ProjectDataCmdType.Languages) {
+                section.table = prjstorage.TableType.GENERAL;
+                section.name = cmd;
+                setLanguages(value);
             } else if (cmd === ProjectDataCmdType.Graphs) {
                 section.table = prjstorage.TableType.GENERAL;
                 section.name = cmd;
@@ -357,6 +361,14 @@ function setCharts(charts) {
  */
  function setGraphs(graphs) {
     data.graphs = graphs;
+}
+
+/**
+ * Set Languages
+ * @param {*} languages
+ */
+function setLanguages(languages) {
+    data.languages = languages;
 }
 
 /**
@@ -1024,6 +1036,7 @@ const ProjectDataCmdType = {
     HmiLayout: 'layout',
     Charts: 'charts',
     Graphs: 'graphs',
+    Languages: 'languages',
     SetText: 'set-text',
     SetText: 'set-text',
     DelText: 'del-text',
