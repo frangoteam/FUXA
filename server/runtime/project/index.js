@@ -212,11 +212,11 @@ function setProjectData(cmd, value) {
                 setGraphs(value);
             } else if (cmd === ProjectDataCmdType.SetText) {
                 section.table = prjstorage.TableType.TEXTS;
-                section.name = value.name;
+                section.name = value.id;
                 setText(value);
             } else if (cmd === ProjectDataCmdType.DelText) {
                 section.table = prjstorage.TableType.TEXTS;
-                section.name = value.name;
+                section.name = value.id;
                 toremove = removeText(value);
             } else if (cmd === ProjectDataCmdType.SetAlarm) {
                 section.table = prjstorage.TableType.ALARMS;
@@ -381,7 +381,7 @@ function setText(text) {
     }
     var pos = -1;
     for (var i = 0; i < data.texts.length; i++) {
-        if (data.texts[i].name === text.name) {
+        if (data.texts[i].id === text.id) {
             pos = i;
         }
     }
@@ -398,9 +398,8 @@ function setText(text) {
  */
 function removeText(text) {
     if (data.texts) {
-        var pos = -1;
         for (var i = 0; i < data.texts.length; i++) {
-            if (data.texts[i].name === text.name) {
+            if (data.texts[i].id === text.id) {
                 data.texts.splice(i, 1);
                 return true;
             }
@@ -436,7 +435,6 @@ function setAlarm(alarm) {
  */
 function removeAlarm(alarm) {
     if (data.alarms) {
-        var pos = -1;
         for (var i = 0; i < data.alarms.length; i++) {
             if (data.alarms[i].name === alarm.name) {
                 data.alarms.splice(i, 1);
@@ -474,7 +472,6 @@ function removeAlarm(alarm) {
  */
 function removeNotification(notification) {
     if (data.notifications) {
-        var pos = -1;
         for (var i = 0; i < data.notifications.length; i++) {
             if (data.notifications[i].id === notification.id) {
                 data.notifications.splice(i, 1);
@@ -512,7 +509,6 @@ function removeNotification(notification) {
  */
  function removeScript(script) {
     if (data.scripts) {
-        var pos = -1;
         for (var i = 0; i < data.scripts.length; i++) {
             if (data.scripts[i].id === script.id) {
                 data.scripts.splice(i, 1);
@@ -550,7 +546,6 @@ function removeNotification(notification) {
  */
  function removeReport(report) {
     if (data.reports) {
-        var pos = -1;
         for (var i = 0; i < data.reports.length; i++) {
             if (data.reports[i].id === report.id) {
                 data.reports.splice(i, 1);
@@ -588,7 +583,6 @@ function setMapsLocation(location) {
  */
 function removeMapsLocation(location) {
     if (data.mapsLocations) {
-        var pos = -1;
         for (var i = 0; i < data.mapsLocations.length; i++) {
             if (data.mapsLocations[i].id === location.id) {
                 data.mapsLocations.splice(i, 1);

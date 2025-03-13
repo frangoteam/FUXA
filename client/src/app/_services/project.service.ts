@@ -10,7 +10,7 @@ import { Graph } from '../_models/graph';
 import { Alarm, AlarmBaseType, AlarmQuery, AlarmsFilter } from '../_models/alarm';
 import { Notification } from '../_models/notification';
 import { Script } from '../_models/script';
-import { Language, Text } from '../_models/language';
+import { Language, LanguageText } from '../_models/language';
 import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag, FuxaServer, TagSystemType, TAG_PREFIX, ServerTagType, TagDevice } from '../_models/device';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -832,21 +832,18 @@ export class ProjectService {
      * save the text to project
      * @param text
      */
-    setText(text: Text, old: Text) {
+    setText(text: LanguageText) {
         if (!this.projectData.texts) {
             this.projectData.texts = [];
         }
-        let exist = this.projectData.texts.find(tx => tx.name === text.name);
+        let exist = this.projectData.texts.find(tx => tx.id === text.id);
         if (exist) {
-            exist.group = text.group;
-            exist.value = text.value;
+            Utils.assign(exist, text);
         } else {
+            text.id ??= Utils.getShortGUID('w_');
             this.projectData.texts.push(text);
         }
-        this.storage.setServerProjectData(ProjectDataCmdType.SetText, text, this.projectData).subscribe(result => {
-            if (old && old.name && old.name !== text.name) {
-                this.removeText(old);
-            }
+        this.storage.setServerProjectData(ProjectDataCmdType.SetText, text, this.projectData).subscribe(_ => {
         }, err => {
             console.error(err);
             this.notifySaveError(err);
@@ -857,16 +854,16 @@ export class ProjectService {
      * remove the text from project
      * @param text
      */
-    removeText(text: Text) {
+    removeText(text: LanguageText) {
         if (this.projectData.texts) {
             for (let i = 0; i < this.projectData.texts.length; i++) {
-                if (this.projectData.texts[i].name === text.name) {
+                if (this.projectData.texts[i].id === text.id) {
                     this.projectData.texts.splice(i, 1);
                     break;
                 }
             }
         }
-        this.storage.setServerProjectData(ProjectDataCmdType.DelText, text, this.projectData).subscribe(result => {
+        this.storage.setServerProjectData(ProjectDataCmdType.DelText, text, this.projectData).subscribe(_ => {
         }, err => {
             console.error(err);
             this.notifySaveError(err);

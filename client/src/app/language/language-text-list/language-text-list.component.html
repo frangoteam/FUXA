@@ -37,26 +37,26 @@
             </ng-container>
 
             <ng-container matColumnDef="id">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'texts.list-id' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.name}} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header [style.min-width.px]="200"> {{'texts.list-id' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.min-width.px]="200"> {{element.name}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="group">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'texts.list-group' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.group}} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header [style.min-width.px]="200"> {{'texts.list-group' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.min-width.px]="200"> {{element.group}} </mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="value">
-                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'texts.list-value' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{element.value}} </mat-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header [style.min-width.px]="200"> {{'texts.list-value' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.min-width.px]="200"> {{element.value}} </mat-cell>
             </ng-container>
 
             <ng-container *ngFor="let lang of languages" [matColumnDef]="'lang-' + lang.id">
-                <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-lang-{{ lang.id }}">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-lang-{{ lang.id }}" [style.min-width.px]="200">
                     {{ lang.name }}
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" class="mat-column-lang-{{ lang.id }}">
-                    {{ element[lang.id] || '-' }}
+                <mat-cell *matCellDef="let element" class="mat-column-lang-{{ lang.id }}" [style.min-width.px]="200">
+                    {{ element.translations[lang.id] || '-' }}
                 </mat-cell>
             </ng-container>
 

@@ -7,9 +7,11 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Subscription } from 'rxjs';
 
 import { ProjectService } from '../../_services/project.service';
-import { Language, Text } from '../../_models/language';
+import { Language, LanguageText } from '../../_models/language';
 import { LanguageTextPropertyComponent } from '../language-text-property/language-text-property.component';
 import { LanguageTypePropertyComponent } from '../language-type-property/language-type-property.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-language-text-list',
@@ -29,6 +31,7 @@ export class LanguageTextListComponent implements OnInit, AfterViewInit, OnDestr
     @ViewChild(MatSort, { static: false }) sort: MatSort;
 
     constructor(public dialog: MatDialog,
+        private translateService: TranslateService,
         private projectService: ProjectService) { }
 
     ngOnInit() {
@@ -52,32 +55,36 @@ export class LanguageTextListComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     onAddText() {
-        let text = new Text();
-        this.editText(text, 1);
+        this.editText();
     }
 
-    onEditText(text: Text) {
-        this.editText(text, 0);
+    onEditText(text: LanguageText) {
+        this.editText(text);
     }
 
-    onRemoveText(text: Text) {
-        this.editText(text, -1);
+    onRemoveText(text: LanguageText) {
+        let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            position: { top: '60px' },
+            data: <ConfirmDialogData> { msg: this.translateService.instant('msg.texts-text-remove', { value: text.name }) }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.projectService.removeText(text);
+                this.loadTexts();
+            }
+        });
     }
 
-    editText(text: Text, toAdd: number) {
-        let mtext: Text = JSON.parse(JSON.stringify(text));
+    editText(text?: LanguageText) {
         let dialogRef = this.dialog.open(LanguageTextPropertyComponent, {
             position: { top: '60px' },
             disableClose: true,
-            data: { text: mtext, editmode: toAdd, texts: this.dataSource.data }
+            data: { text: text }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                if (toAdd < 0) {
-                    this.projectService.removeText(result);
-                } else {
-                    this.projectService.setText(result, text);
-                }
+                this.projectService.setText(result);
                 this.loadTexts();
             }
         });

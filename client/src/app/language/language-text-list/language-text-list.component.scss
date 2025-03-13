@@ -28,11 +28,14 @@
 
     .container {
         width: 100%;
+        height: 100%;
     }
 
     .mat-table {
-        width: auto;
-        min-width: 1000px;
+        width: 100%;
+        height: 100%;
+        table-layout: fixed;
+        overflow: auto;
     }
 
     .mat-column-select {
@@ -41,30 +44,32 @@
     }
 
     .mat-column-id {
-        flex: 0 0 300px;
+        flex: 1 1 200px;
     }
 
 
     .mat-column-group {
-        flex: 0 0 200px;
+        flex: 1 1 200px;
     }
 
     .mat-column-value {
-        flex: 0 0 400px;
+        flex: 1 1 200px;
     }
 
-    @for $i from 1 through 20 { // Limite massimo per supportare fino a 20 lingue
-        .mat-column-lang-#{$i} {
-            flex: 0 0 400px;
+    @for $i from 1 through 20 {
+        mat-header-cell.mat-column-lang-#{$i}, mat-cell.mat-column-lang-#{$i} {
+            flex: 1 1 200px;
         }
     }
 
     .mat-column-remove {
-        flex: 0 0 60px;
+        flex: 1 1 60px;
+        padding-right: 0px !important;
     }
 
     .mat-cell {
         font-size: 13px;
+        overflow: visible;
     }
 
     .mat-header-row {
@@ -75,5 +80,7 @@
 
     .mat-header-cell {
         font-size: 15px;
+        overflow: visible;
     }
+
 }

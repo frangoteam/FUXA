@@ -3,9 +3,10 @@ export class Language {
     name: string;
 }
 
-export class Text {
+export class LanguageText {
+    id: string;
     name: string;
     group: string;
     value: string;
-
+    translations: { [languageId: string]: string };
 }

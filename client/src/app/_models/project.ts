@@ -4,7 +4,7 @@ import { Chart } from './chart';
 import { Graph } from './graph';
 import { Alarm } from './alarm';
 import { Notification } from './notification';
-import { Language, Text } from './language';
+import { Language, LanguageText } from './language';
 import { Utils } from '../_helpers/utils';
 import { Script } from './script';
 import { Report } from './report';
@@ -33,7 +33,7 @@ export class ProjectData {
     /** Reports */
     reports: Report[] = [];
     /** Texts */
-    texts: Text[] = [];
+    texts: LanguageText[] = [];
     /** Language */
     languages: Language[] = [];
     /** Plugins, name, version */

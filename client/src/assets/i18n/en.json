@@ -1481,6 +1481,10 @@
     "language.settings-id-placeholder": "ex: EN",
     "language.settings-name": "Name",
     "language.settings-name-placeholder": "ex: English",
+    "text.settings-title": "Text",
+    "text.settings-id": "Name (Allowed letters and numbers, no spaces)",
+    "text.settings-group": "Group",
+    "text.settings-value": "Text (default)",
 
     "gui.range-number-min": "Min",
     "gui.range-number-max": "Max",
@@ -1490,11 +1494,6 @@
     "gui.range-number-switcher": "Range as number or boolean",
 
     "dlg.bitmask-title": "Bitmask",
-
-    "dlg.textproperty-title": "Text",
-    "dlg.textproperty-id": "ID",
-    "dlg.textproperty-group": "Group",
-    "dlg.textproperty-value": "Text",
 
     "dlg.plugins-title": "Server Plugins",
     "dlg.plugins-info": "Not installed plugins can be installed in the server manually: 'npm install [package name]@[version]'",
@@ -1661,5 +1660,7 @@
     "msg.file-remove": "Would you like to remove '{{value}}'?",
     "msg.notification-remove": "Would you like to remove Notification '{{value}}'?",
     "msg.maps-location-remove": "Would you like to remove Maps Location '{{value}}'?",
-    "msg.maps-location-name-exist": "The Maps Location name already exist!"
+    "msg.maps-location-name-exist": "The Maps Location name already exist!",
+    "msg.text-name-exist": "Text name already exist!",
+    "msg.texts-text-remove": "Would you like to remove Text '{{value}}'?"
 }
