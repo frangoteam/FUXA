@@ -9,6 +9,7 @@ var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
+var Vistwoclient = require('./vistwo');
 var EthernetIPclient = require('./ethernetip');
 var FuxaServer = require('./fuxaserver');
 var ODBCclient = require('./odbc');
@@ -62,6 +63,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = BACNETclient.create(data, logger, events, manager, runtime);
+    } else if (data.type === DeviceEnum.Vistwo) {
+        if (!Vistwoclient) {
+            return null;
+        }
+        comm = Vistwoclient.create(data, logger, events, manager, runtime);
     } else if (data.type === DeviceEnum.WebAPI) {
         if (!HTTPclient) {
             return null;
@@ -191,6 +197,8 @@ function Device(data, runtime) {
         var self = this;
         if (data.type === DeviceEnum.ModbusRTU) {
             comm.init(MODBUSclient.ModbusTypes.RTU);
+        } else if (data.type === DeviceEnum.Vistwo) {
+            comm.init();
         } else if (data.type === DeviceEnum.ModbusTCP) {
             comm.init(MODBUSclient.ModbusTypes.TCP);
         }
@@ -483,6 +491,8 @@ function loadPlugin(type, module) {
         HTTPclient = require(module);
     } else if (type === DeviceEnum.MQTTclient) {
         MQTTclient = require(module);
+    } else if (type === DeviceEnum.Vistwo) {
+        Vistwoclient = require(module);
     } else if (type === DeviceEnum.EthernetIP) {
         EthernetIPclient = require(module);
     } else if (type === DeviceEnum.FuxaServer) {
@@ -522,6 +532,7 @@ var DeviceEnum = {
     BACnet: 'BACnet',
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
+    Vistwo: 'Vistwo',
     EthernetIP: 'EthernetIP',
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
