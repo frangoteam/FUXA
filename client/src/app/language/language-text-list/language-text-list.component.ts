@@ -22,6 +22,7 @@ export class LanguageTextListComponent implements OnInit, AfterViewInit, OnDestr
 
     displayedColumns = ['select', 'id', 'group', 'value', 'remove'];
     languages: Language[] = [];
+    defaultLanguage: Language;
     dataSource = new MatTableDataSource([]);
     selection = new SelectionModel<Element>(true, []);
 
@@ -104,7 +105,8 @@ export class LanguageTextListComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     private loadTexts() {
-        const rawLanguages = this.projectService.getLanguages();
+        const rawLanguages = this.projectService.getLanguages().optionals;
+        this.defaultLanguage = this.projectService.getLanguages().default;
         this.languages = Array.isArray(rawLanguages) ? rawLanguages : Object.values(rawLanguages);
 
         const valueIndex = this.displayedColumns.indexOf('value');

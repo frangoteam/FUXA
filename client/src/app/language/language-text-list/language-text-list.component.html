@@ -47,13 +47,16 @@
             </ng-container>
 
             <ng-container matColumnDef="value">
-                <mat-header-cell *matHeaderCellDef mat-sort-header [style.min-width.px]="200"> {{'texts.list-value' | translate}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef mat-sort-header [style.min-width.px]="200">
+                    <ng-container *ngIf="defaultLanguage; else defaultText">{{ defaultLanguage.id }} ({{ defaultLanguage.name }})</ng-container>
+                    <ng-template #defaultText>{{ 'texts.list-value' | translate }}</ng-template>
+                </mat-header-cell>
                 <mat-cell *matCellDef="let element" [style.min-width.px]="200"> {{element.value}} </mat-cell>
             </ng-container>
 
             <ng-container *ngFor="let lang of languages" [matColumnDef]="'lang-' + lang.id">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-lang-{{ lang.id }}" [style.min-width.px]="200">
-                    {{ lang.name }}
+                    {{ lang.id }} ({{ lang.name }})
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" class="mat-column-lang-{{ lang.id }}" [style.min-width.px]="200">
                     {{ element.translations[lang.id] || '-' }}

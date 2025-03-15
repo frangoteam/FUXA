@@ -13,6 +13,7 @@ export class LanguageTextPropertyComponent implements OnInit {
 
     formGroup: UntypedFormGroup;
     languages: Language[] = [];
+    defaultLanguage: Language;
     nameExists: boolean = false;
 
     constructor(
@@ -28,7 +29,8 @@ export class LanguageTextPropertyComponent implements OnInit {
             group: new FormControl(this.data.text?.group || ''),
             value: new FormControl(this.data.text?.value || ''),
         };
-        this.languages = this.projectService.getLanguages() || [];
+        this.languages = this.projectService.getLanguages().optionals || [];
+        this.defaultLanguage = this.projectService.getLanguages().default;
         this.languages.forEach(lang => {
             controls[`translation_${lang.id}`] = new FormControl(this.data.text?.translations?.[lang.id] || '');
         });
