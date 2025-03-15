@@ -115,7 +115,17 @@ export class LanguageTextListComponent implements OnInit, AfterViewInit, OnDestr
             ...this.languages.map(lang => `lang-${lang.id}`),
             ...this.displayedColumns.slice(removeIndex)
         ];
-
-        this.dataSource.data = this.projectService.getTexts();
+        const texts = this.projectService.getTexts();
+        texts.forEach(text => {
+            if (!text.translations) {
+                text.translations = {};
+            }
+            this.languages.forEach(lang => {
+                if (!(lang.id in text.translations)) {
+                    text.translations[lang.id] = '';
+                }
+            });
+        });
+        this.dataSource.data = texts;
     }
 }

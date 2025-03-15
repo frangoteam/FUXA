@@ -66,6 +66,7 @@
     "dlg.layout-lbl-margin-right": "Margin right",
     "dlg.layout-lbl-login-info": "Login info",
     "dlg.layout-lbl-custom-styles": "Custom styles",
+    "dlg.layout-lbl-show-language": "Show language",
 
     "dlg.menuitem-title": "Menu Item",
     "dlg.menuitem-image": "[My Image...]",
@@ -216,6 +217,11 @@
     "item.logininfo-type-username": "Username",
     "item.logininfo-type-fullname": "Full name",
     "item.logininfo-type-both": "Username & Full name",
+
+    "item.language-show-mode-nothing": "Hide",
+    "item.language-show-mode-simple": "Show",
+    "item.language-show-mode-key": "Show with Key",
+    "item.language-show-mode-fullname": "Show with Full name",
 
     "item.zoommode-disabled": "Disabled",
     "item.zoommode-enabled": "Manually",
