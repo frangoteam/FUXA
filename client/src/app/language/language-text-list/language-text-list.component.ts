@@ -105,7 +105,7 @@ export class LanguageTextListComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     private loadTexts() {
-        const rawLanguages = this.projectService.getLanguages().optionals;
+        const rawLanguages = this.projectService.getLanguages().options;
         this.defaultLanguage = this.projectService.getLanguages().default;
         this.languages = Array.isArray(rawLanguages) ? rawLanguages : Object.values(rawLanguages);
 

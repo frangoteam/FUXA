@@ -213,6 +213,7 @@ import { MapsLocationImportComponent } from './maps/maps-location-import/maps-lo
 import { MapsFabButtonMenuComponent } from './maps/maps-view/maps-fab-button-menu/maps-fab-button-menu.component';
 import { LanguageTypePropertyComponent } from './language/language-type-property/language-type-property.component';
 import { LanguageTextPropertyComponent } from './language/language-text-property/language-text-property.component';
+import { LanguageService } from './_services/language.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -448,6 +449,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ReportsService,
         ActionPropertyService,
         MapsLocationsService,
+        LanguageService,
         {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
     ],
     bootstrap: [AppComponent]

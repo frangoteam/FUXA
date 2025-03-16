@@ -578,7 +578,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     if (htmlevent.ga.type === HtmlInputComponent.TypeTag) {
                         htmlevent.dom.focus();
-                        htmlevent.dom.select();                        
+                        htmlevent.dom.select();
                         const events = JSON.parse(JSON.stringify(HtmlInputComponent.getEvents(htmlevent.ga.property, GaugeEventType.enter)));
                         self.eventForScript(events, htmlevent.value);
                     }

@@ -27,7 +27,7 @@ export class LanguageTypePropertyComponent implements OnInit {
             defaultName: [languages.default?.name || 'English', Validators.required]
         });
 
-        this.setLanguages(languages.optionals);
+        this.setLanguages(languages.options);
     }
 
     get languages(): FormArray {
@@ -69,7 +69,7 @@ export class LanguageTypePropertyComponent implements OnInit {
 
     onOkClick(): void {
         this.dialogRef.close(<Languages> {
-            optionals: <Language[]>this.languagesForm.getRawValue().languages,
+            options: <Language[]>this.languagesForm.getRawValue().languages,
             default: {
                 id: this.languagesForm.get('defaultId').value,
                 name: this.languagesForm.get('defaultName').value

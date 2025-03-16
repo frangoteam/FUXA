@@ -34,6 +34,8 @@ import { ScriptService } from '../_services/script.service';
 // declare var panzoom: any;
 
 import { ToastrService } from 'ngx-toastr';
+import { LanguageService, LanguageConfiguration } from '../_services/language.service';
+import { Language } from '../_models/language';
 
 @Component({
     selector: 'app-home',
@@ -80,6 +82,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscriptionOpen: Subscription;
     private destroy$ = new Subject<void>();
     loggedUser$: Observable<User>;
+    language$: Observable<LanguageConfiguration>;
 
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
@@ -89,6 +92,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private hmiService: HmiService,
         private toastr: ToastrService,
         private scriptService: ScriptService,
+        private languageService: LanguageService,
         private authService: AuthService,
         public gaugesManager: GaugesManager) {
         this.gridOptions.draggable = { enabled: false };
@@ -131,6 +135,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 takeUntil(this.destroy$)
             );
 
+            this.language$ = this.languageService.languageConfig$;
             this.loggedUser$ = this.authService.currentUser$;
 
             this.gaugesManager.onchange.pipe(
@@ -344,6 +349,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             ele.classList.remove('is-active');
             ele.classList.remove('is-full-active');
         }
+    }
+
+    onSetLanguage(language: Language) {
+        this.languageService.setCurrentLanguage(language);
     }
 
     private processValueInHeaderItem(varTag: Variable) {

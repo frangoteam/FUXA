@@ -235,9 +235,11 @@
                                 {{ currentDateTime | date: data.layout.header.dateTimeDisplay }}
                             </div>
                             <div *ngIf="data.layout.header.language && data.layout.header.language !== 'nothing'" class="header-language">
-                                <button mat-icon-button>
+                                <button mat-icon-button class="inbk">
                                     <mat-icon aria-label="Language">language</mat-icon>
                                 </button>
+                                <div *ngIf="data.layout.header.language === 'key'" class="inbk">EN</div>
+                                <div *ngIf="data.layout.header.language === 'fullname'" class="inbk">English</div>
                             </div>
                             <div *ngIf="data.securityEnabled" class="header-login">
                                 <button mat-icon-button>

@@ -1,6 +1,6 @@
 export class Languages {
     default: Language;
-    optionals: Language[] = [];
+    options: Language[] = [];
 }
 export class Language {
     id: string;
