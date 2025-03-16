@@ -240,7 +240,6 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         // set plugins
         opt.plugins = (this.options.tooltip && this.options.tooltip.show) ? [this.tooltipPlugin()] : [];
         if (this.options.thouchZoom) {
-            console.log('touch zoom');
             opt.plugins.push(this.touchZoomPlugin({}));
         }
         this.uplot = new uPlot(opt, this.data, this.graph.nativeElement);
@@ -599,7 +598,6 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             }
 
             function touchmove(e) {
-                console.log('touchmove');
                 storePos(to, e);
 
                 if (!rafPending) {
@@ -609,7 +607,6 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             }
 
             over.addEventListener('touchstart', function(e) {
-                console.log('touchstart');
                 rect = over.getBoundingClientRect();
 
                 storePos(fr, e);
@@ -627,7 +624,6 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             });
 
             over.addEventListener('touchend', function(e) {
-                console.log('touchend');
                 document.removeEventListener('touchmove', touchmove, {});
             });
         }
