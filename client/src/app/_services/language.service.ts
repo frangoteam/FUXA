@@ -8,6 +8,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class LanguageService {
 
+    localStorageItem = 'currentLanguage';
     languages: Languages;
     languageConfig: LanguageConfiguration;
     languageConfig$ = new BehaviorSubject<LanguageConfiguration>(null);
@@ -16,18 +17,20 @@ export class LanguageService {
         public projectService: ProjectService
     ) {
         this.projectService.onLoadHmi.subscribe(() => {
+            let storageLanguage = JSON.parse(localStorage.getItem(this.localStorageItem));
             this.languages = this.projectService.getLanguages();
             this.languageConfig = {
-                currentLanguage: this.languages.default || { id: 'EN', name: 'English' },
+                currentLanguage: storageLanguage || this.languages.default || { id: 'EN', name: 'English' },
                 ...this.languages
             };
-		    this.languageConfig$.next(this.languageConfig);
+		    this.setCurrentLanguage(this.languageConfig.currentLanguage);
         });
     }
 
     setCurrentLanguage(lang: Language): void {
         this.languageConfig.currentLanguage = lang;
         this.languageConfig$.next(this.languageConfig);
+		localStorage.setItem(this.localStorageItem, JSON.stringify(lang));
     }
 }
 
