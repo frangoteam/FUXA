@@ -30,10 +30,12 @@ export class HeartbeatService {
 				this.server.heartbeat(this.activity).subscribe(res => {
 					if (res?.message === 'tokenRefresh' && res?.token) {
 						this.authService.setNewToken(res.token);
+					} else if (res?.message === 'guest' && res?.token) {
+						this.authService.signOut();
 					}
 				}, (error) => {
 					if (error instanceof HttpErrorResponse) {
-						if (error.status === 403) {
+						if (error.status === 401 || error.status === 403) {
 							this.router.navigateByUrl('/');
 						}
 					}
