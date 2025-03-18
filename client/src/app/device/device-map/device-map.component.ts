@@ -143,7 +143,6 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
             });
             this.plugins.push(DeviceType.WebAPI);
             this.plugins.push(DeviceType.MQTTclient);
-            this.plugins.push(DeviceType.Gpio)
             this.plugins.push(DeviceType.internal);
         } else {
             this.plugins.push(DeviceType.internal);

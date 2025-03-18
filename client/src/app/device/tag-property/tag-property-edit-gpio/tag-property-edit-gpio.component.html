@@ -26,7 +26,7 @@
                     </mat-option>
                 </mat-select>
             </div>
-            <div class="my-form-field item-inline mt10 ftr mr5" *ngIf=" formGroup.get('tagDirection').value == GpioDirectionType.in">
+            <div class="my-form-field item-inline mt10 ftr mr5" *ngIf="formGroup.get('tagDirection')?.value === GpioDirectionType.in">
                 <span>{{'device.tag-property-edge' | translate}}</span>
                 <mat-select formControlName="tagEdge" >
                     <mat-option *ngFor="let type of edgeType | enumToArray" [value]="type.key">

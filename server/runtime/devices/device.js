@@ -90,18 +90,18 @@ function Device(data, runtime) {
         }
         comm = ODBCclient.create(data, logger, events, manager);
     }
-    // else if (data.type === DeviceEnum.Template) {
-    //     if (!TEMPLATEclient) {
-    //         return null;
-    //     }
-    //     comm = TEMPLATEclient.create(data, logger, events, manager);
-    // }
     else if (data.type === DeviceEnum.Gpio) {
         if (!GpioClient) {
             return null;
         }
         comm = GpioClient.create(data, logger, events, manager, runtime);
     }
+    // else if (data.type === DeviceEnum.Template) {
+    //     if (!TEMPLATEclient) {
+    //         return null;
+    //     }
+    //     comm = TEMPLATEclient.create(data, logger, events, manager);
+    // }
     if (!comm) {
         return null;
     }

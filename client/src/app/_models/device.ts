@@ -239,7 +239,7 @@ export enum DeviceType {
     internal = 'internal',
     EthernetIP = 'EthernetIP',
     ODBC = 'ODBC',
-    Gpio = 'Gpio',
+    GPIO = 'GPIO',
     // Template: 'template'
 }
 

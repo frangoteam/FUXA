@@ -12,8 +12,8 @@ import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDia
 export class TagPropertyEditGpioComponent implements OnInit {
     @Output() result = new EventEmitter<any>();
     formGroup: UntypedFormGroup;
-    directionType= GpioDirectionType
-    edgeType= GpioEdgeType
+    directionType = GpioDirectionType;
+    edgeType = GpioEdgeType;
     existingNames = [];
     error: string;
 

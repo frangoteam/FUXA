@@ -43,7 +43,6 @@
     "nodemailer": "6.9.9",
     "nopt": "5.0.0",
     "odbc": "2.4.9",
-    "onoff": "^6.0.3",
     "pdfmake": "0.2.5",
     "socket.io": "2.5.0",
     "sqlite3": "5.1.5",
