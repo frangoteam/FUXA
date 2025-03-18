@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProjectService, SaveMode } from '../_services/project.service';
 import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, ISvgElement, GaugeProperty, DocProfile } from '../_models/hmi';
 import { WindowRef } from '../_helpers/windowref';
-import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
+import { GaugePropertyComponent, GaugeDialogType, GaugePropertyData } from '../gauges/gauge-property/gauge-property.component';
 
 import { GaugesManager } from '../gauges/gauges.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component';
@@ -1268,8 +1268,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!tempsettings.name) {
             tempsettings.name = Utils.getNextName(GaugesManager.getPrefixGaugeName(settings.type), names);
         }
-        // settings.property = JSON.parse(settings.property);
         let dialogRef: any;
+        let elementWithLanguageText;
         if (dlgType === GaugeDialogType.Chart) {
             this.gaugeDialog.type = dlgType;
             this.gaugeDialog.data = {
@@ -1359,11 +1359,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.reloadGaugeDialog = !this.reloadGaugeDialog;
             return;
         } else {
+            //!TODO to be refactored (GaugePropertyComponent)
+            elementWithLanguageText = this.isSelectedElementToEnableLanguageTextSettings();
             let title = this.getGaugeTitle(settings.type);
             dialogRef = this.dialog.open(GaugePropertyComponent, {
                 position: { top: '60px' },
                 disableClose: true,
-                data: {
+                data: <GaugePropertyData> {
                     settings: tempsettings,
                     devices: Object.values(this.projectService.getDevices()),
                     title: title,
@@ -1376,7 +1378,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
                     names: names,
                     scripts: this.projectService.getScripts(),
-                    withBitmask: bitmaskSupported
+                    withBitmask: bitmaskSupported,
+                    languageTextEnabled: !!elementWithLanguageText
                 }
             });
         }
@@ -1395,6 +1398,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.checkSvgElementsMap(true);
             }
         });
+    }
+
+    isSelectedElementToEnableLanguageTextSettings(): any {
+        const elementsSelected = this.winRef.nativeWindow.svgEditor.getSelectedElements();
+        return elementsSelected[0]?.tagName?.toLowerCase() === 'text' ? elementsSelected[0] : null;
     }
 
     editBindOfTags(selected: any) {

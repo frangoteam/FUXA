@@ -1132,6 +1132,7 @@
     "gauges.property-tag-label": "Tag",
     "gauges.property-tag-internal-title": "Set placeholder of Destination (or Tag of internal device)",
     "gauges.property-input-range": "Allowed input range",
+    "gauges.property-language-text": "Text or @TextID",
 
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisions",
