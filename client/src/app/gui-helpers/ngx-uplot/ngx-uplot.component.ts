@@ -154,6 +154,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.options = this.defOptions;
+        //this.options.cursor = { drag: { x: true, y: true } };
         this.uplot = new uPlot(this.defOptions, this.sampleData, this.graph.nativeElement);
     }
 
@@ -232,15 +233,11 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             3: { range: [Utils.isNumeric(options.scaleY3min) ? options.scaleY3min : null, Utils.isNumeric(options.scaleY3max) ? options.scaleY3max : null] },
             4: { range: [Utils.isNumeric(options.scaleY4min) ? options.scaleY4min : null, Utils.isNumeric(options.scaleY4max) ? options.scaleY4max : null] },
         };
-        // if (Utils.isNumeric(options.scaleY1min) || Utils.isNumeric(options.scaleY1max)) {
-            // this.options.scales['4'] = {
-            //     range: [Utils.isNumeric(options.scaleY1min) ? options.scaleY1min : null, Utils.isNumeric(options.scaleY1max) ? options.scaleY1max : null]
-            // };
-        // }
+
         // set plugins
         opt.plugins = (this.options.tooltip && this.options.tooltip.show) ? [this.tooltipPlugin()] : [];
         if (this.options.thouchZoom) {
-            opt.plugins.push(this.touchZoomPlugin({}));
+            opt.plugins.push(this.touchZoomPlugin(opt));
         }
         this.uplot = new uPlot(opt, this.data, this.graph.nativeElement);
 
