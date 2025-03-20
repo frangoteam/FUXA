@@ -225,4 +225,12 @@ export class GaugeBaseComponent {
             }
         });
     }
+
+    static checkLanguageTextchange(gaugeProperty: GaugeProperty, elementWithLanguageText: any) {
+        if (gaugeProperty.text) {
+            if (elementWithLanguageText?.tagName?.toLowerCase() === 'text') {
+                elementWithLanguageText.textContent = gaugeProperty.text;
+            }
+        }
+    }
 }

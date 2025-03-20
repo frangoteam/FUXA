@@ -1387,7 +1387,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (result) {
                 callback(result.settings);
                 this.saveView(this.currentView);
-                let result_gauge = this.gaugesManager.initInEditor(result.settings, this.resolver, this.viewContainerRef);
+                let result_gauge = this.gaugesManager.initInEditor(result.settings, this.resolver, this.viewContainerRef, elementWithLanguageText);
                 if (result_gauge && result_gauge.element && result_gauge.element.id !== result.settings.id) {
                     // by init a path we need to change the id
                     delete this.currentView.items[result.settings.id];

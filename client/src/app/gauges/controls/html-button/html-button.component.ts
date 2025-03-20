@@ -46,7 +46,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
         return this.actionsType;
     }
 
-    static initElement(gab: GaugeSettings) {
+    static initElement(gab: GaugeSettings): HTMLElement {
         let ele = document.getElementById(gab.id);
         if (ele && gab.property) {
             let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);

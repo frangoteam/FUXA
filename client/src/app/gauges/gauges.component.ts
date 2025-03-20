@@ -173,7 +173,7 @@ export class GaugesManager {
      * gauges to update in editor after changed property (GaugePropertyComponent, ChartPropertyComponent)
      * @param ga
      */
-    initInEditor(ga: GaugeSettings, res: any, ref: any) {
+    initInEditor(ga: GaugeSettings, res: any, ref: any, elementWithLanguageText?: any) {
         if (ga.type.startsWith(GaugeProgressComponent.TypeTag)) {
             GaugeProgressComponent.initElement(ga);
         } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
@@ -205,6 +205,8 @@ export class GaugesManager {
             this.mapGauges[ga.id] = gauge;
         } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
             HtmlImageComponent.detectChange(ga, true);
+        } else if (elementWithLanguageText){
+            GaugeBaseComponent.checkLanguageTextchange(ga.property, elementWithLanguageText);
         }
         return false;
     }
