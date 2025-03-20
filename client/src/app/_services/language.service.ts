@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { ProjectService } from './project.service';
-import { Language, Languages } from '../_models/language';
+import { Language, LANGUAGE_TEXT_KEY_PREFIX, Languages, LanguageText } from '../_models/language';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class LanguageService {
-
     localStorageItem = 'currentLanguage';
     languages: Languages;
     languageConfig: LanguageConfiguration;
     languageConfig$ = new BehaviorSubject<LanguageConfiguration>(null);
+    texts: LanguageText[];
 
     constructor(
         public projectService: ProjectService
@@ -24,6 +24,7 @@ export class LanguageService {
                 ...this.languages
             };
 		    this.setCurrentLanguage(this.languageConfig.currentLanguage);
+            this.texts = this.projectService.getTexts();
         });
     }
 
@@ -31,6 +32,13 @@ export class LanguageService {
         this.languageConfig.currentLanguage = lang;
         this.languageConfig$.next(this.languageConfig);
 		localStorage.setItem(this.localStorageItem, JSON.stringify(lang));
+    }
+
+    getTranslation(textKey: string): string {
+        if (!textKey || !textKey.startsWith(LANGUAGE_TEXT_KEY_PREFIX)) {
+            return null;
+        }
+        return '';
     }
 }
 

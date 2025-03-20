@@ -25,7 +25,10 @@ export class LanguageTextPropertyComponent implements OnInit {
 
     ngOnInit() {
         let controls = {
-            name: new FormControl(this.data.text?.name || '', [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]+$/)]),
+            name: new FormControl(this.data.text?.name || '', [
+                Validators.required,
+                Validators.pattern(/^[a-zA-Z0-9_]+$/)
+            ]),
             group: new FormControl(this.data.text?.group || ''),
             value: new FormControl(this.data.text?.value || ''),
         };
@@ -38,8 +41,9 @@ export class LanguageTextPropertyComponent implements OnInit {
     }
 
     checkNameExists() {
-        const name = this.formGroup.get('name')?.value;
-        this.nameExists = !!this.projectService.getTexts()?.find(text => text.name === name);
+        const name = this.formGroup?.get('name')?.value;
+        this.nameExists = this.projectService.getTexts()?.find(text => text.name === name && text.id !== this.data.text.id) ? true : false;
+        return this.nameExists ? { nameTaken: true } : null;
     }
 
     clearNameError() {

@@ -31,6 +31,7 @@ import { FuxaViewDialogComponent, FuxaViewDialogData } from './fuxa-view-dialog/
 import { LegacyDialogPosition as DialogPosition, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { WebcamPlayerDialogComponent, WebcamPlayerDialogData } from '../gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
 import { PlaceholderDevice } from '../_models/device';
+import { LanguageService } from '../_services/language.service';
 
 declare var SVG: any;
 
@@ -85,6 +86,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         private scriptService: ScriptService,
         private projectService: ProjectService,
         private hmiService: HmiService,
+        private languageService: LanguageService,
         private resolver: ComponentFactoryResolver,
         private fuxaDialog: MatDialog) {
     }
@@ -298,6 +300,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                                 this.runEvents(this, gaugeSetting, null, loadEvents);
                             }
                         }
+                        // check language translation
+                        const textTranslated = this.languageService.getTranslation(items[key].property?.text);
+                        console.log('gaugeSetting ', textTranslated);
+                        // if (items[key].property?.text) {
+                        //     console.log('gaugeSetting ', items[key].property.text);
+                        //     items[key].property.text = this.translateService.instant(items[key].property.text);
+                        // }
                     }
                 } catch (err) {
                     console.error('loadWatch: ' + key, err);

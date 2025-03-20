@@ -14,3 +14,5 @@ export class LanguageText {
     value: string;
     translations: { [languageId: string]: string };
 }
+
+export const LANGUAGE_TEXT_KEY_PREFIX = '@';
