@@ -12,6 +12,7 @@ var MQTTclient = require('./mqtt');
 var EthernetIPclient = require('./ethernetip');
 var FuxaServer = require('./fuxaserver');
 var ODBCclient = require('./odbc');
+var ADSclient = require('./adsclient');
 // var TEMPLATEclient = require('./template');
 
 const path = require('path');
@@ -88,6 +89,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = ODBCclient.create(data, logger, events, manager);
+    } else if (data.type === DeviceEnum.ADSclient) {
+        if (!ADSclient) {
+            return null;
+        }
+        comm = ADSclient.create(data, logger, events, manager);
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
@@ -489,6 +495,8 @@ function loadPlugin(type, module) {
         FuxaServer = require(module);
     } else if (type === DeviceEnum.ODBC) {
         ODBCclient = require(module);
+    } else if (type === DeviceEnum.ADSclient) {
+        ADSclient = require(module);
     }
 }
 
@@ -525,6 +533,7 @@ var DeviceEnum = {
     EthernetIP: 'EthernetIP',
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
+    ADSclient: 'ADSclient',
     // Template: 'template'
 }
 

@@ -27,6 +27,7 @@ plugins['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '2.78.0', P
 plugins['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.9', PluginGroupType.connectionDevice);
 plugins['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4', PluginGroupType.connectionDevice);
 plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.7', PluginGroupType.connectionDevice);
+plugins['node-ads'] = new Plugin('node-ads', './adsclient', 'ADSclient', '1.0.0', PluginGroupType.connectionDevice);
 plugins['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.17', PluginGroupType.connectionDevice, true);
 plugins['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8', PluginGroupType.connectionDatabase);
 // plugins['influxdb-client'] = new Plugin('@influxdata/influxdb-client', '../storage/influxdb', 'influxDB', '1.25.0', true);
@@ -36,8 +37,8 @@ plugins['chartjs-node-canvas'] = new Plugin('chartjs-node-canvas', 'chartjs-canv
 
 /**
  * Init plugin resource
- * @param {*} _settings 
- * @param {*} log 
+ * @param {*} _settings
+ * @param {*} log
  */
 function init(_settings, log) {
     settings = _settings;
