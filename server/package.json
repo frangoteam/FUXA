@@ -1,6 +1,6 @@
 {
   "name": "fuxa-server",
-  "version": "1.2.4-2188",
+  "version": "1.2.5-2216",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
   "main": "main.js",
   "scripts": {
@@ -34,11 +34,11 @@
     "ip": "2.0.1",
     "jsonwebtoken": "9.0.0",
     "live-plugin-manager": "0.15.1",
-    "modbus-serial": "8.0.16",
+    "modbus-serial": "8.0.19",
     "morgan": "1.10.0",
     "mqtt": "4.3.7",
     "node-bacnet": "0.2.4",
-    "node-opcua": "2.130.0",
+    "node-opcua": "2.149.0",
     "node-schedule": "2.1.1",
     "nodemailer": "6.9.9",
     "nopt": "5.0.0",

@@ -66,7 +66,7 @@ function Device(data, runtime) {
         if (!HTTPclient) {
             return null;
         }
-        comm = HTTPclient.create(data, logger, events, manager, runtime);
+        comm = HTTPclient.create(data, logger, events, runtime);
     } else if (data.type === DeviceEnum.MQTTclient) {
         if (!MQTTclient) {
             return null;
