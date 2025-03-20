@@ -343,6 +343,38 @@ export class TagPropertyService {
         dialogRef.afterClosed().subscribe();
     }
 
+    public editTagPropertyADSclient(device: Device, tag: Tag, checkToAdd: boolean): Observable<any> {
+        let oldTagId = tag.id;
+        let tagToEdit: Tag = Utils.clone(tag);
+        let dialogRef = this.dialog.open(TagPropertyEditOpcuaComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            data: <TagPropertyOpcUaData> {
+                device: device,
+                tag: tagToEdit
+            },
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                if (result) {
+                    tag.type = result.tagType;
+                    tag.description = result.tagDescription;
+                    if (checkToAdd) {
+                        this.checkToAdd(tag, device);
+                    } else if (tag.id !== oldTagId) {
+                        //remove old tag device reference
+                        delete device.tags[oldTagId];
+                        this.checkToAdd(tag, device);
+                    }
+                    this.projectService.setDeviceTags(device);
+                }
+                dialogRef.close();
+                return result;
+            })
+        );
+    }
+
     checkToAdd(tag: Tag, device: Device, overwrite: boolean = false) {
         let exist = false;
         Object.keys(device.tags).forEach((key) => {

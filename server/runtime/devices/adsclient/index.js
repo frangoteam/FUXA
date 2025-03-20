@@ -1,5 +1,5 @@
 /**
- * 'ROS client': ROS client to manage subscription and publish 
+ * 'ROS client': ROS client to manage subscription and publish
  */
 
 'use strict';
@@ -22,7 +22,7 @@ function ADSclient(_data, _logger, _events) {
     var topicsMap = {};                 // Map the topic subscribed, to check by on.message
 
     /**
-     * initialize the device type 
+     * initialize the device type
      */
     this.init = function (_type) {
         console.error('Not supported!');
@@ -46,7 +46,7 @@ function ADSclient(_data, _logger, _events) {
                             targetAmsNetId: ipAddress,
                             targetAdsPort: data.property.port || 30012,
                             // routerAddress: 'localhost',      //PLC ip address
-                            // routerTcpPort: data.property.port || 48898   
+                            // routerTcpPort: data.property.port || 48898
                         };
                         if (data.property.local) {
                             var ipLocalNetId = data.property.local;
@@ -101,7 +101,7 @@ function ADSclient(_data, _logger, _events) {
                         });
                         client.on("connect", function (connectionInfo) {
                             connected = true;
-                            logger.info(`'${data.name}' client connected ${connectionInfo}`, false);
+                            logger.info(`'${data.name}' client connected ${connectionInfo.targetAmsNetId}`, false);
                         });
                         client.on("disconnect", function () {
                             connected = false;
@@ -165,7 +165,7 @@ function ADSclient(_data, _logger, _events) {
     }
 
     /**
-     * Read values in polling mode 
+     * Read values in polling mode
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
@@ -179,6 +179,10 @@ function ADSclient(_data, _logger, _events) {
                     if (this.addDaq) {
                         this.addDaq(varsValueChanged, data.name);
                     }
+
+                    var res = await client.readValue('MAIN.i');
+
+                    logger.info(`'${data.name}' value read: ${res.value}`);
                 } catch (err) {
                     logger.error(`'${data.name}' polling error: ${err}`);
                 }
@@ -245,7 +249,7 @@ function ADSclient(_data, _logger, _events) {
         if (client && client.connected && data.tags[tagId]) {
             try {
                 var valueToSend = deviceUtils.tagRawCalculator(_toValue(data.tags[tagId].type, value), data.tags[tagId]);
-                const res = await client.writeSymbol(ata.tags[tagId].address, valueToSend)
+                const res = await client.writeValue(ata.tags[tagId].address, valueToSend)
             } catch (err) {
                 logger.error(`'${data.name}' setValue error! ${err}`);
             }
@@ -269,7 +273,7 @@ function ADSclient(_data, _logger, _events) {
 
     /**
      * Return the timestamp of last read tag operation on polling
-     * @returns 
+     * @returns
      */
     this.lastReadTimestamp = () => {
         return lastTimestampValue;
@@ -282,51 +286,23 @@ function ADSclient(_data, _logger, _events) {
         return new Promise(function (resolve, reject) {
             var topics = Object.values(data.tags).map(t => t.address);
             _mapTopicsAddress(Object.values(data.tags));
+            logger.info()
             if (topics && topics.length) {
-                var count = 0;
-                topics.forEach(async (topic) => {
-                    try {
-                        await client.subscribe(topic, _onChange, 1000, false);
-                        count++;
-                    } catch (err) {
-                        logger.error(`'${data.name}' subscribe ${topic} error! ${err}`);
-                        return
-                    }
-                });
-                logger.info(`'${data.name}' subscribe ${count} of ${topics.length}`, true);
-
-                // client.subscribe(topics, function (err) {
-                //     if (err) {
-                //         reject(err);
-                //     } else {
-                //         client.on('message', function (topicAddr, msg, pkt) {
-                //             if (topicsMap[topicAddr]) {
-                //                 for (var i = 0; i < topicsMap[topicAddr].length; i++) {
-                //                     var id = topicsMap[topicAddr][i].id;
-                //                     var oldvalue = data.tags[id].rawValue;
-                //                     data.tags[id].rawValue = msg.toString();
-                //                     data.tags[id].timestamp = new Date().getTime();
-                //                     data.tags[id].changed = oldvalue !== data.tags[id].rawValue;
-                //                     if (data.tags[id].type === 'json' && data.tags[id].options && data.tags[id].options.subs && data.tags[id].memaddress) {
-                //                         try {
-                //                             var subitems = JSON.parse(data.tags[id].rawValue);
-                //                             if (!utils.isNullOrUndefined(subitems[data.tags[id].memaddress])) {
-                //                                 data.tags[id].rawValue = subitems[data.tags[id].memaddress];
-                //                             } else {
-                //                                 data.tags[id].rawValue = oldvalue;
-                //                             }
-                //                         } catch (err) {
-                //                             console.error(err);
-                //                         }
-                //                     }
-                //                 }
-                //             }
-                //         });
-                        resolve();
-                //     }
-                // });
+              var count = 0;
+              topics.forEach(async (topic) => {
+                  try {
+                      logger.info(`subscribe ${topic}`);
+                      await client.subscribeValue(topic, _onChange, 1000, false);
+                      count++;
+                  } catch (err) {
+                      logger.error(`'${data.name}' subscribe ${topic} error! ${err}`);
+                      return
+                  }
+              });
+              logger.info(`'${data.name}' subscribe ${count} of ${topics.length}`, true);
+              resolve();
             } else {
-                resolve();
+              resolve();
             }
         });
     }
@@ -334,7 +310,7 @@ function ADSclient(_data, _logger, _events) {
     /**
      * Callback from monitor of changed Tag value
      * And set the changed value to local Tags
-     * @param {*} _nodeId 
+     * @param {*} _nodeId
      */
     const _onChange = (data, sub) => {
         console.log(`${data.timeStamp}: ${sub.target} changed to ${data.value}`)
@@ -351,7 +327,7 @@ function ADSclient(_data, _logger, _events) {
 
     /**
      * Map the topics to address (path)
-     * @param {*} topics 
+     * @param {*} topics
      */
     var _mapTopicsAddress = function (topics) {
         var tmap = {};
@@ -376,7 +352,7 @@ function ADSclient(_data, _logger, _events) {
     }
 
     /**
-     * Return the Topics to publish that have value changed and clear value changed flag of all Topics 
+     * Return the Topics to publish that have value changed and clear value changed flag of all Topics
      */
     var _checkVarsChanged = () => {
         const timestamp = new Date().getTime();
@@ -396,7 +372,7 @@ function ADSclient(_data, _logger, _events) {
 
     /**
      * Emit the mqtt client connection status
-     * @param {*} status 
+     * @param {*} status
      */
     var _emitStatus = function (status) {
         lastStatus = status;
@@ -405,7 +381,7 @@ function ADSclient(_data, _logger, _events) {
 
     /**
      * Emit the mqtt Topics values array { id: <name>, value: <value>, type: <type> }
-     * @param {*} values 
+     * @param {*} values
      */
     var _emitValues = function (values) {
         events.emit('device-value:changed', { id: data.name, values: values });
@@ -413,7 +389,7 @@ function ADSclient(_data, _logger, _events) {
 
     /**
      * Used to manage the async connection and polling automation (that not overloading)
-     * @param {*} check 
+     * @param {*} check
      */
     var _checkWorking = function (check) {
         if (check && working) {
@@ -437,8 +413,8 @@ function ADSclient(_data, _logger, _events) {
 
     /**
      * Convert value from string depending of type
-     * @param {*} type 
-     * @param {*} value 
+     * @param {*} type
+     * @param {*} value
      */
     var _toValue = function (type, value) {
         switch (type) {
