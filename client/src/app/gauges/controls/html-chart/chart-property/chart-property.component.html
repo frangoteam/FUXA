@@ -64,6 +64,10 @@
                                     <span>{{'chart.property-hide-toolbar' | translate}}</span>
                                     <mat-slide-toggle color="primary" [(ngModel)]="options.hideToolbar" (change)="onChartChanged()"></mat-slide-toggle>
                                 </div>
+                                <div class="my-form-field inbk ml10 tac">
+                                    <span>{{'chart.property-thouch-zoom' | translate}}</span>
+                                    <mat-slide-toggle color="primary" [(ngModel)]="options.thouchZoom" (change)="onChartChanged()"></mat-slide-toggle>
+                                </div>
                             </ng-container>
                         </div>
                     </ng-container>
