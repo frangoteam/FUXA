@@ -85,12 +85,13 @@ function ADSclient(_data, _logger, _events) {
                                 _checkWorking(false);
                             }).catch(function (err) {
                                 connected = false;
+                                logger.error(err);
                                 reject(err);
                                 _checkWorking(false);
                             });
                         }).then(() => {
                             connected = false;
-                            logger.warn(`'${data.name}' client disconnect ${data.property.address}`, true);
+                            logger.warn(`'${data.name}' client disconnect, conn ended ${data.property.address}`, true);
                             resolve();
                         }).catch((err) => {
                             connected = false;
@@ -103,9 +104,9 @@ function ADSclient(_data, _logger, _events) {
                             connected = true;
                             logger.info(`'${data.name}' client connected ${connectionInfo.targetAmsNetId}`, false);
                         });
-                        client.on("disconnect", function () {
+                        client.on("disconnect", function (connectionLost) {
                             connected = false;
-                            logger.warn(`'${data.name}' client disconnect ${data.property.address}`, true);
+                            logger.warn(`'${data.name}' client disconnect, got signal ${data.property.address}: ${connectionLost}`, true);
                         });
                         client.on("reconnect", function () {
                             connected = true;
@@ -146,12 +147,12 @@ function ADSclient(_data, _logger, _events) {
                 } catch (err) {
                     logger.error(`'${data.name}' try to unsubscribe error! ${err}`);
                 }
-                try {
-                    client.disconnect();
-                } catch (err) {
-                    logger.error(`'${data.name}' try to disconnect error! ${err}`);
-                    connected = false;
-                }
+                // try {
+                //     client.disconnect();
+                // } catch (err) {
+                //     logger.error(`'${data.name}' try to disconnect error! ${err}`);
+                //     connected = false;
+                // }
                 logger.info(`'${data.name}' disconnected!`, true);
                 _checkWorking(false);
                 _emitStatus('connect-off');
@@ -249,7 +250,7 @@ function ADSclient(_data, _logger, _events) {
         if (client && client.connected && data.tags[tagId]) {
             try {
                 var valueToSend = deviceUtils.tagRawCalculator(_toValue(data.tags[tagId].type, value), data.tags[tagId]);
-                const res = await client.writeValue(ata.tags[tagId].address, valueToSend)
+                const res = await client.writeValue(data.tags[tagId].address, valueToSend)
             } catch (err) {
                 logger.error(`'${data.name}' setValue error! ${err}`);
             }
