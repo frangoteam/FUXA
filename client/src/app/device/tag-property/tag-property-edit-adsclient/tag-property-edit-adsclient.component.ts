@@ -27,16 +27,9 @@ export class TagPropertyEditADSclientComponent implements OnInit, OnDestroy {
         this.formGroup = this.fb.group({
             deviceName: [this.data.device.name, Validators.required],
             tagName: [this.data.tag.name, [Validators.required, this.validateName()]],
+            tagType: [this.data.tag.type, Validators.required],
             tagAddress: [this.data.tag.address, Validators.required],
             tagDescription: [this.data.tag.description],
-        });
-        this.formGroup.controls.tagAddress.valueChanges.pipe(
-            takeUntil(this.destroy$)
-        ).subscribe(address => {
-            this.formGroup.controls.tagType.enable();
-            if (address === '') {
-                this.formGroup.controls.tagType.disable();
-            }
         });
 
         this.formGroup.updateValueAndValidity();

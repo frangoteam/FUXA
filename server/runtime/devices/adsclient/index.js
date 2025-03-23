@@ -91,7 +91,7 @@ function ADSclient(_data, _logger, _events) {
                             });
                         }).then(() => {
                             connected = false;
-                            logger.warn(`'${data.name}' client disconnect, conn ended ${data.property.address}`, true);
+                            logger.warn(`'${data.name}' client disconnect, connection ended ${data.property.address}`, true);
                             resolve();
                         }).catch((err) => {
                             connected = false;
@@ -147,12 +147,12 @@ function ADSclient(_data, _logger, _events) {
                 } catch (err) {
                     logger.error(`'${data.name}' try to unsubscribe error! ${err}`);
                 }
-                // try {
-                //     client.disconnect();
-                // } catch (err) {
-                //     logger.error(`'${data.name}' try to disconnect error! ${err}`);
-                //     connected = false;
-                // }
+                try {
+                    client.disconnect();
+                } catch (err) {
+                    logger.error(`'${data.name}' try to disconnect error! ${err}`);
+                    connected = false;
+                }
                 logger.info(`'${data.name}' disconnected!`, true);
                 _checkWorking(false);
                 _emitStatus('connect-off');
@@ -173,17 +173,13 @@ function ADSclient(_data, _logger, _events) {
         if (_checkWorking(true)) {
             if (client) {
                 try {
-                    var varsValueChanged = _checkVarsChanged();
+                    var varsValueChanged = await _checkVarsChanged();
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
 
                     if (this.addDaq) {
                         this.addDaq(varsValueChanged, data.name);
                     }
-
-                    var res = await client.readValue('MAIN.TestInt');
-
-                    logger.info(`'${data.name}' value read: ${res.value}`);
                 } catch (err) {
                     logger.error(`'${data.name}' polling error: ${err}`);
                 }
@@ -287,12 +283,10 @@ function ADSclient(_data, _logger, _events) {
         return new Promise(function (resolve, reject) {
             var topics = Object.values(data.tags).map(t => t.address);
             _mapTopicsAddress(Object.values(data.tags));
-            logger.info()
             if (topics && topics.length) {
               var count = 0;
               topics.forEach(async (topic) => {
                   try {
-                      logger.info(`subscribe ${topic}`);
                       await client.subscribeValue(topic, _onChange, 1000, false);
                       count++;
                   } catch (err) {
@@ -300,7 +294,6 @@ function ADSclient(_data, _logger, _events) {
                       return
                   }
               });
-              logger.info(`'${data.name}' subscribe ${count} of ${topics.length}`, true);
               resolve();
             } else {
               resolve();
@@ -313,15 +306,14 @@ function ADSclient(_data, _logger, _events) {
      * And set the changed value to local Tags
      * @param {*} _nodeId
      */
-    const _onChange = (data, sub) => {
-        console.log(`${data.timeStamp}: ${sub.target} changed to ${data.value}`)
-        if (topicsMap[sub.target]) {
-            for (var i = 0; i < topicsMap[sub.target].length; i++) {
-                var id = topicsMap[sub.target][i].id;
+    const _onChange = (receivedData, sub) => {
+        if (topicsMap[sub.symbol.name]) {
+            for (var i = 0; i < topicsMap[sub.symbol.name].length; i++) {
+                var id = topicsMap[sub.symbol.name][i].id;
                 var oldvalue = data.tags[id].rawValue;
-                data.tags[id].rawValue = data.value.toString();
-                data.tags[id].timestamp = new Date().getTime();
-                data.tags[id].changed = oldvalue !== data.tags[id].rawValue;
+                data.tags[id].rawValue = receivedData.value.toString();
+                data.tags[id].timestamp = receivedData.timestamp.getTime();
+                data.tags[id].changed = oldvalue !== receivedData.value;
             }
         }
     }
@@ -355,15 +347,16 @@ function ADSclient(_data, _logger, _events) {
     /**
      * Return the Topics to publish that have value changed and clear value changed flag of all Topics
      */
-    var _checkVarsChanged = () => {
+    var _checkVarsChanged = async () => {
         const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
+        		// logger.warn(`Tag ${id} has raw value ${data.tags[id].rawValue}`);
             if (!utils.isNullOrUndefined(data.tags[id].rawValue)) {
-                data.tags[id].value = deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
-                if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
-                    result[id] = data.tags[id];
-                }
+              data.tags[id].value = await deviceUtils.tagValueCompose(data.tags[id].rawValue, data.tags[id]);
+              if (this.addDaq && deviceUtils.tagDaqToSave(data.tags[id], timestamp)) {
+                  result[id] = data.tags[id];
+              }
             }
             data.tags[id].changed = false;
             varsValue[id] = data.tags[id];

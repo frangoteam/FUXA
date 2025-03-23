@@ -16,6 +16,14 @@
             </span>
         </div>
         <div class="my-form-field item-block mt10">
+            <span>{{'device.tag-property-type' | translate}}</span>
+            <mat-select formControlName="tagType">
+                <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
+                    {{ type.value }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field item-block mt10">
             <span>{{'device.tag-property-address-offset' | translate}}</span>
             <input formControlName="tagAddress" type="text">
         </div>
