@@ -20,15 +20,16 @@ export class LanguageService {
         private authService: AuthService
     ) {
         this.projectService.onLoadHmi.subscribe(() => {
-            let storageLanguage = JSON.parse(localStorage.getItem(this.localStorageItem));
+            let storageLanguage = this.getStorageLanguage();
             this.languages = this.projectService.getLanguages();
             this.languageConfig = {
                 currentLanguage: storageLanguage || this.languages?.default || { id: 'EN', name: 'English' },
                 ...this.languages
             };
-            const userLanguageId = new UserInfo(this.authService.getUser()?.info).languageId;
+            const user = this.authService.getUser();
+            const userLanguageId = new UserInfo(user?.info).languageId;
             if (userLanguageId) {
-                this.languageConfig.currentLanguage = this.getLanguage(userLanguageId) || this.languageConfig.currentLanguage;
+                this.languageConfig.currentLanguage ??= this.getLanguage(userLanguageId);
             }
 		    this.setCurrentLanguage(this.languageConfig.currentLanguage);
             this.texts = this.projectService.getTexts().reduce((acc, text) => {
@@ -39,9 +40,15 @@ export class LanguageService {
     }
 
     setCurrentLanguage(lang: Language): void {
+        const username = this.authService.getUser()?.username || '';
         this.languageConfig.currentLanguage = lang;
         this.languageConfig$.next(this.languageConfig);
-		localStorage.setItem(this.localStorageItem, JSON.stringify(lang));
+		localStorage.setItem(`${this.localStorageItem}-${username}`, JSON.stringify(lang));
+    }
+
+    private getStorageLanguage(): Language {
+        const username = this.authService.getUser()?.username || '';
+        return JSON.parse(localStorage.getItem(`${this.localStorageItem}-${username}`));
     }
 
     getTranslation(textKey: string): string {
