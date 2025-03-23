@@ -211,6 +211,7 @@ import { MapsLocationPropertyComponent } from './maps/maps-location-property/map
 import { MapsViewComponent } from './maps/maps-view/maps-view.component';
 import { MapsLocationImportComponent } from './maps/maps-location-import/maps-location-import.component';
 import { MapsFabButtonMenuComponent } from './maps/maps-view/maps-fab-button-menu/maps-fab-button-menu.component';
+import { TagPropertyEditADSclientComponent } from './device/tag-property/tag-property-edit-adsclient/tag-property-edit-adsclient.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -241,6 +242,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyEditBacnetComponent,
         TagPropertyEditWebapiComponent,
         TagPropertyEditEthernetipComponent,
+        TagPropertyEditADSclientComponent,
         TagOptionsComponent,
         TopicPropertyComponent,
         DevicePropertyComponent,

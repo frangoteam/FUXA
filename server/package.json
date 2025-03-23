@@ -18,6 +18,7 @@
     "@influxdata/influxdb-client": "1.25.0",
     "@tdengine/rest": "3.0.2",
     "@types/socket.io": "2.1.2",
+    "ads-client": "^2.1.0",
     "app-root-path": "2.2.1",
     "async": "3.2.3",
     "async-mutex": "0.5.0",

@@ -393,6 +393,20 @@
                         </mat-expansion-panel>
                     </div>
                 </div>
+                <div *ngSwitchCase="deviceType.ADSclient">
+                    <div class="my-form-field block mb10">
+                        <span>{{'device.property-ads-target' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip" (click)="onAddressChanged()">
+                    </div>
+                    <div class="my-form-field block mb10">
+                        <span>{{'device.property-ads-local' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.local" style="width: 350px" type="ip" (click)="onAddressChanged()">
+                    </div>
+                    <div class="my-form-field block">
+                        <span>{{'device.property-ads-router' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.router" style="width: 350px" type="ip" (click)="onAddressChanged()">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
