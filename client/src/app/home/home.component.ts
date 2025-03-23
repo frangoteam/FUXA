@@ -353,6 +353,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onSetLanguage(language: Language) {
         this.languageService.setCurrentLanguage(language);
+        window.location.reload();
     }
 
     private processValueInHeaderItem(varTag: Variable) {
@@ -420,7 +421,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.infos.mode = this.hmi.layout.header.infos;
                     }
                     this.checkHeaderButton();
-                    this.layoutHeader = this.hmi.layout.header;
+                    this.layoutHeader = Utils.clone(this.hmi.layout.header);
                     this.changeDetector.detectChanges();
                     this.loadHeaderItems();
                 }
@@ -463,6 +464,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             item.status.onlyChange = true;
             item.status.variablesValue = {};
             item.element = Utils.findElementByIdRecursive(this.header.nativeElement, item.id);
+            (item as any).text = this.languageService.getTranslation(item.property?.text) ?? item.property?.text;
             const signalsIds = HtmlButtonComponent.getSignals(item.property);
             signalsIds.forEach(sigId => {
                 if (!this.headerItemsMap.has(sigId)) {

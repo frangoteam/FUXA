@@ -250,7 +250,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     continue;
                 }
                 try {
-                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true, this);
+                    // check language translation
+                    const textTranslated = this.languageService.getTranslation(items[key].property?.text);
+                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true, this, textTranslated);
                     if (gauge) {
                         this.mapControls[key] = gauge;
                     }
@@ -300,13 +302,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                                 this.runEvents(this, gaugeSetting, null, loadEvents);
                             }
                         }
-                        // check language translation
-                        const textTranslated = this.languageService.getTranslation(items[key].property?.text);
-                        console.log('gaugeSetting ', textTranslated);
-                        // if (items[key].property?.text) {
-                        //     console.log('gaugeSetting ', items[key].property.text);
-                        //     items[key].property.text = this.translateService.instant(items[key].property.text);
-                        // }
                     }
                 } catch (err) {
                     console.error('loadWatch: ' + key, err);

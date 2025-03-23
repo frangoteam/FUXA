@@ -11,7 +11,7 @@ export class LanguageService {
     languages: Languages;
     languageConfig: LanguageConfiguration;
     languageConfig$ = new BehaviorSubject<LanguageConfiguration>(null);
-    texts: LanguageText[];
+    texts: { [id: string]: LanguageText } = {};
 
     constructor(
         public projectService: ProjectService
@@ -24,7 +24,10 @@ export class LanguageService {
                 ...this.languages
             };
 		    this.setCurrentLanguage(this.languageConfig.currentLanguage);
-            this.texts = this.projectService.getTexts();
+            this.texts = this.projectService.getTexts().reduce((acc, text) => {
+                acc[text.name] = text;
+                return acc;
+              }, {} as { [id: string]: LanguageText });
         });
     }
 
@@ -38,7 +41,15 @@ export class LanguageService {
         if (!textKey || !textKey.startsWith(LANGUAGE_TEXT_KEY_PREFIX)) {
             return null;
         }
-        return '';
+        const text = this.texts[textKey.substring(1)];
+        if (text) {
+            if (text.translations[this.languageConfig.currentLanguage.id]) {
+                return text.translations[this.languageConfig.currentLanguage.id];
+            } else {
+                return text.value;
+            }
+        }
+        return null;
     }
 }
 

@@ -32,7 +32,7 @@
 								[style.marginLeft.px]="item.marginLeft"
 								[style.marginRight.px]="item.marginRight">
 								<mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-							{{ item.property?.text ?? item.type }}
+							{{ item.text ?? item.type }}
 						</button>
 					</ng-container>
 					<ng-container *ngSwitchCase="'label'">
@@ -44,7 +44,7 @@
 								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
 								[style.marginLeft.px]="item.marginLeft"
 								[style.marginRight.px]="item.marginRight">
-							{{ item.property?.text ?? item.type }}
+							{{ item.text ?? item.type }}
 						</button>
 					</ng-container>
 					<ng-container *ngSwitchCase="'image'">

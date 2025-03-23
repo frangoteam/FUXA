@@ -17,6 +17,8 @@ export class GaugeBaseComponent {
     @Input() settings: GaugeSettings;
     @Output() edit: EventEmitter<any> = new EventEmitter();
 
+    static GAUGE_TEXT = 'text';
+
     constructor() { }
 
     onEdit() {
@@ -226,10 +228,10 @@ export class GaugeBaseComponent {
         });
     }
 
-    static checkLanguageTextchange(gaugeProperty: GaugeProperty, elementWithLanguageText: any) {
-        if (gaugeProperty.text) {
-            if (elementWithLanguageText?.tagName?.toLowerCase() === 'text') {
-                elementWithLanguageText.textContent = gaugeProperty.text;
+    static setLanguageText(elementWithLanguageText: any, text: string) {
+        if (text) {
+            if (elementWithLanguageText?.tagName?.toLowerCase() === GaugeBaseComponent.GAUGE_TEXT) {
+                elementWithLanguageText.textContent = text;
             }
         }
     }

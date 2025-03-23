@@ -206,7 +206,7 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
             HtmlImageComponent.detectChange(ga, true);
         } else if (elementWithLanguageText){
-            GaugeBaseComponent.checkLanguageTextchange(ga.property, elementWithLanguageText);
+            GaugeBaseComponent.setLanguageText(elementWithLanguageText, ga.property?.text);
         }
         return false;
     }
@@ -750,7 +750,7 @@ export class GaugesManager {
      * @param isview in view or editor, in editor have to disable mouse activity
      * @param parent parent that call the function, should be from a FuxaViewComponent
      */
-    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean, parent?: FuxaViewComponent) {
+    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean, parent?: FuxaViewComponent, textTranslation?: string) {
         if (!ga || !ga.type) {
             console.error('!TOFIX', ga);
             return null;
@@ -836,7 +836,7 @@ export class GaugesManager {
             this.mapGauges[ga.id] = gauge;
             return gauge;
         } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
-            let gauge = HtmlButtonComponent.initElement(ga);
+            let gauge = HtmlButtonComponent.initElement(ga, textTranslation);
             return gauge || true;
         } else if (ga.type.startsWith(PipeComponent.TypeTag)) {
             let gauge = PipeComponent.initElement(ga, isview, parent?.getGaugeStatus(ga));
@@ -845,6 +845,7 @@ export class GaugesManager {
         } else {
             let ele = document.getElementById(ga.id);
             ele?.setAttribute('data-name', ga.name);
+            GaugeBaseComponent.setLanguageText(ele, textTranslation);
             return ele || true;
         }
     }
