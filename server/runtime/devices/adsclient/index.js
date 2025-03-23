@@ -247,7 +247,7 @@ function ADSclient(_data, _logger, _events) {
      * Set the Tag value to device
      */
     this.setValue = async (tagId, value) => {
-        if (client && client.connected && data.tags[tagId]) {
+        if (client && client.connection.connected && data.tags[tagId]) {
             try {
                 var valueToSend = deviceUtils.tagRawCalculator(_toValue(data.tags[tagId].type, value), data.tags[tagId]);
                 const res = await client.writeValue(data.tags[tagId].address, valueToSend)
@@ -261,7 +261,7 @@ function ADSclient(_data, _logger, _events) {
      * Return if device is connected
      */
     this.isConnected = function () {
-        return (client) ? client.connected : false;
+        return (client) ? client.connection.connected : false;
     }
 
     /**
