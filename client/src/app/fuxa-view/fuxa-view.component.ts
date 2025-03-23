@@ -31,6 +31,7 @@ import { FuxaViewDialogComponent, FuxaViewDialogData } from './fuxa-view-dialog/
 import { LegacyDialogPosition as DialogPosition, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { WebcamPlayerDialogComponent, WebcamPlayerDialogData } from '../gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
 import { PlaceholderDevice } from '../_models/device';
+import { LanguageService } from '../_services/language.service';
 
 declare var SVG: any;
 
@@ -85,6 +86,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         private scriptService: ScriptService,
         private projectService: ProjectService,
         private hmiService: HmiService,
+        private languageService: LanguageService,
         private resolver: ComponentFactoryResolver,
         private fuxaDialog: MatDialog) {
     }
@@ -248,7 +250,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     continue;
                 }
                 try {
-                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true, this);
+                    // check language translation
+                    const textTranslated = this.languageService.getTranslation(items[key].property?.text);
+                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true, this, textTranslated);
                     if (gauge) {
                         this.mapControls[key] = gauge;
                     }
@@ -578,7 +582,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     if (htmlevent.ga.type === HtmlInputComponent.TypeTag) {
                         htmlevent.dom.focus();
-                        htmlevent.dom.select();                        
+                        htmlevent.dom.select();
                         const events = JSON.parse(JSON.stringify(HtmlInputComponent.getEvents(htmlevent.ga.property, GaugeEventType.enter)));
                         self.eventForScript(events, htmlevent.value);
                     }

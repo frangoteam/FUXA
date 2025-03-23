@@ -1121,6 +1121,11 @@
     "text.list-group": "组",
     "text.list-value": "文本",
 
+    "text.settings-title": "文本",
+    "text.settings-id": "ID",
+    "text.settings-group": "组",
+    "text.settings-value": "文本",
+
     "gui.range-number-min": "最小值",
     "gui.range-number-max": "最大值",
     "gui.range-number-boolean": "掩码值",
@@ -1129,11 +1134,6 @@
     "gui.range-number-switcher": "范围为数字或布尔值",
 
     "dlg.bitmask-title": "Bitmask",
-
-    "dlg.textproperty-title": "文本",
-    "dlg.textproperty-id": "ID",
-    "dlg.textproperty-group": "组",
-    "dlg.textproperty-value": "文本",
 
     "dlg.plugins-title": "插件",
     "dlg.plugins-name": "名称",

@@ -46,12 +46,12 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
         return this.actionsType;
     }
 
-    static initElement(gab: GaugeSettings) {
+    static initElement(gab: GaugeSettings, textTranslation?: string): HTMLElement {
         let ele = document.getElementById(gab.id);
         if (ele && gab.property) {
             let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);
             if (htmlButton) {
-                let text = gab.property.text || gab.name;
+                let text = textTranslation || gab.property.text || gab.name;
                 htmlButton.innerHTML = (text) ? text : '<span>&nbsp;</span>';
             }
         }
