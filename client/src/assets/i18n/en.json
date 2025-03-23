@@ -138,6 +138,7 @@
     "dlg.userproperty-groups": "Authorization Groups",
     "dlg.userproperty-roles": "Authorization Roles",
     "dlg.useraccess-groups": "Authorization (void = full for everyone)",
+    "dlg.userproperty-language": "Language",
     "dlg.userproperty-start": "Start View",
 
     "dlg.gauge-permission-title": "Authorization",

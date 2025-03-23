@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { ProjectService } from './project.service';
 import { Language, LANGUAGE_TEXT_KEY_PREFIX, Languages, LanguageText } from '../_models/language';
 import { BehaviorSubject } from 'rxjs';
+import { UserInfo } from '../users/user-edit/user-edit.component';
+import { AuthService } from './auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -14,15 +16,20 @@ export class LanguageService {
     texts: { [id: string]: LanguageText } = {};
 
     constructor(
-        public projectService: ProjectService
+        public projectService: ProjectService,
+        private authService: AuthService
     ) {
         this.projectService.onLoadHmi.subscribe(() => {
             let storageLanguage = JSON.parse(localStorage.getItem(this.localStorageItem));
             this.languages = this.projectService.getLanguages();
             this.languageConfig = {
-                currentLanguage: storageLanguage || this.languages.default || { id: 'EN', name: 'English' },
+                currentLanguage: storageLanguage || this.languages?.default || { id: 'EN', name: 'English' },
                 ...this.languages
             };
+            const userLanguageId = new UserInfo(this.authService.getUser()?.info).languageId;
+            if (userLanguageId) {
+                this.languageConfig.currentLanguage = this.getLanguage(userLanguageId) || this.languageConfig.currentLanguage;
+            }
 		    this.setCurrentLanguage(this.languageConfig.currentLanguage);
             this.texts = this.projectService.getTexts().reduce((acc, text) => {
                 acc[text.name] = text;
@@ -50,6 +57,13 @@ export class LanguageService {
             }
         }
         return null;
+    }
+
+    getLanguage(id: string) {
+        if (this.languages?.default?.id === id) {
+            return this.languages.default;
+        }
+        return this.languages?.options?.find(lang => lang.id === id);
     }
 }
 
