@@ -181,7 +181,7 @@ function ADSclient(_data, _logger, _events) {
                         this.addDaq(varsValueChanged, data.name);
                     }
 
-                    var res = await client.readValue('MAIN.i');
+                    var res = await client.readValue('MAIN.TestInt');
 
                     logger.info(`'${data.name}' value read: ${res.value}`);
                 } catch (err) {

@@ -307,6 +307,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             });
             return;
         }
+        if (this.deviceSelected.type === DeviceType.ADSclient) {
+            this.tagPropertyService.editTagPropertyADSclient(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
     }
 
     editTagOptions(tags: Tag[]) {
