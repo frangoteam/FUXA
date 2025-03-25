@@ -84,7 +84,7 @@
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-description' | translate}} </mat-header-cell>
             <mat-cell *matCellDef="let element" matTooltip="{{element.description}}">{{ element.description }}</mat-cell>
         </ng-container>
-        
+
         <!-- Logger Column -->
         <ng-container matColumnDef="logger">
             <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
@@ -97,7 +97,7 @@
                         <mat-icon>storage</mat-icon>
                         <span *ngIf="element.daq.interval" style="display: inline-block;vertical-align: super;">
                             {{element.daq.interval}} s
-                        </span>    
+                        </span>
                     </ng-container>
                 </div>
             </mat-cell>
@@ -117,18 +117,18 @@
         <ng-container matColumnDef="options">
             <mat-header-cell *matHeaderCellDef></mat-header-cell>
             <mat-cell *matCellDef="let element">
-                <button mat-icon-button 
+                <button mat-icon-button
                         [matMenuTriggerFor]="options">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #options="matMenu" xPosition="before">
-                    <button *ngIf="!readonly && deviceSelected.type !== deviceType.internal" 
+                    <button *ngIf="!readonly && deviceSelected.type !== deviceType.internal"
                             mat-menu-item
                             class="context-menu"
                             (click)="onEditOptions(element)">
                         {{'device.list-options' | translate}}
                     </button>
-                    <button mat-menu-item 
+                    <button mat-menu-item
                             class="context-menu"
                             (click)="onCopyTagToClipboard(element)">
                         {{'device.list-clipboard' | translate}}
@@ -149,6 +149,12 @@
                     <mat-icon>clear</mat-icon>
                 </button>
             </mat-cell>
+        </ng-container>
+
+        <!-- Direction Column -->
+        <ng-container matColumnDef="direction">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-direction' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element" matTooltip="{{element.direction}}"> {{element.direction}} </mat-cell>
         </ng-container>
 
         <mat-header-row *matHeaderRowDef="displayedColumns" [ngStyle]="{'min-width.px': tableWidth}"></mat-header-row>
