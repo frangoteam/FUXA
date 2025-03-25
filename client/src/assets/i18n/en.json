@@ -66,6 +66,7 @@
     "dlg.layout-lbl-margin-right": "Margin right",
     "dlg.layout-lbl-login-info": "Login info",
     "dlg.layout-lbl-custom-styles": "Custom styles",
+    "dlg.layout-lbl-show-language": "Show language",
 
     "dlg.menuitem-title": "Menu Item",
     "dlg.menuitem-image": "[My Image...]",
@@ -137,6 +138,7 @@
     "dlg.userproperty-groups": "Authorization Groups",
     "dlg.userproperty-roles": "Authorization Roles",
     "dlg.useraccess-groups": "Authorization (void = full for everyone)",
+    "dlg.userproperty-language": "Language",
     "dlg.userproperty-start": "Start View",
 
     "dlg.gauge-permission-title": "Authorization",
@@ -217,6 +219,11 @@
     "item.logininfo-type-fullname": "Full name",
     "item.logininfo-type-both": "Username & Full name",
 
+    "item.language-show-mode-nothing": "Hide",
+    "item.language-show-mode-simple": "Show",
+    "item.language-show-mode-key": "Show with Key",
+    "item.language-show-mode-fullname": "Show with Full name",
+
     "item.zoommode-disabled": "Disabled",
     "item.zoommode-enabled": "Manually",
     "item.zoommode-autoresize": "Auto-resize",
@@ -283,6 +290,7 @@
     "chart.property-date-last-range": "Date range",
     "chart.property-refresh-interval": "Refresh interval (min.)",
     "chart.property-hide-toolbar": "Hide toolbar",
+    "chart.property-thouch-zoom": "Thouch Zoom",
     "chart.property-load-old-values": "Load history",
     "chart.property-date.format": "Date format",
     "chart.property-time.format": "Time format",
@@ -1132,6 +1140,7 @@
     "gauges.property-tag-label": "Tag",
     "gauges.property-tag-internal-title": "Set placeholder of Destination (or Tag of internal device)",
     "gauges.property-input-range": "Allowed input range",
+    "gauges.property-language-text": "Text or @TextID",
 
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisions",
@@ -1475,12 +1484,26 @@
     "resource.list-title-fonts": "Fonts list",
     "resources.lib-widgets": "Widgets",
 
-    "texts.list-title": "Texts settings",
+    "texts.list-title": "Language settings",
     "texts.list-filter": "Filter",
     "texts.list-filter-group": "Group",
     "texts.list-id": "ID",
     "texts.list-group": "Group",
-    "texts.list-value": "Text",
+    "texts.list-value": "Text (default)",
+    "texts.list-add-text": "Add Text",
+    "texts.list-edit-language": "Edit Language",
+    "language.settings-title": "Language settings",
+    "language.settings-add-tooltip": "Add Language",
+    "language.settings-id": "Key",
+    "language.settings-default-id": "Key (default)",
+    "language.settings-id-placeholder": "ex: EN",
+    "language.settings-name": "Name",
+    "language.settings-default-name": "Name (default)",
+    "language.settings-name-placeholder": "ex: English",
+    "text.settings-title": "Text",
+    "text.settings-id": "Name (Allowed letters and numbers, no spaces)",
+    "text.settings-group": "Group",
+    "text.settings-value": "Text (default)",
 
     "gui.range-number-min": "Min",
     "gui.range-number-max": "Max",
@@ -1490,11 +1513,6 @@
     "gui.range-number-switcher": "Range as number or boolean",
 
     "dlg.bitmask-title": "Bitmask",
-
-    "dlg.textproperty-title": "Text",
-    "dlg.textproperty-id": "ID",
-    "dlg.textproperty-group": "Group",
-    "dlg.textproperty-value": "Text",
 
     "dlg.plugins-title": "Server Plugins",
     "dlg.plugins-info": "Not installed plugins can be installed in the server manually: 'npm install [package name]@[version]'",
@@ -1532,6 +1550,7 @@
     "dlg.setup-events": "Events",
     "dlg.setup-resources": "Resources",
     "dlg.setup-fonts": "Fonts",
+    "dlg.setup-language": "Language",
     "dlg.app-settings-title": "Settings",
     "dlg.app-settings-system": "System",
     "dlg.app-settings-smtp": "SMTP",
@@ -1660,5 +1679,7 @@
     "msg.file-remove": "Would you like to remove '{{value}}'?",
     "msg.notification-remove": "Would you like to remove Notification '{{value}}'?",
     "msg.maps-location-remove": "Would you like to remove Maps Location '{{value}}'?",
-    "msg.maps-location-name-exist": "The Maps Location name already exist!"
+    "msg.maps-location-name-exist": "The Maps Location name already exist!",
+    "msg.text-name-exist": "Text name already exist!",
+    "msg.texts-text-remove": "Would you like to remove Text '{{value}}'?"
 }

@@ -80,7 +80,7 @@
     "dlg.docproperty-size-1600-1200": "1600 x 1200 пикселей",
     "dlg.docproperty-size-1920-1080": "1920 x 1080 пикселей",
     "dlg.docproperty-margin": "Отступ",
-    
+
     "dlg.docname-title": "Название вида",
     "dlg.docname-name": "Название",
     "dlg.docproperty-type": "View type",
@@ -296,7 +296,7 @@
     "graph.property-datalabels-show": "Показать",
     "graph.property-datalabels-fontsize": "Размер шрифта",
     "graph.property-datalabels-align": "Выравнивание",
-    
+
     "graph.rangetype-last1h": "Последний час",
     "graph.rangetype-last1d": "Последний день",
     "graph.rangetype-last3d": "Последние 3 дня",
@@ -323,7 +323,7 @@
     "table.property-row-height": "Высота",
     "table.property-row-background": "Фон",
     "table.property-row-color": "Цвет",
-    "table.property-row-fontSize": "Размер шрифта",    
+    "table.property-row-fontSize": "Размер шрифта",
     "table.property-layout": "Вид",
     "table.property-filter": "Фильтр",
     "table.property-paginator": "Разбиение на страницы",
@@ -565,7 +565,7 @@
     "editor.tools-ungroup-title": "Разгруппировать элементы [G]",
     "editor.tools-hyperlink-title": "Создать гиперссылку",
 	"editor.tools-svg-selector": "Выбор элемента из списка",
-	
+
 	"svg.selector.property-title": "Список элементов",
 
     "tutorial.editor-keyboard-shortcuts": "Горячие клавиши",
@@ -758,7 +758,7 @@
     "device.topic-name-exist": "Имя Топика '{{value}}' уже существует",
     "device.topic-subs-address-exist": "Топик для подписывания с адресом '{{value}}' уже существует",
     "device.topic-pubs-address-exist": "Топик для публикации с адресом '{{value}}' уже существует",
-    
+
     "device.property-mqtt-address": "Адрес (mqtt://[server]:[port])",
     "device.tag-property-title": "Свойства тега",
     "device.browsetag-property-title": "Обзор тегов на сервере",
@@ -775,8 +775,8 @@
     "device.tag-property-obj-name": "Название",
     "device.tag-property-path": "Путь",
     "device.tag-property-unit": "Единица измерения",
-    "device.tag-property-digits": "Десятичное",    
-    "device.tag-property-initvalue": "Целое значение",    
+    "device.tag-property-digits": "Десятичное",
+    "device.tag-property-initvalue": "Целое значение",
     "device.tag-array-id": "ИД массива:",
     "device.tag-array-value": "Value:",
     "device-tag-dialog-title": "Выбор тега",
@@ -785,7 +785,7 @@
     "device.tag-daq-enabled": "Регистрация включена",
     "device.tag-daq-changed": "Сохранять значения по изменению",
     "device.tag-daq-interval": "Интервал сохранения значений (сек.)",
-    
+
     "device.connect-ok": "Ок",
     "device.connect-error": "Ошибка",
     "device.connect-failed": "Не удалось",
@@ -1055,7 +1055,7 @@
     "report.item-daterange-month": "Последний месяц",
     "report.item-interval": "Интервал (период)",
     "report.item-interval-hour": "Час",
-    "report.item-interval-day": "День",    
+    "report.item-interval-day": "День",
     "report.item-function-type": "Тип функции",
     "report.item-function-min": "Мин",
     "report.item-function-max": "Макс",
@@ -1096,6 +1096,11 @@
     "texts.list-group": "Группа",
     "texts.list-value": "Текст",
 
+    "text.settings-title": "Текст",
+    "text.settings-id": "ИД",
+    "text.settings-group": "Группа",
+    "text.settings-value": "Текст",
+
     "gui.range-number-min": "Мин",
     "gui.range-number-max": "Макс",
     "gui.range-number-boolean": "Маскирование",
@@ -1104,11 +1109,6 @@
     "gui.range-number-switcher": "Диапазон - число или логическое",
 
     "dlg.bitmask-title": "Битовая маска",
-
-    "dlg.textproperty-title": "Текст",
-    "dlg.textproperty-id": "ИД",
-    "dlg.textproperty-group": "Группа",
-    "dlg.textproperty-value": "Текст",
 
     "dlg.plugins-title": "Плагины",
     "dlg.plugins-name": "Название",
