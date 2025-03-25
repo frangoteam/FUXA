@@ -89,38 +89,51 @@ module.exports = {
 
 const filterIncludeData = function (values, group) {
     let resValues = []
-    if (group && group.includes && group.includes.length > 0) {
-        for (let i = 0; i < values.length; i++) {
-            let rows = []
-            for (let j = 0; j < values[i].length; j++) {
-                let row = values[i][j]
-                let dateTime = new Date(row[0])
-                if (group.by === 'year') {
-                    if (group.includes.includes(dateTime.getFullYear())) {
-                        rows.push({dt:dateTime.getTime(),value:row[1]});
-                    }
-                } else if (group.by === 'month') {
-                    if (group.includes.includes(dateTime.getMonth() +1 )) {
-                        rows.push({dt:dateTime.getTime(),value:row[1]});
-                    }
-                } else if (group.by === 'day') {
-                    if (group.includes.includes(dateTime.getDate())) {
-                        rows.push({dt:dateTime.getTime(),value:row[1]});
-                    }
-                } else if (group.by === 'hour') {
-                    if (group.includes.includes(dateTime.getHours())) {
-                        rows.push({dt:dateTime.getTime(),value:row[1]});
-                    }
-                } else if (group.by === 'minute') {
-                    if (group.includes.includes(dateTime.getMinutes())) {
-                        rows.push({dt:dateTime.getTime(),value:row[1]});
-                    }
-                } else {
+    if(!group.includes){
+        group.includes = []
+    }
+    for (let i = 0; i < values.length; i++) {
+        let rows = []
+        for (let j = 0; j < values[i].length; j++) {
+            let row = values[i][j]
+            let dateTime = parseDate(row[0])
+            if (group.by === 'year') {
+                if (group.includes.includes(dateTime.getFullYear())) {
                     rows.push({dt:dateTime.getTime(),value:row[1]});
                 }
+            } else if (group.by === 'month') {
+                if (group.includes.includes(dateTime.getMonth() +1 )) {
+                    rows.push({dt:dateTime.getTime(),value:row[1]});
+                }
+            } else if (group.by === 'day') {
+                if (group.includes.includes(dateTime.getDate())) {
+                    rows.push({dt:dateTime.getTime(),value:row[1]});
+                }
+            } else if (group.by === 'hour') {
+                if (group.includes.includes(dateTime.getHours())) {
+                    rows.push({dt:dateTime.getTime(),value:row[1]});
+                }
+            } else if (group.by === 'minute') {
+                if (group.includes.includes(dateTime.getMinutes())) {
+                    rows.push({dt:dateTime.getTime(),value:row[1]});
+                }
+            } else {
+                rows.push({dt:dateTime.getTime(),value:row[1]});
             }
-            resValues.push(rows);
         }
+        resValues.push(rows);
     }
     return resValues;
 };
+
+function parseDate(dateString) {
+    // 按照空格分割日期和时间
+    const [datePart, timePart] = dateString.split(' ');
+    // 按照斜杠分割日、月、年
+    const [day, month, year] = datePart.split('/');
+    // 按照冒号分割时、分、秒
+    const [hours, minutes, seconds] = timePart.split(':');
+
+    // 创建 Date 对象，注意月份从 0 开始，所以要减 1
+    return new Date(year, month - 1, day, hours, minutes, seconds);
+}
