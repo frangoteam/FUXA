@@ -100,7 +100,7 @@ const filterIncludeData = function (values, group) {
                         rows.push({dt:dateTime.getTime(),value:row[1]});
                     }
                 } else if (group.by === 'month') {
-                    if (group.includes.includes(dateTime.getMonth() - 1)) {
+                    if (group.includes.includes(dateTime.getMonth() +1 )) {
                         rows.push({dt:dateTime.getTime(),value:row[1]});
                     }
                 } else if (group.by === 'day') {
