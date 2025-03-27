@@ -24,10 +24,10 @@ module.exports = {
                 next();
             }
         });
-        
+
         /**
          * GET daq data
-         * Take from daq storage data and reply 
+         * Take from daq storage data and reply
          */
          daqApp.get("/api/daq", secureFnc, function(req, res) {
             try {
@@ -37,6 +37,13 @@ module.exports = {
                     for (let i = 0; i < query.sids.length; i++) {
                         if (query.to === query.from) {  // current values
                             dbfncs.push([runtime.devices.getTagValue(query.sids[i], true)]);
+                        } else if(query.group) {
+                            let options = {
+                                functions: ['average'],
+                                interval: query.group.by,
+                                formats: [2]
+                            }
+                            dbfncs.push(runtime.daqStorage.getNodesValues([query.sids[i]], query.from, query.to,options));
                         } else {                        // from history
                             dbfncs.push(runtime.daqStorage.getNodeValues(query.sids[i], query.from, query.to));
                         }
@@ -45,9 +52,11 @@ module.exports = {
                         res.json(dbfncs);
                     } else {
                         Promise.all(dbfncs).then(values => {
-                            if (values) {
+                            if (values && !query.group) {
                                 res.json(values);
-                            } else {
+                            } else if(values && query.group){
+                                res.json(filterIncludeData(values,query.group));
+                            }else {
                                 res.status(404).end();
                                 runtime.logger.error("api get daq: Not Found!");
                             }
@@ -76,4 +85,55 @@ module.exports = {
         });
         return daqApp;
     }
+}
+
+const filterIncludeData = function (values, group) {
+    let resValues = []
+    if(!group.includes){
+        group.includes = []
+    }
+    for (let i = 0; i < values.length; i++) {
+        let rows = []
+        for (let j = 0; j < values[i].length; j++) {
+            let row = values[i][j]
+            let dateTime = parseDate(row[0])
+            if (group.by === 'year') {
+                if (group.includes.includes(dateTime.getFullYear())) {
+                    rows.push({dt:dateTime.getTime(),value:row[1]});
+                }
+            } else if (group.by === 'month') {
+                if (group.includes.includes(dateTime.getMonth() +1 )) {
+                    rows.push({dt:dateTime.getTime(),value:row[1]});
+                }
+            } else if (group.by === 'day') {
+                if (group.includes.includes(dateTime.getDate())) {
+                    rows.push({dt:dateTime.getTime(),value:row[1]});
+                }
+            } else if (group.by === 'hour') {
+                if (group.includes.includes(dateTime.getHours())) {
+                    rows.push({dt:dateTime.getTime(),value:row[1]});
+                }
+            } else if (group.by === 'minute') {
+                if (group.includes.includes(dateTime.getMinutes())) {
+                    rows.push({dt:dateTime.getTime(),value:row[1]});
+                }
+            } else {
+                rows.push({dt:dateTime.getTime(),value:row[1]});
+            }
+        }
+        resValues.push(rows);
+    }
+    return resValues;
+};
+
+function parseDate(dateString) {
+    // 按照空格分割日期和时间
+    const [datePart, timePart] = dateString.split(' ');
+    // 按照斜杠分割日、月、年
+    const [day, month, year] = datePart.split('/');
+    // 按照冒号分割时、分、秒
+    const [hours, minutes, seconds] = timePart.split(':');
+
+    // 创建 Date 对象，注意月份从 0 开始，所以要减 1
+    return new Date(year, month - 1, day, hours, minutes, seconds);
 }
