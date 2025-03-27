@@ -9,6 +9,7 @@ import { Script } from '../../_models/script';
 import { PropertyType } from './flex-input/flex-input.component';
 import { PermissionData, PermissionDialogComponent } from './permission-dialog/permission-dialog.component';
 import { SettingsService } from '../../_services/settings.service';
+import { Device } from '../../_models/device';
 
 @Component({
     selector: 'gauge-property',
@@ -39,7 +40,7 @@ export class GaugePropertyComponent implements AfterViewInit {
                 public dialogRef: MatDialogRef<GaugePropertyComponent>,
                 private settingsService: SettingsService,
                 private cdr: ChangeDetectorRef,
-                @Inject(MAT_DIALOG_DATA) public data: any) {
+                @Inject(MAT_DIALOG_DATA) public data: GaugePropertyData | any) {
         this.dialogType = this.data.dlgType;
         this.eventsSupported = this.data.withEvents;
         this.actionsSupported = this.data.withActions;
@@ -135,10 +136,7 @@ export class GaugePropertyComponent implements AfterViewInit {
     }
 
     isTextToShow() {
-        if (this.dialogType === GaugeDialogType.RangeAndText) {
-            return true;
-        }
-        return false;
+        return this.data.languageTextEnabled || (this.dialogType === GaugeDialogType.RangeAndText);
     }
 
     isAlarmToShow() {
@@ -204,4 +202,21 @@ export enum GaugeDialogType {
     Table,
     Input,
     Panel
+}
+
+export interface GaugePropertyData {
+    dlgType: GaugeDialogType;
+    withEvents: boolean;
+    withActions: any;
+    withBitmask: boolean;
+    views: View[];
+    view: View;
+    inputs: GaugeSettings[];
+    scripts: Script[];
+    settings: any;
+    default: any;
+    devices: Device[];
+    title: string;
+    names: string[];
+    languageTextEnabled: boolean;
 }

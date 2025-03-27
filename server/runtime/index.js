@@ -105,6 +105,11 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 }
             }
         }
+
+        socket.on('disconnect', (reason) => {
+            logger.info('socket.io disconnection:', socket.id, 'reason', reason);
+        });
+
         // client ask device status
         socket.on(Events.IoEventTypes.DEVICE_STATUS, (message) => {
             if (message === 'get') {

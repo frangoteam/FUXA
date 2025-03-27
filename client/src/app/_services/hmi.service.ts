@@ -174,9 +174,14 @@ export class HmiService {
         this.socket = io(`${this.endPointConfig}/?token=${token}`);
         this.socket.on('connect', () => {
             this.onServerConnection$.next(true);
+            this.tagsSubscribe();
         });
-        this.socket.on('disconnect', () => {
+        this.socket.on('disconnect', (reason) => {
             this.onServerConnection$.next(false);
+            console.log('socket disconnected: ', reason);
+        });
+        this.socket.io.on('reconnect_attempt', () => {
+            console.log('socket.io try to reconnect...');
         });
         // devicse status
         this.socket.on(IoEventTypes.DEVICE_STATUS, (message) => {
