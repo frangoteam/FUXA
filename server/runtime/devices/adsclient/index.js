@@ -79,6 +79,7 @@ function ADSclient(_data, _logger, _events) {
                         client.connect().then((res) => {
                             logger.info(`'${data.name}' connected to ${res.targetAmsNetId}!`);
                             _emitStatus('connect-ok');
+							browse();
                             _createSubscription().then(() => {
                                 connected = true;
                                 resolve();
@@ -134,6 +135,39 @@ function ADSclient(_data, _logger, _events) {
         });
     }
 
+    function browse() {
+        return new Promise(async function (resolve, reject) {
+            if (client) {
+                try {
+                    var symbolObject = await client.getSymbols();
+					var symbolList = Object.values(symbolObject);
+
+                    var symbols = [];
+                    for (var i = 0; i < symbolList.length; i++) {
+                        var tag = new AdsSymbol(symbolList[i].name);
+                        tag.type = symbolList[i].type;
+                        tag.value = symbolList[i].value;
+                        symbols.push(tag);
+                    }
+
+					logger.warn(symbols);
+
+                    resolve(symbols);
+                } catch (err) {
+                    logger.error(`'${data.name}' try to browse error! ${err}`);
+                    _checkWorking(false);
+                    _emitStatus('browse-error');
+                    _clearVarsValue();
+                    reject();
+                }
+            } else {
+                logger.error(`'${data.name}' missing connection data!`);
+                _emitStatus('browse-failed');
+                _clearVarsValue();
+                reject();
+            }
+        });
+    }
 
     /**
      * Disconnect the device
@@ -437,4 +471,10 @@ const Datatypes = {
     number: 'number',
     boolean: 'boolean',
     string: 'string'
+}
+
+function AdsSymbol(name) {
+    this.name = name;
+    this.type = '';
+    this.value = '';
 }
