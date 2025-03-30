@@ -716,9 +716,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private getView(viewref: string): View {
         let view: View;
-        for (let i = 0; i < this.hmi?.views?.length; i++) {
-            if (this.hmi.views[i] && this.hmi.views[i].id === viewref) {
-                view = this.hmi.views[i];
+        const hmi = this.hmi ?? this.hmiService.hmi;
+        for (let i = 0; i < hmi?.views?.length; i++) {
+            if (hmi.views[i]?.id === viewref) {
+                view = hmi.views[i];
                 break;
             }
         }
