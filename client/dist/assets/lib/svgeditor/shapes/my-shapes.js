@@ -2,14 +2,14 @@
 // add the shape library: with file name as parameter (have to be unique)
 (function () {
     'use strict';
-    var shapesGroupName = 'editor.shape';     // used to organize and gropping the shapes, displayed in editor menu as label with expand/collapse 
+    var shapesGroupName = 'editor.shape';     // used to organize and gropping the shapes, displayed in editor menu as label with expand/collapse
     var typeId = 'shapes';              // used to identify shapes type, 'shapes' is binded with angular component 'ShapesComponent'
-    // if you make a new type you have to implement the angular component too 
+    // if you make a new type you have to implement the angular component too
 
     // add in this array your schapes data, the shape object has the following attributes:
     // 'name': is unique for shape type
     // 'ico': path icon displayed in editor menu
-    // 'content': array of svg element 
+    // 'content': array of svg element
     // 'id': element id used if you like make a animation managed in angular component
     // 'type': svg element type (path, text, ellipse,...) see svg description
     // 'attr': element attribute, depending of type
@@ -17,11 +17,11 @@
         {
             name: 'rectangle', ico: 'assets/lib/svgeditor/shapes/img/shape-rectangle.svg', content: [
                 { id: '', type: 'rect', attr: { width: '40', height: '40' } }]
-        },           
+        },
         {
             name: 'circle', ico: 'assets/lib/svgeditor/shapes/img/shape-circle.svg', content: [
                 { id: '', type: 'ellipse', attr: { cx: '20', cy: '20', rx: '20.5', ry: '20.5' } }]
-        },        
+        },
         {
             name: 'diamond', ico: 'assets/lib/svgeditor/shapes/img/shape-diamond.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 20 0 L 40 20 L 20 40 L 0 20 Z' } }]
@@ -61,19 +61,19 @@
         {
             name: 'maninput', ico: 'assets/lib/svgeditor/shapes/img/shape-maninput.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 80 L 0 30 L 80 0 L 80 80 Z' } }]
-        },        
+        },
         {
             name: 'pentagon', ico: 'assets/lib/svgeditor/shapes/img/shape-pentagon.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 17.16 80 L 0 29.33 L 45 0 L 90 29.33 L 72.84 80 Z' } }]
-        }, 
+        },
         {
             name: 'octagon', ico: 'assets/lib/svgeditor/shapes/img/shape-octagon.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 30 0 L 70 0 L 100 30 L 100 70 L 70 100 L 30 100 L 0 70 L 0 30 Z' } }]
-        },         
+        },
         {
             name: 'ticket', ico: 'assets/lib/svgeditor/shapes/img/shape-ticket.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 0 L 29 0 L 29 0 L 40 10 L 29 20 L 29 20 L 0 20 L 0 10 Z' } }]
-        },        
+        },
         {
             name: 'display', ico: 'assets/lib/svgeditor/shapes/img/shape-display.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 20 L 22.5 0 L 70 0 Q 90 0 90 20 Q 90 40 70 40 L 22.5 40 Z' } }]
@@ -93,7 +93,7 @@
         {
             name: 'docu', ico: 'assets/lib/svgeditor/shapes/img/shape-docu.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 0 L 120 0 L 120 59 Q 90 21.2 60 59 Q 30 96.8 0 59 L 0 21 Z' } }]
-        },        
+        },
         {
             name: 'cloud', ico: 'assets/lib/svgeditor/shapes/img/shape-cloud.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 20 17.5 C 4 17.5 0 35 12.8 38.5 C 0 46.2 14.4 63 24.8 56 C 32 70 56 70 64 56 C 80 56 80 42 70 35 C 80 21 64 7 50 14 C 40 3.5 24 3.5 20 17.5 Z' } }]
@@ -109,7 +109,7 @@
         {
             name: 'star4', ico: 'assets/lib/svgeditor/shapes/img/shape-star4.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 40 L 32 32 L 40 0 L 48 32 L 80 40 L 48 48 L 40 80 L 32 48 Z' } }]
-        },     
+        },
         {
             name: 'poval', ico: 'assets/lib/svgeditor/shapes/img/shape-poval.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 25 0 C 0 22.78 0 57.22 25 80 C 49.99 57.22 49.99 22.78 25 0 Z' } }]
@@ -146,7 +146,7 @@
         {
             name: 'tee', ico: 'assets/lib/svgeditor/shapes/img/shape-tee.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 0 L 80 0 L 80 20 L 50 20 L 50 80 L 30 80 L 30 20 L 0 20 Z' } }]
-        },        
+        },
         {
             name: 'arrow', ico: 'assets/lib/svgeditor/shapes/img/shape-arrow.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 0 8.04 L 31 8.04 L 31 0 L 40 12 L 31 24 L 31 15.96 L 0 15.96 L 0 12 Z' } }]
@@ -162,9 +162,17 @@
         {
             name: 'circleindi', ico: 'assets/lib/svgeditor/shapes/img/shape-circleindi.svg', content: [
                 { id: '', type: 'path', attr: { d: 'M 12,40 V 24 M 24,12 A 12,12 0 0 1 12,24 12,12 0 0 1 0,12 12,12 0 0 1 12,0 12,12 0 0 1 24,12 Z' } }]
+        },
+        {
+            name: 'radiuskorner', ico: 'assets/lib/svgeditor/shapes/img/shape-radiuskorner.svg', content: [
+                { id: '', type: 'path', attr: { d: 'M 24 4 A 20 20 0 0 1 44 24' } }]
+        },
+        {
+            name: 'shape-circlehalf.svg', ico: 'assets/lib/svgeditor/shapes/img/shape-circlehalf.svg', content: [
+                { id: '', type: 'path', attr: { d: 'M 24 4 A 20 20 0 0 1 24 44' } }]
         }];
 
-    // merge shapes groups        
+    // merge shapes groups
     for (var i = 0; i < shapes.length; i++) {
         shapes[i].name = typeId + '-' + shapes[i].name;
     }

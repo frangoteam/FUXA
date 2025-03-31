@@ -132,6 +132,16 @@ function load() {
                                 logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.REPORTS}' ${err}`);
                                 callback(err);
                             });
+                        },
+                        // step 6 get MapsLocations
+                        function (callback) {
+                            getMapsLocations().then(locations => {
+                                data.mapsLocations = locations;
+                                callback();
+                            }).catch(function (err) {
+                                logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.LOCATIONS}' ${err}`);
+                                callback(err);
+                            });
                         }
                     ],
                     async function (err) {
@@ -192,17 +202,21 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.GENERAL;
                 section.name = cmd;
                 setCharts(value);
+            } else if (cmd === ProjectDataCmdType.Languages) {
+                section.table = prjstorage.TableType.GENERAL;
+                section.name = cmd;
+                setLanguages(value);
             } else if (cmd === ProjectDataCmdType.Graphs) {
                 section.table = prjstorage.TableType.GENERAL;
                 section.name = cmd;
                 setGraphs(value);
             } else if (cmd === ProjectDataCmdType.SetText) {
                 section.table = prjstorage.TableType.TEXTS;
-                section.name = value.name;
+                section.name = value.id;
                 setText(value);
             } else if (cmd === ProjectDataCmdType.DelText) {
                 section.table = prjstorage.TableType.TEXTS;
-                section.name = value.name;
+                section.name = value.id;
                 toremove = removeText(value);
             } else if (cmd === ProjectDataCmdType.SetAlarm) {
                 section.table = prjstorage.TableType.ALARMS;
@@ -236,6 +250,14 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.REPORTS;
                 section.name = value.id;
                 toremove = removeReport(value);
+            } else if (cmd === ProjectDataCmdType.SetMapsLocation) {
+                section.table = prjstorage.TableType.LOCATIONS;
+                section.name = value.id;
+                setMapsLocation(value);
+            } else if (cmd === ProjectDataCmdType.DelMapsLocation) {
+                section.table = prjstorage.TableType.LOCATIONS;
+                section.name = value.id;
+                toremove = removeMapsLocation(value);
             } else {
                 logger.error(`prjstorage.setdata failed! '${section.table}'`);
                 reject('prjstorage.failed-to-setdata: Command not found!');
@@ -342,6 +364,14 @@ function setCharts(charts) {
 }
 
 /**
+ * Set Languages
+ * @param {*} languages
+ */
+function setLanguages(languages) {
+    data.languages = languages;
+}
+
+/**
  * Set or add if not exist (check with taxt.name) the Text in Project
  * @param {*} text
  */
@@ -351,7 +381,7 @@ function setText(text) {
     }
     var pos = -1;
     for (var i = 0; i < data.texts.length; i++) {
-        if (data.texts[i].name === text.name) {
+        if (data.texts[i].id === text.id) {
             pos = i;
         }
     }
@@ -368,9 +398,8 @@ function setText(text) {
  */
 function removeText(text) {
     if (data.texts) {
-        var pos = -1;
         for (var i = 0; i < data.texts.length; i++) {
-            if (data.texts[i].name === text.name) {
+            if (data.texts[i].id === text.id) {
                 data.texts.splice(i, 1);
                 return true;
             }
@@ -406,7 +435,6 @@ function setAlarm(alarm) {
  */
 function removeAlarm(alarm) {
     if (data.alarms) {
-        var pos = -1;
         for (var i = 0; i < data.alarms.length; i++) {
             if (data.alarms[i].name === alarm.name) {
                 data.alarms.splice(i, 1);
@@ -444,7 +472,6 @@ function removeAlarm(alarm) {
  */
 function removeNotification(notification) {
     if (data.notifications) {
-        var pos = -1;
         for (var i = 0; i < data.notifications.length; i++) {
             if (data.notifications[i].id === notification.id) {
                 data.notifications.splice(i, 1);
@@ -482,7 +509,6 @@ function removeNotification(notification) {
  */
  function removeScript(script) {
     if (data.scripts) {
-        var pos = -1;
         for (var i = 0; i < data.scripts.length; i++) {
             if (data.scripts[i].id === script.id) {
                 data.scripts.splice(i, 1);
@@ -520,10 +546,46 @@ function removeNotification(notification) {
  */
  function removeReport(report) {
     if (data.reports) {
-        var pos = -1;
         for (var i = 0; i < data.reports.length; i++) {
             if (data.reports[i].id === report.id) {
                 data.reports.splice(i, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Set or add if not exist (check with location.id) the MapsLocation in Project
+ * @param {*} location
+ */
+function setMapsLocation(location) {
+    if (!data.mapsLocations) {
+        data.mapsLocations = [];
+    }
+    var pos = -1;
+    for (var i = 0; i < data.mapsLocations.length; i++) {
+        if (data.mapsLocations[i].id === location.id) {
+            pos = i;
+        }
+    }
+    if (pos >= 0) {
+        data.mapsLocations[pos] = location;
+    } else {
+        data.mapsLocations.push(location);
+    }
+}
+
+/**
+ * Remove the Maps Locations from Project
+ * @param {*} location
+ */
+function removeMapsLocation(location) {
+    if (data.mapsLocations) {
+        for (var i = 0; i < data.mapsLocations.length; i++) {
+            if (data.mapsLocations[i].id === location.id) {
+                data.mapsLocations.splice(i, 1);
                 return true;
             }
         }
@@ -619,6 +681,13 @@ function setProject(prjcontent) {
                         if (reports && reports.length) {
                             for (var i = 0; i < reports.length; i++) {
                                 scs.push({ table: prjstorage.TableType.REPORTS, name: reports[i].id, value: reports[i] });
+                            }
+                        }
+                    } else if (key === 'mapsLocations') {
+                        var locations = prjcontent[key];
+                        if (locations && locations.length) {
+                            for (var i = 0; i < locations.length; i++) {
+                                scs.push({ table: prjstorage.TableType.LOCATIONS, name: locations[i].id, value: locations[i] });
                             }
                         }
                     } else {
@@ -789,6 +858,28 @@ function getAlarms() {
 }
 
 /**
+ * Get the Maps Locations
+ */
+function getMapsLocations() {
+    return new Promise(function (resolve, reject) {
+        prjstorage.getSection(prjstorage.TableType.LOCATIONS).then(drows => {
+            if (drows.length > 0) {
+                var locations = [];
+                for (var id = 0; id < drows.length; id++) {
+                    locations.push(JSON.parse(drows[id].value));
+                }
+                resolve(locations);
+            } else {
+                resolve();
+            }
+        }).catch(function (err) {
+            logger.error(`project.prjstorage.get-mapsLocations failed! '${prjstorage.TableType.LOCATIONS} ${err}'`);
+            reject(err);
+        });
+    });
+}
+
+/**
  * Set the device property
  */
 function setDeviceProperty(query) {
@@ -939,6 +1030,7 @@ const ProjectDataCmdType = {
     HmiLayout: 'layout',
     Charts: 'charts',
     Graphs: 'graphs',
+    Languages: 'languages',
     SetText: 'set-text',
     SetText: 'set-text',
     DelText: 'del-text',
@@ -950,6 +1042,8 @@ const ProjectDataCmdType = {
     DelScript: 'del-script',
     SetReport: 'set-report',
     DelReport: 'del-report',
+    SetMapsLocation:'set-maps-location',
+    DelMapsLocation: 'del-maps-location',
 }
 
 module.exports = {

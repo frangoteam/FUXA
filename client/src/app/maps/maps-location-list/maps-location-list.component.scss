@@ -1,0 +1,62 @@
+:host {
+    .header-panel {
+        background-color: var(--headerBackground);
+        color: var(--headerColor);
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: 36px;
+        width: 100%;
+        text-align: center;
+        line-height: 36px;
+        border-bottom: 1px solid var(--headerBorder);
+
+        mat-icon {
+            display: inline-block;
+            vertical-align: text-top;
+        }
+    }
+
+    .work-panel {
+        position: absolute;
+        top: 37px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        background-color: var(--workPanelBackground);
+    }
+
+    .mat-column-select {
+        overflow: visible;
+        flex: 0 0 80px;
+    }
+
+    .mat-column-name {
+        flex: 1 1 200px;
+    }
+
+    .mat-column-view {
+        flex: 1 1 140px;
+    }
+
+    .mat-column-description {
+        flex: 1 1 140px;
+    }
+    .mat-column-remove {
+        flex: 0 0 60px;
+    }
+
+    .mat-cell {
+        font-size: 13px;
+    }
+
+    .mat-header-row {
+        top: 0;
+        position: sticky;
+        z-index: 1;
+    }
+
+    .mat-header-cell {
+        font-size: 15px;
+    }
+}

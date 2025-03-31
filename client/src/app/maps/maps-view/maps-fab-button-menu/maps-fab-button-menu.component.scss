@@ -1,0 +1,16 @@
+:host {
+    .fab-container {
+
+        .fab-buttons {
+            position: relative;
+
+        }
+
+        .fab {
+            position: absolute;
+            transition: transform 0.3s ease-in-out;
+            background-color: rgba(255, 255, 255, 0.7) !important;
+            color: #2B82C8 !important;
+        }
+    }
+}

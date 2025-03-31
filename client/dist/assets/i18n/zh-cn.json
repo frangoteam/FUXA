@@ -514,11 +514,11 @@
     "editor.align-middle-title": "对齐中间",
     "editor.align-bottom-title": "对齐底部",
 
-    "editor.stroke": "笔画",
-    "editor.stroke-width": "笔画宽度",
-    "editor.stroke-width-title": "改变笔画宽度为1，按shift键改变为0.1",
-    "editor.stroke-style": "笔画风格",
-    "editor.stroke-style-title": "改变笔画破折号样式",
+    "editor.stroke": "边框",
+    "editor.stroke-width": "边框宽度",
+    "editor.stroke-width-title": "改变边框宽度为1，按shift键改变为0.1",
+    "editor.stroke-style": "边框风格",
+    "editor.stroke-style-title": "改变边框破折号样式",
     "editor.stroke-joinmiter-title": "Linejoin Miter",
     "editor.stroke-joinround-title": "Linejoin Round",
     "editor.stroke-joinbevel-title": "Linejoin Round",
@@ -687,6 +687,9 @@
     "device.list-remove": "删除标签",
     "device.list-remove-all": "删除所有标签",
     "device.list-options": "标签选项",
+    "device.list-timestamp": "时间戳",
+    "device.list-description": "描述",
+    "device.list-direction":"方向",
 
     "devices.export": "导出设备",
     "devices.export-json": "JSON",
@@ -774,7 +777,7 @@
     "device.tag-property-title": "标签属性",
     "device.browsetag-property-title": "浏览服务器中的标签",
     "device.tag-property-device": "设备",
-    "device.tag-property-name": "Tagname",
+    "device.tag-property-name": "Tag名称",
     "device.tag-property-register": "注册",
     "device.tag-property-type": "类型",
     "device.tag-property-address": "地址（ex. db5.dbb3 db4.dbx2.0 MB7）",
@@ -788,6 +791,11 @@
     "device.tag-property-unit": "单位",
     "device.tag-property-digits": "十进制",
     "device.tag-property-initvalue": "初始值",
+    "device.tag-property-description": "描述",
+    "device.tag-property-direction": "方向",
+    "device.tag-property-edge": "边缘",
+    "device.tag-property-gpio": "GPIO编号",
+
     "device.tag-array-id": "阵列ID:",
     "device.tag-array-value": "值：",
     "device-tag-dialog-title": "标签选择",
@@ -1121,6 +1129,11 @@
     "text.list-group": "组",
     "text.list-value": "文本",
 
+    "text.settings-title": "文本",
+    "text.settings-id": "ID",
+    "text.settings-group": "组",
+    "text.settings-value": "文本",
+
     "gui.range-number-min": "最小值",
     "gui.range-number-max": "最大值",
     "gui.range-number-boolean": "掩码值",
@@ -1129,11 +1142,6 @@
     "gui.range-number-switcher": "范围为数字或布尔值",
 
     "dlg.bitmask-title": "Bitmask",
-
-    "dlg.textproperty-title": "文本",
-    "dlg.textproperty-id": "ID",
-    "dlg.textproperty-group": "组",
-    "dlg.textproperty-value": "文本",
 
     "dlg.plugins-title": "插件",
     "dlg.plugins-name": "名称",

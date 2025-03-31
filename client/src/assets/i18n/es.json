@@ -1,10 +1,10 @@
 {
     "with param": "Muestra {{value}}",
-  
+
     "app.home": "Inicio",
     "app.lab": "Lab",
     "app.editor": "Editor",
-  
+
     "header.new-project": "Nuevo proyecto",
     "header.save-project": "Guardar proyecto",
     "header.saveas-project": "Guardar proyecto como...",
@@ -23,13 +23,13 @@
     "header.help-info": "Acerca de",
     "header.info-version": "Version ",
     "header.theme": "Tema claro/oscuro",
-  
+
     "sidenav.title": "FUXA",
-  
+
     "tutorial.title": "FUXA Tutorial",
-  
+
     "dlg.info-title": "FUXA",
-  
+
     "dlg.layout-title": "Opciones de diseño",
     "dlg.layout-general": "General",
     "dlg.layout-lbl-sview": "Iniciar vista",
@@ -47,13 +47,13 @@
     "dlg.layout-lbl-title": "Titulo",
     "dlg.layout-lbl-alarms": "Modo de notificación de alarmas",
     "dlg.layout-lbl-infos": "Modo de notificación de información",
-  
+
     "dlg.menuitem-title": "Opción del menú",
     "dlg.menuitem-icon": "Icono",
     "dlg.menuitem-text": "Texto",
     "dlg.menuitem-view": "Ver por clic",
     "dlg.menuitem-link": "Enlace por clic",
-  
+
     "dlg.docproperty-title": "Ver propiedades",
     "dlg.docproperty-width": "Ancho",
     "dlg.docproperty-height": "Alto",
@@ -69,33 +69,33 @@
     "dlg.docproperty-size-1600-1200": "1600 x 1200 pixeles",
     "dlg.docproperty-size-1920-1080": "1920 x 1080 pixeles",
     "dlg.docproperty-margin": "Margenes",
-    
+
     "dlg.docname-title": "Ver nombre",
     "dlg.docname-name": "Nombre",
     "dlg.docproperty-type": "Ver tipo",
-  
+
     "dlg.tagname-title": "Nombre de la etiqueta",
     "dlg.tagname-name": "Nombre",
-  
+
     "dlg.linkproperty-title": "Hacer hipervínculo",
     "dlg.linkproperty-url": "URL de hipervínculo",
-  
+
     "dlg.login-title": "Iniciar sesion...",
     "dlg.logout-btn": "Cerrar sesion",
-  
+
     "dlg.ok": "OK",
     "dlg.cancel": "Cancelar",
     "dlg.close": "Cerrar",
-  
+
     "dlg.userproperty-title": "Usuario",
     "dlg.userproperty-groups": "Grupos de autorización",
     "dlg.useraccess-groups": "Autorización (vacio = Todos los permisos)",
-  
+
     "dlg.gauge-permission-title": "Autorización",
     "dlg.gauge-permission-label": "(vacio = Todos los permisos)",
     "dlg.gauge-permission-show": "Mostrar",
     "dlg.gauge-permission-enabled": "Habilitado",
-  
+
     "general.close": "Cerrar",
     "general.search": "Buscar...",
     "general.search-notfound": "Opciones no encontradas",
@@ -106,34 +106,34 @@
     "general.authority": "Autoridad",
     "general.grant-type": "Tipo de permiso",
     "general.usergroups": "Espectador,Operario,Ingeniero,Supervisor,Gerente,F,G,Administrator",
-  
+
     "tester.title": "Variable",
     "tester.send": "Enviar",
-  
+
     "item.navsmode-none": "Ninguno",
     "item.navsmode-push": "Empujar",
     "item.navsmode-over": "Sobre",
     "item.navsmode-fix": "Fijo",
-  
+
     "item.navtype-icons": "Iconos",
     "item.navtype-text": "Texto",
     "item.navtype-icons-text-block": "Iconos & Texto (bloque)",
     "item.navtype-icons-text-inline": "Iconos & Texto (en linea)",
-  
+
     "item.notifymode-hide": "Ocultar",
     "item.notifymode-fix": "Fijo",
     "item.notifymode-float": "Empujar",
-  
+
     "item.zoommode-disabled": "Deshabilitado",
     "item.zoommode-enabled": "Habilitado",
-  
+
     "item.headerbarmode-hide": "Ocultar",
     "item.headerbarmode-show": "Mostrar",
-  
+
     "dlg.layout-input-dialog": "Modo de diálogo del campo de entrada",
     "item.inputmode-disabled": "Deshabilitado",
     "item.inputmode-enabled": "Habilitado",
-  
+
     "chart.config-title": "Opciones de graficos",
     "chart.config-charts": "Graficos",
     "chart.config-devices": "Dispositivos",
@@ -153,7 +153,7 @@
     "chart.config-interpo-stepAfter": "Paso despues",
     "chart.config-interpo-stepBefore": "Paso anterior",
     "chart.config-interpo-spline": "spline",
-  
+
     "chart.property-props": "Propiedad",
     "chart.property-layout": "Diseño",
     "chart.property-chart": "Gráfico para mostrar",
@@ -172,21 +172,21 @@
     "chart.property-legend.mode": "Modo de mostrar de leyenda",
     "chart.property-date.format": "Formato de fecha",
     "chart.property-time.format": "Formato de tiempo",
-  
+
     "chart.rangetype-last8h": "Ultimas 8 horas",
     "chart.rangetype-last1d": "Ultimo dia",
     "chart.rangetype-last3d": "Ultimos 3 dias",
     "chart.rangetype-last1w": "Ultima semana",
-  
+
     "chart.legend-always": "Siempre",
     "chart.legend-follow": "Seguir",
     "chart.legend-bottom": "Boton",
     "chart.legend-never": "Nunca",
-  
+
     "chart.labels-serie": "Serie",
     "chart.labels-time": "Tiempo",
     "chart.labels-title": "Titulo",
-  
+
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
     "editor.views": "Vistas",
@@ -224,16 +224,16 @@
     "editor.controls-shape-settings": "Opciones de forma",
     "editor.controls-html-switch-settings": "Opciones de switch",
   "editor.controls-switch": "Switch",
-  
+
     "editor.layout-settings": "Opciones de diseño",
-  
+
     "editor.interactivity": "Interactividad",
     "editor.interactivity-id": "id:",
     "editor.interactivity-id-title": "Identificar el elemento",
     "editor.interactivity-class": "Clase:",
     "editor.interactivity-class-title": "Clase de elemento",
     "editor.interactivity-name": "nombre",
-  
+
     "editor.cmenu-cut": "Cortar",
     "editor.cmenu-copy": "Copiar",
     "editor.cmenu-paste": "Pegar",
@@ -249,7 +249,7 @@
     "editor.cmenu-layer-delete": "Eliminar capa",
     "editor.cmenu-layer-marge-down": "Unir abajo",
     "editor.cmenu-layer-marge-all": "Unir todo",
-  
+
     "editor.transform": "Transformar",
     "editor.transform-x": "x",
     "editor.transform-x-title": "Cambiar coordenada X",
@@ -303,7 +303,7 @@
     "editor.transform-change-image-title": "NOTA: esta imagen no se puede incrustar. Dependerá de esta ruta que se muestre",
     "editor.transform-angle": "ángulo",
     "editor.transform-angle-title": "Cambiar el ángulo de rotación",
-  
+
     "editor.align": "Alinear",
     "editor.align-left-title": "Alinear a la izquierda",
     "editor.align-center-title": "Alinear al centro",
@@ -311,7 +311,7 @@
     "editor.align-top-title": "Alinear arriba",
     "editor.align-middle-title": "Alinear en medio",
     "editor.align-bottom-title": "Alinear abajo",
-  
+
     "editor.stroke": "Trazo",
     "editor.stroke-width": "anchura del trazo",
     "editor.stroke-width-title": "Cambie el ancho del trazo en 1, presione Mayús y haga clic para cambiar en 0,1",
@@ -325,7 +325,7 @@
     "editor.stroke-capround-title": "Linecap Round",
     "editor.stroke-shadow": "sombra",
     "editor.stroke-shadow-title": "Con sombra",
-  
+
     "editor.marker": "Marcador",
     "editor.marker-start": "Comenzar",
     "editor.marker-start-title": "Seleccione el tipo de marcador de inicio",
@@ -333,10 +333,10 @@
     "editor.marker-middle-title": "Seleccione el tipo de marcador central",
     "editor.marker-end": "Fin",
     "editor.marker-end-title": "Seleccione el tipo de marcador final",
-  
+
     "editor.hyperlink": "Hipervínculo",
     "editor.hyperlink-url": "url",
-  
+
     "editor.tools-launch-title": "Iniciar vista actual",
     "editor.tools-zoom-title": "Herramienta de zoom [Ctrl + Arriba / Abajo]",
     "editor.tools-grid-title": "Mostrar Ocultar cuadrícula",
@@ -358,7 +358,7 @@
     "editor.tools-alignbottom-title": "Alinear la parte inferior",
     "editor.tools-ungroup-title": "Desagrupar elementos [G]",
     "editor.tools-hyperlink-title": "Hacer hipervínculo",
-  
+
     "shapes.action-hide": "Ocultar",
     "shapes.action-show": "Mostrar",
     "shapes.action-blink": "Parpadear",
@@ -376,7 +376,7 @@
     "shapes.event-ontogglevalue": "Alternar valor",
     "shapes.event-onsetinput": "Establecer desde entrada",
     "shapes.event-onclose": "Cerrar",
-  
+
     "pipe.property-props": "Propiedad",
     "pipe.property-border-width": "Ancho del borde",
     "pipe.property-border-color": "Color del borde",
@@ -385,7 +385,7 @@
     "pipe.property-content-width": "Ancho del contenido",
     "pipe.property-content-color": "Color del contenido",
     "pipe.property-content-space": "Guión de contenido",
-  
+
     "slider.property-props": "Propiedad",
     "slider.property-horizontal": "Horizontal",
     "slider.property-vertical": "Vertical",
@@ -418,7 +418,7 @@
     "slider.property-slider-color": "Conectar color",
     "slider.property-slider-background": "Color de base",
     "slider.property-slider-handle": "Color del puntero",
-  
+
     "html-switch.property-off-value": "Desactivado Valor",
     "html-switch.property-on-value": "Activado Valor",
     "html-switch.property-on-background": "Activado fondo",
@@ -432,7 +432,7 @@
     "html-switch.property-on-text-color": "Activado Color del texto",
     "html-switch.property-font-size": "Tamaño de la fuente",
     "html-switch.property-font": "Fuente",
-  
+
     "editor.tools-zoomlevel-title": "Zoom level",
     "editor.tools-zoomlevel-fitcanvas": "Ajustar al lienzo",
     "editor.tools-zoomlevel-fitsection": "Ajustar a la selección",
@@ -440,7 +440,7 @@
     "editor.tools-fillcolor-title": "Cambiar el color de relleno",
     "editor.tools-strokecolor-title": "Cambiar el color del trazo",
     "editor.tools-palettecolor-title": "Haga clic para cambiar el color de relleno, presione Mayús y haga clic para cambiar el color del trazo",
-  
+
     "device.list-title": "Opciones de dispositivos",
     "device.list-device": "Dispositivo",
     "device.list-filter": "Filtro",
@@ -455,7 +455,7 @@
     "device.list-remove": "Eliminar etiqueta",
     "device.list-remove-all": "Eliminar todos los etiquetas",
     "device.list-options": "Opciones de etiqueta",
-  
+
     "devices.export": "Exportar dispositivos",
     "devices.import": "Importar dispositivos",
     "device.property-client": "Propiedades de dispositivos",
@@ -492,7 +492,7 @@
     "device.security-none": "Ninguno",
     "device.security-sign": "Firmar",
     "device.security-signandencrypt": "Firmar y encriptar",
-  
+
     "device.browsetopics-property-title": "Temas de broker para suscribirse y publicar",
     "device.browsetopics-property-sub": "Subscribir",
     "device.browsetopics-property-pub": "Publicar",
@@ -522,7 +522,7 @@
     "device.topic-name-exist": "El nombre del tema '{{value}}' ya existe",
     "device.topic-subs-address-exist": "El tema para suscribirse  con la dirección '{{value}}' ya existe",
     "device.topic-pubs-address-exist": "El tema para publicar con la dirección '{{value}}' ya existe",
-    
+
     "device.property-mqtt-address": "Direccion (mqtt://[servidor]:[puerto])",
     "device.tag-property-title": "Propiedad de la etiqueta",
     "device.browsetag-property-title": "Buscar etiquetas en el servidor",
@@ -538,21 +538,21 @@
     "device.tag-property-obj-name": "Nombre",
     "device.tag-property-path": "Trayectoria",
     "device.tag-property-unit": "Unidad",
-    "device.tag-property-digits": "Decimal",    
+    "device.tag-property-digits": "Decimal",
     "device.tag-array-id": "Lista ID:",
     "device.tag-array-value": "Valor:",
     "device-tag-dialog-title": "Etiqueta seleccionada",
-  
+
     "device.tag-options-title": "Opciones de etiquetas",
     "device.tag-daq-enabled": "Registration Enabled",
     "device.tag-daq-changed": "Guardar valor si cambia",
     "device.tag-daq-interval": "Intervalo para guardar valor (segundos)",
-  
+
     "users.list-title": "Opciones de usuarios",
     "users.list-name": "Usuario",
     "users.list-fullname": "Nombre completo",
     "users.list-groups": "Grupos",
-  
+
     "gauges.property-props": "Propiedad",
     "gauges.property-events": "Eventos",
     "gauges.property-title": "Propiedad",
@@ -595,7 +595,7 @@
     "gauges.property-interval-msec": "Intervalo (milisegundos.)",
     "gauges.property-tag-label": "Etiqueta",
     "gauges.property-tag-internal-title": "Establecer una etiqueta de dispositivo interno",
-  
+
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisiones",
     "bag.property-subdivisions": "Subdivisiones",
@@ -627,7 +627,7 @@
     "bag.property-format-digits": "Formato digitos",
     "bag.property-zones": "Zonas",
     "bag.property-color": "Color",
-  
+
     "alarms.list-title": "Configuración de alarmas",
     "alarms.list-name": "Nombre",
     "alarms.list-device": "Dispositivo / Variable",
@@ -677,7 +677,7 @@
     "alarm.property-action-type": "Tipo de accion",
     "alarm.property-action-value": "Valor a fijar",
     "alarm.property-action-destination": "Vista a mostrar",
-    
+
     "card.config-title": "Configuración de la tarjeta",
     "card.config-content-type": "Tipo de contenido",
     "card.config-content-view": "Vista de contenido",
@@ -685,19 +685,19 @@
     "card.widget-alarms": "Alarmas",
     "card.widget-table": "Tabla",
     "card.style-zoom": "Zoom",
-  
+
     "texts.list-title": "Configuración de textos",
     "texts.list-filter": "Filtro",
     "texts.list-filter-group": "Grupo",
     "texts.list-id": "ID",
     "texts.list-group": "Grupo",
     "texts.list-value": "Texto",
-  
-    "dlg.textproperty-title": "Texto",
-    "dlg.textproperty-id": "ID",
-    "dlg.textproperty-group": "Grupo",
-    "dlg.textproperty-value": "Texto",
-  
+
+    "text.settings-title": "Texto",
+    "text.settings-id": "ID",
+    "text.settings-group": "Grupo",
+    "text.settings-value": "Texto",
+
     "dlg.plugins-title": "Plugins",
     "dlg.plugins-name": "Nombre",
     "dlg.plugins-version": "Version",
@@ -707,7 +707,7 @@
     "dlg.plugins-status-installed": "Instalando...OK!",
     "dlg.plugins-status-removed": "Removiendo...OK!",
     "dlg.plugins-status-error": "Error! Intentelo manualmente!",
-  
+
     "dlg.setup-title": "Setup",
     "dlg.setup-gui": "Interfaz de usuario",
     "dlg.setup-diverse": "Varios",
@@ -742,7 +742,7 @@
     "dlg.app-auth-expiration-3h": "Habilitado con token expira en 3 horas.",
     "dlg.app-auth-expiration-1d": "Habilitado con token expira en 1 dia.",
     "dlg.app-auth-tooltip": "Para habilitar usted tiene una cuenta de administrador 'admin/123456. No lo olvide cambiarlo'",
-  
+
     "msg.alarm-remove": "¿Le gustaria eliminar la alarma?",
     "msg.text-remove": "¿Le gustaria eliminar el texto?",
     "msg.alarmproperty-error-exist": "Nombre de alarma no existe!",
@@ -774,4 +774,3 @@
     "msg.editor-mode-locked": "El editor ya esta abierto!",
     "msg.alarms-clear-success": "Todas las alarmas han sido canceladas!"
   }
-  

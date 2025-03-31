@@ -1,0 +1,50 @@
+<form [formGroup]="formGroup" class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'maps.location-property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field item-block">
+            <span>*{{'maps.location-property-name' | translate}}</span>
+            <input formControlName="name" type="text">
+        </div>
+        <div class="form-input-dual mt5">
+            <div class="my-form-field inbk">
+                <span>{{'maps.location-property-latitude' | translate}}</span>
+                <input formControlName="latitude" type="text">
+            </div>
+            <div class="my-form-field inbk ml20">
+                <span>{{'maps.location-property-longitude' | translate}}</span>
+                <input formControlName="longitude" type="text">
+            </div>
+        </div>
+        <div class="my-form-field mt5">
+            <span>{{'maps.location-property-card' | translate}}</span>
+            <mat-select formControlName="viewId">
+                <mat-option [value]=""></mat-option>
+                <mat-option *ngFor="let view of views" [value]="view.id">
+                    {{ view.name }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field mt5">
+            <span>{{'maps.location-property-view' | translate}}</span>
+            <mat-select formControlName="pageId">
+                <mat-option [value]=""></mat-option>
+                <mat-option *ngFor="let view of views" [value]="view.id">
+                    {{ view.name }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field item-block mt5">
+            <span>{{'maps.location-property-url' | translate}}</span>
+            <input formControlName="url" type="text">
+        </div>
+        <div class="my-form-field item-block mt5">
+            <span>{{'maps.location-property-description' | translate}}</span>
+            <input formControlName="description" type="text">
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action mt10">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button [disabled]="formGroup.invalid" (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

@@ -4,7 +4,7 @@ FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With F
 
 ![fuxa editor](/screenshot/fuxa-editor.png)
 
-![fuxa ani](/screenshot/fuxa-ani.gif)
+![fuxa ani](/screenshot/fuxa-thinglinks.gif)
 
 ![fuxa action](/screenshot/feature-action-move.gif)
 

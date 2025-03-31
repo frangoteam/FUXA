@@ -5,6 +5,8 @@ import { Location } from '@angular/common';
 import { LayoutSettings, NaviItem, NavigationSettings, LinkType } from '../_models/hmi';
 import { Router } from '@angular/router';
 import { ProjectService } from '../_services/project.service';
+import { LanguageService } from '../_services/language.service';
+import { Utils } from '../_helpers/utils';
 
 @Component({
     selector: 'app-sidenav',
@@ -21,13 +23,14 @@ export class SidenavComponent implements AfterContentChecked {
     viewAsAlarms = LinkType.alarms;
 
     logo = null;
-    layout = null;
+    layout: LayoutSettings = null;
     showSidenav = false;
     layoutNavigation = new NavigationSettings();
 
     constructor(private location: Location,
                 private router: Router,
                 private projectService: ProjectService,
+                private languageService: LanguageService,
                 private changeDetector: ChangeDetectorRef) {
     }
 
@@ -50,11 +53,14 @@ export class SidenavComponent implements AfterContentChecked {
         }
     }
 
-    public setLayout(ly: LayoutSettings) {
-        this.layout = ly;
+    public setLayout(layout: LayoutSettings) {
+        this.layout = Utils.clone(layout);
         if (this.layout.navigation) {
             this.layoutNavigation = this.layout.navigation;
             this.logo = this.layout.navigation.logo;
+            this.layout.navigation.items?.forEach(item => {
+                item.text = this.languageService.getTranslation(item.text) ?? item.text;
+            });
         }
     }
 }

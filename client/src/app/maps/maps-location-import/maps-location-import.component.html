@@ -1,0 +1,25 @@
+<form [formGroup]="formGroup" class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'maps.location-property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field input">
+            <span>{{'maps.location-to-import' | translate}}</span>
+            <input matInput
+                class="location-input"
+                title="{{ 'maps.location-to-import-input-title' | translate }}"
+                placeholder="{{ 'maps.location-to-import-input-title' | translate }}"
+                type="text"
+                formControlName="location"
+                [matAutocomplete]="autoLocations">
+            <mat-autocomplete #autoLocations="matAutocomplete" [displayWith]="displayFn"  (optionSelected)="onLocationSelected($event.option.value)">
+                <mat-option *ngFor="let location of locations$ | async" [value]="location" class="location-option-label">
+                    <span>{{ location.name }}</span>
+                </mat-option>
+            </mat-autocomplete>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action mt10">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button [disabled]="formGroup.invalid" (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

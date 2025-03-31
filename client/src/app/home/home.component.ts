@@ -33,6 +33,10 @@ import { Script, ScriptMode } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
 // declare var panzoom: any;
 
+import { ToastrService } from 'ngx-toastr';
+import { LanguageService, LanguageConfiguration } from '../_services/language.service';
+import { Language } from '../_models/language';
+
 @Component({
     selector: 'app-home',
     templateUrl: './home.component.html',
@@ -66,7 +70,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     viewAsAlarms = LinkType.alarms;
     alarmPanelWidth = '100%';
     serverErrorBanner$: Observable<boolean>;
-    cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
+    cardViewType = ViewType.cards;
+    mapsViewType = ViewType.maps;
     gridOptions = <GridsterConfig>new GridOptions();
     intervalsScript = new Intervals();
     currentDateTime: Date = new Date();
@@ -77,6 +82,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscriptionOpen: Subscription;
     private destroy$ = new Subject<void>();
     loggedUser$: Observable<User>;
+    language$: Observable<LanguageConfiguration>;
 
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
@@ -84,7 +90,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private hmiService: HmiService,
+        private toastr: ToastrService,
         private scriptService: ScriptService,
+        private languageService: LanguageService,
         private authService: AuthService,
         public gaugesManager: GaugesManager) {
         this.gridOptions.draggable = { enabled: false };
@@ -127,6 +135,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 takeUntil(this.destroy$)
             );
 
+            this.language$ = this.languageService.languageConfig$;
             this.loggedUser$ = this.authService.currentUser$;
 
             this.gaugesManager.onchange.pipe(
@@ -212,7 +221,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.homeView = view;
                 this.changeDetector.detectChanges();
                 this.setBackground();
-                if (this.homeView.type !== this.cardViewType) {
+                if (this.homeView.type !== this.cardViewType && this.homeView.type !== this.mapsViewType) {
                     this.checkZoom();
                     this.fuxaview.hmi.layout = this.hmi.layout;
                     this.fuxaview.loadHmi(this.homeView);
@@ -342,6 +351,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    onSetLanguage(language: Language) {
+        this.languageService.setCurrentLanguage(language);
+        window.location.reload();
+    }
+
     private processValueInHeaderItem(varTag: Variable) {
         this.headerItemsMap.get(varTag.id)?.forEach(item => {
             if (item.status.variablesValue[varTag.id] !== varTag.value) {
@@ -407,7 +421,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.infos.mode = this.hmi.layout.header.infos;
                     }
                     this.checkHeaderButton();
-                    this.layoutHeader = this.hmi.layout.header;
+                    this.layoutHeader = Utils.clone(this.hmi.layout.header);
                     this.changeDetector.detectChanges();
                     this.loadHeaderItems();
                 }
@@ -450,6 +464,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             item.status.onlyChange = true;
             item.status.variablesValue = {};
             item.element = Utils.findElementByIdRecursive(this.header.nativeElement, item.id);
+            (item as any).text = this.languageService.getTranslation(item.property?.text) ?? item.property?.text;
             const signalsIds = HtmlButtonComponent.getSignals(item.property);
             signalsIds.forEach(sigId => {
                 if (!this.headerItemsMap.has(sigId)) {
@@ -548,6 +563,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.fuxaview.openDialog(null, act.params, {});
                 } else if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.setView)) {
                     this.onGoToPage(act.params);
+                } else if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.toastMessage)) {
+                    var msg = act.params;
+                    // Check if the toast with the same message is already being displayed
+                    const resetOnDuplicate = true;  // Reset the duplicate toast
+                    // Use findDuplicate to check if the toast already exists
+                    const duplicateToast = this.toastr.findDuplicate('', msg, resetOnDuplicate, false);
+                    if (!duplicateToast) {
+                        const toastType = act.options?.type ?? 'info';
+                        // If no duplicate exists, show the toast
+                        this.toastr[toastType](msg, '', {
+                            timeOut: 3000,
+                            closeButton: true,
+                            disableTimeOut: true
+                        });
+                    }
                 }
             });
         }

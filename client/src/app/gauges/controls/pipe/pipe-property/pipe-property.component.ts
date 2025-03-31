@@ -22,7 +22,7 @@ declare var SVG: any;
     templateUrl: './pipe-property.component.html',
     styleUrls: ['./pipe-property.component.scss']
 })
-export class PipePropertyComponent implements OnInit {
+export class PipePropertyComponent implements OnInit  {
     @Input() data: PipePropertyData;
     @Output() onPropChanged: EventEmitter<any> = new EventEmitter();
     @Input('reload') set reload(b: any) {
@@ -156,13 +156,8 @@ export class PipePropertyComponent implements OnInit {
     }
 
     private _reload() {
-        this.property = this.data.settings.property;
-        if (this.property) {
-            // this.tableTypeCtrl.setValue(this.property.type);
-            // this.options = Object.assign(this.options, DataTableComponent.DefaultOptions(), this.property.options);
-        } else {
-            this.ngOnInit();
-        }
+        this.property = this.data?.settings?.property;
+        this.ngOnInit();
     }
 }
 

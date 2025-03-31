@@ -144,6 +144,20 @@
             }
         }
 
+        .header-date-time {
+            border-left-width: 1px;
+            border-left-style: solid;
+            padding-left: 10px;
+            padding-right: 10px;
+            display: inline-block;
+        }
+
+        .header-language {
+            padding-left: 10px;
+            padding-right: 10px;
+            display: inline-block;
+        }
+
         .header-notify-button {
             display: flex;
             line-height: 46px;
@@ -159,7 +173,7 @@
                 height: 28px;
             }
 
-            .alarm-button {
+            .alarm-button, .info-button {
                 margin-right: 20px;
             }
         }

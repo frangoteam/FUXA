@@ -6,6 +6,7 @@ import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { NgxSwitchComponent } from '../../../gui-helpers/ngx-switch/ngx-switch.component';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
+import { CheckPermissionFunction } from '../../../_services/auth.service';
 
 @Injectable()
 export class HtmlSwitchComponent extends GaugeBaseComponent {
@@ -78,12 +79,13 @@ export class HtmlSwitchComponent extends GaugeBaseComponent {
         }
     }
 
-    static initElement(ga: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, options?: any) {
+    static initElement(ga: GaugeSettings, resolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, checkPermission?: CheckPermissionFunction) {
         let ele = document.getElementById(ga.id);
         if (ele) {
             ele?.setAttribute('data-name', ga.name);
             let htmlSwitch = Utils.searchTreeStartWith(ele, this.prefix);
             if (htmlSwitch) {
+                const permission = checkPermission ? checkPermission(ga.property) : null;
                 const factory = resolver.resolveComponentFactory(NgxSwitchComponent);
                 const componentRef = viewContainerRef.createComponent(factory);
                 htmlSwitch.innerHTML = '';
@@ -101,6 +103,9 @@ export class HtmlSwitchComponent extends GaugeBaseComponent {
                 }
                 componentRef.instance.isReadonly = !!ga.property?.events?.length;
                 componentRef.instance['name'] = ga.name;
+                if (permission?.show && !permission?.enabled) {
+                    componentRef.instance.setDisabled(true);
+                }
                 return componentRef.instance;
             }
         }
@@ -130,11 +135,7 @@ export class HtmlSwitchComponent extends GaugeBaseComponent {
     }
 
     static detectChange(ga: GaugeSettings, res: any, ref: any) {
-        let options;
-        if (ga.property && ga.property.options) {
-            options = ga.property.options;
-        }
-        return HtmlSwitchComponent.initElement(ga, res, ref, options);
+        return HtmlSwitchComponent.initElement(ga, res, ref);
     }
 
     static getSize(ga: GaugeSettings) {

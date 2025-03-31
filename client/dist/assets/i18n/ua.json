@@ -541,10 +541,10 @@
     "texts.list-group": "Група",
     "texts.list-value": "Текст",
 
-    "dlg.textproperty-title": "Текст",
-    "dlg.textproperty-id": "ID",
-    "dlg.textproperty-group": "Група",
-    "dlg.textproperty-value": "Текст",
+    "text.settings-title": "Текст",
+    "text.settings-id": "ID",
+    "text.settings-group": "Група",
+    "text.settings-value": "Текст",
 
     "dlg.plugins-title": "Плагіни",
     "dlg.plugins-name": "Імя",

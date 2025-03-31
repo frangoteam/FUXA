@@ -134,6 +134,11 @@ function init(_server, _runtime) {
                     } else {
                         res.end();
                     }
+                } else if (req.userId === 'guest') {
+                    res.status(200).json({
+                        message: 'guest',
+                        token: authJwt.getGuestToken()
+                    });
                 } else {
                     res.end();
                 }

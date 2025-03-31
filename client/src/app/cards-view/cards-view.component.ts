@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, Renderer
 import { ChangeDetectorRef } from '@angular/core';
 
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, CardWidget, CardWidgetType } from '../_models/hmi';
+import { Hmi, View, CardWidget, CardWidgetType, ViewType } from '../_models/hmi';
 import { GridsterConfig, GridsterItem, GridType, CompactType, GridsterItemComponentInterface } from 'angular-gridster2';
 import { Utils } from '../_helpers/utils';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
@@ -20,11 +20,13 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     @Input() hmi: Hmi;
     @Input() gaugesManager: GaugesManager;        // gauges.component
     @Output() editCard: EventEmitter<CardWidget> = new EventEmitter();
+    @Output() onGoTo: EventEmitter<string> = new EventEmitter<string>();
     @ViewChildren(FuxaViewComponent) fuxaViews!: QueryList<FuxaViewComponent>;
 
     gridOptions: GridsterConfig;
     dashboard: Array<GridsterItem> = [];
     cardType = CardWidgetType;
+    mapsViewType = ViewType.maps;
     private loadOk = false;
 
     constructor(private renderer: Renderer2,
@@ -39,9 +41,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        setTimeout(() => {
-            this.reload();
-        }, 200);
+        this.reload();
     }
 
     reload() {
@@ -84,6 +84,10 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     onRemoveCard(item) {
         this.dashboard.splice(this.dashboard.indexOf(item), 1);
         this.view.svgcontent = JSON.stringify(this.dashboard);
+    }
+
+    onGoToPage($event) {
+        this.onGoTo.emit($event);
     }
 
     addCardsWidget(x: number = 0, y: number = 0, cols: number = 10, rows: number = 8, card: CardWidget = <CardWidget>{ type: CardWidgetType.view, zoom: 1 }) {
@@ -149,14 +153,21 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
 
     static itemResizeTrigger(item: GridsterItem, itemComponent: GridsterItemComponentInterface) {
         if (item.card?.type === CardWidgetType.view) {
-            let ratioWidth, ratioHeight, eleToResize;
-            ratioWidth = itemComponent.el.clientWidth / item.content?.profile?.width;
-            ratioHeight = itemComponent.el.clientHeight / item.content?.profile?.height;
-            eleToResize = Utils.searchTreeTagName(itemComponent.el, 'svg');
-            if (item.card?.scaleMode === 'contain') {
-                eleToResize?.setAttribute('transform', 'scale(' + Math.min(ratioWidth, ratioHeight) + ')');
-            } else if (item.card?.scaleMode === 'stretch') {
-                eleToResize?.setAttribute('transform', 'scale(' + ratioWidth + ', ' + ratioHeight + ')');
+            if (item.content.type === 'maps') {
+                if ((itemComponent.el.firstChild as HTMLElement).style) {
+                    (itemComponent.el.firstChild as HTMLElement).style.height = '100%';
+                    (itemComponent.el.firstChild as HTMLElement).style.width = '100%';
+                }
+            } else {
+                let ratioWidth, ratioHeight, eleToResize;
+                ratioWidth = itemComponent.el.clientWidth / item.content?.profile?.width;
+                ratioHeight = itemComponent.el.clientHeight / item.content?.profile?.height;
+                eleToResize = Utils.searchTreeTagName(itemComponent.el, 'svg');
+                if (item.card?.scaleMode === 'contain') {
+                    eleToResize?.setAttribute('transform', 'scale(' + Math.min(ratioWidth, ratioHeight) + ')');
+                } else if (item.card?.scaleMode === 'stretch') {
+                    eleToResize?.setAttribute('transform', 'scale(' + ratioWidth + ', ' + ratioHeight + ')');
+                }
             }
         } else if (item.card.type === CardWidgetType.iframe) {
             if ((itemComponent.el.firstChild as HTMLElement).style) {

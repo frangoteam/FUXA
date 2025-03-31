@@ -34,7 +34,7 @@ export class AuthInterceptor implements HttpInterceptor {
             tap((event: HttpEvent<any>) => {
             }, (err: any) => {
                 if (err instanceof HttpErrorResponse) {
-                    if (err.status === 403) {
+                    if (err.status === 401 || err.status === 403) {
                         authService.signOut();
                         const projectService = this.injector.get(ProjectService);
                         projectService.reload();

@@ -1,0 +1,10 @@
+<div class="fab-container">
+    <div class="fab-buttons" [class.open]="isOpen">
+        <button mat-mini-fab *ngFor="let button of buttons; let i = index"
+                class="fab"
+                [ngStyle]="buttonStyles[i]"
+                (click)="button.action()">
+            <mat-icon>{{ button.icon }}</mat-icon>
+        </button>
+    </div>
+</div>

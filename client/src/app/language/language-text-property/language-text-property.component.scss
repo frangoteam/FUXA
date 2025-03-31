@@ -1,0 +1,20 @@
+:host {
+    .container {
+        .mat-dialog-content
+        {
+            width: 400px;
+            min-height: 220px;
+            max-height: 400px;
+            overflow: auto;
+            padding-bottom: 7px;
+
+            .my-form-field {
+                display: block;
+                input,
+                span {
+                    width: calc(100% - 5px);
+                }
+            }
+        }
+    }
+}

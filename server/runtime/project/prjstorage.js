@@ -1,6 +1,6 @@
 /**
  *  Module to manage the project datastore in a database
- *  Table: 'general', 'views', 'devices', 'chart' 
+ *  Table: 'general', 'views', 'devices', 'chart', 'texts', 'alarms', 'notifications', 'scripts', 'reports', 'locations'
  */
 
 'use strict';
@@ -15,8 +15,8 @@ var db_prj;         // Database of project
 
 /**
  * Init and bind the database resource
- * @param {*} _settings 
- * @param {*} _log 
+ * @param {*} _settings
+ * @param {*} _log
  */
 function init(_settings, _log) {
     settings = _settings;
@@ -49,6 +49,7 @@ function _bind() {
         sql += "CREATE TABLE if not exists notifications (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists scripts (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists reports (name TEXT PRIMARY KEY, value TEXT);";
+        sql += "CREATE TABLE if not exists locations (name TEXT PRIMARY KEY, value TEXT);";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.bind failed! ${err}`);
@@ -56,9 +57,9 @@ function _bind() {
             } else {
                 resolve(dbfileExist);
             }
-        });  
+        });
     });
-} 
+}
 
 /**
  * Set default project value in database
@@ -79,7 +80,7 @@ function setDefault() {
 /**
  * Insert the list of values in database tables, if exist replace the value of name(key)
  * The section contains the name of table, name(key) and value
- * @param {*} sections 
+ * @param {*} sections
  */
 function setSections(sections) {
     return new Promise(function (resolve, reject) {
@@ -96,7 +97,7 @@ function setSections(sections) {
             } else {
                 resolve();
             }
-        });          
+        });
     });
 }
 
@@ -116,15 +117,15 @@ function setSection(section) {
             } else {
                 resolve();
             }
-        });          
+        });
     });
 }
 
 /**
  * Return all values of table with this name
  * If name is null return all values in table
- * @param {*} table 
- * @param {*} name 
+ * @param {*} table
+ * @param {*} name
  */
 function getSection(table, name) {
     return new Promise(function (resolve, reject) {
@@ -145,7 +146,7 @@ function getSection(table, name) {
 /**
  * Delete the values in database table
  * The section contains the name of table, name(key)
- * @param {*} section 
+ * @param {*} section
  */
 function deleteSection(section) {
     return new Promise(function (resolve, reject) {
@@ -183,6 +184,7 @@ function clearAll() {
         sql += "DELETE FROM notifications;";
         sql += "DELETE FROM scripts;";
         sql += "DELETE FROM reports;";
+        sql += "DELETE FROM locations;";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.clear failed! ${err}`);
@@ -190,7 +192,7 @@ function clearAll() {
             } else {
                 resolve(true);
             }
-        });  
+        });
     });
 }
 
@@ -207,6 +209,7 @@ const TableType = {
     NOTIFICATIONS: 'notifications',
     SCRIPTS: 'scripts',
     REPORTS: 'reports',
+    LOCATIONS: 'locations',
 }
 
 module.exports = {

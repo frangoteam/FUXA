@@ -13,6 +13,7 @@ var EthernetIPclient = require('./ethernetip');
 var FuxaServer = require('./fuxaserver');
 var ODBCclient = require('./odbc');
 // var TEMPLATEclient = require('./template');
+var GpioClient = require('./gpio');
 
 const path = require('path');
 const utils = require('../utils');
@@ -66,7 +67,7 @@ function Device(data, runtime) {
         if (!HTTPclient) {
             return null;
         }
-        comm = HTTPclient.create(data, logger, events, manager, runtime);
+        comm = HTTPclient.create(data, logger, events, runtime);
     } else if (data.type === DeviceEnum.MQTTclient) {
         if (!MQTTclient) {
             return null;
@@ -89,6 +90,12 @@ function Device(data, runtime) {
         }
         comm = ODBCclient.create(data, logger, events, manager);
     }
+    else if (data.type === DeviceEnum.Gpio) {
+        if (!GpioClient) {
+            return null;
+        }
+        comm = GpioClient.create(data, logger, events, manager, runtime);
+    }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
     //         return null;
@@ -105,7 +112,6 @@ function Device(data, runtime) {
         currentCmd = DeviceCmdEnum.START;
         if (status === DeviceStatusEnum.INIT) {
             logger.info(`'${property.name}' start`);
-            this.restoreValues();
             var self = this;
             this.checkStatus();
             deviceCheckStatus = setInterval(function () {
@@ -148,6 +154,7 @@ function Device(data, runtime) {
             this.connect().then(() => {
                 tryToConnect = 0;
                 status = DeviceStatusEnum.IDLE;
+                self.restoreValues();
             }).catch(function (err) {
                 logger.error(`'${property.name}' connect error! ${err} (${tryToConnect})`);
                 if (tryToConnect++ > 3) {
@@ -489,6 +496,8 @@ function loadPlugin(type, module) {
         FuxaServer = require(module);
     } else if (type === DeviceEnum.ODBC) {
         ODBCclient = require(module);
+    }else if (type === DeviceEnum.Gpio) {
+        GpioClient = require(module);
     }
 }
 
@@ -525,6 +534,7 @@ var DeviceEnum = {
     EthernetIP: 'EthernetIP',
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
+    Gpio: 'Gpio',
     // Template: 'template'
 }
 

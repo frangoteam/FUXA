@@ -66,6 +66,7 @@
     "dlg.layout-lbl-margin-right": "Margin right",
     "dlg.layout-lbl-login-info": "Login info",
     "dlg.layout-lbl-custom-styles": "Custom styles",
+    "dlg.layout-lbl-show-language": "Show language",
 
     "dlg.menuitem-title": "Menu Item",
     "dlg.menuitem-image": "[My Image...]",
@@ -137,6 +138,7 @@
     "dlg.userproperty-groups": "Authorization Groups",
     "dlg.userproperty-roles": "Authorization Roles",
     "dlg.useraccess-groups": "Authorization (void = full for everyone)",
+    "dlg.userproperty-language": "Language",
     "dlg.userproperty-start": "Start View",
 
     "dlg.gauge-permission-title": "Authorization",
@@ -217,6 +219,11 @@
     "item.logininfo-type-fullname": "Full name",
     "item.logininfo-type-both": "Username & Full name",
 
+    "item.language-show-mode-nothing": "Hide",
+    "item.language-show-mode-simple": "Show",
+    "item.language-show-mode-key": "Show with Key",
+    "item.language-show-mode-fullname": "Show with Full name",
+
     "item.zoommode-disabled": "Disabled",
     "item.zoommode-enabled": "Manually",
     "item.zoommode-autoresize": "Auto-resize",
@@ -250,6 +257,8 @@
     "chart.config-interpo-stepAfter": "step after",
     "chart.config-interpo-stepBefore": "step before",
     "chart.config-interpo-spline": "spline",
+    "chart.config-line-width": "Line Width",
+    "chart.config-line-gap": "Fill Gaps",
     "chart.config-line-add-zone": "Add Zone",
     "chart.config-line-zone-min": "Min",
     "chart.config-line-zone-max": "Max",
@@ -281,6 +290,7 @@
     "chart.property-date-last-range": "Date range",
     "chart.property-refresh-interval": "Refresh interval (min.)",
     "chart.property-hide-toolbar": "Hide toolbar",
+    "chart.property-thouch-zoom": "Thouch Zoom",
     "chart.property-load-old-values": "Load history",
     "chart.property-date.format": "Date format",
     "chart.property-time.format": "Time format",
@@ -499,6 +509,7 @@
 
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
+    "editor.view-maps": "Maps",
     "editor.views": "Views",
     "editor.resources": "Resources",
     "editor.view-delete": "Delete",
@@ -842,6 +853,7 @@
     "device.list-remove-all": "Remove all Tags",
     "device.list-options": "Tag options",
     "device.list-clipboard": "Copy Tag object to clipboard",
+    "device.list-direction": "Direction",
 
     "devices.export": "Export Devices",
     "devices.export-json": "JSON",
@@ -967,6 +979,11 @@
     "device.tag-property-digits": "Decimal",
     "device.tag-property-initvalue": "Init value",
     "device.tag-property-description": "Description",
+    "device.tag-property-direction": "Direction",
+    "device.tag-property-edge": "Edge",
+    "device.tag-property-gpio": "GPIO Number",
+
+
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "Value:",
     "device-tag-dialog-title": "Tag Selection",
@@ -1123,6 +1140,7 @@
     "gauges.property-tag-label": "Tag",
     "gauges.property-tag-internal-title": "Set placeholder of Destination (or Tag of internal device)",
     "gauges.property-input-range": "Allowed input range",
+    "gauges.property-language-text": "Text or @TextID",
 
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisions",
@@ -1155,6 +1173,7 @@
     "bag.property-format-digits": "Format digits",
     "bag.property-zones": "Zones",
     "bag.property-color": "Color",
+    "bag.property-fill": "Fill",
 
     "alarms.list-title": "Alarms settings",
     "alarms.list-name": "Name",
@@ -1206,10 +1225,13 @@
     "alarm.action-onsetview": "Set View",
     "alarm.action-onsetvalue": "Set Value",
     "alarm.action-onRunScript": "Run Script",
+    "alarm.action-toastMessage": "Show Message",
     "alarm.action-sendMsg": "Send Message",
     "alarm.property-action-type": "Action type",
     "alarm.property-action-value": "Value to set",
     "alarm.property-action-destination": "View to show",
+    "alarm.property-action-toastMessage": "Message to show",
+    "alarm.property-action-toastType": "Type",
 
     "notifications.list-title": "Notifications settings",
     "notifications.list-name": "Name",
@@ -1341,6 +1363,8 @@
     "script.template-chart-data-tooltip": "Code template of customized chart data to return",
     "script.template-invoke-chart-update-options-text": "Update Chart options",
     "script.template-invoke-chart-update-options-tooltip": "Code template to update Chart options (Y-axis scale range). CLIENT mode only!",
+    "script.template-getHistoricalTagsoptions-text": "Get Historical Tags values",
+    "script.template-getHistoricalTagsoptions-tooltip": "Code template to get Historical Tags values.",
 
     "reports.list-title": "Reports settings",
     "reports.list-name": "Name",
@@ -1412,6 +1436,28 @@
     "report.chart-width": "Width",
     "report.chart-height": "Height",
 
+    "maps.locations-list-title": "Locations settings",
+    "maps.locations-list-name": "Name",
+    "maps.locations-list-view": "View",
+    "maps.locations-list-description": "Description",
+    "maps.location-property-title": "Location",
+    "maps.location-property-name": "Name",
+    "maps.location-property-description": "Description",
+    "maps.location-property-latitude": "Latitude",
+    "maps.location-property-longitude": "Longitude",
+    "maps.location-property-card": "Card",
+    "maps.location-property-view": "View",
+    "maps.location-property-url": "URL",
+    "maps.edit-add-location": "Add Location",
+    "maps.edit-import-location": "Import Location",
+    "maps.edit-edit-location": "Edit Location",
+    "maps.edit-remove-location": "Remove Location",
+    "maps.edit-start-location": "Set as start Location",
+    "maps.edit-start-location-saved": "Start Location saved",
+    "maps.close-popups": "Close all popups",
+    "maps.location-to-import": "Location to import",
+    "maps.location-to-import-input-title": "Select Location to import",
+
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",
 
@@ -1438,12 +1484,26 @@
     "resource.list-title-fonts": "Fonts list",
     "resources.lib-widgets": "Widgets",
 
-    "texts.list-title": "Texts settings",
+    "texts.list-title": "Language settings",
     "texts.list-filter": "Filter",
     "texts.list-filter-group": "Group",
     "texts.list-id": "ID",
     "texts.list-group": "Group",
-    "texts.list-value": "Text",
+    "texts.list-value": "Text (default)",
+    "texts.list-add-text": "Add Text",
+    "texts.list-edit-language": "Edit Language",
+    "language.settings-title": "Language settings",
+    "language.settings-add-tooltip": "Add Language",
+    "language.settings-id": "Key",
+    "language.settings-default-id": "Key (default)",
+    "language.settings-id-placeholder": "ex: EN",
+    "language.settings-name": "Name",
+    "language.settings-default-name": "Name (default)",
+    "language.settings-name-placeholder": "ex: English",
+    "text.settings-title": "Text",
+    "text.settings-id": "Name (Allowed letters and numbers, no spaces)",
+    "text.settings-group": "Group",
+    "text.settings-value": "Text (default)",
 
     "gui.range-number-min": "Min",
     "gui.range-number-max": "Max",
@@ -1453,11 +1513,6 @@
     "gui.range-number-switcher": "Range as number or boolean",
 
     "dlg.bitmask-title": "Bitmask",
-
-    "dlg.textproperty-title": "Text",
-    "dlg.textproperty-id": "ID",
-    "dlg.textproperty-group": "Group",
-    "dlg.textproperty-value": "Text",
 
     "dlg.plugins-title": "Server Plugins",
     "dlg.plugins-info": "Not installed plugins can be installed in the server manually: 'npm install [package name]@[version]'",
@@ -1484,6 +1539,7 @@
     "dlg.setup-alarms": "Alarms",
     "dlg.setup-line-charts": "Line charts",
     "dlg.setup-bar-charts": "Bar charts",
+    "dlg.setup-maps-locations": "Locations",
     "dlg.setup-layout": "Layout",
     "dlg.setup-plugins": "Plugins",
     "dlg.setup-scripts": "Scripts",
@@ -1494,6 +1550,7 @@
     "dlg.setup-events": "Events",
     "dlg.setup-resources": "Resources",
     "dlg.setup-fonts": "Fonts",
+    "dlg.setup-language": "Language",
     "dlg.app-settings-title": "Settings",
     "dlg.app-settings-system": "System",
     "dlg.app-settings-smtp": "SMTP",
@@ -1620,5 +1677,9 @@
     "msg.view-name-exist": "View name exist!",
     "msg.notification-name-exist": "Notification name exist!",
     "msg.file-remove": "Would you like to remove '{{value}}'?",
-    "msg.notification-remove": "Would you like to remove Notification '{{value}}'?"
+    "msg.notification-remove": "Would you like to remove Notification '{{value}}'?",
+    "msg.maps-location-remove": "Would you like to remove Maps Location '{{value}}'?",
+    "msg.maps-location-name-exist": "The Maps Location name already exist!",
+    "msg.text-name-exist": "Text name already exist!",
+    "msg.texts-text-remove": "Would you like to remove Text '{{value}}'?"
 }

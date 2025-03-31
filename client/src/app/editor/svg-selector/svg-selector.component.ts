@@ -44,7 +44,7 @@ export class SvgSelectorComponent {
     isSelected(element: ISvgElement) {
         return element?.id === this.svgElementSelected?.id;
     }
-    
+
     filterElements(): void {
         if (!this.filterText) {
           this.filteredSvgElements = this.svgElements;
@@ -56,7 +56,7 @@ export class SvgSelectorComponent {
             this.filteredSvgElements = [];
           }
         }
-    }  
+    }
 }
 
 export interface IElementPreview {

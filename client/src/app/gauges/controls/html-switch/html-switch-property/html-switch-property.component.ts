@@ -68,6 +68,7 @@ export class HtmlSwitchPropertyComponent implements OnInit, AfterContentInit {
     onOkClick(): void {
         this.data.settings.property = this.property;
         this.data.settings.property.permission = this.flexauth.permission;
+        this.data.settings.property.permissionRoles = this.flexauth.permissionRoles;
         this.data.settings.property.options = this.options;
         this.data.settings.name = this.flexauth.name;
         if (this.flexEvent) {

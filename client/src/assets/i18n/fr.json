@@ -1,10 +1,10 @@
 {
   "with param": "échantillon {{value}}",
-    
+
   "app.home": "Accueil",
   "app.lab": "Laboratoire",
   "app.editor": "Edition",
-  
+
   "header.new-project": "Nouveau projet",
   "header.save-project": "Sauvegarder le projet",
   "header.save-project-tooltip": "Sauver tous les changements du projet en suspens",
@@ -220,7 +220,7 @@
 
   "item.headerbarmode-hide": "Cacher",
   "item.headerbarmode-show": "Montrer",
- 
+
   "dlg.layout-input-dialog": "Mode de dialogue du champ de saisie",
   "item.inputmode-disabled": "Désactivé",
   "item.inputmode-enabled": "Activé",
@@ -1102,6 +1102,12 @@
   "texts.list-id": "IDENTIFIANT",
   "texts.list-group": "Groupe",
   "texts.list-value": "Texte",
+
+  "text.settings-title": "Texte",
+  "text.settings-id": "IDENTIFIANT",
+  "text.settings-group": "Groupe",
+  "text.settings-value": "Texte",
+
   "gui.range-number-min": "Min",
   "gui.range-number-max": "Max",
   "gui.range-number-boolean": "Valeur de masque",
@@ -1109,10 +1115,7 @@
   "gui.range-number-false": "Faux [0-0]",
   "gui.range-number-switcher": "Gamme comme nombre ou booléen",
   "dlg.bitmask-title": "Massacre",
-  "dlg.textproperty-title": "Texte",
-  "dlg.textproperty-id": "IDENTIFIANT",
-  "dlg.textproperty-group": "Groupe",
-  "dlg.textproperty-value": "Texte",
+
   "dlg.plugins-title": "Plugins",
   "dlg.plugins-name": "Nom",
   "dlg.plugins-version": "Version",

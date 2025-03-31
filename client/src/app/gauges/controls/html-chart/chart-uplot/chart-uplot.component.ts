@@ -284,6 +284,14 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 serie.scale = '1';
             }
+            serie.spanGaps = Utils.isNullOrUndefined(line.spanGaps) ? true : line.spanGaps;
+            if (line.fill) {
+                serie.fill = line.fill;
+            }
+            if (line.lineWidth) {
+                serie.width = line.lineWidth;
+            }
+
             if (line.zones?.some(zone => zone.fill)) {
                 const zones = this.generateZones(line.zones, 'fill', line.fill);
                 if (zones) {

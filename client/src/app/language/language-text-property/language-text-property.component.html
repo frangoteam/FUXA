@@ -1,0 +1,33 @@
+<form [formGroup]="formGroup" class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'text.settings-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field">
+            <span>{{'text.settings-id' | translate}}</span>
+            <input matInput formControlName="name" type="text" pattern="^[a-zA-Z0-9_]+$" (input)="clearNameError()">
+            <div *ngIf="nameExists" class="message-error">{{'msg.text-name-exist' | translate}}</div>
+        </div>
+        <div class="my-form-field mt5">
+            <span>{{'text.settings-group' | translate}}</span>
+            <input matInput formControlName="group" type="text">
+        </div>
+        <div class="my-form-field mt5">
+            <ng-container *ngIf="defaultLanguage; else defaultText">
+                <span>{{ defaultLanguage.id }} ({{ defaultLanguage.name }})</span>
+            </ng-container>
+            <ng-template #defaultText>
+                <span>{{'text.settings-value' | translate}}</span>
+            </ng-template>
+            <input matInput formControlName="value" type="text">
+        </div>
+        <div *ngFor="let lang of languages" class="my-form-field mt5">
+            <span>{{ lang.id }} ({{ lang.name }})</span>
+            <input matInput [formControlName]="'translation_' + lang.id" type="text" [value]="formGroup.get('translation_' + lang.id)?.value">
+        </div>
+
+    </div>
+    <div mat-dialog-actions class="dialog-action mt10">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button [disabled]="formGroup.invalid" (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

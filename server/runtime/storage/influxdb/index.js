@@ -43,9 +43,9 @@ function Influx(_settings, _log, _currentStorate) {
                 client = new InfluxDB(clientOptions);
                 writeApi = client.getWriteApi(settings.daqstore.organization, settings.daqstore.bucket, 's');
                 queryApi = client.getQueryApi(settings.daqstore.organization);
-                status = InfluxDBStatusEnum.OPEN;    
+                status = InfluxDBStatusEnum.OPEN;
             } catch (error) {
-                logger.error('influxdb-init failed! ' + error.message); 
+                logger.error('influxdb-init failed! ' + error.message);
             }
         } else if (influxdbVersion === VERSION_18_FLUX) {
             try {
@@ -98,7 +98,7 @@ function Influx(_settings, _log, _currentStorate) {
         var dataToRestore = [];
         for (var tagid in tagsValues) {
             let tag = tagsValues[tagid];
-            if (!tag.daq || utils.isNullOrUndefined(tag.value) || Number.isNaN(tag.value)) {
+            if (tag.daq && !(utils.isNullOrUndefined(tag.value) || Number.isNaN(tag.value))) {
                 if (tag.daq.restored) {
                     dataToRestore.push({id: tag.id, deviceId: deviceId, value: tag.value});
                 }
@@ -159,7 +159,7 @@ function Influx(_settings, _log, _currentStorate) {
                     tots *= 1000000;
                     const query = `SELECT * FROM "${tagid}" WHERE time >= ${fromts} AND time <= ${tots}`;
                     client.query(query).then((result) => {
-                        resolve(result.map(row => { 
+                        resolve(result.map(row => {
                             return {
                                 dt: new Date(row.time).getTime(),
                                 value: row.value
@@ -210,9 +210,6 @@ function Influx(_settings, _log, _currentStorate) {
                     logger.error(`influxdb-writePoints error! ${err}`);
                     setError(err);
                 });
-            }
-            if (currentStorage) {
-                currentStorage.setValues(points);
             }
         } catch (error) {
             logger.error(`influxdb-writePoints failed! ${error}`);

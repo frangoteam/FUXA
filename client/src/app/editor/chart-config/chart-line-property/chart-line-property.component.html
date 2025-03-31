@@ -29,6 +29,16 @@
             </div>
         </div>
         <div class="block mt10">
+            <div class="my-form-field" style="width: 140px;">
+                <span>{{'chart.config-line-width' | translate}}</span>
+                <input numberOnly formControlName="lineWidth" style="width:140px" type="number" min="1" max="5">
+            </div>
+            <div class="my-form-field inbk ml20 tac">
+                <span>{{'chart.config-line-gap' | translate}}</span>
+                <mat-slide-toggle color="primary" formControlName="spanGaps"></mat-slide-toggle>
+            </div>
+        </div>
+        <div class="block mt10">
             <div class="my-form-field slider-field color-field">
                 <span>{{'chart.config-line-color' | translate}}</span>
                 <input [(colorPicker)]="data.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="data.color" [cpPresetColors]="defaultColor"
@@ -48,8 +58,6 @@
                 </button>
             </div>
         </div>
-
-
         <div class="my-form-field block-zones mt10">
             <div *ngFor="let zone of data.zones; index as i" class="mt5">
                 <div class="my-form-field">

@@ -186,9 +186,14 @@ export class DeviceComponent implements OnInit, OnDestroy {
                         device.id = Utils.getGUID(DEVICE_PREFIX);
                         device.name = Utils.getShortGUID(device.name + '_', '');
                         if (device.tags) {
+                            let newTags = {};
                             Object.keys(device.tags).forEach((key) => {
-                                device.tags[key].id = Utils.getGUID(TAG_PREFIX);
+                                const id = Utils.getGUID(TAG_PREFIX);
+                                //change tags key to new id
+                                newTags[id] = device.tags[key];
+                                newTags[id].id = id;
                             });
+                            device.tags = newTags;
                         }
                         importDev.push(device);
                     }

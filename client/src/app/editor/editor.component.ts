@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProjectService, SaveMode } from '../_services/project.service';
 import { Hmi, View, GaugeSettings, SelElement, LayoutSettings, ViewType, ISvgElement, GaugeProperty, DocProfile } from '../_models/hmi';
 import { WindowRef } from '../_helpers/windowref';
-import { GaugePropertyComponent, GaugeDialogType } from '../gauges/gauge-property/gauge-property.component';
+import { GaugePropertyComponent, GaugeDialogType, GaugePropertyData } from '../gauges/gauge-property/gauge-property.component';
 
 import { GaugesManager } from '../gauges/gauges.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component';
@@ -39,6 +39,7 @@ import { ViewPropertyComponent, ViewPropertyType } from './view-property/view-pr
 import { HtmlImageComponent } from '../gauges/controls/html-image/html-image.component';
 import { LibWidgetsService } from '../resources/lib-widgets/lib-widgets.service';
 import { PipePropertyData } from '../gauges/controls/pipe/pipe-property/pipe-property.component';
+import { MapsViewComponent } from '../maps/maps-view/maps-view.component';
 
 declare var Gauge: any;
 
@@ -65,6 +66,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('sidePanel', {static: false}) sidePanel: MatDrawer;
     @ViewChild('svgSelectorPanel', {static: false}) svgSelectorPanel: MatDrawer;
     @ViewChild('svgpreview', {static: false}) svgPreview: ElementRef;
+    @ViewChild('mapsView', {static: false}) mapsView: MapsViewComponent;
 
     svgElementSelected: ISvgElement = null;
     svgElements: ISvgElement[] = [];
@@ -107,8 +109,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     panelHyperlinkOpenState: boolean;
 
     dashboard: Array<GridsterItem>;
-    cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
-    svgViewType = Utils.getEnumKey(ViewType, ViewType.svg);
+    cardViewType = ViewType.cards;
+    svgViewType = ViewType.svg;
+    mapsViewType = ViewType.maps;
     shapesGrps = [];
     private gaugesRef = {};
 
@@ -324,7 +327,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 oldsel = this.hmi.views[0].name;
             }
             for (let i = 0; i < this.hmi.views.length; i++) {
-                if (this.hmi.views[i].name === oldsel) {
+                if (this.hmi.views[i].name === oldsel && this.hmi.views[i].type !== ViewType.maps) {
                     this.onSelectView(this.hmi.views[i]);
                     break;
                 }
@@ -361,7 +364,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private getContent() {
-        if (this.currentView.type === Utils.getEnumKey(ViewType, ViewType.cards)) {
+        if (this.currentView.type === ViewType.cards) {
             this.currentView.svgcontent = this.cardsview.getContent();
             return this.currentView.svgcontent;
             // let temp = JSON.parse(JSON.stringify(this.dashboard));
@@ -370,9 +373,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             //     delete temp[i]['background'];
             // }
             // return JSON.stringify(temp);
-        } else {
-            return this.winRef.nativeWindow.svgEditor.getSvgString();
+        } else if (this.currentView.type === ViewType.maps) {
+            return this.currentView.svgcontent;
         }
+        return this.winRef.nativeWindow.svgEditor.getSvgString();
     }
 
     /**
@@ -502,7 +506,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     private loadView(view: View) {
         if (view) {
             this.clearEditor();
-            if (this.editorMode !== EditorModeType.CARDS) {
+            if (this.isSvgEditMode(this.editorMode)) {
                 let svgcontent = '';
                 let v = this.getView(view.name);
                 if (v) {
@@ -530,11 +534,26 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.checkSvgElementsMap(true);
                     this.winRef.nativeWindow.svgEditor.resetUndoStack();
                 }, 500);
-            } else if (this.cardsview) {
+            } else if (this.isCardsEditMode(this.editorMode) && this.cardsview) {
                 this.cardsview.view = view;
                 this.cardsview.reload();
+            } else if (this.isMapsEditMode(this.editorMode) && this.mapsView) {
+                this.mapsView.view = view;
+                this.mapsView.reload();
             }
         }
+    }
+
+    private isSvgEditMode(editMode: EditorModeType) {
+        return editMode !== EditorModeType.CARDS && editMode !== EditorModeType.MAPS;
+    }
+
+    private isCardsEditMode(editMode: EditorModeType) {
+        return editMode === EditorModeType.CARDS;
+    }
+
+    private isMapsEditMode(editMode: EditorModeType) {
+        return editMode === EditorModeType.MAPS;
     }
 
     /**
@@ -564,7 +583,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (item.card.data && exist.indexOf(item.card.data) >= 0) {
             exist = exist.filter((n) => n !== item.card.data);
         }
-        let cardType = Utils.getEnumKey(ViewType, ViewType.cards);
+        let cardType = ViewType.cards;
         let views = this.hmi.views.filter((v) => v.type !== cardType && exist.indexOf(v.name) < 0).map((v) => v.name);
         let dialogRef = this.dialog.open(CardConfigComponent, {
             position: { top: '60px' },
@@ -981,11 +1000,12 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     onAddDoc() {
         let dialogRef = this.dialog.open(ViewPropertyComponent, {
             position: { top: '60px' },
-            data: <ViewPropertyType> {
+            data: <ViewPropertyType & { newView: boolean}> {
                 name: '',
                 profile: new DocProfile(),
                 type: ViewType.svg,
-                existingNames: this.hmi.views.map((v) => v.name)
+                existingNames: this.hmi.views.map((v) => v.name),
+                newView: true
             }
         });
 
@@ -1027,7 +1047,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 v.name = nn + idx;
                 v.profile.bkcolor = '#ffffffff';
             }
-            if (type === Utils.getEnumKey(ViewType, ViewType.cards)) {
+            if (type === ViewType.cards) {
                 v.profile.bkcolor = 'rgba(67, 67, 67, 1)';
             }
             this.hmi.views.push(v);
@@ -1098,8 +1118,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.saveView(this.currentView);
         }
         this.currentView = view;
-        if (this.currentView.type === Utils.getEnumKey(ViewType, ViewType.cards)) {
+        if (this.currentView.type === ViewType.cards) {
             this.editorMode = EditorModeType.CARDS;
+        } else if (this.currentView.type === ViewType.maps) {
+            this.editorMode = EditorModeType.MAPS;
         } else {
             this.editorMode = EditorModeType.SVG;
         }
@@ -1246,8 +1268,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!tempsettings.name) {
             tempsettings.name = Utils.getNextName(GaugesManager.getPrefixGaugeName(settings.type), names);
         }
-        // settings.property = JSON.parse(settings.property);
         let dialogRef: any;
+        let elementWithLanguageText;
         if (dlgType === GaugeDialogType.Chart) {
             this.gaugeDialog.type = dlgType;
             this.gaugeDialog.data = {
@@ -1337,11 +1359,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.reloadGaugeDialog = !this.reloadGaugeDialog;
             return;
         } else {
+            //!TODO to be refactored (GaugePropertyComponent)
+            elementWithLanguageText = this.isSelectedElementToEnableLanguageTextSettings();
             let title = this.getGaugeTitle(settings.type);
             dialogRef = this.dialog.open(GaugePropertyComponent, {
                 position: { top: '60px' },
                 disableClose: true,
-                data: {
+                data: <GaugePropertyData> {
                     settings: tempsettings,
                     devices: Object.values(this.projectService.getDevices()),
                     title: title,
@@ -1354,7 +1378,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
                     names: names,
                     scripts: this.projectService.getScripts(),
-                    withBitmask: bitmaskSupported
+                    withBitmask: bitmaskSupported,
+                    languageTextEnabled: !!elementWithLanguageText
                 }
             });
         }
@@ -1362,7 +1387,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (result) {
                 callback(result.settings);
                 this.saveView(this.currentView);
-                let result_gauge = this.gaugesManager.initInEditor(result.settings, this.resolver, this.viewContainerRef);
+                let result_gauge = this.gaugesManager.initInEditor(result.settings, this.resolver, this.viewContainerRef, elementWithLanguageText);
                 if (result_gauge && result_gauge.element && result_gauge.element.id !== result.settings.id) {
                     // by init a path we need to change the id
                     delete this.currentView.items[result.settings.id];
@@ -1373,6 +1398,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.checkSvgElementsMap(true);
             }
         });
+    }
+
+    isSelectedElementToEnableLanguageTextSettings(): any {
+        const elementsSelected = this.winRef.nativeWindow.svgEditor.getSelectedElements();
+        return elementsSelected[0]?.tagName?.toLowerCase() === 'text' ? elementsSelected[0] : null;
     }
 
     editBindOfTags(selected: any) {
@@ -1525,7 +1555,8 @@ export class DialogLinkProperty {
 
 export enum EditorModeType {
     SVG,
-    CARDS
+    CARDS,
+    MAPS
 }
 
 interface PanelsStateType {

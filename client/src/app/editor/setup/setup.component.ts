@@ -11,7 +11,7 @@ import { ILayoutPropertyData, LayoutPropertyComponent } from '../../editor/layou
 import { PluginsComponent } from '../../editor/plugins/plugins.component';
 import { AppSettingsComponent } from '../../editor/app-settings/app-settings.component';
 
-const clientOnlyToDisable = ['messages', 'users', 'userRoles', 'plugins', 'notifications', 'scripts', 'reports', 'materials', 'logs', 'events'];
+const clientOnlyToDisable = ['messages', 'users', 'userRoles', 'plugins', 'notifications', 'scripts', 'reports', 'materials', 'logs', 'events', 'language'];
 
 @Component({
     selector: 'app-setup',

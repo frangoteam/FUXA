@@ -31,6 +31,7 @@ import { FuxaViewDialogComponent, FuxaViewDialogData } from './fuxa-view-dialog/
 import { LegacyDialogPosition as DialogPosition, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { WebcamPlayerDialogComponent, WebcamPlayerDialogData } from '../gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
 import { PlaceholderDevice } from '../_models/device';
+import { LanguageService } from '../_services/language.service';
 
 declare var SVG: any;
 
@@ -85,6 +86,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         private scriptService: ScriptService,
         private projectService: ProjectService,
         private hmiService: HmiService,
+        private languageService: LanguageService,
         private resolver: ComponentFactoryResolver,
         private fuxaDialog: MatDialog) {
     }
@@ -248,7 +250,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     continue;
                 }
                 try {
-                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true, this);
+                    // check language translation
+                    const textTranslated = this.languageService.getTranslation(items[key].property?.text);
+                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true, this, textTranslated);
                     if (gauge) {
                         this.mapControls[key] = gauge;
                     }
@@ -577,6 +581,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         htmlevent.dom.blur();
                     }
                     if (htmlevent.ga.type === HtmlInputComponent.TypeTag) {
+                        htmlevent.dom.focus();
+                        htmlevent.dom.select();
                         const events = JSON.parse(JSON.stringify(HtmlInputComponent.getEvents(htmlevent.ga.property, GaugeEventType.enter)));
                         self.eventForScript(events, htmlevent.value);
                     }
@@ -683,7 +689,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private eventForScript(events: GaugeEvent[], value: any) {
-        events.forEach(ev => {
+        events?.forEach(ev => {
             if (value) {
                 let parameters = <ScriptParam[]>ev.actoptions[SCRIPT_PARAMS_MAP];
                 parameters.forEach(param => {
@@ -710,9 +716,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private getView(viewref: string): View {
         let view: View;
-        for (let i = 0; i < this.hmi?.views?.length; i++) {
-            if (this.hmi.views[i] && this.hmi.views[i].id === viewref) {
-                view = this.hmi.views[i];
+        const hmi = this.hmi ?? this.hmiService.hmi;
+        for (let i = 0; i < hmi?.views?.length; i++) {
+            if (hmi.views[i]?.id === viewref) {
+                view = hmi.views[i];
                 break;
             }
         }

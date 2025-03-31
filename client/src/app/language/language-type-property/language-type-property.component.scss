@@ -1,0 +1,29 @@
+:host {
+    .container {
+        .toolbox {
+            float: right;
+            line-height: 44px;
+            button {
+                /* margin-right: 8px; */
+                margin-left: 10px;
+            }
+        }
+
+        .mat-dialog-content
+        {
+            width: 380px;
+            min-height: 220px;
+            max-height: 400px;
+            overflow: auto;
+            padding-bottom: 7px;
+
+            .language-item {
+                gap: 10px;
+            }
+
+            .remove {
+                margin-left: 20px;
+            }
+        }
+    }
+}
