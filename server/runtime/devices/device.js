@@ -90,7 +90,7 @@ function Device(data, runtime) {
         }
         comm = ODBCclient.create(data, logger, events, manager);
     }
-    else if (data.type === DeviceEnum.Gpio) {
+    else if (data.type === DeviceEnum.GPIO) {
         if (!GpioClient) {
             return null;
         }
@@ -496,7 +496,7 @@ function loadPlugin(type, module) {
         FuxaServer = require(module);
     } else if (type === DeviceEnum.ODBC) {
         ODBCclient = require(module);
-    }else if (type === DeviceEnum.Gpio) {
+    }else if (type === DeviceEnum.GPIO) {
         GpioClient = require(module);
     }
 }
@@ -534,7 +534,7 @@ var DeviceEnum = {
     EthernetIP: 'EthernetIP',
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
-    Gpio: 'Gpio',
+    GPIO: 'GPIO',
     // Template: 'template'
 }
 
