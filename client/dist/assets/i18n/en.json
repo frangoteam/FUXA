@@ -1681,5 +1681,6 @@
     "msg.maps-location-remove": "Would you like to remove Maps Location '{{value}}'?",
     "msg.maps-location-name-exist": "The Maps Location name already exist!",
     "msg.text-name-exist": "Text name already exist!",
-    "msg.texts-text-remove": "Would you like to remove Text '{{value}}'?"
+    "msg.texts-text-remove": "Would you like to remove Text '{{value}}'?",
+    "msg.operation-unauthorized": "Operation Unauthorized!"
 }
