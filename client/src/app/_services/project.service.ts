@@ -953,8 +953,8 @@ export class ProjectService {
     }
     //#endregion
 
-    async getTagsValues(tagsIds: string[]): Promise<any[]> {
-        let values = await firstValueFrom(this.storage.getTagsValues(tagsIds));
+    async getTagsValues(tagsIds: string[], sourceScriptName?: string): Promise<any[]> {
+        let values = await firstValueFrom(this.storage.getTagsValues(tagsIds, sourceScriptName));
         return values;
     }
 

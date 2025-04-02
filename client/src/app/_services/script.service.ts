@@ -11,6 +11,8 @@ import { Utils } from '../_helpers/utils';
 import { DeviceType, TagDaq, TagDevice } from '../_models/device';
 import { DaqQuery } from '../_models/hmi';
 import { AlarmsType } from '../_models/alarm';
+import { ToastNotifierService } from './toast-notifier.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -20,14 +22,23 @@ export class ScriptService {
     private endPointConfig: string = EndPointApi.getURL();
 
     constructor(private http: HttpClient,
-                private projectService: ProjectService,
-                private hmiService: HmiService,
-            ) {
+        private projectService: ProjectService,
+        private hmiService: HmiService,
+        private authService: AuthService,
+        private toastNotifier: ToastNotifierService
+    ) {
 
     }
 
     runScript(script: Script) {
         return new Observable((observer) => {
+            const permission = this.authService.checkPermission(script);
+            if (permission?.enabled === false) {
+                this.toastNotifier.notifyError('msg.operation-unauthorized', '', false, false);
+                observer.next();
+                observer.complete();
+                return;
+            }
             if (!script.mode || script.mode === ScriptMode.SERVER) {
                 if (environment.serverEnabled) {
                     let header = new HttpHeaders({ 'Content-Type': 'application/json' });
@@ -56,9 +67,9 @@ export class ScriptService {
                 });
                 try {
                     const code = `${parameterToAdd}${script.code}`;
-                    const asyncText = script.sync ? '' : 'async';
-                    const asyncScript = `(${asyncText} () => { ${this.addSysFunctions(code)} \n})();`;
-                    const result = eval(asyncScript);
+                    const asyncText = script.sync ? 'function' : 'async function';
+                    const callText = `${asyncText} ${script.name}() {\n${this.addSysFunctions(code)} \n }\n${script.name}.call(this);\n`;
+                    const result = eval(callText);
                     observer.next(result);
                 } catch (err) {
                     console.error(err);
@@ -104,15 +115,18 @@ export class ScriptService {
         return code;
     }
 
+    /* get Tag value from server, check authorization of source script */
     public async $getTag(id: string) {
         let tag: TagDevice = this.projectService.getTagFromId(id, true);
         if (tag?.deviceType === DeviceType.internal) {
             return tag.value;
         }
-        let values = await this.projectService.getTagsValues([id]);
+        const sourceScriptName = this.extractUserFunctionBeforeScriptService();
+        let values = await this.projectService.getTagsValues([id], sourceScriptName);
         return values[0]?.value;
     }
 
+    /* set Tag value to server via socket */
     public $setTag(id: string, value: any) {
         this.hmiService.putSignalValue(id, value);
     }
@@ -190,5 +204,22 @@ export class ScriptService {
 
     public async $ackAlarm(alarmName: string, types?: AlarmsType[]) {
         return await this.projectService.runSysFunctionSync('$ackAlarm', [alarmName, types]);
+    }
+
+    private extractUserFunctionBeforeScriptService(): string | null {
+        const err = new Error();
+        const lines = err.stack?.match(/at\s[^\n]+/g);
+        if (!lines) {
+            return null;
+        }
+
+        for (const line of lines) {
+            const match = line.match(/at ScriptService\.([\w$]+) \(eval at/);
+            if (match) {
+                return match[1];
+            }
+        }
+
+        return null;
     }
 }

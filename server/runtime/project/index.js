@@ -940,7 +940,7 @@ function _filterProjectPermission(userPermission) {
             if (result.hmi.views[i].items) {
                 Object.values(result.hmi.views[i].items).forEach((item) => {
                     if (item.property) {
-                        const itemPermission = runtime.checkPermission(userPermission, item.property);
+                        const itemPermission = runtime.checkPermission(userPermission, item.property, false, true);
                         if (!itemPermission.show) {
                             var position = view.svgcontent.indexOf(item.id);
                             if (position >= 0) {
