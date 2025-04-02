@@ -603,6 +603,7 @@ export class Event {
     type?: string;
     ga: GaugeSettings;
     variableId: string;
+    mode?: 'Value' | 'View'; // Added mode
 }
 
 export class DaqQuery {

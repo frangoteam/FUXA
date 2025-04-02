@@ -10,7 +10,7 @@ import { SidenavComponent } from '../sidenav/sidenav.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 import { CardsViewComponent } from '../cards-view/cards-view.component';
 
-import { HmiService, ScriptOpenCard, ScriptSetView } from '../_services/hmi.service';
+import { HmiService, ScriptOpenCard, ScriptSetView, SVGSetView } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
@@ -79,6 +79,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscriptionLoad: Subscription;
     private subscriptionAlarmsStatus: Subscription;
     private subscriptiongoTo: Subscription;
+    private subscriptionViewChange: Subscription; 
     private subscriptionOpen: Subscription;
     private destroy$ = new Subject<void>();
     loggedUser$: Observable<User>;
@@ -115,6 +116,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             });
             this.subscriptiongoTo = this.hmiService.onGoTo.subscribe((viewToGo: ScriptSetView) => {
                 this.onGoToPage(this.projectService.getViewId(viewToGo.viewName), viewToGo.force);
+            });
+            this.subscriptionViewChange = this.hmiService.onViewChange.subscribe((viewToGo: SVGSetView) => {
+                this.onGoToPage(this.projectService.getViewId(viewToGo.viewName), false); 
             });
             this.subscriptionOpen = this.hmiService.onOpen.subscribe((viewToOpen: ScriptOpenCard) => {
                 this.fuxaview.onOpenCard(null, null, this.projectService.getViewId(viewToOpen.viewName), viewToOpen.options);
@@ -176,6 +180,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (this.subscriptiongoTo) {
                 this.subscriptiongoTo.unsubscribe();
+            }
+            if (this.subscriptionViewChange) {
+                this.subscriptionViewChange.unsubscribe();
             }
             this.destroy$.next();
             this.destroy$.complete();

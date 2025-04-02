@@ -29,6 +29,7 @@ export class HmiService {
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
     @Output() onOpen: EventEmitter<ScriptOpenCard> = new EventEmitter();
+    @Output() onViewChange: EventEmitter<SVGSetView> = new EventEmitter();
 
     onServerConnection$ = new BehaviorSubject<boolean>(false);
 
@@ -505,6 +506,13 @@ export class HmiService {
         }
     }
 
+    /**   
+    * @param viewName The name of the view to navigate to
+    */
+      setView(viewName: string) {
+        this.onViewChange.emit(<SVGSetView>{ viewName });
+    }  
+
     private getTagLabel(tag: Tag) {
         if (tag.label) {
             return tag.label;
@@ -677,4 +685,8 @@ export interface EndPointSettings {
     uid: string;
     pwd: string;
     id?: string;
+}
+
+export interface SVGSetView {
+    viewName: string;
 }

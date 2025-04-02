@@ -594,9 +594,14 @@ export class GaugesManager {
      */
     putEvent(event: Event) {
         if (event.type === HtmlImageComponent.propertyWidgetType) {
-            const value = GaugeBaseComponent.valueBitmask(event.ga.property.bitmask, event.value, this.hmiService.variables[event.variableId]?.value);
-            this.hmiService.putSignalValue(event.variableId, String(value));
-            event.dbg = 'put ' + event.variableId + ' ' + event.value;
+            if (event.mode === 'Value') {
+                const value = GaugeBaseComponent.valueBitmask(event.ga.property.bitmask, event.value, this.hmiService.variables[event.variableId]?.value);
+                this.hmiService.putSignalValue(event.variableId, String(value));
+                event.dbg = 'put ' + event.variableId + ' ' + event.value;
+            }else if (event.mode === 'View') {
+                this.hmiService.setView(event.value);
+                event.dbg = 'navigate to ' + event.value;
+            }
         } else if (event.ga.property && event.ga.property.variableId) {
             const value = GaugeBaseComponent.valueBitmask(event.ga.property.bitmask, event.value, this.hmiService.variables[event.ga.property.variableId]?.value);
             this.hmiService.putSignalValue(event.ga.property.variableId, String(value));
