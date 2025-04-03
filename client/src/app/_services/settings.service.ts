@@ -33,7 +33,7 @@ export class SettingsService {
             this.http.get<any>(this.endPointConfig + '/api/settings').subscribe(result => {
                 this.setSettings(result);
             }, error => {
-                console.error('settings.service err: ' + error);
+                console.error('settings.service err: ', error);
             });
         }
         // this.setLanguage(this.appSettings.language);

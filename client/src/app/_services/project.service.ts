@@ -62,7 +62,7 @@ export class ProjectService {
                 this.load();
             }
         }, error => {
-            console.error('project.service err: ' + error);
+            console.error('project.service err: ', error);
             this.load();
             this.notifyServerError();
         });

@@ -101,6 +101,7 @@ export class ScriptService {
         code = code.replace(/\$getAlarms\(/g, 'await this.$getAlarms(');
         code = code.replace(/\$getAlarmsHistory\(/g, 'await this.$getAlarmsHistory(');
         code = code.replace(/\$ackAlarm\(/g, 'await this.$ackAlarm(');
+        code = code.replace(/\$generateReport\(/g, 'await this.$generateReport(');
         return code;
     }
 
@@ -190,5 +191,9 @@ export class ScriptService {
 
     public async $ackAlarm(alarmName: string, types?: AlarmsType[]) {
         return await this.projectService.runSysFunctionSync('$ackAlarm', [alarmName, types]);
+    }
+
+    public async $generateReport(reportName: string) {
+        return await this.projectService.runSysFunctionSync('$generateReport', [reportName]);
     }
 }

@@ -237,6 +237,7 @@ function ScriptsManager(_runtime) {
         sysFncs['$getAlarms'] = _getAlarms;
         sysFncs['$getAlarmsHistory'] = _getAlarmsHistory;
         sysFncs['$ackAlarm'] = _ackAlarm;
+        sysFncs['$generateReport'] = _generateReport;
 
         return sysFncs;
     }
@@ -272,6 +273,22 @@ function ScriptsManager(_runtime) {
         } else {
             return await runtime.alarmsMgr.setAlarmAck(alarmName, null, -1);
         }
+    }
+
+    var _generateReport = async function (reportName) {
+        //var report;
+        runtime.project.getReports().then(function (result) {
+                        if (result) {
+                            result.forEach(rptProperty => {
+                                console.log(rptProperty);
+                            });
+                        }
+                        resolve();
+                    }).catch(function (err) {
+                        reject(err);
+                    });
+
+        //runtime.jobsMgr.forceReport()
     }
 }
 

@@ -227,6 +227,14 @@ export class SystemFunctions {
         tooltip: 'script.sys-fnc-ackAlarms-tooltip',
         params: [false, false],
         paramsText: 'script.sys-fnc-ackAlarms-params'
+    },
+    {
+        name: '$generateReport',
+        mode: null,
+        text: 'script.sys-fnc-generateReport-text',
+        tooltip: 'script.sys-fnc-generateReport-tooltip',
+        params: [true],
+        paramsText: 'script.sys-fnc-generateReport-params'
     }
 ];
 }
