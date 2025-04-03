@@ -32,6 +32,7 @@ import { LegacyDialogPosition as DialogPosition, MatLegacyDialog as MatDialog } 
 import { WebcamPlayerDialogComponent, WebcamPlayerDialogData } from '../gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
 import { PlaceholderDevice } from '../_models/device';
 import { LanguageService } from '../_services/language.service';
+import { EventUtils } from '../_helpers/event-utils';
 
 declare var SVG: any;
 
@@ -780,7 +781,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         dialogRef.afterClosed().subscribe();
     }
 
-    onOpenCard(id: string, event, viewref: string, options: any = {}) {
+    onOpenCard(id: string, event: PointerEvent | TouchEvent | any, viewref: string, options: any = {}) {
         if (options?.singleCard) {
             this.cards = [];
             this.changeDetector.detectChanges();
@@ -803,11 +804,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         card.x = Utils.isNumeric(options.left) ? parseInt(options.left) : 0;
         card.y = Utils.isNumeric(options.top) ? parseInt(options.top) : 0;
         if (options.relativeFrom !== GaugeEventRelativeFromType.window) {
-            if (event?.clientX) {
-                card.x += event?.clientX;
-            }
-            if (event?.clientY) {
-                card.y += event?.clientY;
+            const eventPos = EventUtils.getEventClientPosition(event);
+            if (eventPos) {
+                card.x += eventPos.x ?? 0;
+                card.y += eventPos.y ?? 0;
             }
         }
         if (this.hmi.layout.hidenavigation) {
