@@ -108,6 +108,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     panelMarkerOpenState: boolean;
     panelHyperlinkOpenState: boolean;
     gaugeSettingsHide: boolean = false;
+    gaugeSettingsLock: boolean = false;
 
     dashboard: Array<GridsterItem>;
     cardViewType = ViewType.cards;
@@ -1542,9 +1543,20 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    onLockSelectionToggle(checked: boolean) {
+        let gaugeSettings = this.getGaugeSettings(this.selectedElement);
+        if (gaugeSettings) {
+            gaugeSettings.lock = checked;
+            this.setGaugeSettings(gaugeSettings);
+            this.winRef.nativeWindow.svgEditor.lockSelection(gaugeSettings.lock);
+        }
+    }
+
     checkSelectedGaugeSettings() {
         let gaugeSettings = this.getGaugeSettings(this.selectedElement);
         this.gaugeSettingsHide = gaugeSettings?.hide ?? false;
+        this.gaugeSettingsLock = gaugeSettings?.lock ?? false;
+        this.winRef.nativeWindow.svgEditor.lockSelection(gaugeSettings?.lock);
     }
 
     flipSelected(fliptype: string) {

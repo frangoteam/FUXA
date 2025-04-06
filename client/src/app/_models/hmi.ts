@@ -199,6 +199,7 @@ export class GaugeSettings {
     property: any = null;   // set to GaugeProperty after upgrate
     label = '';             // Gauge type label
     hide = false;
+    lock = false;
     constructor(public id: string, public type: string) {
     }
 }
