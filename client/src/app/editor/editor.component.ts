@@ -107,6 +107,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     panelEventOpenState: boolean;
     panelMarkerOpenState: boolean;
     panelHyperlinkOpenState: boolean;
+    gaugeSettingsHide: boolean = false;
 
     dashboard: Array<GridsterItem>;
     cardViewType = ViewType.cards;
@@ -128,7 +129,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         private viewContainerRef: ViewContainerRef,
         private resolver: ComponentFactoryResolver,
         private libWidgetsService: LibWidgetsService,
-        private mdIconRegistry: MatIconRegistry, private sanitizer: DomSanitizer) {
+        private mdIconRegistry: MatIconRegistry,
+        private sanitizer: DomSanitizer) {
         mdIconRegistry.addSvgIcon('group', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/group.svg'));
         mdIconRegistry.addSvgIcon('to_bottom', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/to-bottom.svg'));
         mdIconRegistry.addSvgIcon('to_top', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/to-top.svg'));
@@ -222,6 +224,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.isAnySelected = (selected);
                     this.onSelectedElement(selected);
                     this.getGaugeSettings(selected);
+                    this.checkSelectedGaugeSettings();
                 },
                 (type, args) => {
                     this.onExtensionLoaded(args);
@@ -396,7 +399,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * get gauge settings from current view items, if not exist create void settings from GaugesManager
      * @param ele gauge id
      */
-    getGaugeSettings(ele, initParams: any = null) {
+    getGaugeSettings(ele, initParams: any = null): GaugeSettings {
         if (ele && this.currentView) {
             if (this.currentView.items[ele.id]) {
                 return this.currentView.items[ele.id];
@@ -717,6 +720,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                                     let gaDest: GaugeSettings = this.gaugesManager.createSettings(pastedIdsAndTypes[j].id, pastedIdsAndTypes[j].type);
                                     gaDest.name = Utils.getNextName(GaugesManager.getPrefixGaugeName(pastedIdsAndTypes[j].type), names);
                                     gaDest.property = JSON.parse(JSON.stringify(gaSrc.property));
+                                    gaDest.hide = gaSrc.hide;
                                     this.setGaugeSettings(gaDest);
                                     this.checkGaugeAdded(gaDest);
                                 }
@@ -1528,6 +1532,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     cloneElement() {
         this.winRef.nativeWindow.svgEditor.clickExtension('view_grid');
+    }
+
+    onHideSelectionToggle(checked: boolean) {
+        let gaugeSettings = this.getGaugeSettings(this.selectedElement);
+        if (gaugeSettings) {
+            gaugeSettings.hide = checked;
+            this.setGaugeSettings(gaugeSettings);
+        }
+    }
+
+    checkSelectedGaugeSettings() {
+        let gaugeSettings = this.getGaugeSettings(this.selectedElement);
+        this.gaugeSettingsHide = gaugeSettings?.hide ?? false;
     }
 
     flipSelected(fliptype: string) {

@@ -642,6 +642,7 @@
     "editor.transform-change-image-title": "NOTE: This image cannot be embedded. It will depend on this path to be displayed",
     "editor.transform-angle": "angle",
     "editor.transform-angle-title": "Change rotation angle",
+    "editor.transform-hide": "Hide",
 
     "editor.align": "Align",
     "editor.align-left-title": "Align Left",

@@ -105,7 +105,7 @@ export class GaugesManager {
         });
     }
 
-    createSettings(id: string, type: string) {
+    createSettings(id: string, type: string): GaugeSettings {
         let gs: GaugeSettings = null;
         if (type) {
             for (let i = 0; i < GaugesManager.Gauges.length; i++) {
@@ -768,6 +768,12 @@ export class GaugesManager {
         if (sigsid) {
             for (let i = 0; i < sigsid.length; i++) {
                 this.hmiService.addSignal(sigsid[i], ga);
+            }
+        }
+        if (isview && ga.hide) {
+            let ele = document.getElementById(ga.id);
+            if (ele) {
+                ele.style.display = 'none';
             }
         }
         if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
