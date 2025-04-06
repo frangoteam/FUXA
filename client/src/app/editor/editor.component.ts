@@ -314,6 +314,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * Load the hmi resource and bind it
      */
     private loadHmi() {
+        this.gaugesManager.initGaugesMap();
         this.currentView = null;
         this.hmi = this.projectService.getHmi();
         // check new hmi
@@ -1387,14 +1388,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             if (result) {
                 callback(result.settings);
                 this.saveView(this.currentView);
-                let result_gauge = this.gaugesManager.initInEditor(result.settings, this.resolver, this.viewContainerRef, elementWithLanguageText);
-                if (result_gauge && result_gauge.element && result_gauge.element.id !== result.settings.id) {
-                    // by init a path we need to change the id
-                    delete this.currentView.items[result.settings.id];
-                    result.settings.id = result_gauge.element.id;
-                    callback(result.settings);
-                    this.saveView(this.currentView);
-                }
+                this.gaugesManager.initInEditor(result.settings, this.resolver, this.viewContainerRef, elementWithLanguageText);
                 this.checkSvgElementsMap(true);
             }
         });
@@ -1450,7 +1444,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (settings) {
             this.setGaugeSettings(settings);
             this.saveView(this.currentView);
-            this.gaugesManager.initInEditor(settings, this.resolver, this.viewContainerRef);
+            let result_gauge = this.gaugesManager.initInEditor(settings, this.resolver, this.viewContainerRef);
+            if (result_gauge?.element && result_gauge.element.id !== settings.id) {
+                // by init a path we need to change the id
+                delete this.currentView.items[settings.id];
+                settings.id = result_gauge.element.id;
+                this.saveView(this.currentView);
+            }
         }
     }
 
