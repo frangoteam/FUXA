@@ -67,7 +67,7 @@ function ScriptsManager(_runtime) {
      * Run script, <script> {id, name, parameters: <ScriptParam> {name, type: <ScriptParamType>[tagid, value], value: any} }
      * @returns
      */
-    this.runScript = function (script) {
+    this.runScript = function (script, toLogEvent = true) {
         return new Promise(async function (resolve, reject) {
             try {
                 if (script.test) {

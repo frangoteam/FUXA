@@ -30,7 +30,7 @@ export class ScriptService {
 
     }
 
-    runScript(script: Script) {
+    runScript(script: Script, toLogEvent: boolean = true): Observable<any> {
         return new Observable((observer) => {
             const permission = this.authService.checkPermission(script);
             if (permission?.enabled === false) {
@@ -42,7 +42,7 @@ export class ScriptService {
             if (!script.mode || script.mode === ScriptMode.SERVER) {
                 if (environment.serverEnabled) {
                     let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-                    let params = { script: script };
+                    let params = { script: script, toLogEvent: toLogEvent };
                     this.http.post<any>(this.endPointConfig + '/api/runscript', { headers: header, params: params }).subscribe(result => {
                         observer.next(result);
                         observer.complete();
@@ -182,7 +182,7 @@ export class ScriptService {
     public async $runServerScript(scriptName: string, ...params: any[]) {
         let scriptToRun = Utils.clone(this.projectService.getScripts().find(dataScript => dataScript.name == scriptName));
         scriptToRun.parameters = params;
-        return await lastValueFrom(this.runScript(scriptToRun));
+        return await lastValueFrom(this.runScript(scriptToRun, false));
     }
 
     public async $getHistoricalTags(tagIds: string[], fromDate: number, toDate: number) {

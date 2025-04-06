@@ -40,7 +40,7 @@ module.exports = {
                 runtime.logger.error("api post runscript: Unauthorized");
             } else {
                 //req.body.params.script.parameters.permission = groups;
-                runtime.scriptsMgr.runScript(req.body.params.script).then(function (result) {
+                runtime.scriptsMgr.runScript(req.body.params.script, req.body.params.toLogEvent).then(function (result) {
                     res.json(result);
                 }).catch(function (err) {
                     if (err.code) {
