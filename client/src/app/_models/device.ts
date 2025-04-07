@@ -39,7 +39,7 @@ export class Device {
         id: 'Device id, GUID',
         name: 'Device name',
         enabled: 'Enabled',
-        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | Vistwo | MQTTclient | internal | EthernetIP',
+        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP |Gpio | Vistwo',
         polling: 'Polling interval in millisec., check changed value after ask value, by OPCUA there is a monitor',
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
@@ -67,7 +67,7 @@ export class Tag {
     type: string;
     /** Address of Tag, combine with address by Modbus, some property for WebAPI */
     memaddress: string;
-    /** Tag address, for OPCUA like the id */
+    /** Tag address, for OPCUA like the id , for GPIO the io number */
     address: string;
     /** Value divisor, used by Modbus */
     divisor: number;
@@ -97,6 +97,12 @@ export class Tag {
     description?: string;
     /** Deadband to set changed value */
     deadband?: TagDeadband;
+    /**
+     * Optional GPIO direction,edge
+     */
+    direction?: string;
+    edge?: string;
+
 
     constructor(_id: string) {
         this.id = _id;
@@ -117,7 +123,9 @@ export class Tag {
             enabled: 'Daq enabled storage',
             interval: 'min storage interval (without change value)'
         },
-        format: 'Number of digits to appear after the decimal point'
+        format: 'Number of digits to appear after the decimal point',
+        direction: 'A string specifying whether the GPIO should be configured as an input or output. The valid values are: \'in\', \'out\', \'high\', and \'low\'. If \'out\' is specified the GPIO will be configured as an output and the value of the GPIO will be set to 0. \'high\' and \'low\' are variants of \'out\' that configure the GPIO as an output with an initial level of 1 or 0 respectively.',
+        edge: 'An optional string specifying the interrupt generating edge or edges for an input GPIO. The valid values are: \'none\', \'rising\', \'falling\' or \'both\'. The default value is \'none\' indicating that the GPIO will not generate interrupts. Whether or not interrupts are supported by an input GPIO is GPIO specific. If interrupts are not supported by a GPIO the edge argument should not be specified. The edge argument is ignored for output GPIOs.',
     };
 }
 
@@ -231,7 +239,8 @@ export enum DeviceType {
     MQTTclient = 'MQTTclient',
     internal = 'internal',
     EthernetIP = 'EthernetIP',
-    ODBC = 'ODBC'
+    ODBC = 'ODBC',
+    GPIO = 'GPIO',
     // Template: 'template'
 }
 
@@ -298,6 +307,26 @@ export enum ModbusOptionType {
 export enum ModbusReuseModeType {
     Reuse = 'Reuse',
     ReuseSerial = 'ReuseSerial',
+}
+
+/**
+ * A string specifying whether the GPIO should be configured as an input or output. The valid values are: 'in', 'out', 'high', and 'low'. If 'out' is specified the GPIO will be configured as an output and the value of the GPIO will be set to 0. 'high' and 'low' are variants of 'out' that configure the GPIO as an output with an initial level of 1 or 0 respectively.
+ */
+export enum GpioDirectionType {
+    in = 'in',
+    out = 'out',
+    high = ' - high',
+    low = ' - low',
+}
+
+/**
+ * An optional string specifying the interrupt generating edge or edges for an input GPIO. The valid values are: 'none', 'rising', 'falling' or 'both'. The default value is 'none' indicating that the GPIO will not generate interrupts. Whether or not interrupts are supported by an input GPIO is GPIO specific. If interrupts are not supported by a GPIO the edge argument should not be specified. The edge argument is ignored for output GPIOs.
+ */
+export enum GpioEdgeType {
+    none = 'none',
+    rising = 'rising',
+    falling = 'falling',
+    both = 'both',
 }
 
 export enum MessageSecurityMode {

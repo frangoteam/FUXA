@@ -126,9 +126,9 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.get<any>(this.endPointConfig + '/api/daq', { headers: header, params });
     }
 
-    getTagsValues(tagsIds: string[]): Observable<any> {
+    getTagsValues(tagsIds: string[], sourceScriptName?: string): Observable<any> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        let params = { ids: JSON.stringify(tagsIds) };
+        let params = { ids: JSON.stringify(tagsIds), sourceScriptName: sourceScriptName };
         return this.http.get<any>(this.endPointConfig + '/api/getTagValue', { headers: header, params });
     }
 

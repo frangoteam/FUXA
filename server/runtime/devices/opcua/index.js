@@ -110,6 +110,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                                 });
                                 the_session.on('keepalive_failure', () => {
                                     logger.error(`'${data.name}' session keepalive failure!`);
+                                    self.disconnect().then(function () { });
                                 });
                                 the_session.on("terminated", function() {
                                     console.log("terminated");

@@ -14,6 +14,7 @@ var EthernetIPclient = require('./ethernetip');
 var FuxaServer = require('./fuxaserver');
 var ODBCclient = require('./odbc');
 // var TEMPLATEclient = require('./template');
+var GpioClient = require('./gpio');
 
 const path = require('path');
 const utils = require('../utils');
@@ -94,6 +95,12 @@ function Device(data, runtime) {
             return null;
         }
         comm = ODBCclient.create(data, logger, events, manager);
+    }
+    else if (data.type === DeviceEnum.GPIO) {
+        if (!GpioClient) {
+            return null;
+        }
+        comm = GpioClient.create(data, logger, events, manager, runtime);
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
@@ -499,6 +506,8 @@ function loadPlugin(type, module) {
         FuxaServer = require(module);
     } else if (type === DeviceEnum.ODBC) {
         ODBCclient = require(module);
+    }else if (type === DeviceEnum.GPIO) {
+        GpioClient = require(module);
     }
 }
 
@@ -536,6 +545,7 @@ var DeviceEnum = {
     EthernetIP: 'EthernetIP',
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
+    GPIO: 'GPIO',
     // Template: 'template'
 }
 

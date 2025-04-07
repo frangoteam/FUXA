@@ -34,11 +34,11 @@ plugins['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8', PluginGroupType.
 // plugins['onoff'] = new Plugin('onoff', './raspy', 'Raspberry', '6.0.1');
 plugins['chart.js'] = new Plugin('chart.js', './chartjs', 'Chart', '2.9.4', PluginGroupType.chartReport);
 plugins['chartjs-node-canvas'] = new Plugin('chartjs-node-canvas', 'chartjs-canvas', 'Chart', '3.2.0', PluginGroupType.chartReport);
-
+plugins['onoff'] = new Plugin('onoff', './onoff', 'GPIO', '6.0.3', PluginGroupType.connectionDevice);
 /**
  * Init plugin resource
- * @param {*} _settings 
- * @param {*} log 
+ * @param {*} _settings
+ * @param {*} log
  */
 function init(_settings, log) {
     settings = _settings;

@@ -4,7 +4,7 @@ import { Chart } from './chart';
 import { Graph } from './graph';
 import { Alarm } from './alarm';
 import { Notification } from './notification';
-import { Text } from './text';
+import { Languages, LanguageText } from './language';
 import { Utils } from '../_helpers/utils';
 import { Script } from './script';
 import { Report } from './report';
@@ -32,8 +32,10 @@ export class ProjectData {
     scripts: Script[] = [];
     /** Reports */
     reports: Report[] = [];
-    /** not used yet */
-    texts: Text[] = [];
+    /** Texts */
+    texts: LanguageText[] = [];
+    /** Language */
+    languages: Languages = new Languages();
     /** Plugins, name, version */
     plugin: Plugin[] = [];
     /** Maps location */
@@ -48,6 +50,7 @@ export enum ProjectDataCmdType {
     HmiLayout = 'layout',
     Charts = 'charts',
     Graphs = 'graphs',
+    Languages = 'languages',
     SetText = 'set-text',
     DelText = 'del-text',
     SetAlarm = 'set-alarm',

@@ -56,7 +56,7 @@ export abstract class ResourceStorageService {
 
     public abstract endPointConfig: string;
 
-    public abstract getTagsValues(query: string[]): Observable<any>;
+    public abstract getTagsValues(query: string[], sourceScriptName?: string): Observable<any>;
 
     public abstract runSysFunction(functionName: string, params?: any): Observable<any>;
 

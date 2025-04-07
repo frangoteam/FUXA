@@ -103,6 +103,11 @@ function ScriptsManager(_runtime) {
         return false;
     }
 
+    this.isAuthorisedByScriptName = function (scriptName, permission) {
+        const script = scriptModule.getScriptByName(scriptName);
+        return this.isAuthorised(script, permission);
+    }
+
     this.sysFunctionExist = (functionName) => {
         const sysFncs = _getSystemFunctions();
         return !!sysFncs[functionName];

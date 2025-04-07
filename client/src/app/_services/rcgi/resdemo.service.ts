@@ -109,7 +109,7 @@ export class ResDemoService implements ResourceStorageService {
         });
     }
 
-    getTagsValues(query: string[]): Observable<any> {
+    getTagsValues(query: string[], sourceScriptName?: string): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');
         });

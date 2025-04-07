@@ -48,6 +48,11 @@ export class PipePropertyComponent implements OnInit  {
     }
 
     ngOnInit() {
+        this.initFromInput();
+    }
+
+    initFromInput() {
+        let emitChange = Utils.isNullOrUndefined(this.data.settings.property) || Utils.isNullOrUndefined(this.data.settings.property.options);
         this.name = this.data.settings.name;
         this.property = this.data.settings.property || new GaugeProperty();
         if (!this.property) {
@@ -55,6 +60,12 @@ export class PipePropertyComponent implements OnInit  {
         }
         this.options = <PipeOptions>this.property.options ?? new PipeOptions();
         this.devices = this.projectService.getDeviceList();
+
+        if (emitChange) {
+            setTimeout(() => {
+                this.onPipeChanged();
+            }, 0);
+        }
     }
 
     onFlexAuthChanged(flexAuth: FlexAuthValues) {
@@ -157,7 +168,7 @@ export class PipePropertyComponent implements OnInit  {
 
     private _reload() {
         this.property = this.data?.settings?.property;
-        this.ngOnInit();
+        this.initFromInput();
     }
 }
 
