@@ -90,9 +90,9 @@ function ScriptsManager(_runtime) {
         try {
             const st = scriptModule.getScript(_script);
             var admin = (permission === -1 || permission === 255) ? true : false;
-            if (permission.info && permission.info.roles) {
+            if (permission && permission.info && permission.info.roles) {
                 if (st.permissionRoles.enabled) {
-                    return permission.info.roles.some(role => st.permissionRoles.enabled.includes(role));
+                    return st.permissionRoles.enabled.length <= 0 || permission.info.roles.some(role => st.permissionRoles.enabled.includes(role));
                 }
             } else if (admin || (st && (!st.permission || st.permission & permission))) {
                 return true;
