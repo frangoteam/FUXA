@@ -91,7 +91,9 @@ function ScriptsManager(_runtime) {
             const st = scriptModule.getScript(_script);
             var admin = (permission === -1 || permission === 255) ? true : false;
             if (permission && permission.info && permission.info.roles) {
-                if (st.permissionRoles.enabled) {
+                if (!st.permissionRoles || !st.permissionRoles.enabled) {
+                    return true;
+                } else {
                     return st.permissionRoles.enabled.length <= 0 || permission.info.roles.some(role => st.permissionRoles.enabled.includes(role));
                 }
             } else if (admin || (st && (!st.permission || st.permission & permission))) {

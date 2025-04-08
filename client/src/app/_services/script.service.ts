@@ -32,7 +32,7 @@ export class ScriptService {
 
     runScript(script: Script, toLogEvent: boolean = true): Observable<any> {
         return new Observable((observer) => {
-            const permission = this.authService.checkPermission(script);
+            const permission = this.authService.checkPermission(script, true);
             if (permission?.enabled === false) {
                 this.toastNotifier.notifyError('msg.operation-unauthorized', '', false, false);
                 observer.next();
