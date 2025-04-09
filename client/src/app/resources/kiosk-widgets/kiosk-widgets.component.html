@@ -1,0 +1,28 @@
+<div class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'maps.location-property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <mat-accordion multi="true">
+            <mat-expansion-panel *ngFor="let group of resourceWidgets$ | async" class="my-expansion-panel lib-image-panel">
+                <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
+                    <mat-panel-title>
+                        {{group.name}}
+                    </mat-panel-title>
+                    <mat-panel-description>
+
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <!-- <div *ngFor="let item of group.items" (click)="onSelect(item.path)" class="lib-image-item" matTooltip="{{item.name}}">
+                    <img src="{{item.path}}" id="{{item.path}}">
+                </div> -->
+
+            </mat-expansion-panel>
+        </mat-accordion>
+        <div style="display: block;width: 660px; padding-bottom: 20px;">
+
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

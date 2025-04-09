@@ -40,6 +40,7 @@ import { HtmlImageComponent } from '../gauges/controls/html-image/html-image.com
 import { LibWidgetsService } from '../resources/lib-widgets/lib-widgets.service';
 import { PipePropertyData } from '../gauges/controls/pipe/pipe-property/pipe-property.component';
 import { MapsViewComponent } from '../maps/maps-view/maps-view.component';
+import { KioskWidgetsComponent } from '../resources/kiosk-widgets/kiosk-widgets.component';
 
 declare var Gauge: any;
 
@@ -1506,6 +1507,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     // }
                 }
             }
+        });
+    }
+
+    onWidgetKiosk() {
+        let dialogRef = this.dialog.open(KioskWidgetsComponent, {
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(() => {
         });
     }
 
