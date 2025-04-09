@@ -214,7 +214,7 @@ export class ScriptService {
         }
 
         for (const line of lines) {
-            const match = line.match(/at ScriptService\.([\w$]+) \(eval at/);
+            const match = line.match(/ScriptService\.([\w$]+) \(eval at/);
             if (match) {
                 return match[1];
             }

@@ -13,7 +13,6 @@ var SCRIPT_CHECK_STATUS_INTERVAL = 1000;
 function ScriptsManager(_runtime) {
     var runtime = _runtime;
     var events = runtime.events;        // Events to commit change to runtime
-    var settings = runtime.settings;    // Settings
     var logger = runtime.logger;        // Logger
     var scriptsCheckStatus = null;      // TimerInterval to check scripts manager status
     var working = false;                // Working flag to manage overloading of check notificator status
@@ -90,10 +89,11 @@ function ScriptsManager(_runtime) {
         try {
             const st = scriptModule.getScript(_script);
             var admin = (permission === -1 || permission === 255) ? true : false;
-            if (permission && permission.info && permission.info.roles) {
+            if (runtime.settings.userRole) {
                 if (!st.permissionRoles || !st.permissionRoles.enabled) {
                     return true;
-                } else {
+                }
+                if (permission && permission.info && permission.info.roles) {
                     return st.permissionRoles.enabled.length <= 0 || permission.info.roles.some(role => st.permissionRoles.enabled.includes(role));
                 }
             } else if (admin || (st && (!st.permission || st.permission & permission))) {
@@ -107,6 +107,9 @@ function ScriptsManager(_runtime) {
 
     this.isAuthorisedByScriptName = function (scriptName, permission) {
         const script = scriptModule.getScriptByName(scriptName);
+        if (!script) {
+            return true;
+        }
         return this.isAuthorised(script, permission);
     }
 
