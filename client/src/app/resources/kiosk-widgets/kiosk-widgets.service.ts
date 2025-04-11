@@ -1,23 +1,31 @@
 import { Injectable } from '@angular/core';
-import { ResourcesService } from '../../_services/resources.service';
-import { map, Observable } from 'rxjs';
-import { ResourceGroup, ResourceType } from '../../_models/resources';
-import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { WidgetsResource } from '../../_models/resources';
 
 @Injectable({
     providedIn: 'root'
 })
 export class KioskWidgetsService {
 
-    resourceWidgets$: Observable<ResourceGroup[]>;
+    endPointWidgetResources = 'https://frangoteam.org/api/list-widgets.php';
+    resourceWidgets$: Observable<WidgetsResource[]>;
+    widgetAssetBaseUrl = 'https://frangoteam.org/widgets/';
 
     constructor(
         private http: HttpClient,
-        private resourcesService: ResourcesService
     ) {
-        this.resourceWidgets$ = this.resourcesService.getResources(ResourceType.widgets).pipe(
-            map(images => images.groups),
-        );
+        this.resourceWidgets$ = this.getWidgetsResource();
     }
 
+    getWidgetsResource(): Observable<WidgetsResource[]> {
+        const headers = new HttpHeaders({ 'Skip-Auth': 'true' });
+        return this.http.get<WidgetsResource[]>(this.endPointWidgetResources, { headers: headers });
+    }
+
+    getWidgetsGroupContent(path: string): Observable<WidgetsResource[]> {
+        const headers = new HttpHeaders({ 'Skip-Auth': 'true' });
+        return this.http.get<WidgetsResource[]>(
+            `${this.endPointWidgetResources}?path=${encodeURIComponent(path)}`, { headers });
+    }
 }
