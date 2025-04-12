@@ -816,7 +816,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 card.y += eventPos.y ?? 0;
             }
         }
-        if (this.hmi.layout.hidenavigation) {
+        if (this.hmi.layout?.hidenavigation) {
             card.y -= 48;
         }
         card.width = view.profile.width;
