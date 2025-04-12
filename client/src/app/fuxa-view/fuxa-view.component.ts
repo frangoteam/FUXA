@@ -790,8 +790,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!view) {
             return;
         }
-        // check existing card
+
+        const new_id = id + '_' + view.id
+        // Create new instance of View
+        var new_view = new View(new_id,null,null,view)
         let card = null;
+
+
+        // check existing card
         this.cards.forEach(c => {
             if (c.id === id) {
                 card = c;
@@ -800,7 +806,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (card) {
             return;
         }
-        card = new CardModel(id);
+        card = new CardModel(new_id);
         card.x = Utils.isNumeric(options.left) ? parseInt(options.left) : 0;
         card.y = Utils.isNumeric(options.top) ? parseInt(options.top) : 0;
         if (options.relativeFrom !== GaugeEventRelativeFromType.window) {

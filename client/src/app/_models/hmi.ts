@@ -28,10 +28,31 @@ export class View {
     /** Property with events of view like Open or Close */
     property: ViewProperty;
 
-    constructor(id?: string, type?: ViewType, name?: string) {
+    constructor(id?: string, type?: ViewType, name?: string, viewref?: View) {
         this.id = id;
         this.name = name;
         this.type = type;
+        if(viewref){
+            this.id = id;
+            this.name = viewref.name;
+            this.profile = { ...viewref.profile }; // Shallow copy, ensure deep copy if needed
+             // Deep copy items
+             this.items = JSON.parse(JSON.stringify(viewref.items));
+             // Deep copy variables
+             this.variables = JSON.parse(JSON.stringify(viewref.variables));
+             if (viewref.svgcontent) {
+                let svgtoReplace = viewref.svgcontent;
+                for (const idx in this.items) {
+                    const strToreplace = this.items[idx].id;
+                    this.items[idx + "_" + id] = { ...this.items[idx] }; // Shallow copy, ensure deep copy if needed
+                    this.items[idx + "_" + id].id = idx + "_" + id;
+                    delete this.items[idx];
+                    svgtoReplace = svgtoReplace.replace(strToreplace, idx + "_" + id);
+                }
+                this.svgcontent = svgtoReplace;
+            }
+            this.type = viewref.type;
+        }
     }
 }
 
