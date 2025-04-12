@@ -799,7 +799,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // check existing card
         this.cards.forEach(c => {
-            if (c.id === id) {
+            if (c.id === new_id) {
                 card = c;
             }
         });
