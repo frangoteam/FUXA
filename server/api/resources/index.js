@@ -120,7 +120,7 @@ module.exports = {
                         var wwwSubDir =  path.join('_widgets', resourcesDirs[i]);
                         var files =  getFiles(dirPath, ['.svg']);
                         for (var x = 0; x < files.length; x++) {
-                            var filename = files[x].replace(/\.[^\/.]+$/, '');
+                            var filename = files[x];
                             group.items.push({ path:  path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep), name: filename });
                         }
                         result.groups.push(group);

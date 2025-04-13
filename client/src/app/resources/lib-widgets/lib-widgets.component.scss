@@ -27,12 +27,12 @@
 
     .lib-widget-item {
         display: inline-block;
-        padding: 5px 5px 5px 5px;
-        margin: 5px 5px 5px 5px;
+        padding: 3px 3px 3px 3px;
+        margin: 2px 2px 2px 2px;
 
         img {
-            max-width: 140px;
-            max-height: 140px;
+            width: 85px;
+            height: 85px;
             min-width: 50px;
             cursor: pointer;
         }
@@ -42,7 +42,7 @@
         background-color: #bdbdbd;
     }
 
-    .lib-widget-item img:hover {
+    .lib-widget-item:hover {
         background-color: rgba(182, 182, 182, 0.3);
     }
 }

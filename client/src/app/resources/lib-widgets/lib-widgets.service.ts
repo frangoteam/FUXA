@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, map } from 'rxjs';
+import { Observable, Subject, map, startWith, switchMap } from 'rxjs';
 import { ResourceGroup, ResourceType } from '../../_models/resources';
 import { ResourcesService } from '../../_services/resources.service';
 
@@ -8,15 +8,21 @@ import { ResourcesService } from '../../_services/resources.service';
 })
 export class LibWidgetsService {
 
-    resourceWidgets$: Observable<ResourceGroup[]>;
     clearSelection$ = new Subject<void>();
     svgWidgetSelected$ = new Subject<string>();
+    private refreshSubject = new Subject<void>();
 
     constructor(private resourcesService: ResourcesService) {
-        this.resourceWidgets$ = this.resourcesService.getResources(ResourceType.widgets).pipe(
-            map(images => images.groups),
-        );
     }
+
+    public resourceWidgets$: Observable<ResourceGroup[]> = this.refreshSubject.pipe(
+        startWith(0),
+        switchMap(() =>
+            this.resourcesService.getResources(ResourceType.widgets).pipe(
+                map(images => images.groups)
+            )
+        )
+    );
 
     clearSelection() {
         this.clearSelection$.next();
@@ -26,5 +32,9 @@ export class LibWidgetsService {
         if (widgetPath.split('.').pop().toLowerCase() === 'svg') {
             this.svgWidgetSelected$.next(widgetPath);
         }
+    }
+
+    refreshResources(): void {
+        this.refreshSubject.next();
     }
 }

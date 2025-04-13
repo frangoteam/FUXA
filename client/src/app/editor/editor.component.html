@@ -221,7 +221,7 @@
                                 <mat-icon aria-label="Select" *ngIf="!panelsState.panelWidgets">expand_more</mat-icon>
                                 <span>{{ 'resources.lib-widgets' | translate }}</span>
                             </mat-panel-title>
-                            <mat-icon class="leftbar-edit-btn">widgets</mat-icon>
+                            <mat-icon class="leftbar-edit-btn" (click)="onWidgetKiosk();$event.stopPropagation()">widgets</mat-icon>
                         </mat-expansion-panel-header>
                         <ng-template matExpansionPanelContent>
                             <app-lib-widgets>
