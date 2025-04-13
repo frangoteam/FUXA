@@ -1,5 +1,5 @@
 <div class="container">
-    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'maps.location-property-title' | translate}}</h1>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'widgets.kiosk-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
         <mat-accordion multi="true">
@@ -17,10 +17,9 @@
                     <mat-progress-spinner diameter="30" mode="indeterminate"></mat-progress-spinner>
                 </div>
                 <div *ngIf="groupContent[group.path] as items" class="content">
-                    <div *ngFor="let item of items" 
-                         (click)="onSelect(item.path)" 
+                    <div *ngFor="let item of items"
                          class="content-item"
-                         [class.item-exists]="item.exist" 
+                         [class.item-exists]="item.exist"
                          matTooltip="{{item.name}}">
                         <img [src]="assetBaseUrl + item.path" [id]="item.path">
                         <div class="download-icon" *ngIf="!item.exist">

@@ -1482,6 +1482,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onAddResource() {
         let dialogRef = this.dialog.open(LibImagesComponent, {
+            disableClose: true,
             position: { top: '60px' }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -1512,9 +1513,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onWidgetKiosk() {
         let dialogRef = this.dialog.open(KioskWidgetsComponent, {
-            position: { top: '60px' }
+            disableClose: true,
+            position: { top: '60px' },
+            width: '1020px',
         });
-        dialogRef.afterClosed().subscribe(() => {
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.libWidgetsService.refreshResources();
+            }
         });
     }
 

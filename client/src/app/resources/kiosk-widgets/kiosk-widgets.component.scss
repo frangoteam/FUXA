@@ -1,6 +1,9 @@
 :host {
     .container {
-        max-width: 900px;
+        max-width: 1020px;
+        width: 100%;
+        min-width: 700px;
+        margin: 0 auto;
 
         .loading-spinner {
             display: flex;
@@ -17,8 +20,8 @@
                 display: inline-flex;
                 margin: 8px;
                 padding: 4px;
-                width: 150px;
-                height: 150px;
+                width: 120px;
+                height: 120px;
                 box-sizing: border-box;
                 position: relative;
                 justify-content: center;
@@ -40,7 +43,7 @@
                     justify-content: center;
                     color: rgba(255, 255, 255, 0.7);
                 }
-            
+
                 .download-icon:hover {
                     color: #000;
                 }
