@@ -95,13 +95,20 @@ export class SvgUtils {
         while ((match = functionExprRegex.exec(scriptContent)) !== null) {
             scriptContent += `\n${moduleId}.${match[1]} = ${match[1]};`;
         }
-
+    
         // Regex to search calls of postValue function
         const oldFuncName = 'postValue';
         const newFuncName = `${moduleId}.${oldFuncName}`;
         const functionCallRegex = new RegExp(`(?<!function\\s+)\\b${oldFuncName}\\b(?=\\s*\\()`, 'g');
         // const functionCallRegex = new RegExp(`\\b${oldFuncName}\\s*\\(`, 'g');
         scriptContent = scriptContent.replace(functionCallRegex, `${newFuncName}`);
+    
+        // Add support for postView
+        const oldViewName = 'postView';
+        const newViewName = `${moduleId}.${oldViewName}`;
+        const viewCallRegex = new RegExp(`(?<!function\\s+)\\b${oldViewName}\\b(?=\\s*\\()`, 'g');
+        scriptContent = scriptContent.replace(viewCallRegex, `${newViewName}`);
+    
         return scriptContent;
     }
 

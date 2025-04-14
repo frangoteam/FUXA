@@ -199,6 +199,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                         event.ga = ga;
                         event.value = value;
                         event.variableId = widgetVar.variableId;
+                        event.mode = 'Value'; // Mode for signal update
                         callback(event);
                     } else {
                         console.error(`Variable name (${varName}) not found!`);
@@ -206,6 +207,22 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                 };
             } else {
                 console.error(`Module (${scriptContent.moduleId}) or postValue function not found!`);
+            }
+            if (window[scriptContent.moduleId]?.['postView']) {
+                window[scriptContent.moduleId]['postView'] = (viewName) => {
+                    if (viewName){
+                        const widgetVar = <WidgetPropertyVariable> ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.name === viewName);
+                        let event = new Event();
+                        event.type = HtmlImageComponent.propertyWidgetType;
+                        event.ga = ga;
+                        event.value = viewName;
+                        event.variableId = widgetVar?.variableId; // Added for consistency
+                        event.mode = 'View'; // Mode for view change
+                        callback(event);
+                    }
+                };
+            } else {
+                console.error(`Module (${scriptContent.moduleId}) or postView function not found!`);
             }
         }
         return null;
