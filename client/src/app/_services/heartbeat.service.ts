@@ -5,6 +5,7 @@ import { Subscription, interval } from 'rxjs';
 import { AuthService } from './auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ProjectService } from './project.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -17,6 +18,7 @@ export class HeartbeatService {
 	private activity = false;
 	constructor(
 		private authService: AuthService,
+		private projectService: ProjectService,
 		private router: Router,
 		private rcgiService: RcgiService
 	) {
@@ -25,6 +27,7 @@ export class HeartbeatService {
 
 	startHeartbeatPolling(): void {
 		if (this.server) {
+			let lastMessage = '';
 			this.stopHeartbeatPolling();
 			this.heartbeatSubscription = interval(this.heartbeatInterval).subscribe(() => {
 				this.server.heartbeat(this.activity).subscribe(res => {
@@ -32,7 +35,11 @@ export class HeartbeatService {
 						this.authService.setNewToken(res.token);
 					} else if (res?.message === 'guest' && res?.token) {
 						this.authService.signOut();
+						if (lastMessage !== res.message) {
+                    		this.projectService.reload();
+						}
 					}
+					lastMessage = res?.message;
 				}, (error) => {
 					if (error instanceof HttpErrorResponse) {
 						if (error.status === 401 || error.status === 403) {
