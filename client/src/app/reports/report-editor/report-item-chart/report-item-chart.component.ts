@@ -46,7 +46,7 @@ export class ReportItemChartComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this._onDestroy.next();
+        this._onDestroy.next(null);
         this._onDestroy.complete();
     }
 

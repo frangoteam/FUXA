@@ -39,13 +39,13 @@ export class AuthService {
 						this.saveUserToken(this.currentUser);
 						this.currentUser$.next(this.currentUser);
 					}
-					observer.next();
+					observer.next(null);
 				}, err => {
 					console.error(err);
 					observer.error(err);
 				});
 			} else {
-				observer.next();
+				observer.next(null);
 			}
 		});
 

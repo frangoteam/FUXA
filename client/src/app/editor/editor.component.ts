@@ -202,7 +202,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             console.error(e);
         }
         this.onSaveProject();
-        this.destroy$.next();
+        this.destroy$.next(null);
         this.destroy$.complete();
     }
     //#endregion
