@@ -34,9 +34,12 @@ export class HeartbeatService {
 					if (res?.message === 'tokenRefresh' && res?.token) {
 						this.authService.setNewToken(res.token);
 					} else if (res?.message === 'guest' && res?.token) {
+						console.log('login as guest');
 						this.authService.signOut();
 						if (lastMessage !== res.message) {
+							console.log('refresh');
                     		this.projectService.reload();
+							this.router.navigateByUrl('/');
 						}
 					}
 					lastMessage = res?.message;
