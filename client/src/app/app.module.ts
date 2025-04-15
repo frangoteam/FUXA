@@ -216,6 +216,7 @@ import { TagPropertyEditGpioComponent } from './device/tag-property/tag-property
 import { LanguageTypePropertyComponent } from './language/language-type-property/language-type-property.component';
 import { LanguageTextPropertyComponent } from './language/language-text-property/language-text-property.component';
 import { LanguageService } from './_services/language.service';
+import { KioskWidgetsComponent } from './resources/kiosk-widgets/kiosk-widgets.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -366,6 +367,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         RangeNumberComponent,
         LibImagesComponent,
         LibWidgetsComponent,
+        KioskWidgetsComponent,
         ReportItemTextComponent,
         ReportItemTableComponent,
         ReportItemAlarmsComponent,

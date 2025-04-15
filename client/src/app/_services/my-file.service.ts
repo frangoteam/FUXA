@@ -12,10 +12,16 @@ export class MyFileService {
 
     }
 
-    upload(file: File, destination: string): Observable<TransferResult> {
+    upload(file: File, destination: string, fullPath?: string): Observable<TransferResult> {
         if (file) {
             let filename = file.name;
-            let fileToUpload = { type: filename.split('.').pop().toLowerCase(), name: filename.split('/').pop(), data: null };
+            let fileToUpload = {
+                type: filename.split('.').pop().toLowerCase(),
+                name: filename.split('/').pop(),
+                data: null,
+                fullPath: fullPath
+            };
+            const isSvg = fileToUpload.type === 'svg';
             let reader = new FileReader();
 
             return new Observable<TransferResult>(observer => {
@@ -36,7 +42,11 @@ export class MyFileService {
                     }
                 };
 
-                reader.readAsDataURL(file);
+                if (isSvg) {
+                    reader.readAsText(file);
+                } else {
+                    reader.readAsDataURL(file);
+                }
             });
         } else {
             return of({ result: false, error: null });

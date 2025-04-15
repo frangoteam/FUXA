@@ -72,7 +72,7 @@ module.exports = {
             if (res.statusCode === 403) {
                 runtime.logger.error("api get getTagValue: Tocken Expired");
             } else if (!authJwt.haveAdminPermission(permission) && !runtime.scriptsMgr.isAuthorisedByScriptName(req.query.sourceScriptName, permission)) {
-                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                res.status(400).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api get getTagValue: Unauthorized");
             } else {
                 try {

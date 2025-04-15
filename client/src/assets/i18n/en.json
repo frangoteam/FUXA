@@ -1488,6 +1488,8 @@
     "resource.list-title-fonts": "Fonts list",
     "resources.lib-widgets": "Widgets",
 
+    "widgets.kiosk-title": "Widgets Kiosk",
+
     "texts.list-title": "Language settings",
     "texts.list-filter": "Filter",
     "texts.list-filter-group": "Group",

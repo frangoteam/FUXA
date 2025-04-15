@@ -110,7 +110,7 @@ export class AuthService {
 		const contextPermission = settings.userRole ? context.permissionRoles : context.permission;
 		if (settings.userRole) {
 			if (userPermission && !contextPermission) {
-				return { show: true, enabled: false };
+				return { show: forceUndefined, enabled: forceUndefined };
 			}
 		} else {
 			if (userPermission && !context && !contextPermission) {

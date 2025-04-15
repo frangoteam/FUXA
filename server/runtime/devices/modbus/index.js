@@ -324,7 +324,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     name: null,
                     parameters};
                 try {
-                    const bufVal = await runtime.scriptsMgr.runScript(script);
+                    const bufVal = await runtime.scriptsMgr.runScript(script, false);
                     if (Array.isArray(bufVal)) {
                         if ((bufVal.length % 2) !== 0 ) {
                             logger.error(`'${data.tags[sigid].name}' setValue script error, returned buffer invalid must be mod 2`);
