@@ -54,7 +54,7 @@ export class UsersComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	ngOnDestroy() {
-		this.destroy$.next();
+		this.destroy$.next(null);
         this.destroy$.complete();
 	}
 

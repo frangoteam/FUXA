@@ -35,7 +35,7 @@ export class ScriptService {
             const permission = this.authService.checkPermission(script, true);
             if (permission?.enabled === false) {
                 this.toastNotifier.notifyError('msg.operation-unauthorized', '', false, false);
-                observer.next();
+                observer.next(null);
                 observer.complete();
                 return;
             }
@@ -51,7 +51,7 @@ export class ScriptService {
                         observer.error(err);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                     observer.complete();
                 }
             } else {

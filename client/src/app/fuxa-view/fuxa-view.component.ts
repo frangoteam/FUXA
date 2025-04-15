@@ -117,7 +117,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         try {
-            this.destroy$.next();
+            this.destroy$.next(null);
             this.destroy$.complete();
             this.gaugesManager.unbindGauge(this.id);
             this.clearGaugeStatus();

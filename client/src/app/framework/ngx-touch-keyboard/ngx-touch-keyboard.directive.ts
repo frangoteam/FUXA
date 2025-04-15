@@ -142,7 +142,7 @@ export class NgxTouchKeyboardDirective implements OnDestroy {
   closePanel(): void {
     this._overlayRef?.detach();
     this.isOpen = false;
-    this.closePanelSubject.next();
+    this.closePanelSubject.next(null);
   }
 
   /**

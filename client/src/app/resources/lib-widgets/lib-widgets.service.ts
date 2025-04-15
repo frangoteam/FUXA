@@ -25,7 +25,7 @@ export class LibWidgetsService {
     );
 
     clearSelection() {
-        this.clearSelection$.next();
+        this.clearSelection$.next(null);
     }
 
     widgetSelected(widgetPath: string) {
@@ -35,6 +35,6 @@ export class LibWidgetsService {
     }
 
     refreshResources(): void {
-        this.refreshSubject.next();
+        this.refreshSubject.next(null);
     }
 }

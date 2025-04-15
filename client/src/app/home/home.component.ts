@@ -177,7 +177,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.subscriptiongoTo) {
                 this.subscriptiongoTo.unsubscribe();
             }
-            this.destroy$.next();
+            this.destroy$.next(null);
             this.destroy$.complete();
             this.intervalsScript.clearIntervals();
         } catch (e) {

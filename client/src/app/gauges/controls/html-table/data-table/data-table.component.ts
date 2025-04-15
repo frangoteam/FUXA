@@ -119,7 +119,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         try {
-            this.destroy$.next();
+            this.destroy$.next(null);
             this.destroy$.complete();
         } catch (e) {
             console.error(e);

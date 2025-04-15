@@ -68,7 +68,7 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
     }
 
     ngOnDestroy() {
-        this.destroy$.next();
+        this.destroy$.next(null);
         this.destroy$.complete();
     }
 
