@@ -29,12 +29,23 @@
         display: inline-block;
         padding: 3px 3px 3px 3px;
         margin: 2px 2px 2px 2px;
+        position: relative;
 
         img {
             width: 85px;
             height: 85px;
             min-width: 50px;
             cursor: pointer;
+        }
+
+        mat-icon {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            height: unset;
+            width: unset;
         }
     }
 

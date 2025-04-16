@@ -1487,6 +1487,7 @@
     "resources.lib-widgets": "Widgets",
 
     "widgets.kiosk-title": "Widgets Kiosk",
+    "widget.remove": "Remove Widget",
 
     "texts.list-title": "Language settings",
     "texts.list-filter": "Filter",

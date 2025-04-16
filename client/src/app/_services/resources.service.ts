@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { EndPointApi } from '../_helpers/endpointapi';
-import { Resources, ResourceType } from '../_models/resources';
+import { ResourceItem, Resources, ResourceType } from '../_models/resources';
 
 @Injectable({
     providedIn: 'root'
@@ -18,6 +18,12 @@ export class ResourcesService {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         let params = { type: type };
         return this.http.get<Resources>(this.endPointConfig + '/api/resources/' + type, { headers: header, params: params });
+    }
+
+    removeWidget(widget: ResourceItem): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { path: widget.path };
+        return this.http.post<any>(this.endPointConfig + '/api/resources/removeWidget', params, { headers: header });
     }
 
     generateImage(imageProperty: any) {
