@@ -579,9 +579,10 @@ export class HmiService {
             switch (message.command) {
                 case ScriptCommandEnum.SETVIEW:
                     this.onGoTo.emit(<ScriptSetView>{ viewName: message.params[0], force: message.params[1] });
+                    break;
                 case ScriptCommandEnum.OPENCARD:
                     this.onOpen.emit(<ScriptOpenCard>{ viewName: message.params[0], options: message.params[1] });
-                break;
+                    break;
             }
         }
     }
