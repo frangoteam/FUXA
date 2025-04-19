@@ -24,6 +24,7 @@ export class AppSettingsComponent implements OnInit {
 		{ text: 'dlg.app-language-ko', value: 'ko' },
 		{ text: 'dlg.app-language-pt', value: 'pt' },
 		{ text: 'dlg.app-language-ru', value: 'ru' },
+        { text: 'dlg.app-language-sv', value: 'sv' },
 		{ text: 'dlg.app-language-tr', value: 'tr' },
 		{ text: 'dlg.app-language-ua', value: 'ua' },
 		{ text: 'dlg.app-language-zh-cn', value: 'zh-cn' },
