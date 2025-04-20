@@ -583,6 +583,8 @@ export class HmiService {
                 case ScriptCommandEnum.OPENCARD:
                     this.onOpen.emit(<ScriptOpenCard>{ viewName: message.params[0], options: message.params[1] });
                     break;
+                default:
+                    break;
             }
         }
     }
