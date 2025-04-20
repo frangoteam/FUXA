@@ -803,7 +803,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         card = new CardModel(id);
         card.x = Utils.isNumeric(options.left) ? parseInt(options.left) : 0;
         card.y = Utils.isNumeric(options.top) ? parseInt(options.top) : 0;
-        if (options.relativeFrom !== GaugeEventRelativeFromType.window) {
+        if (event && options.relativeFrom !== GaugeEventRelativeFromType.window) {
             const eventPos = EventUtils.getEventClientPosition(event);
             if (eventPos) {
                 card.x += eventPos.x ?? 0;

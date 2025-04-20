@@ -1368,6 +1368,9 @@
     "script.template-getHistoricalTagsoptions-text": "Get Historical Tags values",
     "script.template-getHistoricalTagsoptions-tooltip": "Code template to get Historical Tags values.",
 
+    "client.script-access-title": "Client Scripts access",
+    "client.script-access-info": "Configure access to system functions from the frontend (e.g. widgets) via window.fuxaScriptAPI.",
+
     "reports.list-title": "Reports settings",
     "reports.list-name": "Name",
     "reports.list-type": "Type",
@@ -1550,7 +1553,7 @@
     "dlg.setup-scripts": "Scripts",
     "dlg.setup-reports": "Reports",
     "dlg.setup-settings": "Settings",
-    "dlg.setup-widgets-settings": "Widgets",
+    "dlg.setup-client-access": "Frontend Scripts",
     "dlg.setup-logs": "Logs",
     "dlg.setup-notifications": "Notifications",
     "dlg.setup-events": "Events",

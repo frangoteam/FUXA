@@ -45,7 +45,6 @@ export class ClientScriptAccessComponent implements OnInit {
     onOkClick(): void {
         this.dialogRef.close();
         const updatedAccess = this.getClientAccess();
-        console.log('Access saved:', updatedAccess);
         this.projectService.setClientAccess(updatedAccess);
     }
 }

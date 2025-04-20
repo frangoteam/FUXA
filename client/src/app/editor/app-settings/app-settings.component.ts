@@ -16,7 +16,7 @@ import { Utils } from '../../_helpers/utils';
 })
 export class AppSettingsComponent implements OnInit {
 
-    languageType = [ 
+    languageType = [
 		{ text: 'dlg.app-language-de', value: 'de' },
 		{ text: 'dlg.app-language-en', value: 'en' },
 		{ text: 'dlg.app-language-es', value: 'es' },
@@ -29,15 +29,15 @@ export class AppSettingsComponent implements OnInit {
 		{ text: 'dlg.app-language-ua', value: 'ua' },
 		{ text: 'dlg.app-language-zh-cn', value: 'zh-cn' },
 	];
-	
-    authType = [ 
-		{ text: 'dlg.app-auth-disabled', value: '' }, 
+
+    authType = [
+		{ text: 'dlg.app-auth-disabled', value: '' },
 		{ text: 'dlg.app-auth-expiration-15m', value: '15m' },
-		{ text: 'dlg.app-auth-expiration-1h', value: '1h' }, 
+		{ text: 'dlg.app-auth-expiration-1h', value: '1h' },
 		{ text: 'dlg.app-auth-expiration-3h', value: '3h' },
 		{ text: 'dlg.app-auth-expiration-1d', value: '1d' }
 	];
-    
+
     settings = new AppSettings();
     authentication = '';
     authenticationTooltip = '';

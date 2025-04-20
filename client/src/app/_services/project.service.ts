@@ -31,6 +31,7 @@ export class ProjectService {
 
     @Output() onSaveCurrent: EventEmitter<SaveMode> = new EventEmitter();
     @Output() onLoadHmi: EventEmitter<boolean> = new EventEmitter();
+    public onLoadClientAccess: Subject<void> = new Subject<void>();
 
     private projectData = new ProjectData();            // Project data
     public AppId = '';
@@ -909,6 +910,7 @@ export class ProjectService {
     setClientAccess(clientAccess: ClientAccess) {
         this.projectData.clientAccess = clientAccess;
         this.storage.setServerProjectData(ProjectDataCmdType.ClientAccess, clientAccess, this.projectData).subscribe(result => {
+            this.onLoadClientAccess.next();
         }, err => {
             console.error(err);
             this.notifySaveError(err);
