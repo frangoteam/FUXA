@@ -12,8 +12,8 @@
         <div *ngIf="data.newScript" class="my-form-field block mt10">
             <span>{{'dlg.item-req-name' | translate}}</span>
             <input formControlName="name" style="width: 300px" type="text">
-            <span *ngIf="formGroup.controls.name.errors?.name" class="form-input-error">
-                {{formGroup.controls.name.errors?.name}}
+            <span *ngIf="formGroup.controls.name.errors?.message" class="form-input-error">
+                {{formGroup.controls.name.errors?.message}}
             </span>
         </div>
         <div class="my-form-field block mt10">
