@@ -1550,6 +1550,7 @@
     "dlg.setup-scripts": "Scripts",
     "dlg.setup-reports": "Reports",
     "dlg.setup-settings": "Settings",
+    "dlg.setup-widgets-settings": "Widgets",
     "dlg.setup-logs": "Logs",
     "dlg.setup-notifications": "Notifications",
     "dlg.setup-events": "Events",

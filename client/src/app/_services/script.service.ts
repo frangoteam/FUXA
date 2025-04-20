@@ -27,7 +27,9 @@ export class ScriptService {
         private authService: AuthService,
         private toastNotifier: ToastNotifierService
     ) {
-
+        (window as any).fuxaScriptAPI = {
+            setView: this.$setView.bind(this)
+        };
     }
 
     runScript(script: Script, toLogEvent: boolean = true): Observable<any> {
