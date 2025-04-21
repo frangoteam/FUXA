@@ -24,12 +24,14 @@ import { Utils } from '../_helpers/utils';
 import * as FileSaver from 'file-saver';
 import { Report } from '../_models/report';
 import { MapsLocation } from '../_models/maps';
+import { ClientAccess } from '../_models/client-access';
 
 @Injectable()
 export class ProjectService {
 
     @Output() onSaveCurrent: EventEmitter<SaveMode> = new EventEmitter();
     @Output() onLoadHmi: EventEmitter<boolean> = new EventEmitter();
+    public onLoadClientAccess: Subject<void> = new Subject<void>();
 
     private projectData = new ProjectData();            // Project data
     public AppId = '';
@@ -886,6 +888,29 @@ export class ProjectService {
     setLanguages(languages: Languages) {
         this.projectData.languages = languages;
         this.storage.setServerProjectData(ProjectDataCmdType.Languages, languages, this.projectData).subscribe(result => {
+        }, err => {
+            console.error(err);
+            this.notifySaveError(err);
+        });
+    }
+    //#endregion
+
+    //#region ClientAccess
+    /**
+     * get client access
+     */
+    getClientAccess(): ClientAccess {
+        return (this.projectData) ? (this.projectData.clientAccess) ? this.projectData.clientAccess : new ClientAccess() : null;
+    }
+
+    /**
+     * save client access
+     * @param text
+     */
+    setClientAccess(clientAccess: ClientAccess) {
+        this.projectData.clientAccess = clientAccess;
+        this.storage.setServerProjectData(ProjectDataCmdType.ClientAccess, clientAccess, this.projectData).subscribe(result => {
+            this.onLoadClientAccess.next();
         }, err => {
             console.error(err);
             this.notifySaveError(err);

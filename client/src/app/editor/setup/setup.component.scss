@@ -36,8 +36,8 @@
         flex-wrap: wrap;
         margin-left: -8px;
         margin-right: -8px;
-        margin-top: 20px;
-        margin-bottom: 20px;
+        margin-top: 16px;
+        margin-bottom: 18px;
         justify-content: center;
     }
 
@@ -45,12 +45,14 @@
         // flex-basis: 25%;
         margin-left: 3px;
         margin-right: 3px;
-        padding-left: 8px;
-        padding-right: 8px;
+        padding-left: 4px;
+        padding-right: 4px;
         flex: 1;
     }
 
     .card-btn {
+        height: 85px;
+        min-height: auto;
         min-width: 100px;
         width: 100px;
         font-size: 16px;
@@ -69,21 +71,34 @@
     }
 
     .card-btn-content {
-        display: block;
-        padding: 10px 0px 5px 0px;
-        text-align: -webkit-center;
-        text-align: -moz-center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 10px 0 5px 0;
+        text-align: center;
+        height: 100%;
     }
 
     .card-btn-content .mat-icon {
-        display: block;
         font-size: 32px;
+        margin-bottom: 6px;
         height: 32px;
         width: 32px;
     }
 
     .card-btn-content span {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 14px;
+        text-align: center;
+        white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.2;
+        min-height: 2.4em;
+        max-height: 2.4em;
+        padding: 0 4px;
     }
 }
