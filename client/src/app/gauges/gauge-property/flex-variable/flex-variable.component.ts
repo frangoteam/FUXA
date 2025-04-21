@@ -46,6 +46,7 @@ export class FlexVariableComponent implements OnInit {
     @Output() valueChange: EventEmitter<any> = new EventEmitter();
 
     public manualEdit = false;
+    defaultColor = Utils.defaultColor;
 
     variableList: any = [];
     selectedTag: DeviceTagOption;
