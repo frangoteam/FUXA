@@ -33,6 +33,7 @@ export class FlexVariableComponent implements OnInit {
     @Input() variableValue: string;
     @Input() variableLabel = 'gauges.property-variable-value';
     @Input() withStaticValue = true;
+    @Input() withStaticType: string = null;
     @Input() withBitmask = false;
     @Input() tagLabel = 'gauges.property-tag-label';
     @Input() tagTitle = '';
