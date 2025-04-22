@@ -47,7 +47,7 @@ export class ResDemoService implements ResourceStorageService {
     setServerProject(prj: ProjectData) {
         return new Observable((observer) => {
             localStorage.setItem(this.getAppId(), JSON.stringify(prj));
-            observer.next();
+            observer.next(null);
         });
     }
 
@@ -95,7 +95,7 @@ export class ResDemoService implements ResourceStorageService {
 
     checkServer(): Observable<any> {
         return new Observable((observer) => {
-            observer.next();
+            observer.next(null);
         });
     }
 
@@ -109,7 +109,7 @@ export class ResDemoService implements ResourceStorageService {
         });
     }
 
-    getTagsValues(query: string[]): Observable<any> {
+    getTagsValues(query: string[], sourceScriptName?: string): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');
         });

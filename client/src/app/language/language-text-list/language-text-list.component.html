@@ -1,0 +1,82 @@
+<div class="header-panel">
+    <mat-icon>language</mat-icon>
+    {{'texts.list-title' | translate}}
+</div>
+<div class="work-panel">
+    <div class="container">
+        <!-- <div class="filter">
+          <div class="my-form-field" style="padding-right: 10px;">
+              <span>{{'texts.list-filter-group' | translate}}</span>
+              <mat-select [(value)]="groupSelected" style="width: 300px" (selectionChange)="onGroupChange($event.source)">
+                  <mat-option *ngFor="let group of groups" [value]="group">
+                      {{ group }}
+                  </mat-option>
+              </mat-select>
+          </div>
+          <div class="my-form-field" style="padding-right: 10px;">
+              <span>{{'texts.list-filter' | translate}}</span>
+              <input (keyup)="applyFilter($event.target.value)" style="width: 450px" type="text">
+          </div>
+      </div> -->
+        <mat-table #table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
+                    <button mat-icon-button [matMenuTriggerFor]="addMenu" class="remove">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                    <mat-menu #addMenu [overlapTrigger]="false">
+                        <button mat-menu-item (click)="onAddText()">{{'texts.list-add-text' | translate}}</button>
+                        <button mat-menu-item (click)="onEditLanguage()">{{'texts.list-edit-language' | translate}}</button>
+                    </mat-menu>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
+                    <button mat-icon-button (click)="onEditText(element)" class="remove">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="id">
+                <mat-header-cell *matHeaderCellDef mat-sort-header [style.min-width.px]="200"> {{'texts.list-id' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.min-width.px]="200"> {{element.name}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="group">
+                <mat-header-cell *matHeaderCellDef mat-sort-header [style.min-width.px]="200"> {{'texts.list-group' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.min-width.px]="200"> {{element.group}} </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="value">
+                <mat-header-cell *matHeaderCellDef mat-sort-header [style.min-width.px]="200">
+                    <ng-container *ngIf="defaultLanguage; else defaultText">{{ defaultLanguage.id }} ({{ defaultLanguage.name }})</ng-container>
+                    <ng-template #defaultText>{{ 'texts.list-value' | translate }}</ng-template>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.min-width.px]="200"> {{element.value}} </mat-cell>
+            </ng-container>
+
+            <ng-container *ngFor="let lang of languages" [matColumnDef]="'lang-' + lang.id">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="mat-column-lang-{{ lang.id }}" [style.min-width.px]="200">
+                    {{ lang.id }} ({{ lang.name }})
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="mat-column-lang-{{ lang.id }}" [style.min-width.px]="200">
+                    {{ element.translations[lang.id] || '-' }}
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="remove">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-icon-button (click)="$event.stopPropagation();onRemoveText(element)" class="remove">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
+        </mat-table>
+    </div>
+</div>
+<button mat-fab color="primary" (click)="onAddText()" class="fab-add">
+    <mat-icon class="">add</mat-icon>
+</button>

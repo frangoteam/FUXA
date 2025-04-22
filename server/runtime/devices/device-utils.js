@@ -131,7 +131,7 @@ const callScaleScript = async (scriptId, params, runtime, isRead, value) => {
             notLog: true
         };
         try {
-            value = await runtime.scriptsMgr.runScript(script);
+            value = await runtime.scriptsMgr.runScript(script, false);
         } catch (error) {
             runtime.logger.error(`'${params}' ${isRead ? 'read' : 'write'} script error! ${error.toString()}`);
         }

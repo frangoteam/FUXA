@@ -1,8 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import { ResourceGroup } from '../../_models/resources';
+import { ResourceGroup, ResourceItem } from '../../_models/resources';
 import { LibWidgetsService } from './lib-widgets.service';
 import { RcgiService } from '../../_services/rcgi/rcgi.service';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { ToastNotifierService } from '../../_services/toast-notifier.service';
 
 @Component({
     selector: 'app-lib-widgets',
@@ -15,9 +17,15 @@ export class LibWidgetsComponent implements OnInit, OnDestroy {
     selectedWidgetPath: string;
     private destroy$ = new Subject<void>();
     rootPath = '';
+    contextMenuWidget: any = null;
+    expandedGroups: { [groupName: string]: boolean } = {};
+
+    @ViewChild('menuTriggerButton') menuTrigger!: MatMenuTrigger;
+    @ViewChild('menuTriggerEl', { read: ElementRef }) triggerButtonRef!: ElementRef;
 
     constructor(
         private libWidgetService: LibWidgetsService,
+        private toastNotifier: ToastNotifierService,
         private rcgiService: RcgiService) {
             this.rootPath = this.rcgiService.rcgi.endPointConfig;
         }
@@ -32,7 +40,7 @@ export class LibWidgetsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.destroy$.next();
+        this.destroy$.next(null);
         this.destroy$.complete();
     }
 
@@ -43,5 +51,14 @@ export class LibWidgetsComponent implements OnInit, OnDestroy {
 
     clearSelection() {
         this.selectedWidgetPath = null;
+    }
+
+    onRemoveWidget(widget: ResourceItem) {
+        this.libWidgetService.removeWidget(widget).subscribe(() => {
+            this.libWidgetService.refreshResources();
+         }, err => {
+            console.error('Remove failed:', err);
+            this.toastNotifier.notifyError('msg.file-download-failed', err.message || err);
+        });
     }
 }

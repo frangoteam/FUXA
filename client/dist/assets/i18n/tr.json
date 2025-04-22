@@ -4,12 +4,12 @@
     "app.home": "Ana Ekran",
     "app.lab": "Test Merkezi",
     "app.editor": "Tasarlama Ekranı",
-	
-	"header.new-project": "Yeni",	
+
+	"header.new-project": "Yeni",
 	"header.save-project": "Kaydet",
 	"header.saveas-project": "Farklı Kaydet",
 	"header.open-project": "Aç",
-		
+
 	"header.edit-project": "Düzenle",
 	"header.edit-views": "Görünüm Düzeneyici",
 	"header.edit-devices": "Cihaz Ayarları",
@@ -29,7 +29,7 @@
 	"tutorial.title": "FUXA Öğretici",
 
 	"dlg.info-title": "FUXA",
-	
+
 	"dlg.layout-title": "Yerleşim Ayarları",
 	"dlg.layout-general": "Genel",
 	"dlg.layout-lbl-sview": "Başlangıç Görünümü",
@@ -47,13 +47,13 @@
 	"dlg.layout-lbl-alarms": "Alarm bilgilendirme şekli",
 	"dlg.layout-lbl-infos": "Bilgilendirme şekli",
 	"dlg.docproperty-margin": "Kenar Boşluğu",
-	
+
 	"dlg.menuitem-title": "Menü Öğesi",
 	"dlg.menuitem-icon": "Simge",
 	"dlg.menuitem-text": "Metin",
 	"dlg.menuitem-view": "Tıklayınca Göster",
 	"dlg.menuitem-link": "Tıklama ile Bağlan",
-	
+
 	"dlg.docproperty-title": "Görünüm Ayarları",
 	"dlg.docproperty-width": "Genişlik",
 	"dlg.docproperty-height": "Yükseklik",
@@ -70,20 +70,20 @@
 	"dlg.docproperty-size-1920-1080": "1920 x 1080 nokta",
 	"dlg.docname-title": "Ekran Adı",
 	"dlg.docname-name": "Adı",
-	
+
 	"dlg.linkproperty-title": "Köprü Oluştur",
 	"dlg.linkproperty-url": "Köprü URL",
-	
+
 	"dlg.login-title": "Giriş yapın...",
 	"dlg.logout-btn": "Çıkış",
-	
+
 	"dlg.ok": "TAMAM",
 	"dlg.cancel": "GERİ DÖN",
-	
+
 	"dlg.userproperty-title": "Kullanıcı",
 	"dlg.userproperty-groups": "Yetki Grupları",
 	"dlg.useraccess-groups": "Yetkilendirme (geçersiz = herkes için tam yetki)",
-	
+
 	"dlg.gauge-permission-title": "Yetkilendirme",
 	"dlg.gauge-permission-label": "(geçersiz = herkes için tam yetki)",
 	"dlg.gauge-permission-show": "Göster",
@@ -106,11 +106,11 @@
 	"item.navtype-text": "Metin",
 	"item.navtype-icons-text-block": "Simge & Metin (blokta)",
 	"item.navtype-icons-text-inline": "Simge & Metin (satır içi)",
-	
+
 	"item.notifymode-hide": "Gizle",
 	"item.notifymode-fix": "Sabit",
 	"item.notifymode-float": "Çekmeli",
-	
+
 	"item.zoommode-disabled": "Etkisiz",
 	"item.zoommode-enabled": "Aktif",
 
@@ -127,16 +127,16 @@
 	"chart.config-name": "Adı",
 	"chart.config-rename": "Ad Değiştir",
 	"chart.config-delete": "Sil",
-	
+
 	"chart.property-props": "Özellik",
 	"chart.property-layout": "Yerleşim",
 	"chart.property-chart": "Gösterilecek grafik",
 	"chart.property-chart-type": "Gösterme şekli",
 	"chart.property-realtime-max": "Max süre (dk)",
-	
+
 	"chart.viewtype-realtime1": "Gerçek zamanlı",
 	"chart.viewtype-history": "Geçmiş",
-	
+
 	"chart.property-font": "Yazıtipi",
 	"chart.property-font.titlesize": "Başlık boyutu",
 	"chart.property-font.axissize": "Eksen boyutu",
@@ -148,17 +148,17 @@
 	"chart.property-legend.mode": "Gösterge görünüm şekli",
 	"chart.property-date.format": "Tarih biçimi",
 	"chart.property-time.format": "Saat biçimi",
-	
+
 	"chart.rangetype-last8h": "Son 8 Saat",
 	"chart.rangetype-last1d": "Son 1 Gün",
 	"chart.rangetype-last3d": "Son 3 Gün",
 	"chart.rangetype-last1w": "Son 1 Hafta",
-	
+
 	"chart.legend-always": "her zaman",
 	"chart.legend-follow": "takip et",
 	"chart.legend-bottom": "aşağıda",
 	"chart.legend-never": "asla",
-	
+
 	"editor.views": "Görünümler",
 	"editor.view-delete": "Sil",
 	"editor.view-rename": "Ad Değiştir",
@@ -166,12 +166,12 @@
 	"editor.view-clone": "Çoğalt",
 	"editor.view-export": "Dışa aktar",
 	"editor.view-import": "Görünüm al",
-	
+
 	"editor.general": "Genel",
 	"editor.shape": "Şekil",
 	"editor.processeng": "Süreç Mühendisliği",
 	"editor.animated": "Animasyon",
-	
+
 	"editor.controls": "Kontroller",
 	"editor.controls-input": "Giriş Değeri",
 	"editor.controls-input-settings": "Giriş Ayarları",
@@ -196,15 +196,15 @@
 	"editor.controls-shape-settings": "Şekil ayarları",
 	"editor.controls-html-switch-settings": "Anahtar ayarları",
 	"editor.controls-switch": "Anahtar",
-	
+
 	"editor.layout-settings": "Yerleşim ayarları",
-	
+
 	"editor.interactivity": "Etkileşim",
 	"editor.interactivity-id": "id:",
 	"editor.interactivity-id-title": "Öğeyi tanımla",
 	"editor.interactivity-class": "sınıf:",
 	"editor.interactivity-class-title": "Öğe sınıfı",
-	
+
 	"editor.cmenu-cut": "Kes",
 	"editor.cmenu-copy": "Kopyala",
 	"editor.cmenu-paste": "Yapıştır",
@@ -220,7 +220,7 @@
 	"editor.cmenu-layer-delete": "Katmanı Sil",
 	"editor.cmenu-layer-marge-down": "Aşağı doğru birleştir",
 	"editor.cmenu-layer-marge-all": "Tümünü birleştir",
-	
+
 	"editor.transform": "Dönüştür",
 	"editor.transform-x": "x",
 	"editor.transform-x-title": "X eksenini değiştir",
@@ -274,7 +274,7 @@
 	"editor.transform-change-image-title": "NOT: Bu resim katıştırılamaz. Görüntülenmesi bu yola bağlı olacak.",
 	"editor.transform-angle": "açı",
 	"editor.transform-angle-title": "Döndürme açısını değiştir",
-	
+
 	"editor.align": "Hizala",
 	"editor.align-left-title": "Sola Hizala",
 	"editor.align-center-title": "Merkeze Hizala",
@@ -282,7 +282,7 @@
 	"editor.align-top-title": "Üste Hizala",
 	"editor.align-middle-title": "Ortaya Hizala",
 	"editor.align-bottom-title": "Alta Hizala",
-	
+
 	"editor.stroke": "Kenarlık",
 	"editor.stroke-width": "kenarlık genişliği",
 	"editor.stroke-width-title": "Kenarlık genişliğini 1 birim değiştirin, 0.1 birim değiştirmek için shift tuşu ile tıklayın",
@@ -296,7 +296,7 @@
 	"editor.stroke-capround-title": "Yuvarlak",
 	"editor.stroke-shadow": "gölge",
 	"editor.stroke-shadow-title": "gölgeli",
-	
+
 	"editor.marker": "İşaretleme",
 	"editor.marker-start": "başla",
 	"editor.marker-start-title": "Başlangıç işareti türünü seçin",
@@ -304,10 +304,10 @@
 	"editor.marker-middle-title": "Orta işaret türünü seçin",
 	"editor.marker-end": "son",
 	"editor.marker-end-title": "Son işaret türünü seçin",
-	
+
 	"editor.hyperlink": "Köprü",
 	"editor.hyperlink-url": "url",
-	
+
 	"editor.tools-launch-title": "Mevcut görünüme geç",
 	"editor.tools-zoom-title": "Yakınlaştırma Aracı [Ctrl+Yukarı/Aşağı]",
 	"editor.tools-grid-title": "Kılavuz çizgilerini göster/gizle",
@@ -411,7 +411,7 @@
 	"device.list-min": "Min",
 	"device.list-max": "Max",
 	"device.list-value": "Değer",
-	
+
 	"device.property-client": "Aygıt Özellikleri",
 	"device.property-server": "FUXA Sunucu Özellikleri",
 	"device.property-name": "Ad",
@@ -422,9 +422,9 @@
 	"device.property-device-port": "Aygıt IP and Port (127.0.0.1:47808)",
 	"device.property-address-port": "İstemci IP ve Portu (127.0.0.1:502)",
 	"device.property-security": "Güvenlik ve şifreleme var",
-	
+
 	"device.not-property-security": "Güvenlik ve şifreleme yok",
-	
+
 	"device.property-port": "Port",
 	"device.property-slave-id": "İstemci ID",
 	"device.property-tockenized": "Parçalı",
@@ -439,23 +439,23 @@
 	"device.property-format": "Format",
 	"device.property-url": "URL",
 	"device.property-webapi-result": "Talebin sonucu",
-	
+
 	"device.not-webapi-result": "WebAPI talebini yapılandır",
-	
+
 	"device.property-show": "Aygıt Özelliklerini Göster",
 	"device.property-hide": "Aygıt Özelliklerini Gizle",
-	
+
 	"device.security-none": "Yok",
 	"device.security-sign": "İmzala",
 	"device.security-signandencrypt": "İmzala ve Şifrele",
-	
+
 	"device.browsetopics-property-title": "Alınan ve yayınlanan ara sunucu konuları",
 	"device.discovery-topics": "Ara sunucudaki tarayıcı konuları",
 	"device.add-topics": "Konularımı ara sunucuda yayınla",
 	"device.property-mqtt-address": "Adres (mqtt://[sunucu]:[port])",
 	"device.tag-property-title": "Öğe Özellikleri",
 	"device.browsetag-property-title": "Öğelere sunucuda gözat",
-	
+
 	"device.tag-property-device": "Aygıt",
 	"device.tag-property-name": "Öğe adı",
 	"device.tag-property-register": "Kaydet",
@@ -551,7 +551,7 @@
 	"alarms.list-high": "Yüksek",
 	"alarms.list-low": "Düşük",
 	"alarms.list-info": "Bilgilendirme",
-	
+
 	"alarm.property-title": "Alarm",
 	"alarm.property-name": "Adı",
 	"alarm.property-permission": "Yetkilendirme",
@@ -568,28 +568,28 @@
 	"alarm.property-ackmode": "Görüldü Türü",
 	"alarm.property-text": "Metin",
 	"alarm.property-group": "Grup",
-	
+
 	"alarm.ack-float": "Gezici",
 	"alarm.ack-active": "Aktifken görüldü yapılabilir.",
 	"alarm.ack-passive": "Alarm geçtiğinde görüldü yapılabilir.",
-	
+
 	"alarms.view-ontime": "Tarih/Saat",
 	"alarms.view-text": "Metin",
 	"alarms.view-group": "Grup",
 	"alarms.view-status": "Durum",
 	"alarms.view-type": "Öncelik",
-	
+
 	"alarm.status-active": "Aktif",
 	"alarm.status-passive": "Çözüldü",
 	"alarm.status-active-ack": "Aktif - Görüldü",
-	
+
 	"card.config-title": "Kart Ayarları",
     "card.config-content-type": "İçerik Türü",
     "card.config-content-view": "İçerik Görünümü",
     "card.widget-view": "Sayfa",
     "card.widget-alarms": "Alarmlar",
     "card.widget-table": "Tablo",
-	
+
 
 	"texts.list-title": "Metin ayarları",
 	"texts.list-filter": "Filtre",
@@ -598,11 +598,11 @@
 	"texts.list-group": "Grup",
 	"texts.list-value": "Metin",
 
-	"dlg.textproperty-title": "Metin",
-	"dlg.textproperty-id": "ID",
-	"dlg.textproperty-group": "Grup",
-	"dlg.textproperty-value": "Metin",
-	
+	"text.settings-title": "Metin",
+    "text.settings-id": "ID",
+    "text.settings-group": "Grup",
+    "text.settings-value": "Metin",
+
 	"dlg.plugins-title": "Eklentiler",
 	"dlg.plugins-name": "Ad",
 	"dlg.plugins-version": "Sürüm",
@@ -612,7 +612,7 @@
 	"dlg.plugins-status-installed": "Kurulum tamamlandı.",
 	"dlg.plugins-status-removed": "Kaldırma tamamlandı.",
 	"dlg.plugins-status-error": "Hata! Kendiniz yapmayı deneyin.",
-	
+
 	"dlg.setup-title": "Kurulum",
 	"dlg.setup-gui": "Kullanıcı Arayüzü",
 	"dlg.setup-diverse": "Temel Ayarlar",
@@ -627,7 +627,7 @@
 	"dlg.setup-plugins": "Eklentiler",
 	"dlg.setup-scripts": "Betikler",
 	"dlg.setup-settings": "Ayarlar",
-	
+
 	"dlg.app-settings-title": "Ayarlar",
 	"dlg.app-settings-system": "Sistem",
 	"dlg.app-settings-language": "Dil",
@@ -638,7 +638,7 @@
 	"dlg.app-language-tr": "Turkish",
 	"dlg.app-settings-server-port": "Sunucuya erişmek için port",
 	"dlg.app-settings-auth-token": "Anahtar şifre işe yetkilendir",
-	
+
 	"dlg.app-auth-disabled": "Etkisiz",
 	"dlg.app-auth-expiration-15m": "Anahtar şifre 15dk içinde geçerliliğini yitirecek.",
 	"dlg.app-auth-expiration-1h": "Anahtar şifre 1 saat içinde geçerliliğini yitirecek.",

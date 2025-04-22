@@ -39,13 +39,13 @@ export class AuthService {
 						this.saveUserToken(this.currentUser);
 						this.currentUser$.next(this.currentUser);
 					}
-					observer.next();
+					observer.next(null);
 				}, err => {
 					console.error(err);
 					observer.error(err);
 				});
 			} else {
-				observer.next();
+				observer.next(null);
 			}
 		});
 
@@ -110,7 +110,7 @@ export class AuthService {
 		const contextPermission = settings.userRole ? context.permissionRoles : context.permission;
 		if (settings.userRole) {
 			if (userPermission && !contextPermission) {
-				return { show: true, enabled: false };
+				return { show: forceUndefined, enabled: forceUndefined };
 			}
 		} else {
 			if (userPermission && !context && !contextPermission) {

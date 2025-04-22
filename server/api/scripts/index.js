@@ -36,11 +36,11 @@ module.exports = {
                 runtime.logger.error("api post runscript: Tocken Expired");
                 //runtime.settings.secureEnabled
             } else if (!runtime.scriptsMgr.isAuthorised(req.body.params.script, permission)) {
-                res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+                res.status(400).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api post runscript: Unauthorized");
             } else {
                 //req.body.params.script.parameters.permission = groups;
-                runtime.scriptsMgr.runScript(req.body.params.script).then(function (result) {
+                runtime.scriptsMgr.runScript(req.body.params.script, req.body.params.toLogEvent).then(function (result) {
                     res.json(result);
                 }).catch(function (err) {
                     if (err.code) {
@@ -62,7 +62,7 @@ module.exports = {
             if (res.statusCode === 403) {
                 runtime.logger.error("api post runSysFunction: Tocken Expired");
             } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
-                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                res.status(400).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post runSysFunction: Unauthorized");
             } else {
                 try {

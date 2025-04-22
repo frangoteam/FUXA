@@ -105,7 +105,7 @@ export class GaugesManager {
         });
     }
 
-    createSettings(id: string, type: string) {
+    createSettings(id: string, type: string): GaugeSettings {
         let gs: GaugeSettings = null;
         if (type) {
             for (let i = 0; i < GaugesManager.Gauges.length; i++) {
@@ -173,7 +173,7 @@ export class GaugesManager {
      * gauges to update in editor after changed property (GaugePropertyComponent, ChartPropertyComponent)
      * @param ga
      */
-    initInEditor(ga: GaugeSettings, res: any, ref: any) {
+    initInEditor(ga: GaugeSettings, res: any, ref: any, elementWithLanguageText?: any) {
         if (ga.type.startsWith(GaugeProgressComponent.TypeTag)) {
             GaugeProgressComponent.initElement(ga);
         } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
@@ -191,7 +191,8 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlBagComponent.TypeTag)) {
             this.mapGauges[ga.id] = HtmlBagComponent.detectChange(ga, res, ref);
         } else if (ga.type.startsWith(PipeComponent.TypeTag)) {
-            return this.mapGauges[ga.id] = PipeComponent.detectChange(ga, res, this.winRef);
+            this.mapGauges[ga.id] = PipeComponent.detectChange(ga, res, this.winRef);
+            return this.mapGauges[ga.id];
         } else if (ga.type.startsWith(SliderComponent.TypeTag)) {
             return this.mapGauges[ga.id] = SliderComponent.detectChange(ga, res, ref);
         } else if (ga.type.startsWith(HtmlSwitchComponent.TypeTag)) {
@@ -205,6 +206,8 @@ export class GaugesManager {
             this.mapGauges[ga.id] = gauge;
         } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
             HtmlImageComponent.detectChange(ga, true);
+        } else if (elementWithLanguageText){
+            GaugeBaseComponent.setLanguageText(elementWithLanguageText, ga.property?.text);
         }
         return false;
     }
@@ -224,6 +227,13 @@ export class GaugesManager {
     initGaugesMap() {
         this.eventGauge = {};
         this.mapGaugeView = {};
+        this.eventGauge = {};
+        this.mapGaugeView = {};
+        this.memorySigGauges = {};
+        this.mapChart = {};
+        this.mapGauges = {};
+        this.mapTable = {};
+        this.gaugesTags = [];
     }
 
     /**
@@ -748,7 +758,7 @@ export class GaugesManager {
      * @param isview in view or editor, in editor have to disable mouse activity
      * @param parent parent that call the function, should be from a FuxaViewComponent
      */
-    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean, parent?: FuxaViewComponent) {
+    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean, parent?: FuxaViewComponent, textTranslation?: string) {
         if (!ga || !ga.type) {
             console.error('!TOFIX', ga);
             return null;
@@ -758,6 +768,12 @@ export class GaugesManager {
         if (sigsid) {
             for (let i = 0; i < sigsid.length; i++) {
                 this.hmiService.addSignal(sigsid[i], ga);
+            }
+        }
+        if (isview && ga.hide) {
+            let ele = document.getElementById(ga.id);
+            if (ele) {
+                ele.style.display = 'none';
             }
         }
         if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
@@ -834,7 +850,7 @@ export class GaugesManager {
             this.mapGauges[ga.id] = gauge;
             return gauge;
         } else if (ga.type.startsWith(HtmlButtonComponent.TypeTag)) {
-            let gauge = HtmlButtonComponent.initElement(ga);
+            let gauge = HtmlButtonComponent.initElement(ga, textTranslation);
             return gauge || true;
         } else if (ga.type.startsWith(PipeComponent.TypeTag)) {
             let gauge = PipeComponent.initElement(ga, isview, parent?.getGaugeStatus(ga));
@@ -843,6 +859,7 @@ export class GaugesManager {
         } else {
             let ele = document.getElementById(ga.id);
             ele?.setAttribute('data-name', ga.name);
+            GaugeBaseComponent.setLanguageText(ele, textTranslation);
             return ele || true;
         }
     }

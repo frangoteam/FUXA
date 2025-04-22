@@ -120,7 +120,7 @@ module.exports = {
                         var wwwSubDir =  path.join('_widgets', resourcesDirs[i]);
                         var files =  getFiles(dirPath, ['.svg']);
                         for (var x = 0; x < files.length; x++) {
-                            var filename = files[x].replace(/\.[^\/.]+$/, '');
+                            var filename = files[x];
                             group.items.push({ path:  path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep), name: filename });
                         }
                         result.groups.push(group);
@@ -134,6 +134,51 @@ module.exports = {
                     }
                     runtime.logger.error("api get resources/widgets: " + err.message);
                 }
+            }
+        });
+
+        /**
+         * POST Remove Server widget item
+         */
+        resourcesApp.post('/api/resources/removeWidget', secureFnc, function (req, res) {
+            const permission = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api resources/removeWidget: Tocken Expired");
+            } else if (!authJwt.haveAdminPermission(permission)) {
+                runtime.logger.error("api resources/removeWidget: Unauthorized!");
+                return res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+            }
+            try {
+                const relPath = req.body?.path;
+                if (!relPath || typeof relPath !== 'string') {
+                    return res.status(400).json({ error: "invalid_path", message: "Missing or invalid widget path." });
+                }
+                const basePath = path.resolve(runtime.settings.appDir);
+                const fullPath = path.resolve(basePath, relPath);
+
+                if (!fullPath.startsWith(basePath)) {
+                    runtime.logger.error("api resources/widgets: security_violation " + fullPath);
+                    return res.status(403).json({ error: 'security_violation', message: 'Invalid path' });
+                }
+
+                if (!fs.existsSync(fullPath)) {
+                    return res.status(404).json({ error: "not_found", message: "Widget file not found." });
+                }
+
+                try {
+                    fs.unlinkSync(fullPath);
+                    res.json({ success: true, path: relPath });
+                } catch (err) {
+                    runtime.logger.error("api removeWidget: " + err.message);
+                    res.status(500).json({ error: "delete_failed", message: err.message });
+                }
+            } catch (err) {
+                if (err.code) {
+                    res.status(400).json({ error: err.code, message: err.message });
+                } else {
+                    res.status(400).json({ error: "unexpected_error", message: err.toString() });
+                }
+                runtime.logger.error("api resources/removeWidget: " + err.message);
             }
         });
 

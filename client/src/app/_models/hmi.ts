@@ -131,6 +131,7 @@ export class HeaderSettings {
     itemsAnchor: AnchorType = 'left';
     loginInfo: LoginInfoType;
     dateTimeDisplay: string;
+    language: LanguageShowModeType;
 }
 
 export interface HeaderItem {
@@ -152,6 +153,8 @@ export type LoginInfoType = 'nothing' | 'username' | 'fullname' | 'both';
 export type HeaderItemType = 'button' | 'label' | 'image';
 
 export type AnchorType = 'left' | 'center' | 'right';
+
+export type LanguageShowModeType = 'nothing' | 'simple' | 'key' | 'fullname';
 
 export enum NotificationModeType {
     hide = 'item.notifymode-hide',
@@ -195,6 +198,8 @@ export class GaugeSettings {
     name = '';
     property: any = null;   // set to GaugeProperty after upgrate
     label = '';             // Gauge type label
+    hide = false;
+    lock = false;
     constructor(public id: string, public type: string) {
     }
 }

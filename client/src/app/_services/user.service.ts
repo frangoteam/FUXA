@@ -46,14 +46,14 @@ export class UserService {
             if (environment.serverEnabled) {
                 let header = new HttpHeaders({ 'Content-Type': 'application/json' });
                 this.http.post<any>(this.endPointConfig + '/api/users', { headers: header, params: user }).subscribe(result => {
-                    observer.next();
+                    observer.next(null);
                 }, err => {
                     console.error(err);
                     this.notifySaveError();
                     observer.error(err);
                 });
             } else {
-                observer.next();
+                observer.next(null);
             }
         });
     }
@@ -63,14 +63,14 @@ export class UserService {
             if (environment.serverEnabled) {
                 let header = new HttpHeaders({ 'Content-Type': 'application/json' });
                 this.http.delete<any>(this.endPointConfig + '/api/users', { headers: header, params: {param: user.username} }).subscribe(result => {
-                    observer.next();
+                    observer.next(null);
                 }, err => {
                     console.error(err);
                     this.notifySaveError();
                     observer.error(err);
                 });
             } else {
-                observer.next();
+                observer.next(null);
             }
         });
     }

@@ -35,7 +35,7 @@ export class CustomMatPaginatorIntl extends MatPaginatorIntl implements OnDestro
                 this.previousPageLabel = translation['Ptable.property-paginator-prev-page'];
                 this.ofLabel = translation['table.property-paginator-of-label'];
 
-                this.changes.next();
+                this.changes.next(null);
             });
     }
 
@@ -50,7 +50,7 @@ export class CustomMatPaginatorIntl extends MatPaginatorIntl implements OnDestro
     };
 
     ngOnDestroy() {
-        this.unsubscribe.next();
+        this.unsubscribe.next(null);
         this.unsubscribe.complete();
     }
 }

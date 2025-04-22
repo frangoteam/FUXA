@@ -45,4 +45,18 @@
     .mat-column-remove {
         flex: 0 0 60px;
     }
+
+    .mat-cell {
+        font-size: 13px;
+    }
+
+    .mat-header-row {
+        top: 0;
+        position: sticky;
+        z-index: 1;
+    }
+
+    .mat-header-cell {
+        font-size: 15px;
+    }
 }

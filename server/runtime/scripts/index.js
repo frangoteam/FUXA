@@ -13,7 +13,6 @@ var SCRIPT_CHECK_STATUS_INTERVAL = 1000;
 function ScriptsManager(_runtime) {
     var runtime = _runtime;
     var events = runtime.events;        // Events to commit change to runtime
-    var settings = runtime.settings;    // Settings
     var logger = runtime.logger;        // Logger
     var scriptsCheckStatus = null;      // TimerInterval to check scripts manager status
     var working = false;                // Working flag to manage overloading of check notificator status
@@ -67,7 +66,7 @@ function ScriptsManager(_runtime) {
      * Run script, <script> {id, name, parameters: <ScriptParam> {name, type: <ScriptParamType>[tagid, value], value: any} }
      * @returns
      */
-    this.runScript = function (script) {
+    this.runScript = function (script, toLogEvent = true) {
         return new Promise(async function (resolve, reject) {
             try {
                 if (script.test) {
@@ -90,9 +89,12 @@ function ScriptsManager(_runtime) {
         try {
             const st = scriptModule.getScript(_script);
             var admin = (permission === -1 || permission === 255) ? true : false;
-            if (permission.info && permission.info.roles) {
-                if (st.permissionRoles.enabled) {
-                    return permission.info.roles.some(role => st.permissionRoles.enabled.includes(role));
+            if (runtime.settings.userRole) {
+                if (!st.permissionRoles || !st.permissionRoles.enabled) {
+                    return true;
+                }
+                if (permission && permission.info && permission.info.roles) {
+                    return st.permissionRoles.enabled.length <= 0 || permission.info.roles.some(role => st.permissionRoles.enabled.includes(role));
                 }
             } else if (admin || (st && (!st.permission || st.permission & permission))) {
                 return true;
@@ -101,6 +103,14 @@ function ScriptsManager(_runtime) {
             logger.error(err);
         }
         return false;
+    }
+
+    this.isAuthorisedByScriptName = function (scriptName, permission) {
+        const script = scriptModule.getScriptByName(scriptName);
+        if (!script) {
+            return true;
+        }
+        return this.isAuthorised(script, permission);
     }
 
     this.sysFunctionExist = (functionName) => {

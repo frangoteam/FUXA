@@ -40,13 +40,13 @@ export class DiagnoseService {
                 let header = new HttpHeaders({ 'Content-Type': 'application/json' });
                 let params = { msg: msg, smtp: smtp };
                 this.http.post<any>(this.endPointConfig + '/api/sendmail', { headers: header, params: params }).subscribe(result => {
-                    observer.next();
+                    observer.next(null);
                 }, err => {
                     console.error(err);
                     observer.error(err);
                 });
             } else {
-                observer.next();
+                observer.next(null);
             }
         });
     }

@@ -219,7 +219,10 @@ if (settings.https) {
 }
 server.setMaxListeners(0);
 
-const io = socketIO(server);
+const io = socketIO(server, {
+    pingInterval: 60000, // send ping interval
+    pingTimeout: 120000  // close connection if pong is not received
+});
 
 // Check settings value
 var www = path.resolve(__dirname, '../client/dist');

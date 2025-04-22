@@ -266,6 +266,13 @@ if (opt) {
     opt.scaleY1max = 200;
 }
 $invokeObject('chart_1', 'updateOptions', opt);`
+    },
+    {
+        name: 'getHistoricalTags', mode: null, text: 'script.template-getHistoricalTagsoptions-text', tooltip: 'script.template-getHistoricalTagsoptions-tooltip',
+        code: `const to = Date.now();
+var from = Date.now() - (1000 * 3600);  // 1 hour
+var data = await $getHistoricalTags(['t_a95d5816-9f1e4a67' /* opcua - Byte */], from, to);
+console.log(JSON.stringify(data));`
     }];
 }
 

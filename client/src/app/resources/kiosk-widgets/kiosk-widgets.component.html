@@ -1,0 +1,39 @@
+<div class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'widgets.kiosk-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <mat-accordion multi="true">
+            <mat-expansion-panel *ngFor="let group of resourceWidgets$ | async" class="widget-panel"
+                (opened)="onGroupExpand(group.path)">
+                <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
+                    <mat-panel-title>
+                        {{group.name}}
+                    </mat-panel-title>
+                    <mat-panel-description>
+
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div *ngIf="loadingGroups[group.path]" class="loading-spinner">
+                    <mat-progress-spinner diameter="30" mode="indeterminate"></mat-progress-spinner>
+                </div>
+                <div *ngIf="groupContent[group.path] as items" class="content">
+                    <div *ngFor="let item of items"
+                         class="content-item"
+                         [class.item-exists]="item.exist"
+                         matTooltip="{{item.name}}">
+                        <img [src]="assetBaseUrl + item.path" [id]="item.path">
+                        <div class="download-icon" *ngIf="!item.exist">
+                            <mat-icon (click)="onDownload(item)" matTooltip="Download">download</mat-icon>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+        <div style="display: block;width: 660px; padding-bottom: 20px;">
+
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

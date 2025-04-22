@@ -1,0 +1,30 @@
+:host {
+    .container {
+        max-width: 900px;
+        width: 100%;
+        min-width: 700px;
+        margin: 0 auto;
+
+        .info {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .function-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .function-item {
+            padding: 1px;
+        }
+
+        .function-item span {
+            font-size: 13px;
+            color: gray;
+            margin-left: 6px;
+        }
+    }
+}

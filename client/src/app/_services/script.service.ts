@@ -4,13 +4,15 @@ import { Observable, lastValueFrom } from 'rxjs';
 
 import { EndPointApi } from '../_helpers/endpointapi';
 import { environment } from '../../environments/environment';
-import { Script, ScriptMode } from '../_models/script';
+import { Script, ScriptMode, SystemFunctions } from '../_models/script';
 import { ProjectService } from './project.service';
 import { HmiService, ScriptCommandEnum, ScriptCommandMessage } from './hmi.service';
 import { Utils } from '../_helpers/utils';
 import { DeviceType, TagDaq, TagDevice } from '../_models/device';
 import { DaqQuery } from '../_models/hmi';
 import { AlarmsType } from '../_models/alarm';
+import { ToastNotifierService } from './toast-notifier.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -20,18 +22,50 @@ export class ScriptService {
     private endPointConfig: string = EndPointApi.getURL();
 
     constructor(private http: HttpClient,
-                private projectService: ProjectService,
-                private hmiService: HmiService,
-            ) {
-
+        private projectService: ProjectService,
+        private hmiService: HmiService,
+        private authService: AuthService,
+        private toastNotifier: ToastNotifierService
+    ) {
+        this.projectService.onLoadClientAccess.subscribe(() => {
+            this.loadScriptApi();
+        });
+        this.projectService.onLoadHmi.subscribe(() => {
+            this.loadScriptApi();
+        });
     }
 
-    runScript(script: Script) {
+    loadScriptApi() {
+        const clientAccess = this.projectService.getClientAccess();
+        const systemFunctions = new SystemFunctions(ScriptMode.CLIENT);
+        const api: any = {};
+
+        for (const fn of systemFunctions.functions) {
+            if (clientAccess.scriptSystemFunctions.includes(fn.name)) {
+                const methodName = fn.name.replace('$', '');
+                if (typeof this[fn.name] === 'function') {
+                    api[methodName] = this[fn.name].bind(this);
+                } else {
+                    console.warn(`Function ${fn.name} not found in ScriptService`);
+                }
+            }
+        }
+        (window as any).fuxaScriptAPI = api;
+    }
+
+    runScript(script: Script, toLogEvent: boolean = true): Observable<any> {
         return new Observable((observer) => {
+            const permission = this.authService.checkPermission(script, true);
+            if (permission?.enabled === false) {
+                this.toastNotifier.notifyError('msg.operation-unauthorized', '', false, false);
+                observer.next(null);
+                observer.complete();
+                return;
+            }
             if (!script.mode || script.mode === ScriptMode.SERVER) {
                 if (environment.serverEnabled) {
                     let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-                    let params = { script: script };
+                    let params = { script: script, toLogEvent: toLogEvent };
                     this.http.post<any>(this.endPointConfig + '/api/runscript', { headers: header, params: params }).subscribe(result => {
                         observer.next(result);
                         observer.complete();
@@ -40,7 +74,7 @@ export class ScriptService {
                         observer.error(err);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                     observer.complete();
                 }
             } else {
@@ -56,9 +90,9 @@ export class ScriptService {
                 });
                 try {
                     const code = `${parameterToAdd}${script.code}`;
-                    const asyncText = script.sync ? '' : 'async';
-                    const asyncScript = `(${asyncText} () => { ${this.addSysFunctions(code)} \n})();`;
-                    const result = eval(asyncScript);
+                    const asyncText = script.sync ? 'function' : 'async function';
+                    const callText = `${asyncText} ${script.name}() {\n${this.addSysFunctions(code)} \n }\n${script.name}.call(this);\n`;
+                    const result = eval(callText);
                     observer.next(result);
                 } catch (err) {
                     console.error(err);
@@ -104,15 +138,18 @@ export class ScriptService {
         return code;
     }
 
+    /* get Tag value from server, check authorization of source script */
     public async $getTag(id: string) {
         let tag: TagDevice = this.projectService.getTagFromId(id, true);
         if (tag?.deviceType === DeviceType.internal) {
             return tag.value;
         }
-        let values = await this.projectService.getTagsValues([id]);
+        const sourceScriptName = this.extractUserFunctionBeforeScriptService();
+        let values = await this.projectService.getTagsValues([id], sourceScriptName);
         return values[0]?.value;
     }
 
+    /* set Tag value to server via socket */
     public $setTag(id: string, value: any) {
         this.hmiService.putSignalValue(id, value);
     }
@@ -168,7 +205,7 @@ export class ScriptService {
     public async $runServerScript(scriptName: string, ...params: any[]) {
         let scriptToRun = Utils.clone(this.projectService.getScripts().find(dataScript => dataScript.name == scriptName));
         scriptToRun.parameters = params;
-        return await lastValueFrom(this.runScript(scriptToRun));
+        return await lastValueFrom(this.runScript(scriptToRun, false));
     }
 
     public async $getHistoricalTags(tagIds: string[], fromDate: number, toDate: number) {
@@ -190,5 +227,22 @@ export class ScriptService {
 
     public async $ackAlarm(alarmName: string, types?: AlarmsType[]) {
         return await this.projectService.runSysFunctionSync('$ackAlarm', [alarmName, types]);
+    }
+
+    private extractUserFunctionBeforeScriptService(): string | null {
+        const err = new Error();
+        const lines = err.stack?.match(/at\s[^\n]+/g);
+        if (!lines) {
+            return null;
+        }
+
+        for (const line of lines) {
+            const match = line.match(/ScriptService\.([\w$]+) \(eval at/);
+            if (match) {
+                return match[1];
+            }
+        }
+
+        return null;
     }
 }

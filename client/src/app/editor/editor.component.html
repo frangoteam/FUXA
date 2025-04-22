@@ -221,7 +221,7 @@
                                 <mat-icon aria-label="Select" *ngIf="!panelsState.panelWidgets">expand_more</mat-icon>
                                 <span>{{ 'resources.lib-widgets' | translate }}</span>
                             </mat-panel-title>
-                            <mat-icon class="leftbar-edit-btn">widgets</mat-icon>
+                            <mat-icon class="leftbar-edit-btn" (click)="onWidgetKiosk();$event.stopPropagation()">widgets</mat-icon>
                         </mat-expansion-panel-header>
                         <ng-template matExpansionPanelContent>
                             <app-lib-widgets>
@@ -467,13 +467,13 @@
                                             <span>{{'editor.transform-angle' | translate}}</span>
                                             <input numberOnly id="angle" size="4" value="0" type="number" class="rightbar-input"/>
                                         </div>
-                                        <div class="svg-property">
-                                            <!-- <div class="svg-tool-button" (click)="flipSelected('vertical')" matTooltip="Flip vertically">
-                                        <span class="icon-flip-vertical"></span>
+                                        <div class="svg-property" style="vertical-align: top;">
+                                            <span>{{'editor.transform-hide' | translate}}</span>
+                                            <input [(ngModel)]="gaugeSettingsHide" type="checkbox" style="margin-top: 2px;" (change)="onHideSelectionToggle(gaugeSettingsHide)"/>
                                         </div>
-                                        <div class="svg-tool-button" (click)="flipSelected('orizontal')" matTooltip="Flip orizontally">
-                                        <span class="icon-flip-orizontal"></span>
-                                        </div> -->
+                                        <div class="svg-property" style="vertical-align: top;">
+                                            <span>{{'editor.transform-lock' | translate}}</span>
+                                            <input [(ngModel)]="gaugeSettingsLock" type="checkbox" style="margin-top: 2px;" (change)="onLockSelectionToggle(gaugeSettingsLock)"/>
                                         </div>
                                     </div>
                                 </div>
