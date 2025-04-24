@@ -70,7 +70,7 @@ export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy
     }
 
     ngOnDestroy() {
-		this.destroy$.next();
+		this.destroy$.next(null);
         this.destroy$.complete();
 	}
 

@@ -52,7 +52,7 @@ export class NotificationListComponent implements OnInit, AfterViewInit, OnDestr
     }
 
     ngOnDestroy() {
-        this.destroy$.next();
+        this.destroy$.next(null);
         this.destroy$.complete();
     }
 

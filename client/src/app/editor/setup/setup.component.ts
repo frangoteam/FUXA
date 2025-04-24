@@ -10,6 +10,7 @@ import { GraphConfigComponent } from '../../editor/graph-config/graph-config.com
 import { ILayoutPropertyData, LayoutPropertyComponent } from '../../editor/layout-property/layout-property.component';
 import { PluginsComponent } from '../../editor/plugins/plugins.component';
 import { AppSettingsComponent } from '../../editor/app-settings/app-settings.component';
+import { ClientScriptAccessComponent } from '../client-script-access/client-script-access.component';
 
 const clientOnlyToDisable = ['messages', 'users', 'userRoles', 'plugins', 'notifications', 'scripts', 'reports', 'materials', 'logs', 'events', 'language'];
 
@@ -121,5 +122,14 @@ export class SetupComponent {
             return this.appService.isClientApp;
         }
         return false;
+    }
+
+    onWidgets() {
+        this.onNoClick();
+        let dialogRef = this.dialog.open(ClientScriptAccessComponent, {
+            position: { top: '60px' },
+        });
+        dialogRef.afterClosed().subscribe(result => {
+        });
     }
 }

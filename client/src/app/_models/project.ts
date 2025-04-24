@@ -9,6 +9,7 @@ import { Utils } from '../_helpers/utils';
 import { Script } from './script';
 import { Report } from './report';
 import { MapsLocation } from './maps';
+import { ClientAccess } from './client-access';
 
 export class ProjectData {
     version = '1.01';
@@ -40,6 +41,8 @@ export class ProjectData {
     plugin: Plugin[] = [];
     /** Maps location */
     mapsLocations: MapsLocation[] = [];
+    /** ClientAccess */
+    clientAccess = new ClientAccess();
 }
 
 export enum ProjectDataCmdType {
@@ -51,6 +54,7 @@ export enum ProjectDataCmdType {
     Charts = 'charts',
     Graphs = 'graphs',
     Languages = 'languages',
+    ClientAccess = 'client-access',
     SetText = 'set-text',
     DelText = 'del-text',
     SetAlarm = 'set-alarm',

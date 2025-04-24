@@ -110,7 +110,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.unsubscribeTimer$.next();
+        this.unsubscribeTimer$.next(null);
         this.unsubscribeTimer$.complete();
     }
 
@@ -134,7 +134,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
                 });
             }
         } else {
-            this.unsubscribeTimer$.next();
+            this.unsubscribeTimer$.next(null);
             this.currentDateTime = null;
         }
     }

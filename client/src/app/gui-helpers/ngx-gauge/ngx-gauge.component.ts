@@ -46,7 +46,7 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
 
     ngOnDestroy() {
         try {
-            this.destroy$.next();
+            this.destroy$.next(null);
             this.destroy$.unsubscribe();
         } catch (e) {
             console.error(e);

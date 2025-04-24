@@ -86,7 +86,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.destroy$.next();
+        this.destroy$.next(null);
         this.destroy$.complete();
     }
 
@@ -100,7 +100,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
                         return 'system-function';
                     }
                 }
-                while (stream.next() != null && this.checkSystemFnc.indexOf(stream) !== -1) {}
+                while (stream.next(null) != null && this.checkSystemFnc.indexOf(stream) !== -1) {}
                 return null;
             }
         };

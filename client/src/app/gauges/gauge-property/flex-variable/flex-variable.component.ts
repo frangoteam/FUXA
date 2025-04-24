@@ -33,6 +33,7 @@ export class FlexVariableComponent implements OnInit {
     @Input() variableValue: string;
     @Input() variableLabel = 'gauges.property-variable-value';
     @Input() withStaticValue = true;
+    @Input() withStaticType: string = null;
     @Input() withBitmask = false;
     @Input() tagLabel = 'gauges.property-tag-label';
     @Input() tagTitle = '';
@@ -45,6 +46,7 @@ export class FlexVariableComponent implements OnInit {
     @Output() valueChange: EventEmitter<any> = new EventEmitter();
 
     public manualEdit = false;
+    defaultColor = Utils.defaultColor;
 
     variableList: any = [];
     selectedTag: DeviceTagOption;

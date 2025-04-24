@@ -1368,6 +1368,9 @@
     "script.template-getHistoricalTagsoptions-text": "Get Historical Tags values",
     "script.template-getHistoricalTagsoptions-tooltip": "Code template to get Historical Tags values.",
 
+    "client.script-access-title": "Client Scripts access",
+    "client.script-access-info": "Configure access to system functions from the frontend (e.g. widgets) via window.fuxaScriptAPI.",
+
     "reports.list-title": "Reports settings",
     "reports.list-name": "Name",
     "reports.list-type": "Type",
@@ -1487,6 +1490,7 @@
     "resources.lib-widgets": "Widgets",
 
     "widgets.kiosk-title": "Widgets Kiosk",
+    "widget.remove": "Remove Widget",
 
     "texts.list-title": "Language settings",
     "texts.list-filter": "Filter",
@@ -1549,6 +1553,7 @@
     "dlg.setup-scripts": "Scripts",
     "dlg.setup-reports": "Reports",
     "dlg.setup-settings": "Settings",
+    "dlg.setup-client-access": "Frontend Scripts",
     "dlg.setup-logs": "Logs",
     "dlg.setup-notifications": "Notifications",
     "dlg.setup-events": "Events",
@@ -1572,6 +1577,7 @@
     "dlg.app-language-ua": "Ukrainian",
     "dlg.app-language-zh-cn": "Chinese",
     "dlg.app-language-pt": "Portuguese",
+	"dlg.app-language-sv": "Swedish",
     "dlg.app-language-tr": "Turkish",
     "dlg.app-language-ko": "Korean",
     "dlg.app-language-es": "Spanish",
@@ -1676,6 +1682,7 @@
     "msg.device-tags-request-result": "Load {{value}} of {{current}}",
     "msg.chart-with-script": "The defined script receives the list of chart lines as a parameter and then returns the completed list with the data. Code sample in script 'Templates'",
     "msg.script-name-exist": "Script name exist!",
+    "msg.invalid-script-name": "Invalid script name!",
     "msg.templates-exist-ask-overwrite": "The template with name '{{value}}' already exist. Do you want to overwrite it?",
     "msg.templates-save-success": "Template save successful!",
     "msg.view-name-exist": "View name exist!",

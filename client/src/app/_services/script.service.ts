@@ -4,7 +4,7 @@ import { Observable, lastValueFrom } from 'rxjs';
 
 import { EndPointApi } from '../_helpers/endpointapi';
 import { environment } from '../../environments/environment';
-import { Script, ScriptMode } from '../_models/script';
+import { Script, ScriptMode, SystemFunctions } from '../_models/script';
 import { ProjectService } from './project.service';
 import { HmiService, ScriptCommandEnum, ScriptCommandMessage } from './hmi.service';
 import { Utils } from '../_helpers/utils';
@@ -27,7 +27,30 @@ export class ScriptService {
         private authService: AuthService,
         private toastNotifier: ToastNotifierService
     ) {
+        this.projectService.onLoadClientAccess.subscribe(() => {
+            this.loadScriptApi();
+        });
+        this.projectService.onLoadHmi.subscribe(() => {
+            this.loadScriptApi();
+        });
+    }
 
+    loadScriptApi() {
+        const clientAccess = this.projectService.getClientAccess();
+        const systemFunctions = new SystemFunctions(ScriptMode.CLIENT);
+        const api: any = {};
+
+        for (const fn of systemFunctions.functions) {
+            if (clientAccess.scriptSystemFunctions.includes(fn.name)) {
+                const methodName = fn.name.replace('$', '');
+                if (typeof this[fn.name] === 'function') {
+                    api[methodName] = this[fn.name].bind(this);
+                } else {
+                    console.warn(`Function ${fn.name} not found in ScriptService`);
+                }
+            }
+        }
+        (window as any).fuxaScriptAPI = api;
     }
 
     runScript(script: Script, toLogEvent: boolean = true): Observable<any> {
@@ -35,7 +58,7 @@ export class ScriptService {
             const permission = this.authService.checkPermission(script, true);
             if (permission?.enabled === false) {
                 this.toastNotifier.notifyError('msg.operation-unauthorized', '', false, false);
-                observer.next();
+                observer.next(null);
                 observer.complete();
                 return;
             }
@@ -51,7 +74,7 @@ export class ScriptService {
                         observer.error(err);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                     observer.complete();
                 }
             } else {

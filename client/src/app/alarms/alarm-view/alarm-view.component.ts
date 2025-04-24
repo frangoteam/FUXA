@@ -94,7 +94,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private stopPolling() {
         this.alarmsPolling = 0;
-        this.destroy.next();
+        this.destroy.next(null);
         this.destroy.complete();
     }
 

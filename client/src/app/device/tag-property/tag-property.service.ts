@@ -17,7 +17,7 @@ import { TagPropertyEditEthernetipComponent, TagPropertyEthernetIpData } from '.
 import { TopicPropertyComponent, TopicPropertyData } from '../topic-property/topic-property.component';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
-import {TagPropertyEditGpioComponent, TagPropertyGpioData } from "./tag-property-edit-gpio/tag-property-edit-gpio.component";
+import { TagPropertyEditGpioComponent, TagPropertyGpioData } from './tag-property-edit-gpio/tag-property-edit-gpio.component';
 
 @Injectable({
     providedIn: 'root'

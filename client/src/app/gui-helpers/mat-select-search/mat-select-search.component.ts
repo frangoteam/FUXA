@@ -62,7 +62,7 @@ import { TranslateService } from '@ngx-translate/core';
  *   }
  *
  *   ngOnDestroy() {
- *     this._onDestroy.next();
+ *     this._onDestroy.next(null);
  *     this._onDestroy.complete();
  *   }
  *
@@ -199,7 +199,7 @@ export class MatSelectSearchComponent implements OnInit, OnDestroy, AfterViewIni
     }
 
     ngOnDestroy() {
-        this._onDestroy.next();
+        this._onDestroy.next(null);
         this._onDestroy.complete();
     }
 

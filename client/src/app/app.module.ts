@@ -217,6 +217,7 @@ import { LanguageTypePropertyComponent } from './language/language-type-property
 import { LanguageTextPropertyComponent } from './language/language-text-property/language-text-property.component';
 import { LanguageService } from './_services/language.service';
 import { KioskWidgetsComponent } from './resources/kiosk-widgets/kiosk-widgets.component';
+import { ClientScriptAccessComponent } from './editor/client-script-access/client-script-access.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -385,7 +386,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         MapsFabButtonMenuComponent,
         LanguageTypePropertyComponent,
         LanguageTextPropertyComponent,
-        LanguageTextListComponent
+        LanguageTextListComponent,
+        ClientScriptAccessComponent
     ],
     imports: [
         BrowserModule,

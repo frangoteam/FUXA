@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, map, startWith, switchMap } from 'rxjs';
-import { ResourceGroup, ResourceType } from '../../_models/resources';
+import { ResourceGroup, ResourceItem, ResourceType } from '../../_models/resources';
 import { ResourcesService } from '../../_services/resources.service';
 
 @Injectable({
@@ -12,7 +12,8 @@ export class LibWidgetsService {
     svgWidgetSelected$ = new Subject<string>();
     private refreshSubject = new Subject<void>();
 
-    constructor(private resourcesService: ResourcesService) {
+    constructor(
+        private resourcesService: ResourcesService) {
     }
 
     public resourceWidgets$: Observable<ResourceGroup[]> = this.refreshSubject.pipe(
@@ -25,7 +26,7 @@ export class LibWidgetsService {
     );
 
     clearSelection() {
-        this.clearSelection$.next();
+        this.clearSelection$.next(null);
     }
 
     widgetSelected(widgetPath: string) {
@@ -35,6 +36,10 @@ export class LibWidgetsService {
     }
 
     refreshResources(): void {
-        this.refreshSubject.next();
+        this.refreshSubject.next(null);
+    }
+
+    removeWidget(widget: ResourceItem) {
+        return this.resourcesService.removeWidget(widget);
     }
 }
