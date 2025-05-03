@@ -45,7 +45,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
     events.once('init-project-ok', checkInit);
 
 
-    daqstorage.init(settings, logger);
+    daqstorage.init(settings, logger, runtime);
 
     plugins.init(settings, logger).then(result => {
         logger.info('runtime init plugins successful!', true);

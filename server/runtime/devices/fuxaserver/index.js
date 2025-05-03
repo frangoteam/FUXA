@@ -84,7 +84,7 @@ function FuxaServer(_data, _logger, _events) {
             tagsMap[id] = data.tags[id];
             const dataTag = data.tags[id];
             if (dataTag.init) {
-                data.tags[id].value = _parseValue(dataTag.init, dataTag.type);
+                data.tags[id].value = deviceUtils.parseValue(dataTag.init, dataTag.type);
             }
             if (dataTag.sysType === TagSystemTypeEnum.deviceConnectionStatus) {
                 data.tags[id].timestamp = Date.now();

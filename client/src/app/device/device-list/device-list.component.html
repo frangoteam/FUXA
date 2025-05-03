@@ -122,7 +122,7 @@
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #options="matMenu" xPosition="before">
-                    <button *ngIf="!readonly && deviceSelected.type !== deviceType.internal"
+                    <button *ngIf="!readonly && isWithOptions"
                             mat-menu-item
                             class="context-menu"
                             (click)="onEditOptions(element)">

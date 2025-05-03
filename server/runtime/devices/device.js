@@ -14,6 +14,7 @@ var FuxaServer = require('./fuxaserver');
 var ODBCclient = require('./odbc');
 // var TEMPLATEclient = require('./template');
 var GpioClient = require('./gpio');
+var DeviceAdapter = require('./adapter');
 
 const path = require('path');
 const utils = require('../utils');
@@ -26,7 +27,7 @@ var DEVICE_POLLING_INTERVAL = 3000;             // with DAQ enabled, will be sav
 var fncGetDeviceProperty;
 
 function Device(data, runtime) {
-    var property = { id: data.id, name: data.name };        // Device property (name, id)
+    var property = { id: data.id, name: data.name, type: data.type };   // Device property (name, id)
     var status = DeviceStatusEnum.INIT;                     // Current status (StateMachine)
     var logger = runtime.logger;                            // Logger
     var events = runtime.events;                            // Events to commit change to runtime
@@ -95,6 +96,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = GpioClient.create(data, logger, events, manager, runtime);
+    } else if (data.type === DeviceEnum.DeviceAdapter) {
+        if (!DeviceAdapter) {
+            return null;
+        }
+        comm = DeviceAdapter.create(data, logger, events, runtime);
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
@@ -426,6 +432,14 @@ function Device(data, runtime) {
         return comm;
     }
 
+    this.getName = () => {
+        return property.name;
+    }
+
+    this.getType = () => {
+        return property.type;
+    }
+
     this.load(data);
 }
 
@@ -496,8 +510,10 @@ function loadPlugin(type, module) {
         FuxaServer = require(module);
     } else if (type === DeviceEnum.ODBC) {
         ODBCclient = require(module);
-    }else if (type === DeviceEnum.GPIO) {
+    } else if (type === DeviceEnum.GPIO) {
         GpioClient = require(module);
+    } else if (type === DeviceEnum.DeviceAdapter) {
+        DeviceAdapter = require(module);
     }
 }
 
@@ -535,6 +551,7 @@ var DeviceEnum = {
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
     GPIO: 'GPIO',
+    DeviceAdapter: 'DeviceAdapter',
     // Template: 'template'
 }
 
