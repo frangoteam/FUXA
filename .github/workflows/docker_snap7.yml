@@ -2,7 +2,7 @@ name: Build and Publish DHI snap7
 
 env:
   app: fuxa
-  version: snap7-1.2.4
+  version: snap7-1.2.5
   # for available platforms see output of a previous run -
   # ie the "Setup Docker BuildX" / "Inspect Builder" section
   # has eg "node_platforms": "linux/amd64,linux/arm64,linux/riscv64,linux/ppc64le,linux/s390x,linux/386,linux/arm/v7,linux/arm/v6"
