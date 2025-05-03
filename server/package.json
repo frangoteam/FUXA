@@ -24,7 +24,7 @@
     "axios": "0.30.0",
     "bcryptjs": "2.4.3",
     "bluebird": "3.7.2",
-    "body-parser": "1.20.0",
+    "body-parser": "1.20.3",
     "csv-parser": "3.0.0",
     "dayjs": "1.11.9",
     "express": "4.21.2",
