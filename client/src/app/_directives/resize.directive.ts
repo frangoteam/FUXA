@@ -1,49 +1,67 @@
-import { Directive, HostListener, Input, Output, EventEmitter } from '@angular/core';
+import { Directive, HostListener, Input, Output, EventEmitter, ElementRef, OnDestroy } from '@angular/core';
 
 @Directive({
     selector: '[appResize]'
 })
-export class ResizeDirective {
-    oldY = 0;
-    isGrabbing = false;
+export class ResizeDirective implements OnDestroy {
+    private oldY = 0;
+    private isGrabbing = false;
+    private resizeZoneHeight = 6;
 
     @Input() height: number;
     @Output() heightChange = new EventEmitter<number>();
     @Output() changeEnd = new EventEmitter<void>();
 
+    constructor(private el: ElementRef) { }
+
     @HostListener('mousemove', ['$event'])
     onMouseMove(event: MouseEvent) {
         if (!this.isGrabbing) {
+            const bounds = this.el.nativeElement.getBoundingClientRect();
+            const offsetY = event.clientY - bounds.top;
+            this.el.nativeElement.style.cursor = offsetY >= bounds.height - this.resizeZoneHeight ? 'ns-resize' : 'default';
             return;
         }
-        this.height += (event.clientY - this.oldY);
-        this.heightChange.emit(this.height);
-        this.oldY = event.clientY;
-    }
-
-    @HostListener('mouseup', ['$event'])
-    onMouseUp(event: MouseEvent) {
-        this.isGrabbing = false;
-        this.changeEnd.emit();
     }
 
     @HostListener('mousedown', ['$event'])
     onMouseDown(event: MouseEvent) {
-        this.isGrabbing = true;
+        const bounds = this.el.nativeElement.getBoundingClientRect();
+        const offsetY = event.clientY - bounds.top;
+
+        if (offsetY >= bounds.height - this.resizeZoneHeight) {
+            this.isGrabbing = true;
+            this.oldY = event.clientY;
+
+            // attach to window so we don't lose tracking
+            window.addEventListener('mousemove', this.resizeHandler);
+            window.addEventListener('mouseup', this.releaseHandler);
+
+            event.preventDefault();
+        }
+    }
+
+    private resizeHandler = (event: MouseEvent) => {
+        if (!this.isGrabbing) {
+            return;
+        }
+        this.height += (event.clientY - this.oldY);
+        this.height = Math.max(50, this.height);
+        this.heightChange.emit(this.height);
         this.oldY = event.clientY;
-    }
+    };
 
-    @HostListener('mouseleave', ['$event'])
-    onMouseLeave(event: MouseEvent) {
-        this.isGrabbing = false;
-        this.changeEnd.emit();
-    }
-}
+    private releaseHandler = () => {
+        if (this.isGrabbing) {
+            this.isGrabbing = false;
+            this.changeEnd.emit();
+            window.removeEventListener('mousemove', this.resizeHandler);
+            window.removeEventListener('mouseup', this.releaseHandler);
+        }
+    };
 
-export interface Edges {
-    top?: boolean;
-    bottom?: boolean;
-    left?: boolean;
-    right?: boolean;
-    [key: string]: boolean | number | undefined;
+    ngOnDestroy() {
+        window.removeEventListener('mousemove', this.resizeHandler);
+        window.removeEventListener('mouseup', this.releaseHandler);
+    }
 }
