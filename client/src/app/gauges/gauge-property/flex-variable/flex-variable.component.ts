@@ -16,8 +16,8 @@ interface Variable {
 }
 
 export const _filter = (opt: DeviceTagOption[], value: string): DeviceTagOption[] => {
-    const filterValue = value.toLowerCase();
-    return opt.filter(item => item.name.toLowerCase().includes(filterValue));
+    const filterValue = value?.toLowerCase();
+    return opt.filter(item => item.name?.toLowerCase().includes(filterValue));
 };
 
 @Component({
