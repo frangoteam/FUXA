@@ -108,19 +108,20 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                     } else {
                         val = parseFloat(val.toFixed(digit || 5));
                     }
-
-                    // Do not update value if input is in focus!
-                    if (ga.property?.options?.updated && !(document.hasFocus && input.id == document.activeElement.id)) {
-                        if (datetime) {
-                            input.value = datetime;
-                        } else {
-                            if (ga.property?.options?.type === InputOptionType.text) {
-                                input.value = sig.value;
+                    if (ga.property?.variableId == sig.id) {
+                        // Do not update value if input is in focus!
+                        if (ga.property?.options?.updated && !(document.hasFocus && input.id == document.activeElement.id)) {
+                            if (datetime) {
+                                input.value = datetime;
                             } else {
-                                input.value = val;
-                            }
-                            if (unit) {
-                                input.value += ' ' + unit;
+                                if (ga.property?.options?.type === InputOptionType.text) {
+                                    input.value = sig.value;
+                                } else {
+                                    input.value = val;
+                                }
+                                if (unit) {
+                                    input.value += ' ' + unit;
+                                }
                             }
                         }
                     }
