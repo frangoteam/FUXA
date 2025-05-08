@@ -533,24 +533,6 @@ async function getHistoricalTags(tagIds, fromTs, toTs) {
     });
 }
 
-/**
- * Get the Target Tag Id from DeviceAdapter if exist
- * used in daqstorage
- * @param {*} sigid
- */
-function getTargetTagId(sigid) {
-    for (var id in activeDevices) {
-        if (activeDevices[id].getTagProperty(sigid)) {
-            var device = activeDevices[id];
-            if (device.getType() === Device.DeviceType.DeviceAdapter) {
-                device = activeDevices[id].getComm();
-                return device.getTargetTagId(sigid);
-            }
-        }
-    }
-    return null;
-}
-
 var devices = module.exports = {
     init: init,
     start: start,
@@ -581,6 +563,5 @@ var devices = module.exports = {
     setTagDaqSettings: setTagDaqSettings,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
-    getHistoricalTags: getHistoricalTags,
-    getTargetTagId: getTargetTagId,
+    getHistoricalTags: getHistoricalTags
 }

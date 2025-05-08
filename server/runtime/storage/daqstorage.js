@@ -60,11 +60,9 @@ function addDaqNode(_id, fncgetprop) {
 
 function getNodeValues(tagid, fromts, tots) {
     return new Promise(function (resolve, reject) {
-        const targetTagId = runtime.devices.getTargetTagId(tagid);
-        const tagIdToUse = targetTagId ? targetTagId : tagid;
-        var daqnode = _getDaqNode(tagIdToUse);
+        var daqnode = _getDaqNode(tagid);
         if (daqnode) {
-            resolve(daqnode.getDaqValue(tagIdToUse, fromts, tots));
+            resolve(daqnode.getDaqValue(tagid, fromts, tots));
         } else {
             resolve([]);
         }

@@ -144,7 +144,6 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
             this.plugins.push(DeviceType.WebAPI);
             this.plugins.push(DeviceType.MQTTclient);
             this.plugins.push(DeviceType.internal);
-            this.plugins.push(DeviceType.DeviceAdapter);
         } else {
             this.plugins.push(DeviceType.internal);
         }
@@ -537,13 +536,11 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     plcs(): Device[] {
         return <Device[]>Object.values(this.devices).filter((d: Device) => d.type !== DeviceType.WebAPI
             && d.type !== DeviceType.FuxaServer
-            && d.type !== DeviceType.ODBC
-            && d.type !== DeviceType.DeviceAdapter);
+            && d.type !== DeviceType.ODBC);
     }
 
     flows(): Device[] {
         return <Device[]>Object.values(this.devices).filter((d: Device) => d.type === DeviceType.WebAPI
-            || d.type === DeviceType.ODBC
-            || d.type === DeviceType.DeviceAdapter);
+            || d.type === DeviceType.ODBC);
     }
 }

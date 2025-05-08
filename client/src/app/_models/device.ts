@@ -240,7 +240,6 @@ export enum DeviceType {
     EthernetIP = 'EthernetIP',
     ODBC = 'ODBC',
     GPIO = 'GPIO',
-    DeviceAdapter = 'DeviceAdapter',
     // Template: 'template'
 }
 

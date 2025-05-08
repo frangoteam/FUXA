@@ -123,7 +123,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             this.displayedColumns = this.defAllColumns;
             this.tableWidth = this.defAllRowWidth;
         }
-        this.isWithOptions = (this.deviceSelected.type === this.deviceType.internal || this.deviceSelected.type === this.deviceType.DeviceAdapter) ? false : true;
+        this.isWithOptions = (this.deviceSelected.type === this.deviceType.internal) ? false : true;
     }
 
     onGoBack() {
@@ -260,7 +260,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     isToEdit(type, tag: Tag) {
         if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer ||
-            type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.DeviceAdapter) {
+            type === DeviceType.OPCUA || type === DeviceType.GPIO) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -315,13 +315,6 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         }
         if (this.deviceSelected.type === DeviceType.GPIO) {
             this.tagPropertyService.editTagPropertyGpio(this.deviceSelected, tag, checkToAdd).subscribe(result => {
-                this.tagsMap[tag.id] = tag;
-                this.bindToTable(this.deviceSelected.tags);
-            });
-            return;
-        }
-        if (this.deviceSelected.type === DeviceType.DeviceAdapter) {
-            this.tagPropertyService.editTagPropertyServer(this.deviceSelected, tag, checkToAdd).subscribe(result => {
                 this.tagsMap[tag.id] = tag;
                 this.bindToTable(this.deviceSelected.tags);
             });
