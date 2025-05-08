@@ -35,6 +35,7 @@ import { HtmlImageComponent } from './controls/html-image/html-image.component';
 import { PanelComponent } from './controls/panel/panel.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 import { AuthService } from '../_services/auth.service';
+import { DevicesUtils, Tag } from '../_models/device';
 
 @Injectable()
 export class GaugesManager {
@@ -758,17 +759,24 @@ export class GaugesManager {
      * @param isview in view or editor, in editor have to disable mouse activity
      * @param parent parent that call the function, should be from a FuxaViewComponent
      */
-    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean, parent?: FuxaViewComponent, textTranslation?: string) {
+    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean, parent?: FuxaViewComponent, textTranslation?: string, sourceDeviceTags?: Tag[]) {
         if (!ga || !ga.type) {
             console.error('!TOFIX', ga);
             return null;
         }
-        // add variable
-        let sigsid: string[] = this.getBindSignals(ga);
-        if (sigsid) {
-            for (let i = 0; i < sigsid.length; i++) {
-                this.hmiService.addSignal(sigsid[i], ga);
-            }
+        var targetSignalsId: Record<string, string> = isview ? {} : null;
+        // add variable to hmi service and map placeholder targetSignalsId
+        let signalsId: string[] = this.getBindSignals(ga);
+        if (signalsId) {
+            signalsId.forEach(signalId => {
+                if (isview) {
+                    const tag = DevicesUtils.placeholderToTag(signalId, sourceDeviceTags);
+                    targetSignalsId[signalId] = tag?.id ?? signalId;
+                    this.hmiService.addSignal(targetSignalsId[signalId]);
+                } else {
+                    this.hmiService.addSignal(signalId);
+                }
+            });
         }
         if (isview && ga.hide) {
             let ele = document.getElementById(ga.id);
@@ -830,7 +838,7 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlTableComponent.TypeTag)) {
             let gauge = HtmlTableComponent.initElement(ga, res, ref, isview);
             if (gauge) {
-                this.setTablePropety(gauge, ga.property);
+                this.setTablePropety(gauge, ga.property, targetSignalsId);
                 this.mapTable[ga.id] = gauge;
                 gauge.onTimeRange$.subscribe(data => {
                     this.hmiService.queryDaqValues(data);
@@ -908,16 +916,11 @@ export class GaugesManager {
         }
     }
 
-    private setTablePropety(gauge: DataTableComponent, property: any) {
+    private setTablePropety(table: DataTableComponent, property: any, targetSignalsId?: Record<string, string>) {
         if (property) {
-            // if (property.id) {
-            //     let graph = this.hmiService.getGraph(property.id);
-            //     if (graph) {
-            //         gauge.init(graph.name, graph.property, graph.sources);
-            //     }
-            // }
             if (property.options) {
-                gauge.setOptions(property.options);
+                table.remapVariableIds(property.options, targetSignalsId);
+                table.setOptions(property.options);
             }
         }
     }

@@ -1072,6 +1072,7 @@
     "gauges.property-event-destination-relative-from": "Relative from",
     "gauges.property-event-destination-panel": "Panel",
     "gauges.property-event-destination-hide-close": "Hide Close",
+    "gauges.property-event-destination-target-device": "Target Device",
     "gauges.property-event-newtab": "New Tab",
     "gauges.property-event-single-card": "Single Card",
     "gauges.property-event-value": "Value",

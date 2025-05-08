@@ -33,10 +33,10 @@ declare const numeral: any;
 })
 export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
-    @ViewChild(MatSort, {static: false}) sort: MatSort;
-    @ViewChild(MatMenuTrigger, {static: false}) trigger: MatMenuTrigger;
-    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+    @ViewChild(MatTable, { static: false }) table: MatTable<any>;
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
+    @ViewChild(MatMenuTrigger, { static: false }) trigger: MatMenuTrigger;
+    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
     onTimeRange$ = new BehaviorSubject<DaqQuery>(null);
 
     rxjsPollingTimer: Observable<number>;
@@ -92,8 +92,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataSource.filterPredicate = (match: any, filter: string) => {
             const cells = Object.values(match).map((c: TableCellData) => c.stringValue);
             for (let i = 0; i < cells.length; i++) {
-                if (cells[i].toLowerCase().includes(filter))
-                {return true;}
+                if (cells[i].toLowerCase().includes(filter)) { return true; }
             }
             return false;
         };
@@ -230,7 +229,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setValues(values) {
         // merge the data to have rows with 0:timestamp, n:variable values
-        const rounder = {H: 3600000, m: 60000, s: 1000};
+        const rounder = { H: 3600000, m: 60000, s: 1000 };
         const roundIndex = rounder[this.historyDateformat?.[this.historyDateformat?.length - 1]] ?? 1;
         let data = [];
         data.push([]);    // timestamp, index 0
@@ -246,7 +245,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 xmap[t][i] = values[i][x].value;
             }
         }
-        data[0].sort(function(a, b) { return b - a; });
+        data[0].sort((a, b) => b - a);
         for (var i = 0; i < data[0].length; i++) {
             let t = data[0][i];
             for (var x = 1; x < data.length; x++) {
@@ -275,7 +274,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             let colPos = 1;
             for (let x = 0; x < this.displayedColumns.length; x++) {
                 let column = <TableColumn>this.columnsStyle[this.displayedColumns[x]];
-                row[column.id] = <TableCellData> { stringValue: '' };
+                row[column.id] = <TableCellData>{ stringValue: '' };
                 if (column.type === TableCellType.timestamp) {
                     row[column.id].stringValue = format(new Date(data[0][i]), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
                     row[column.id].timestamp = data[0][i];
@@ -383,7 +382,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         let exnameColumnId = null;
         for (let x = 0; x < this.displayedColumns.length; x++) {
             let column = <TableColumn>this.columnsStyle[this.displayedColumns[x]];
-            row[column.id] = <TableCellData> { stringValue: '' };
+            row[column.id] = <TableCellData>{ stringValue: '' };
             if (column.type === TableCellType.timestamp) {
                 timestapColumnId = column.id;
                 row[column.id].stringValue = format(new Date(dt), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
@@ -526,7 +525,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 let row = {};
                 r.cells.forEach(cell => {
                     if (cell) {
-                        row[cell.id] = <TableCellData> {stringValue: '', rowIndex: i, ...cell};
+                        row[cell.id] = <TableCellData>{ stringValue: '', rowIndex: i, ...cell };
                         this.mapCellContent(row[cell.id]);
                     }
                 });
@@ -560,7 +559,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private addVariableToMap(cell: TableCellData) {
         if (!this.tagsMap[cell.variableId]) {
-            this.tagsMap[cell.variableId] = <ITagMap>{ value: NaN, cells: [], rows: []};
+            this.tagsMap[cell.variableId] = <ITagMap>{ value: NaN, cells: [], rows: [] };
         }
         this.tagsMap[cell.variableId].cells.push(cell);
         this.tagsMap[cell.variableId].rows.push(cell.rowIndex);
@@ -622,7 +621,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public static DefaultOptions() {
-        let options = <TableOptions> {
+        let options = <TableOptions>{
             paginator: {
                 show: false
             },
@@ -662,6 +661,41 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             rows: [],
         };
         return options;
+    }
+
+    remapVariableIds(options: TableOptions, targetSignalsId: Record<string, string>): void {
+        if (!targetSignalsId) {
+            return;
+        }
+
+        const updateVariableId = (cell: TableCell) => {
+            if (cell.variableId && targetSignalsId[cell.variableId]) {
+                cell.variableId = targetSignalsId[cell.variableId];
+            }
+        };
+
+        const processCells = (cells?: TableCell[]) => {
+            if (cells) {
+                for (const cell of cells) {
+                    updateVariableId(cell);
+                }
+            }
+        };
+
+        if (options.columns) {
+            processCells(options.columns);
+        }
+        if (options.alarmsColumns) {
+            processCells(options.alarmsColumns);
+        }
+        if (options.reportsColumns) {
+            processCells(options.reportsColumns);
+        }
+        if (options.rows) {
+            for (const row of options.rows) {
+                processCells(row.cells);
+            }
+        }
     }
 }
 

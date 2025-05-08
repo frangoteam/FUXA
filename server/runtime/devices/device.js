@@ -551,6 +551,7 @@ var DeviceEnum = {
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
     GPIO: 'GPIO',
+    internal: 'internal',
     DeviceAdapter: 'DeviceAdapter',
     // Template: 'template'
 }

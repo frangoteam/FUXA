@@ -408,7 +408,7 @@ export class HmiService {
     //#endregion
 
     //#region Signals Gauges Mapping
-    addSignal(signalId: string, ga: GaugeSettings) {
+    addSignal(signalId: string) {
         // add to variable list
         if (!this.variables[signalId]) {
             this.variables[signalId] = new Variable(signalId, null, this.projectService.getDeviceFromTagId(signalId));

@@ -82,7 +82,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
     events.on('script-console', scriptConsoleOutput);
 
     io.on('connection', async (socket) => {
-        logger.info(`socket.io client connected`);
+        logger.info(`socket.io client connected ${socket.id}`);
         socket.tagsClientSubscriptions = [];
         // check authorizations
         if (settings.secureEnabled && !settings.secureOnlyEditor) {
