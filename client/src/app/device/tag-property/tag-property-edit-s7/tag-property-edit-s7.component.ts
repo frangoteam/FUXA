@@ -46,11 +46,11 @@ export class TagPropertyEditS7Component implements OnInit {
     validateName(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             this.error = null;
-            const name = control.value;
+            const name = control?.value;
             if (this.existingNames.indexOf(name) !== -1) {
               return { name: this.translateService.instant('msg.device-tag-exist') };
             }
-            if (name.includes('@')) {
+            if (name?.includes('@')) {
               return { name: this.translateService.instant('msg.device-tag-invalid-char') };
             }
             return null;
