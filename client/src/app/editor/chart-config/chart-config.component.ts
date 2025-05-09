@@ -162,7 +162,21 @@ export class ChartConfigComponent implements OnInit {
             disableClose: true,
             position: { top: '60px' }
         });
-        dialogRef.afterClosed().subscribe((result) => {
+        dialogRef.afterClosed().subscribe(placeholder => {
+            if (placeholder) {
+                const label = placeholder;
+                placeholder = '@' + placeholder;
+                const myCopiedObject = <ChartLine>{
+                    id: placeholder,
+                    name: placeholder,
+                    device: '@',
+                    color: this.getNextColor(),
+                    label: label,
+                    yaxis: 1,
+                    spanGaps: true
+                };
+                chart.lines.push(myCopiedObject);
+            }
         });
     }
 

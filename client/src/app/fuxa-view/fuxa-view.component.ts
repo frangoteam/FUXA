@@ -263,7 +263,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.mapControls[key] = gauge;
                     }
                     // bind mouse/key events, signals in gage will be subscribe for notify changes in backend
-                    this.gaugesManager.bindGauge(gauge, this.id, items[key],
+                    this.gaugesManager.bindGauge(gauge, this.id, items[key], sourceDeviceTags,
                         (gaToBindMouseEvents) => {
                             this.onBindMouseEvents(gaToBindMouseEvents);
                         },
@@ -772,11 +772,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     loadPage(param: any, viewref: string, options: any) {
         let view: View = this.getView(viewref);
-
         if (view) {
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);
             }
+            this.sourceDeviceId = options.sourceDeviceId;
             this.loadHmi(view, true);
             if (param.scaleMode) {
                 Utils.resizeViewRev(this.dataContainer.nativeElement, this.dataContainer.nativeElement.parentElement?.parentElement, param.scaleMode);
@@ -790,7 +790,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             bkColor: 'transparent',
             variablesMapping: options.variablesMapping,
             disableDefaultClose: options.hideClose,
-            gaugesManager: this.gaugesManager
+            gaugesManager: this.gaugesManager,
+            sourceDeviceId: options.sourceDeviceId
         };
         let dialogRef = this.fuxaDialog.open(FuxaViewDialogComponent, {
             panelClass: 'fuxa-dialog-property',

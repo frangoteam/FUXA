@@ -47,8 +47,12 @@ export class TagPropertyEditGpioComponent implements OnInit {
     validateName(): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             this.error = null;
-            if (this.existingNames.indexOf(control.value) !== -1) {
-                return { name: this.translateService.instant('msg.device-tag-exist') };
+            const name = control.value;
+            if (this.existingNames.indexOf(name) !== -1) {
+              return { name: this.translateService.instant('msg.device-tag-exist') };
+            }
+            if (name.includes('@')) {
+              return { name: this.translateService.instant('msg.device-tag-invalid-char') };
             }
             return null;
         };
