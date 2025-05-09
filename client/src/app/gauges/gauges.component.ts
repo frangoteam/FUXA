@@ -254,17 +254,17 @@ export class GaugesManager {
      * @param bindhtmlevent
      */
     bindGauge(gauge: any, domViewId: string, ga: GaugeSettings, sourceDeviceTags: Tag[], bindMouseEvent: any, bindhtmlevent: any) {
-        let sigsid: string[] = this.getBindSignals(ga, sourceDeviceTags);
-        if (sigsid) {
-            for (let i = 0; i < sigsid.length; i++) {
-                this.hmiService.addSignalGaugeToMap(domViewId, sigsid[i], ga);
+        let sigsId: string[] = this.getBindSignals(ga, sourceDeviceTags);
+        if (sigsId) {
+            for (let i = 0; i < sigsId.length; i++) {
+                this.hmiService.addSignalGaugeToMap(domViewId, sigsId[i], ga);
                 // check for special gauge to save in memory binded to sigid (chart-html)
                 if (gauge) {
-                    if (!this.memorySigGauges[sigsid[i]]) {
-                        this.memorySigGauges[sigsid[i]] = {};
-                        this.memorySigGauges[sigsid[i]][ga.id] = gauge;
-                    } else if (!this.memorySigGauges[sigsid[i]][ga.id]) {
-                        this.memorySigGauges[sigsid[i]][ga.id] = gauge;
+                    if (!this.memorySigGauges[sigsId[i]]) {
+                        this.memorySigGauges[sigsId[i]] = {};
+                        this.memorySigGauges[sigsId[i]][ga.id] = gauge;
+                    } else if (!this.memorySigGauges[sigsId[i]][ga.id]) {
+                        this.memorySigGauges[sigsId[i]][ga.id] = gauge;
                     }
                 }
             }
@@ -413,12 +413,12 @@ export class GaugesManager {
      * return all signals binded to the gauge
      * @param ga
      */
-    getBindSignals(ga: GaugeSettings, sourceDeviceTags?: Tag[]) {
-        if (ga.property) {
+    getBindSignals(gaugeSettings: GaugeSettings, sourceDeviceTags?: Tag[]) {
+        if (gaugeSettings.property) {
             for (let i = 0; i < GaugesManager.Gauges.length; i++) {
-                if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
-                    if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
-                        let sigsId = this.hmiService.getChartSignal(ga.property.id);
+                if (gaugeSettings.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
+                    if (gaugeSettings.type.startsWith(HtmlChartComponent.TypeTag)) {
+                        let sigsId = this.hmiService.getChartSignal(gaugeSettings.property.id);
                         if (sourceDeviceTags) {
                             sigsId = sigsId.map(signalId => {
                                 const tag = DevicesUtils.placeholderToTag(signalId, sourceDeviceTags);
@@ -426,11 +426,17 @@ export class GaugesManager {
                             });
                         }
                         return sigsId;
-                    } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
-                        let sigsId = this.hmiService.getGraphSignal(ga.property.id);
+                    } else if (gaugeSettings.type.startsWith(HtmlGraphComponent.TypeTag)) {
+                        let sigsId = this.hmiService.getGraphSignal(gaugeSettings.property.id);
+                        if (sourceDeviceTags) {
+                            sigsId = sigsId.map(signalId => {
+                                const tag = DevicesUtils.placeholderToTag(signalId, sourceDeviceTags);
+                                return tag?.id ?? signalId;
+                            });
+                        }
                         return sigsId;
                     } else if (typeof GaugesManager.Gauges[i]['getSignals'] === 'function') {
-                        return GaugesManager.Gauges[i]['getSignals'](ga.property);
+                        return GaugesManager.Gauges[i]['getSignals'](gaugeSettings.property);
                     } else {
                         return null;
                     }
@@ -808,7 +814,7 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
             let gauge: GraphBaseComponent = HtmlGraphComponent.initElement(ga, res, ref, isview);
             if (gauge) {
-                this.setGraphPropety(gauge, ga.property);
+                this.setGraphPropety(gauge, ga.property, targetSignalsId);
                 gauge.onReload.subscribe((query: DaqQuery) => {
                     this.hmiService.getDaqValues(query).subscribe(result => {
                         gauge.setValues(query.sids, result);
@@ -894,7 +900,8 @@ export class GaugesManager {
                     let yaxisNotOne = chart.lines.find(line => line.yaxis > 1);
                     for (let i = 0; i < chart.lines.length; i++) {
                         let line = chart.lines[i];
-                        let sigid = targetSignalsId[line.id] ?? line.id;
+                        // check for placeholder
+                        let sigid = targetSignalsId?.[line.id] ?? line.id;
                         let sigProperty = this.hmiService.getMappedVariable(sigid, true);
                         if (sigProperty) {
                             gauge.addLine(sigid, sigProperty.name, line, yaxisNotOne ? true : false);
@@ -908,12 +915,21 @@ export class GaugesManager {
         }
     }
 
-    private setGraphPropety(gauge: GraphBaseComponent, property: any) {
+    private setGraphPropety(gauge: GraphBaseComponent, property: any, targetSignalsId?: Record<string, string>) {
         if (property) {
             if (property.id) {
                 let graph = this.hmiService.getGraph(property.id);
                 if (graph) {
                     gauge.init(graph.name, graph.property, graph.sources);
+                    // check for placeholder
+                    if ('sourceMap' in gauge && targetSignalsId) {
+                        const updatedSourceMap: Record<string, any> = {};
+                        for (const [key, index] of Object.entries(gauge.sourceMap)) {
+                            const newKey = targetSignalsId[key] ?? key;
+                            updatedSourceMap[newKey] = index;
+                        }
+                        gauge.sourceMap = updatedSourceMap;
+                    }
                 }
             }
             if (property.options) {

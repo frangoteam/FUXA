@@ -230,6 +230,9 @@ export class ChartConfigComponent implements OnInit {
     }
 
     getDeviceTagName(line: ChartLine) {
+        if (line.device === '@') {
+            return line.name;
+        }
         let devices = this.data.devices.filter(x => x.name === line.device);
         if (devices && devices.length > 0) {
             let tags = Object.values<Tag>(devices[0].tags);
