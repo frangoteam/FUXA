@@ -13,6 +13,7 @@ import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
 import { ChartLineAndInterpolationsType, ChartLinePropertyComponent } from './chart-line-property/chart-line-property.component';
+import { EditPlaceholderComponent } from '../../gui-helpers/edit-placeholder/edit-placeholder.component';
 
 @Component({
   selector: 'app-chart-config',
@@ -153,6 +154,15 @@ export class ChartConfigComponent implements OnInit {
                     }
                 });
             }
+        });
+    }
+
+    onAddChartLinePlaceholder(chart: Chart) {
+        let dialogRef = this.dialog.open(EditPlaceholderComponent, {
+            disableClose: true,
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe((result) => {
         });
     }
 

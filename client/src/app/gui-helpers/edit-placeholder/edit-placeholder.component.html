@@ -1,0 +1,15 @@
+<form [formGroup]="formGroup">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{ 'device.edit-placeholder-titel' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field">
+            <span>{{ 'dlg.item-name' | translate }}</span>
+            <mat-icon>alternate_email</mat-icon>
+            <input formControlName="name" type="text">
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button (click)="onOkClick()" [disabled]="formGroup.invalid" color="primary">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>
