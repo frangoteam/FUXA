@@ -361,6 +361,7 @@ export class TagPropertyService {
                 if (result) {
                     tag.name = result.tagName;
                     tag.address = result.tagAddress;
+                    tag.type = result.tagType;
                     tag.description = result.tagDescription;
                     if (checkToAdd) {
                         this.checkToAdd(tag, device);

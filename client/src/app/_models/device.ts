@@ -285,6 +285,12 @@ export enum OpcUaTagType {
     ByteString = 'ByteString'
 }
 
+export enum AdsClientTagType {
+    Number = 'number',
+    Boolean = 'boolean',
+    String = 'string'
+}
+
 export enum ModbusOptionType {
     SerialPort = 'SerialPort',
     RTUBufferedPort = 'RTUBufferedPort',

@@ -1,9 +1,9 @@
 import { Component, EventEmitter, OnInit, Inject, Output, OnDestroy } from '@angular/core';
-import { Device, TagType, Tag } from '../../../_models/device';
+import { Device, AdsClientTagType, Tag } from '../../../_models/device';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-tag-property-edit-adsclient',
@@ -13,7 +13,7 @@ import { Subject, takeUntil } from 'rxjs';
 export class TagPropertyEditADSclientComponent implements OnInit, OnDestroy {
     @Output() result = new EventEmitter<any>();
     formGroup: UntypedFormGroup;
-    tagType = TagType;
+    tagType = AdsClientTagType;
     existingNames = [];
     error: string;
     private destroy$ = new Subject<void>();

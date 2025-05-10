@@ -279,8 +279,10 @@ function ADSclient(_data, _logger, _events) {
     this.setValue = async (tagId, value) => {
         if (client && client.connection.connected && data.tags[tagId]) {
             try {
-                var valueToSend = deviceUtils.tagRawCalculator(_toValue(data.tags[tagId].type, value), data.tags[tagId]);
+                var valueToSend = await deviceUtils.tagRawCalculator(_toValue(data.tags[tagId].type, value), data.tags[tagId]);
+                logger.info(`Writing ${valueToSend} to: '${data.tags[tagId].address}'`)
                 const res = await client.writeValue(data.tags[tagId].address, valueToSend)
+
             } catch (err) {
                 logger.error(`'${data.name}' setValue error! ${err}`);
             }
@@ -345,7 +347,7 @@ function ADSclient(_data, _logger, _events) {
             for (var i = 0; i < topicsMap[sub.symbol.name].length; i++) {
                 var id = topicsMap[sub.symbol.name][i].id;
                 var oldvalue = data.tags[id].rawValue;
-                data.tags[id].rawValue = receivedData.value.toString();
+                data.tags[id].rawValue = receivedData.value;
                 data.tags[id].timestamp = receivedData.timestamp.getTime();
                 data.tags[id].changed = oldvalue !== receivedData.value;
             }
