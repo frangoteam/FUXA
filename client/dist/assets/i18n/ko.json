@@ -69,7 +69,7 @@
     "dlg.docproperty-size-1600-1200": "1600 x 1200 pixels",
     "dlg.docproperty-size-1920-1080": "1920 x 1080 pixels",
     "dlg.docproperty-margin": "여유 크기",
-    
+
     "dlg.docname-title": "뷰 이름",
     "dlg.docname-name": "이름",
     "dlg.docproperty-type": "뷰 타입",
@@ -522,7 +522,7 @@
     "device.topic-name-exist": "The Topic name '{{value}}' already exist",
     "device.topic-subs-address-exist": "The Topic to subscribe with address '{{value}}' already exist",
     "device.topic-pubs-address-exist": "The Topic to publish with address '{{value}}' already exist",
-    
+
     "device.property-mqtt-address": "주소 (mqtt://[server]:[port])",
     "device.tag-property-title": "태그 속성",
     "device.browsetag-property-title": "서버 내 브라우저 태그",
@@ -538,7 +538,7 @@
     "device.tag-property-obj-name": "이름",
     "device.tag-property-path": "위치",
     "device.tag-property-unit": "단위",
-    "device.tag-property-digits": "Decimal",    
+    "device.tag-property-digits": "Decimal",
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "값:",
     "device-tag-dialog-title": "태그 선택",
@@ -677,7 +677,7 @@
     "alarm.property-action-type": "능동 타입",
     "alarm.property-action-value": "설정 값",
     "alarm.property-action-destination": "설정 뷰",
-    
+
     "card.config-title": "Card 설정",
     "card.config-content-type": "컨텐츠 타입",
     "card.config-content-view": "컨텐츠 뷰",
@@ -693,10 +693,10 @@
     "texts.list-group": "그룹",
     "texts.list-value": "텍스트",
 
-    "dlg.textproperty-title": "텍스트",
-    "dlg.textproperty-id": "ID",
-    "dlg.textproperty-group": "그룹",
-    "dlg.textproperty-value": "텍스트",
+    "text.settings-title": "텍스트",
+    "text.settings-id": "ID",
+    "text.settings-group": "그룹",
+    "text.settings-value": "텍스트",
 
     "dlg.plugins-title": "플러그인",
     "dlg.plugins-name": "이름",

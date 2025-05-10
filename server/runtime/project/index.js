@@ -202,17 +202,25 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.GENERAL;
                 section.name = cmd;
                 setCharts(value);
+            } else if (cmd === ProjectDataCmdType.Languages) {
+                section.table = prjstorage.TableType.GENERAL;
+                section.name = cmd;
+                setLanguages(value);
+            } else if (cmd === ProjectDataCmdType.ClientAccess) {
+                section.table = prjstorage.TableType.GENERAL;
+                section.name = cmd;
+                setClientAccess(value);
             } else if (cmd === ProjectDataCmdType.Graphs) {
                 section.table = prjstorage.TableType.GENERAL;
                 section.name = cmd;
                 setGraphs(value);
             } else if (cmd === ProjectDataCmdType.SetText) {
                 section.table = prjstorage.TableType.TEXTS;
-                section.name = value.name;
+                section.name = value.id;
                 setText(value);
             } else if (cmd === ProjectDataCmdType.DelText) {
                 section.table = prjstorage.TableType.TEXTS;
-                section.name = value.name;
+                section.name = value.id;
                 toremove = removeText(value);
             } else if (cmd === ProjectDataCmdType.SetAlarm) {
                 section.table = prjstorage.TableType.ALARMS;
@@ -360,6 +368,22 @@ function setCharts(charts) {
 }
 
 /**
+ * Set Languages
+ * @param {*} languages
+ */
+function setLanguages(languages) {
+    data.languages = languages;
+}
+
+/**
+ * Set ClientAccess
+ * @param {*} clientAccess
+ */
+function setClientAccess(clientAccess) {
+    data.clientAccess = clientAccess;
+}
+
+/**
  * Set or add if not exist (check with taxt.name) the Text in Project
  * @param {*} text
  */
@@ -369,7 +393,7 @@ function setText(text) {
     }
     var pos = -1;
     for (var i = 0; i < data.texts.length; i++) {
-        if (data.texts[i].name === text.name) {
+        if (data.texts[i].id === text.id) {
             pos = i;
         }
     }
@@ -386,9 +410,8 @@ function setText(text) {
  */
 function removeText(text) {
     if (data.texts) {
-        var pos = -1;
         for (var i = 0; i < data.texts.length; i++) {
-            if (data.texts[i].name === text.name) {
+            if (data.texts[i].id === text.id) {
                 data.texts.splice(i, 1);
                 return true;
             }
@@ -424,7 +447,6 @@ function setAlarm(alarm) {
  */
 function removeAlarm(alarm) {
     if (data.alarms) {
-        var pos = -1;
         for (var i = 0; i < data.alarms.length; i++) {
             if (data.alarms[i].name === alarm.name) {
                 data.alarms.splice(i, 1);
@@ -462,7 +484,6 @@ function removeAlarm(alarm) {
  */
 function removeNotification(notification) {
     if (data.notifications) {
-        var pos = -1;
         for (var i = 0; i < data.notifications.length; i++) {
             if (data.notifications[i].id === notification.id) {
                 data.notifications.splice(i, 1);
@@ -500,7 +521,6 @@ function removeNotification(notification) {
  */
  function removeScript(script) {
     if (data.scripts) {
-        var pos = -1;
         for (var i = 0; i < data.scripts.length; i++) {
             if (data.scripts[i].id === script.id) {
                 data.scripts.splice(i, 1);
@@ -538,7 +558,6 @@ function removeNotification(notification) {
  */
  function removeReport(report) {
     if (data.reports) {
-        var pos = -1;
         for (var i = 0; i < data.reports.length; i++) {
             if (data.reports[i].id === report.id) {
                 data.reports.splice(i, 1);
@@ -576,7 +595,6 @@ function setMapsLocation(location) {
  */
 function removeMapsLocation(location) {
     if (data.mapsLocations) {
-        var pos = -1;
         for (var i = 0; i < data.mapsLocations.length; i++) {
             if (data.mapsLocations[i].id === location.id) {
                 data.mapsLocations.splice(i, 1);
@@ -934,7 +952,7 @@ function _filterProjectPermission(userPermission) {
             if (result.hmi.views[i].items) {
                 Object.values(result.hmi.views[i].items).forEach((item) => {
                     if (item.property) {
-                        const itemPermission = runtime.checkPermission(userPermission, item.property);
+                        const itemPermission = runtime.checkPermission(userPermission, item.property, false, true);
                         if (!itemPermission.show) {
                             var position = view.svgcontent.indexOf(item.id);
                             if (position >= 0) {
@@ -1024,6 +1042,8 @@ const ProjectDataCmdType = {
     HmiLayout: 'layout',
     Charts: 'charts',
     Graphs: 'graphs',
+    Languages: 'languages',
+    ClientAccess: 'client-access',
     SetText: 'set-text',
     SetText: 'set-text',
     DelText: 'del-text',

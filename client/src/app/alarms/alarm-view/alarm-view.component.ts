@@ -7,12 +7,13 @@ import { takeUntil, switchMap, catchError, delay } from 'rxjs/operators';
 
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
-import { AlarmColumns, AlarmHistoryColumns, AlarmPriorityType, AlarmQuery, AlarmStatusType } from '../../_models/alarm';
+import { AlarmBaseType, AlarmColumns, AlarmHistoryColumns, AlarmPriorityType, AlarmQuery, AlarmStatusType } from '../../_models/alarm';
 import { FormControl, FormGroup } from '@angular/forms';
 
 import * as moment from 'moment';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { LanguageService } from '../../_services/language.service';
 
 @Component({
     selector: 'app-alarm-view',
@@ -51,6 +52,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     constructor(private translateService: TranslateService,
                 private dialog: MatDialog,
+                private languageService: LanguageService,
                 private hmiService: HmiService) {
         const today = moment();
         this.dateRange = new FormGroup({
@@ -92,7 +94,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private stopPolling() {
         this.alarmsPolling = 0;
-        this.destroy.next();
+        this.destroy.next(null);
         this.destroy.complete();
     }
 
@@ -117,9 +119,11 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
         return empty();
     }
 
-    updateAlarmsList(alr: any[]) {
+    updateAlarmsList(alr: AlarmBaseType[]) {
         if (this.showType === AlarmShowType.alarms) {
             alr.forEach(alr => {
+                alr.text = this.languageService.getTranslation(alr.text) ?? alr.text;
+                alr.group = this.languageService.getTranslation(alr.group) ?? alr.group;
                 alr.status = this.getStatus(alr.status);
                 alr.type = this.getPriority(alr.type);
             });

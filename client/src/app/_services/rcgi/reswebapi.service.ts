@@ -105,7 +105,7 @@ export class ResWebApiService implements ResourceStorageService {
         return new Observable((observer) => {
             let header = new HttpHeaders({ 'Content-Type': 'application/json' });
             this.http.post<any>(this.endPointConfig + '/api/alarmack', { headers: header, params: name }).subscribe(result => {
-                observer.next();
+                observer.next(null);
             }, err => {
                 observer.error(err);
             });
@@ -126,9 +126,9 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.get<any>(this.endPointConfig + '/api/daq', { headers: header, params });
     }
 
-    getTagsValues(tagsIds: string[]): Observable<any> {
+    getTagsValues(tagsIds: string[], sourceScriptName?: string): Observable<any> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        let params = { ids: JSON.stringify(tagsIds) };
+        let params = { ids: JSON.stringify(tagsIds), sourceScriptName: sourceScriptName };
         return this.http.get<any>(this.endPointConfig + '/api/getTagValue', { headers: header, params });
     }
 
@@ -161,7 +161,7 @@ export class ResWebApiService implements ResourceStorageService {
         return new Observable((observer) => {
             let header = new HttpHeaders({ 'Content-Type': 'application/json' });
             this.http.post<Role[]>(this.endPointConfig + '/api/roles', { headers: header, params: roles }).subscribe(result => {
-                observer.next();
+                observer.next(null);
             }, err => {
                 observer.error(err);
             });
@@ -193,7 +193,7 @@ export class ResWebApiService implements ResourceStorageService {
                 let header = new HttpHeaders({ 'Content-Type': 'application/json' });
                 let params = report;
                 this.http.post<void>(this.endPointConfig + '/api/reportBuild', { headers: header, params: params }).subscribe(result => {
-                    observer.next();
+                    observer.next(null);
                     var msg = '';
                     this.translateService.get('msg.report-build-forced').subscribe((txt: string) => { msg = txt; });
                     this.toastr.success(msg);

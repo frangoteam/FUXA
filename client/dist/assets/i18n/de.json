@@ -326,7 +326,7 @@
     "graph.property-datalabels-show": "Anzeigen",
     "graph.property-datalabels-fontsize": "Schriftgröße",
     "graph.property-datalabels-align": "Ausrichten",
-    
+
     "graph.rangetype-last1h": "Letzte Stunde",
     "graph.rangetype-last1d": "Letzter Tag",
     "graph.rangetype-last3d": "Letzte 3 Tage",
@@ -353,7 +353,7 @@
     "table.property-row-height": "Höhe",
     "table.property-row-background": "Hintergrund",
     "table.property-row-color": "Farbe",
-    "table.property-row-fontSize": "Schriftgröße",    
+    "table.property-row-fontSize": "Schriftgröße",
     "table.property-layout": "Layout",
     "table.property-filter": "Filter",
     "table.property-paginator": "Paginator",
@@ -806,7 +806,7 @@
     "device.topic-name-exist": "Der Topic-Name '{{value}}' existiert bereits",
     "device.topic-subs-address-exist": "Das zu abonnierende Topic mit der Adresse '{{value}}' existiert bereits",
     "device.topic-pubs-address-exist": "Das zu veröffentlichende Thema mit der Adresse '{{value}}' existiert bereits",
-    
+
     "device.property-mqtt-address": "Adresse (mqtt://[Server]:[Port])",
     "device.tag-property-title": "Tag-Eigenschaft",
     "device.browsetag-property-title": "Tags im Server durchsuchen",
@@ -823,8 +823,8 @@
     "device.tag-property-obj-name": "Name",
     "device.tag-property-path": "Pfad",
     "device.tag-property-unit": "Einheit",
-    "device.tag-property-digits": "Dezimal",    
-    "device.tag-property-initvalue": "Initialwert",    
+    "device.tag-property-digits": "Dezimal",
+    "device.tag-property-initvalue": "Initialwert",
     "device.tag-array-id": "Array-ID:",
     "device.tag-array-value": "Wert:",
     "device-tag-dialog-title": "Tag-Auswahl",
@@ -843,7 +843,7 @@
     "device.tag-raw-high": "Raw High",
     "device.tag-scaled-low": "Skaliert niedrig",
     "device.tag-scaled-high": "Skaliert hoch",
-    
+
     "device.connect-ok": "Ok",
     "device.connect-error": "Fehler",
     "device.connect-failed": "Fehlgeschlagen",
@@ -1120,7 +1120,7 @@
     "report.item-interval-min10": "10 Minuten",
     "report.item-interval-min30": "30 Minuten",
     "report.item-interval-hour": "1 Stunde",
-    "report.item-interval-day": "1 Tag",    
+    "report.item-interval-day": "1 Tag",
     "report.item-function-type": "Funktionstyp",
     "report.item-function-min": "Min",
     "report.item-function-max": "Max",
@@ -1162,6 +1162,11 @@
     "texts.list-group": "Gruppe",
     "texts.list-value": "Text",
 
+    "text.settings-title": "Text",
+    "text.settings-id": "ID",
+    "text.settings-group": "Group",
+    "text.settings-value": "Text",
+
     "gui.range-number-min": "Min",
     "gui.range-number-max": "Max",
     "gui.range-number-boolean": "Maskenwert",
@@ -1170,11 +1175,6 @@
     "gui.range-number-switcher": "Bereich als Zahl oder boolesch",
 
     "dlg.bitmask-title": "Bitmaske",
-
-    "dlg.textproperty-title": "Text",
-    "dlg.textproperty-id": "ID",
-    "dlg.textproperty-group": "Gruppe",
-    "dlg.textproperty-value": "Text",
 
     "dlg.plugins-title": "Plugins",
     "dlg.plugins-name": "Name",

@@ -19,7 +19,7 @@
                             <mat-select [(value)]="data.layout.loginonstart" style="width: 400px">
                                 <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>
                                 <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
-                            </mat-select>    
+                            </mat-select>
                         </div>
                         <div class="my-form-field block mt10" *ngIf="data.layout.loginonstart">
                             <span>{{'dlg.layout-lbl-login-overlay-color' | translate}}</span>
@@ -27,7 +27,7 @@
                                 <mat-option *ngFor="let color of loginOverlayColor | enumToArray" [value]="color.key">
                                     {{ 'item.overlaycolor-' + color.value | translate }}
                                 </mat-option>
-                            </mat-select>    
+                            </mat-select>
                         </div>
                         <div class="my-form-field block mt10">
                             <span>{{'dlg.layout-lbl-zoom' | translate}}</span>
@@ -59,7 +59,7 @@
                                 <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>
                                 <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
                             </mat-select>
-                        </div>      
+                        </div>
                     </div>
                     <div>
                         <div style="display: inline-block;margin-left: 180px;">
@@ -95,8 +95,8 @@
                                         <span *ngIf="!data.layout.navigation.logo; else hasLogo">{{'sidenav.title' | translate}}</span>
                                         <ng-template #hasLogo><img src="{{data.layout.navigation.logo}}" style="max-width: 100%; max-height: 100%;"></ng-template>
                                     </mat-list-item>
-                                    <mat-list-item *ngFor="let item of draggableListLeft; let i = index"                                                    
-                                                   [ngClass]="'menu-item-' + data.layout.navigation.type" 
+                                    <mat-list-item *ngFor="let item of draggableListLeft; let i = index"
+                                                   [ngClass]="'menu-item-' + data.layout.navigation.type"
                                                    style="width: unset">
                                         <button type="button" mat-button class="sidenav-btn" [style.color]="data.layout.navigation.fgcolor" [ngSwitch]="data.layout.navigation.type">
                                             <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
@@ -113,7 +113,7 @@
                                             </div>
                                             <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
                                                 <img *ngIf="item.image" src="{{item.image}}">
-                                                <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>                                        
+                                                <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
                                                 <span style="display: inline-block">{{item.text}}</span>
                                             </div>
                                         </button>
@@ -191,8 +191,8 @@
                         <div class="items" [style.textAlign]="data.layout.header.itemsAnchor">
                             <ng-container *ngFor="let item of headerItems; let i = index" [ngSwitch]="item.type">
                                 <ng-container *ngSwitchCase="'button'">
-                                    <button mat-raised-button 
-                                            [style.background-color]="item.bkcolor ?? data.layout.header.bkcolor" 
+                                    <button mat-raised-button
+                                            [style.background-color]="item.bkcolor ?? data.layout.header.bkcolor"
                                             [style.color]="item.fgcolor ?? data.layout.header.fgcolor"
                                             [style.fontFamily]="data.layout.header.fontFamily"
                                             [style.fontSize]="data.layout.header.fontSize + 'px !important'"
@@ -203,8 +203,8 @@
                                     </button>
                                 </ng-container>
                                 <ng-container *ngSwitchCase="'label'">
-                                    <button mat-button 
-                                            [style.background-color]="item.bkcolor ?? data.layout.header.bkcolor" 
+                                    <button mat-button
+                                            [style.background-color]="item.bkcolor ?? data.layout.header.bkcolor"
                                             [style.color]="item.fgcolor ?? data.layout.header.fgcolor"
                                             [style.fontFamily]="data.layout.header.fontFamily"
                                             [style.fontSize]="data.layout.header.fontSize + 'px !important'"
@@ -215,7 +215,7 @@
                                 </ng-container>
                                 <ng-container *ngSwitchCase="'image'">
                                     <button mat-icon-button
-                                            [style.background-color]="item.bkcolor ?? data.layout.header.bkcolor" 
+                                            [style.background-color]="item.bkcolor ?? data.layout.header.bkcolor"
                                             [style.color]="item.fgcolor ?? data.layout.header.fgcolor"
                                             [style.marginLeft.px]="item.marginLeft"
                                             [style.marginRight.px]="item.marginRight">
@@ -228,11 +228,18 @@
                             <button mat-icon-button class="alarm-button">
                                 <mat-icon aria-label="Alarms">notifications_none</mat-icon>
                             </button>
-                            <button mat-icon-button>
+                            <button mat-icon-button class="info-button">
                                 <mat-icon aria-label="Info">error_outline</mat-icon>
                             </button>
                             <div class="header-date-time" *ngIf="data.layout.header.dateTimeDisplay">
                                 {{ currentDateTime | date: data.layout.header.dateTimeDisplay }}
+                            </div>
+                            <div *ngIf="data.layout.header.language && data.layout.header.language !== 'nothing'" class="header-language">
+                                <button mat-icon-button class="inbk">
+                                    <mat-icon aria-label="Language">language</mat-icon>
+                                </button>
+                                <div *ngIf="data.layout.header.language === 'key'" class="inbk">EN</div>
+                                <div *ngIf="data.layout.header.language === 'fullname'" class="inbk">English</div>
                             </div>
                             <div *ngIf="data.securityEnabled" class="header-login">
                                 <button mat-icon-button>
@@ -298,11 +305,21 @@
                                         {{ 'item.logininfo-type-' + type | translate }}
                                     </mat-option>
                                 </mat-select>
+                                <mat-icon aria-label="Info">account_circle</mat-icon>
+                            </div>
+                            <div class="my-form-field block mt10">
+                                <span>{{'dlg.layout-lbl-show-language' | translate}}</span>
+                                <mat-select [(value)]="data.layout.header.language" style="width: 260px">
+                                    <mat-option *ngFor="let type of languageShowModeType" [value]="type">
+                                        {{ 'item.language-show-mode-' + type | translate }}
+                                    </mat-option>
+                                </mat-select>
+                                <mat-icon aria-label="Language">language</mat-icon>
                             </div>
                             <div class="my-form-field block mt10">
                                 <span>{{'dlg.layout-lbl-datetime' | translate}}</span>
                                 <input [(ngModel)]="data.layout.header.dateTimeDisplay" (input)="checkTimer()" type="text" style="width: 260px">
-                            </div>                            
+                            </div>
                             <div class="my-form-field block mt10">
                                 <span>{{'dlg.layout-lbl-alarms' | translate}}</span>
                                 <mat-select [(value)]="data.layout.header.alarms" style="width: 260px">
@@ -358,7 +375,7 @@
                                         [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
                                         style="width:120px;" [cpPosition]="'bottom'" />
                                 </div>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -366,7 +383,7 @@
             <mat-tab label="{{'dlg.layout-lbl-custom-styles' | translate}}">
                 <div class="tab-container">
                     <ngx-codemirror #CodeMirror [(ngModel)]="data.layout.customStyles" [options]="codeMirrorOptions" ></ngx-codemirror>
-                </div>                    
+                </div>
             </mat-tab>
         </mat-tab-group>
     </div>

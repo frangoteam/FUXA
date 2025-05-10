@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { ProjectService } from '../../_services/project.service';
 
-import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, View, HeaderItem, AnchorType, GaugeProperty, LoginInfoType, LoginOverlayColorType } from '../../_models/hmi';
+import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, View, HeaderItem, AnchorType, GaugeProperty, LoginInfoType, LoginOverlayColorType, LanguageShowModeType } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
 import { Utils } from '../../_helpers/utils';
 import { ResourceGroup, ResourceItem, Resources, ResourceType } from '../../_models/resources';
@@ -33,6 +33,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
     fonts = Define.fonts;
     anchorType = <AnchorType[]>['left', 'center', 'right'];
     loginInfoType = <LoginInfoType[]>['nothing', 'username', 'fullname', 'both'];
+    languageShowModeType = <LanguageShowModeType[]>['nothing', 'simple', 'key', 'fullname'];
     currentDateTime: Date;
     private unsubscribeTimer$ = new Subject<void>();
 
@@ -109,7 +110,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.unsubscribeTimer$.next();
+        this.unsubscribeTimer$.next(null);
         this.unsubscribeTimer$.complete();
     }
 
@@ -118,6 +119,8 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
         if (event.index == 3) {
             this.changeDetector.detectChanges();
             this.CodeMirror?.codeMirror?.refresh();
+        } else if (event.index == 2) {
+            this.checkTimer();
         }
     }
 
@@ -131,7 +134,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
                 });
             }
         } else {
-            this.unsubscribeTimer$.next();
+            this.unsubscribeTimer$.next(null);
             this.currentDateTime = null;
         }
     }

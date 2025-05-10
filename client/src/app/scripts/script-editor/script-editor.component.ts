@@ -86,7 +86,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.destroy$.next();
+        this.destroy$.next(null);
         this.destroy$.complete();
     }
 
@@ -100,7 +100,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
                         return 'system-function';
                     }
                 }
-                while (stream.next() != null && this.checkSystemFnc.indexOf(stream) !== -1) {}
+                while (stream.next(null) != null && this.checkSystemFnc.indexOf(stream) !== -1) {}
                 return null;
             }
         };
@@ -236,7 +236,6 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     onRunTest() {
-        console.log('Run test');
         let torun = new ScriptTest(this.script.id, this.script.name);
         torun.parameters = this.testParameters;
         torun.outputId = this.script.id;

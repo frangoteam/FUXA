@@ -77,7 +77,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.nguplot.ngOnDestroy();
             }
             delete this.nguplot;
-            this.destroy$.next();
+            this.destroy$.next(null);
             this.destroy$.unsubscribe();
         } catch (e) {
             console.error(e);
@@ -214,7 +214,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (options) {
             this.options = options;
         }
-        this.destroy$.next();
+        this.destroy$.next(null);
         if (this.property?.type === ChartViewType.history && this.options.refreshInterval) {
             interval(this.options.refreshInterval * 60000).pipe(
                 takeUntil(this.destroy$)

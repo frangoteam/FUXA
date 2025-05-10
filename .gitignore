@@ -87,3 +87,5 @@ _certificates/
 server/_appdata
 #server/package-lock.json
 #client/package-lock.json
+
+server/_widgets

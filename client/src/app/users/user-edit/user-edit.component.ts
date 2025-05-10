@@ -8,6 +8,7 @@ import { View } from '../../_models/hmi';
 import { SettingsService } from '../../_services/settings.service';
 import { UserService } from '../../_services/user.service';
 import { Subject, map, takeUntil } from 'rxjs';
+import { Languages } from '../../_models/language';
 
 @Component({
     selector: 'app-user-edit',
@@ -21,6 +22,7 @@ export class UserEditComponent implements OnInit, AfterViewInit, OnDestroy {
     showPassword: boolean;
     views: View[];
     userInfo: UserInfo;
+    languages: Languages;
 
     @ViewChild(SelOptionsComponent, { static: false }) seloptions: SelOptionsComponent;
 
@@ -37,12 +39,14 @@ export class UserEditComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit() {
         this.views = this.projectService.getViews();
+        this.languages = this.projectService.getLanguages();
         this.userInfo = new UserInfo(this.data.user?.info);
         this.formGroup = this.fb.group({
             username: [this.data.user?.username, [Validators.required, this.isValidUserName()]],
             fullname: [this.data.user?.fullname],
             password: [],
             start: [this.userInfo.start],
+            languageId: [this.userInfo.languageId]
         });
         if (this.data.current?.username) {
             this.formGroup.get('username').disable();
@@ -69,7 +73,7 @@ export class UserEditComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
-		this.destroy$.next();
+		this.destroy$.next(null);
         this.destroy$.complete();
 	}
 
@@ -91,7 +95,8 @@ export class UserEditComponent implements OnInit, AfterViewInit, OnDestroy {
         this.data.user.password = this.formGroup.controls.password.value;
         this.data.user.info = JSON.stringify({
             start: this.formGroup.controls.start.value || '',
-            roles: roles
+            roles: roles,
+            languageId: this.formGroup.controls.languageId.value
         });
         this.dialogRef.close(this.data.user);
     }
@@ -141,12 +146,14 @@ export interface UserEditData {
 export class UserInfo {
     start: string;
     roleIds: string[];
+    languageId: string;
 
     constructor(info: string) {
         if (info) {
             const obj = JSON.parse(info);
             this.start = obj.start;
             this.roleIds = obj.roles;
+            this.languageId = obj.languageId;
         }
     }
 }

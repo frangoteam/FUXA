@@ -46,7 +46,7 @@ export class ScriptPermissionComponent implements OnInit, OnDestroy {
     }
 
 	ngOnDestroy() {
-		this.destroy$.next();
+		this.destroy$.next(null);
         this.destroy$.complete();
 	}
 

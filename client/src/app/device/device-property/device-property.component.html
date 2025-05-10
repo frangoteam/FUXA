@@ -406,6 +406,8 @@
                         <span>{{'device.property-ads-router' | translate}}</span>
                         <input [(ngModel)]="data.device.property.router" style="width: 350px" type="ip" (click)="onAddressChanged()">
                     </div>
+                <div *ngSwitchCase="deviceType.Gpio">
+                    <!-- property config --->
                 </div>
             </div>
         </div>

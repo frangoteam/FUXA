@@ -12,29 +12,29 @@ import { ProjectService } from '../../_services/project.service';
 })
 export class ScriptModeComponent implements OnInit {
 
-    formGroup: UntypedFormGroup;
+	formGroup: UntypedFormGroup;
 
 	scriptMode = ScriptMode;
-    existingNames = [];
+	existingNames = [];
 
 	constructor(public dialogRef: MatDialogRef<ScriptModeComponent>,
-        		private translateService: TranslateService,
-        		private projectService: ProjectService,
-				private fb: UntypedFormBuilder,
-				@Inject(MAT_DIALOG_DATA) public data: ScriptModeType) {
+		private translateService: TranslateService,
+		private projectService: ProjectService,
+		private fb: UntypedFormBuilder,
+		@Inject(MAT_DIALOG_DATA) public data: ScriptModeType) {
 	}
 
 	ngOnInit() {
-        this.existingNames = this.projectService.getScripts()?.map(script => script.name);
+		this.existingNames = this.projectService.getScripts()?.map(script => script.name);
 
-        this.formGroup = this.fb.group({
-            name: [this.data.name],
-            mode: [this.data.mode, Validators.required],
-        });
+		this.formGroup = this.fb.group({
+			name: [this.data.name],
+			mode: [this.data.mode, Validators.required],
+		});
 		if (this.data.newScript) {
 			this.formGroup.controls.name.setValidators([Validators.required, this.isValidScriptName()]);
 		}
-    }
+	}
 
 	onNoClick(): void {
 		this.dialogRef.close();
@@ -45,13 +45,21 @@ export class ScriptModeComponent implements OnInit {
 	}
 
 	isValidScriptName(): ValidatorFn {
-        return (control: AbstractControl): ValidationErrors | null => {
-            if (this.existingNames.indexOf(control.value) !== -1) {
-                return { name: this.translateService.instant('msg.script-name-exist') };
-            }
-            return null;
-        };
-    }
+		return (control: AbstractControl): ValidationErrors | null => {
+			const value = control.value?.trim();
+			if (!value) {
+				return null;
+			}
+			const functionNameRegex = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/;
+			if (!functionNameRegex.test(value)) {
+				return { message: this.translateService.instant('msg.invalid-script-name') };
+			}
+			if (this.existingNames.includes(value)) {
+				return { message: this.translateService.instant('msg.script-name-exist') };
+			}
+			return null;
+		};
+	}
 }
 
 export interface ScriptModeType {

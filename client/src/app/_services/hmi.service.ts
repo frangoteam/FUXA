@@ -174,9 +174,14 @@ export class HmiService {
         this.socket = io(`${this.endPointConfig}/?token=${token}`);
         this.socket.on('connect', () => {
             this.onServerConnection$.next(true);
+            this.tagsSubscribe();
         });
-        this.socket.on('disconnect', () => {
+        this.socket.on('disconnect', (reason) => {
             this.onServerConnection$.next(false);
+            console.log('socket disconnected: ', reason);
+        });
+        this.socket.io.on('reconnect_attempt', () => {
+            console.log('socket.io try to reconnect...');
         });
         // devicse status
         this.socket.on(IoEventTypes.DEVICE_STATUS, (message) => {
@@ -574,9 +579,12 @@ export class HmiService {
             switch (message.command) {
                 case ScriptCommandEnum.SETVIEW:
                     this.onGoTo.emit(<ScriptSetView>{ viewName: message.params[0], force: message.params[1] });
+                    break;
                 case ScriptCommandEnum.OPENCARD:
                     this.onOpen.emit(<ScriptOpenCard>{ viewName: message.params[0], options: message.params[1] });
-                break;
+                    break;
+                default:
+                    break;
             }
         }
     }

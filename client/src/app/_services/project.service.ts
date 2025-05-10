@@ -10,7 +10,7 @@ import { Graph } from '../_models/graph';
 import { Alarm, AlarmBaseType, AlarmQuery, AlarmsFilter } from '../_models/alarm';
 import { Notification } from '../_models/notification';
 import { Script } from '../_models/script';
-import { Text } from '../_models/text';
+import { Languages, LanguageText } from '../_models/language';
 import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag, FuxaServer, TagSystemType, TAG_PREFIX, ServerTagType, TagDevice } from '../_models/device';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,12 +24,14 @@ import { Utils } from '../_helpers/utils';
 import * as FileSaver from 'file-saver';
 import { Report } from '../_models/report';
 import { MapsLocation } from '../_models/maps';
+import { ClientAccess } from '../_models/client-access';
 
 @Injectable()
 export class ProjectService {
 
     @Output() onSaveCurrent: EventEmitter<SaveMode> = new EventEmitter();
     @Output() onLoadHmi: EventEmitter<boolean> = new EventEmitter();
+    public onLoadClientAccess: Subject<void> = new Subject<void>();
 
     private projectData = new ProjectData();            // Project data
     public AppId = '';
@@ -507,10 +509,10 @@ export class ProjectService {
             this.storage.setServerProjectData(ProjectDataCmdType.SetAlarm, alarm, this.projectData).subscribe(result => {
                 if (old && old.name && old.name !== alarm.name) {
                     this.removeAlarm(old).subscribe(result => {
-                        observer.next();
+                        observer.next(null);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                 }
             }, err => {
                 console.error(err);
@@ -534,7 +536,7 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelAlarm, alarm, this.projectData).subscribe(result => {
-                observer.next();
+                observer.next(null);
             }, err => {
                 console.error(err);
                 this.notifySaveError(err);
@@ -589,10 +591,10 @@ export class ProjectService {
             this.storage.setServerProjectData(ProjectDataCmdType.SetNotification, notification, this.projectData).subscribe(result => {
                 if (old?.id && old.id !== notification.id) {
                     this.removeNotification(old).subscribe(result => {
-                        observer.next();
+                        observer.next(null);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                 }
             }, err => {
                 console.error(err);
@@ -616,7 +618,7 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelNotification, notification, this.projectData).subscribe(result => {
-                observer.next();
+                observer.next(null);
             }, err => {
                 console.error(err);
                 this.notifySaveError(err);
@@ -657,10 +659,10 @@ export class ProjectService {
             this.storage.setServerProjectData(ProjectDataCmdType.SetMapsLocation, newLocation, this.projectData).subscribe(result => {
                 if (oldLocation?.id && newLocation.id !== oldLocation.id) {
                     this.removeMapsLocation(oldLocation).subscribe(result => {
-                        observer.next();
+                        observer.next(null);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                 }
             }, err => {
                 console.error(err);
@@ -682,7 +684,7 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelMapsLocation, location, this.projectData).subscribe(result => {
-                observer.next();
+                observer.next(null);
             }, err => {
                 console.error(err);
                 this.notifySaveError(err);
@@ -721,10 +723,10 @@ export class ProjectService {
             this.storage.setServerProjectData(ProjectDataCmdType.SetScript, script, this.projectData).subscribe(result => {
                 if (old && old.id && old.id !== script.id) {
                     this.removeScript(old).subscribe(result => {
-                        observer.next();
+                        observer.next(null);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                 }
             }, err => {
                 console.error(err);
@@ -748,7 +750,7 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelScript, script, this.projectData).subscribe(result => {
-                observer.next();
+                observer.next(null);
             }, err => {
                 console.error(err);
                 this.notifySaveError(err);
@@ -783,10 +785,10 @@ export class ProjectService {
             this.storage.setServerProjectData(ProjectDataCmdType.SetReport, report, this.projectData).subscribe(result => {
                 if (old && old.id && old.id !== report.id) {
                     this.removeReport(old).subscribe(result => {
-                        observer.next();
+                        observer.next(null);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                 }
             }, err => {
                 console.error(err);
@@ -810,7 +812,7 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelReport, report, this.projectData).subscribe(result => {
-                observer.next();
+                observer.next(null);
             }, err => {
                 console.error(err);
                 this.notifySaveError(err);
@@ -832,21 +834,18 @@ export class ProjectService {
      * save the text to project
      * @param text
      */
-    setText(text: Text, old: Text) {
+    setText(text: LanguageText) {
         if (!this.projectData.texts) {
             this.projectData.texts = [];
         }
-        let exist = this.projectData.texts.find(tx => tx.name === text.name);
+        let exist = this.projectData.texts.find(tx => tx.id === text.id);
         if (exist) {
-            exist.group = text.group;
-            exist.value = text.value;
+            Utils.assign(exist, text);
         } else {
+            text.id ??= Utils.getShortGUID('w_');
             this.projectData.texts.push(text);
         }
-        this.storage.setServerProjectData(ProjectDataCmdType.SetText, text, this.projectData).subscribe(result => {
-            if (old && old.name && old.name !== text.name) {
-                this.removeText(old);
-            }
+        this.storage.setServerProjectData(ProjectDataCmdType.SetText, text, this.projectData).subscribe(_ => {
         }, err => {
             console.error(err);
             this.notifySaveError(err);
@@ -857,16 +856,61 @@ export class ProjectService {
      * remove the text from project
      * @param text
      */
-    removeText(text: Text) {
+    removeText(text: LanguageText) {
         if (this.projectData.texts) {
             for (let i = 0; i < this.projectData.texts.length; i++) {
-                if (this.projectData.texts[i].name === text.name) {
+                if (this.projectData.texts[i].id === text.id) {
                     this.projectData.texts.splice(i, 1);
                     break;
                 }
             }
         }
-        this.storage.setServerProjectData(ProjectDataCmdType.DelText, text, this.projectData).subscribe(result => {
+        this.storage.setServerProjectData(ProjectDataCmdType.DelText, text, this.projectData).subscribe(_ => {
+        }, err => {
+            console.error(err);
+            this.notifySaveError(err);
+        });
+    }
+    //#endregion
+
+    //#region Languages resource
+    /**
+     * get languages resource
+     */
+    getLanguages() {
+        return (this.projectData) ? (this.projectData.languages) ? this.projectData.languages : new Languages() : null;
+    }
+
+    /**
+     * save the text to project
+     * @param text
+     */
+    setLanguages(languages: Languages) {
+        this.projectData.languages = languages;
+        this.storage.setServerProjectData(ProjectDataCmdType.Languages, languages, this.projectData).subscribe(result => {
+        }, err => {
+            console.error(err);
+            this.notifySaveError(err);
+        });
+    }
+    //#endregion
+
+    //#region ClientAccess
+    /**
+     * get client access
+     */
+    getClientAccess(): ClientAccess {
+        return (this.projectData) ? (this.projectData.clientAccess) ? this.projectData.clientAccess : new ClientAccess() : null;
+    }
+
+    /**
+     * save client access
+     * @param text
+     */
+    setClientAccess(clientAccess: ClientAccess) {
+        this.projectData.clientAccess = clientAccess;
+        this.storage.setServerProjectData(ProjectDataCmdType.ClientAccess, clientAccess, this.projectData).subscribe(result => {
+            this.onLoadClientAccess.next();
         }, err => {
             console.error(err);
             this.notifySaveError(err);
@@ -934,8 +978,8 @@ export class ProjectService {
     }
     //#endregion
 
-    async getTagsValues(tagsIds: string[]): Promise<any[]> {
-        let values = await firstValueFrom(this.storage.getTagsValues(tagsIds));
+    async getTagsValues(tagsIds: string[], sourceScriptName?: string): Promise<any[]> {
+        let values = await firstValueFrom(this.storage.getTagsValues(tagsIds, sourceScriptName));
         return values;
     }
 

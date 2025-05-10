@@ -23,6 +23,7 @@ import { ReportsService } from '../../../../_services/reports.service';
 import { ReportColumnsType, ReportFile, ReportsFilter } from '../../../../_models/report';
 import * as FileSaver from 'file-saver';
 import { CommandService } from '../../../../_services/command.service';
+import { LanguageService } from '../../../../_services/language.service';
 
 declare const numeral: any;
 @Component({
@@ -78,6 +79,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         private hmiService: HmiService,
         private scriptService: ScriptService,
         private reportsService: ReportsService,
+        private languageService: LanguageService,
         private commandService: CommandService,
         public dialog: MatDialog,
         private translateService: TranslateService) { }
@@ -117,7 +119,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         try {
-            this.destroy$.next();
+            this.destroy$.next(null);
             this.destroy$.complete();
         } catch (e) {
             console.error(e);
@@ -306,8 +308,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 type: { stringValue: this.priorityText[alr.type] },
                 name: { stringValue: alr.name },
                 status: { stringValue: this.statusText[alr.status] },
-                text: { stringValue: alr.text },
-                group: { stringValue: alr.group },
+                text: { stringValue: this.languageService.getTranslation(alr.text) ?? alr.text },
+                group: { stringValue: this.languageService.getTranslation(alr.group) ?? alr.group },
                 ontime: { stringValue: format(new Date(alr.ontime), 'YYYY.MM.DD HH:mm:ss') },
                 color: alr.color,
                 bkcolor: alr.bkcolor,

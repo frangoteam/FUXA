@@ -29,7 +29,7 @@ module.exports = {
 
         /**
          * GET Project data
-         * Take from project storage and reply 
+         * Take from project storage and reply
          */
         prjApp.get("/api/project", secureFnc, function(req, res) {
             const permission = checkGroupsFnc(req);
@@ -113,7 +113,7 @@ module.exports = {
 
         /**
          * GET Project demo data
-         * Take the project demo file from server folder 
+         * Take the project demo file from server folder
          */
         prjApp.get("/api/projectdemo", secureFnc, function (req, res) {
             const data = runtime.project.getProjectDemo();
@@ -129,7 +129,7 @@ module.exports = {
 
         /**
          * GET Device property like security
-         * Take from project storage and reply 
+         * Take from project storage and reply
          */
         prjApp.get("/api/device", secureFnc, function(req, res) {
             const permission = checkGroupsFnc(req);
@@ -181,7 +181,7 @@ module.exports = {
                         res.status(400).json({error:"unexpected_error", message: err});
                         runtime.logger.error("api post device: " + err);
                     }
-                });                
+                });
             }
         });
 
@@ -198,20 +198,25 @@ module.exports = {
                 // let basedata = file.data.replace(/^data:.*,/, '');
                 // let basedata = file.data.replace(/^data:image\/png;base64,/, "");
                 let fileName = file.name.replace(new RegExp('../', 'g'), '');
+                let fullPath = file.fullPath || file.name;
+                fullPath = fullPath.replace(/(\.\.[/\\])/g, '');
+                fullPath = path.normalize(fullPath).replace(/^(\.\.[/\\])+/, '');
+
                 if (file.type !== 'svg') {
                     basedata = file.data.replace(/^data:.*,/, '');
                     encoding = {encoding: 'base64'};
                 }
-                var filePath = path.join(runtime.settings.uploadFileDir, fileName);
+                var filePath = path.join(runtime.settings.uploadFileDir, fullPath || fileName);
                 if (destination) {
                     const destinationDir = path.resolve(runtime.settings.appDir, `_${destination}`);
-                    if (!fs.existsSync(destinationDir)) {
-                        fs.mkdirSync(destinationDir);
+                    filePath = path.join(destinationDir, fullPath || fileName);
+                    const dir = path.dirname(filePath);
+                    if (!fs.existsSync(dir)) {
+                        fs.mkdirSync(dir, { recursive: true });
                     }
-                    filePath = path.join(destinationDir, fileName);
                 }
                 fs.writeFileSync(filePath, basedata, encoding);
-                let result = {'location': '/' + runtime.settings.httpUploadFileStatic + '/' + fileName };
+                let result = {'location': '/' + runtime.settings.httpUploadFileStatic + '/' + fullPath || fileName };
                 res.json(result);
             } catch (err) {
                 if (err && err.code) {

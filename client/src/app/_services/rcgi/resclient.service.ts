@@ -57,7 +57,7 @@ export class ResClientService implements ResourceStorageService {
                 if (prj) {
                     observer.next(JSON.parse(prj));
                 } else {
-                    observer.next();
+                    observer.next(null);
                 }
             }
         });
@@ -66,17 +66,17 @@ export class ResClientService implements ResourceStorageService {
     setServerProject(prj: ProjectData) {
         return new Observable((observer) => {
             if (!prj) {
-                observer.next();
+                observer.next(null);
             } else if (this.bridge) {
                 let sprj = ResourceStorageService.sanitizeProject(prj);
                 if (this.bridge.saveProject(sprj, true)) {
-                    observer.next();
+                    observer.next(null);
                 } else {
                     observer.error();
                 }
             } else {
                 this.saveInLocalStorage(prj);
-                observer.next();
+                observer.next(null);
             }
         });
     }
@@ -84,7 +84,7 @@ export class ResClientService implements ResourceStorageService {
     setServerProjectData(cmd: ProjectDataCmdType, data: any, prj: ProjectData) {
         return new Observable((observer) => {
             if (!prj) {
-                observer.next();
+                observer.next(null);
             } else if (this.bridge) {
                 let sprj = ResourceStorageService.sanitizeProject(prj);
                 if (this.bridge.saveProject(sprj, false)) {
@@ -92,13 +92,13 @@ export class ResClientService implements ResourceStorageService {
                     //     let sdevice = ResourceStorageService.sanitizeDevice(data);
                     //     this.bridge.deviceChange(sdevice);
                     // }
-                    observer.next();
+                    observer.next(null);
                 } else {
                     observer.error();
                 }
             } else {
                 this.saveInLocalStorage(prj);
-                observer.next();
+                observer.next(null);
             }
         });
     }
@@ -151,7 +151,7 @@ export class ResClientService implements ResourceStorageService {
 
     checkServer(): Observable<any> {
         return new Observable((observer) => {
-            observer.next();
+            observer.next(null);
         });
     }
 
@@ -165,7 +165,7 @@ export class ResClientService implements ResourceStorageService {
         });
     }
 
-    getTagsValues(query: string[]): Observable<any> {
+    getTagsValues(query: string[], sourceScriptName?: string): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');
         });

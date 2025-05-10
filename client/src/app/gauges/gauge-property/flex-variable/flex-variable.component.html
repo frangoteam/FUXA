@@ -1,7 +1,17 @@
 <div class="container">
-    <div class="my-form-field value" *ngIf="withStaticValue">
+    <div class="my-form-field value" *ngIf="withStaticValue || withStaticType">
         <span>{{variableLabel | translate}}</span>
-        <input [(ngModel)]="variableValue" (change)="onChanged()" style="width: 100px" type="text">
+        <ng-container [ngSwitch]="withStaticType">
+            <ng-container *ngSwitchCase="'color'">
+                <input [(colorPicker)]="variableValue" [cpAlphaChannel]="'always'" class="input-color" [style.background]="variableValue"
+                       [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                       [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" [cpPosition]="'auto'"
+                       (colorPickerChange)="onChanged()" style="width:80px;"/>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+                <input [(ngModel)]="variableValue" (change)="onChanged()" style="width: 80px" type="text">
+            </ng-container>
+        </ng-container>
     </div>
     <div class="my-form-field link" *ngIf="!readonly">
         <span class="span-link">{{tagLabel | translate}}</span>
@@ -35,5 +45,5 @@
             <input value="{{getVariableMask()}}" readonly="true" [disabled]="true">
             <mat-icon class="header-icon" (click)="onSetBitmask()">arrow_drop_down</mat-icon>
         </div>
-    </div>    
+    </div>
 </div>

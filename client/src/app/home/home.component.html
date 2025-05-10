@@ -32,7 +32,7 @@
 								[style.marginLeft.px]="item.marginLeft"
 								[style.marginRight.px]="item.marginRight">
 								<mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-							{{ item.property?.text ?? item.type }}
+							{{ item.text ?? item.type }}
 						</button>
 					</ng-container>
 					<ng-container *ngSwitchCase="'label'">
@@ -44,7 +44,7 @@
 								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
 								[style.marginLeft.px]="item.marginLeft"
 								[style.marginRight.px]="item.marginRight">
-							{{ item.property?.text ?? item.type }}
+							{{ item.text ?? item.type }}
 						</button>
 					</ng-container>
 					<ng-container *ngSwitchCase="'image'">
@@ -74,6 +74,17 @@
 				</div>
 				<div class="header-date-time" *ngIf="layoutHeader.dateTimeDisplay">
                     {{ currentDateTime | date: layoutHeader.dateTimeDisplay }}
+				</div>
+				<div *ngIf="layoutHeader.language && layoutHeader.language !== 'nothing' && language$ | async as language" class="header-language">
+					<button mat-icon-button [matMenuTriggerFor]="languageMenu">
+						<mat-icon aria-label="Language">language</mat-icon>
+					</button>
+					<div *ngIf="layoutHeader.language === 'key' && language.currentLanguage" class="inbk">{{ language.currentLanguage.id }}</div>
+					<div *ngIf="layoutHeader.language === 'fullname' && language.currentLanguage" class="inbk">{{ language.currentLanguage.name }}</div>
+					<mat-menu #languageMenu [overlapTrigger]="false">
+                        <button mat-menu-item (click)="onSetLanguage(language.default)" style="font-size: 14px;">{{ language.default?.id }} ({{ language.default?.name }})</button>
+                        <button mat-menu-item *ngFor="let languageOption of language.options" (click)="onSetLanguage(languageOption)" style="font-size: 14px;">{{ languageOption.id }} ({{ languageOption.name }})</button>
+                    </mat-menu>
 				</div>
 				<div *ngIf="securityEnabled" class="header-login">
 					<button mat-icon-button (click)="onLogin()">

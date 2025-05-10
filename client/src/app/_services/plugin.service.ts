@@ -27,14 +27,14 @@ export class PluginService {
             if (environment.serverEnabled) {
                 let header = new HttpHeaders({ 'Content-Type': 'application/json' });
                 this.http.post<any>(this.endPointConfig + '/api/plugins', { headers: header, params: plugin }).subscribe(result => {
-                    observer.next();
+                    observer.next(null);
                     this.onPluginsChanged.emit();
                 }, err => {
                     console.error(err);
                     observer.error(err);
                 });
             } else {
-                observer.next();
+                observer.next(null);
             }
         });
     }
@@ -44,14 +44,14 @@ export class PluginService {
             if (environment.serverEnabled) {
                 let header = new HttpHeaders({ 'Content-Type': 'application/json' });
                 this.http.delete<any>(this.endPointConfig + '/api/plugins', { headers: header, params: {param:  plugin.name} }).subscribe(result => {
-                    observer.next();
+                    observer.next(null);
                     this.onPluginsChanged.emit();
                 }, err => {
                     console.error(err);
                     observer.error(err);
                 });
             } else {
-                observer.next();
+                observer.next(null);
             }
         });
     }

@@ -9,9 +9,9 @@
 						<span>{{'gauges.property-name' | translate}}</span>
 						<input [(ngModel)]="data.settings.name" style="width: 220px" type="text">
 					</div>
-					<div class="my-form-field" style="vertical-align: bottom; margin-left: 13px;">
+					<div class="my-form-field ml10" style="vertical-align: bottom;">
 						<span>{{'gauges.property-permission' | translate}}</span>
-						<div style="text-align:center;cursor:pointer;" class="my-form-field-permission" (click)="onEditPermission()">
+						<div style="text-align:center;" class="my-form-field-permission pointer" (click)="onEditPermission()">
 							<mat-icon *ngIf="havePermission(); else unlock"
 									  class="header-icon"
 									  style="line-height: 28px;">lock</mat-icon>
@@ -21,9 +21,9 @@
 							</ng-template>
 						</div>
 					</div>
-					<div class="my-form-field" style="padding-left: 56px" *ngIf="isTextToShow()">
+					<div class="my-form-field ml10" *ngIf="isTextToShow()">
 						<span>{{'gauges.property-text' | translate}}</span>
-						<input [(ngModel)]="property.text" style="width: 220px" type="text" placeholder="{{data.settings.name}}">
+						<input [(ngModel)]="property.text" style="width: 270px" type="text" placeholder="{{'gauges.property-language-text' | translate}}">
 					</div>
 					<div class="my-form-field" style="padding-left: 100px" *ngIf="isReadonlyToShow()">
 						<span>{{'gauges.property-readonly' | translate}}</span>
