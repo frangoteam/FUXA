@@ -258,7 +258,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     isToEdit(type, tag: Tag) {
         if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer ||
-            type === DeviceType.OPCUA || type === DeviceType.GPIO) {
+            type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.ADSclient) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -310,6 +310,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                 this.bindToTable(this.deviceSelected.tags);
             });
             return;
+        }
+        if (this.deviceSelected.type === DeviceType.ADSclient) {
+            this.tagPropertyService.editTagPropertyADSclient(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return
         }
         if (this.deviceSelected.type === DeviceType.GPIO) {
             this.tagPropertyService.editTagPropertyGpio(this.deviceSelected, tag, checkToAdd).subscribe(result => {
@@ -404,5 +411,3 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 export interface Element extends Tag {
     position: number;
 }
-
-
