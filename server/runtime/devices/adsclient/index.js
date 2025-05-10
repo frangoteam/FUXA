@@ -150,7 +150,7 @@ function ADSclient(_data, _logger, _events) {
                         symbols.push(tag);
                     }
 
-					logger.warn(symbols);
+					// logger.warn(symbols);
 
                     resolve(symbols);
                 } catch (err) {
