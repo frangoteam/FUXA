@@ -13,6 +13,7 @@ import { DaqQuery } from '../_models/hmi';
 import { AlarmsType } from '../_models/alarm';
 import { ToastNotifierService } from './toast-notifier.service';
 import { AuthService } from './auth.service';
+import { DeviceAdapterService } from '../device-adapter/device-adapter.service';
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +26,7 @@ export class ScriptService {
         private projectService: ProjectService,
         private hmiService: HmiService,
         private authService: AuthService,
+        private deviceAdapaterService: DeviceAdapterService,
         private toastNotifier: ToastNotifierService
     ) {
         this.projectService.onLoadClientAccess.subscribe(() => {
@@ -128,6 +130,7 @@ export class ScriptService {
         code = code.replace(/\$enableDevice\(/g, 'this.$enableDevice(');
         code = code.replace(/\$getDeviceProperty\(/g, 'await this.$getDeviceProperty(');
         code = code.replace(/\$setDeviceProperty\(/g, 'await this.$setDeviceProperty(');
+        code = code.replace(/\$setAdapterToDevice\(/g, 'this.$setAdapterToDevice(');
         code = code.replace(/\$invokeObject\(/g, 'this.$invokeObject(');
         code = code.replace(/\$runServerScript\(/g, 'this.$runServerScript(');
         code = code.replace(/\$getHistoricalTags\(/g, 'this.$getHistoricalTags(');
@@ -192,6 +195,10 @@ export class ScriptService {
 
     public async $setDeviceProperty(deviceName: string, property: any) {
         return await this.projectService.runSysFunctionSync('$setDeviceProperty', [deviceName, property]);
+    }
+
+    public async $setAdapterToDevice(adapterName: string, deviceName: string) {
+        return await this.deviceAdapaterService.setTargetDevice(adapterName, deviceName, this.hmiService.clearSignalValues.bind(this.hmiService));
     }
 
     public $invokeObject(gaugeName: string, fncName: string, ...params: any[]) {

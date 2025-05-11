@@ -536,11 +536,13 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     plcs(): Device[] {
         return <Device[]>Object.values(this.devices).filter((d: Device) => d.type !== DeviceType.WebAPI
             && d.type !== DeviceType.FuxaServer
-            && d.type !== DeviceType.ODBC);
+            && d.type !== DeviceType.ODBC
+            && d.type !== DeviceType.internal);
     }
 
     flows(): Device[] {
         return <Device[]>Object.values(this.devices).filter((d: Device) => d.type === DeviceType.WebAPI
-            || d.type === DeviceType.ODBC);
+            || d.type === DeviceType.ODBC
+            || d.type === DeviceType.internal);
     }
 }
