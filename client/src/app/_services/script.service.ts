@@ -198,7 +198,7 @@ export class ScriptService {
     }
 
     public async $setAdapterToDevice(adapterName: string, deviceName: string) {
-        return await this.deviceAdapaterService.setTargetDevice(adapterName, deviceName, this.hmiService.clearSignalValues.bind(this.hmiService));
+        return await this.deviceAdapaterService.setTargetDevice(adapterName, deviceName, this.hmiService.initSignalValues.bind(this.hmiService));
     }
 
     public $invokeObject(gaugeName: string, fncName: string, ...params: any[]) {

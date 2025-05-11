@@ -114,10 +114,10 @@ export class HmiService {
         return this.variables;
     }
 
-    public clearSignalValues(sigIds: string[]) {
-        for (const sigId of sigIds) {
-            if (this.variables[sigId]) {
-                this.variables[sigId].value = null;
+    public initSignalValues(sigIds: Record<string, string>) {
+        for (const [adapterId, deviceId] of Object.entries(sigIds)) {
+            if (!Utils.isNullOrUndefined(this.variables[adapterId])) {
+                this.variables[adapterId].value = this.variables[deviceId]?.value || null;
             }
         }
     }
@@ -217,7 +217,7 @@ export class HmiService {
         // devices values
         this.socket.on(IoEventTypes.DEVICE_VALUES, (message) => {
             const updateVariable = (id: string, value: any, timestamp: any) => {
-                if (!this.variables[id]) {
+                if (Utils.isNullOrUndefined(this.variables[id])) {
                     this.variables[id] = new Variable(id, null, null);
                 }
                 this.variables[id].value = value;

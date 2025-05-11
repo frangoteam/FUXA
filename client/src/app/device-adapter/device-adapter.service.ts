@@ -35,7 +35,7 @@ export class DeviceAdapterService {
         });
     }
 
-    setTargetDevice(adapterName: string, deviceName: string, onClearValue?: (adapterIds: string[]) => void) {
+    setTargetDevice(adapterName: string, deviceName: string, onInitValue?: (adapterIds: Record<string, string>) => void) {
         const device = this.projectService.getDeviceList().find(device => device.name === deviceName);
         const adapter = this.adapterMapping[adapterName];
         if (!adapter) {
@@ -48,7 +48,8 @@ export class DeviceAdapterService {
         if (device) {
             const adapterIdsThatMatch = this.setMatchIdsAdapterDevice(device, Object.values(adapter.tags));
             this.mapAdapterIdsWithDevice(adapterIdsThatMatch);
-            onClearValue?.(Object.keys(adapterIdsThatMatch));
+            onInitValue?.(adapterIdsThatMatch);
+            // onClearValue?.(Object.keys(adapterIdsThatMatch));
         } else if (deviceName) {
             console.error(`Device not found: ${deviceName}`);
         }
