@@ -54,11 +54,12 @@
               "pdfmake/build/pdfmake",
               "pdfmake/build/vfs_fonts",
               "socket.io-client",
-                "eventemitter3",
-                "delegate",
-                "flv.js",
-                "danmu.js",
-                "downloadjs"
+              "eventemitter3",
+              "delegate",
+              "flv.js",
+              "danmu.js",
+              "downloadjs",
+              "leaflet"
             ]
           },
           "configurations": {
