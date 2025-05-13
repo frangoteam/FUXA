@@ -469,6 +469,8 @@
     "table.customize-column-edit": "Edit column",
     "table.customize-column-add": "Add column",
     "table.customize-column-remove": "Delete column",
+    "table.customize-column-left": "Move to left",
+    "table.customize-column-right": "Move to right",
     "table.customize-row-edit": "Edit row",
     "table.customize-row-add": "Add row",
     "table.customize-row-remove": "Delete row",

@@ -15,6 +15,14 @@
                     <mat-menu #optionsgMenu [overlapTrigger]="false">
                         <button mat-menu-item (click)="onEditColumn(column)" style="font-size: 14px;">{{'table.customize-column-edit' | translate}}</button>
                         <button mat-menu-item (click)="onRemoveColumn(column)" style="font-size: 14px;">{{'table.customize-column-remove' | translate}}</button>
+                        <button mat-menu-item (click)="onMoveColumnLeft(i)" style="font-size: 14px;" [disabled]="i === 0">
+                            <mat-icon style="margin-right: unset">west</mat-icon>
+                            {{'table.customize-column-left' | translate}}
+                        </button>
+                        <button mat-menu-item (click)="onMoveColumnRight(i)" style="font-size: 14px;" [disabled]="i === displayedColumns.length - 1">
+                            <mat-icon style="margin-right: unset">east</mat-icon>
+                            {{'table.customize-column-right' | translate}}
+                        </button>
                     </mat-menu>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" >

@@ -152,6 +152,22 @@ export class TableCustomizerComponent implements OnInit {
         return '';
     }
 
+    onMoveColumnLeft(index: number) {
+        if (index > 0) {
+            [this.data.columns[index - 1], this.data.columns[index]] =
+                [this.data.columns[index], this.data.columns[index - 1]];
+            this.loadData();
+        }
+    }
+
+    onMoveColumnRight(index: number) {
+        if (index < this.data.columns.length - 1) {
+            [this.data.columns[index + 1], this.data.columns[index]] =
+                [this.data.columns[index], this.data.columns[index + 1]];
+            this.loadData();
+        }
+    }
+
     onNoClick(): void {
         this.dialogRef.close();
     }
