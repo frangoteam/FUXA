@@ -13,15 +13,43 @@
                         <mat-icon>more_vert</mat-icon>
                     </button>
                     <mat-menu #optionsgMenu [overlapTrigger]="false">
-                        <button mat-menu-item (click)="onEditColumn(column)" style="font-size: 14px;">{{'table.customize-column-edit' | translate}}</button>
-                        <button mat-menu-item (click)="onRemoveColumn(column)" style="font-size: 14px;">{{'table.customize-column-remove' | translate}}</button>
+                        <button mat-menu-item (click)="onEditColumn(column)" class="table-menu-item">
+                            <mat-icon>edit</mat-icon>
+                            {{'table.customize-column-edit' | translate}}
+                        </button>
+                        <button mat-menu-item (click)="onMoveColumnLeft(i)" class="table-menu-item" [disabled]="i === 0">
+                            <mat-icon>west</mat-icon>
+                            {{'table.customize-column-left' | translate}}
+                        </button>
+                        <button mat-menu-item (click)="onMoveColumnRight(i)" class="table-menu-item" [disabled]="i === displayedColumns.length - 1">
+                            <mat-icon>east</mat-icon>
+                            {{'table.customize-column-right' | translate}}
+                        </button>
+                        <button mat-menu-item (click)="onRemoveColumn(column)" class="table-menu-item">
+                            <mat-icon>delete</mat-icon>
+                            {{'table.customize-column-remove' | translate}}
+                        </button>
                     </mat-menu>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" >
                     <mat-cell *ngIf="i === 0" class="data-table-remove-row">
-                        <button mat-icon-button (click)="$event.stopPropagation();onRemoveRow(element)" class="remove" matTooltip="{{'table.customize-row-remove' | translate}}">
-                            <mat-icon>clear</mat-icon>
+                        <button mat-icon-button [matMenuTriggerFor]="rowMenu" (click)="$event.stopPropagation()" class="row-options">
+                            <mat-icon>more_vert</mat-icon>
                         </button>
+                        <mat-menu #rowMenu="matMenu">
+                            <button mat-menu-item (click)="onMoveRowUp(element)" class="table-menu-item" [disabled]="dataSource.data.indexOf(element) === 0">
+                                <mat-icon>arrow_upward</mat-icon>
+                                {{'table.customize-row-up' | translate}}
+                            </button>
+                            <button mat-menu-item (click)="onMoveRowDown(element)" class="table-menu-item" [disabled]="dataSource.data.indexOf(element) === dataSource.data.length - 1">
+                                <mat-icon>arrow_downward</mat-icon>
+                                {{'table.customize-row-down' | translate}}
+                            </button>
+                            <button mat-menu-item (click)="onRemoveRow(element)" class="table-menu-item">
+                                <mat-icon>delete</mat-icon>
+                                {{'table.customize-row-remove' | translate}}
+                            </button>
+                        </mat-menu>
                     </mat-cell>
                     <div class="data-table-cell">
                         <span style="display: block; font-size: 12px;">{{getCellType(element[column])}} </span>
