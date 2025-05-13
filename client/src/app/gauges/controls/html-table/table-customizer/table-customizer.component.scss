@@ -58,4 +58,11 @@
         display: block;
         margin-top: 10px;
     }
+
+    .table-menu-item {
+        font-size: 14px;
+    }
+}
+::ng-deep .table-menu-item .mat-icon {
+    font-size: 20px;
 }

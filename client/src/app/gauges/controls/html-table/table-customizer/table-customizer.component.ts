@@ -168,6 +168,26 @@ export class TableCustomizerComponent implements OnInit {
         }
     }
 
+    onMoveRowUp(row) {
+        const index = this.dataSource.data.indexOf(row);
+        if (index > 0) {
+            const temp = this.data.rows[index];
+            this.data.rows[index] = this.data.rows[index - 1];
+            this.data.rows[index - 1] = temp;
+            this.loadData();
+        }
+    }
+
+    onMoveRowDown(row) {
+        const index = this.dataSource.data.indexOf(row);
+        if (index < this.data.rows.length - 1) {
+            const temp = this.data.rows[index];
+            this.data.rows[index] = this.data.rows[index + 1];
+            this.data.rows[index + 1] = temp;
+            this.loadData();
+        }
+    }
+
     onNoClick(): void {
         this.dialogRef.close();
     }
