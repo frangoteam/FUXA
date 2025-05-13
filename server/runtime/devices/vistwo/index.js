@@ -213,8 +213,12 @@ function DeviceVistwo(_data, _logger, _events) {
     /**
      * Return Tag property to show in frontend
      */
-    this.getTagProperty = function (tagid) {
-//      console.error('vistwo: getTagProperty not supported');
+    this.getTagProperty = function (topic) {
+        if (data.tags[topic]) {
+            return { id: topic, name: data.tags[topic].name, type: data.tags[topic].type, format: data.tags[topic].format };
+        } else {
+            return null;
+        }
     }
 
     /**
