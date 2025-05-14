@@ -156,7 +156,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
             this.lastDaqQuery.event = ev;
             this.lastDaqQuery.gid = this.id;
-            this.lastDaqQuery.sids = Object.keys(this.tagsColumnMap);
+            this.lastDaqQuery.sids = this.getVariableIdsForQuery();
             this.lastDaqQuery.from = this.range.from;
             this.lastDaqQuery.to = this.range.to;
             this.onDaqQuery();
@@ -172,7 +172,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.range.from = dateRange.start;
                 this.range.to = dateRange.end;
                 this.lastDaqQuery.gid = this.id;
-                this.lastDaqQuery.sids = Object.keys(this.tagsColumnMap);
+                this.lastDaqQuery.sids = this.getVariableIdsForQuery();
                 this.lastDaqQuery.from = dateRange.start;
                 this.lastDaqQuery.to = dateRange.end;
                 this.onDaqQuery();
@@ -227,76 +227,78 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    setValues(values) {
-        // merge the data to have rows with 0:timestamp, n:variable values
+    setValues(values: { dt: number; value: string }[][]) {
         const rounder = { H: 3600000, m: 60000, s: 1000 };
         const roundIndex = rounder[this.historyDateformat?.[this.historyDateformat?.length - 1]] ?? 1;
-        let data = [];
-        data.push([]);    // timestamp, index 0
-        let xmap = {};
-        for (var i = 0; i < values.length; i++) {
-            data.push([]);    // line
-            for (var x = 0; x < values[i].length; x++) {
-                let t = Math.round(values[i][x].dt / roundIndex) * roundIndex;
-                if (data[0].indexOf(t) === -1) {
-                    data[0].push(t);
-                    xmap[t] = {};
-                }
-                xmap[t][i] = values[i][x].value;
+
+        const timestampsSet = new Set<number>();
+        const mergedMap = new Map<number, Record<string, string>>(); // timestamp -> { columnId: value }
+
+        // Find columns of type variable in order
+        const variableColumns = this.displayedColumns
+            .map(colId => this.columnsStyle[colId])
+            .filter(col => col.type === TableCellType.variable);
+
+        // xmap construction with rounded timestamps
+        values.forEach((variableValues, varIndex) => {
+            const column = variableColumns[varIndex];
+            if (!column) {
+                return;
             }
-        }
-        data[0].sort((a, b) => b - a);
-        for (var i = 0; i < data[0].length; i++) {
-            let t = data[0][i];
-            for (var x = 1; x < data.length; x++) {
-                if (xmap[t][x - 1] !== undefined) {
-                    data[x].push(xmap[t][x - 1]);
-                } else {
-                    data[x].push(null);
+
+            variableValues.forEach(entry => {
+                const roundedTime = Math.round(entry.dt / roundIndex) * roundIndex;
+                if (!mergedMap.has(roundedTime)) {
+                    mergedMap.set(roundedTime, {});
                 }
-            }
-        }
-        for (var x = 1; x < data.length; x++) {
-            let lastValue = null;
-            for (var i = data[x].length - 1; i >= 0; i--) {
-                if (data[x][i] === null) {
-                    data[x][i] = lastValue;
-                } else {
-                    lastValue = data[x][i];
-                }
-            }
-        }
-        // create the table data
-        let dataTable = [];
-        for (let i = 0; i < data[0].length; i++) {
-            // create the row
-            let row = {};
-            let colPos = 1;
-            for (let x = 0; x < this.displayedColumns.length; x++) {
-                let column = <TableColumn>this.columnsStyle[this.displayedColumns[x]];
-                row[column.id] = <TableCellData>{ stringValue: '' };
+                mergedMap.get(roundedTime)![column.id] = entry.value;
+                timestampsSet.add(roundedTime);
+            });
+        });
+
+        const sortedTimestamps = Array.from(timestampsSet).sort((a, b) => b - a);
+
+        // Filling columns with timestamps and values
+        const filledRows: Record<string, SimpleCellData>[] = [];
+
+        // For each timestamp, construct the line
+        sortedTimestamps.forEach(t => {
+            const row: Record<string, SimpleCellData> = {};
+            this.displayedColumns.forEach(colId => {
+                const column = this.columnsStyle[colId];
+                row[colId] = { stringValue: '' };
+
                 if (column.type === TableCellType.timestamp) {
-                    row[column.id].stringValue = format(new Date(data[0][i]), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
-                    row[column.id].timestamp = data[0][i];
-                } else if (column.type === TableCellType.variable) {
-                    const tempValue = data[x][i];
-                    if (Utils.isNumeric(tempValue)) {
-                        row[column.id].stringValue = (data[colPos][i]) ? Utils.formatValue(tempValue, column.valueFormat) : '';
-                    } else {
-                        row[column.id].stringValue = tempValue;
-                    }
-                    colPos++;
+                    row[colId].stringValue = format(new Date(t), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                    row[colId].rowIndex = t;
                 } else if (column.type === TableCellType.device) {
-                    row[column.id].stringValue = column.exname;
+                    row[colId].stringValue = column.exname;
+                } else if (column.type === TableCellType.variable) {
+                    const val = mergedMap.get(t)?.[colId] ?? null;
+                    if (Utils.isNumeric(val)) {
+                        row[colId].stringValue = Utils.formatValue(val, column.valueFormat);
+                    } else {
+                        row[colId].stringValue = val ?? '';
+                    }
+                }
+            });
+            filledRows.push(row);
+        });
+
+        // Fill in forward missing values for variable columns
+        for (const col of variableColumns) {
+            let lastValue: string = '';
+            for (let i = filledRows.length - 1; i >= 0; i--) {
+                if (!filledRows[i][col.id].stringValue) {
+                    filledRows[i][col.id].stringValue = lastValue;
+                } else {
+                    lastValue = filledRows[i][col.id].stringValue;
                 }
             }
-            dataTable.push(row);
         }
-        this.dataSource.data = dataTable;
+        this.dataSource.data = filledRows;
         this.bindTableControls();
-        setTimeout(() => {
-            this.setLoading(false);
-        }, 500);
+        setTimeout(() => this.setLoading(false), 500);
         this.reloadActive = false;
     }
 
@@ -579,6 +581,13 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.tagsColumnMap[cell.variableId].push(cell);
     }
 
+    private getVariableIdsForQuery(): string[] {
+        return this.tableOptions.columns
+            .filter(col => col.type === TableCellType.variable && col.variableId)
+            .map(col => col.variableId)
+            .filter(varId => Object.prototype.hasOwnProperty.call(this.tagsColumnMap, varId));
+    }
+
     isAlarmsType(): boolean {
         return this.type === TableType.alarms || this.type === TableType.alarmsHistory;
     }
@@ -700,8 +709,14 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 }
 
 export class TableCellData extends TableCell {
-    rowIndex: number;
+    rowIndex?: number;
     stringValue: string;
+}
+
+interface SimpleCellData {
+    rowIndex?: number;
+    stringValue: string;
+    timestamp?: number;
 }
 
 interface ITagMap {
