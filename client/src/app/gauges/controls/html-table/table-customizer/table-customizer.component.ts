@@ -154,16 +154,22 @@ export class TableCustomizerComponent implements OnInit {
 
     onMoveColumnLeft(index: number) {
         if (index > 0) {
-            [this.data.columns[index - 1], this.data.columns[index]] =
-                [this.data.columns[index], this.data.columns[index - 1]];
+            [this.data.columns[index - 1], this.data.columns[index]] = [this.data.columns[index], this.data.columns[index - 1]];
+            this.data.rows.forEach(row => {
+                [row.cells[index - 1], row.cells[index]] =
+                    [row.cells[index], row.cells[index - 1]];
+            });
             this.loadData();
         }
     }
 
     onMoveColumnRight(index: number) {
         if (index < this.data.columns.length - 1) {
-            [this.data.columns[index + 1], this.data.columns[index]] =
-                [this.data.columns[index], this.data.columns[index + 1]];
+            [this.data.columns[index + 1], this.data.columns[index]] = [this.data.columns[index], this.data.columns[index + 1]];
+            this.data.rows.forEach(row => {
+                [row.cells[index + 1], row.cells[index]] =
+                    [row.cells[index], row.cells[index + 1]];
+            });
             this.loadData();
         }
     }
