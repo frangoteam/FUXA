@@ -366,7 +366,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
      * to add or edit MQTT topic for subscription or publish
      */
     editTopics(topic: Tag = null) {
-        if (topic && topic.options && topic.options.subs) {
+        if (topic && topic.options && topic.options.subs && topic.type === 'json') {
             // edit only name (subscription)
             let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (t.id !== topic.id) {return t;} }).map((t: Tag) => t.name);
             let dialogRef = this.dialog.open(EditNameComponent, {

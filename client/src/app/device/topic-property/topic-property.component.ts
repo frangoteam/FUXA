@@ -44,6 +44,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
     itemTimestamp = Utils.getEnumKey(MqttItemType, MqttItemType.timestamp);
     itemValue = Utils.getEnumKey(MqttItemType, MqttItemType.value);
     itemStatic = Utils.getEnumKey(MqttItemType, MqttItemType.static);
+    editSubscription = false;
 
     constructor(
         private hmiService: HmiService,
@@ -82,6 +83,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
             if (tag.options) {
                 if (tag.options.subs) {
                     // sure a subscription
+                    this.editSubscription = true;
                     this.grptabs.selectedIndex = 0;
                     this.tabpub.disabled = true;
                     this.topicSelectedSubType = tag.type;
@@ -161,7 +163,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
                     }
                     this.topicContent.push({ key: key, value: obj[key], checked: checked, type: this.topicSelectedSubType });
                 });
-            } else if (this.selectedTopic.value?.content) {
+            } else if (!Utils.isNullOrUndefined(this.selectedTopic.value?.content) || this.editSubscription) {
                 this.topicContent =  [{ name: this.selectedTopic.name, key: this.selectedTopic.key, value: this.selectedTopic.value?.content, checked: true, type: this.topicSelectedSubType }];
             }
         }

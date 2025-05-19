@@ -45,12 +45,15 @@
                                type="text">
                     </div>
                     <div class="my-form-field add-payload">
-                        <button mat-icon-button (click)="onAddSubscribeAttribute()" [disabled]="!this.selectedTopic.key">
+                        <button mat-icon-button (click)="onAddSubscribeAttribute()" [disabled]="!this.selectedTopic.key || editSubscription">
                             <mat-icon>add_circle_outline</mat-icon>
                         </button>
                         {{'device.topic-publish-add-item' | translate}}
                     </div>
-                    <mat-button-toggle-group class="toggle-group" [(ngModel)]="topicSelectedSubType" (change)="onSubTopicValChange($event.value)">
+                    <mat-button-toggle-group class="toggle-group"
+                                             [(ngModel)]="topicSelectedSubType"
+                                             (change)="onSubTopicValChange($event.value)"
+                                             [disabled]="editSubscription">
                         <mat-button-toggle value="raw">{{'device.topic-raw' | translate}}</mat-button-toggle>
                         <mat-button-toggle value="json">{{'device.topic-json' | translate}}</mat-button-toggle>
                     </mat-button-toggle-group>
@@ -66,7 +69,7 @@
                             <div class="topic">
                                 <div class="topic-name">
                                     <input [(ngModel)]="tcontent.name" type="text">
-                                </div>     
+                                </div>
                                 <div class="topic-name">
                                     <input [(ngModel)]="tcontent.key" type="text" [disabled]="topicSelectedSubType === 'raw'">
                                 </div>
@@ -132,7 +135,7 @@
                                     <div *ngSwitchCase="itemStatic" class="my-form-field" style="margin-bottom: 5px;">
                                         <span>{{'device.topic-publish-static' | translate}}</span>
                                         <input [(ngModel)]="item.value" (keyup)="stringifyPublishItem()" style="width: 478px;" type="text">
-                                    </div>                                    
+                                    </div>
                                 </div>
                                 <div style="float: right;padding-top: 5px;">
                                     <button mat-icon-button (click)="onRemovePublishItem(i)" class="remove">
