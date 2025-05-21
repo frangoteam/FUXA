@@ -3,15 +3,16 @@
  */
 
 'use strict';
-const ads = require('ads-client');
+var ads;
 var utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
-function ADSclient(_data, _logger, _events) {
+function ADSclient(_data, _logger, _events, _runtime) {
 
     var data = JSON.parse(JSON.stringify(_data)); // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;
     var events = _events;               // Events to commit change to runtime
+    var runtime = _runtime;
     var working = false;                // Working flag to manage overloading polling and connection
     var connected = false;              // Connected flag
     var lastStatus = '';                // Last connections status
@@ -464,8 +465,11 @@ function ADSclient(_data, _logger, _events) {
 module.exports = {
     init: function (settings) {
     },
-    create: function (data, logger, events, manager) {
-        return new ADSclient(data, logger, events);
+    create: function (data, logger, events, manager, runtime) {
+        try { ads = require('ads-client'); } catch { }
+        if (!ads && manager) { try { snap7 = manager.require('ads-client'); } catch { } }
+        if (!ads) return null;
+        return new ADSclient(data, logger, events, runtime);
     }
 }
 

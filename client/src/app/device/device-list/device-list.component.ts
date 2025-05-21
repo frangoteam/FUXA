@@ -316,7 +316,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                 this.tagsMap[tag.id] = tag;
                 this.bindToTable(this.deviceSelected.tags);
             });
-            return
+            return;
         }
         if (this.deviceSelected.type === DeviceType.GPIO) {
             this.tagPropertyService.editTagPropertyGpio(this.deviceSelected, tag, checkToAdd).subscribe(result => {

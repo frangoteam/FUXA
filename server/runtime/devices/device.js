@@ -94,7 +94,7 @@ function Device(data, runtime) {
         if (!ADSclient) {
             return null;
         }
-        comm = ADSclient.create(data, logger, events, manager);
+        comm = ADSclient.create(data, logger, events, manager, runtime);
     }
     else if (data.type === DeviceEnum.GPIO) {
         if (!GpioClient) {
