@@ -39,7 +39,7 @@ export class Device {
         id: 'Device id, GUID',
         name: 'Device name',
         enabled: 'Enabled',
-        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP |Gpio',
+        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | ADSclient | Gpio',
         polling: 'Polling interval in millisec., check changed value after ask value, by OPCUA there is a monitor',
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
@@ -239,6 +239,7 @@ export enum DeviceType {
     internal = 'internal',
     EthernetIP = 'EthernetIP',
     ODBC = 'ODBC',
+    ADSclient = 'ADSclient',
     GPIO = 'GPIO',
     // Template: 'template'
 }
@@ -291,6 +292,12 @@ export enum OpcUaTagType {
     DateTime = 'DateTime',
     Guid = 'Guid',
     ByteString = 'ByteString'
+}
+
+export enum AdsClientTagType {
+    Number = 'number',
+    Boolean = 'boolean',
+    String = 'string'
 }
 
 export enum ModbusOptionType {
