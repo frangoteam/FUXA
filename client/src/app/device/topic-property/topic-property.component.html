@@ -77,7 +77,7 @@
                                     {{tcontent.value}}
                                 </div>
                                 <div class="topic-check">
-                                    <mat-checkbox [(ngModel)]="tcontent.checked" (change)="isSubscriptionValid()" value="true"></mat-checkbox>
+                                    <mat-checkbox [(ngModel)]="tcontent.checked" (change)="isSubscriptionValid()" value="true" [disabled]="editSubscription"></mat-checkbox>
                                 </div>
                             </div>
                         </div>

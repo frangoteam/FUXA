@@ -853,7 +853,9 @@ export class GaugesManager {
                 this.setTablePropety(gauge, ga.property, targetSignalsId);
                 this.mapTable[ga.id] = gauge;
                 gauge.onTimeRange$.subscribe(data => {
-                    this.hmiService.queryDaqValues(data);
+                    if (data) {
+                        this.hmiService.queryDaqValues(data);
+                    }
                 });
                 this.mapGauges[ga.id] = gauge;
             }
