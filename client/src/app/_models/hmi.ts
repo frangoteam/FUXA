@@ -307,6 +307,7 @@ export enum GaugeActionsType {
     rotate = 'shapes.action-rotate',
     move = 'shapes.action-move',
     monitor = 'shapes.action-monitor',
+    refreshImage = 'shapes.action-refreshImage',
 }
 
 export class GaugeAction {
@@ -385,6 +386,7 @@ export enum GaugeEventActionType {
     onRunScript = 'shapes.event-onrunscript',
     onViewToPanel = 'shapes.event-onViewToPanel',
     onMonitor = 'shapes.event-onmonitor',
+    onRefreshImage = 'shapes.event-onRefreshImage',
 }
 
 export enum ViewEventType {

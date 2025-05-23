@@ -5,14 +5,17 @@
 'use strict';
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
+const path = require('path');
+const fs = require('fs');
 var NodeWebcam;
 
-function WebCamClient(_data, _logger, _events, _manager) {
+function WebCamClient(_data, _logger, _events, _manager, _runtime) {
 
     var data = JSON.parse(JSON.stringify(_data)); // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;
     var events = _events; // Events to commit change to runtime
     var manager = _manager;
+    var runtime = _runtime;             // Access runtime config such as scripts
     var tagMap = {}
     var camMap = {}
     var varsValue = [];                 // Signal to send to frontend { id, type, value }
@@ -31,8 +34,10 @@ function WebCamClient(_data, _logger, _events, _manager) {
      * Emit connection status to clients, clear all Tags values
      */
     this.connect = function () {
-        // console.error('Not supported!');
-        _emitStatus('connect-ok');
+        return new Promise(async function (resolve, reject) {
+            _emitStatus('connect-ok');
+            resolve();
+        })
         // events.emit('device-status:changed', { id: data.id, status: 'connect-error' });
     }
 
@@ -42,8 +47,12 @@ function WebCamClient(_data, _logger, _events, _manager) {
      * Emit connection status to clients, clear all Tags values
      */
     this.disconnect = function () {
-        _clearVarsValue()
-        _emitStatus('connect-off');
+        return new Promise(async function (resolve, reject) {
+            _clearVarsValue()
+            _emitStatus('connect-off');
+            resolve(true);
+        });
+
     }
 
     /**
@@ -51,25 +60,25 @@ function WebCamClient(_data, _logger, _events, _manager) {
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
-        var readVarsfnc = [];
-
-        for (const camId in camMap) {
-            readVarsfnc.push(await _capture(camId, camMap[camId]));
-        }
-
-        try {
-            const result = await Promise.all(readVarsfnc);
-            if (result.length) {
-                await _updateVarsValue(result);
-            } else {
-                // console.error('then error');
-            }
-            if (lastStatus !== 'connect-ok') {
-                _emitStatus('connect-ok');
-            }
-        } catch (reason) {
-            logger.error(`'${data.name}' _readVars error! ${reason}`);
-        }
+        // var readVarsfnc = [];
+        //
+        // for (const camId in camMap) {
+        //     readVarsfnc.push(await _capture(camId, camMap[camId]));
+        // }
+        //
+        // try {
+        //     const result = await Promise.all(readVarsfnc);
+        //     if (result.length) {
+        //         await _updateVarsValue(result);
+        //     } else {
+        //         // console.error('then error');
+        //     }
+        //     if (lastStatus !== 'connect-ok') {
+        //         _emitStatus('connect-ok');
+        //     }
+        // } catch (reason) {
+        //     logger.error(`'${data.name}' _readVars error! ${reason}`);
+        // }
     }
 
     /**
@@ -89,6 +98,10 @@ function WebCamClient(_data, _logger, _events, _manager) {
                 continue
             }
             tagMap[tag.id] = tag;
+            // Check webcam shots  folder
+            if (!fs.existsSync(path.resolve(runtime.settings.webcamSnapShotsDir, tagId))) {
+                fs.mkdirSync(path.resolve(runtime.settings.webcamSnapShotsDir, tagId));
+            }
         }
         logger.info(`'${data.name}' data loaded `, true);
     }
@@ -103,7 +116,7 @@ function WebCamClient(_data, _logger, _events, _manager) {
     /**
      * Return Tag value { id: <name>, value: <value>, ts: <lastTimestampValue> }
      */
-    this.getValue = function (tagid) {
+    this.getValue = function (id) {
         if (varsValue[id]) {
             return {id: id, value: varsValue[id].value, ts: lastTimestampValue};
         }
@@ -135,9 +148,18 @@ function WebCamClient(_data, _logger, _events, _manager) {
 
     /**
      * Set the Tag value to device
+     * if value == true then take a capture and update the value
      */
     this.setValue = function (tagid, value) {
-        console.error('Not supported!');
+        if (value) {
+            _capture(tagid, camMap[tagid]).then((result) => {
+                _updateVarsValue([result]).then(() => {
+                    if (lastStatus !== 'connect-ok') {
+                        _emitStatus('connect-ok');
+                    }
+                })
+            })
+        }
     }
 
     /**
@@ -182,13 +204,15 @@ function WebCamClient(_data, _logger, _events, _manager) {
 
     var _capture = async (tagId, camInstance) => {
         return new Promise((resolve, reject) => {
-            camInstance.capture(runtime.settings.webcamShotsDir, function (err, data) {
-                if (err) {
-                    logger.error(`'${data.name}' capture failed! ${err}`);
-                } else {
-                    resolve({id: tagId, value: data});
-                }
-            });
+            camInstance.capture(path.resolve(runtime.settings.webcamSnapShotsDir, tagId, new Date().getTime().toString()),
+                function (err, data) {
+                    if (err) {
+                        logger.error(`'${tagId}' capture failed! ${err}`);
+                        reject({id: tagId, opts: camInstance.opts})
+                    } else {
+                        resolve({id: tagId, value: data.replace(runtime.settings.webcamSnapShotsDir, '')});
+                    }
+                });
         })
     }
 
@@ -258,7 +282,7 @@ function WebCamClient(_data, _logger, _events, _manager) {
 module.exports = {
     init: function (settings) {
     },
-    create: function (data, logger, events, manager) {
+    create: function (data, logger, events, manager, runtime) {
         //To use with plugin
         try {
             NodeWebcam = require('node-webcam');
@@ -271,6 +295,6 @@ module.exports = {
             }
         }
         if (!NodeWebcam) return null;
-        return new WebCamClient(data, logger, events, manager);
+        return new WebCamClient(data, logger, events, manager, runtime);
     }
 }

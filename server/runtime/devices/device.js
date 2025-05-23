@@ -14,6 +14,7 @@ var FuxaServer = require('./fuxaserver');
 var ODBCclient = require('./odbc');
 // var TEMPLATEclient = require('./template');
 var GpioClient = require('./gpio');
+var WebCamClient = require('./webcam');
 
 const path = require('path');
 const utils = require('../utils');
@@ -95,6 +96,12 @@ function Device(data, runtime) {
             return null;
         }
         comm = GpioClient.create(data, logger, events, manager, runtime);
+    }
+    else if (data.type === DeviceEnum.WebCam) {
+        if (!WebCamClient) {
+            return null;
+        }
+        comm = WebCamClient.create(data, logger, events, manager, runtime);
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
