@@ -1,34 +1,22 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    ViewChild
-} from '@angular/core';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
-import {
-    MatLegacyTable as MatTable,
-    MatLegacyTableDataSource as MatTableDataSource
-} from '@angular/material/legacy-table';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
-import {MatLegacyMenuTrigger as MatMenuTrigger} from '@angular/material/legacy-menu';
-import {MatSort} from '@angular/material/sort';
-import {SelectionModel} from '@angular/cdk/collections';
-import {TranslateService} from '@ngx-translate/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { ChangeDetectorRef } from '@angular/core';
+import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
+import { MatSort } from '@angular/material/sort';
+import { SelectionModel } from '@angular/cdk/collections';
+import { TranslateService } from '@ngx-translate/core';
 
-import {TagOptionsComponent, TagOptionType} from './../tag-options/tag-options.component';
-import {Device, DeviceType, Tag, TAG_PREFIX} from '../../_models/device';
-import {ProjectService} from '../../_services/project.service';
-import {HmiService} from '../../_services/hmi.service';
-import {ConfirmDialogComponent} from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
-import {Utils} from '../../_helpers/utils';
-import {TagPropertyService} from '../tag-property/tag-property.service';
-import {EditNameComponent} from '../../gui-helpers/edit-name/edit-name.component';
+import { TagOptionType, TagOptionsComponent } from './../tag-options/tag-options.component';
+import { Tag, Device, DeviceType, TAG_PREFIX } from '../../_models/device';
+import { ProjectService } from '../../_services/project.service';
+import { HmiService } from '../../_services/hmi.service';
+import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
+import { Utils } from '../../_helpers/utils';
+import { TagPropertyService } from '../tag-property/tag-property.service';
+import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 
 @Component({
     selector: 'app-device-list',
@@ -274,7 +262,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     isToEdit(type, tag: Tag) {
         if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer ||
-            type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.WebCam) {
+            type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.ADSclient ||
+            type === DeviceType.WebCam) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -322,6 +311,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         }
         if (this.deviceSelected.type === DeviceType.OPCUA) {
             this.tagPropertyService.editTagPropertyOpcUa(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
+        if (this.deviceSelected.type === DeviceType.ADSclient) {
+            this.tagPropertyService.editTagPropertyADSclient(this.deviceSelected, tag, checkToAdd).subscribe(result => {
                 this.tagsMap[tag.id] = tag;
                 this.bindToTable(this.deviceSelected.tags);
             });
@@ -426,5 +422,3 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 export interface Element extends Tag {
     position: number;
 }
-
-

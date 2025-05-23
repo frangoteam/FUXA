@@ -13,6 +13,7 @@ import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component'
 import { TagPropertyBacNetData, TagPropertyEditBacnetComponent } from './tag-property-edit-bacnet/tag-property-edit-bacnet.component';
 import { TagPropertyEditWebapiComponent, TagPropertyWebApiData } from './tag-property-edit-webapi/tag-property-edit-webapi.component';
 import { TagPropertyEditEthernetipComponent, TagPropertyEthernetIpData } from './tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
+import { TagPropertyEditADSclientComponent } from './tag-property-edit-adsclient/tag-property-edit-adsclient.component';
 import { TopicPropertyComponent, TopicPropertyData } from '../topic-property/topic-property.component';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -345,6 +346,39 @@ export class TagPropertyService {
         dialogRef.afterClosed().subscribe();
     }
 
+    public editTagPropertyADSclient(device: Device, tag: Tag, checkToAdd: boolean): Observable<any> {
+        let oldTagId = tag.id;
+        let tagToEdit: Tag = Utils.clone(tag);
+        let dialogRef = this.dialog.open(TagPropertyEditADSclientComponent, {
+            disableClose: true,
+            data: {
+                device: device,
+                tag: tagToEdit
+            },
+            position: { top: '60px' }
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                if (result) {
+                    tag.name = result.tagName;
+                    tag.address = result.tagAddress;
+                    tag.type = result.tagType;
+                    tag.description = result.tagDescription;
+                    if (checkToAdd) {
+                        this.checkToAdd(tag, device);
+                    } else if (tag.id !== oldTagId) {
+                        //remove old tag device reference
+                        delete device.tags[oldTagId];
+                        this.checkToAdd(tag, device);
+                    }
+                    this.projectService.setDeviceTags(device);
+                }
+                dialogRef.close();
+                return result;
+            })
+        );
+    }
     editTagPropertyGpio(device: Device, tag: Tag, checkToAdd: boolean) {
         let oldTagId = tag.id;
         let tagToEdit: Tag = Utils.clone(tag);
