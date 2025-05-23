@@ -6,6 +6,7 @@ const http = require('http');
 const https = require('https');
 const socketIO = require('socket.io');
 const nopt = require("nopt");
+const schedule = require('node-schedule');
 
 const paths = require('./paths');
 const logger = require('./runtime/logger');
@@ -246,6 +247,7 @@ settings.uiHost = settings.uiHost || "0.0.0.0";
 events.once('init-runtime-ok', function () {
     logger.info('FUXA init in  ' + utils.endTime(startTime) + 'ms.');
     startFuxa();
+    cleanupSnapShotsFiles();
 });
 
 // Init FUXA
@@ -303,6 +305,7 @@ app.use('/view', express.static(settings.httpStatic));
 app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
 app.use('/_images', express.static(settings.imagesFileDir));
 app.use('/_widgets', express.static(settings.widgetsFileDir));
+app.use('/snapshots',express.static(settings.webcamSnapShotsDir))
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
 app.use(morgan('combined', {
@@ -389,6 +392,43 @@ function startFuxa() {
     });
 }
 
+/**
+ * Cleanup Snapshots Files
+ * @description  start on '0 1 * * *'
+ */
+function cleanupSnapShotsFiles() {
+    schedule.scheduleJob('0 1 * * *', function() {
+        if(!settings.webcamSnapShotsCleanup){
+            return;
+        }
+        const snapshotsDir = settings.webcamSnapShotsDir;
+        const oneWeekAgo = Date.now() - (settings.webcamSnapShotsRetain * 24 * 60 * 60 * 1000);
+
+        fs.readdir(snapshotsDir, (err, files) => {
+            if (err) {
+                logger.error('cleanup snapshots:', err);
+                return;
+            }
+
+            files.forEach(file => {
+                const filePath = path.join(snapshotsDir, file);
+                fs.stat(filePath, (err, stat) => {
+                    if (err) return;
+
+                    if (stat.ctimeMs < oneWeekAgo) {
+                        fs.unlink(filePath, err => {
+                            if (err) {
+                                logger.error(`remove ${filePath} failed:`, err);
+                            } else {
+                                logger.info(`cleanup snapshots success: ${filePath}`);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    });
+}
 // Don't wait any more
 setTimeout(() => {
     events.emit('init-runtime-ok');

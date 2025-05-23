@@ -3,7 +3,6 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 var express = require('express');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
@@ -62,8 +61,6 @@ function init(_server, _runtime) {
             apiApp.use(commandApi.app());
             reportsApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(reportsApi.app());
-
-            apiApp.use('/snapshots',express.static(path.resolve(runtime.settings.webcamSnapShotsDir)))
 
             const limiter = rateLimit({
                 windowMs: 5 * 60 * 1000, // 5 minutes
