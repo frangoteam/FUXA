@@ -392,7 +392,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         LanguageTypePropertyComponent,
         LanguageTextPropertyComponent,
         LanguageTextListComponent,
-        ClientScriptAccessComponent
+        ClientScriptAccessComponent,
+        TagPropertyEditWebcamComponent
     ],
     imports: [
         BrowserModule,

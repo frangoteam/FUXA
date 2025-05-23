@@ -580,6 +580,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 self.onOpenTab(events[i], events[i].actoptions);
             } else if (events[i].action === this.eventViewToPanel) {
                 self.onSetViewToPanel(events[i]);
+            }else if(eventTypes.indexOf(GaugeEventActionType.onRefreshImage) === actindex){
+                self.onRefreshImage(ga, ev, events[i].actparam, events[i].actoptions);
             }
         }
     }
@@ -1005,6 +1007,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             const panelProperty = this.view.items[event.actoptions['panelId']]?.property;
             panelCtrl.loadPage(panelProperty, event.actparam, event.actoptions);
         }
+    }
+
+    onRefreshImage(gaugeSettings: GaugeSettings, event: any, viewRef: string, options: any = {}) {
+        console.log("onRefreshImage")
     }
 
     getCardHeight(height) {

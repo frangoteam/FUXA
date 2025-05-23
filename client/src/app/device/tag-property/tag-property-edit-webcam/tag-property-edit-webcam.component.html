@@ -14,22 +14,45 @@
             </span>
         </div>
         <div class="my-form-field item-block mt10">
-            <span>{{'device.tag-property-address-sample' | translate}}</span>
-            <input numberOnly formControlName="tagAddress" type="text">
+            <span>{{'device.tag-property-webcam-device-address' | translate}}</span>
+            <input  formControlName="tagAddress" type="text">
         </div>
-
-        <div class="item-combi">
+        <div class="item-combi" formGroupName="tagOptions">
             <div class="my-form-field item-inline mt10">
-                <span>{{'device.tag-property-type' | translate}}</span>
-                <mat-select formControlName="tagType">
-                    <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
+                <span>{{'device.tag-property-webcam-options.width' | translate}}</span>
+                <input numberOnly formControlName="width" type="number">
+            </div>
+            <div class="my-form-field item-inline mt10 ftr mr5" >
+                <span>{{'device.tag-property-webcam-options.height' | translate}}</span>
+                <input numberOnly formControlName="height" type="number">
+            </div>
+        </div>
+        <div class="item-combi" formGroupName="tagOptions">
+            <div class="my-form-field item-inline mt10">
+                <span>{{'device.tag-property-webcam-options.quality' | translate}}</span>
+                <input numberOnly formControlName="quality" type="number">
+            </div>
+            <div class="my-form-field item-inline mt10 ftr mr5" >
+                <span>{{'device.tag-property-webcam-options.frames' | translate}}</span>
+                <input numberOnly formControlName="frames" type="number">
+            </div>
+        </div>
+        <div class="item-combi" formGroupName="tagOptions">
+            <div class="my-form-field item-inline mt10">
+                <span>{{'device.tag-property-webcam-options.outputType' | translate}}</span>
+                <mat-select formControlName="output">
+                    <mat-option *ngFor="let type of outputType | enumToArray" [value]="type.key">
                         {{ type.value }}
                     </mat-option>
                 </mat-select>
             </div>
-            <div class="my-form-field item-inline mt10 ftr mr5">
-                <span>{{'device.tag-property-initvalue' | translate}}</span>
-                <input numberOnly formControlName="tagInit" type="text">
+            <div class="my-form-field item-inline mt10 ftr mr5" >
+                <span>{{'device.tag-property-webcam-options.callbackReturn' | translate}}</span>
+                <mat-select formControlName="callbackReturn">
+                    <mat-option *ngFor="let type of callbackReturnType | enumToArray" [value]="type.key">
+                        {{ type.value }}
+                    </mat-option>
+                </mat-select>
             </div>
         </div>
         <div class="my-form-field item-block mt10">

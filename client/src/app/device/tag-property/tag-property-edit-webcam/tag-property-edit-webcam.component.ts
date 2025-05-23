@@ -1,6 +1,14 @@
 import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Device, ServerTagType, Tag } from '../../../_models/device';
+import {
+    AbstractControl,
+    FormGroup,
+    UntypedFormBuilder,
+    UntypedFormGroup,
+    ValidationErrors,
+    ValidatorFn,
+    Validators
+} from '@angular/forms';
+import {Device, GpioDirectionType, GpioEdgeType, ServerTagType, Tag, TagType} from '../../../_models/device';
 import { TranslateService } from '@ngx-translate/core';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 
@@ -12,22 +20,33 @@ import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDia
 export class TagPropertyEditWebcamComponent implements OnInit {
     @Output() result = new EventEmitter<any>();
     formGroup: UntypedFormGroup;
-    tagType = ServerTagType;
+    readonly tagType = ServerTagType;
+    readonly outputType = OutputType;
+    readonly callbackReturnType = WebcamCallbackReturnType;
     existingNames = [];
     error: string;
 
     constructor(private fb: UntypedFormBuilder,
         private translateService: TranslateService,
         public dialogRef: MatDialogRef<TagPropertyEditWebcamComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: TagPropertyInternalData) { }
+        @Inject(MAT_DIALOG_DATA) public data: TagPropertyWebcamData) { }
 
     ngOnInit() {
         this.formGroup = this.fb.group({
             deviceName: [this.data.device.name, Validators.required],
             tagName: [this.data.tag.name, [Validators.required, this.validateName()]],
+            tagAddress: [this.data.tag.address],
             tagType: [this.data.tag.type],
             tagInit: [this.data.tag.init],
-            tagDescription: [this.data.tag.description]
+            tagDescription: [this.data.tag.description],
+            tagOptions: this.fb.group({
+                    width: this.data.tag.options?.width || 1280,
+                    height:this.data.tag.options?.height ||  720,
+                    frames:this.data.tag.options?.frames || 60,
+                    quality: this.data.tag.options?.quality || 100,
+                    output: this.data.tag.options?.output || OutputType.jpeg,
+                    callbackReturn: this.data.tag.options?.callbackReturn || WebcamCallbackReturnType.location
+            }),
         });
         this.formGroup.updateValueAndValidity();
         Object.keys(this.data.device.tags).forEach((key) => {
@@ -59,9 +78,22 @@ export class TagPropertyEditWebcamComponent implements OnInit {
     onOkClick(): void {
         this.result.emit(this.formGroup.getRawValue());
     }
+
 }
 
-export interface TagPropertyInternalData {
+export interface TagPropertyWebcamData {
     device: Device;
     tag: Tag;
+}
+
+
+export enum WebcamCallbackReturnType {
+    location = 'location',
+    // buffer = 'buffer', not support now
+    base64 ='base64'
+}
+
+export enum OutputType {
+    jpeg = 'jpeg',
+    png = 'png',
 }

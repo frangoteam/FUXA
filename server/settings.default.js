@@ -91,7 +91,7 @@ module.exports = {
     // To enable only by Raspberry Host
 
     //Location to output webcam capture
-    webcamShotsDir: '_webcamShots',
+    webcamSnapShotsDir: '_webcam_snapshots',
 
 
 }
