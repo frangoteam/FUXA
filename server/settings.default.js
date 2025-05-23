@@ -92,6 +92,11 @@ module.exports = {
 
     //Location to output webcam capture
     webcamSnapShotsDir: '_webcam_snapshots',
+    //cleanup old snapshots
+    //Default: false
+    webcamSnapShotsCleanup: false,
+    //snapshots retention in days
+    webcamSnapShotsRetain: 7,
 
 
 }

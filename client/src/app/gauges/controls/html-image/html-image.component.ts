@@ -161,7 +161,6 @@ export class HtmlImageComponent extends GaugeBaseComponent {
      */
     static processWebcamValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         if (sig.value && ga.property.actions) {
-            console.log("process refreshImage")
             ga.property.actions.forEach(act => {
                 //process refresh image only
                 if (act.variableId === sig.id && this.actionsType[act.type] === GaugeActionsType.refreshImage) {
