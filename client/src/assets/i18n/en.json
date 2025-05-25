@@ -764,6 +764,7 @@
     "shapes.event-onLoad": "OnLoad",
     "shapes.event-relativefrom-window": "Window",
     "shapes.event-relativefrom-mouse": "Mouse",
+    "shapes.event-onRefreshImage": "Refresh Image",
 
     "pipe.property-title": "Pipe settings",
     "pipe.property-data": "Data",

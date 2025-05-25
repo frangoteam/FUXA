@@ -601,6 +601,7 @@
     "shapes.event-setvalue-add": "增加",
     "shapes.event-setvalue-remove": "减少",
     "shapes.event-onmonitor": "监控",
+    "shapes.event-onRefreshImage": "更新图像",
 
 
     "pipe.property-props": "属性",
