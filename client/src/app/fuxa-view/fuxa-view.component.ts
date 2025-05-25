@@ -1009,10 +1009,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onRefreshImage(gaugeSettings: GaugeSettings, event: any, viewRef: string, options: any = {}) {
-        console.log("onRefreshImage")
-    }
-
     getCardHeight(height) {
         return parseInt(height) + 4;
     }
