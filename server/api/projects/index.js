@@ -6,6 +6,7 @@ var express = require("express");
 const authJwt = require('../jwt-helper');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 var runtime;
 var secureFnc;
@@ -206,9 +207,13 @@ module.exports = {
                     basedata = file.data.replace(/^data:.*,/, '');
                     encoding = {encoding: 'base64'};
                 }
-                var filePath = path.join(runtime.settings.uploadFileDir, fullPath || fileName);
+                let filePath = path.join(runtime.settings.uploadFileDir, fullPath || fileName);
                 if (destination) {
-                    const destinationDir = path.resolve(runtime.settings.appDir, `_${destination}`);
+                    let destinationDir = path.resolve(runtime.settings.appDir, `_${destination}`);
+                    if (process.versions.electron) {
+                        const userDataDir = process.env.userDir || path.join(os.homedir(), '.fuxa');
+                        destinationDir = path.join(userDataDir, `_${destination}`);
+                    }
                     filePath = path.join(destinationDir, fullPath || fileName);
                     const dir = path.dirname(filePath);
                     if (!fs.existsSync(dir)) {
