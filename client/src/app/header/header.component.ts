@@ -21,7 +21,6 @@ const editorModeRouteKey = ['/editor', '/device', '/messages', '/language', '/us
 const saveFromEditorRouteKey = ['/device', '/messages', '/language', '/users', '/userRoles', '/notifications', '/scripts', '/reports', '/materials', '/logs', '/events', '/mapsLocations'];
 
 @Component({
-    moduleId: module.id,
     selector: 'app-header',
     templateUrl: 'header.component.html',
     styleUrls: ['header.component.css']
