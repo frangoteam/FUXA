@@ -398,7 +398,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         MaterialModule,
         BrowserAnimationsModule,
         ColorPickerModule,
-        AngularDraggableModule,
         MatSelectSearchModule,
         ToastrModule.forRoot({
             timeOut: 3000,
@@ -416,7 +415,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         NgChartsModule,
         CodemirrorModule,
         NgxDaterangepickerMd.forRoot(),
-        FrameworkModule
+        FrameworkModule,
+        AngularDraggableModule
     ],
     providers: [
         // providersResourceService,
