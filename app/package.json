@@ -1,32 +1,65 @@
 {
-  "name": "fuxa-app",
-  "version": "1.0.0",
-  "description": "FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With FUXA you can create modern process visualizations with individual designs for your machines and real-time data display.",
-  "main": "index.js",
-  "scripts": {
-    "start": "electron-forge start",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "package": "electron-forge package",
-    "make": "electron-forge make"
-  },
-  "keywords": [
-    "scada",
-    "hmi"
-  ],
-  "author": "",
-  "license": "MIT",
-  "devDependencies": {
-    "@electron-forge/cli": "^7.4.0",
-    "@electron-forge/maker-deb": "^7.4.0",
-    "@electron-forge/maker-rpm": "^7.4.0",
-    "@electron-forge/maker-squirrel": "^7.4.0",
-    "@electron-forge/maker-zip": "^7.4.0",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
-    "@electron-forge/plugin-fuses": "^7.4.0",
-    "@electron/fuses": "^1.8.0",
-    "electron": "^30.0.1"
-  },
-  "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
-  }
+    "name": "fuxa",
+    "version": "0.0.1",
+    "description": "FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With FUXA you can create modern process visualizations with individual designs for your machines and real-time data display.",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "package": "electron-builder --dir",
+        "dist": "electron-builder"
+    },
+    "author": "frangoteam",
+    "license": "MIT",
+    "devDependencies": {
+        "electron": "^31.0.0",
+        "electron-builder": "^24.13.0"
+    },
+    "build": {
+        "appId": "com.frangoteam.fuxa",
+        "productName": "FUXA",
+        "asar": false,
+        "files": [
+            "main.js",
+            "server/**/*",
+            "client/dist/**/*",
+            "icons/**/*"
+        ],
+        "extraResources": [
+            {
+                "from": "server/node_modules",
+                "to": "app/server/node_modules"
+            }
+        ],
+        "directories": {
+            "output": "dist"
+        },
+        "win": {
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": ["x64"]
+                }
+            ],
+            "icon": "icons/fuxa-logo.ico"
+        },
+        "linux": {
+            "target": [
+                {
+                    "target": "appimage",
+                    "arch": ["x64", "arm64"]
+                }
+            ],
+            "executableName": "fuxa",
+            "icon": "icons/fuxa-logo.png"
+        },
+        "mac": {
+            "target": [
+                {
+                    "target": "dmg",
+                    "arch": ["x64", "arm64"]
+                }
+            ],
+            "icon": "icons/fuxa-logo.icns"
+        }
+    }
 }
