@@ -56,14 +56,14 @@
     "xgplayer": "3.0.13",
     "xgplayer-flv.js": "3.0.13",
     "xgplayer-hls.js": "3.0.13",
-    "zone.js": "~0.15.1"
+    "zone.js": "~0.14.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.2.16",
     "@angular-eslint/builder": "15.2.1",
     "@angular-eslint/eslint-plugin": "15.2.1",
     "@angular-eslint/eslint-plugin-template": "15.2.1",
-    "@angular-eslint/schematics": "16.3.1",
+    "@angular-eslint/schematics": "17.5.3",
     "@angular-eslint/template-parser": "15.2.1",
     "@angular/cli": "^16.2.16",
     "@angular/compiler-cli": "^16.2.12",
