@@ -3,7 +3,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -229,8 +229,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
     touchendHideDelay: 500,
 };
 
-@NgModule({
-    declarations: [
+@NgModule({ declarations: [
         HomeComponent,
         EditorComponent,
         HeaderComponent,
@@ -389,11 +388,9 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         LanguageTextListComponent,
         ClientScriptAccessComponent
     ],
-    imports: [
-        BrowserModule,
+    bootstrap: [AppComponent], imports: [BrowserModule,
         FormsModule,
         ReactiveFormsModule,
-        HttpClientModule,
         routing,
         MaterialModule,
         BrowserAnimationsModule,
@@ -416,9 +413,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         CodemirrorModule,
         NgxDaterangepickerMd.forRoot(),
         FrameworkModule,
-        AngularDraggableModule
-    ],
-    providers: [
+        AngularDraggableModule], providers: [
         // providersResourceService,
         ResClientService,
         ResWebApiService,
@@ -458,8 +453,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ActionPropertyService,
         MapsLocationsService,
         LanguageService,
-        {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
-    ],
-    bootstrap: [AppComponent]
-})
+        { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }
