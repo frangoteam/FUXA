@@ -584,6 +584,8 @@
     "shapes.action-anticlockwise": "逆时针转弯",
     "shapes.action-downup": "向上和向下",
     "shapes.action-rotate": "旋转",
+    "shapes.action-refreshImage": "更新图像",
+
     "shapes.event-click": "点击",
     "shapes.event-mouseup": "鼠标松开",
     "shapes.event-mousedown": "鼠标按下",
@@ -601,7 +603,6 @@
     "shapes.event-setvalue-add": "增加",
     "shapes.event-setvalue-remove": "减少",
     "shapes.event-onmonitor": "监控",
-    "shapes.event-onRefreshImage": "更新图像",
 
 
     "pipe.property-props": "属性",

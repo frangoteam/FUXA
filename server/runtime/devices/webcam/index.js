@@ -60,25 +60,25 @@ function WebCamClient(_data, _logger, _events, _manager, _runtime) {
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
-        // var readVarsfnc = [];
-        //
-        // for (const camId in camMap) {
-        //     readVarsfnc.push(await _capture(camId, camMap[camId]));
-        // }
-        //
-        // try {
-        //     const result = await Promise.all(readVarsfnc);
-        //     if (result.length) {
-        //         await _updateVarsValue(result);
-        //     } else {
-        //         // console.error('then error');
-        //     }
-        //     if (lastStatus !== 'connect-ok') {
-        //         _emitStatus('connect-ok');
-        //     }
-        // } catch (reason) {
-        //     logger.error(`'${data.name}' _readVars error! ${reason}`);
-        // }
+        var readVarsfnc = [];
+
+        for (const camId in camMap) {
+            readVarsfnc.push(_capture(camId, camMap[camId]));
+        }
+
+        try {
+            const result = await Promise.all(readVarsfnc);
+            if (result.length) {
+                await _updateVarsValue(result);
+            } else {
+                // console.error('then error');
+            }
+            if (lastStatus !== 'connect-ok') {
+                _emitStatus('connect-ok');
+            }
+        } catch (reason) {
+            logger.error(`'${data.name}' _readVars error! ${reason}`);
+        }
     }
 
     /**

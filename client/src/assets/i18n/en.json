@@ -728,6 +728,7 @@
     "shapes.action-downup": "Up and down",
     "shapes.action-rotate": "Rotate",
     "shapes.action-move": "Move",
+    "shapes.action-refreshImage": "Refresh image",
     "shapes.event-click": "Click",
     "shapes.event-dblclick": "DoubleClick",
     "shapes.event-mouseup": "MouseUp",
@@ -758,7 +759,6 @@
     "shapes.event-onLoad": "OnLoad",
     "shapes.event-relativefrom-window": "Window",
     "shapes.event-relativefrom-mouse": "Mouse",
-    "shapes.event-onRefreshImage": "Refresh Image",
 
     "pipe.property-title": "Pipe settings",
     "pipe.property-data": "Data",

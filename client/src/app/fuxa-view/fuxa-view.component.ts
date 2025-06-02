@@ -580,8 +580,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 self.onOpenTab(events[i], events[i].actoptions);
             } else if (events[i].action === this.eventViewToPanel) {
                 self.onSetViewToPanel(events[i]);
-            }else if(eventTypes.indexOf(GaugeEventActionType.onRefreshImage) === actindex){
-                self.onRefreshImage(ga, ev, events[i].actparam, events[i].actoptions);
             }
         }
     }
