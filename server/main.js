@@ -6,6 +6,7 @@ const http = require('http');
 const https = require('https');
 const socketIO = require('socket.io');
 const nopt = require("nopt");
+const schedule = require('node-schedule');
 
 const paths = require('./paths');
 const logger = require('./runtime/logger');
@@ -100,6 +101,7 @@ try {
     settings.imagesFileDir = path.resolve(rootDir, '_images');
     settings.widgetsFileDir = path.resolve(rootDir, '_widgets');
     settings.reportsDir = path.resolve(rootDir, '_reports');
+    settings.webcamSnapShotsDir = path.resolve(workDir, settings.webcamSnapShotsDir);
 
     // check new settings from default and merge if not defined
     var defSettings = require(path.join(__dirname, 'settings.default.js'));
@@ -210,6 +212,10 @@ if (!fs.existsSync(settings.imagesFileDir)) {
 if (!fs.existsSync(settings.widgetsFileDir)) {
     fs.mkdirSync(settings.widgetsFileDir);
 }
+// Check webcam shots  folder
+if (!fs.existsSync(settings.webcamSnapShotsDir)){
+    fs.mkdirSync(settings.webcamSnapShotsDir);
+}
 
 // Server settings
 if (settings.https) {
@@ -241,6 +247,7 @@ settings.uiHost = settings.uiHost || "0.0.0.0";
 events.once('init-runtime-ok', function () {
     logger.info('FUXA init in  ' + utils.endTime(startTime) + 'ms.');
     startFuxa();
+    cleanupSnapShotsFiles();
 });
 
 // Init FUXA
@@ -298,6 +305,7 @@ app.use('/view', express.static(settings.httpStatic));
 app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
 app.use('/_images', express.static(settings.imagesFileDir));
 app.use('/_widgets', express.static(settings.widgetsFileDir));
+app.use('/snapshots',express.static(settings.webcamSnapShotsDir))
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
 app.use(morgan('combined', {
@@ -384,6 +392,43 @@ function startFuxa() {
     });
 }
 
+/**
+ * Cleanup Snapshots Files
+ * @description  start on '0 1 * * *'
+ */
+function cleanupSnapShotsFiles() {
+    schedule.scheduleJob('0 1 * * *', function() {
+        if(!settings.webcamSnapShotsCleanup){
+            return;
+        }
+        const snapshotsDir = settings.webcamSnapShotsDir;
+        const oneWeekAgo = Date.now() - (settings.webcamSnapShotsRetain * 24 * 60 * 60 * 1000);
+
+        fs.readdir(snapshotsDir, (err, files) => {
+            if (err) {
+                logger.error('cleanup snapshots:', err);
+                return;
+            }
+
+            files.forEach(file => {
+                const filePath = path.join(snapshotsDir, file);
+                fs.stat(filePath, (err, stat) => {
+                    if (err) return;
+
+                    if (stat.ctimeMs < oneWeekAgo) {
+                        fs.unlink(filePath, err => {
+                            if (err) {
+                                logger.error(`remove ${filePath} failed:`, err);
+                            } else {
+                                logger.info(`cleanup snapshots success: ${filePath}`);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    });
+}
 // Don't wait any more
 setTimeout(() => {
     events.emit('init-runtime-ok');
