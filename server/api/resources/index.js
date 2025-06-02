@@ -7,6 +7,7 @@ const path = require('path');
 var express = require("express");
 const authJwt = require('../jwt-helper');
 const Report = require('../../runtime/jobs/report');
+const os = require('os');
 
 var runtime;
 var secureFnc;
@@ -149,11 +150,15 @@ module.exports = {
                 return res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
             }
             try {
-                const relPath = req.body?.path;
+                let relPath = req.body?.path;
+                relPath = relPath.replace(new RegExp('\\.\\.\/', 'g'), '');
                 if (!relPath || typeof relPath !== 'string') {
                     return res.status(400).json({ error: "invalid_path", message: "Missing or invalid widget path." });
                 }
-                const basePath = path.resolve(runtime.settings.appDir);
+                let basePath = path.resolve(runtime.settings.appDir);
+                if (process.versions.electron) {
+                    basePath = process.env.userDir || path.join(os.homedir(), '.fuxa');
+                }
                 const fullPath = path.resolve(basePath, relPath);
 
                 if (!fullPath.startsWith(basePath)) {
