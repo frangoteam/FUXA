@@ -3,13 +3,13 @@ import { Utils } from '../../_helpers/utils';
 import { Script } from '../../_models/script';
 import { DocAlignType, DocProfile, ViewProperty, ViewType } from '../../_models/hmi';
 import { TranslateService } from '@ngx-translate/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA as MAT_DIALOG_DATA, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { GridType } from 'angular-gridster2';
 import { FlexEventComponent } from '../../gauges/gauge-property/flex-event/flex-event.component';
 import { ProjectService } from '../../_services/project.service';
 import { Subject, startWith, takeUntil } from 'rxjs';
-import { MatLegacyTab as MatTab } from '@angular/material/legacy-tabs';
+import { MatTab as MatTab } from '@angular/material/tabs';
 
 @Component({
     selector: 'app-view-property',

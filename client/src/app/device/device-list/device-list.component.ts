@@ -1,10 +1,10 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { ChangeDetectorRef } from '@angular/core';
-import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
+import { MatTable as MatTable, MatTableDataSource as MatTableDataSource } from '@angular/material/table';
+import { MatPaginator as MatPaginator } from '@angular/material/paginator';
+import { MatMenuTrigger as MatMenuTrigger } from '@angular/material/menu';
 import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TranslateService } from '@ngx-translate/core';
