@@ -63,7 +63,7 @@ var utils = module.exports = {
                 nics.push({ name: 'Default' });
                 Object.keys(osNics).forEach((ifname) => {
                     osNics[ifname].forEach((iface) => {
-                        if (iface.interal === true) return;
+                        if (iface.internal === true) return;
                         if (iface.family !== 'IPv4') return;
                         nics.push({
                             name: ifname,
@@ -275,7 +275,7 @@ var utils = module.exports = {
         var result = [];
         Object.keys(interfaces).forEach((interfaceName) => {
             interfaces[interfaceName].forEach((iface) => {
-                if (iface.interal === true) return;
+                if (iface.internal === true) return;
                 if (iface.family !== 'IPv4') return;
                 result.push(iface.address);
             });
