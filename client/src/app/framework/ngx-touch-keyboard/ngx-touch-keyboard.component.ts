@@ -347,7 +347,9 @@ export class NgxTouchKeyboardComponent {
   }
 
   get current() {
-    return this._activeInputElement.value;
+    const currentType = this._activeInputElement?.getAttribute('type');
+    const value = this._activeInputElement?.value || '';
+    return currentType === 'password' ? '*'.repeat(value.length) : value;
   }
   // -----------------------------------------------------------------------------------------------------
   // @ Private methods
