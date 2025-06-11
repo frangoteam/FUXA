@@ -12,7 +12,6 @@ declare var SVG: any;
 declare var Raphael: any;
 
 @Component({
-    moduleId: module.id,
     templateUrl: 'lab.component.html',
     styleUrls: ['lab.component.css']
 })
