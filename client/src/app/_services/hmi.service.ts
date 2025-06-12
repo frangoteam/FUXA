@@ -381,11 +381,11 @@ export class HmiService {
         }
     }
 
-    private tagsSubscribe() {
+    private tagsSubscribe(sendLastValue: boolean = false) {
         if (this.socket) {
             const mergedArray = this.viewsTagsSubscription.concat(this.homeTagsSubscription);
             const mergedArrayResolvedAdapter = this.deviceAdapaterService.resolveAdapterTagsId(mergedArray);
-            let msg = { tagsId: [...new Set(mergedArrayResolvedAdapter)] };
+            let msg = { tagsId: [...new Set(mergedArrayResolvedAdapter)], sendLastValue: sendLastValue };
             this.socket.emit(IoEventTypes.DEVICE_TAGS_SUBSCRIBE, msg);
         }
     }
@@ -393,9 +393,9 @@ export class HmiService {
     /**
      * Subscribe views tags values
      */
-    public viewsTagsSubscribe(tagsId: string[]) {
+    public viewsTagsSubscribe(tagsId: string[], sendLastValue: boolean = false) {
         this.viewsTagsSubscription = tagsId;
-        this.tagsSubscribe();
+        this.tagsSubscribe(sendLastValue);
     }
 
     /**

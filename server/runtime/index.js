@@ -305,6 +305,12 @@ function init(_io, _api, _settings, _log, eventsMain) {
         socket.on(Events.IoEventTypes.DEVICE_TAGS_SUBSCRIBE, (message) => {
             try {
                 socket.tagsClientSubscriptions = message.tagsId
+                if (message.sendLastValue) {
+                    var adevs = devices.getDevicesValues();
+                    for (var id in adevs) {
+                        updateDeviceValues({ id: id, values: adevs[id] });
+                    }
+                }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_TAGS_SUBSCRIBE}: ${err}`);
             }
