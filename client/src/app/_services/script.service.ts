@@ -131,6 +131,7 @@ export class ScriptService {
         code = code.replace(/\$getDeviceProperty\(/g, 'await this.$getDeviceProperty(');
         code = code.replace(/\$setDeviceProperty\(/g, 'await this.$setDeviceProperty(');
         code = code.replace(/\$setAdapterToDevice\(/g, 'this.$setAdapterToDevice(');
+        code = code.replace(/\$resolveAdapterTagId\(/g, 'this.$resolveAdapterTagId(');
         code = code.replace(/\$invokeObject\(/g, 'this.$invokeObject(');
         code = code.replace(/\$runServerScript\(/g, 'this.$runServerScript(');
         code = code.replace(/\$getHistoricalTags\(/g, 'this.$getHistoricalTags(');
@@ -199,6 +200,14 @@ export class ScriptService {
 
     public async $setAdapterToDevice(adapterName: string, deviceName: string) {
         return await this.deviceAdapaterService.setTargetDevice(adapterName, deviceName, this.hmiService.initSignalValues.bind(this.hmiService));
+    }
+
+    public $resolveAdapterTagId(id: string): string {
+        let tagIdOfDevice = this.deviceAdapaterService.resolveAdapterTagsId([id]);
+        if (tagIdOfDevice?.length && tagIdOfDevice[0] !== id) {
+            return tagIdOfDevice[0];
+        }
+        return id;
     }
 
     public $invokeObject(gaugeName: string, fncName: string, ...params: any[]) {

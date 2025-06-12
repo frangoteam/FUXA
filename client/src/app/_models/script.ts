@@ -180,6 +180,14 @@ export class SystemFunctions {
         paramsText: 'script.sys-fnc-setAdapterToDevice-params'
     },
     {
+        name: '$resolveAdapterTagId',
+        mode: ScriptMode.CLIENT,
+        text: 'script.sys-fnc-resolveAdapterTagId-text',
+        tooltip: 'script.sys-fnc-resolveAdapterTagId-tooltip',
+        params: [true],
+        paramsText: 'script.sys-fnc-resolveAdapterTagId-params'
+    },
+    {
         name: '$invokeObject',
         mode: ScriptMode.CLIENT,
         text: 'script.sys-fnc-invokeObject-text',
