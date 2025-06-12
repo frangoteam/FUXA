@@ -92,6 +92,13 @@ if (fs.existsSync(appSettingsFile)) {
 try {
     // load settings and set some app variable
     var settings = require(settingsFile);
+    // check new settings from default and merge if not defined
+    var defSettings = require(path.join(__dirname, 'settings.default.js'));
+    if (defSettings.version !== settings.version) {
+        logger.warn("Settings are outdated. Missing fields have been merged from defaults. Consider reviewing 'settings.json'.");
+        settings = utils.deepMerge(defSettings, settings);
+    }
+
     settings.workDir = workDir;
     settings.appDir = __dirname;
     settings.packageDir = path.resolve(rootDir, '_pkg');
@@ -102,13 +109,6 @@ try {
     settings.widgetsFileDir = path.resolve(rootDir, '_widgets');
     settings.reportsDir = path.resolve(rootDir, '_reports');
     settings.webcamSnapShotsDir = path.resolve(workDir, settings.webcamSnapShotsDir);
-
-    // check new settings from default and merge if not defined
-    var defSettings = require(path.join(__dirname, 'settings.default.js'));
-    if (defSettings.version !== settings.version) {
-        logger.warn("Settings aren't up to date! Please check 'settings.json'.");
-        // settings = Object.assign(defSettings, settings);
-    }
 } catch (err) {
     logger.error('Error loading settings file: ' + settingsFile)
     if (err.code == 'MODULE_NOT_FOUND') {
