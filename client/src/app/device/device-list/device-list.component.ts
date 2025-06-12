@@ -29,6 +29,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'logger', 'options', 'remove'];
     readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'description', 'options', 'remove'];
     readonly defGpipColumns = ['select', 'name', 'device', 'address', 'direction', 'value', 'timestamp', 'description', 'logger', 'options', 'remove'];
+    readonly defWebcamColumns = ['select', 'name', 'device', 'address', 'value', 'timestamp', 'description', 'logger', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
     readonly defInternalRowWidth = 1200;
@@ -117,6 +118,9 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             this.tableWidth = this.defInternalRowWidth;
         } else if(this.deviceSelected.type === DeviceType.GPIO) {
             this.displayedColumns = this.defGpipColumns;
+            this.tableWidth = this.defAllRowWidth;
+        } else if(this.deviceSelected.type === DeviceType.WebCam){
+            this.displayedColumns = this.defWebcamColumns;
             this.tableWidth = this.defAllRowWidth;
         }else {
             this.displayedColumns = this.defAllColumns;
@@ -258,7 +262,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     isToEdit(type, tag: Tag) {
         if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer ||
-            type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.ADSclient) {
+            type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.ADSclient ||
+            type === DeviceType.WebCam) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -324,6 +329,12 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                 this.bindToTable(this.deviceSelected.tags);
             });
             return;
+        }
+        if(this.deviceSelected.type === DeviceType.WebCam) {
+            this.tagPropertyService.editTagPropertyWebcam(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
         }
     }
 

@@ -1,10 +1,22 @@
-import { Component } from '@angular/core';
-import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeActionsType, GaugeProperty, GaugePropertyColor, GaugeSettings, GaugeStatus, Variable, WidgetProperty, Event } from '../../../_models/hmi';
-import { Utils } from '../../../_helpers/utils';
-import { ShapesComponent } from '../../shapes/shapes.component';
-import { EndPointApi } from '../../../_helpers/endpointapi';
-import { SvgUtils, WidgetPropertyVariable } from '../../../_helpers/svg-utils';
+import {Component} from '@angular/core';
+import {GaugeBaseComponent} from '../../gauge-base/gauge-base.component';
+import {
+    Event, GaugeAction,
+    GaugeActionsType,
+    GaugeProperty,
+    GaugePropertyColor,
+    GaugeSettings,
+    GaugeStatus,
+    Variable,
+    WidgetProperty
+} from '../../../_models/hmi';
+import {Utils} from '../../../_helpers/utils';
+import {ShapesComponent} from '../../shapes/shapes.component';
+import {EndPointApi} from '../../../_helpers/endpointapi';
+import {SvgUtils, WidgetPropertyVariable} from '../../../_helpers/svg-utils';
+import {DeviceType} from "../../../_models/device";
+
+declare var SVG: any;
 
 @Component({
     selector: 'app-html-image',
@@ -20,10 +32,17 @@ export class HtmlImageComponent extends GaugeBaseComponent {
     static propertyWidgetType = 'widget';
 
     static actionsType = {
-        hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
-        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, rotate: GaugeActionsType.rotate,
-        move: GaugeActionsType.move
+        hide: GaugeActionsType.hide,
+        show: GaugeActionsType.show,
+        blink: GaugeActionsType.blink,
+        stop: GaugeActionsType.stop,
+        clockwise: GaugeActionsType.clockwise,
+        anticlockwise: GaugeActionsType.anticlockwise,
+        rotate: GaugeActionsType.rotate,
+        move: GaugeActionsType.move,
+        refreshImage: GaugeActionsType.refreshImage,
     };
+
     constructor() {
         super();
     }
@@ -63,7 +82,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                             type: HtmlImageComponent.propertyWidgetType,
                             svgGuid: svgGuid,
                             svgContent: svgImageContainer.innerHTML,
-                            scriptContent: { moduleId: moduleId, content: widgetResult?.content },
+                            scriptContent: {moduleId: moduleId, content: widgetResult?.content},
                             varsToBind: Utils.mergeArray([widgetResult?.vars, gaugeSettings.property.varsToBind], 'originalName')
                         };
                     } else {
@@ -133,9 +152,32 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         return true;
     }
 
+    /**
+     * process value from webcam
+     * @param ga
+     * @param svgele
+     * @param sig
+     * @param gaugeStatus
+     */
+    static processWebcamValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
+        if (sig.value && ga.property.actions) {
+            ga.property.actions.forEach(act => {
+                //process refresh image only
+                if (act.variableId === sig.id && this.actionsType[act.type] === GaugeActionsType.refreshImage) {
+                    this.actionRefreshImage(act, svgele, sig, gaugeStatus);
+                    return;
+                }
+            });
+        }
+    }
+
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
             if (svgele.node) {
+                if (sig.device?.type === DeviceType.WebCam) {
+                    this.processWebcamValue(ga, svgele, sig, gaugeStatus);
+                    return;
+                }
                 let value = parseFloat(sig.value);
                 if (Number.isNaN(value)) {
                     // maybe boolean
@@ -174,7 +216,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                     if (ga.property.type === HtmlImageComponent.propertyWidgetType && ga.property.scriptContent && ga.property.varsToBind?.length) {
                         const scriptContent = ga.property.scriptContent;
                         if (window[scriptContent.moduleId]['putValue']) {
-                            const widgetVar = <WidgetPropertyVariable> ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.variableId === sig.id);
+                            const widgetVar = <WidgetPropertyVariable>ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.variableId === sig.id);
                             if (widgetVar) {
                                 window[scriptContent.moduleId]['putValue'](widgetVar.name, sig.value);
                             }
@@ -192,7 +234,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
             const scriptContent = ga.property.scriptContent;
             if (window[scriptContent.moduleId]?.['postValue']) {
                 window[scriptContent.moduleId]['postValue'] = (varName, value) => {
-                    const widgetVar = <WidgetPropertyVariable> ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.name === varName);
+                    const widgetVar = <WidgetPropertyVariable>ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.name === varName);
                     if (widgetVar) {
                         let event = new Event();
                         event.type = HtmlImageComponent.propertyWidgetType;
@@ -211,7 +253,15 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         return null;
     }
 
-    static detectChange(gab: GaugeSettings, isview: boolean): HTMLElement{
+    static detectChange(gab: GaugeSettings, isview: boolean): HTMLElement {
         return HtmlImageComponent.initElement(gab, isview);
+    }
+
+    static actionRefreshImage(act: GaugeAction, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
+        let element = SVG.adopt(svgele.node);
+        let img = Utils.searchTreeTagName(element.node, 'IMG');
+        if (img) {
+            img.setAttribute('src', `/snapshots${sig.value}?${new Date().getTime()}`);
+        }
     }
 }
