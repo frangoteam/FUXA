@@ -935,6 +935,7 @@
     "device.not-odbc-result": "Database tables result",
     "device.add-device-templates-title": "Device templates",
     "device.add-tags-templates-title": "Tags templates",
+    "device.add-from-template": "Add Device from template",
     "device.manage-templates-title": "Remove templates",
     "device.template-device": "Template name",
     "device.template-tags": "Template name",
