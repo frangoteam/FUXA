@@ -12,6 +12,7 @@ import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.compone
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
 import { GraphSourceEditComponent } from './graph-source-edit/graph-source-edit.component';
+import { EditPlaceholderComponent } from '../../gui-helpers/edit-placeholder/edit-placeholder.component';
 
 @Component({
     selector: 'app-graph-config',
@@ -135,6 +136,29 @@ export class GraphConfigComponent implements OnInit {
         });
     }
 
+    onAddGraphSourcePlaceholder(graph: Graph) {
+        let dialogRef = this.dialog.open(EditPlaceholderComponent, {
+            disableClose: true,
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(placeholder => {
+            if (placeholder) {
+                const label = placeholder;
+                placeholder = '@' + placeholder;
+                let color = this.getNextColor();
+                const myCopiedObject: GraphSource = {
+                    id: placeholder,
+                    name: placeholder,
+                    device: '@',
+                    label: label,
+                    color: color,
+                    fill: color
+                };
+                graph.sources.push(myCopiedObject);
+            }
+        });
+    }
+
     onRemoveGraph(index: number) {
         let msg = '';
         this.translateService.get('msg.graph-remove', { value: this.data.graphs[index].name }).subscribe((txt: string) => { msg = txt; });
@@ -223,6 +247,9 @@ export class GraphConfigComponent implements OnInit {
     }
 
     getDeviceTagName(source: GraphSource) {
+        if (source.device === '@') {
+            return source.name;
+        }
         let devices = this.data.devices.filter(x => x.name === source.device);
         if (devices && devices.length > 0) {
             let tags = Object.values<Tag>(devices[0].tags);

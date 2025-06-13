@@ -131,3 +131,13 @@
         width:calc(100% - 15px);
     }
 }
+
+::ng-deep .chart-filter-option  {
+
+    line-height: 28px !important;
+    height: 28px !important;
+
+    span {
+        font-size: 13px;
+    }
+}

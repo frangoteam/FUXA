@@ -1,5 +1,5 @@
 /**
- *  Module to manage the DAQ datastore with daqnode 
+ *  Module to manage the DAQ datastore with daqnode
  */
 
 'use strict';
@@ -20,10 +20,12 @@ var settings;
 var logger;
 var daqDB = {};                 // list of daqDB node: SQlite one pro device, influxDB only one
 var currentStorateDB;
+var runtime;
 
-function init(_settings, _log) {
+function init(_settings, _log, _runtime) {
     settings = _settings;
     logger = _log;
+    runtime = _runtime;
     logger.info("daqstorage: init successful!", true);
     currentStorateDB = CurrentStorage.create(_settings, _log);
 }
@@ -68,14 +70,14 @@ function getNodeValues(tagid, fromts, tots) {
 }
 
 /**
- * Return tags values, 
+ * Return tags values,
  * if with options then return function array [{DD/MM/YYYY mm:HH, ...values}]
  * else for chart object {tagId} [{Date, value}]
- * @param {*} tagsid 
- * @param {*} fromts 
- * @param {*} tots 
- * @param {*} options 
- * @returns 
+ * @param {*} tagsid
+ * @param {*} fromts
+ * @param {*} tots
+ * @param {*} options
+ * @returns
  */
 function getNodesValues(tagsid, fromts, tots, options) {
     return new Promise(async function (resolve, reject) {
@@ -127,7 +129,7 @@ function checkRetention() {
     return new Promise(async function (resolve, reject) {
         if (settings.daqstore && _getDbType() === DaqStoreTypeEnum.SQlite && settings.daqstore.retention !== 'none') {
             try {
-                SqliteDB.checkRetention(utils.getRetentionLimit(settings.daqstore.retention), settings.dbDir, 
+                SqliteDB.checkRetention(utils.getRetentionLimit(settings.daqstore.retention), settings.dbDir,
                 (fileDeleted) => {
                     logger.info(`daqstorage.checkRetention file ${fileDeleted} removed`);
                 },

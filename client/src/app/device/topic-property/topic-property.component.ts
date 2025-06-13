@@ -7,6 +7,7 @@ import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
 import { Device, Tag, TAG_PREFIX } from '../../_models/device';
+import { JsonUtils } from '../../_helpers/json-utils';
 
 @Component({
     selector: 'app-topic-property',
@@ -24,7 +25,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
     editMode = false;
     topicSource = '#';
     topicsList = {};
-    topicContent = [];
+    topicContent: TopicContent[] = [];
     topicSelectedSubType = 'raw';
     discoveryError = '';
     discoveryWait = false;
@@ -44,6 +45,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
     itemTimestamp = Utils.getEnumKey(MqttItemType, MqttItemType.timestamp);
     itemValue = Utils.getEnumKey(MqttItemType, MqttItemType.value);
     itemStatic = Utils.getEnumKey(MqttItemType, MqttItemType.static);
+    editSubscription = false;
 
     constructor(
         private hmiService: HmiService,
@@ -82,11 +84,31 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
             if (tag.options) {
                 if (tag.options.subs) {
                     // sure a subscription
+                    this.editSubscription = true;
                     this.grptabs.selectedIndex = 0;
                     this.tabpub.disabled = true;
                     this.topicSelectedSubType = tag.type;
                     this.editMode = true;
-                    this.selectTopic({ name: tag.name, key: tag.address, value: { content: tag.value }, subs: tag.options.subs });
+                    var topic: Topic = {
+                        key: tag.address,
+                        name: tag.name,
+                        value: {
+                            name: tag.address,
+                        },
+                        subs: tag.options.subs
+                    };
+                    if (tag.type === 'json') {
+                        const topicsOfAddress = Object.values(this.data.device.tags).filter(t => t.address === tag.address);
+                        const content: Record<string, Tag> = {};
+                        tag.options.subs.forEach(key => {
+                            content[key] = topicsOfAddress.find(t => t.memaddress === key);
+                        });
+                        topic.value.content = content;
+                    } else {
+                        topic.name = tag.name;
+                        topic.value.content = tag.value;
+                    }
+                    this.selectTopic(topic);
                 } else {
                     // publish topic
                     this.grptabs.selectedIndex = 1;
@@ -153,16 +175,25 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
         this.topicContent =  [];
         if (this.selectedTopic.value) {
             if (this.topicSelectedSubType === 'json') {
-                let obj = JSON.parse(this.selectedTopic.value?.content);
-                Object.keys(obj).forEach(key => {
+                let content = JsonUtils.tryToParse(this.selectedTopic.value?.content, {});
+                Object.keys(content).forEach(key => {
                     let checked = (this.selectedTopic.subs) ? false : true;
                     if (this.selectedTopic.subs && this.selectedTopic.subs.indexOf(key) !== -1) {
                         checked = true;
                     }
-                    this.topicContent.push({ key: key, value: obj[key], checked: checked, type: this.topicSelectedSubType });
+                    const topicToAdd: TopicContent = { key: key, value: '', checked: checked, type: this.topicSelectedSubType, name: '' };
+                    if (content[key]) {
+                        if (this.editSubscription) {
+                            topicToAdd.name = content[key]?.name || '';
+                            topicToAdd.tag = content[key];
+                        } else {
+                            topicToAdd.value = content[key];
+                        }
+                    }
+                    this.topicContent.push(topicToAdd);
                 });
-            } else if (this.selectedTopic.value?.content) {
-                this.topicContent =  [{ name: this.selectedTopic.name, key: this.selectedTopic.key, value: this.selectedTopic.value?.content, checked: true, type: this.topicSelectedSubType }];
+            } else if (!Utils.isNullOrUndefined(this.selectedTopic.value?.content) || this.editSubscription) {
+                this.topicContent = [{ name: this.selectedTopic.name, key: this.selectedTopic.key, value: this.selectedTopic.value?.content, checked: true, type: this.topicSelectedSubType }];
             }
         }
     }
@@ -211,12 +242,12 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
 
     onAddToSubscribe() {
         if (this.topicContent && this.topicContent.length && this.invokeSubscribe) {
-            let topicsToAdd = [];
             for (let i = 0; i < this.topicContent.length; i++) {
                 if (this.topicContent[i].checked) {
                     let topic = new Tag(Utils.getGUID(TAG_PREFIX));
                     if (this.data.topic) {
-                        topic = new Tag(this.data.topic.id);
+                        let id = this.topicContent[i]?.tag?.id || this.data.topic.id;
+                        topic = new Tag(id);
                     }
                     topic.type = this.topicSelectedSubType;
                     topic.address = this.selectedTopic.key;
@@ -230,10 +261,9 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
                             topic.name += '[' + topic.memaddress + ']';
                         }
                     }
-                    topicsToAdd.push(topic);
+                    this.invokeSubscribe(this.topicContent[i]?.tag || this.data.topic, [topic]);
                 }
             }
-            this.invokeSubscribe(this.data.topic, topicsToAdd);
         } else if (this.selectedTopic.key?.length) {
             let topic = new Tag(Utils.getGUID(TAG_PREFIX));
             topic.name = this.selectedTopic.key;
@@ -358,6 +388,25 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
         return (this.publishTopicPath && this.publishTopicPath.length) ? true : false;
     }
     //#endregion
+}
+
+interface Topic {
+    key: string;
+    value: {
+        name?: string;
+        content?: string | Record<string, Tag>;
+    };
+    subs: any;
+    name?: string;
+}
+
+interface TopicContent {
+    name: string;
+    key: string;
+    type: string;
+    checked: boolean;
+    value: any;
+    tag?: Tag;
 }
 
 export enum MqttItemType {

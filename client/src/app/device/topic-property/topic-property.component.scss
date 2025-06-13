@@ -3,6 +3,7 @@
     width: 100%;
     height: 24px;
     cursor: pointer;
+    margin-bottom: 1px;
 }
 
 .topic-active {
@@ -42,7 +43,7 @@
 .topic-text {
     width: 250px;
     display: inline-block;
-    overflow: hidden; 
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     line-height: 24px;
@@ -51,22 +52,29 @@
 .topic-name {
     display: inline-block;
     width: 220px;
-    overflow: hidden; 
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-size: 12px;
     font-family: monospace;
 }
 
-.topic-name input {
-    width: 200px;
-    overflow: hidden; 
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 12px;
-    font-family: monospace;
-    background-color: var(--formExtInputBackground);
-    padding: 4px 2px 4px 3px !important;
+.topic-name {
+    input {
+        width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 12px;
+        font-family: monospace;
+        background-color: var(--formExtInputBackground);
+        padding: 4px 2px 4px 3px !important;
+    }
+    input:focus {
+        padding: 3px 1px 3px 2px !important;
+        border: 1px solid var(--formInputBorderFocus);
+        background-color: var(--formInputBackgroundFocus);
+    }
 }
 
 .topic-value {

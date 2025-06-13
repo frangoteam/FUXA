@@ -13,6 +13,7 @@ import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
 import { ChartLineAndInterpolationsType, ChartLinePropertyComponent } from './chart-line-property/chart-line-property.component';
+import { EditPlaceholderComponent } from '../../gui-helpers/edit-placeholder/edit-placeholder.component';
 
 @Component({
   selector: 'app-chart-config',
@@ -156,6 +157,29 @@ export class ChartConfigComponent implements OnInit {
         });
     }
 
+    onAddChartLinePlaceholder(chart: Chart) {
+        let dialogRef = this.dialog.open(EditPlaceholderComponent, {
+            disableClose: true,
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(placeholder => {
+            if (placeholder) {
+                const label = placeholder;
+                placeholder = '@' + placeholder;
+                const myCopiedObject = <ChartLine>{
+                    id: placeholder,
+                    name: placeholder,
+                    device: '@',
+                    color: this.getNextColor(),
+                    label: label,
+                    yaxis: 1,
+                    spanGaps: true
+                };
+                chart.lines.push(myCopiedObject);
+            }
+        });
+    }
+
     editChartLine(line: ChartLine) {
         let dialogRef = this.dialog.open(ChartLinePropertyComponent, {
             position: { top: '60px' },
@@ -206,6 +230,9 @@ export class ChartConfigComponent implements OnInit {
     }
 
     getDeviceTagName(line: ChartLine) {
+        if (line.device === '@') {
+            return line.name;
+        }
         let devices = this.data.devices.filter(x => x.name === line.device);
         if (devices && devices.length > 0) {
             let tags = Object.values<Tag>(devices[0].tags);
