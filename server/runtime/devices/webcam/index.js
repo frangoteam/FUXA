@@ -57,7 +57,7 @@ function WebCamClient(_data, _logger, _events, _manager, _runtime) {
 
     /**
      * Read values in polling mode
-     * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
+     * Used to refresh automatically the images
      */
     this.polling = async function () {
         var readVarsfnc = [];
