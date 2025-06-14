@@ -1,7 +1,7 @@
 
 module.exports = {
     // Version to manage update
-    version: 1.2,
+    version: 1.3,
 
     // Standard language (editor)
     language: 'en',
