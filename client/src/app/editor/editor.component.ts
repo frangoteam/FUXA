@@ -55,7 +55,6 @@ declare var mysvgcanvas: any;
 declare var mysvgeditor: any;
 
 @Component({
-    moduleId: module.id,
     templateUrl: 'editor.component.html',
     styleUrls: ['editor.component.css']
 })

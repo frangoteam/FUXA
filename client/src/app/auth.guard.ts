@@ -1,4 +1,4 @@
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { AuthService } from './_services/auth.service';
 import { ProjectService } from './_services/project.service';
@@ -10,7 +10,7 @@ import { LoginComponent } from './login/login.component';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuard  {
     constructor(private authService: AuthService,
         private translateService: TranslateService,
         private toastr: ToastrService,
