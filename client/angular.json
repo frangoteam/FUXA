@@ -28,7 +28,8 @@
               "src/theme.scss",
               "node_modules/uplot/dist/uPlot.min.css",
               "node_modules/ngx-toastr/toastr.css",
-              "node_modules/leaflet/dist/leaflet.css"
+              "node_modules/leaflet/dist/leaflet.css",
+              "node_modules/angular2-draggable/css/resizable.min.css"
             ],
             "scripts": [
               "node_modules/uplot/dist/uPlot.iife.min.js",
