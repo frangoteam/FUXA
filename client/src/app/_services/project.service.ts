@@ -1073,7 +1073,7 @@ export class ProjectService {
         let result = {};
         if (this.projectData) {
             result = this.projectData.devices;
-            if (!result[this.projectData.server.id]) {
+            if (this.projectData.server && !result[this.projectData.server?.id]) {
                 // add server as device to use in script and logic
                 let server: Device = JSON.parse(JSON.stringify(this.projectData.server));
                 server.enabled = true;
