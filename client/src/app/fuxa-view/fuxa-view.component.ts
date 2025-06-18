@@ -75,6 +75,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     parent: FuxaViewComponent;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
 
+    viewLoaded: boolean = false;
+    private viewRenderDelay = 0; // Delay to render view after loading SVG content
+
     private subscriptionOnChange: Subscription;
     protected staticValues: any = {};
     protected plainVariableMapping: VariableMappingDictionary = {};
@@ -173,60 +176,71 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param view
      */
     public loadHmi(view: View, legacyProfile?: boolean) {
+        this.viewLoaded = false;
         if (this.loadOk || !view) {
+            this.viewLoaded = true;
             return;
         }
-        if (this.view) {
-            // Execute onClose script for last view
-            let lastView = this.getView(this.view.id);
-            if (lastView) {
-                lastView.property?.events?.forEach(event => {
-                    if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
+        try {
+            if (this.view) {
+                // Execute onClose script for last view
+                let lastView = this.getView(this.view.id);
+                if (lastView) {
+                    lastView.property?.events?.forEach(event => {
+                        if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
+                            this.onRunScript(event);
+                        }
+                    });
+                }
+            }
+            if (!this.hmi) {
+                this.hmi = this.projectService.getHmi();
+            }
+            if (this.id) {
+                try {
+                    this.gaugesManager.unbindGauge(this.id);
+                    this.clearGaugeStatus();
+                    this.viewContainerRef.clear();
+                    this.dataContainer.nativeElement.innerHTML = '';
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            if (view?.id) {
+                this.id = view.id;
+                this.view = view;
+                if (view.type === this.cardViewType) {
+                    this.ongoto.emit(view.id);
+                    return;
+                } else {
+                    this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
+                }
+                if (view.profile.bkcolor && (this.child || legacyProfile)) {
+                    this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
+                }
+                if (view.profile.align && !this.child) {
+                    FuxaViewComponent.setAlignStyle(view.profile.align, this.dataContainer.nativeElement);
+                }
+            }
+            this.changeDetector.detectChanges();
+            this.loadWatch(this.view);
+            this.onResize();
+
+            if (view) {
+                // Execute onOpen script for new current view
+                view.property?.events?.forEach(event => {
+                    if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {
                         this.onRunScript(event);
                     }
                 });
+                this.viewRenderDelay = view.profile?.viewRenderDelay || 0;
             }
-        }
-        if (!this.hmi) {
-            this.hmi = this.projectService.getHmi();
-        }
-        if (this.id) {
-            try {
-                this.gaugesManager.unbindGauge(this.id);
-                this.clearGaugeStatus();
-                this.viewContainerRef.clear();
-                this.dataContainer.nativeElement.innerHTML = '';
-            } catch (err) {
-                console.error(err);
-            }
-        }
-        if (view?.id) {
-            this.id = view.id;
-            this.view = view;
-            if (view.type === this.cardViewType) {
-                this.ongoto.emit(view.id);
-                return;
-            } else {
-                this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
-            }
-            if (view.profile.bkcolor && (this.child || legacyProfile)) {
-                this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
-            }
-            if (view.profile.align && !this.child) {
-                FuxaViewComponent.setAlignStyle(view.profile.align, this.dataContainer.nativeElement);
-            }
-        }
-        this.changeDetector.detectChanges();
-        this.loadWatch(this.view);
-        this.onResize();
-
-        if (view) {
-            // Execute onOpen script for new current view
-            view.property?.events?.forEach(event => {
-                if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {
-                    this.onRunScript(event);
-                }
-            });
+        } finally {
+            // Garantisce sempre il completamento
+            setTimeout(() => {
+                this.viewLoaded = true;
+                this.changeDetector.detectChanges();
+            }, this.viewRenderDelay);
         }
     }
 

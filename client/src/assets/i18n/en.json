@@ -110,6 +110,7 @@
     "dlg.docproperty-gridtype-fixed": "Fixed",
     "dlg.docproperty-gridtype-verticalFixed": "VerticalFixed",
     "dlg.docproperty-gridtype-horizontalFixed": "HorizontalFixed",
+    "dlg.docproperty-renderDelay": "View rendering delay (ms)",
 
     "dlg.docname-title": "View name",
     "dlg.docname-name": "Name",
