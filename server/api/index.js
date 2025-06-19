@@ -35,7 +35,7 @@ function init(_server, _runtime) {
             apiApp.use(morgan(['combined', 'common', 'dev', 'short', 'tiny'].
                 includes(runtime.settings.logApiLevel) ? runtime.settings.logApiLevel : 'combined'));
 
-            var maxApiRequestSize = runtime.settings.apiMaxLength || '10mb';
+            var maxApiRequestSize = runtime.settings.apiMaxLength || '100mb';
             apiApp.use(bodyParser.json({limit:maxApiRequestSize}));
             apiApp.use(bodyParser.urlencoded({limit:maxApiRequestSize, extended: true}));
             authJwt.init(runtime.settings.secureEnabled, runtime.settings.secretCode, runtime.settings.tokenExpiresIn);
