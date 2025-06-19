@@ -54,6 +54,7 @@ export class ViewPropertyComponent implements OnInit, OnDestroy {
             margin: [this.data.profile.margin],
             align: [this.data.profile.align],
             gridType: [this.data.profile.gridType],
+            viewRenderDelay: [this.data.profile?.viewRenderDelay || 0],
         });
         if (this.data.type !== ViewType.cards && this.data.type !== ViewType.maps) {
             this.formGroup.controls.width.setValidators(Validators.required);
@@ -101,6 +102,7 @@ export class ViewPropertyComponent implements OnInit, OnDestroy {
         this.data.profile.margin = this.formGroup.controls.margin.value;
         this.data.profile.align = this.formGroup.controls.align.value;
         this.data.profile.gridType = this.formGroup.controls.gridType.value;
+        this.data.profile.viewRenderDelay = this.formGroup.controls.viewRenderDelay.value;
         if (!this.data.property) {
 			this.data.property = new ViewProperty();
         }

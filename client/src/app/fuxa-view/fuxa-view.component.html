@@ -1,4 +1,4 @@
-<div #dataContainer class="view-container" id="content">
+<div  [ngStyle]="{ visibility: viewLoaded ? 'visible' : 'hidden' }" #dataContainer class="view-container" id="content">
 </div>
 <div *ngFor="let card of cards; let i = index"
      [style.height]="getCardHeight(card.height) + 'px'"
