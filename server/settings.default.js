@@ -64,8 +64,8 @@ module.exports = {
     "allowedOrigins": ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*"]
 
     // The maximum size of HTTP request that will be accepted by the runtime api.
-    // Default: 15mb
-    //apiMaxLength: '15mb',
+    // Default: 100mb
+    //apiMaxLength: '100mb',
 
     // Used to disable the server API used for Backend communication (Standalone application)
     // disable to use only the Editor

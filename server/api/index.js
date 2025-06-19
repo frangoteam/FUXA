@@ -35,9 +35,9 @@ function init(_server, _runtime) {
             apiApp.use(morgan(['combined', 'common', 'dev', 'short', 'tiny'].
                 includes(runtime.settings.logApiLevel) ? runtime.settings.logApiLevel : 'combined'));
 
-            var maxApiRequestSize = runtime.settings.apiMaxLength || '35mb';
+            var maxApiRequestSize = runtime.settings.apiMaxLength || '10mb';
             apiApp.use(bodyParser.json({limit:maxApiRequestSize}));
-            apiApp.use(bodyParser.urlencoded({limit:maxApiRequestSize,extended:true}));
+            apiApp.use(bodyParser.urlencoded({limit:maxApiRequestSize, extended: true}));
             authJwt.init(runtime.settings.secureEnabled, runtime.settings.secretCode, runtime.settings.tokenExpiresIn);
             prjApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(prjApi.app());
@@ -69,6 +69,15 @@ function init(_server, _runtime) {
 
             //  apply to all requests
             apiApp.use(limiter);
+
+            apiApp.use((err, req, res, next) => {
+                if (err?.type === 'entity.too.large') {
+                    return res.status(413).json({
+                        message: `The submitted content exceeds the maximum allowed size (${maxApiRequestSize})`
+                    });
+                }
+                next(err);
+            });
 
             /**
              * GET Server setting data
