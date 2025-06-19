@@ -1217,11 +1217,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * to check from DOM and to control open close interaction panel
      * @param ele selected gauge element
      */
-    isInteractivtyEnabled(ele) {
-        if (ele && ele.type) {
-            return this.gaugesManager.isGauge(ele.type);
+    onInteractivityClick(ele) {
+        if (ele?.type && GaugesManager.isGauge(ele.type)) {
+            this.onGaugeEditEx();
         }
-        return false;
     }
 
     /**

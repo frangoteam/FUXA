@@ -57,7 +57,7 @@ export class GaugesManager {
     mapTable = {};
 
     // list of gauges tags to speed up the check
-    gaugesTags = [];
+    static gaugesTags = [];
 
     // list of gauges with input
     static GaugeWithProperty = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix];
@@ -102,7 +102,7 @@ export class GaugesManager {
         this.hmiService.getGaugeMapped = this.getGaugeFromName.bind(this);
         // make the list of gauges tags to speed up the check
         GaugesManager.Gauges.forEach(g => {
-            this.gaugesTags.push(g.TypeTag);
+            GaugesManager.gaugesTags.push(g.TypeTag);
         });
     }
 
@@ -161,9 +161,9 @@ export class GaugesManager {
      * @param type
      * @returns
      */
-    isGauge(type: string) {
-        for (let tag in this.gaugesTags) {
-            if (type.startsWith(this.gaugesTags[tag])) {
+    static isGauge(type: string) {
+        for (let tag in GaugesManager.gaugesTags) {
+            if (type.startsWith(GaugesManager.gaugesTags[tag])) {
                 return true;
             }
         }
@@ -234,7 +234,6 @@ export class GaugesManager {
         this.mapChart = {};
         this.mapGauges = {};
         this.mapTable = {};
-        this.gaugesTags = [];
     }
 
     /**
