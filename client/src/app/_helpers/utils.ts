@@ -547,6 +547,45 @@ export class Utils {
         return Array.from(mergedMap.values());
     }
 
+    /**
+     * Merges two arrays of objects into one, ensuring uniqueness based on a specified object key.
+     * @template T - The type of objects in the arrays.
+     * @param {T[] | null | undefined} base - The base array to start from. Can be null or undefined.
+     * @param {T[] | null | undefined} toAdd - The array of elements to add, if they are not already present.
+     * @param {keyof T} key - The object key used to determine uniqueness.
+     * @returns {T[]} A new array containing all unique elements from both arrays based on the specified key.
+     * @example
+     * const base = [{ id: 1, name: 'A' }];
+     * const toAdd = [{ id: 2, name: 'B' }, { id: 1, name: 'A' }];
+     * const result = Utils.mergeUniqueBy(base, toAdd, 'id');
+     * // result: [{ id: 1, name: 'A' }, { id: 2, name: 'B' }]
+     */
+    static mergeUniqueBy<T>(base: T[] | null | undefined, toAdd: T[] | null | undefined, key: keyof T): T[] | null {
+        if ((!base || base.length === 0) && (!toAdd || toAdd.length === 0)) {
+            return null;
+        }
+
+        const result: T[] = base ? [...base] : [];
+        const existingKeys = new Set(result.map(item => item[key]));
+        let added = false;
+
+        if (toAdd) {
+            toAdd.forEach(item => {
+                if (!existingKeys.has(item[key])) {
+                    result.push(item);
+                    existingKeys.add(item[key]);
+                    added = true;
+                }
+            });
+        }
+
+        if (!added) {
+            return base ?? null;
+        }
+
+        return result;
+    }
+
     static copyToClipboard(text) {
         // Create a temporary textarea element
         const textarea = document.createElement('textarea');

@@ -262,8 +262,23 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (view && view.items) {
             this.mapControls = {};
             const device = this.projectService.getDeviceFromId(this.sourceDeviceId);
-            const sourceDeviceTags: Tag[] | null = device?.tags ? Object.values(device.tags) : null;
-            let items = this.applyVariableMapping(view.items, sourceDeviceTags);
+            let sourceTags: Tag[] | null = device?.tags ? Object.values(device.tags) : null;
+            let items = this.applyVariableMapping(view.items, sourceTags);
+            // add mapped placeholder -> variable to sourceTags
+            let tagsToAddForPlaceholderMapping: Tag[] = [];
+            Object.entries(this.plainVariableMapping ?? {}).forEach(([key, mappingEntry]) => {
+                if (mappingEntry?.variableId) {
+                    const tagFound = this.projectService.getTagFromId(mappingEntry.variableId);
+                    if (tagFound) {
+                        const tag = new Tag(tagFound.id);
+                        const placeholder = DevicesUtils.getPlaceholderContent(key);
+                        tag.name = placeholder.firstContent;
+                        tagsToAddForPlaceholderMapping.push(tag);
+                    }
+                }
+            });
+            sourceTags = Utils.mergeUniqueBy(sourceTags, tagsToAddForPlaceholderMapping, 'id');
+
             for (let key in items) {
                 if (!items.hasOwnProperty(key)) {
                     continue;
@@ -272,12 +287,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     // check language translation
                     const textTranslated = this.languageService.getTranslation(items[key].property?.text);
                     // init gauge and TagId
-                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true, this, textTranslated, sourceDeviceTags);
+                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true, this, textTranslated, sourceTags);
                     if (gauge) {
                         this.mapControls[key] = gauge;
                     }
                     // bind mouse/key events, signals in gage will be subscribe for notify changes in backend
-                    this.gaugesManager.bindGauge(gauge, this.id, items[key], sourceDeviceTags,
+                    this.gaugesManager.bindGauge(gauge, this.id, items[key], sourceTags,
                         (gaToBindMouseEvents) => {
                             this.onBindMouseEvents(gaToBindMouseEvents);
                         },
@@ -386,7 +401,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param items
      * @protected
      */
-    protected applyVariableMapping(items: DictionaryGaugeSettings, tags?: Tag[]) {
+    protected applyVariableMapping(items: DictionaryGaugeSettings, sourceTags?: Tag[]): DictionaryGaugeSettings {
         // Deep clone
         items = JSON.parse(JSON.stringify(items));
 
@@ -394,14 +409,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!items.hasOwnProperty(gaId)) {
                 continue;
             }
-            let property = <GaugeProperty> items[gaId].property;
+            const gaugeSettings = items[gaId];
+            let property = <GaugePropertyExt> gaugeSettings.property;
             if (!property) {
                 continue;
             }
-            this.applyVariableMappingTo(property, tags);
+            this.applyVariableMappingTo(property, sourceTags);
             if (property.actions) {
                 property.actions.forEach(action => {
-                    this.applyVariableMappingTo(action, tags);
+                    this.applyVariableMappingTo(action, sourceTags);
                 });
             }
 
@@ -409,9 +425,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 property.events.forEach((event: GaugeEvent) => {
                     if (event.actoptions) {
                         if (Utils.isObject(event.actoptions['variable'])) {
-                            this.applyVariableMappingTo(event.actoptions['variable'], tags);
+                            this.applyVariableMappingTo(event.actoptions['variable'], sourceTags);
                         } else {
-                            this.applyVariableMappingTo(event.actoptions, tags);
+                            this.applyVariableMappingTo(event.actoptions, sourceTags);
                         }
                     }
                 });
@@ -420,7 +436,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (property.ranges) {
                 property.ranges.forEach((range: GaugeRangeProperty) => {
                     if (range.textId) {
-                        this.applyVariableMappingTo(range.textId, tags);
+                        this.applyVariableMappingTo(range.textId, sourceTags);
                     }
                 });
             }
@@ -1126,6 +1142,11 @@ interface VariableMappingDictionary {
 
 interface ActionOptionsVariable {
     variable: IPropertyVariable;
+}
+
+interface GaugePropertyExt extends GaugeProperty {
+    id: string;
+    type: string;
 }
 
 export class CardModel {
