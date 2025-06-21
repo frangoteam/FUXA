@@ -77,6 +77,11 @@
     "dlg.menuitem-alarms": "Alarms by Click",
     "dlg.menuitem-address": "Link address",
     "dlg.menuitem-icons-filter": "Icons Filter",
+	
+    "dlg.menuitem-submenu": "Submenu",
+    "dlg.menuitem-add-submenu": "Add Submenu Item",
+    "dlg.menuitem-submenu-items": "Submenu Items",
+    "sidenav.new_item": "New Submenu Item",
 
     "dlg.headeritem-title": "Header Item",
     "dlg.headeritem-icon": "Icon",

@@ -155,6 +155,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (item) {
+                    Object.assign(item, result.item);
                     item.icon = result.item.icon;
                     item.image = result.item.image;
                     item.text = result.item.text;
@@ -164,6 +165,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
                     item.permissionRoles = result.permissionRoles;
                 } else {
                     let nitem = new NaviItem();
+                    Object.assign(nitem, result.item);
                     nitem.icon = result.item.icon;
                     nitem.image = result.item.image;
                     nitem.text = result.item.text;
