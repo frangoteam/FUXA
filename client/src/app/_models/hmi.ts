@@ -110,6 +110,7 @@ export enum NaviItemType {
 }
 
 export class NaviItem {
+	id?: string;
     text: string;
     link: string;
     view: string;
@@ -117,6 +118,7 @@ export class NaviItem {
     image: string;
     permission: number;
     permissionRoles: PermissionRoles;
+	children?: NaviItem[];
 }
 
 export class HeaderSettings {
