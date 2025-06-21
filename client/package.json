@@ -56,7 +56,7 @@
     "xgplayer": "3.0.13",
     "xgplayer-flv.js": "3.0.13",
     "xgplayer-hls.js": "3.0.13",
-    "zone.js": "~0.13.3"
+    "zone.js": "~0.14.10"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^16.2.16",
