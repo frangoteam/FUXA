@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { SchedulerData, ScriptScheduling, ScriptSchedulingMode } from '../../_models/script';
 import { FormArray, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';

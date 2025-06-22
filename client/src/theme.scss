@@ -1,13 +1,12 @@
 @use '@angular/material' as mat;
-@import '@angular/material/theming';
 
 // TODO: As of v15 mat.legacy-core no longer includes default typography styles.
 // If you specify typography styles for the components you use elsewhere, you should delete this line.
 // If you don't need the default component typographies but still want the hierarchy styles,
 // you can delete this line and instead use:
 // `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
-@include mat.all-legacy-component-typographies();
-@include mat.legacy-core();
+@include mat.all-component-typographies();
+@include mat.core();
 
 // Header theme
 $my-header-primary: mat.define-palette(mat.$grey-palette, 100);
@@ -116,7 +115,7 @@ $dark-theme: mat.define-dark-theme((
 
 // Themes will be switched based on class names. Angular will switch classes which will trigger the theme change.
 .dark-theme {
-  @include mat.all-legacy-component-themes($dark-theme);
+  @include mat.all-component-themes($dark-theme);
 }
 
 @import 'codemirror/lib/codemirror';

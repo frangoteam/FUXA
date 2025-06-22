@@ -1,5 +1,5 @@
 import { Directive, HostListener, AfterViewInit } from '@angular/core';
-import { MatLegacyDialogContainer as MatDialogContainer, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogContainer as MatDialogContainer, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { fromEvent } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Position } from './modal-position.cache';
