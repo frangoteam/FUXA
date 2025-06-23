@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Role, UserGroups } from '../../../_models/user';
 import { SelOptionType, SelOptionsComponent } from '../../../gui-helpers/sel-options/sel-options.component';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SettingsService } from '../../../_services/settings.service';
 import { UserService } from '../../../_services/user.service';
 import { Subject, map, takeUntil } from 'rxjs';

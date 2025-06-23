@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap } from 'rxjs/operators';
 import { LoginComponent } from './login/login.component';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 
 @Injectable()
 export class AuthGuard  {

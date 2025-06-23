@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
 import { ResourceGroup, Resources, ResourceType } from '../../_models/resources';

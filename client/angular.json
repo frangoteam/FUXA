@@ -135,24 +135,24 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "proxyConfig": "proxy.conf.json",
-            "browserTarget": "FUXA:build"
+            "buildTarget": "FUXA:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "FUXA:build:production"
+              "buildTarget": "FUXA:build:production"
             },
             "client": {
-              "browserTarget": "FUXA:build:clientdebug"
+              "buildTarget": "FUXA:build:clientdebug"
             },
             "demo": {
-              "browserTarget": "FUXA:build:demodebug"
+              "buildTarget": "FUXA:build:demodebug"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "FUXA:build"
+            "buildTarget": "FUXA:build"
           }
         },
         "test": {

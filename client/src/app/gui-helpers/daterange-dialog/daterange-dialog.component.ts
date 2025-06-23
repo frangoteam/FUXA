@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 
 import { DaterangepickerComponent } from '../daterangepicker';
 import { IDateRange } from '../../_models/hmi';

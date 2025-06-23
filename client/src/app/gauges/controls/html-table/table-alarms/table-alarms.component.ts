@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { TableFilter, TableType } from '../../../../_models/hmi';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA as MAT_DIALOG_DATA, MatDialog as MatDialog, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { AlarmColumns, AlarmColumnsType, AlarmHistoryColumns, AlarmHistoryColumnsType, AlarmsFilter, AlarmsType } from '../../../../_models/alarm';
 import { ProjectService } from '../../../../_services/project.service';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../../../device/device-tag-selection/device-tag-selection.component';

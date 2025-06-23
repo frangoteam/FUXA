@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, Inject, ViewChild } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
-import { MatLegacyTabGroup as MatTabGroup, MatLegacyTab as MatTab } from '@angular/material/legacy-tabs';
+import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatTabGroup as MatTabGroup, MatTab as MatTab } from '@angular/material/tabs';
 import { Subscription } from 'rxjs';
 
 import { HmiService } from '../../_services/hmi.service';

@@ -3,7 +3,7 @@ import { GaugeProperty, GaugeRangeProperty, InputActionEscType, InputConvertionT
 import { DevicesUtils, Tag } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
 import { FlexVariableComponent } from '../flex-variable/flex-variable.component';
-import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
+import { MatSelectChange as MatSelectChange } from '@angular/material/select';
 
 @Component({
     selector: 'flex-input',

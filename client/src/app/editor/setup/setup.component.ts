@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 
 import { ProjectService } from '../../_services/project.service';
 import { AppService } from '../../_services/app.service';
