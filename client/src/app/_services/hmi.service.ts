@@ -1,5 +1,5 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import * as io from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 import { environment } from '../../environments/environment';
 import { Tag, DeviceType } from '../_models/device';
