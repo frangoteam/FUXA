@@ -141,7 +141,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         if (element.timeline) {
             element.timeline().stop();
         }
-        if (gaugeStatus.actionRef?.animr) {
+        if (gaugeStatus.actionRef?.animr?.unschedule instanceof Function) {
             gaugeStatus.actionRef?.animr.unschedule();
         }
         if (ApeShapesComponent.actionsType[type] === ApeShapesComponent.actionsType.clockwise) {
