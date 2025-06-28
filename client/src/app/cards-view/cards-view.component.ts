@@ -153,7 +153,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
 
     static itemResizeTrigger(item: GridsterItem, itemComponent: GridsterItemComponentInterface) {
         if (item.card?.type === CardWidgetType.view) {
-            if (item.content.type === 'maps') {
+            if (item.content?.type === 'maps') {
                 if ((itemComponent.el.firstChild as HTMLElement).style) {
                     (itemComponent.el.firstChild as HTMLElement).style.height = '100%';
                     (itemComponent.el.firstChild as HTMLElement).style.width = '100%';
