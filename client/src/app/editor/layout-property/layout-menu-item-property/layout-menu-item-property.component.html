@@ -55,6 +55,40 @@
             <span>{{'dlg.useraccess-groups' | translate}}</span>
             <sel-options #seloptions [selected]="selected" [options]="options"></sel-options>
         </div>
+        <!-- Submeu -->
+        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+            <span>{{'dlg.menuitem-submenu' | translate}}</span>
+            <button mat-raised-button color="primary" (click)="onAddChild()" style="margin-left: 10px;">
+                {{'dlg.menuitem-add-submenu' | translate}}
+            </button>
+        </div>
+        <!-- List submenu -->
+        <div *ngIf="data.item.children?.length" class="submenu-list">
+            <h3>{{'dlg.menuitem-submenu-items' | translate}}</h3>
+            <div *ngFor="let child of data.item.children; let i = index" class="submenu-item">
+                <div class="my-form-field" style="display: inline-block; margin-right: 10px;">
+                    <span>{{'dlg.menuitem-text' | translate}}</span>
+                    <input [(ngModel)]="child.text" type="text" style="width: 200px">
+                </div>
+                <div class="my-form-field" style="display: inline-block; margin-right: 10px;">
+                    <span>{{'dlg.menuitem-view' | translate}}</span>
+                    <mat-select [(value)]="child.view" style="width: 200px">
+                        <mat-option *ngFor="let view of data.views" [value]="view.id">
+                            {{ view.name }}
+                        </mat-option>
+                        <mat-option [value]="linkAddress">[{{'dlg.menuitem-link' | translate}}]</mat-option>
+                        <mat-option [value]="linkAlarms">[{{'dlg.menuitem-alarms' | translate}}]</mat-option>
+                    </mat-select>
+                </div>
+                <div *ngIf="child.view === '[link]'" class="my-form-field" style="display: inline-block; margin-right: 10px;">
+                    <span>{{'dlg.menuitem-address' | translate}}</span>
+                    <input [(ngModel)]="child.link" type="text" style="width: 200px">
+                </div>
+                <button mat-icon-button (click)="onDeleteChild(i)">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </div>
+        </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>

@@ -26,6 +26,7 @@ export class SidenavComponent implements AfterContentChecked {
     layout: LayoutSettings = null;
     showSidenav = false;
     layoutNavigation = new NavigationSettings();
+    expandedItems: Set<string> = new Set();
 
     constructor(private location: Location,
                 private router: Router,
@@ -53,6 +54,21 @@ export class SidenavComponent implements AfterContentChecked {
         }
     }
 
+    toggleSubMenu(item: NaviItem) {
+        if (item.id && item.children?.length) {
+            if (this.expandedItems.has(item.id)) {
+                this.expandedItems.delete(item.id);
+            } else {
+                this.expandedItems.add(item.id);
+            }
+            this.changeDetector.detectChanges();
+        }
+    }
+
+    isExpanded(item: NaviItem): boolean {
+        return item.id ? this.expandedItems.has(item.id) : false;
+    }
+
     public setLayout(layout: LayoutSettings) {
         this.layout = Utils.clone(layout);
         if (this.layout.navigation) {
@@ -60,6 +76,16 @@ export class SidenavComponent implements AfterContentChecked {
             this.logo = this.layout.navigation.logo;
             this.layout.navigation.items?.forEach(item => {
                 item.text = this.languageService.getTranslation(item.text) ?? item.text;
+                
+                if (!item.id) {
+                    item.id = Utils.getRandomId();
+                }
+                item.children?.forEach(child => {
+                    child.text = this.languageService.getTranslation(child.text) ?? child.text;
+                    if (!child.id) {
+                        child.id = Utils.getRandomId();
+                    }
+                });
             });
         }
     }
