@@ -1,5 +1,5 @@
 import { Directive, Input, ElementRef, HostListener } from '@angular/core';
-import { MatLegacyTooltip as MatTooltip } from '@angular/material/legacy-tooltip';
+import { MatTooltip as MatTooltip } from '@angular/material/tooltip';
 
 @Directive({
   selector: '[jsonTooltip]',
