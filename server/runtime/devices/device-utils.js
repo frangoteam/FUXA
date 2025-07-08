@@ -26,7 +26,8 @@ module.exports = {
                 if (tag.scaleReadFunction) {
                     value = await callScaleScript(tag.scaleReadFunction, tag.scaleReadParams ? tag.scaleReadParams : undefined, runtime, true, value);
                 }
-                if (!(tag.type === 'String' || tag.type === 'ByteString') && utils.isNumber(value, obj)) {
+                const type = tag?.type;
+                if (!(type === 'String' || type === 'ByteString' || type === 'string') && utils.isNumber(value, obj)) {
                     value = obj.value;
                     if (tag.deadband && tag.deadband.value && !utils.isNullOrUndefined(oldValue)) {
                         if (Math.abs(value - oldValue) <= tag.deadband.value) {
