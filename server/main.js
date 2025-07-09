@@ -296,14 +296,6 @@ const allowCrossDomain = function (req, res, next) {
     return res.sendStatus(204); 
   }
   next();
-  
-  try {
-    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    console.log("Client IP:", ip);
-  } catch (err) {
-    console.error("IP Logging Error:", err);
-  }
-
 };
 app.use(allowCrossDomain);
 app.use('/', express.static(settings.httpStatic));
