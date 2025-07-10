@@ -221,7 +221,8 @@ server.setMaxListeners(0);
 
 const io = socketIO(server, {
     pingInterval: 60000, // send ping interval
-    pingTimeout: 120000  // close connection if pong is not received
+    pingTimeout: 120000,  // close connection if pong is not received
+    allowEIO3: true  //Whether to enable compatibility with Socket.IO v2 clients.
 });
 
 // Check settings value

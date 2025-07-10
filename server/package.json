@@ -17,7 +17,6 @@
   "dependencies": {
     "@influxdata/influxdb-client": "1.25.0",
     "@tdengine/rest": "3.0.2",
-    "@types/socket.io": "2.1.2",
     "ads-client": "2.1.0",
     "app-root-path": "2.2.1",
     "async": "3.2.3",
@@ -45,7 +44,7 @@
     "nopt": "5.0.0",
     "odbc": "2.4.9",
     "pdfmake": "0.2.5",
-    "socket.io": "2.5.0",
+    "socket.io": "^4.5.0",
     "sqlite3": "5.1.5",
     "winston": "3.7.2",
     "ws": "8.18.0"

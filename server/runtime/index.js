@@ -484,7 +484,7 @@ function updateDeviceValues(event) {
     try {
         //!TOFIX
         if (settings.broadcastAll === false) {
-            Object.values(io.sockets.sockets).forEach((socket) => {
+            Array.from(io.sockets.sockets.values()).forEach((socket) => {
                 const tags = Object.values(event.values).filter((tag) => {
                     return socket.tagsClientSubscriptions.includes(tag.id);
                 });
