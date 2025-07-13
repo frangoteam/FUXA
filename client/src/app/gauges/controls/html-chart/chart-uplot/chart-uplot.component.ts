@@ -299,9 +299,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (zones) {
                     serie.fill = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || fallbackFill;
                 }
-            }
-
-            else if (line.fill) {
+            } else if (line.fill) {
                 serie.fill = line.fill;
             }
 
@@ -310,12 +308,10 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (zones) {
                     serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || fallbackStroke;
                 }
-            }
-
-            else if (line.color) {
+            } else if (line.color) {
                 serie.stroke = line.color;
             }
-            
+
             serie.lineInterpolation = line.lineInterpolation;
             this.mapData[id] = <MapDataType>{
                 index: Object.keys(this.mapData).length + 1,
@@ -329,9 +325,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    
     private generateZones(ranges: ChartLineZone[], attribute: 'stroke' | 'fill', baseColor:string): Zone[] {
-        
+
         const result: Zone[] = [];
         const sorted = ranges.sort((a, b) => a.min - b.min);
 
