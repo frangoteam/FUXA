@@ -25,6 +25,7 @@ const PluginGroupType = {
 var plugins = {};
 plugins['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '2.78.0', PluginGroupType.connectionDevice);
 plugins['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.9', PluginGroupType.connectionDevice);
+plugins['node-vistwo'] = new Plugin('node-vistwo', './vistwo', 'Vistwo', '2.9.17', PluginGroupType.connectionDevice);
 plugins['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4', PluginGroupType.connectionDevice);
 plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.7', PluginGroupType.connectionDevice);
 plugins['ads-client'] = new Plugin('ads-client', './ads-client', 'ADSclient', '2.1.0', PluginGroupType.connectionDevice);
