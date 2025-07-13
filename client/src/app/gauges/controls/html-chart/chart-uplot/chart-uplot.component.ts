@@ -386,49 +386,78 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    /**
-     * set values to a history chart
-     * the values is composed of a matrix of array, array of lines values[]<datetime, value> [line][pos]{dt, value}
-     * the have to be transform in uplot format. a matrix with array of datetime and arrays of values [datetime[dt], lineN[value]]
-     * @param values
-     */
-    public setValues(values, chunk: DaqChunkType) {
-        let result = [];
-        result.push([]);    // timestamp, index 0
-        let xmap = {};
-        for (var i = 0; i < values.length; i++) {
-            result.push([]);    // line
-            for (var x = 0; x < values[i].length; x++) {
-                let t = values[i][x].dt / 1e3;
-                if (result[0].indexOf(t) === -1) {
-                    result[0].push(t);
-                    xmap[t] = {};
+    private chunkBuffer = new Map<number, any[]>();  // Buffer for received chunks
+    private processedChunks = new Set<number>();     // Prevent duplicates
+    private totalChunks = 0;
+
+    public setValues(values: any[][], chunk: DaqChunkType) {
+        if (!chunk || !chunk.index || !chunk.of) {
+            console.warn('❗ Invalid or missing chunk info:', chunk);
+            return;
+        }
+
+        // Reset if this is the first chunk of a new series
+        if (chunk.index === 1) {
+            this.chunkBuffer.clear();
+            this.processedChunks.clear();
+            this.totalChunks = chunk.of;
+        }
+
+        // Skip duplicate chunks
+        if (this.processedChunks.has(chunk.index)) {
+            // console.warn(`⚠️ Duplicate chunk ignored: ${chunk.index}`);
+            return;
+        }
+
+        // Store chunk
+        this.chunkBuffer.set(chunk.index, values);
+        this.processedChunks.add(chunk.index);
+
+        // If all expected chunks have been received
+        if (this.chunkBuffer.size === this.totalChunks) {
+            const sortedChunks = Array.from(this.chunkBuffer.entries())
+                .sort((a, b) => a[0] - b[0])
+                .map(entry => entry[1]);
+
+            const mergedData = this.buildUnifiedData(sortedChunks);
+
+            this.nguplot.setData(mergedData);
+            this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+
+            setTimeout(() => this.setLoading(false), 300);
+        }
+    }
+
+    // Converts chunks into format: [timestamps[], line1[], line2[], ...]
+    private buildUnifiedData(chunks: any[][][]): any[] {
+        const timestampsSet = new Set<number>();
+        const xmap = new Map<number, Record<number, any>>();
+
+        for (let chunk of chunks) {
+            for (let i = 0; i < chunk.length; i++) {
+                for (const v of chunk[i]) {
+                    const t = Math.floor(v.dt / 1000);
+                    timestampsSet.add(t);
+                    if (!xmap.has(t)) {
+                        xmap.set(t, {});
+                    }
+                    xmap.get(t)[i] = v.value;
                 }
-                xmap[t][i] = values[i][x].value;
             }
         }
-        result[0].sort(function(a, b) { return a - b; });
-        for (var i = 0; i < result[0].length; i++) {
-            let t = result[0][i];
-            for (var x = 1; x < result.length; x++) {
-                if (xmap[t][x - 1] !== undefined) {
-                    result[x].push(xmap[t][x - 1]);
-                } else {
-                    result[x].push(null);
-                }
+        const sortedTimestamps = Array.from(timestampsSet).sort((a, b) => a - b);
+        const result = [sortedTimestamps];
+        const seriesCount = chunks[0].length;
+
+        for (let i = 0; i < seriesCount; i++) {
+            const line = [];
+            for (const t of sortedTimestamps) {
+                const val = xmap.get(t)?.[i];
+                line.push(val !== undefined ? val : null);
             }
+            result.push(line);
         }
-        if (!chunk || chunk.index === 1) {
-            this.nguplot.setData(result);
-        } else {
-            this.nguplot.addData(result);
-        }
-        this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
-        if (!chunk || chunk.index === chunk.of) {
-            setTimeout(() => {
-                this.setLoading(false);
-            }, 500);
-        }
+        return result;
     }
 
     public redraw() {
