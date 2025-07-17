@@ -202,31 +202,35 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 if (msg && msg.from && msg.to && msg.sids && msg.sids.length) {
                     const TIME_CHUNK_SIZE = 60 * 60 * 1000 * 6; // Dimensione del chunk in millisecondi (ad esempio, 1 ora)
                     const timeChunks = utils.chunkTimeRange(msg.from, msg.to, msg.chunked ? TIME_CHUNK_SIZE : 0);
-                    const processChunks = async () => {
-                        var counter = 1;
-                        for (const chunk of timeChunks) {
+                    (async () => {
+                        for (let index = timeChunks.length - 1; index >= 0; index--) {
+                            const chunk = timeChunks[index];
+                            const reverseIndex = timeChunks.length - index;
                             try {
-                                var dbfncs = [];
-                                for (let i = 0; i < msg.sids.length; i++) {
-                                    dbfncs.push(daqstorage.getNodeValues(msg.sids[i], chunk.start, chunk.end));
-                                }
+                                const dbfncs = msg.sids.map(sid => daqstorage.getNodeValues(sid, chunk.start, chunk.end));
                                 const values = await Promise.all(dbfncs);
+
+                                // 🔁 Simula delay tra un chunk e l'altro
+                                await new Promise(resolve => setTimeout(resolve, 100));
+                                console.log(`DAQ Query chunk ${reverseIndex} of ${timeChunks.length} for gid: ${msg.gid}`);
                                 io.emit(Events.IoEventTypes.DAQ_RESULT, {
                                     gid: msg.gid,
                                     result: values,
                                     chunk: {
-                                        index: counter++,
+                                        index: reverseIndex,
                                         of: timeChunks.length
                                     }
                                 });
                             } catch (error) {
-                                logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${error.stack || error}`);
-                                io.emit(Events.IoEventTypes.DAQ_ERROR, { gid, error });
-                                return;
+                                logger.error(`${Events.IoEventTypes.DAQ_QUERY} [chunk ${reverseIndex}]: ${error.stack || error}`);
+                                io.emit(Events.IoEventTypes.DAQ_ERROR, {
+                                    gid: msg.gid,
+                                    error: error.toString()
+                                });
+                                return; // interrompi in caso di errore
                             }
                         }
-                    }
-                    processChunks();
+                    })();
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${err}`);

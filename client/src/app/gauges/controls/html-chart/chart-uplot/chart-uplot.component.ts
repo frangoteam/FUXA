@@ -383,6 +383,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private chunkBuffer = new Map<number, any[]>();  // Buffer for received chunks
     private processedChunks = new Set<number>();     // Prevent duplicates
+    private expectedChunk = 1;                      // Keeps order tracking
     private totalChunks = 0;
 
     public setValues(values: any[][], chunk: DaqChunkType) {
@@ -396,6 +397,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.chunkBuffer.clear();
             this.processedChunks.clear();
             this.totalChunks = chunk.of;
+            this.expectedChunk = 1;
+            // this.nguplot.setData([]); // Optional: clear chart at start
         }
 
         // Skip duplicate chunks
@@ -408,17 +411,25 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.chunkBuffer.set(chunk.index, values);
         this.processedChunks.add(chunk.index);
 
-        // If all expected chunks have been received
-        if (this.chunkBuffer.size === this.totalChunks) {
-            const sortedChunks = Array.from(this.chunkBuffer.entries())
-                .sort((a, b) => a[0] - b[0])
-                .map(entry => entry[1]);
+        // Process available chunks in order
+        while (this.chunkBuffer.has(this.expectedChunk)) {
+            const chunkData = this.chunkBuffer.get(this.expectedChunk);
+            const formatted = this.buildUnifiedData([chunkData]);
 
-            const mergedData = this.buildUnifiedData(sortedChunks);
+            if (this.expectedChunk === 1) {
+                this.nguplot.setData(formatted);
+            } else {
+                this.nguplot.addData(formatted);
+            }
 
-            this.nguplot.setData(mergedData);
-            this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+            this.chunkBuffer.delete(this.expectedChunk);
+            this.expectedChunk++;
+        }
 
+        this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+
+        if (chunk.index === chunk.of) {
+            console.log('✅ All chunks received. Rendering complete.');
             setTimeout(() => this.setLoading(false), 300);
         }
     }
