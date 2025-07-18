@@ -902,6 +902,7 @@
     "device.property-databits": "Data Bits",
     "device.property-stopbits": "Stop Bits",
     "device.property-parity": "Parity",
+    "device.property-force-fc16": "Use Only Write Multiple Registers",
     "device.property-delay": "Frame delay (msec.)",
     "device.property-method": "Method",
     "device.property-format": "Format",

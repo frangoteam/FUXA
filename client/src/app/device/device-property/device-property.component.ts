@@ -188,6 +188,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
             if (!this.data.device.property.parity) {
                 this.data.device.property.parity = 'None';
             }
+            if (!this.data.device.property.forceFC16) {
+                this.data.device.property.forceFC16 = false;
+            }
         }
 		this.subscriptionHostInterfaces = this.hmiService.onHostInterfaces.subscribe(res => {
 			if (res.result) {
