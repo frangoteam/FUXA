@@ -735,12 +735,9 @@
     "shapes.action-anticlockwise": "逆时针转弯",
     "shapes.action-downup": "向上和向下",
     "shapes.action-rotate": "旋转",
-<<<<<<< HEAD
     "shapes.action-refreshImage": "更新图像",
 
-=======
     "shapes.action-move": "移动",
->>>>>>> origin/master
     "shapes.event-click": "点击",
     "shapes.event-dblclick": "双击",
     "shapes.event-mouseup": "鼠标松开",
@@ -1023,17 +1020,6 @@
     "device.tag-raw-high": "原始高",
     "device.tag-scaled-low": "按比例的低",
     "device.tag-scaled-high": "按比例的高",
-<<<<<<< HEAD
-    "device.tag-property-webcam-device": "摄像头地址",
-    "device.tag-property-webcam-device-address": "摄像头地址,比如(/dev/video0)",
-    "device.tag-property-webcam-options.width": "宽",
-    "device.tag-property-webcam-options.height": "高",
-    "device.tag-property-webcam-options.frames": "帧数",
-    "device.tag-property-webcam-options.quality": "质量",
-    "device.tag-property-webcam-options.outputType": "截图格式",
-    "device.tag-property-webcam-options.callbackReturn": "截图输出",
-
-=======
     "device.tag-convert-datetime": "毫秒到日期时间格式",
     "device.tag-convert-datetime-tooltip": "示例格式：'YYYY-MM-DD HH:mm:ss' 2023-09-14 08:45:10",
     "device.tag-convert-datetime-format": "日期时间格式（YYYY-MM-DD HH:mm:ss）",
@@ -1049,7 +1035,6 @@
     "device.tag-scale-script-params-tooltip": "传递给脚本的参数值的JSON格式化数组",
 
     "device.edit-placeholder-titel": "编辑占位符",
->>>>>>> origin/master
 
     "device.connect-ok": "OK",
     "device.connect-error": "错误",
@@ -1596,11 +1581,7 @@
     "dlg.setup-events": "事件",
     "dlg.setup-resources": "资源",
     "dlg.setup-fonts": "字体",
-<<<<<<< HEAD
-    "dlg.setup-language": "多语言",
-=======
     "dlg.setup-language": "语言",
->>>>>>> origin/master
     "dlg.app-settings-title": "设置",
     "dlg.app-settings-system": "系统",
     "dlg.app-settings-smtp": "SMTP",
