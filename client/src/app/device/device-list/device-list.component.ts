@@ -126,7 +126,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             this.displayedColumns = this.defAllColumns;
             this.tableWidth = this.defAllRowWidth;
         }
-        this.isWithOptions = (this.deviceSelected.type === this.deviceType.internal) ? false : true;
+        this.isWithOptions = (this.deviceSelected.type === this.deviceType.internal || this.deviceSelected.type === DeviceType.WebCam) ? false : true;
     }
 
     onGoBack() {

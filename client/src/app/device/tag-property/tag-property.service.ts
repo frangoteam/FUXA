@@ -18,7 +18,7 @@ import { TopicPropertyComponent, TopicPropertyData } from '../topic-property/top
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { TagPropertyEditGpioComponent, TagPropertyGpioData } from './tag-property-edit-gpio/tag-property-edit-gpio.component';
-import { TagPropertyEditWebcamComponent, TagPropertyWebcamData } from "./tag-property-edit-webcam/tag-property-edit-webcam.component";
+import { TagPropertyEditWebcamComponent, TagPropertyWebcamData } from './tag-property-edit-webcam/tag-property-edit-webcam.component';
 
 @Injectable({
     providedIn: 'root'

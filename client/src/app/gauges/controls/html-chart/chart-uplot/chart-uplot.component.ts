@@ -325,7 +325,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private generateZones(ranges: ChartLineZone[], attribute: 'stroke' | 'fill', baseColor:string): Zone[] {
+    private generateZones(ranges: ChartLineZone[], attribute: 'stroke' | 'fill', baseColor: string): Zone[] {
 
         const result: Zone[] = [];
         const sorted = ranges.sort((a, b) => a.min - b.min);

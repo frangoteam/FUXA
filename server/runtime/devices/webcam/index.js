@@ -190,7 +190,7 @@ function WebCamClient(_data, _logger, _events, _manager, _runtime) {
      * @returns
      */
     this.getTagDaqSettings = (tagId) => {
-        return data.tags[tagId] ? data.tags[tagId].daq : null;
+        console.error('Not supported!');
     }
 
     /**
@@ -198,9 +198,7 @@ function WebCamClient(_data, _logger, _events, _manager, _runtime) {
      * @returns
      */
     this.setTagDaqSettings = (tagId, settings) => {
-        if (data.tags[tagId]) {
-            utils.mergeObjectsValues(data.tags[tagId].daq, settings);
-        }
+        console.error('Not supported!');
     }
 
     var _capture = async (tagId, camInstance) => {
@@ -234,16 +232,9 @@ function WebCamClient(_data, _logger, _events, _manager, _runtime) {
                     changed: valueChanged,
                     timestamp: timestamp
                 };
-                if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[val.id], timestamp)) {
-                    changed[val.id] = varsValue[val.id];
-                }
-                varsValue[val.id].changed = false;
             }
         })
         _emitValues(varsValue);
-        if (this.addDaq && !utils.isEmptyObject(changed)) {
-            this.addDaq(changed, data.name, data.id);
-        }
         return changed;
     }
 
