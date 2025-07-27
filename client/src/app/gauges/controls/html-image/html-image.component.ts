@@ -14,7 +14,7 @@ import {Utils} from '../../../_helpers/utils';
 import {ShapesComponent} from '../../shapes/shapes.component';
 import {EndPointApi} from '../../../_helpers/endpointapi';
 import {SvgUtils, WidgetPropertyVariable} from '../../../_helpers/svg-utils';
-import {DeviceType} from "../../../_models/device";
+import {DeviceType} from '../../../_models/device';
 
 declare var SVG: any;
 
