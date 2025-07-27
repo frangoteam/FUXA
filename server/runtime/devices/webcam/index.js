@@ -1,5 +1,6 @@
 /**
- * template to define owner device driver communication
+ *
+ * Wrapper to communicate with Web-Cam
  */
 
 'use strict';

@@ -25,7 +25,7 @@ var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
 var SERVER_POLLING_INTERVAL = 1000;             // with DAQ enabled, will be saved only changed values in this interval
 var DEVICE_POLLING_INTERVAL = 3000;             // with DAQ enabled, will be saved only changed values in this interval
-var DISABLE_POLLING_INTERVAL = -1;             // disable polling
+var DISABLE_POLLING_INTERVAL = -1;              // disable polling
 
 var fncGetDeviceProperty;
 
@@ -224,7 +224,7 @@ function Device(data, runtime) {
             comm.init(MODBUSclient.ModbusTypes.TCP);
         }
         return comm.connect().then(function () {
-            if(pollingInterval !== DISABLE_POLLING_INTERVAL){
+            if (pollingInterval !== DISABLE_POLLING_INTERVAL){
                 devicePolling = setInterval(function () {
                     self.polling();
                 }, pollingInterval);
@@ -576,6 +576,7 @@ var DeviceEnum = {
     internal: 'internal',
     // Template: 'template'
     WebCam: 'WebCam'
+    // Template: 'template'
 }
 
 /**
