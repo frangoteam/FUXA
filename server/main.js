@@ -247,7 +247,7 @@ settings.uiHost = settings.uiHost || "0.0.0.0";
 events.once('init-runtime-ok', function () {
     logger.info('FUXA init in  ' + utils.endTime(startTime) + 'ms.');
     startFuxa();
-    cleanupSnapShotsFiles();
+    initWebcamSnapshotCleanup();
 });
 
 // Init FUXA
@@ -392,43 +392,51 @@ function startFuxa() {
     });
 }
 
+const initWebcamSnapshotCleanup = () => {
+    if (!settings.webcamSnapShotsCleanup) {
+        return;
+    }
+
+    schedule.scheduleJob('0 1 * * *', cleanupSnapShotsFiles);
+    logger.info('Scheduled webcam snapshot cleanup at 01:00 daily.');
+};
+
 /**
  * Cleanup Snapshots Files
  * @description  start on '0 1 * * *'
  */
-function cleanupSnapShotsFiles() {
-    schedule.scheduleJob('0 1 * * *', function() {
-        if(!settings.webcamSnapShotsCleanup){
-            return;
-        }
-        const snapshotsDir = settings.webcamSnapShotsDir;
-        const oneWeekAgo = Date.now() - (settings.webcamSnapShotsRetain * 24 * 60 * 60 * 1000);
+const cleanupSnapShotsFiles = async () => {
+    const { webcamSnapShotsCleanup, webcamSnapShotsDir, webcamSnapShotsRetain } = settings;
 
-        fs.readdir(snapshotsDir, (err, files) => {
-            if (err) {
-                logger.error('cleanup snapshots:', err);
-                return;
+    if (!webcamSnapShotsCleanup) {
+        return;
+    }
+
+    try {
+        const now = Date.now();
+        const retentionMillis = webcamSnapShotsRetain * 24 * 60 * 60 * 1000;
+        const files = await fs.promises.readdir(webcamSnapShotsDir);
+        let deletedCount = 0;
+
+        for (const file of files) {
+            const filePath = path.join(webcamSnapShotsDir, file);
+            try {
+                const stat = await fs.promises.stat(filePath);
+                if (stat.mtime && (now - stat.mtimeMs > retentionMillis)) {
+                    await fs.promises.unlink(filePath);
+                    deletedCount++;
+                }
+            } catch (fileErr) {
+                logger.error(`Failed to process snapshot file: ${filePath}`, fileErr);
             }
+        }
 
-            files.forEach(file => {
-                const filePath = path.join(snapshotsDir, file);
-                fs.stat(filePath, (err, stat) => {
-                    if (err) return;
+        logger.info(`Snapshot cleanup completed. ${deletedCount} old file(s) deleted.`);
+    } catch (err) {
+        logger.error('Error during webcam snapshot cleanup', err);
+    }
+};
 
-                    if (stat.ctimeMs < oneWeekAgo) {
-                        fs.unlink(filePath, err => {
-                            if (err) {
-                                logger.error(`remove ${filePath} failed:`, err);
-                            } else {
-                                logger.info(`cleanup snapshots success: ${filePath}`);
-                            }
-                        });
-                    }
-                });
-            });
-        });
-    });
-}
 // Don't wait any more
 setTimeout(() => {
     events.emit('init-runtime-ok');
