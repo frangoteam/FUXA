@@ -238,6 +238,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     onRunTest() {
         let torun = new ScriptTest(this.script.id, this.script.name);
         torun.parameters = this.testParameters;
+        torun.mode = this.script.mode;
         torun.outputId = this.script.id;
         torun.code = this.script.code;
         this.scriptService.runScript(torun).subscribe(result => {

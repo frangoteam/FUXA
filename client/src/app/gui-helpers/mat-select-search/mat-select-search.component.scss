@@ -31,10 +31,12 @@ $multiple-check-width: 33px;
     padding: 16px;
     padding-right: 16px + $clear-button-width;
     box-sizing: border-box;
-    font-size: 15px;
+    font-size: 13px;
     border: none;
     background-color: var(--workPanelBackground);
     color: var(--formInputColor);
+    line-height: 28px;
+    height: 28px;
 }
 .mat-select-search-no-entries-found {
     padding: 16px;

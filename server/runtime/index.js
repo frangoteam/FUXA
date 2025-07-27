@@ -45,7 +45,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
     events.once('init-project-ok', checkInit);
 
 
-    daqstorage.init(settings, logger);
+    daqstorage.init(settings, logger, runtime);
 
     plugins.init(settings, logger).then(result => {
         logger.info('runtime init plugins successful!', true);
@@ -82,7 +82,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
     events.on('script-console', scriptConsoleOutput);
 
     io.on('connection', async (socket) => {
-        logger.info(`socket.io client connected`);
+        logger.info(`socket.io client connected ${socket.id}`);
         socket.tagsClientSubscriptions = [];
         // check authorizations
         if (settings.secureEnabled && !settings.secureOnlyEditor) {
@@ -305,6 +305,12 @@ function init(_io, _api, _settings, _log, eventsMain) {
         socket.on(Events.IoEventTypes.DEVICE_TAGS_SUBSCRIBE, (message) => {
             try {
                 socket.tagsClientSubscriptions = message.tagsId
+                if (message.sendLastValue) {
+                    var adevs = devices.getDevicesValues();
+                    for (var id in adevs) {
+                        updateDeviceValues({ id: id, values: adevs[id] });
+                    }
+                }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_TAGS_SUBSCRIBE}: ${err}`);
             }

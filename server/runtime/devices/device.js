@@ -29,7 +29,7 @@ var DISABLE_POLLING_INTERVAL = -1;              // disable polling
 var fncGetDeviceProperty;
 
 function Device(data, runtime) {
-    var property = { id: data.id, name: data.name };        // Device property (name, id)
+    var property = { id: data.id, name: data.name, type: data.type };   // Device property (name, id)
     var status = DeviceStatusEnum.INIT;                     // Current status (StateMachine)
     var logger = runtime.logger;                            // Logger
     var events = runtime.events;                            // Events to commit change to runtime
@@ -442,6 +442,14 @@ function Device(data, runtime) {
         return comm;
     }
 
+    this.getName = () => {
+        return property.name;
+    }
+
+    this.getType = () => {
+        return property.type;
+    }
+
     this.load(data);
 }
 
@@ -514,7 +522,7 @@ function loadPlugin(type, module) {
         ODBCclient = require(module);
     } else if (type === DeviceEnum.ADSclient) {
         ADSclient = require(module);
-    }else if (type === DeviceEnum.GPIO) {
+    } else if (type === DeviceEnum.GPIO) {
         GpioClient = require(module);
     }
 }
@@ -554,6 +562,7 @@ var DeviceEnum = {
     ODBC: 'ODBC',
     ADSclient: 'ADSclient',
     GPIO: 'GPIO',
+    internal: 'internal',
     WebCam: 'WebCam'
     // Template: 'template'
 }

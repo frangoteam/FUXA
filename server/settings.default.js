@@ -59,13 +59,15 @@ module.exports = {
 
     // CORS (Cross-Origin Resource Sharing)
     // Used to enable CORS for all HTTP request
+    // Please use exact origin urls for better and safe CORS (Wild Cards not Recommended)
     // "allowedOrigins": ["https://example.com", "https://dashboard.example.com"]
     // Default: ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*"]
-    "allowedOrigins": ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*"],
+    "allowedOrigins": ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*", "http://localhost:4200"],
+
 
     // The maximum size of HTTP request that will be accepted by the runtime api.
-    // Default: 15mb
-    //apiMaxLength: '15mb',
+    // Default: 100mb
+    //apiMaxLength: '100mb',
 
     // Used to disable the server API used for Backend communication (Standalone application)
     // disable to use only the Editor
@@ -92,8 +94,7 @@ module.exports = {
 
     //Location to output webcam capture
     webcamSnapShotsDir: '_webcam_snapshots',
-    //cleanup old snapshots
-    //Default: false
+    //cleanup old snapshots Default false
     webcamSnapShotsCleanup: false,
     //snapshots retention in days
     webcamSnapShotsRetain: 7,

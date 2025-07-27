@@ -707,8 +707,15 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     var _toValue = function (type, value) {
         switch (type) {
             case opcua.DataType.Boolean:
-                if (typeof value === 'string' && (value.toLowerCase() === 'true' || value === '1')) {
-                    return true;
+                if (typeof value === 'boolean') {
+                    return value;
+                }
+                if (typeof value === 'string') {
+                    const val = value.toLowerCase();
+                    return val === 'true' || val === '1';
+                }
+                if (typeof value === 'number') {
+                    return value === 1;
                 }
                 return false;
             case opcua.DataType.SByte:

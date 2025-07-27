@@ -20,6 +20,7 @@ import { Script, ScriptParam, SCRIPT_PARAMS_MAP } from '../../../_models/script'
 import { Utils } from '../../../_helpers/utils';
 import { HtmlInputComponent } from '../../controls/html-input/html-input.component';
 import { HtmlSelectComponent } from '../../controls/html-select/html-select.component';
+import { ProjectService } from '../../../_services/project.service';
 
 
 @Component({
@@ -57,7 +58,8 @@ export class FlexEventComponent implements OnInit {
     eventOnIframe = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.oniframe);
 
     constructor(
-        private translateService: TranslateService) {
+        private translateService: TranslateService,
+        private projectService: ProjectService) {
     }
 
     ngOnInit() {
@@ -233,6 +235,10 @@ export class FlexEventComponent implements OnInit {
             this.events = [];
         }
         this.events.push(ge);
+    }
+
+    getDevices() {
+        return this.projectService.getDeviceList();
     }
 }
 

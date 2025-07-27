@@ -1,242 +1,251 @@
 $main-backcolor: rgb(12, 101, 189);
-$main-bordercolor: var(--mapBorderColor);//rgb(5, 65, 123);
+$main-bordercolor: var(--mapBorderColor); //rgb(5, 65, 123);
 $device-color: rgb(79, 86, 93);
-$line-color:   var(--mapBorderColor);
+$line-color: var(--mapBorderColor);
 $flow-backcolor: rgb(218, 218, 218);
-$flow-bordercolor: var(--mapBorderColor);//rgb(117, 117, 117);
-$flowline-color: var(--mapBorderColor);//rgb(117, 117, 117);
-$internal-backcolor: rgb(114,120,125);
+$flow-bordercolor: var(--mapBorderColor); //rgb(117, 117, 117);
+$flowline-color: var(--mapBorderColor); //rgb(117, 117, 117);
+$internal-backcolor: rgb(114, 120, 125);
 
-.main-device {
-    position: absolute;
-    text-align: center;
-    background-color: $main-backcolor;
-    color: white;
-    border-style: solid;
-    border-color: $main-bordercolor;
-}
-
-.node-device {
-    position: absolute;
-    background-color: $device-color;
-    text-align: center;
-    padding-top: 17px;
-    border-style: solid;
-    border-color: $line-color;
-    mat-icon {
+:host {
+    .main-device {
+        position: absolute;
+        text-align: center;
+        background-color: $main-backcolor;
         color: white;
+        border-style: solid;
+        border-color: $main-bordercolor;
     }
-}
 
-.node-internal {
-    position: absolute;
-    background-color: $internal-backcolor;
-    text-align: center;
-    padding-top: 17px;
-    border-style: solid;
-    border-color: $line-color;
-    mat-icon {
-        color: white;
+    .node-device {
+        position: absolute;
+        background-color: $device-color;
+        text-align: center;
+        padding-top: 17px;
+        border-style: solid;
+        border-color: $line-color;
+
+        mat-icon {
+            color: white;
+        }
     }
-}
 
-.node-flow {
-    position: absolute;
-    background-color: $flow-backcolor;
-    text-align: center;
-    padding-top: 17px;
-    border-style: solid;
-    border-color: $flow-bordercolor;
-    mat-icon {
-        color: black;
+    .node-internal {
+        position: absolute;
+        background-color: $internal-backcolor;
+        text-align: center;
+        padding-top: 17px;
+        border-style: solid;
+        border-color: $line-color;
+
+        mat-icon {
+            color: white;
+        }
     }
-}
-.main-line {
-    position: absolute;
-    background-color: $line-color;
-}
-.main-line-flow {
-    position: absolute;
-    background-color: $flowline-color;
-}
 
-.device-line {
-    position: absolute;
-    background-color: $line-color;
-}
-.flow-line {
-    position: absolute;
-    background-color: $flowline-color;
-}
-.connection-line {
-    position: absolute;
-    background-color: $line-color;
-}
+    .node-flow {
+        position: absolute;
+        background-color: $flow-backcolor;
+        text-align: center;
+        padding-top: 17px;
+        border-style: solid;
+        border-color: $flow-bordercolor;
 
-// .main-device mat-icon {
-//     font-size: 0px;
-// }
-// .main-device:hover mat-icon {
-//     font-size: 17px;
-// }
+        mat-icon {
+            color: black;
+        }
+    }
 
-.device-header {
-    display: block;
-    font-size: 17px;
-    padding-bottom: 7px;
-    padding-top: 0px;
-    min-height: 20px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+    .main-line {
+        position: absolute;
+        background-color: $line-color;
+    }
 
-.device-pro {
-    display: block;
-    font-size: 12px;
-    padding-top: 0px;
-    min-height: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+    .main-line-flow {
+        position: absolute;
+        background-color: $flowline-color;
+    }
 
-.device-pro-line {
-    display: inline-block;
-    font-size: 12px;
-    padding-top: 5px;
-}
+    .device-line {
+        position: absolute;
+        background-color: $line-color;
+    }
 
-.device-icon {
-    position: absolute;
-    cursor:pointer;
-}
+    .flow-line {
+        position: absolute;
+        background-color: $flowline-color;
+    }
 
-.device-edit {
-    position: absolute;
-    bottom: 0px;
-    right: 0px;
-    font-size: 17px;
-}
+    .connection-line {
+        position: absolute;
+        background-color: $line-color;
+    }
 
-.device-edit-disabled {
-    color:rgb(136, 136, 136) !important;
-    cursor:default;
-}
+    // .main-device mat-icon {
+    //     font-size: 0px;
+    // }
+    // .main-device:hover mat-icon {
+    //     font-size: 17px;
+    // }
 
-.device-delete {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    font-size: 17px;
-}
+    .device-header {
+        display: block;
+        font-size: 17px;
+        padding-bottom: 7px;
+        padding-top: 0px;
+        min-height: 20px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-.device-list {
-    position: absolute;
-    right: 30px;
-    font-size: 24px;
-    bottom: 0px;
-}
+    .device-pro {
+        display: block;
+        font-size: 12px;
+        padding-top: 0px;
+        min-height: 14px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-.device-status {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    width: 10px;
-    height: 10px;
-    border-radius: 4px;
-}
+    .device-pro-line {
+        display: inline-block;
+        font-size: 12px;
+        padding-top: 5px;
+    }
 
-// Table View Mode
-.container {
-    display: flex;
-    flex-direction: column;
-    min-width: 300px;
-    position: absolute;
-    bottom: 0px;
-    top: 1px;
-    left:0px;
-    right:0px;
-}
+    .device-icon {
+        position: absolute;
+        cursor: pointer;
+    }
 
-.mat-table {
-    overflow: auto;
-    /* min-width: 1500px; */
-    height: 100%;
-}
+    .device-edit {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+        font-size: 17px;
+    }
 
-.mat-row {
-    min-height: 40px;
-    height: 43px;
-}
+    .device-edit-disabled {
+        color: rgb(136, 136, 136) !important;
+        cursor: default;
+    }
 
-.mat-cell {
-    font-size: 13px;
-}
+    .device-delete {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        font-size: 17px;
+    }
 
-.mat-header-row {
-    top: 0;
-    position: sticky;
-    z-index: 1;
-}
+    .device-list {
+        position: absolute;
+        right: 30px;
+        font-size: 24px;
+        bottom: 0px;
+    }
 
-.mat-header-cell {
-    font-size: 15px;
-}
+    .device-status {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        width: 10px;
+        height: 10px;
+        border-radius: 4px;
+    }
 
-.mat-column-select {
-    // overflow: visible;
-    flex: 0 0 100px;
-}
+    // Table View Mode
+    .container {
+        display: flex;
+        flex-direction: column;
+        min-width: 300px;
+        position: absolute;
+        bottom: 0px;
+        top: 1px;
+        left: 0px;
+        right: 0px;
+    }
 
-.mat-column-name {
-    flex: 1 1 160px;
-}
+    .mat-table {
+        overflow: auto;
+        /* min-width: 1500px; */
+        height: 100%;
+    }
 
-.mat-column-type {
-    flex: 0 0 150px;
-}
+    .mat-row {
+        min-height: 40px;
+        height: 43px;
+    }
 
-.mat-column-polling {
-    flex: 0 0 100px;
-}
+    .mat-cell {
+        font-size: 13px;
+    }
 
-.mat-column-address {
-    flex: 2 1 300px;
-}
+    .mat-header-row {
+        top: 0;
+        position: sticky;
+        z-index: 1;
+    }
 
-.mat-column-status {
-    flex: 0 0 120px;
-}
+    .mat-header-cell {
+        font-size: 15px;
+    }
 
-.mat-column-enabled {
-    flex: 0 0 160px;
-}
+    .mat-column-select {
+        // overflow: visible;
+        flex: 0 0 100px;
+    }
 
-.mat-column-remove {
-    flex: 0 0 60px;
-}
+    .mat-column-name {
+        flex: 1 1 160px;
+    }
 
-.selectWidthClass {
-    flex: 0 0 100px;
- }
+    .mat-column-type {
+        flex: 0 0 150px;
+    }
 
- .selectHideClass {
-    flex: 0 0 10px;
- }
+    .mat-column-polling {
+        flex: 0 0 100px;
+    }
 
-.my-header-filter-input {
-    display: block; 
-    margin-top: 4px;
-    margin-bottom: 6px;
-    padding: 3px 1px 3px 2px;
-    border-radius: 2px;
-}
+    .mat-column-address {
+        flex: 2 1 300px;
+    }
 
-.showTable {
-    display: flex;
-}
+    .mat-column-status {
+        flex: 0 0 120px;
+    }
 
-.hideTable {
-    display: none;
+    .mat-column-enabled {
+        flex: 0 0 160px;
+    }
+
+    .mat-column-remove {
+        flex: 0 0 60px;
+    }
+
+    .selectWidthClass {
+        flex: 0 0 100px;
+    }
+
+    .selectHideClass {
+        flex: 0 0 10px;
+    }
+
+    .my-header-filter-input {
+        display: block;
+        margin-top: 4px;
+        margin-bottom: 6px;
+        padding: 3px 1px 3px 2px;
+        border-radius: 2px;
+    }
+
+    .showTable {
+        display: flex;
+    }
+
+    .hideTable {
+        display: none;
+    }
 }

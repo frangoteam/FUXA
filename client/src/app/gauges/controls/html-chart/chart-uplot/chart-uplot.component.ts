@@ -285,31 +285,33 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 serie.scale = '1';
             }
             serie.spanGaps = Utils.isNullOrUndefined(line.spanGaps) ? true : line.spanGaps;
-            if (line.fill) {
-                serie.fill = line.fill;
-            }
+
             if (line.lineWidth) {
                 serie.width = line.lineWidth;
             }
 
+            const fallbackFill = line.fill || 'rgba(0,0,0,0)';
+
+            const fallbackStroke = line.color || 'rgb(0,0,0)';
+
             if (line.zones?.some(zone => zone.fill)) {
-                const zones = this.generateZones(line.zones, 'fill', line.fill);
+                const zones = this.generateZones(line.zones, 'fill', fallbackFill);
                 if (zones) {
-                    serie.fill = (self, seriesIndex) => {
-                        let fill = this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
-                        return  fill || line.fill;
-                    };
+                    serie.fill = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || fallbackFill;
                 }
-            }
-            else if (line.fill) {
+            } else if (line.fill) {
                 serie.fill = line.fill;
             }
+
             if (line.zones?.some(zone => zone.stroke)) {
-                const zones = this.generateZones(line.zones, 'stroke', line.color);
+                const zones = this.generateZones(line.zones, 'stroke', fallbackStroke);
                 if (zones) {
-                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || line.color;
+                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || fallbackStroke;
                 }
+            } else if (line.color) {
+                serie.stroke = line.color;
             }
+
             serie.lineInterpolation = line.lineInterpolation;
             this.mapData[id] = <MapDataType>{
                 index: Object.keys(this.mapData).length + 1,
@@ -323,23 +325,35 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private generateZones(ranges: ChartLineZone[], attribute: string, baseColor: string): Zone[] {
+    private generateZones(ranges: ChartLineZone[], attribute: 'stroke' | 'fill', baseColor:string): Zone[] {
+
         const result: Zone[] = [];
-        const sortedRanges = ranges.sort((a, b) => a.min - b.min);
-        result.push([-Infinity, baseColor]);
-        sortedRanges.forEach((range, index) => {
-            result.push([range.min, range[attribute]]);
-            if (index < sortedRanges.length - 1) {
-                const nextMin = sortedRanges[index + 1].min;
-                if (range.max < nextMin) {
-                    result.push([range.max, baseColor]);
-                }
-            } else {
-                result.push([range.max, baseColor]);
+        const sorted = ranges.sort((a, b) => a.min - b.min);
+
+        // ── 1. Color for –∞ comes from the first zone ───────────────
+        const firstColor = sorted[0]?.[attribute] || baseColor;
+        result.push([-Infinity, firstColor]);
+
+        // ── 2. Mid‑zone stops (same as before) ──────────────────────
+        sorted.forEach((r, i) => {
+            const color = r[attribute] || baseColor;
+            result.push([r.min, color]);
+
+            const nextMin = sorted[i + 1]?.min;
+            if (nextMin !== undefined && r.max < nextMin) {
+            result.push([r.max, color]);
+            } else if (nextMin === undefined) {
+            // last zone – we’ll add +∞ after the loop
+            result.push([r.max, color]);
             }
         });
+
+        // ── 3. Color for +∞ comes from the last zone ────────────────
+        const lastColor = sorted[sorted.length - 1]?.[attribute] || baseColor;
+        result.push([Infinity, lastColor]);
+
         return result;
-    }
+        }
 
     /**
      * add value to a realtime chart
@@ -367,49 +381,78 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    /**
-     * set values to a history chart
-     * the values is composed of a matrix of array, array of lines values[]<datetime, value> [line][pos]{dt, value}
-     * the have to be transform in uplot format. a matrix with array of datetime and arrays of values [datetime[dt], lineN[value]]
-     * @param values
-     */
-    public setValues(values, chunk: DaqChunkType) {
-        let result = [];
-        result.push([]);    // timestamp, index 0
-        let xmap = {};
-        for (var i = 0; i < values.length; i++) {
-            result.push([]);    // line
-            for (var x = 0; x < values[i].length; x++) {
-                let t = values[i][x].dt / 1e3;
-                if (result[0].indexOf(t) === -1) {
-                    result[0].push(t);
-                    xmap[t] = {};
+    private chunkBuffer = new Map<number, any[]>();  // Buffer for received chunks
+    private processedChunks = new Set<number>();     // Prevent duplicates
+    private totalChunks = 0;
+
+    public setValues(values: any[][], chunk: DaqChunkType) {
+        if (!chunk || !chunk.index || !chunk.of) {
+            console.warn('❗ Invalid or missing chunk info:', chunk);
+            return;
+        }
+
+        // Reset if this is the first chunk of a new series
+        if (chunk.index === 1) {
+            this.chunkBuffer.clear();
+            this.processedChunks.clear();
+            this.totalChunks = chunk.of;
+        }
+
+        // Skip duplicate chunks
+        if (this.processedChunks.has(chunk.index)) {
+            // console.warn(`⚠️ Duplicate chunk ignored: ${chunk.index}`);
+            return;
+        }
+
+        // Store chunk
+        this.chunkBuffer.set(chunk.index, values);
+        this.processedChunks.add(chunk.index);
+
+        // If all expected chunks have been received
+        if (this.chunkBuffer.size === this.totalChunks) {
+            const sortedChunks = Array.from(this.chunkBuffer.entries())
+                .sort((a, b) => a[0] - b[0])
+                .map(entry => entry[1]);
+
+            const mergedData = this.buildUnifiedData(sortedChunks);
+
+            this.nguplot.setData(mergedData);
+            this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+
+            setTimeout(() => this.setLoading(false), 300);
+        }
+    }
+
+    // Converts chunks into format: [timestamps[], line1[], line2[], ...]
+    private buildUnifiedData(chunks: any[][][]): any[] {
+        const timestampsSet = new Set<number>();
+        const xmap = new Map<number, Record<number, any>>();
+
+        for (let chunk of chunks) {
+            for (let i = 0; i < chunk.length; i++) {
+                for (const v of chunk[i]) {
+                    const t = Math.floor(v.dt / 1000);
+                    timestampsSet.add(t);
+                    if (!xmap.has(t)) {
+                        xmap.set(t, {});
+                    }
+                    xmap.get(t)[i] = v.value;
                 }
-                xmap[t][i] = values[i][x].value;
             }
         }
-        result[0].sort(function(a, b) { return a - b; });
-        for (var i = 0; i < result[0].length; i++) {
-            let t = result[0][i];
-            for (var x = 1; x < result.length; x++) {
-                if (xmap[t][x - 1] !== undefined) {
-                    result[x].push(xmap[t][x - 1]);
-                } else {
-                    result[x].push(null);
-                }
+        const sortedTimestamps = Array.from(timestampsSet).sort((a, b) => a - b);
+        const result = [sortedTimestamps];
+        const seriesCount = chunks[0].length;
+
+        for (let i = 0; i < seriesCount; i++) {
+            const line = [];
+            for (const t of sortedTimestamps) {
+                const val = xmap.get(t)?.[i];
+                line.push(val !== undefined ? val : null);
             }
+            result.push(line);
         }
-        if (!chunk || chunk.index === 1) {
-            this.nguplot.setData(result);
-        } else {
-            this.nguplot.addData(result);
-        }
-        this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
-        if (!chunk || chunk.index === chunk.of) {
-            setTimeout(() => {
-                this.setLoading(false);
-            }, 500);
-        }
+        return result;
     }
 
     public redraw() {

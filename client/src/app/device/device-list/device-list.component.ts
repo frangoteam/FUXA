@@ -16,7 +16,6 @@ import { HmiService } from '../../_services/hmi.service';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { Utils } from '../../_helpers/utils';
 import { TagPropertyService } from '../tag-property/tag-property.service';
-import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 
 @Component({
     selector: 'app-device-list',
@@ -44,6 +43,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     tagsMap = {};
     deviceSelected: Device = null;
     isDeviceToEdit = true;
+    isWithOptions = true;
 
     @Input() readonly = false;
     @Output() save = new EventEmitter();
@@ -122,10 +122,11 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         } else if(this.deviceSelected.type === DeviceType.WebCam){
             this.displayedColumns = this.defWebcamColumns;
             this.tableWidth = this.defAllRowWidth;
-        }else {
+        } else {
             this.displayedColumns = this.defAllColumns;
             this.tableWidth = this.defAllRowWidth;
         }
+        this.isWithOptions = (this.deviceSelected.type === this.deviceType.internal) ? false : true;
     }
 
     onGoBack() {
@@ -377,41 +378,18 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         return Object.values(this.devices);
     }
 
-
     /**
      * to add or edit MQTT topic for subscription or publish
      */
     editTopics(topic: Tag = null) {
-        if (topic && topic.options && topic.options.subs) {
-            // edit only name (subscription)
-            let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (t.id !== topic.id) {return t;} }).map((t: Tag) => t.name);
-            let dialogRef = this.dialog.open(EditNameComponent, {
-                disableClose: true,
-                position: { top: '60px' },
-                data: {
-                    name: topic.name,
-                    exist: existNames,
-                    error: this.translateService.instant('msg.device-tag-exist')
-                }
-            });
-            dialogRef.afterClosed().subscribe(result => {
-                if (result) {
-                    this.deviceSelected.tags[topic.id].name = result.name;
-                    this.tagsMap[topic.id].name = result.name;
-                    this.bindToTable(this.deviceSelected.tags);
-                    this.projectService.setDeviceTags(this.deviceSelected);
-                }
-            });
-        } else {
-            this.tagPropertyService.editTagPropertyMqtt(
-                this.deviceSelected,
-                topic,
-                this.tagsMap,
-                () => {
-                    this.bindToTable(this.deviceSelected.tags);
-                }
-            );
-        }
+        this.tagPropertyService.editTagPropertyMqtt(
+            this.deviceSelected,
+            topic,
+            this.tagsMap,
+            () => {
+                this.bindToTable(this.deviceSelected.tags);
+            }
+        );
     }
 
     onCopyTagToClipboard(tag: Tag) {

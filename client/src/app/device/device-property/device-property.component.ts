@@ -59,7 +59,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	pollingType = this.pollingPlcType;
 
 	isFuxaServer = false;
-	isWithPolling = true;
 	isToRemove = false;
 	propertyError = '';
 	propertyExpanded: boolean;
@@ -96,9 +95,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.isToRemove = this.data.remove;
 		this.isFuxaServer = (this.data.device.type && this.data.device.type === DeviceType.FuxaServer) ? true : false;
-		if (this.appService.isClientApp || this.appService.isDemoApp) {
-			this.isWithPolling = false;
-		}
 		for (let key in DeviceType) {
 			if (!this.isFuxaServer && key !== DeviceType.FuxaServer) {
 				for (let idx = 0; idx < this.data.availableType.length; idx++) {
@@ -353,6 +349,23 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
     keyDownStopPropagation(event) {
         event.stopPropagation();
     }
+
+	isWithPolling() {
+		if (this.data.device?.type === DeviceType.internal) {
+			return false;
+		}
+		if (this.appService.isClientApp || this.appService.isDemoApp) {
+			return false;
+		}
+		return true;
+	}
+
+	canEnable() {
+		if (this.isFuxaServer || this.data.device?.type === this.deviceType.internal) {
+			return false;
+		}
+		return true;
+	}
 
 	private securityModeToString(mode): string {
 		let secMode = MessageSecurityMode;

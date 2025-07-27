@@ -26,7 +26,8 @@ module.exports = {
                 if (tag.scaleReadFunction) {
                     value = await callScaleScript(tag.scaleReadFunction, tag.scaleReadParams ? tag.scaleReadParams : undefined, runtime, true, value);
                 }
-                if (utils.isNumber(value, obj)) {
+                const type = tag?.type;
+                if (!(type === 'String' || type === 'ByteString' || type === 'string') && utils.isNumber(value, obj)) {
                     value = obj.value;
                     if (tag.deadband && tag.deadband.value && !utils.isNullOrUndefined(oldValue)) {
                         if (Math.abs(value - oldValue) <= tag.deadband.value) {
@@ -72,6 +73,32 @@ module.exports = {
             }
         }
         return value;
+    },
+
+    parseValue: function (value, type) {
+        if (type === 'number') {
+            return parseFloat(value);
+        } else if (type === 'boolean') {
+            if (typeof value === 'string') {
+                return value.toLowerCase() !== 'false';
+            }
+            return Boolean(value);
+        } else if (type === 'string') {
+            return value;
+        } else {
+            let val = parseFloat(value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(value);
+                // maybe string
+                if (Number.isNaN(val)) {
+                    val = value;
+                }
+            } else {
+                val = parseFloat(val.toFixed(5));
+            }
+            return val;
+        }
     }
 }
 

@@ -220,6 +220,8 @@ import { KioskWidgetsComponent } from './resources/kiosk-widgets/kiosk-widgets.c
 import { ClientScriptAccessComponent } from './editor/client-script-access/client-script-access.component';
 import { TagPropertyEditWebcamComponent } from './device/tag-property/tag-property-edit-webcam/tag-property-edit-webcam.component';
 
+import { EditPlaceholderComponent } from './gui-helpers/edit-placeholder/edit-placeholder.component';
+import { DeviceAdapterService } from './device-adapter/device-adapter.service';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -270,6 +272,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ViewPropertyComponent,
         DialogLinkProperty,
         EditNameComponent,
+        EditPlaceholderComponent,
         ConfirmDialogComponent,
         DialogInfo,
         DaterangeDialogComponent,
@@ -461,6 +464,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ActionPropertyService,
         MapsLocationsService,
         LanguageService,
+        DeviceAdapterService,
         {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
     ],
     bootstrap: [AppComponent]

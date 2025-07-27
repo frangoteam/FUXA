@@ -271,27 +271,39 @@ try {
 }
 
 // Http Server for client UI
-var allowCrossDomain = function(req, res, next) {
-    const origin = req.headers.origin;
-    const allowedOrigins = settings.allowedOrigins || ["*"];
+const allowCrossDomain = function (req, res, next) {
+  const origin = req.headers.origin;
+  const allowedOrigins = settings.allowedOrigins || ["*"];
 
-    if (allowedOrigins.includes("*")) {
-        res.header('Access-Control-Allow-Origin', '*');
-    } else if (allowedOrigins.includes(origin)) {
-        res.header('Access-Control-Allow-Origin', origin);
-    }
+  const isOriginAllowed = (origin) => {
+    if (!origin) return false;
+    if (allowedOrigins.includes("*")) return true;
 
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.header('Access-Control-Allow-Headers', 'x-access-token, x-auth-user, Origin, Content-Type, Accept');
+    // Convert wildcard-style strings to regex
+    return allowedOrigins.some(pattern => {
+      if (!pattern.includes("*")) return pattern === origin;
 
-    next();
-    try {
-        var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-        // logger.info("Client: " + ip, false);
-    } catch (err) {
+      // Escape dots and replace * with regex
+      const regexPattern = new RegExp(
+        "^" + pattern.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$"
+      );
+      return regexPattern.test(origin);
+    });
+  };
 
-    }
-}
+  if (isOriginAllowed(origin)) {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'x-access-token, x-auth-user, Origin, Content-Type, Accept');
+
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204); 
+  }
+  next();
+};
 app.use(allowCrossDomain);
 app.use('/', express.static(settings.httpStatic));
 app.use('/home', express.static(settings.httpStatic));

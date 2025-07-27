@@ -926,10 +926,11 @@ export class ProjectService {
 
     private notifySaveError(err: any) {
         console.error('FUXA notifySaveError error', err);
-        let msg = null;
-        this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt; });
+        let msg = this.translateService.instant('msg.project-save-error');
         if (err.status === 401) {
-            this.translateService.get('msg.project-save-unauthorized').subscribe((txt: string) => { msg = txt; });
+            msg = this.translateService.instant('msg.project-save-unauthorized');
+        } else if (err.status === 413) {
+            msg = err.error?.message || err.message || err.statusText;
         }
         if (msg) {
             this.toastr.error(msg, '', {
@@ -1073,7 +1074,7 @@ export class ProjectService {
         let result = {};
         if (this.projectData) {
             result = this.projectData.devices;
-            if (!result[this.projectData.server.id]) {
+            if (this.projectData.server && !result[this.projectData.server?.id]) {
                 // add server as device to use in script and logic
                 let server: Device = JSON.parse(JSON.stringify(this.projectData.server));
                 server.enabled = true;

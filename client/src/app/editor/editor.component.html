@@ -1042,7 +1042,7 @@
     <!-- canvas context menu -->
     <ul id="cmenu_canvas" class="contextMenu svg-workarea-contextmenu">
         <li>
-            <a id="#interactivity" (click)="isInteractivtyEnabled(selectedElement) && onGaugeEditEx()">{{'editor.interactivity' | translate}}</a>
+            <a id="#interactivity" (click)="onInteractivityClick(selectedElement)">{{'editor.interactivity' | translate}}</a>
         </li>
         <li>
             <a id="#editBindOfTags" (click)="editBindOfTags(selectedElement)">{{'editor.edit-bind-of-tags' | translate}}</a>

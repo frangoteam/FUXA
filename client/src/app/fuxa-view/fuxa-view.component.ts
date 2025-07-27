@@ -30,7 +30,7 @@ import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.
 import { FuxaViewDialogComponent, FuxaViewDialogData } from './fuxa-view-dialog/fuxa-view-dialog.component';
 import { LegacyDialogPosition as DialogPosition, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { WebcamPlayerDialogComponent, WebcamPlayerDialogData } from '../gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
-import { PlaceholderDevice } from '../_models/device';
+import { DevicesUtils, PlaceholderDevice, Tag } from '../_models/device';
 import { LanguageService } from '../_services/language.service';
 import { EventUtils } from '../_helpers/event-utils';
 
@@ -50,6 +50,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() child = false;
     @Input() gaugesManager: GaugesManager;        // gauges.component
     @Input() parentcards: CardModel[];
+    @Input() sourceDeviceId: string;
     @Output() onclose = new EventEmitter();
     @Output() ongoto: EventEmitter<string> = new EventEmitter();
 
@@ -73,6 +74,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     gaugeInputCurrent = '';
     parent: FuxaViewComponent;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
+
+    viewLoaded: boolean = false;
+    private viewRenderDelay = 0; // Delay to render view after loading SVG content
 
     private subscriptionOnChange: Subscription;
     protected staticValues: any = {};
@@ -127,6 +131,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.inputDialogRef) {
                 this.inputDialogRef.nativeElement.style.display = 'none';
             }
+            // Execute onClose script
+            this.view?.property?.events?.forEach(event => {
+                if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
+                    this.onRunScript(event);
+                }
+            });
         } catch (err) {
             console.error(err);
         }
@@ -172,60 +182,60 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param view
      */
     public loadHmi(view: View, legacyProfile?: boolean) {
+        this.viewLoaded = false;
         if (this.loadOk || !view) {
+            this.viewLoaded = true;
             return;
         }
-        if (this.view) {
-            // Execute onClose script for last view
-            let lastView = this.getView(this.view.id);
-            if (lastView) {
-                lastView.property?.events?.forEach(event => {
-                    if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onclose)) {
+        try {
+            if (!this.hmi) {
+                this.hmi = this.projectService.getHmi();
+            }
+            if (this.id) {
+                try {
+                    this.gaugesManager.unbindGauge(this.id);
+                    this.clearGaugeStatus();
+                    this.viewContainerRef.clear();
+                    this.dataContainer.nativeElement.innerHTML = '';
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            if (view?.id) {
+                this.id = view.id;
+                this.view = view;
+                if (view.type === this.cardViewType) {
+                    this.ongoto.emit(view.id);
+                    return;
+                } else {
+                    this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
+                }
+                if (view.profile.bkcolor && (this.child || legacyProfile)) {
+                    this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
+                }
+                if (view.profile.align && !this.child) {
+                    FuxaViewComponent.setAlignStyle(view.profile.align, this.dataContainer.nativeElement);
+                }
+            }
+            this.changeDetector.detectChanges();
+            this.loadWatch(this.view);
+            this.onResize();
+
+            if (view) {
+                // Execute onOpen script for new current view
+                view.property?.events?.forEach(event => {
+                    if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {
                         this.onRunScript(event);
                     }
                 });
+                this.viewRenderDelay = view.profile?.viewRenderDelay || 0;
             }
-        }
-        if (!this.hmi) {
-            this.hmi = this.projectService.getHmi();
-        }
-        if (this.id) {
-            try {
-                this.gaugesManager.unbindGauge(this.id);
-                this.clearGaugeStatus();
-                this.viewContainerRef.clear();
-                this.dataContainer.nativeElement.innerHTML = '';
-            } catch (err) {
-                console.error(err);
-            }
-        }
-        if (view?.id) {
-            this.id = view.id;
-            this.view = view;
-            if (view.type === this.cardViewType) {
-                this.ongoto.emit(view.id);
-                return;
-            } else {
-                this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
-            }
-            if (view.profile.bkcolor && (this.child || legacyProfile)) {
-                this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
-            }
-            if (view.profile.align && !this.child) {
-                FuxaViewComponent.setAlignStyle(view.profile.align, this.dataContainer.nativeElement);
-            }
-        }
-        this.changeDetector.detectChanges();
-        this.loadWatch(this.view);
-        this.onResize();
-
-        if (view) {
-            // Execute onOpen script for new current view
-            view.property?.events?.forEach(event => {
-                if (event.type === Utils.getEnumKey(ViewEventType, ViewEventType.onopen)) {
-                    this.onRunScript(event);
-                }
-            });
+        } finally {
+            // Garantisce sempre il completamento
+            setTimeout(() => {
+                this.viewLoaded = true;
+                this.changeDetector.detectChanges();
+            }, this.viewRenderDelay);
         }
     }
 
@@ -239,13 +249,31 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
+     * main function to check placeholder of property, events, action
      * load all gauge settings, bind gauge with signals, bind gauge event
      * @param view
      */
     private loadWatch(view: View) {
         if (view && view.items) {
             this.mapControls = {};
-            let items = this.applyVariableMapping(view.items);
+            const device = this.projectService.getDeviceFromId(this.sourceDeviceId);
+            let sourceTags: Tag[] | null = device?.tags ? Object.values(device.tags) : null;
+            let items = this.applyVariableMapping(view.items, sourceTags);
+            // add mapped placeholder -> variable to sourceTags
+            let tagsToAddForPlaceholderMapping: Tag[] = [];
+            Object.entries(this.plainVariableMapping ?? {}).forEach(([key, mappingEntry]) => {
+                if (mappingEntry?.variableId) {
+                    const tagFound = this.projectService.getTagFromId(mappingEntry.variableId);
+                    if (tagFound) {
+                        const tag = new Tag(tagFound.id);
+                        const placeholder = DevicesUtils.getPlaceholderContent(key);
+                        tag.name = placeholder.firstContent;
+                        tagsToAddForPlaceholderMapping.push(tag);
+                    }
+                }
+            });
+            sourceTags = Utils.mergeUniqueBy(sourceTags, tagsToAddForPlaceholderMapping, 'id');
+
             for (let key in items) {
                 if (!items.hasOwnProperty(key)) {
                     continue;
@@ -253,11 +281,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 try {
                     // check language translation
                     const textTranslated = this.languageService.getTranslation(items[key].property?.text);
-                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true, this, textTranslated);
+                    // init gauge and TagId
+                    let gauge = this.gaugesManager.initElementAdded(items[key], this.resolver, this.viewContainerRef, true, this, textTranslated, sourceTags);
                     if (gauge) {
                         this.mapControls[key] = gauge;
                     }
-                    this.gaugesManager.bindGauge(gauge, this.id, items[key],
+                    // bind mouse/key events, signals in gage will be subscribe for notify changes in backend
+                    this.gaugesManager.bindGauge(gauge, this.id, items[key], sourceTags,
                         (gaToBindMouseEvents) => {
                             this.onBindMouseEvents(gaToBindMouseEvents);
                         },
@@ -321,7 +351,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
             }
             // set subscription to server
-            this.hmiService.viewsTagsSubscribe(this.gaugesManager.getBindedSignalsId());
+            this.hmiService.viewsTagsSubscribe(this.gaugesManager.getBindedSignalsId(), true);
         }
     }
 
@@ -362,10 +392,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * Replace variables by defined mapping
+     * The variable should be placeholder that was configured in Events and context bind
      * @param items
      * @protected
      */
-    protected applyVariableMapping(items: DictionaryGaugeSettings) {
+    protected applyVariableMapping(items: DictionaryGaugeSettings, sourceTags?: Tag[]): DictionaryGaugeSettings {
         // Deep clone
         items = JSON.parse(JSON.stringify(items));
 
@@ -373,14 +404,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (!items.hasOwnProperty(gaId)) {
                 continue;
             }
-            let property = <GaugeProperty> items[gaId].property;
+            const gaugeSettings = items[gaId];
+            let property = <GaugePropertyExt> gaugeSettings.property;
             if (!property) {
                 continue;
             }
-            this.applyVariableMappingTo(property);
+            this.applyVariableMappingTo(property, sourceTags);
             if (property.actions) {
                 property.actions.forEach(action => {
-                    this.applyVariableMappingTo(action);
+                    this.applyVariableMappingTo(action, sourceTags);
                 });
             }
 
@@ -388,9 +420,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 property.events.forEach((event: GaugeEvent) => {
                     if (event.actoptions) {
                         if (Utils.isObject(event.actoptions['variable'])) {
-                            this.applyVariableMappingTo(event.actoptions['variable']);
+                            this.applyVariableMappingTo(event.actoptions['variable'], sourceTags);
                         } else {
-                            this.applyVariableMappingTo(event.actoptions);
+                            this.applyVariableMappingTo(event.actoptions, sourceTags);
                         }
                     }
                 });
@@ -399,7 +431,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (property.ranges) {
                 property.ranges.forEach((range: GaugeRangeProperty) => {
                     if (range.textId) {
-                        this.applyVariableMappingTo(range.textId);
+                        this.applyVariableMappingTo(range.textId, sourceTags);
                     }
                 });
             }
@@ -407,13 +439,27 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         return items;
     }
 
-    protected applyVariableMappingTo(target) {
+    /**
+     * @param target variable to replace with TagId
+     * @param device if don't have a replace, check the device tags name to replace
+     * @returns
+     */
+    protected applyVariableMappingTo(target, tags?: Tag[]) {
         if (!target || !target['variableId']) {
             return;
         }
         if (this.plainVariableMapping.hasOwnProperty(target.variableId)) {
             target.variableValue = this.plainVariableMapping[target.variableId]?.variableValue;
             target.variableId = this.plainVariableMapping[target.variableId]?.variableId;
+            return;
+        }
+        if (tags) {
+            const tag = DevicesUtils.placeholderToTag(target.variableId, tags);
+            if (tag) {
+                target.variableId = tag.id;
+                target.variableValue = tag.value;
+                return;
+            }
         }
     }
 
@@ -751,11 +797,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     loadPage(param: any, viewref: string, options: any) {
         let view: View = this.getView(viewref);
-
         if (view) {
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);
             }
+            this.sourceDeviceId = options.sourceDeviceId;
             this.loadHmi(view, true);
             if (param.scaleMode) {
                 Utils.resizeViewRev(this.dataContainer.nativeElement, this.dataContainer.nativeElement.parentElement?.parentElement, param.scaleMode);
@@ -769,7 +815,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             bkColor: 'transparent',
             variablesMapping: options.variablesMapping,
             disableDefaultClose: options.hideClose,
-            gaugesManager: this.gaugesManager
+            gaugesManager: this.gaugesManager,
+            sourceDeviceId: options.sourceDeviceId
         };
         let dialogRef = this.fuxaDialog.open(FuxaViewDialogComponent, {
             panelClass: 'fuxa-dialog-property',
@@ -818,6 +865,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         card.view = view;
         card.variablesMapping = options?.variablesMapping;
         card.disableDefaultClose = options?.hideClose;
+        card.sourceDeviceId = options?.sourceDeviceId;
         if (this.parentcards) {
             this.parentcards.push(card);
         } else {
@@ -1091,6 +1139,11 @@ interface ActionOptionsVariable {
     variable: IPropertyVariable;
 }
 
+interface GaugePropertyExt extends GaugeProperty {
+    id: string;
+    type: string;
+}
+
 export class CardModel {
     public id: string;
     public name: string;
@@ -1104,7 +1157,7 @@ export class CardModel {
     public height: number;
     public variablesMapping: any = [];
     public view: View;
-
+    public sourceDeviceId: string;
     disableDefaultClose: boolean;
 
     constructor(id: string) {

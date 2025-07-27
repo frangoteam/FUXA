@@ -19,6 +19,10 @@
                         <mat-icon style="margin-right: unset">link</mat-icon>
                         {{'graph.config-source-tag' | translate}}
                     </button>
+                    <button mat-menu-item (click)="onAddGraphSourcePlaceholder(graph)" style="font-size: 14px;">
+                        <mat-icon style="margin-right: unset">link</mat-icon>
+                        {{'chart.config-addlinePlaceholder' | translate}}
+                    </button>
                     <button mat-menu-item (click)="onEditGraph(graph)" style="font-size: 14px;">{{'graph.config-rename' | translate}}</button>
                 </mat-menu>
             </div>

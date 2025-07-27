@@ -35,6 +35,7 @@ import { HtmlImageComponent } from './controls/html-image/html-image.component';
 import { PanelComponent } from './controls/panel/panel.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 import { AuthService } from '../_services/auth.service';
+import { DevicesUtils, Tag } from '../_models/device';
 
 @Injectable()
 export class GaugesManager {
@@ -56,14 +57,14 @@ export class GaugesManager {
     mapTable = {};
 
     // list of gauges tags to speed up the check
-    gaugesTags = [];
+    static gaugesTags = [];
 
     // list of gauges with input
     static GaugeWithProperty = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag,
-        ApeShapesComponent.TypeTag, HtmlImageComponent.TypeTag, HtmlInputComponent.TypeTag, PanelComponent.TypeTag, HtmlSelectComponent.TypeTag,
-        HtmlSwitchComponent.TypeTag];
+    ApeShapesComponent.TypeTag, HtmlImageComponent.TypeTag, HtmlInputComponent.TypeTag, PanelComponent.TypeTag, HtmlSelectComponent.TypeTag,
+    HtmlSwitchComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, ShapesComponent, HtmlButtonComponent, HtmlSelectComponent,
         ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent, PanelComponent];
@@ -101,7 +102,7 @@ export class GaugesManager {
         this.hmiService.getGaugeMapped = this.getGaugeFromName.bind(this);
         // make the list of gauges tags to speed up the check
         GaugesManager.Gauges.forEach(g => {
-            this.gaugesTags.push(g.TypeTag);
+            GaugesManager.gaugesTags.push(g.TypeTag);
         });
     }
 
@@ -160,9 +161,9 @@ export class GaugesManager {
      * @param type
      * @returns
      */
-    isGauge(type: string) {
-        for (let tag in this.gaugesTags) {
-            if (type.startsWith(this.gaugesTags[tag])) {
+    static isGauge(type: string) {
+        for (let tag in GaugesManager.gaugesTags) {
+            if (type.startsWith(GaugesManager.gaugesTags[tag])) {
                 return true;
             }
         }
@@ -206,7 +207,7 @@ export class GaugesManager {
             this.mapGauges[ga.id] = gauge;
         } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
             HtmlImageComponent.detectChange(ga, true);
-        } else if (elementWithLanguageText){
+        } else if (elementWithLanguageText) {
             GaugeBaseComponent.setLanguageText(elementWithLanguageText, ga.property?.text);
         }
         return false;
@@ -233,7 +234,6 @@ export class GaugesManager {
         this.mapChart = {};
         this.mapGauges = {};
         this.mapTable = {};
-        this.gaugesTags = [];
     }
 
     /**
@@ -252,18 +252,18 @@ export class GaugesManager {
      * @param bindclick
      * @param bindhtmlevent
      */
-    bindGauge(gauge: any, domViewId: string, ga: GaugeSettings, bindMouseEvent: any, bindhtmlevent: any) {
-        let sigsid: string[] = this.getBindSignals(ga);
-        if (sigsid) {
-            for (let i = 0; i < sigsid.length; i++) {
-                this.hmiService.addSignalGaugeToMap(domViewId, sigsid[i], ga);
+    bindGauge(gauge: any, domViewId: string, ga: GaugeSettings, sourceDeviceTags: Tag[], bindMouseEvent: any, bindhtmlevent: any) {
+        let sigsId: string[] = this.getBindSignals(ga, sourceDeviceTags);
+        if (sigsId) {
+            for (let i = 0; i < sigsId.length; i++) {
+                this.hmiService.addSignalGaugeToMap(domViewId, sigsId[i], ga);
                 // check for special gauge to save in memory binded to sigid (chart-html)
                 if (gauge) {
-                    if (!this.memorySigGauges[sigsid[i]]) {
-                        this.memorySigGauges[sigsid[i]] = {};
-                        this.memorySigGauges[sigsid[i]][ga.id] = gauge;
-                    } else if (!this.memorySigGauges[sigsid[i]][ga.id]) {
-                        this.memorySigGauges[sigsid[i]][ga.id] = gauge;
+                    if (!this.memorySigGauges[sigsId[i]]) {
+                        this.memorySigGauges[sigsId[i]] = {};
+                        this.memorySigGauges[sigsId[i]][ga.id] = gauge;
+                    } else if (!this.memorySigGauges[sigsId[i]][ga.id]) {
+                        this.memorySigGauges[sigsId[i]][ga.id] = gauge;
                     }
                 }
             }
@@ -412,18 +412,30 @@ export class GaugesManager {
      * return all signals binded to the gauge
      * @param ga
      */
-    getBindSignals(ga: GaugeSettings) {
-        if (ga.property) {
+    getBindSignals(gaugeSettings: GaugeSettings, sourceDeviceTags?: Tag[]) {
+        if (gaugeSettings.property) {
             for (let i = 0; i < GaugesManager.Gauges.length; i++) {
-                if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
-                    if (ga.type.startsWith(HtmlChartComponent.TypeTag)) {
-                        let sigs = this.hmiService.getChartSignal(ga.property.id);
-                        return sigs;
-                    } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
-                        let sigs = this.hmiService.getGraphSignal(ga.property.id);
-                        return sigs;
+                if (gaugeSettings.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
+                    if (gaugeSettings.type.startsWith(HtmlChartComponent.TypeTag)) {
+                        let sigsId = this.hmiService.getChartSignal(gaugeSettings.property.id);
+                        if (sourceDeviceTags) {
+                            sigsId = sigsId.map(signalId => {
+                                const tag = DevicesUtils.placeholderToTag(signalId, sourceDeviceTags);
+                                return tag?.id ?? signalId;
+                            });
+                        }
+                        return sigsId;
+                    } else if (gaugeSettings.type.startsWith(HtmlGraphComponent.TypeTag)) {
+                        let sigsId = this.hmiService.getGraphSignal(gaugeSettings.property.id);
+                        if (sourceDeviceTags) {
+                            sigsId = sigsId.map(signalId => {
+                                const tag = DevicesUtils.placeholderToTag(signalId, sourceDeviceTags);
+                                return tag?.id ?? signalId;
+                            });
+                        }
+                        return sigsId;
                     } else if (typeof GaugesManager.Gauges[i]['getSignals'] === 'function') {
-                        return GaugesManager.Gauges[i]['getSignals'](ga.property);
+                        return GaugesManager.Gauges[i]['getSignals'](gaugeSettings.property);
                     } else {
                         return null;
                     }
@@ -452,7 +464,7 @@ export class GaugesManager {
      * return all events binded to the gauge with mouse event
      * @param ga
      */
-     getBindMouseEvent(ga: GaugeSettings, evType: GaugeEventType): GaugeEvent[] {
+    getBindMouseEvent(ga: GaugeSettings, evType: GaugeEventType): GaugeEvent[] {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
             if (ga.type.startsWith(GaugesManager.Gauges[i].TypeTag)) {
                 if (typeof GaugesManager.Gauges[i]['getEvents'] === 'function') {
@@ -577,7 +589,7 @@ export class GaugesManager {
     toggleSignalValue(sigid: string, bitmask?: number) {
         if (this.hmiService.variables.hasOwnProperty(sigid)) {
             let currentValue = this.hmiService.variables[sigid].value;
-            if (currentValue === null || currentValue === undefined){
+            if (currentValue === null || currentValue === undefined) {
                 return;
             } else {
                 if (!Utils.isNullOrUndefined(bitmask)) {
@@ -694,7 +706,7 @@ export class GaugesManager {
      * @param elements
      */
     static initElementColor(bkcolor, color, elements) {
-        var elems = elements.filter(function(el) { return el; });
+        let elems = elements.filter(el => !!el);
         for (let i = 0; i < elems.length; i++) {
             let type = elems[i].getAttribute('type');
             if (type) {
@@ -758,17 +770,24 @@ export class GaugesManager {
      * @param isview in view or editor, in editor have to disable mouse activity
      * @param parent parent that call the function, should be from a FuxaViewComponent
      */
-    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean, parent?: FuxaViewComponent, textTranslation?: string) {
+    initElementAdded(ga: GaugeSettings, res: any, ref: any, isview: boolean, parent?: FuxaViewComponent, textTranslation?: string, sourceDeviceTags?: Tag[]) {
         if (!ga || !ga.type) {
             console.error('!TOFIX', ga);
             return null;
         }
-        // add variable
-        let sigsid: string[] = this.getBindSignals(ga);
-        if (sigsid) {
-            for (let i = 0; i < sigsid.length; i++) {
-                this.hmiService.addSignal(sigsid[i], ga);
-            }
+        var targetSignalsId: Record<string, string> = {};
+        // add variable to hmi service and map placeholder targetSignalsId
+        let signalsId: string[] = this.getBindSignals(ga);
+        if (signalsId) {
+            signalsId.forEach(signalId => {
+                if (isview) {
+                    const tag = DevicesUtils.placeholderToTag(signalId, sourceDeviceTags);
+                    targetSignalsId[signalId] = tag?.id ?? signalId;
+                    this.hmiService.addSignal(targetSignalsId[signalId]);
+                } else {
+                    this.hmiService.addSignal(signalId);
+                }
+            });
         }
         if (isview && ga.hide) {
             let ele = document.getElementById(ga.id);
@@ -780,7 +799,7 @@ export class GaugesManager {
             // prepare attribute
             let gauge: ChartUplotComponent = HtmlChartComponent.initElement(ga, res, ref, isview, ChartRangeType);
             if (gauge) {
-                this.setChartPropety(gauge, ga.property);
+                this.setChartPropety(gauge, ga.property, targetSignalsId);
                 this.mapChart[ga.id] = gauge;
                 gauge.onTimeRange.subscribe(data => {
                     this.hmiService.queryDaqValues(data);
@@ -794,7 +813,7 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlGraphComponent.TypeTag)) {
             let gauge: GraphBaseComponent = HtmlGraphComponent.initElement(ga, res, ref, isview);
             if (gauge) {
-                this.setGraphPropety(gauge, ga.property);
+                this.setGraphPropety(gauge, ga.property, targetSignalsId);
                 gauge.onReload.subscribe((query: DaqQuery) => {
                     this.hmiService.getDaqValues(query).subscribe(result => {
                         gauge.setValues(query.sids, result);
@@ -830,10 +849,12 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlTableComponent.TypeTag)) {
             let gauge = HtmlTableComponent.initElement(ga, res, ref, isview);
             if (gauge) {
-                this.setTablePropety(gauge, ga.property);
+                this.setTablePropety(gauge, ga.property, targetSignalsId);
                 this.mapTable[ga.id] = gauge;
                 gauge.onTimeRange$.subscribe(data => {
-                    this.hmiService.queryDaqValues(data);
+                    if (data) {
+                        this.hmiService.queryDaqValues(data);
+                    }
                 });
                 this.mapGauges[ga.id] = gauge;
             }
@@ -870,7 +891,7 @@ export class GaugesManager {
      * @param chart
      * @param property
      */
-    private setChartPropety(gauge: ChartUplotComponent, property: any) {
+    private setChartPropety(gauge: ChartUplotComponent, property: any, targetSignalsId?: Record<string, string>) {
         if (property) {
             if (property.id) {
                 let chart = this.hmiService.getChart(property.id);
@@ -880,10 +901,11 @@ export class GaugesManager {
                     let yaxisNotOne = chart.lines.find(line => line.yaxis > 1);
                     for (let i = 0; i < chart.lines.length; i++) {
                         let line = chart.lines[i];
-                        let sigid = line.id;
+                        // check for placeholder
+                        let sigid = targetSignalsId?.[line.id] ?? line.id;
                         let sigProperty = this.hmiService.getMappedVariable(sigid, true);
                         if (sigProperty) {
-                            gauge.addLine(sigid, sigProperty.name, line, yaxisNotOne?true:false);
+                            gauge.addLine(sigid, sigProperty.name, line, yaxisNotOne ? true : false);
                         }
                     }
                     gauge.redraw();
@@ -894,12 +916,21 @@ export class GaugesManager {
         }
     }
 
-    private setGraphPropety(gauge: GraphBaseComponent, property: any) {
+    private setGraphPropety(gauge: GraphBaseComponent, property: any, targetSignalsId?: Record<string, string>) {
         if (property) {
             if (property.id) {
                 let graph = this.hmiService.getGraph(property.id);
                 if (graph) {
                     gauge.init(graph.name, graph.property, graph.sources);
+                    // check for placeholder
+                    if ('sourceMap' in gauge && targetSignalsId) {
+                        const updatedSourceMap: Record<string, any> = {};
+                        for (const [key, index] of Object.entries(gauge.sourceMap)) {
+                            const newKey = targetSignalsId[key] ?? key;
+                            updatedSourceMap[newKey] = index;
+                        }
+                        gauge.sourceMap = updatedSourceMap;
+                    }
                 }
             }
             if (property.options) {
@@ -908,16 +939,11 @@ export class GaugesManager {
         }
     }
 
-    private setTablePropety(gauge: DataTableComponent, property: any) {
+    private setTablePropety(table: DataTableComponent, property: any, targetSignalsId?: Record<string, string>) {
         if (property) {
-            // if (property.id) {
-            //     let graph = this.hmiService.getGraph(property.id);
-            //     if (graph) {
-            //         gauge.init(graph.name, graph.property, graph.sources);
-            //     }
-            // }
             if (property.options) {
-                gauge.setOptions(property.options);
+                table.remapVariableIds(property.options, targetSignalsId);
+                table.setOptions(property.options);
             }
         }
     }

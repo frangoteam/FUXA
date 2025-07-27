@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService, UserProfile } from './auth.service';
+import { DeviceAdapterService } from '../device-adapter/device-adapter.service';
 
 @Injectable()
 export class HmiService {
@@ -51,6 +52,7 @@ export class HmiService {
     constructor(public projectService: ProjectService,
         private translateService: TranslateService,
         private authService: AuthService,
+        private deviceAdapaterService: DeviceAdapterService,
         private toastr: ToastrService) {
 
         this.initSocket();
@@ -83,6 +85,7 @@ export class HmiService {
      * @param value
      */
     putSignalValue(sigId: string, value: string, fnc: string = null) {
+        sigId = this.deviceAdapaterService.resolveAdapterTagsId([sigId])[0];
         if (!this.variables[sigId]) {
             this.variables[sigId] = new Variable(sigId, null, null);
         }
@@ -109,6 +112,14 @@ export class HmiService {
 
     public getAllSignals() {
         return this.variables;
+    }
+
+    public initSignalValues(sigIds: Record<string, string>) {
+        for (const [adapterId, deviceId] of Object.entries(sigIds)) {
+            if (!Utils.isNullOrUndefined(this.variables[adapterId])) {
+                this.variables[adapterId].value = this.variables[deviceId]?.value || null;
+            }
+        }
     }
 
     /**
@@ -205,14 +216,26 @@ export class HmiService {
         });
         // devices values
         this.socket.on(IoEventTypes.DEVICE_VALUES, (message) => {
-            for (let idx = 0; idx < message.values.length; idx++) {
-                let varid = message.values[idx].id;
-                if (!this.variables[varid]) {
-                    this.variables[varid] = new Variable(varid, null, null);
+            const updateVariable = (id: string, value: any, timestamp: any) => {
+                if (Utils.isNullOrUndefined(this.variables[id])) {
+                    this.variables[id] = new Variable(id, null, null);
                 }
-                this.variables[varid].value = message.values[idx].value;
-                this.variables[varid].timestamp = message.values[idx].timestamp;
-                this.setSignalValue(this.variables[varid]);
+                this.variables[id].value = value;
+                this.variables[id].timestamp = timestamp;
+                this.setSignalValue(this.variables[id]);
+            };
+
+            for (let idx = 0; idx < message.values.length; idx++) {
+                const originalId = message.values[idx].id;
+                const value = message.values[idx].value;
+                const timestamp = message.values[idx].timestamp;
+                updateVariable(originalId , value, timestamp);
+                const adapterIds = this.deviceAdapaterService.resolveDeviceTagIdForAdapter(originalId);
+                if (adapterIds?.length) {
+                    adapterIds.forEach(adapterId => {
+                        updateVariable(adapterId, value, timestamp);
+                    });
+                }
             }
         });
         // device browse
@@ -353,14 +376,16 @@ export class HmiService {
 
     public queryDaqValues(msg: DaqQuery) {
         if (this.socket) {
+            msg.sids = this.deviceAdapaterService.resolveAdapterTagsId(msg.sids);
             this.socket.emit(IoEventTypes.DAQ_QUERY, msg);
         }
     }
 
-    private tagsSubscribe() {
+    private tagsSubscribe(sendLastValue: boolean = false) {
         if (this.socket) {
             const mergedArray = this.viewsTagsSubscription.concat(this.homeTagsSubscription);
-            let msg = { tagsId: [...new Set(mergedArray)] };
+            const mergedArrayResolvedAdapter = this.deviceAdapaterService.resolveAdapterTagsId(mergedArray);
+            let msg = { tagsId: [...new Set(mergedArrayResolvedAdapter)], sendLastValue: sendLastValue };
             this.socket.emit(IoEventTypes.DEVICE_TAGS_SUBSCRIBE, msg);
         }
     }
@@ -368,9 +393,9 @@ export class HmiService {
     /**
      * Subscribe views tags values
      */
-    public viewsTagsSubscribe(tagsId: string[]) {
+    public viewsTagsSubscribe(tagsId: string[], sendLastValue: boolean = false) {
         this.viewsTagsSubscription = tagsId;
-        this.tagsSubscribe();
+        this.tagsSubscribe(sendLastValue);
     }
 
     /**
@@ -408,7 +433,7 @@ export class HmiService {
     //#endregion
 
     //#region Signals Gauges Mapping
-    addSignal(signalId: string, ga: GaugeSettings) {
+    addSignal(signalId: string) {
         // add to variable list
         if (!this.variables[signalId]) {
             this.variables[signalId] = new Variable(signalId, null, this.projectService.getDeviceFromTagId(signalId));

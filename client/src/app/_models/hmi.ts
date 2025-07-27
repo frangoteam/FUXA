@@ -187,6 +187,7 @@ export class DocProfile {
     margin = 10;
     align = DocAlignType.topCenter;
     gridType: GridType = GridType.Fixed;
+    viewRenderDelay = 0; // delay in ms to render view after load, used to prevent flickering on load view with many gauges
 }
 
 export enum DocAlignType {

@@ -24,16 +24,16 @@
             <!-- <mat-icon (click)="onEditDevice(server)" class="device-icon device-edit" >edit</mat-icon> -->
             <button *ngIf="!readonly" mat-icon-button (click)="onListDevice(server)" class="device-icon device-list mat-button-sm" [style.right.px]="(readonly) ? 2 : 30" matTooltip="{{'device.property-tags' | translate}}">
                 <mat-icon>link</mat-icon>
-            </button>    
+            </button>
             <button *ngIf="!readonly" mat-icon-button (click)="onEditDevice(server)" class="device-edit mat-button-sm" matTooltip="{{'device.property-edit' | translate}}">
                 <mat-icon style="font-size: 17px">edit</mat-icon>
-            </button>     
+            </button>
         </div>
 
         <div *ngFor="let flow of devicesValue('flow'); index as i" class="node-flow" [style.color]="(flow.enabled) ? '#000000' : '#828282'"
             [style.left.px]="getDeviceLeftPosition(i, 'flow')" [style.top.px]="getDeviceTopPosition('flow')" [style.width.px]="flowWidth" [style.height.px]="flowHeight"
             [style.borderWidth.px]="flowBorder">
-            <span class="device-header">{{ flow.name }}</span>
+            <span class="device-header" style="color: black;">{{ flow.name }}</span>
             <span class="device-pro" *ngIf="flow.property">{{ flow.property.address }}</span>
             <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(flow) }}</span>
             <div class="device-status" *ngIf="flow.enabled" [style.background-color]="getDeviceStatusColor(flow)"></div>
@@ -124,7 +124,7 @@
                 </button>
             </mat-cell>
         </ng-container>
-    
+
         <mat-header-row *matHeaderRowDef="displayedColumns" [ngStyle]="{'min-width.px': tableWidth}"></mat-header-row>
         <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row" [ngStyle]="{'min-width.px': tableWidth}"></mat-row>
     </mat-table>
