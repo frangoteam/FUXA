@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {GaugeBaseComponent} from '../../gauge-base/gauge-base.component';
+import { Component } from '@angular/core';
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import {
     Event, GaugeAction,
     GaugeActionsType,
@@ -10,11 +10,11 @@ import {
     Variable,
     WidgetProperty
 } from '../../../_models/hmi';
-import {Utils} from '../../../_helpers/utils';
-import {ShapesComponent} from '../../shapes/shapes.component';
-import {EndPointApi} from '../../../_helpers/endpointapi';
-import {SvgUtils, WidgetPropertyVariable} from '../../../_helpers/svg-utils';
-import {DeviceType} from '../../../_models/device';
+import { Utils } from '../../../_helpers/utils';
+import { ShapesComponent } from '../../shapes/shapes.component';
+import { EndPointApi } from '../../../_helpers/endpointapi';
+import { SvgUtils, WidgetPropertyVariable } from '../../../_helpers/svg-utils';
+import { DeviceType } from '../../../_models/device';
 
 declare var SVG: any;
 
@@ -82,7 +82,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                             type: HtmlImageComponent.propertyWidgetType,
                             svgGuid: svgGuid,
                             svgContent: svgImageContainer.innerHTML,
-                            scriptContent: {moduleId: moduleId, content: widgetResult?.content},
+                            scriptContent: { moduleId: moduleId, content: widgetResult?.content },
                             varsToBind: Utils.mergeArray([widgetResult?.vars, gaugeSettings.property.varsToBind], 'originalName')
                         };
                     } else {
@@ -175,7 +175,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         try {
             if (svgele.node) {
                 if (sig.device?.type === DeviceType.WebCam) {
-                    this.processWebcamValue(ga, svgele, sig, gaugeStatus);
+                    HtmlImageComponent.processWebcamValue(ga, svgele, sig, gaugeStatus);
                     return;
                 }
                 let value = parseFloat(sig.value);

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import {Device, TAG_PREFIX, Tag, ServerTagType} from '../../_models/device';
+import { Device, TAG_PREFIX, Tag, ServerTagType } from '../../_models/device';
 import { Utils } from '../../_helpers/utils';
 import { TagPropertyEditS7Component } from './tag-property-edit-s7/tag-property-edit-s7.component';
 import { Observable, map } from 'rxjs';
@@ -405,7 +405,7 @@ export class TagPropertyService {
                     tag.edge = result.tagEdge;
                     if (checkToAdd) {
                         this.checkToAdd(tag, device);
-                    }else if (tag.id !== oldTagId) {
+                    } else if (tag.id !== oldTagId) {
                         //remove old tag device reference
                         delete device.tags[oldTagId];
                         this.checkToAdd(tag, device);

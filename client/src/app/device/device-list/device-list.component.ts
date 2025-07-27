@@ -116,10 +116,10 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         if (this.deviceSelected.type === DeviceType.internal) {
             this.displayedColumns = this.defInternalColumns;
             this.tableWidth = this.defInternalRowWidth;
-        } else if(this.deviceSelected.type === DeviceType.GPIO) {
+        } else if (this.deviceSelected.type === DeviceType.GPIO) {
             this.displayedColumns = this.defGpipColumns;
             this.tableWidth = this.defAllRowWidth;
-        } else if(this.deviceSelected.type === DeviceType.WebCam){
+        } else if (this.deviceSelected.type === DeviceType.WebCam){
             this.displayedColumns = this.defWebcamColumns;
             this.tableWidth = this.defAllRowWidth;
         } else {
@@ -331,7 +331,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             });
             return;
         }
-        if(this.deviceSelected.type === DeviceType.WebCam) {
+        if (this.deviceSelected.type === DeviceType.WebCam) {
             this.tagPropertyService.editTagPropertyWebcam(this.deviceSelected, tag, checkToAdd).subscribe(result => {
                 this.tagsMap[tag.id] = tag;
                 this.bindToTable(this.deviceSelected.tags);
