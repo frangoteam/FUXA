@@ -108,7 +108,7 @@ try {
     settings.imagesFileDir = path.resolve(rootDir, '_images');
     settings.widgetsFileDir = path.resolve(rootDir, '_widgets');
     settings.reportsDir = path.resolve(rootDir, '_reports');
-    settings.webcamSnapShotsDir = path.resolve(workDir, settings.webcamSnapShotsDir);
+    settings.webcamSnapShotsDir = path.resolve(rootDir, settings.webcamSnapShotsDir);
 } catch (err) {
     logger.error('Error loading settings file: ' + settingsFile)
     if (err.code == 'MODULE_NOT_FOUND') {
@@ -300,7 +300,7 @@ const allowCrossDomain = function (req, res, next) {
 
 
   if (req.method === 'OPTIONS') {
-    return res.sendStatus(204); 
+    return res.sendStatus(204);
   }
   next();
 };
