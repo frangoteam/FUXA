@@ -32,6 +32,7 @@ export class TableCustomizerCellEditComponent {
 
     onSetVariable(event) {
         this.data.cell.variableId = event.variableId;
+        this.data.cell.bitmask = event.bitmask;
         if (this.data.table === TableType.data) {
             if (event.variableRaw) {
                 this.data.cell.label = event.variableRaw.name;

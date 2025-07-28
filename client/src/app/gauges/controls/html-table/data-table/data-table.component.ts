@@ -24,6 +24,7 @@ import { ReportColumnsType, ReportFile, ReportsFilter } from '../../../../_model
 import * as FileSaver from 'file-saver';
 import { CommandService } from '../../../../_services/command.service';
 import { LanguageService } from '../../../../_services/language.service';
+import { GaugeBaseComponent } from '../../../gauge-base/gauge-base.component';
 
 declare const numeral: any;
 @Component({
@@ -206,7 +207,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.type === TableType.data && this.tagsMap[variableId]) {
             this.tagsMap[variableId].value = variableValue;
             this.tagsMap[variableId].cells.forEach((cell: TableCellData) => {
-                cell.stringValue = Utils.formatValue(this.tagsMap[variableId].value, cell.valueFormat);
+                const rawValue = GaugeBaseComponent.maskedShiftedValue(variableValue, cell.bitmask);
+                cell.stringValue = Utils.formatValue(rawValue?.toString(), cell.valueFormat);
             });
             // update timestamp of all timestamp cells
             this.tagsMap[variableId].rows.forEach((rowIndex: number) => {
