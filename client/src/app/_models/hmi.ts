@@ -308,6 +308,7 @@ export enum GaugeActionsType {
     rotate = 'shapes.action-rotate',
     move = 'shapes.action-move',
     monitor = 'shapes.action-monitor',
+    refreshImage = 'shapes.action-refreshImage',
 }
 
 export class GaugeAction {

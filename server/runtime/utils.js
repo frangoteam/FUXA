@@ -338,5 +338,28 @@ var utils = module.exports = {
             }
             return val;
         }
+    },
+
+    deepMerge: function(source, target) {
+        for (const key in source) {
+            if (!Object.prototype.hasOwnProperty.call(target, key)) {
+                target[key] = source[key];
+            } else {
+                const sourceVal = source[key];
+                const targetVal = target[key];
+
+                if (
+                    typeof sourceVal === 'object' &&
+                    sourceVal !== null &&
+                    !Array.isArray(sourceVal) &&
+                    typeof targetVal === 'object' &&
+                    targetVal !== null &&
+                    !Array.isArray(targetVal)
+                ) {
+                    deepMerge(sourceVal, targetVal);
+                }
+            }
+        }
+        return target;
     }
 }

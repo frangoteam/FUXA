@@ -735,6 +735,8 @@
     "shapes.action-anticlockwise": "逆时针转弯",
     "shapes.action-downup": "向上和向下",
     "shapes.action-rotate": "旋转",
+    "shapes.action-refreshImage": "更新图像",
+
     "shapes.action-move": "移动",
     "shapes.event-click": "点击",
     "shapes.event-dblclick": "双击",
@@ -1048,6 +1050,8 @@
     "devices.list-polling": "轮询",
     "devices.list-enabled": "已启用",
     "devices.list-status": "状态",
+    "device.list-clipboard": "复制到剪贴板",
+
 
     "users.list-title": "用户设置",
     "users.list-name": "用户名",

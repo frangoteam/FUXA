@@ -1,7 +1,7 @@
 
 module.exports = {
     // Version to manage update
-    version: 1.2,
+    version: 1.3,
 
     // Standard language (editor)
     language: 'en',
@@ -62,7 +62,7 @@ module.exports = {
     // Please use exact origin urls for better and safe CORS (Wild Cards not Recommended)
     // "allowedOrigins": ["https://example.com", "https://dashboard.example.com"]
     // Default: ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*"]
-    "allowedOrigins": ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*","http://localhost:4200"]
+    "allowedOrigins": ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*", "http://localhost:4200"],
 
 
     // The maximum size of HTTP request that will be accepted by the runtime api.
@@ -91,5 +91,13 @@ module.exports = {
 
     // Enable GPIO in Raspberry
     // To enable only by Raspberry Host
+
+    //Location to output webcam capture
+    webcamSnapShotsDir: '_webcam_snapshots',
+    //cleanup old snapshots Default false
+    webcamSnapShotsCleanup: false,
+    //snapshots retention in days
+    webcamSnapShotsRetain: 7,
+
 
 }
