@@ -214,7 +214,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             this.tagsMap[variableId].rows.forEach((rowIndex: number) => {
                 if (this.timestampMap[rowIndex]) {
                     this.timestampMap[rowIndex].forEach((cell: TableCellData) => {
-                        cell.stringValue = format(new Date(dt * 1e3), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                        cell.stringValue = format(new Date(dt * 1e3), cell.valueFormat || 'YYYY-MM-DD HH:mm:ss');
                     });
                 }
             });
@@ -271,14 +271,15 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 row[colId] = { stringValue: '' };
 
                 if (column.type === TableCellType.timestamp) {
-                    row[colId].stringValue = format(new Date(t), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                    row[colId].stringValue = format(new Date(t), column.valueFormat || 'YYYY-MM-DD HH:mm:ss');
                     row[colId].rowIndex = t;
                 } else if (column.type === TableCellType.device) {
                     row[colId].stringValue = column.exname;
                 } else if (column.type === TableCellType.variable) {
                     const val = mergedMap.get(t)?.[colId] ?? null;
                     if (Utils.isNumeric(val)) {
-                        row[colId].stringValue = Utils.formatValue(val, column.valueFormat);
+                        const rawValue = GaugeBaseComponent.maskedShiftedValue(val, column.bitmask);
+                        row[colId].stringValue = Utils.formatValue(rawValue?.toString(), column.valueFormat);
                     } else {
                         row[colId].stringValue = val ?? '';
                     }
@@ -379,7 +380,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    addRowDataToTable(dt: number, tagId: string, value: any) {
+    addRowDataToTable(dt: number, tagId: string, value: string) {
         let row = {};
         let timestapColumnId = null;
         let valueColumnId = null;
@@ -389,14 +390,14 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             row[column.id] = <TableCellData>{ stringValue: '' };
             if (column.type === TableCellType.timestamp) {
                 timestapColumnId = column.id;
-                row[column.id].stringValue = format(new Date(dt), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                row[column.id].stringValue = format(new Date(dt), column.valueFormat || 'YYYY-MM-DD HH:mm:ss');
                 row[column.id].timestamp = dt;
             } else if (column.variableId === tagId) {
-                const tempValue = value;
-                if (Utils.isNumeric(tempValue)) {
-                    row[column.id].stringValue = Utils.formatValue(tempValue, column.valueFormat);
+                if (Utils.isNumeric(value)) {
+                    const rawValue = GaugeBaseComponent.maskedShiftedValue(value, column.bitmask);
+                    row[column.id].stringValue = Utils.formatValue(rawValue?.toString(), column.valueFormat);
                 } else {
-                    row[column.id].stringValue = tempValue;
+                    row[column.id].stringValue = value;
                 }
                 valueColumnId = column.id;
             } else if (column.type === TableCellType.device) {
@@ -551,7 +552,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         } else if (cell.type === TableCellType.timestamp) {
             if (this.isEditor) {
-                cell.stringValue = format(new Date(0), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                cell.stringValue = format(new Date(0), cell.valueFormat || 'YYYY-MM-DD HH:mm:ss');
             }
             this.addTimestampToMap(cell);
         } else if (cell.type === TableCellType.label) {
