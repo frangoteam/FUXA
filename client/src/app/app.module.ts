@@ -221,6 +221,7 @@ import { ClientScriptAccessComponent } from './editor/client-script-access/clien
 import { TagPropertyEditWebcamComponent } from './device/tag-property/tag-property-edit-webcam/tag-property-edit-webcam.component';
 import { EditPlaceholderComponent } from './gui-helpers/edit-placeholder/edit-placeholder.component';
 import { DeviceAdapterService } from './device-adapter/device-adapter.service';
+import { VideoPropertyComponent } from './gauges/controls/html-video/video-property/video-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -392,7 +393,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         LanguageTextPropertyComponent,
         LanguageTextListComponent,
         ClientScriptAccessComponent,
-        TagPropertyEditWebcamComponent
+        TagPropertyEditWebcamComponent,
+        VideoPropertyComponent
     ],
     imports: [
         BrowserModule,

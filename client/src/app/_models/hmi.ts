@@ -309,6 +309,9 @@ export enum GaugeActionsType {
     move = 'shapes.action-move',
     monitor = 'shapes.action-monitor',
     refreshImage = 'shapes.action-refreshImage',
+    start = 'shapes.action-start',
+    pause = 'shapes.action-pause',
+    reset = 'shapes.action-reset',
 }
 
 export class GaugeAction {
@@ -705,3 +708,16 @@ export interface ISvgElement {
     id: string;
     name: string;
 }
+
+export class GaugeVideoProperty extends GaugeProperty {
+    constructor() {
+        super();
+        this.options = { address: '' } as VideoOptions;
+    }
+}
+
+export interface VideoOptions {
+    address: string;
+    initImage?: string;
+}
+

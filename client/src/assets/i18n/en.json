@@ -412,8 +412,14 @@
     "graph.grouptype-days": "Days",
 
     "iframe.property-data": "Data",
-    "iframe.property-address": "Address",
-    "iframe.property-name": "Name",
+    "iframe.property-address": "Address (fix)",
+    "iframe.property-image": "Image",
+
+    "video.property-title": "Video settings",
+    "video.property-data": "Data",
+    "video.property-address": "Address",
+    "video.property-image": "Initial image",
+    "video.property-image-placeholder": "Select the initial image",
 
     "panel.property-data": "Data",
     "panel.property-view-name": "View name",
@@ -565,6 +571,8 @@
     "editor.controls-image": "Image (link)",
     "editor.controls-panel": "Panel",
     "editor.controls-panel-settings": "Panel settings",
+    "editor.controls-video": "Video",
+    "editor.controls-video-settings": "Video settings",
 
     "editor.layout-settings": "Layout settings",
 
@@ -731,12 +739,16 @@
     "shapes.action-show": "Show",
     "shapes.action-blink": "Blink",
     "shapes.action-stop": "Stop",
+    "shapes.action-start": "Start",
+    "shapes.action-pause": "Pause",
+    "shapes.action-reset": "Reset",
     "shapes.action-clockwise": "Turn clockwise",
     "shapes.action-anticlockwise": "Turn anticlockwise",
     "shapes.action-downup": "Up and down",
     "shapes.action-rotate": "Rotate",
     "shapes.action-move": "Move",
     "shapes.action-refreshImage": "Refresh image",
+
     "shapes.event-click": "Click",
     "shapes.event-dblclick": "DoubleClick",
     "shapes.event-mouseup": "MouseUp",
