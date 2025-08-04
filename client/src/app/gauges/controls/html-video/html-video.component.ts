@@ -48,19 +48,31 @@ export class HtmlVideoComponent extends GaugeBaseComponent {
 
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable) {
         try {
-            if (sig.value && svgele?.node?.children?.length >= 1) {
+            if (svgele?.node?.children?.length >= 1) {
                 const parentIframe = Utils.searchTreeStartWith(svgele.node, this.prefixD);
                 const video = parentIframe.querySelector('video');
                 if (!video) {
                     return;
                 }
-                let value = Utils.toFloatOrNumber(sig.value);
-                if (ga.property.actions) {
-                    ga.property.actions.forEach(act => {
-                        if (act.variableId === sig.id) {
-                            HtmlVideoComponent.processAction(act, video, value);
+                if (sig.id === ga.property.variableId) {
+                    video.src = sig.value;
+                    const image = parentIframe.querySelector('img');
+                    if (image) {
+                        if (sig.value) {
+                            image.style.display = 'none';
+                        } else {
+                            image.style.display = 'block';
                         }
-                    });
+                    }
+                } else {
+                    let value = Utils.toFloatOrNumber(sig.value);
+                    if (ga.property.actions) {
+                        ga.property.actions.forEach(act => {
+                            if (act.variableId === sig.id) {
+                                HtmlVideoComponent.processAction(act, video, value);
+                            }
+                        });
+                    }
                 }
             }
         } catch (err) {
@@ -80,7 +92,7 @@ export class HtmlVideoComponent extends GaugeBaseComponent {
             const videoSrc = gaugeSettings.property?.options?.address;
             const initImage = gaugeSettings.property?.options?.initImage;
             const hasValidVideo = videoSrc && Utils.isValidUrl(videoSrc);
-            if (initImage && !hasValidVideo && !isView) {
+            if (initImage && !hasValidVideo) {
                 const img = document.createElement('img');
                 img.src = initImage;
                 img.style.width = '100%';
@@ -88,24 +100,22 @@ export class HtmlVideoComponent extends GaugeBaseComponent {
                 img.style.objectFit = 'contain';
                 svgVideoContainer.appendChild(img);
             }
-            if (hasValidVideo) {
-                let video = document.createElement('video');
-                video.setAttribute('playsinline', 'true'); // per evitare fullscreen su iOS
-                video.style.width = '100%';
-                video.style.height = '100%';
-                video.style.objectFit = 'contain';
-                video.style.display = 'block';
-                if (gaugeSettings.property?.options?.showControls) {
-                    video.setAttribute('controls', '');
-                }
-                const source = document.createElement('source');
-                source.src = videoSrc;
-                source.type = HtmlVideoComponent.getMimeTypeFromUrl(videoSrc);
-                video.appendChild(source);
-                // assegna un ID utile per i comandi futuri
-                // video.id = gaugeSettings.id + '_video';
-                svgVideoContainer.appendChild(video);
+            let video = document.createElement('video');
+            video.setAttribute('playsinline', 'true');
+            video.style.width = '100%';
+            video.style.height = '100%';
+            video.style.objectFit = 'contain';
+            video.style.display = 'block';
+            if (gaugeSettings.property?.options?.showControls) {
+                video.setAttribute('controls', '');
             }
+            const source = document.createElement('source');
+            source.src = videoSrc;
+            if (hasValidVideo) {
+                source.type = HtmlVideoComponent.getMimeTypeFromUrl(videoSrc);
+            }
+            video.appendChild(source);
+            svgVideoContainer.appendChild(video);
 
         }
         return svgVideoContainer;
