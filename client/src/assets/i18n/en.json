@@ -418,6 +418,7 @@
     "video.property-title": "Video settings",
     "video.property-data": "Data",
     "video.property-address": "Address",
+    "video.property-controls": "Show controls",
     "video.property-image": "Initial image",
     "video.property-image-placeholder": "Select the initial image",
 

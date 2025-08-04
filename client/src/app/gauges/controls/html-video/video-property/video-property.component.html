@@ -32,6 +32,10 @@
                         <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/*" />
                     </ng-template>
                 </div>
+                <div class="my-form-field block tac mt5 item-slider">
+                    <span>{{'video.property-controls' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="property.options.showControls" (change)="onVideoChanged()"></mat-slide-toggle>
+                </div>
             </mat-tab>
             <!-- <mat-tab label="{{'editor.settings-events' | translate}}">
               <div class="events-toolbox">

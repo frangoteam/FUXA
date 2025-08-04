@@ -719,5 +719,6 @@ export class GaugeVideoProperty extends GaugeProperty {
 export interface VideoOptions {
     address: string;
     initImage?: string;
+    showControls?: boolean;
 }
 
