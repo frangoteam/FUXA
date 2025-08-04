@@ -1,0 +1,166 @@
+<div class="container">
+  <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'editor.controls-textarea-settings' | translate}}
+  </h1>
+  <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+  <mat-tab-group style="width: 100%;">
+    <mat-tab label="{{'gauges.property-props' | translate}}">
+      <div style="height: 500px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
+        <div class="block" style="display: flex; align-items: center; gap: 15px;">
+          <flex-auth [name]="name" [permission]="property.permission" [permissionRoles]="property.permissionRoles"
+            #flexauth></flex-auth>
+          <!-- <div class="my-form-field" style="flex: 1; max-width: 270px;">
+            <span>{{'gauges.property-text' | translate}}</span>
+            <input [(ngModel)]="property.text" type="text"
+              placeholder="{{'gauges.property-language-text' | translate}}">
+          </div> -->
+          <!-- <button mat-icon-button (click)="onAddInput()"
+            matTooltip="{{'gauges.property-tooltip-add-range' | translate}}">
+            <mat-icon>add_circle_outline</mat-icon>
+          </button> -->
+        </div>
+        <!-- Gauge Properties (Tag/Variable binding) -->
+        <!-- <div mat-dialog-content style="overflow: hidden; width:100%">
+          <flex-head [data]="data" [property]="property" #flexhead></flex-head>
+        </div> -->
+        <!-- Textarea Properties (Rows, Cols, Text) -->
+        <div class="block mt10"
+          style="display: flex; flex-direction: row; gap: 10px; width: 100%; align-items: flex-end;">
+          <div class="my-form-field">
+            <span>Rows</span>
+            <input id="textarea-rows" name="textarea-rows" [(ngModel)]="property.options.rows" style="width: 80px"
+              type="number" min="1">
+          </div>
+          <div class="my-form-field">
+            <span>Cols</span>
+            <input id="textarea-cols" name="textarea-cols" [(ngModel)]="property.options.cols" style="width: 80px"
+              type="number" min="1">
+          </div>
+          <div class="my-form-field">
+            <span>Font Family</span>
+            <select [(ngModel)]="property.options.fontFamily" style="width: 120px">
+              <option value="">Default</option>
+              <option value="Arial, Helvetica, sans-serif">Arial</option>
+              <option value="Courier New, Courier, monospace">Courier New</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="Tahoma, Geneva, sans-serif">Tahoma</option>
+              <option value="Times New Roman, Times, serif">Times New Roman</option>
+              <option value="Verdana, Geneva, sans-serif">Verdana</option>
+              <option value="monospace">Monospace</option>
+              <option value="serif">Serif</option>
+              <option value="sans-serif">Sans-serif</option>
+            </select>
+          </div>
+          <div class="my-form-field">
+            <span>Font Size</span>
+            <input type="number" [(ngModel)]="property.options.fontSize" style="width: 70px" min="1" max="100" step="1"
+              placeholder="px">
+          </div>
+          <div class="my-form-field">
+            <span>Text Align</span>
+            <select [(ngModel)]="property.options.textAlign" style="width: 90px">
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
+        </div>
+        <div class="my-form-field">
+          <span>Add Text:</span>
+          <textarea id="textarea-content" name="textarea-content" [(ngModel)]="property.options.text"
+            [rows]="property.options.rows || 4" [cols]="property.options.cols || 50"
+            [style.font-family]="property.options.fontFamily ? property.options.fontFamily : 'inherit'"
+            [style.font-size.px]="property.options.fontSize || 14"
+            [style.text-align]="property.options.textAlign ? property.options.textAlign : 'left'"
+            style="width: 42%; min-width: 220px;" (input)="onTextChange($event)"></textarea>
+        </div>
+        <!-- Color Properties -->
+        <!-- <div class="field-row mt10" style="display: flex; gap: 20px; justify-content: center; width: 50%;">
+          <div class="my-form-field" style="width: 75%;">
+            <span>{{'gauges.property-bkcolor' | translate}}</span>
+            <input [(colorPicker)]="property.bkcolor" [style.background]="property.bkcolor"
+              [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+              [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
+              [cpOKButtonClass]="'cpOKButtonClass'" style="width: 100%;" [cpPosition]="'center'"
+              [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'" class="input-color">
+          </div>
+          <div class="my-form-field" style="width: 75%;">
+            <span>{{'gauges.property-color' | translate}}</span>
+            <input [(colorPicker)]="property.fgcolor" [style.background]="property.fgcolor"
+              [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+              [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
+              [cpOKButtonClass]="'cpOKButtonClass'" style="width: 100%;" [cpPosition]="'center'"
+              [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'" class="input-color">
+          </div>
+        </div> -->
+        <!-- Range Properties -->
+        <!-- <div class="block mt20"> -->
+        <!-- <div class="range-container" *ngFor="let range of property.ranges; let i = index"> -->
+        <!-- <div class="field-row" style="display: flex; align-items: center; gap: 10px;"> -->
+        <!-- Range Number Component -->
+        <!-- <range-number [range]="range"></range-number> -->
+        <!-- Color Options -->
+        <!-- <div class="my-form-field ml10">
+                <span>{{'gauges.property-input-color' | translate}}</span>
+                <input [(colorPicker)]="range.color" [value]="range.color" [style.background]="range.color"
+                  [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                  [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
+                  [cpOKButtonClass]="'cpOKButtonClass'" style="width:70px;" [cpPosition]="'right'"
+                  [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'" class="input-color" />
+              </div>
+              <div class="my-form-field ml10">
+                <span>{{'gauges.property-input-stroke' | translate}}</span>
+                <input [(colorPicker)]="range.stroke" [value]="range.stroke" [style.background]="range.stroke"
+                  [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
+                  [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
+                  [cpOKButtonClass]="'cpOKButtonClass'" style="width:70px;" [cpPosition]="'right'"
+                  [cpAlphaChannel]="'always'" [cpOutputFormat]="'hex'" class="input-color" />
+              </div> -->
+        <!-- Remove Range Button -->
+        <!-- <button mat-icon-button (click)="onRemoveRange(i)" class="remove-btn">
+                <mat-icon>clear</mat-icon>
+              </button> -->
+        <!-- </div> -->
+        <!-- </div> -->
+        <!-- </div> -->
+      </div>
+    </mat-tab>
+    <!-- Events Tab -->
+    <!-- <mat-tab label="{{'gauges.property-events' | translate}}" *ngIf="eventsSupported">
+      <div style="min-height: 500px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
+        <div class="block">
+          <div class="toolbox">
+            <button mat-icon-button (click)="onAddEvent()"
+              matTooltip="{{'gauges.property-tooltip-add-event' | translate}}">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+          </div>
+          <div mat-dialog-content>
+            <flex-event [property]="property" [data]="data" #flexevent class=""></flex-event>
+          </div>
+        </div>
+      </div>
+    </mat-tab> -->
+
+    <!-- Actions Tab -->
+    <!-- <mat-tab label="{{'gauges.property-actions' | translate}}" *ngIf="actionsSupported">
+      <div style="min-height: 500px; overflow-y: auto; overflow-x: hidden; padding-top: 15px;">
+        <div class="block">
+          <div class="toolbox">
+            <button mat-icon-button (click)="flexAction.onAddAction()"
+              matTooltip="{{'gauges.property-tooltip-add-action' | translate}}">
+              <mat-icon>add_circle_outline</mat-icon>
+            </button>
+          </div>
+          <div mat-dialog-content>
+            <flex-action [property]="property" [data]="data" #flexaction class=""></flex-action>
+          </div>
+        </div>
+      </div>
+    </mat-tab> -->
+  </mat-tab-group>
+  <div mat-dialog-actions class="dialog-action">
+    <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+    <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok'
+      | translate}}</button>
+  </div>
+</div>

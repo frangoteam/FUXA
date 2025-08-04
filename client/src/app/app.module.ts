@@ -114,6 +114,7 @@ import { HtmlGraphComponent } from './gauges/controls/html-graph/html-graph.comp
 import { HtmlIframeComponent } from './gauges/controls/html-iframe/html-iframe.component';
 import { HtmlBagComponent } from './gauges/controls/html-bag/html-bag.component';
 import { HtmlTableComponent } from './gauges/controls/html-table/html-table.component';
+import { HtmlTextareaComponent } from './gauges/controls/html-textarea/html-textarea.component';
 import { HtmlSwitchComponent } from './gauges/controls/html-switch/html-switch.component';
 import { GaugeProgressComponent } from './gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from './gauges/controls/gauge-semaphore/gauge-semaphore.component';
@@ -146,6 +147,7 @@ import { GraphBaseComponent } from './gauges/controls/html-graph/graph-base/grap
 import { NgChartsModule } from 'ng2-charts';
 import { IframePropertyComponent } from './gauges/controls/html-iframe/iframe-property/iframe-property.component';
 import { TablePropertyComponent } from './gauges/controls/html-table/table-property/table-property.component';
+import { HtmlTextareaPropertyComponent } from './gauges/controls/html-textarea/html-textarea-property/html-textarea-property.component';
 import { TableCustomizerComponent } from './gauges/controls/html-table/table-customizer/table-customizer.component';
 import { DataTableComponent } from './gauges/controls/html-table/data-table/data-table.component';
 import { ReportListComponent } from './reports/report-list/report-list.component';
@@ -277,6 +279,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DaterangeDialogComponent,
         GaugeBaseComponent,
         HtmlInputComponent,
+        HtmlTextareaComponent,
         HtmlButtonComponent,
         HtmlSelectComponent,
         HtmlChartComponent,
@@ -363,6 +366,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         GraphPropertyComponent,
         GraphBaseComponent,
         IframePropertyComponent,
+        HtmlTextareaPropertyComponent,
         TablePropertyComponent,
         TableCustomizerComponent,
         TableCustomizerCellEditComponent,
@@ -453,6 +457,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         PipeComponent,
         SliderComponent,
         HtmlTableComponent,
+        HtmlTextareaComponent,
         Dictionary,
         ModalPositionCache,
         Define,

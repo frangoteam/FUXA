@@ -513,6 +513,9 @@
     "table.report-filter-name": "Name",
     "table.report-filter-count": "Max.",
 
+    "editor.controls-textarea": "Textarea",
+    "editor.controls-textarea-settings": "Textarea settings",
+
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
     "editor.view-maps": "Maps",

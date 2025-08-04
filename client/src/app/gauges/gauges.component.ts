@@ -26,6 +26,7 @@ import { ChartUplotComponent } from './controls/html-chart/chart-uplot/chart-upl
 import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component';
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
 import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.component';
+import { HtmlTextareaComponent } from './controls/html-textarea/html-textarea.component';
 import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.component';
 import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
@@ -60,19 +61,19 @@ export class GaugesManager {
     static gaugesTags = [];
 
     // list of gauges with input
-    static GaugeWithProperty = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix];
+    static GaugeWithProperty = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix, HtmlTextareaComponent.prefixD];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag,
     ApeShapesComponent.TypeTag, HtmlImageComponent.TypeTag, HtmlInputComponent.TypeTag, PanelComponent.TypeTag, HtmlSelectComponent.TypeTag,
-    HtmlSwitchComponent.TypeTag];
+    HtmlSwitchComponent.TypeTag, HtmlTextareaComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, ShapesComponent, HtmlButtonComponent, HtmlSelectComponent,
-        ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent, PanelComponent];
+        ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent, PanelComponent, HtmlTextareaComponent];
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
         PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
-        HtmlImageComponent, PanelComponent];
+        HtmlImageComponent, PanelComponent, HtmlTextareaComponent];
 
     constructor(private hmiService: HmiService,
         private authService: AuthService,
@@ -209,6 +210,8 @@ export class GaugesManager {
             HtmlImageComponent.detectChange(ga, true);
         } else if (elementWithLanguageText) {
             GaugeBaseComponent.setLanguageText(elementWithLanguageText, ga.property?.text);
+        } else if (ga.type.startsWith(HtmlTextareaComponent.TypeTag)) {
+            HtmlTextareaComponent.initElement(ga, true);
         }
         return false;
     }
@@ -349,6 +352,8 @@ export class GaugesManager {
     checkElementToInit(ga: GaugeSettings) {
         if (ga.type.startsWith(HtmlSelectComponent.TypeTag)) {
             return HtmlSelectComponent.initElement(ga, true);
+        } else if (ga.type.startsWith(HtmlTextareaComponent.TypeTag)) {
+            return HtmlTextareaComponent.initElement(ga, true);
         }
         return null;
     }
@@ -757,6 +762,8 @@ export class GaugesManager {
             return 'output_';
         } else if (type.startsWith(HtmlTableComponent.TypeTag)) {
             return 'table_';
+        } else if (type.startsWith(HtmlTextareaComponent.TypeTag)) {
+            return 'textarea_';
         }
         return 'shape_';
     }
@@ -876,6 +883,9 @@ export class GaugesManager {
         } else if (ga.type.startsWith(PipeComponent.TypeTag)) {
             let gauge = PipeComponent.initElement(ga, isview, parent?.getGaugeStatus(ga));
             this.mapGauges[ga.id] = gauge;
+            return gauge || true;
+        } else if (ga.type.startsWith(HtmlTextareaComponent.TypeTag)) {
+            let gauge = HtmlTextareaComponent.initElement(ga, isview);
             return gauge || true;
         } else {
             let ele = document.getElementById(ga.id);

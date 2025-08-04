@@ -509,6 +509,21 @@ app-root {
     /* background-color: rgba(68,138,255,0.01) */
 }
 
+.my-form-field select {
+    padding: 6px 3px 7px 4px;
+    background-color: var(--formInputBackground);
+    color: var(--formInputColor);
+    font-weight: 300;
+    font-style: normal;
+}
+
+/* Make select options and selected value faint (not bold) */
+.my-form-field select option {
+    font-weight: 300;
+    font-style: normal;
+    color: var(--formInputColor);
+}
+
 .my-form-field input:focus {
     padding: 5px 2px 6px 3px;
     border: 1px solid var(--formInputBorderFocus);
