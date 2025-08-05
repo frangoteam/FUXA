@@ -741,6 +741,7 @@
     "shapes.action-downup": "Up and down",
     "shapes.action-rotate": "Rotate",
     "shapes.action-move": "Move",
+    "shapes.action-refreshImage": "Refresh image",
     "shapes.event-click": "Click",
     "shapes.event-dblclick": "DoubleClick",
     "shapes.event-mouseup": "MouseUp",
@@ -1036,6 +1037,17 @@
     "device.tag-scale-write-script-tooltip": "Script to transform value before write to client",
     "device.tag-scale-write-script-params": "Enter Write Script Parameter Values",
     "device.tag-scale-script-params-tooltip": "JSON formated array of parameters with values to pass to script",
+    "device.tag-property-webcam-device": "Webcam device",
+    "device.tag-property-webcam-device-address": "Webcam device ,like(/dev/video0)",
+    "device.tag-property-webcam-options.width": "width",
+    "device.tag-property-webcam-options.height": "height",
+    "device.tag-property-webcam-options.frames": "frames",
+    "device.tag-property-webcam-options.quality": "quality",
+    "device.tag-property-webcam-options.outputType": "outputType",
+    "device.tag-property-webcam-options.callbackReturn": "callbackReturn",
+
+
+
 
     "device.edit-placeholder-titel": "Edit Placeholder",
 
@@ -1600,7 +1612,7 @@
     "dlg.app-language-ua": "Ukrainian",
     "dlg.app-language-zh-cn": "Chinese",
     "dlg.app-language-pt": "Portuguese",
-	"dlg.app-language-sv": "Swedish",
+    "dlg.app-language-sv": "Swedish",
     "dlg.app-language-tr": "Turkish",
     "dlg.app-language-ko": "Korean",
     "dlg.app-language-es": "Spanish",

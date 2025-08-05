@@ -285,31 +285,33 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 serie.scale = '1';
             }
             serie.spanGaps = Utils.isNullOrUndefined(line.spanGaps) ? true : line.spanGaps;
-            if (line.fill) {
-                serie.fill = line.fill;
-            }
+
             if (line.lineWidth) {
                 serie.width = line.lineWidth;
             }
 
+            const fallbackFill = line.fill || 'rgba(0,0,0,0)';
+
+            const fallbackStroke = line.color || 'rgb(0,0,0)';
+
             if (line.zones?.some(zone => zone.fill)) {
-                const zones = this.generateZones(line.zones, 'fill', line.fill);
+                const zones = this.generateZones(line.zones, 'fill', fallbackFill);
                 if (zones) {
-                    serie.fill = (self, seriesIndex) => {
-                        let fill = this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true);
-                        return  fill || line.fill;
-                    };
+                    serie.fill = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || fallbackFill;
                 }
-            }
-            else if (line.fill) {
+            } else if (line.fill) {
                 serie.fill = line.fill;
             }
+
             if (line.zones?.some(zone => zone.stroke)) {
-                const zones = this.generateZones(line.zones, 'stroke', line.color);
+                const zones = this.generateZones(line.zones, 'stroke', fallbackStroke);
                 if (zones) {
-                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || line.color;
+                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || fallbackStroke;
                 }
+            } else if (line.color) {
+                serie.stroke = line.color;
             }
+
             serie.lineInterpolation = line.lineInterpolation;
             this.mapData[id] = <MapDataType>{
                 index: Object.keys(this.mapData).length + 1,
@@ -323,23 +325,35 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private generateZones(ranges: ChartLineZone[], attribute: string, baseColor: string): Zone[] {
+    private generateZones(ranges: ChartLineZone[], attribute: 'stroke' | 'fill', baseColor: string): Zone[] {
+
         const result: Zone[] = [];
-        const sortedRanges = ranges.sort((a, b) => a.min - b.min);
-        result.push([-Infinity, baseColor]);
-        sortedRanges.forEach((range, index) => {
-            result.push([range.min, range[attribute]]);
-            if (index < sortedRanges.length - 1) {
-                const nextMin = sortedRanges[index + 1].min;
-                if (range.max < nextMin) {
-                    result.push([range.max, baseColor]);
-                }
-            } else {
-                result.push([range.max, baseColor]);
+        const sorted = ranges.sort((a, b) => a.min - b.min);
+
+        // ── 1. Color for –∞ comes from the first zone ───────────────
+        const firstColor = sorted[0]?.[attribute] || baseColor;
+        result.push([-Infinity, firstColor]);
+
+        // ── 2. Mid‑zone stops (same as before) ──────────────────────
+        sorted.forEach((r, i) => {
+            const color = r[attribute] || baseColor;
+            result.push([r.min, color]);
+
+            const nextMin = sorted[i + 1]?.min;
+            if (nextMin !== undefined && r.max < nextMin) {
+            result.push([r.max, color]);
+            } else if (nextMin === undefined) {
+            // last zone – we’ll add +∞ after the loop
+            result.push([r.max, color]);
             }
         });
+
+        // ── 3. Color for +∞ comes from the last zone ────────────────
+        const lastColor = sorted[sorted.length - 1]?.[attribute] || baseColor;
+        result.push([Infinity, lastColor]);
+
         return result;
-    }
+        }
 
     /**
      * add value to a realtime chart
