@@ -8,44 +8,37 @@
         </mat-list-item>
         <ng-container *ngFor="let item of layout.navigation.items; let i = index">
             <mat-list-item [ngClass]="'menu-item-' + layout.navigation.type" style="width: unset" [style.color]="layoutNavigation.fgcolor">
-                <button type="button" mat-button class="sidenav-btn" (click)="item.children?.length ? toggleSubMenu(item) : onGoTo(item)"
+                <button type="button" mat-button class="sidenav-btn" (click)="isExpandable(item) ? toggleSubMenu(item) : onGoTo(item)"
                         [ngSwitch]="layout.navigation.type">
                     <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
                         <img *ngIf="item.image" src="{{item.image}}">
                         <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-                        <mat-icon *ngIf="item.children?.length" class="submenu-icon">
-                            {{ isExpanded(item) ? 'expand_less' : 'expand_more' }}
-                        </mat-icon>
                     </div>
                     <div *ngSwitchCase="'text'" class="menu-item-content-text">
                         <span>{{item.text}}</span>
-                        <mat-icon *ngIf="item.children?.length" class="submenu-icon">
-                            {{ isExpanded(item) ? 'expand_less' : 'expand_more' }}
-                        </mat-icon>
                     </div>
                     <div *ngSwitchCase="'block'" class="menu-item-content-block">
                         <img *ngIf="item.image" src="{{item.image}}">
                         <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
                         <span>{{item.text}}</span>
-                        <mat-icon *ngIf="item.children?.length" class="submenu-icon">
-                            {{ isExpanded(item) ? 'expand_less' : 'expand_more' }}
-                        </mat-icon>
                     </div>
                     <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
                         <img *ngIf="item.image" src="{{item.image}}">
                         <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
                         <span style="display: inline-block">{{item.text}}</span>
-                        <mat-icon *ngIf="item.children?.length" class="submenu-icon">
-                            {{ isExpanded(item) ? 'expand_less' : 'expand_more' }}
-                        </mat-icon>
                     </div>
+                    <mat-icon *ngIf="isExpandable(item)" class="sidenav-submenu-icon">
+                        {{ isExpanded(item) ? 'expand_less' : 'expand_more' }}
+                    </mat-icon>
                 </button>
             </mat-list-item>
             <!-- Submenu -->
-            <mat-list *ngIf="item.children?.length && isExpanded(item)" class="submenu" style="padding-left: 20px;">
+            <mat-list *ngIf="isExpandable(item) && isExpanded(item)" class="submenu-list">
                 <mat-list-item *ngFor="let child of item.children" [ngClass]="'menu-item-' + layout.navigation.type"
-                               style="width: unset" [style.color]="layoutNavigation.fgcolor">
+                               class="sidenav-submenu-item"
+                               [style.color]="layoutNavigation.fgcolor">
                     <button type="button" mat-button class="sidenav-btn" (click)="onGoTo(child)"
+                            style="padding-left: 20px !important;"
                             [ngSwitch]="layout.navigation.type">
                         <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
                             <img *ngIf="child.image" src="{{child.image}}">

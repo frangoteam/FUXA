@@ -135,11 +135,11 @@ export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy
 
     onAddChild() {
         const child = new NaviItem();
-        child.id = Utils.getRandomId();
+        child.id = Utils.getShortGUID();
         child.text = 'New Submenu Item';
         this.data.item.children = this.data.item.children || [];
         this.data.item.children.push(child);
-        console.log('Added child:', child, 'Total children:', this.data.item.children); 
+        console.log('Added child:', child, 'Total children:', this.data.item.children);
         this.cdr.detectChanges();
    }
 

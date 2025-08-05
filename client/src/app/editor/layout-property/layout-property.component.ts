@@ -57,7 +57,8 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
         mode: 'css',
         lint: true,
     };
-
+    expandedItems: Set<string> = new Set();
+    private expandableNavItems = [Utils.getEnumKey(NaviItemType, NaviItemType.text), Utils.getEnumKey(NaviItemType, NaviItemType.inline)];
     constructor(@Inject(MAT_DIALOG_DATA) public data: ILayoutPropertyData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<LayoutPropertyComponent>,
@@ -272,6 +273,28 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
 
     onNoClick(): void {
         this.dialogRef.close();
+    }
+
+    toggleSubMenu(item: NaviItem) {
+        if (item.id && item.children?.length) {
+            if (this.expandedItems.has(item.id)) {
+                this.expandedItems.delete(item.id);
+            } else {
+                this.expandedItems.add(item.id);
+            }
+            this.changeDetector.detectChanges();
+        }
+    }
+
+    isExpanded(item: NaviItem): boolean {
+        if (!item.id) {
+            item.id = Utils.getShortGUID();
+        }
+        return item.id ? this.expandedItems.has(item.id) : false;
+    }
+
+    isExpandable(item: NaviItem): boolean {
+        return this.expandableNavItems.includes(this.data.layout.navigation.type) && item.children?.length > 0;
     }
 }
 
