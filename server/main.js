@@ -225,45 +225,14 @@ if (settings.https) {
 }
 server.setMaxListeners(0);
 
-function parseAllowedOrigins(origins) {
-    return origins.map(origin => {
-        if (origin.includes('*')) {
-            // Convert wildcard in regex
-            const regexString = origin
-                .replace(/\./g, '\\.')     // escape points
-                .replace(/\*/g, '\\d+');   // * -> \d+ per IP
-            return new RegExp(`^${regexString}$`);
-        }
-        return origin;
-    });
-}
-const allowedOrigins = parseAllowedOrigins(settings.allowedOrigins);
 const io = socketIO(server, {
     pingInterval: 60000,    // send ping interval
     pingTimeout: 120000,    // close connection if pong is not received
     allowEIO3: true,        //Whether to enable compatibility with Socket.IO v2 clients.
     cors: {
-        origin: (origin, callback) => {
-            logger.debug(`Socket.IO connection attempt from origin: ${origin}`);
-            if (!origin) {
-                return callback(null, true); // for request from curl, postman ecc.
-            }
-            const isAllowed = allowedOrigins.some(allowed => {
-                if (typeof allowed === 'string') return origin === allowed;
-                if (allowed instanceof RegExp) return allowed.test(origin);
-                return false;
-            });
-
-            if (isAllowed) {
-                logger.debug(`Origin allowed: ${origin}`);
-                callback(null, true);
-            } else {
-                logger.warn(`Origin rejected: ${origin}`);
-                logger.debug(`Allowed origins: ${settings.allowedOrigins.join(', ')}`);
-                callback(new Error('Not allowed by CORS'));
-            }
-        },
-        credentials: true
+        origin: "*",
+        methods: ["GET", "POST"],
+        credentials: false
     }
 });
 

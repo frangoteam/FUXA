@@ -182,12 +182,7 @@ export class HmiService {
             return;
         }
         this.socket?.close();
-        this.socket = io(this.endPointConfig, {
-            auth: {
-                token: token
-            },
-            withCredentials: true
-        });
+        this.socket = io(`${this.endPointConfig}/?token=${token}`);
         this.socket.on('connect', () => {
             this.onServerConnection$.next(true);
             this.tagsSubscribe();
