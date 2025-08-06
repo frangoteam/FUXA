@@ -86,8 +86,8 @@ function init(_io, _api, _settings, _log, eventsMain) {
         socket.tagsClientSubscriptions = [];
         // check authorizations
         if (settings.secureEnabled && !settings.secureOnlyEditor) {
-            var token = socket.handshake.query.token;
-            if (!socket.handshake.query.token || socket.handshake.query.token === 'null') {
+            var token = socket.handshake.auth.token;
+            if (!socket.handshake.auth.token || socket.handshake.auth.token === 'null') {
                 token = api.authJwt.getGuestToken();
             }
             try {
