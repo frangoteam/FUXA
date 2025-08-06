@@ -62,7 +62,7 @@ export class HmiService {
         });
 
         this.authService.currentUser$.subscribe((userProfile: UserProfile) => {
-           this.initSocket(userProfile?.token);
+            this.initSocket(userProfile?.token);
         });
     }
 
@@ -129,7 +129,7 @@ export class HmiService {
      */
     private getValueInFunction(current: any, value: string, fnc: string) {
         try {
-            if (!fnc) {return value;}
+            if (!fnc) { return value; }
             if (!current) {
                 current = 0;
             }
@@ -151,7 +151,7 @@ export class HmiService {
      * @returns
      */
     initClient(bridge?: any) {
-        if (!bridge) {return false;}
+        if (!bridge) { return false; }
         this.bridge = bridge;
         if (this.bridge) {
             this.bridge.onDeviceValues = (tags: Variable[]) => this.onDeviceValues(tags);
@@ -182,7 +182,12 @@ export class HmiService {
             return;
         }
         this.socket?.close();
-        this.socket = io(`${this.endPointConfig}/?token=${token}`);
+        this.socket = io(this.endPointConfig, {
+            auth: {
+                token: token
+            },
+            withCredentials: true
+        });
         this.socket.on('connect', () => {
             this.onServerConnection$.next(true);
             this.tagsSubscribe();
@@ -200,7 +205,7 @@ export class HmiService {
             if (message.status === 'connect-error' && this.hmi?.layout?.show_connection_error) {
                 let name = message.id;
                 let device = this.projectService.getDeviceFromId(message.id);
-                if (device) {name = device.name;}
+                if (device) { name = device.name; }
                 let msg = '';
                 this.translateService.get('msg.device-connection-error', { value: name }).subscribe((txt: string) => { msg = txt; });
                 this.toastr.error(msg, '', {
@@ -229,7 +234,7 @@ export class HmiService {
                 const originalId = message.values[idx].id;
                 const value = message.values[idx].value;
                 const timestamp = message.values[idx].timestamp;
-                updateVariable(originalId , value, timestamp);
+                updateVariable(originalId, value, timestamp);
                 const adapterIds = this.deviceAdapaterService.resolveDeviceTagIdForAdapter(originalId);
                 if (adapterIds?.length) {
                     adapterIds.forEach(adapterId => {
@@ -512,7 +517,7 @@ export class HmiService {
      * @param fulltext
      */
     getMappedVariable(sigid: string, fulltext: boolean): Variable {
-        if (!this.variables[sigid]) {return null;}
+        if (!this.variables[sigid]) { return null; }
 
         if (this.variables[sigid]) {
             let result = this.variables[sigid];
