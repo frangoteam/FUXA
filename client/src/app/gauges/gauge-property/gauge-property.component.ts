@@ -201,7 +201,8 @@ export enum GaugeDialogType {
     Iframe,
     Table,
     Input,
-    Panel
+    Panel,
+    Textarea
 }
 
 export interface GaugePropertyData {

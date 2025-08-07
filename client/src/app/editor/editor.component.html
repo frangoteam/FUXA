@@ -193,6 +193,11 @@
                                 (click)="setMode('own_ctrl-panel')">
                                 <span class="material-icon-tool material-icons" style="font-size: 25px;">web_asset</span>
                             </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-textarea' | translate}}"
+                                [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-textarea')}"
+                                (click)="setMode('own_ctrl-textarea')">
+                                <span class="material-icon-tool material-icons" style="font-size: 25px;">notes</span>
+                            </div>
                         </div>
                     </mat-expansion-panel>
                     <!-- SHAPES -->

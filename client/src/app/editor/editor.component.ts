@@ -28,6 +28,8 @@ import { ValueComponent } from '../gauges/controls/value/value.component';
 import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from '../gauges/controls/gauge-semaphore/gauge-semaphore.component';
 import { HtmlSwitchPropertyComponent } from '../gauges/controls/html-switch/html-switch-property/html-switch-property.component';
+import { HtmlTextareaComponent } from '../gauges/controls/html-textarea/html-textarea.component';
+import { HtmlTextareaPropertyComponent } from '../gauges/controls/html-textarea/html-textarea-property/html-textarea-property.component';
 
 import { GridsterItem } from 'angular-gridster2';
 import { CardConfigComponent, CardConfigType } from './card-config/card-config.component';
@@ -1363,6 +1365,22 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.reloadGaugeDialog = !this.reloadGaugeDialog;
             return;
+        } else if (dlgType === GaugeDialogType.Textarea) {
+            dialogRef = this.dialog.open(HtmlTextareaPropertyComponent, {
+                position: { top: '60px' },
+                data: {
+                    settings: tempsettings,
+                    devices: Object.values(this.projectService.getDevices()),
+                    withEvents: eventsSupported,
+                    withActions: actionsSupported,
+                    withBitmask: bitmaskSupported,
+                    views: hmi.views,
+                    view: this.currentView,
+                    scripts: this.projectService.getScripts(),
+                    inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXB_') || gs.id.startsWith('HXI_'))),
+                    names: names
+                }
+            }); 
         } else {
             //!TODO to be refactored (GaugePropertyComponent)
             elementWithLanguageText = this.isSelectedElementToEnableLanguageTextSettings();
@@ -1471,6 +1489,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             return this.translateService.instant('editor.controls-progress-settings');
         } else if (type.startsWith(GaugeSemaphoreComponent.TypeTag)) {
             return this.translateService.instant('editor.controls-semaphore-settings');
+        } else if (type.startsWith(HtmlTextareaComponent.TypeTag)) {
+            return this.translateService.instant('editor.controls-textarea-settings');
         } else {
             return this.translateService.instant('editor.controls-shape-settings');
         }

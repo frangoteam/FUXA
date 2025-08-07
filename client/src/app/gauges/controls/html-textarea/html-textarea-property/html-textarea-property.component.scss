@@ -1,0 +1,85 @@
+.container {
+  width: 740px;
+  position: relative;
+}
+
+.field-row {
+  display: block;
+  // margin-bottom: 5px;
+}
+
+.textarea-rowcol-wrap {
+  width: 100%;
+  margin: 0 0 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.rowcol-fields {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  justify-content: flex-start;
+  align-items: flex-end;
+  margin-bottom: 6px;
+}
+
+.rowcol-fields .my-form-field {
+  flex: 0 0 auto;
+  min-width: 90px;
+  margin-bottom: 0;
+}
+
+.textarea-addtext-field {
+  margin-top: 0;
+}
+
+.textarea-addtext-field textarea {
+  min-width: 60px;
+  max-width: 100%;
+  min-height: 60px;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.dialog-title {
+  font-size: 1.3rem;
+  // font-weight: 600;
+  margin-bottom: 0;
+  padding: 10px 0 0 10px;
+}
+
+.dialog-close-btn {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+  font-size: 22px;
+  color: #888;
+  z-index: 2;
+}
+
+.block {
+  margin-bottom: 10px;
+}
+
+.my-form-field {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dialog-action {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 0 10px 10px 0;
+}
