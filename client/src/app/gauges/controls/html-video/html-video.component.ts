@@ -3,6 +3,7 @@ import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { GaugeAction, GaugeActionsType, GaugeSettings, Variable } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
+import { EndPointApi } from '../../../_helpers/endpointapi';
 
 @Component({
     selector: 'app-html-video',
@@ -55,7 +56,20 @@ export class HtmlVideoComponent extends GaugeBaseComponent {
                     return;
                 }
                 if (sig.id === ga.property.variableId) {
+                    const newSrc = EndPointApi.resolveUrl(String(sig.value ?? '').trim());
+                    const same = newSrc === video.currentSrc || newSrc === video.src || (video.querySelector('source') as HTMLSourceElement)?.src === newSrc;
                     video.src = sig.value;
+                    if (!same) {
+                        video.pause();
+                        while (video.firstChild) {
+                            video.removeChild(video.firstChild);
+                        }
+                        const source = document.createElement('source');
+                        source.src = newSrc;
+                        source.type = HtmlVideoComponent.getMimeTypeFromUrl(newSrc);
+                        video.appendChild(source);
+                        video.load();
+                    }
                     const image = parentIframe.querySelector('img');
                     if (image) {
                         if (sig.value) {
@@ -89,10 +103,11 @@ export class HtmlVideoComponent extends GaugeBaseComponent {
         let svgVideoContainer = Utils.searchTreeStartWith(ele, this.prefixD);
         if (svgVideoContainer) {
             svgVideoContainer.innerHTML = '';
-            const videoSrc = gaugeSettings.property?.options?.address;
+            const rawSrc  = gaugeSettings.property?.options?.address;
             const initImage = gaugeSettings.property?.options?.initImage;
-            const hasValidVideo = videoSrc && Utils.isValidUrl(videoSrc);
-            if (initImage && !hasValidVideo) {
+            const videoSrc = EndPointApi.resolveUrl(rawSrc);
+            const hasVideo = !!rawSrc;
+            if (initImage && !hasVideo) {
                 const img = document.createElement('img');
                 img.src = initImage;
                 img.style.width = '100%';
@@ -111,7 +126,7 @@ export class HtmlVideoComponent extends GaugeBaseComponent {
             }
             const source = document.createElement('source');
             source.src = videoSrc;
-            if (hasValidVideo) {
+            if (hasVideo) {
                 source.type = HtmlVideoComponent.getMimeTypeFromUrl(videoSrc);
             }
             video.appendChild(source);
