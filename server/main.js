@@ -29,12 +29,12 @@ var knownOpts = {
     "userDir": [path]
 };
 var shortHands = {
-    "?":["--help"],
-    "p":["--port"],
-    "u":["--userDir"]
+    "?": ["--help"],
+    "p": ["--port"],
+    "u": ["--userDir"]
 };
 
-nopt.invalidHandler = function(k,v,t) {
+nopt.invalidHandler = function (k, v, t) {
     // TODO: console.log(k,v,t);
 }
 
@@ -55,7 +55,7 @@ if (parsedArgs.help) {
 var rootDir = __dirname;
 var workDir = path.resolve(process.cwd(), '_appdata');
 
-if(process.env.userDir){
+if (process.env.userDir) {
     rootDir = process.env.userDir;
     workDir = path.resolve(process.env.userDir, '_appdata');
 }
@@ -213,7 +213,7 @@ if (!fs.existsSync(settings.widgetsFileDir)) {
     fs.mkdirSync(settings.widgetsFileDir);
 }
 // Check webcam shots  folder
-if (!fs.existsSync(settings.webcamSnapShotsDir)){
+if (!fs.existsSync(settings.webcamSnapShotsDir)) {
     fs.mkdirSync(settings.webcamSnapShotsDir);
 }
 
@@ -226,18 +226,24 @@ if (settings.https) {
 server.setMaxListeners(0);
 
 const io = socketIO(server, {
-    pingInterval: 60000, // send ping interval
-    pingTimeout: 120000  // close connection if pong is not received
+    pingInterval: 60000,    // send ping interval
+    pingTimeout: 120000,    // close connection if pong is not received
+    allowEIO3: true,        //Whether to enable compatibility with Socket.IO v2 clients.
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+        credentials: false
+    }
 });
 
 // Check settings value
 var www = path.resolve(__dirname, '../client/dist');
 settings.httpStatic = settings.httpStatic || www;
 
-if (parsedArgs.port !== undefined){
+if (parsedArgs.port !== undefined) {
     settings.uiPort = parsedArgs.port;
 } else {
-    if (settings.uiPort === undefined){
+    if (settings.uiPort === undefined) {
         settings.uiPort = 1881;
     }
 }
@@ -253,7 +259,7 @@ events.once('init-runtime-ok', function () {
 // Init FUXA
 try {
     FUXA.init(server, io, settings, logger, events);
-} catch(err) {
+} catch (err) {
     if (err.code == 'unsupported_version') {
         logger.error('Unsupported version of node.js:', process.version);
         logger.error('FUXA requires node.js v6 or later');
@@ -272,37 +278,37 @@ try {
 
 // Http Server for client UI
 const allowCrossDomain = function (req, res, next) {
-  const origin = req.headers.origin;
-  const allowedOrigins = settings.allowedOrigins || ["*"];
+    const origin = req.headers.origin;
+    const allowedOrigins = settings.allowedOrigins || ["*"];
 
-  const isOriginAllowed = (origin) => {
-    if (!origin) return false;
-    if (allowedOrigins.includes("*")) return true;
+    const isOriginAllowed = (origin) => {
+        if (!origin) return false;
+        if (allowedOrigins.includes("*")) return true;
 
-    // Convert wildcard-style strings to regex
-    return allowedOrigins.some(pattern => {
-      if (!pattern.includes("*")) return pattern === origin;
+        // Convert wildcard-style strings to regex
+        return allowedOrigins.some(pattern => {
+            if (!pattern.includes("*")) return pattern === origin;
 
-      // Escape dots and replace * with regex
-      const regexPattern = new RegExp(
-        "^" + pattern.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$"
-      );
-      return regexPattern.test(origin);
-    });
-  };
+            // Escape dots and replace * with regex
+            const regexPattern = new RegExp(
+                "^" + pattern.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$"
+            );
+            return regexPattern.test(origin);
+        });
+    };
 
-  if (isOriginAllowed(origin)) {
-    res.header('Access-Control-Allow-Origin', origin || '*');
-  }
+    if (isOriginAllowed(origin)) {
+        res.header('Access-Control-Allow-Origin', origin || '*');
+    }
 
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'x-access-token, x-auth-user, Origin, Content-Type, Accept');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'x-access-token, x-auth-user, Origin, Content-Type, Accept');
 
 
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204);
-  }
-  next();
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+    }
+    next();
 };
 app.use(allowCrossDomain);
 app.use('/', express.static(settings.httpStatic));
@@ -317,9 +323,9 @@ app.use('/view', express.static(settings.httpStatic));
 app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
 app.use('/_images', express.static(settings.imagesFileDir));
 app.use('/_widgets', express.static(settings.widgetsFileDir));
-app.use('/snapshots',express.static(settings.webcamSnapShotsDir))
+app.use('/snapshots', express.static(settings.webcamSnapShotsDir))
 
-var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
+var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', { flags: 'a' });
 app.use(morgan('combined', {
     stream: accessLogStream,
     skip: function (req, res) { return res.statusCode < 400 }
@@ -463,7 +469,7 @@ process.on('uncaughtException', function (err) {
 });
 
 process.on('SIGINT', function () {
-    FUXA.stop().then(function() {
+    FUXA.stop().then(function () {
         process.exit();
     });
     logger.info('FUXA end!');

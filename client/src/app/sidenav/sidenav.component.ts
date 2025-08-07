@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, ChangeDetectorRef, AfterContent
 import { MatSidenav } from '@angular/material/sidenav';
 import { Location } from '@angular/common';
 
-import { LayoutSettings, NaviItem, NavigationSettings, LinkType } from '../_models/hmi';
+import { LayoutSettings, NaviItem, NavigationSettings, LinkType, NaviItemType } from '../_models/hmi';
 import { Router } from '@angular/router';
 import { ProjectService } from '../_services/project.service';
 import { LanguageService } from '../_services/language.service';
@@ -11,7 +11,7 @@ import { Utils } from '../_helpers/utils';
 @Component({
     selector: 'app-sidenav',
     templateUrl: './sidenav.component.html',
-    styleUrls: ['./sidenav.component.css']
+    styleUrls: ['./sidenav.component.scss']
 })
 export class SidenavComponent implements AfterContentChecked {
 
@@ -26,6 +26,8 @@ export class SidenavComponent implements AfterContentChecked {
     layout: LayoutSettings = null;
     showSidenav = false;
     layoutNavigation = new NavigationSettings();
+    expandedItems: Set<string> = new Set();
+    private expandableNavItems = [Utils.getEnumKey(NaviItemType, NaviItemType.text), Utils.getEnumKey(NaviItemType, NaviItemType.inline)];
 
     constructor(private location: Location,
                 private router: Router,
@@ -53,6 +55,25 @@ export class SidenavComponent implements AfterContentChecked {
         }
     }
 
+    toggleSubMenu(item: NaviItem) {
+        if (item.id && item.children?.length) {
+            if (this.expandedItems.has(item.id)) {
+                this.expandedItems.delete(item.id);
+            } else {
+                this.expandedItems.add(item.id);
+            }
+            this.changeDetector.detectChanges();
+        }
+    }
+
+    isExpanded(item: NaviItem): boolean {
+        return item.id ? this.expandedItems.has(item.id) : false;
+    }
+
+    isExpandable(item: NaviItem): boolean {
+        return this.expandableNavItems.includes(this.layout.navigation.type) && item.children?.length > 0;
+    }
+
     public setLayout(layout: LayoutSettings) {
         this.layout = Utils.clone(layout);
         if (this.layout.navigation) {
@@ -60,6 +81,15 @@ export class SidenavComponent implements AfterContentChecked {
             this.logo = this.layout.navigation.logo;
             this.layout.navigation.items?.forEach(item => {
                 item.text = this.languageService.getTranslation(item.text) ?? item.text;
+                if (!item.id) {
+                    item.id = Utils.getShortGUID();
+                }
+                item.children?.forEach(child => {
+                    child.text = this.languageService.getTranslation(child.text) ?? child.text;
+                    if (!child.id) {
+                        child.id = Utils.getShortGUID();
+                    }
+                });
             });
         }
     }
