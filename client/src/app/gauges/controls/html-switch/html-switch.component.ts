@@ -85,7 +85,6 @@ export class HtmlSwitchComponent extends GaugeBaseComponent {
             ele?.setAttribute('data-name', ga.name);
             let htmlSwitch = Utils.searchTreeStartWith(ele, this.prefix);
             if (htmlSwitch) {
-                htmlSwitch.style.visibility = 'hidden';
                 const permission = checkPermission ? checkPermission(ga.property) : null;
                 const factory = resolver.resolveComponentFactory(NgxSwitchComponent);
                 const componentRef = viewContainerRef.createComponent(factory);
@@ -107,11 +106,6 @@ export class HtmlSwitchComponent extends GaugeBaseComponent {
                 if (permission?.enabled === false) {
                     componentRef.instance.setDisabled(true);
                 }
-                setTimeout(() => {
-                    if (!permission || permission.show || permission.enabled) {
-                        htmlSwitch.style.visibility = 'visible';
-                    }
-                }, 200);
                 return componentRef.instance;
             }
         }
