@@ -29,6 +29,7 @@
     "dayjs": "1.11.9",
     "express": "4.21.2",
     "express-rate-limit": "5.5.1",
+    "fontkit": "^2.0.2",
     "fs-extra": "7.0.1",
     "influx": "5.9.3",
     "ip": "2.0.1",
