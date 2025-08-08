@@ -2,7 +2,7 @@ import { Injectable, Output, EventEmitter } from '@angular/core';
 import { HmiService } from '../_services/hmi.service';
 import { ChartRangeType, ChartViewType } from '../_models/chart';
 
-import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery, TableType } from '../_models/hmi';
+import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery, TableType, GaugeVideoProperty } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
 import { GaugeDialogType } from './gauge-property/gauge-property.component';
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
@@ -889,6 +889,17 @@ export class GaugesManager {
             ele?.setAttribute('data-name', ga.name);
             GaugeBaseComponent.setLanguageText(ele, textTranslation);
             return ele || true;
+        }
+    }
+
+    chackSetModeParamToAddedGauge(ga: GaugeSettings, param: string | any) {
+        if (!param) {
+            return;
+        }
+        if (ga?.type === HtmlVideoComponent.TypeTag) {
+            ga.property = ga.property || new GaugeVideoProperty();
+            ga.property.options = ga.property.options || {};
+            ga.property.options.address = param;
         }
     }
 

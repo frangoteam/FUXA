@@ -41,6 +41,7 @@ import { LibWidgetsService } from '../resources/lib-widgets/lib-widgets.service'
 import { PipePropertyData } from '../gauges/controls/pipe/pipe-property/pipe-property.component';
 import { MapsViewComponent } from '../maps/maps-view/maps-view.component';
 import { KioskWidgetsComponent } from '../resources/kiosk-widgets/kiosk-widgets.component';
+import { ResourcesService } from '../_services/resources.service';
 
 declare var Gauge: any;
 
@@ -85,6 +86,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     currentView: View = null;
     hmi: Hmi = new Hmi();// = {_id: '', name: '', networktype: '', ipaddress: '', maskaddress: '' };
     currentMode = '';
+    setModeParam: string | any;
     imagefile: string;
     ctrlInitParams: any;
     gridOn = false;
@@ -129,6 +131,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         public gaugesManager: GaugesManager,
         private viewContainerRef: ViewContainerRef,
         private resolver: ComponentFactoryResolver,
+        private resourcesService: ResourcesService,
         private libWidgetsService: LibWidgetsService,
         private mdIconRegistry: MatIconRegistry,
         private sanitizer: DomSanitizer) {
@@ -950,6 +953,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param ga
      */
     checkGaugeAdded(ga: GaugeSettings) {
+        this.gaugesManager.chackSetModeParamToAddedGauge(ga, this.setModeParam);
         let gauge = this.gaugesManager.initElementAdded(ga, this.resolver, this.viewContainerRef, false);
         if (gauge) {
             if (gauge !== true) {
@@ -959,6 +963,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.setGaugeSettings(ga);
         }
+        this.setModeParam = null; // reset the mode param to null, because the gauge is added and not a new one;
     }
 
     /**
@@ -1508,6 +1513,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                             }
                             self.setMode('svg-image');
                         });
+                    } else if (this.resourcesService.isVideo(this.imagefile)) {
+                        this.setModeParam = this.imagefile;
+                        self.setMode('own_ctrl-video');
                     }
                     // } else {
                     //     this.getBase64Image(result, function (imgdata) {
