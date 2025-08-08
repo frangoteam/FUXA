@@ -36,6 +36,7 @@ import { PanelComponent } from './controls/panel/panel.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 import { AuthService } from '../_services/auth.service';
 import { DevicesUtils, Tag } from '../_models/device';
+import { HtmlVideoComponent } from './controls/html-video/html-video.component';
 
 @Injectable()
 export class GaugesManager {
@@ -67,12 +68,12 @@ export class GaugesManager {
     HtmlSwitchComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, ShapesComponent, HtmlButtonComponent, HtmlSelectComponent,
-        ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent, PanelComponent];
+        ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent, PanelComponent, HtmlVideoComponent];
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
         PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
-        HtmlImageComponent, PanelComponent];
+        HtmlImageComponent, PanelComponent, HtmlVideoComponent];
 
     constructor(private hmiService: HmiService,
         private authService: AuthService,
@@ -207,6 +208,8 @@ export class GaugesManager {
             this.mapGauges[ga.id] = gauge;
         } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
             HtmlImageComponent.detectChange(ga, true);
+        } else if (ga.type.startsWith(HtmlVideoComponent.TypeTag)) {
+            HtmlVideoComponent.initElement(ga);
         } else if (elementWithLanguageText) {
             GaugeBaseComponent.setLanguageText(elementWithLanguageText, ga.property?.text);
         }
@@ -875,6 +878,10 @@ export class GaugesManager {
             return gauge || true;
         } else if (ga.type.startsWith(PipeComponent.TypeTag)) {
             let gauge = PipeComponent.initElement(ga, isview, parent?.getGaugeStatus(ga));
+            this.mapGauges[ga.id] = gauge;
+            return gauge || true;
+        } else if (ga.type.startsWith(HtmlVideoComponent.TypeTag)) {
+            let gauge = HtmlVideoComponent.initElement(ga, isview);
             this.mapGauges[ga.id] = gauge;
             return gauge || true;
         } else {
