@@ -410,6 +410,22 @@
                 <div *ngSwitchCase="deviceType.Gpio">
                     <!-- property config --->
                 </div>
+                <div *ngSwitchCase="deviceType.MELSEC">
+                    <div class="my-form-field block mb10">
+                        <span>{{'device.property-melsec-target' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.address" placeholder="192.168.0.2:1281" style="width: 350px" type="ip" (click)="onAddressChanged()">
+                    </div>
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk tac" style="width: 100px;">
+                            <span>{{'device.property-melsec-ascii' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field inbk tac" style="width: 100px;">
+                            <span>{{'device.property-melsec-octalIO' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.octalIO"></mat-slide-toggle>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
