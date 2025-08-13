@@ -39,7 +39,7 @@ export class Device {
         id: 'Device id, GUID',
         name: 'Device name',
         enabled: 'Enabled',
-        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP |Gpio ｜WebCam | Vistwo',
+        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | ADSclient | Gpio ｜WebCam | Vistwo | MELSEC',
         polling: 'Polling interval in millisec., check changed value after ask value, by OPCUA there is a monitor',
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
@@ -192,6 +192,8 @@ export class DeviceNetProperty {
     delay: number = 10;
     /** Modbus TCP socket reuse flag */
     socketReuse?: string;
+    /** MELSEC */
+    octalIO?: boolean;
 
     static descriptor = {
         address: 'Device address (IP)',
@@ -240,6 +242,8 @@ export enum DeviceType {
     EthernetIP = 'EthernetIP',
     ODBC = 'ODBC',
     GPIO = 'GPIO',
+    WebCam = 'WebCam',
+    MELSEC = 'MELSEC'
     // Template: 'template'
     WebCam = 'WebCam',
 }
@@ -293,6 +297,24 @@ export enum OpcUaTagType {
     DateTime = 'DateTime',
     Guid = 'Guid',
     ByteString = 'ByteString'
+}
+
+export enum AdsClientTagType {
+    Number = 'number',
+    Boolean = 'boolean',
+    String = 'string'
+}
+
+export enum MelsecTagType {
+    BOOL = 'BOOL',
+    BYTE = 'BYTE',
+    WORD = 'WORD',
+    INT = 'INT',
+    UINT = 'UINT',
+    DINT = 'DINT',
+    UDINT = 'UDINT',
+    REAL = 'REAL',
+    STRING = 'STRING'
 }
 
 export enum ModbusOptionType {

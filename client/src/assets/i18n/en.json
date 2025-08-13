@@ -78,6 +78,11 @@
     "dlg.menuitem-address": "Link address",
     "dlg.menuitem-icons-filter": "Icons Filter",
 
+    "dlg.menuitem-submenu": "Submenu",
+    "dlg.menuitem-add-submenu": "Add Submenu Item",
+    "dlg.menuitem-submenu-items": "Submenu Items",
+    "sidenav.new_item": "New Submenu Item",
+
     "dlg.headeritem-title": "Header Item",
     "dlg.headeritem-icon": "Icon",
     "dlg.headeritem-icons-filter": "Icons Filter",
@@ -943,6 +948,9 @@
     "device.template-device": "Template name",
     "device.template-tags": "Template name",
     "device.property-socket-reuse": "Socket Reuse",
+    "device.property-melsec-target": "Address (IP[:port])",
+    "device.property-melsec-ascii": "ASCII",
+    "device.property-melsec-octalIO": "Octal I/O",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.browsetopics-property-sub": "Subscribe",
