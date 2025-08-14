@@ -795,8 +795,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    private closeAllCards(): void {
+        this.cards = [];
+    }
+
     loadPage(param: any, viewref: string, options: any) {
         let view: View = this.getView(viewref);
+        this.closeAllCards();
         if (view) {
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);
@@ -871,6 +876,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.cards.push(card);
         }
+        this.changeDetector.detectChanges();
     }
 
     onOpenTab(event: GaugeEvent, options: any) {
