@@ -56,7 +56,7 @@ function MelsecClient(_data, _logger, _events, _runtime) {
                 const { host, port, ascii, octal } = _parseAddressOptions(
                     data.property.address,
                     data.property.ascii,
-                    data.property.octalInputOutput
+                    data.property.octalIO
                 );
 
                 logger.info(`'${data.name}' try to connect ${host}:${port}`, true);

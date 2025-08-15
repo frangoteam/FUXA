@@ -193,6 +193,7 @@ export class DeviceNetProperty {
     /** Modbus TCP socket reuse flag */
     socketReuse?: string;
     /** MELSEC */
+    ascii?: boolean;
     octalIO?: boolean;
 
     static descriptor = {
