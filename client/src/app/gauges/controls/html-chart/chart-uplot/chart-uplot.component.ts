@@ -386,8 +386,35 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     private totalChunks = 0;
 
     public setValues(values: any[][], chunk: DaqChunkType) {
-        if (!chunk || !chunk.index || !chunk.of) {
-            console.warn('❗ Invalid or missing chunk info:', chunk);
+        const missingOrInvalidChunk = !chunk || !chunk.index || !chunk.of;
+        if (missingOrInvalidChunk) {
+            try {
+                const first = values?.[0]?.[0];
+                // Case A: data unified -> [timestamps[], serie1[], serie2[], ...]
+                if (Array.isArray(values) && Array.isArray(values[0]) && typeof first === 'number') {
+                    this.nguplot.setData(values);
+                    this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+                    setTimeout(() => this.setLoading(false), 300);
+                    return;
+                }
+                // Case B: array of object -> [[{dt,value|v}, ...], ...] -> normalize e unified
+                if (first && typeof first === 'object') {
+                    const normalized = values.map(serie =>
+                        serie.map(p => ({
+                            dt: (p.dt ?? p.time),                           // tollera 'time'
+                            value: (p.value !== undefined ? p.value : p.v)  // tollera 'v'
+                        }))
+                    );
+                    const mergedData = this.buildUnifiedData([normalized]);
+                    this.nguplot.setData(mergedData);
+                    this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+                    setTimeout(() => this.setLoading(false), 300);
+                    return;
+                }
+                console.warn('setValues (not-chunk): format unknow', values);
+            } catch (err) {
+                console.error('setValues (not-chunk): error parsing/application', err);
+            }
             return;
         }
 
