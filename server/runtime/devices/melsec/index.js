@@ -6,8 +6,6 @@
  */
 
 const path = require('path');
-const { createRequire } = require('module');
-
 let McProtocol; // costructor
 
 const utils = require('../../utils');
@@ -31,6 +29,7 @@ function MelsecClient(_data, _logger, _events, _runtime) {
     const events = _events;
     const runtime = _runtime;
 
+    let registered = new Set();
     let conn = null;
     let connected = false;
     let working = false;
@@ -86,7 +85,7 @@ function MelsecClient(_data, _logger, _events, _runtime) {
                         conn.setTranslationCB((tagId) => tagMap[tagId] ? tagMap[tagId].address : tagId);
 
                         // register items
-                        conn.addItems(Object.keys(tagMap));
+                        _syncRegisteredItems();
 
                         connected = true;
                         logger.info(`'${data.name}' connected!`, true);
@@ -109,9 +108,12 @@ function MelsecClient(_data, _logger, _events, _runtime) {
         return new Promise((resolve, reject) => {
             try {
                 if (conn) {
-                    try { conn.dropConnection(); } catch { }
+                    try {
+                        conn.dropConnection();
+                    } catch { }
                 }
                 connected = false;
+                registered = new Set();
                 _emitStatus('connect-off');
                 _clearVarsValue();
                 _checkWorking(false);
@@ -130,6 +132,13 @@ function MelsecClient(_data, _logger, _events, _runtime) {
             return;
         }
         if (!conn || !connected) {
+            _checkWorking(false);
+            return;
+        }
+        if (!registered || registered.size === 0) {
+            if (lastStatus !== 'connect-ok') {
+                _emitStatus('connect-ok');
+            }
             _checkWorking(false);
             return;
         }
@@ -170,6 +179,9 @@ function MelsecClient(_data, _logger, _events, _runtime) {
                 tagMap[id] = { ...t, id };
                 count++;
             }
+            if (connected && conn) {
+                _syncRegisteredItems();
+            }
             logger.info(`'${data.name}' data loaded (${count})`, true);
         } catch (err) {
             logger.error(`'${data.name}' load error! ${err}`);
@@ -191,12 +203,13 @@ function MelsecClient(_data, _logger, _events, _runtime) {
     };
 
     this.setValue = async function (tagId, value) {
-        if (!tagMap[tagId] || !conn) return false;
-        const addr = tagMap[tagId].address;
+        if (!tagMap[tagId] || !conn) {
+            return false;
+        }
         try {
             const valueToSend = await deviceUtils.tagRawCalculator(value, tagMap[tagId], runtime);
             await new Promise((resolve, reject) => {
-                conn.writeItems(addr, valueToSend, (anythingBad) => {
+                conn.writeItems(tagId, valueToSend, (anythingBad) => {
                     if (anythingBad) return reject(new Error('write error'));
                     logger.info(`'${tagMap[tagId].name}' setValue(${tagId}, ${valueToSend})`, true, true);
                     resolve();
@@ -279,6 +292,26 @@ function MelsecClient(_data, _logger, _events, _runtime) {
             varsValue[id].changed = false;
         }
         return toDaq;
+    }
+
+    function _syncRegisteredItems() {
+        if (!conn) {
+            return;
+        }
+        const current = new Set(Object.keys(tagMap)); // tagId, because using setTranslationCB
+        const toRemove = [...registered].filter(k => !current.has(k));
+        const toAdd    = [...current].filter(k => !registered.has(k));
+        if (toRemove.length && typeof conn.removeItems === 'function') {
+            try {
+                conn.removeItems(toRemove);
+            } catch {}
+        }
+        if (toAdd.length) {
+            try {
+                conn.addItems(toAdd);
+            } catch {}
+        }
+        registered = current;
     }
 
     function _emitValues(values) {
