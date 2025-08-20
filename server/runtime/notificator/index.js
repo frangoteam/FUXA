@@ -231,7 +231,7 @@ function NotificatorManager(_runtime) {
             var time = new Date().getTime();
             // check alarms categorie subscriptions
             runtime.alarmsMgr.getAlarmsStatus().then(alarmsStatus => {
-                Object.keys(alarmsStatus).forEach(stkey => {
+                Object.keys(alarmsStatus).forEach(async stkey => {
                     if (alarmsStatus[stkey]) {
                         if ((notificationsSubsctiption[stkey] && notificationsSubsctiption[stkey].length)) {
                             var statusChanged = !subscriptionStatus[stkey] || subscriptionStatus[stkey] < alarmsStatus[stkey];
@@ -241,20 +241,23 @@ function NotificatorManager(_runtime) {
                                     try {
                                         // get alarms summary in text format
                                         var alarmsSummary = runtime.alarmsMgr.getAlarmsString(stkey) || 'FUXA Alarms Error!';
+
+                                        const onSuccess = () => {
+                                            notification.setNotify(time, stkey);
+                                            logger.info(`notificator.notify.successful (mail): ${new Date()} ${notification.name} ${stkey} ${alarmsSummary}`);
+                                        }
+
                                         if (!_isValidEmail(notification.receiver)) {
-                                            // send via webapi
                                             const url = notification.receiver.replace(/\$\{content\}/g, alarmsSummary);
-                                            runtime.notificatorMgr.postMessage(url).then(function () {
-                                                notification.setNotify(time, stkey);
-                                                logger.info(`notificator.notify.successful (url): ${new Date()} ${notification.name} ${stkey} ${alarmsSummary}`);
+                                            await runtime.notificatorMgr.postMessage(url).then(function () {
+                                                onSuccess();
                                             }).catch(function (senderr) {
                                                 logger.error(`notificator.notify.send.failed: ${senderr}`);
                                             });
                                         } else {
-                                            var mail = new MailMessage(null, notification.receiver, notification.name, alarmsSummary);
-                                            runtime.notificatorMgr.sendMail(mail, null).then(function () {
-                                                notification.setNotify(time, stkey);
-                                                logger.info(`notificator.notify.successful (mail): ${new Date()} ${notification.name} ${stkey} ${alarmsSummary}`);
+                                            const mail = new MailMessage(null, notification.receiver, notification.name, alarmsSummary);
+                                            await runtime.notificatorMgr.sendMail(mail, null).then(function () {
+                                                onSuccess();
                                             }).catch(function (senderr) {
                                                 logger.error(`notificator.notify.send.failed: ${senderr}`);
                                             });
