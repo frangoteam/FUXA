@@ -426,6 +426,12 @@
                         </div>
                     </div>
                 </div>
+                <div *ngSwitchCase="deviceType.REDIS">
+                    <div class="my-form-field block mb10">
+                        <span>{{'device.property-redis-target' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.address" placeholder="redis://localhost:6379" style="width: 350px" type="ip" (click)="onAddressChanged()">
+                    </div>
+                </div>
             </div>
         </div>
     </div>

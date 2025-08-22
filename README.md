@@ -9,7 +9,7 @@ FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With F
 ![fuxa action](/screenshot/feature-action-move.gif)
 
 ## Features
-- Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley)
+- Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley), ADSclient, Gpio (Raspberry), WebCam, MELSEC
 - SCADA/HMI Web-Editor - Engineering and Design completely web-based
 - Cross-Platform Full-Stack - Backend with NodeJs and Frontend with Web technologies (HTML5, CSS, Javascript, Angular, SVG)
 
@@ -27,7 +27,7 @@ See the Wiki for more details about installing and getting started
 
 ### Install using prebuilt Electron Packages
 
-You will need to be logged into github to access the download button for Electron Action Builds, 
+You will need to be logged into github to access the download button for Electron Action Builds,
 click on the workflow and scroll down to Artifacts and click the download icon for you system
 
 [Electron Action Builds](https://github.com/frangoteam/FUXA/actions/workflows/electron_latest.yml)

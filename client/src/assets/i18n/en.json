@@ -963,6 +963,7 @@
     "device.property-melsec-target": "Address (IP[:port])",
     "device.property-melsec-ascii": "ASCII",
     "device.property-melsec-octalIO": "Octal I/O",
+    "device.property-redis-target": "Connection URL",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.browsetopics-property-sub": "Subscribe",

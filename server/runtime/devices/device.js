@@ -16,7 +16,8 @@ var ADSclient = require('./adsclient');
 // var TEMPLATEclient = require('./template');
 var GpioClient = require('./gpio');
 var WebCamClient = require('./webcam');
-var MELSECClient = require('./melsec');
+var MELSECclient = require('./melsec');
+var REDISclient = require('./redis');
 
 const path = require('path');
 const utils = require('../utils');
@@ -109,10 +110,15 @@ function Device(data, runtime) {
         }
         comm = WebCamClient.create(data, logger, events, manager, runtime);
     } else if (data.type === DeviceEnum.MELSEC) {
-        if (!MELSECClient) {
+        if (!MELSECclient) {
             return null;
         }
-        comm = MELSECClient.create(data, logger, events, manager, runtime);
+        comm = MELSECclient.create(data, logger, events, manager, runtime);
+    } else if (data.type === DeviceEnum.REDIS) {
+        if (!REDISclient) {
+            return null;
+        }
+        comm = REDISclient.create(data, logger, events, manager, runtime);
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
@@ -529,7 +535,9 @@ function loadPlugin(type, module) {
     } else if (type === DeviceEnum.GPIO) {
         GpioClient = require(module);
     } else if (type === DeviceEnum.MELSEC) {
-        MELSECClient = require(module);
+        MELSECclient = require(module);
+    } else if (type === DeviceEnum.REDIS) {
+        REDISclient = require(module);
     }
 }
 
@@ -571,6 +579,7 @@ var DeviceEnum = {
     internal: 'internal',
     WebCam: 'WebCam',
     MELSEC: 'MELSEC',
+    REDIS: 'REDIS',
     // Template: 'template'
 }
 
