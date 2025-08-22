@@ -222,6 +222,7 @@ import { TagPropertyEditWebcamComponent } from './device/tag-property/tag-proper
 import { EditPlaceholderComponent } from './gui-helpers/edit-placeholder/edit-placeholder.component';
 import { DeviceAdapterService } from './device-adapter/device-adapter.service';
 import { VideoPropertyComponent } from './gauges/controls/html-video/video-property/video-property.component';
+import { InputPropertyComponent } from './gauges/controls/html-input/input-property/input-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -279,6 +280,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         GaugeBaseComponent,
         HtmlInputComponent,
         HtmlButtonComponent,
+        InputPropertyComponent,
         HtmlSelectComponent,
         HtmlChartComponent,
         HtmlGraphComponent,

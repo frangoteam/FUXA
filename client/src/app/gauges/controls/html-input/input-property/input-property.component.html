@@ -1,0 +1,117 @@
+<div class="container">
+    <h1 mat-dialog-title
+        style="display:inline-block;cursor:move;"
+        mat-dialog-draggable>{{data.title}}</h1>
+    <mat-icon (click)="onNoClick()"
+              style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
+    <mat-tab-group style="width: 100%;">
+        <mat-tab label="{{'gauges.property-props' | translate}}">
+            <div class="mat-tab-container">
+                <div>
+                    <div class="my-form-field">
+                        <span>{{'gauges.property-name' | translate}}</span>
+                        <input [(ngModel)]="data.settings.name"
+                               style="width: 220px"
+                               type="text">
+                    </div>
+                    <div class="my-form-field ml10"
+                         style="vertical-align: bottom;">
+                        <span>{{'gauges.property-permission' | translate}}</span>
+                        <div style="text-align:center;"
+                             class="my-form-field-permission pointer"
+                             (click)="onEditPermission()">
+                            <mat-icon *ngIf="havePermission(); else unlock"
+                                      class="header-icon"
+                                      style="line-height: 28px;">lock</mat-icon>
+                            <ng-template #unlock>
+                                <mat-icon class="header-icon"
+                                          style="line-height: 28px;">lock_open</mat-icon>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <div class="my-form-field ml10"
+                         *ngIf="isTextToShow()">
+                        <span>{{'gauges.property-text' | translate}}</span>
+                        <input [(ngModel)]="property.text"
+                               style="width: 270px"
+                               type="text"
+                               placeholder="{{'gauges.property-language-text' | translate}}">
+                    </div>
+                    <div class="my-form-field"
+                         style="padding-left: 100px"
+                         *ngIf="isReadonlyToShow()">
+                        <span>{{'gauges.property-readonly' | translate}}</span>
+                        <mat-slide-toggle color="primary"
+                                          [(ngModel)]="property.readonly"></mat-slide-toggle>
+                    </div>
+                    <div class="toolbox"
+                         *ngIf="isToolboxToShow()">
+                        <button mat-icon-button
+                                (click)="onAddInput()">
+                            <mat-icon>add_circle_outline</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <div mat-dialog-content
+                     style="overflow: visible; width:100%;">
+                    <flex-head [data]="data"
+                               [property]="property"
+                               #flexhead
+                               [withBitmask]="withBitmask"></flex-head>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="{{'gauges.property-events' | translate}}"
+                 *ngIf="eventsSupported">
+            <div class="mat-tab-container">
+                <div class="toolbox">
+                    <button mat-icon-button
+                            (click)="onAddEvent()"
+                            matTooltip="{{'gauges.property-tooltip-add-event' | translate}}">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                </div>
+                <div mat-dialog-content
+                     style="overflow: visible; width:100%;">
+                    <flex-event [property]="property"
+                                [views]="data.views"
+                                [data]="data"
+                                [inputs]="data.inputs"
+                                [scripts]="data.scripts"
+                                #flexevent
+                                style="padding-bottom: 5px"></flex-event>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="{{'gauges.property-actions' | translate}}"
+                 *ngIf="actionsSupported">
+            <div class="mat-tab-container">
+                <div class="toolbox">
+                    <button mat-icon-button
+                            (click)="onAddAction()">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                </div>
+                <div mat-dialog-content
+                     style="overflow: visible; width:100%">
+                    <flex-action [data]="data"
+                                 [property]="property"
+                                 [withBitmask]="withBitmask"
+                                 #flexaction
+                                 style="padding-bottom: 5px">
+                    </flex-action>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+    <div mat-dialog-actions
+         class="dialog-action">
+        <button mat-raised-button
+                (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button
+                color="primary"
+                (click)="onOkClick()"
+                [mat-dialog-close]="data"
+                cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    </div>
+</div>
