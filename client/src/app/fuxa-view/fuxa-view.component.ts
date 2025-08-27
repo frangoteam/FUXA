@@ -83,6 +83,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     protected plainVariableMapping: VariableMappingDictionary = {};
     private destroy$ = new Subject<void>();
     private loadOk = false;
+    private zIndexCounter = 1000;
 
     constructor(
         private translateService: TranslateService,
@@ -833,6 +834,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         dialogRef.afterClosed().subscribe();
     }
 
+    bringCardToFront(card: any) {
+        card.zIndex = this.nextZIndex();
+    }
+
+    private nextZIndex(): number {
+        return ++this.zIndexCounter;
+    }
+
     onOpenCard(id: string, event: PointerEvent | TouchEvent | any, viewref: string, options: any = {}) {
         if (options?.singleCard) {
             this.cards = [];
@@ -871,6 +880,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         card.variablesMapping = options?.variablesMapping;
         card.disableDefaultClose = options?.hideClose;
         card.sourceDeviceId = options?.sourceDeviceId;
+        card.zIndex = this.nextZIndex();
+
         if (this.parentcards) {
             this.parentcards.push(card);
         } else {
@@ -1165,6 +1176,7 @@ export class CardModel {
     public view: View;
     public sourceDeviceId: string;
     disableDefaultClose: boolean;
+    zIndex: number;
 
     constructor(id: string) {
         this.id = id;
