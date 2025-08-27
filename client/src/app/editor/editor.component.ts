@@ -1387,11 +1387,13 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 position: { top: '60px' },
                 disableClose: true,
                 data: {
-                    settings: tempsettings, 
+                    settings: tempsettings,
                     devices: Object.values(this.projectService.getDevices()),
                     withEvents: eventsSupported,
                     withActions: actionsSupported,
-                    names: names
+                    inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
+                    withBitmask: bitmaskSupported,
+                    languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
                 }
             });
         } else {

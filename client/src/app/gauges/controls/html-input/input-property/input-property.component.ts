@@ -1,24 +1,27 @@
-import { ChangeDetectorRef, Component, Inject, ViewChild } from "@angular/core";
-import { FlexHeadComponent } from "../../../gauge-property/flex-head/flex-head.component";
-import { FlexEventComponent } from "../../../gauge-property/flex-event/flex-event.component";
-import { FlexActionComponent } from "../../../gauge-property/flex-action/flex-action.component";
-import { GaugeProperty } from "../../../../_models/hmi";
-import { GaugeDialogType, GaugePropertyComponent, GaugePropertyData } from "../../../gauge-property/gauge-property.component";
-import { HtmlInputComponent } from "../html-input.component";
-import { PropertyType } from "../../../gauge-property/flex-input/flex-input.component";
-import { PermissionData, PermissionDialogComponent } from "../../../gauge-property/permission-dialog/permission-dialog.component";
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, ViewChild } from '@angular/core';
+import { FlexHeadComponent } from '../../../gauge-property/flex-head/flex-head.component';
+import { FlexEventComponent } from '../../../gauge-property/flex-event/flex-event.component';
+import { FlexActionComponent } from '../../../gauge-property/flex-action/flex-action.component';
+import { GaugeProperty, InputActionEscType, InputConvertionType, InputOptionType, InputTimeFormatType, IPropertyVariable, View } from '../../../../_models/hmi';
+import { GaugeDialogType, GaugePropertyData } from '../../../gauge-property/gauge-property.component';
+import { HtmlInputComponent } from '../html-input.component';
+import { PropertyType } from '../../../gauge-property/flex-input/flex-input.component';
+import { PermissionData, PermissionDialogComponent } from '../../../gauge-property/permission-dialog/permission-dialog.component';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
-import { SettingsService } from "../../../../_services/settings.service";
+import { SettingsService } from '../../../../_services/settings.service';
+import { ProjectService } from '../../../../_services/project.service';
+import { Script } from '../../../../_models/script';
+import { MatSelectChange } from '@angular/material/select';
 
 @Component({
-    selector: "app-input-property",
-    templateUrl: "./input-property.component.html",
-    styleUrls: ["./input-property.component.scss"],
+    selector: 'app-input-property',
+    templateUrl: './input-property.component.html',
+    styleUrls: ['./input-property.component.scss'],
 })
-export class InputPropertyComponent {
-    @ViewChild("flexhead", { static: false }) flexHead: FlexHeadComponent;
-    @ViewChild("flexevent", { static: false }) flexEvent: FlexEventComponent;
-    @ViewChild("flexaction", { static: false }) flexAction: FlexActionComponent;
+export class InputPropertyComponent implements AfterViewInit {
+    @ViewChild('flexhead', { static: false }) flexHead: FlexHeadComponent;
+    @ViewChild('flexevent', { static: false }) flexEvent: FlexEventComponent;
+    @ViewChild('flexaction', { static: false }) flexAction: FlexActionComponent;
 
     slideView = true;
     slideActionView = true;
@@ -27,27 +30,33 @@ export class InputPropertyComponent {
     dialogType = HtmlInputComponent.getDialogType();
     eventsSupported: boolean;
     actionsSupported: any;
-    defaultValue: any;
+    withProperty = PropertyType.input;
+    views: View[];
+    scripts: Script[];
+    inputOptionType = InputOptionType;
+    inputTimeFormatType = InputTimeFormatType;
+    inputConvertionType = InputConvertionType;
+    inputActionEscType = InputActionEscType;
 
     constructor(
         public dialog: MatDialog,
-        public dialogRef: MatDialogRef<GaugePropertyComponent>,
+        public dialogRef: MatDialogRef<InputPropertyComponent>,
         private settingsService: SettingsService,
+        private projectService: ProjectService,
         private cdr: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) public data: GaugePropertyData | any
     ) {
-        this.dialogType = this.data.dlgType;
         this.eventsSupported = this.data.withEvents;
         this.actionsSupported = this.data.withActions;
         this.property = JSON.parse(JSON.stringify(this.data.settings.property));
         if (!this.property) {
             this.property = new GaugeProperty();
         }
+        this.views = this.projectService.getHmi()?.views ?? [];
+        this.scripts = this.projectService.getScripts();
     }
 
     ngAfterViewInit() {
-        this.defaultValue = this.data.default;
-        this.flexHead.withProperty = PropertyType.input;
         if (this.data.withBitmask) {
             this.withBitmask = this.data.withBitmask;
         }
@@ -72,10 +81,6 @@ export class InputPropertyComponent {
         }
     }
 
-    onAddInput() {
-        this.flexHead.onAddInput();
-    }
-
     onAddEvent() {
         this.flexEvent.onAddEvent();
     }
@@ -92,16 +97,10 @@ export class InputPropertyComponent {
         this.flexAction.onRangeViewToggle(this.slideActionView);
     }
 
-    isToolboxToShow() {
-        if (
-            this.dialogType === GaugeDialogType.RangeWithAlarm ||
-            this.dialogType === GaugeDialogType.Range ||
-            this.dialogType === GaugeDialogType.Step ||
-            this.dialogType === GaugeDialogType.RangeAndText
-        ) {
-            return this.data.withProperty !== false;
-        }
-        return false;
+    setVariable(event: IPropertyVariable) {
+        this.property.variableId = event.variableId;
+        this.property.variableValue = event.variableValue;
+        this.property.bitmask = event.bitmask;
     }
 
     isTextToShow() {
@@ -111,15 +110,9 @@ export class InputPropertyComponent {
         );
     }
 
-    isReadonlyToShow() {
-        if (this.dialogType === GaugeDialogType.Step) {
-            return true;
-        }
-        return false;
-    }
     onEditPermission() {
         let dialogRef = this.dialog.open(PermissionDialogComponent, {
-            position: { top: "60px" },
+            position: { top: '60px' },
             data: <PermissionData>{
                 permission: this.property.permission,
                 permissionRoles: this.property.permissionRoles,
@@ -133,6 +126,15 @@ export class InputPropertyComponent {
             }
             this.cdr.detectChanges();
         });
+    }
+
+    onTypeChange(select: MatSelectChange) {
+        if (!this.property.options.timeformat && (select.value === InputOptionType.time || select.value === InputOptionType.datetime)) {
+            this.property.options.timeformat = InputTimeFormatType.normal;
+        }
+        if (!this.property.options.convertion && (select.value === InputOptionType.time || select.value === InputOptionType.date || select.value === InputOptionType.datetime)) {
+            this.property.options.convertion = InputConvertionType.milliseconds;
+        }
     }
 
     isRolePermission() {
