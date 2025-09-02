@@ -432,11 +432,16 @@
                         <input [(ngModel)]="data.device.property.address" placeholder="redis://localhost:6379" style="width: 350px" type="ip" (click)="onAddressChanged()">
                     </div>
                     <div class="my-form-field block mb10">
-                        <mat-select [(value)]="data.device.property.connectionOption" style="width: 168px">
+                        <span>{{'device.property-redis-readMode' | translate}}</span>
+                        <mat-select [(value)]="data.device.property.connectionOption" style="width: 350px">
                             <mat-option *ngFor="let mode of redisReadModeType | enumToArray" [value]="mode.key">
                                 {{ 'device.property-redis-readmode-' + mode.value | translate }}
                             </mat-option>
                         </mat-select>
+                    </div>
+                    <div *ngIf="data.device.property.connectionOption !== redisReadModeSimple" class="my-form-field block mb10">
+                        <span>{{'device.property-redis-hashKey' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.options" placeholder="Value" style="width: 350px" type="ip" (click)="onAddressChanged()">
                     </div>
                 </div>
             </div>

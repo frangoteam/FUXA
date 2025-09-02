@@ -33,6 +33,29 @@ function RedisClient(_data, _logger, _events, _runtime) {
     let lastTimestampValue = null;          // timestamp of last successful polling
     let connected = false;
 
+    const withTimeout = async (p, ms, label) => {
+        const timeoutMs = ms || (data?.property?.redisTimeoutMs || 3000);
+        let to;
+        try {
+            return await Promise.race([
+                p,
+                new Promise((_, rej) => { to = setTimeout(() => rej(new Error(`Timeout ${label || ''}`)), timeoutMs); })
+            ]);
+        } finally {
+            clearTimeout(to);
+        }
+    };
+
+    const hmgetCompat = async (cli, key, fields) => {
+        if (typeof cli.hMGet === 'function') {
+            try { return await cli.hMGet(key, ...fields); } catch (_) { /* fallthrough */ }
+        }
+        if (typeof cli.hmGet === 'function') {
+            try { return await cli.hmGet(key, ...fields); } catch (_) { /* fallthrough */ }
+        }
+        return Promise.all(fields.map(f => cli.hGet(key, f)));
+    };
+
     // ---- tags cache and mapping
     // varsValue: map { [tagId]: { id, value, type } }
     let varsValue = {};
@@ -121,52 +144,54 @@ function RedisClient(_data, _logger, _events, _runtime) {
             }
             const readMode = (data?.property?.connectionOption || 'simple').toLowerCase();
             const batchResults = [];
+            const timeoutMs = data?.property?.redisTimeoutMs || 3000;
 
             if (readMode === 'hash') {
-                const metaFields = Array.isArray(data?.property?.metaFields) && data.property.metaFields.length
-                    ? data.property.metaFields
-                    : ['Value', 'Quality', 'UtcTimeMs', 'Provider'];
+                const valueFieldName =
+                    (typeof data?.property?.options === 'string' && data.property.options.trim())
+                        ? data.property.options.trim()
+                        : 'Value';
+                const metaFields = (Array.isArray(data?.property?.metaFields) && data.property.metaFields.length)
+                    ? data.property.metaFields.slice()
+                    : [valueFieldName];
 
                 const tagIdsByKey = new Map();
                 for (const tagId in keyMap) {
-                    const key = keyMap[tagId].key;
-                    if (!tagIdsByKey.has(key)) tagIdsByKey.set(key, []);
+                    const km = keyMap[tagId];
+                    if (km.kind !== 'hash') {
+                        continue;
+                    }
+                    const key = km.key;
+                    if (!tagIdsByKey.has(key)) {
+                        tagIdsByKey.set(key, []);
+                    }
                     tagIdsByKey.get(key).push(tagId);
                 }
-
-                const hmgetDirect = async (cli, key, fields) => {
-                    if (typeof cli.hMGet === 'function') return cli.hMGet(key, ...fields);
-                    if (typeof cli.hmGet === 'function') return cli.hmGet(key, ...fields);
-                    return Promise.all(fields.map(f => cli.hGet(key, f))); // fallback
-                };
-
-                const withTimeout = async (p, ms, label) => {
-                    let to; const t = new Promise((_, rej) => to = setTimeout(() => rej(new Error(`Timeout ${label}`)), ms));
-                    try { const r = await Promise.race([p, t]); clearTimeout(to); return r; }
-                    catch (e) { clearTimeout(to); throw e; }
-                };
 
                 const chunk = (arr, n) => Array.from({ length: Math.ceil(arr.length / n) }, (_, i) => arr.slice(i * n, (i + 1) * n));
                 const keys = Array.from(tagIdsByKey.keys());
                 const chunks = chunk(keys, data?.property?.maxKeysPerPoll || 500);
-                const timeoutMs = data?.property?.redisTimeoutMs || 3000;
 
                 for (const part of chunks) {
                     const replies = await Promise.all(part.map(k =>
-                        withTimeout(hmgetDirect(client, k, metaFields), timeoutMs, `HMGET ${k}`)
+                        withTimeout(hmgetCompat(client, k, metaFields), timeoutMs, `HMGET ${k}`)
                             .catch(err => { logger.warn(`HMGET ${k} failed: ${err.message}`); return new Array(metaFields.length); })
                     ));
 
                     for (let i = 0; i < part.length; i++) {
                         const key = part[i];
                         const vals = replies[i] || [];
-                        const rec = { Value: vals[0], Quality: vals[1], UtcTimeMs: vals[2], Provider: vals[3] };
-                        for (const tagId of (tagIdsByKey.get(key) || [])) {
-                            batchResults.push({ tagId, raw: rec.Value, quality: rec.Quality, utc: rec.UtcTimeMs, provider: rec.Provider });
+                        const byName = {};
+                        metaFields.forEach((f, idx) => { byName[f] = vals[idx]; });
+
+                        const tagIds = tagIdsByKey.get(key) || [];
+                        for (const tagId of tagIds) {
+                            const km = keyMap[tagId];
+                            const fieldName = km?.field || valueFieldName;
+                            batchResults.push({ tagId, raw: byName[fieldName] });
                         }
                     }
                 }
-
             } else {
                 const keyReads = [];
                 const hashGroups = new Map();
@@ -181,11 +206,9 @@ function RedisClient(_data, _logger, _events, _runtime) {
                     }
                 }
 
-                // const batchResults = [];
-
                 if (keyReads.length) {
                     const keys = keyReads.map(x => x.key);
-                    const values = await client.mGet(keys);
+                    const values = await withTimeout(client.mGet(keys), timeoutMs, 'MGET');
                     for (let i = 0; i < keyReads.length; i++) {
                         batchResults.push({ tagId: keyReads[i].tagId, raw: values[i] });
                     }
@@ -193,7 +216,7 @@ function RedisClient(_data, _logger, _events, _runtime) {
 
                 for (const [hashKey, items] of hashGroups.entries()) {
                     const fields = items.map(x => x.field);
-                    const aVals = await client.hMGet(hashKey, ...fields);
+                    const aVals = await withTimeout(hmgetCompat(client, hashKey, fields), timeoutMs, `HMGET ${hashKey}`);
                     for (let i = 0; i < items.length; i++) {
                         batchResults.push({ tagId: items[i].tagId, raw: aVals[i] });
                     }
@@ -219,23 +242,31 @@ function RedisClient(_data, _logger, _events, _runtime) {
     /**
      * Load: map tags into key/hash definition
      * - tag.address = redis key
-     * - tag.options.redis.kind = 'key' | 'hash' (default: 'key')
-     * - if 'hash': tag.options.redis.field = hash field name
      */
     this.load = function (_data) {
         varsValue = {};
         data = JSON.parse(JSON.stringify(_data));
         keyMap = {};
         try {
+            const readMode = (data?.property?.connectionOption || 'simple').toLowerCase();
+            const isHashMode = readMode === 'hash';
+            const deviceValueField = (typeof data?.property?.options === 'string' && data.property.options.trim()) ? data.property.options.trim() : 'Value';
+
             const count = Object.keys(data.tags).length;
             for (const id in data.tags) {
                 const tag = data.tags[id];
-                const r = (tag.options && tag.options.redis) ? tag.options.redis : {};
-                const kind = (r.kind === 'hash') ? 'hash' : 'key';
+                const kind = isHashMode ? 'hash' : 'key';
+
+                const tagField = isHashMode
+                ? ((typeof tag?.options === 'string' && tag.options.trim())
+                    ? tag.options.trim()
+                    : deviceValueField)
+                : undefined;
+
                 const entry = {
                     kind,
                     key: String(tag.address || tag.name || id),
-                    field: kind === 'hash' ? String(r.field || tag.name || id) : undefined,
+                    field: (kind === 'hash') ? String(tagField) : undefined,
                     type: tag.type,
                     format: tag.format,
                     name: tag.name
@@ -296,18 +327,39 @@ function RedisClient(_data, _logger, _events, _runtime) {
             return false;
         }
 
-        const valueToSend = await deviceUtils.tagRawCalculator(value, tag, runtime);
+        let raw = await deviceUtils.tagRawCalculator(value, tag, runtime);
+        if (tag.type === 'boolean') raw = !!raw ? '1' : '0';
+        else if (tag.type === 'number') {
+            // normalize: "123,45" and "123.45"
+            let s = String(raw).replace(',', '.');
+            const n = Number(s);
+            if (!Number.isFinite(n)) {
+                logger.warn(`'${tag.name}' setValue rejected: NaN`);
+                return false;
+            }
+            raw = String(n);
+        } else {
+            raw = String(raw ?? '');
+        }
+
+        const timeoutMs = data?.property?.redisTimeoutMs || 3000;
+        const ttlSeconds = tag?.options?.redis?.ttlSeconds ?? data?.property?.ttlSeconds ?? 0;
+        const isHashMode = (data?.property?.connectionOption || 'simple').toLowerCase() === 'hash';
+        const writeMeta = !!(data?.property?.writeMeta && isHashMode);
 
         try {
             if (km.kind === 'hash') {
-                await client.hSet(km.key, km.field, String(valueToSend));
+                await withTimeout(client.hSet(km.key, km.field, raw), timeoutMs, `HSET meta ${km.key}`);
+                if (ttlSeconds > 0) await withTimeout(client.expire(km.key, ttlSeconds), timeoutMs, `EXPIRE ${km.key}`);
             } else {
-                await client.set(km.key, String(valueToSend));
+                if (ttlSeconds > 0) await withTimeout(client.set(km.key, raw, { EX: ttlSeconds }), timeoutMs, `SETEX ${km.key}`);
+                else                await withTimeout(client.set(km.key, raw), timeoutMs, `SET ${km.key}`);
             }
-            logger.info(`'${tag.name}' setValue(${tagId}, ${valueToSend})`, true, true);
+
+            logger.info(`'${tag.name}' setValue(${tagId}, ${raw})`, true, true);
             return true;
         } catch (err) {
-            logger.error(`'${tag.name}' setValue error! ${err}`);
+            logger.error(`'${tag?.name || tagId}' setValue error: ${err?.message || err}`);
             return false;
         }
     };
@@ -483,7 +535,13 @@ function RedisClient(_data, _logger, _events, _runtime) {
             logger.warn(`'${data.name}' security property parse warning: ${e}`);
         }
 
-        const cli = Redis.createClient({ url });
+        const cli = Redis.createClient({
+            url,
+            autoPipelining: true,
+            socket: {
+                reconnectStrategy: (retries) => Math.min(100 + retries * 200, 3000)
+            }
+        });
 
         cli.on('ready', () => {
             connected = true;

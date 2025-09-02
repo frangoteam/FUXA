@@ -77,6 +77,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	modbusTcpOptionType = [ModbusOptionType.TcpPort, ModbusOptionType.UdpPort, ModbusOptionType.TcpRTUBufferedPort, ModbusOptionType.TelnetPort];
 	modbusReuseModeType = ModbusReuseModeType;
     redisReadModeType = RedisReadModeType;
+    redisReadModeSimple = RedisReadModeType.simple;
 
 	result = '';
 	private subscriptionDeviceProperty: Subscription;

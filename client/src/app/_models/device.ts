@@ -180,13 +180,13 @@ export class DeviceNetProperty {
     stopbits: string;
     /** Serial parity used for Modbus RTU connection */
     parity: string;
-    /** Options settings used for Modbus tockenized frame */
+    /** Options settings used for Modbus tockenized frame, redis for field */
     options: string;
     /** Method flag used for WebAPI (GET/POST) */
     method: string;
     /** Data format flag used for WebAPI (CSV/JSON) */
     format: string;
-    /** Connection option used for Modbus RTU/TCP */
+    /** Connection option used for Modbus RTU/TCP, Redis for readMode */
     connectionOption: string;
     /** Delay used for Modbus RTU/TCP delay between frame*/
     delay: number = 10;
