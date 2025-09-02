@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EndPointSettings, HmiService } from '../../_services/hmi.service';
 import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
-import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType, ModbusReuseModeType } from './../../_models/device';
+import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType, ModbusReuseModeType, RedisReadModeType } from './../../_models/device';
 
 @Component({
 	selector: 'app-device-property',
@@ -76,6 +76,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	modbusRtuOptionType = [ModbusOptionType.SerialPort, ModbusOptionType.RTUBufferedPort, ModbusOptionType.AsciiPort];
 	modbusTcpOptionType = [ModbusOptionType.TcpPort, ModbusOptionType.UdpPort, ModbusOptionType.TcpRTUBufferedPort, ModbusOptionType.TelnetPort];
 	modbusReuseModeType = ModbusReuseModeType;
+    redisReadModeType = RedisReadModeType;
 
 	result = '';
 	private subscriptionDeviceProperty: Subscription;

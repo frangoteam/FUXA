@@ -319,6 +319,11 @@ export enum MelsecTagType {
     STRING = 'STRING'
 }
 
+export enum RedisReadModeType {
+    simple = 'simple',
+    hash = 'hash',
+}
+
 export enum RedisTagType {
     number = 'number',
     boolean = 'boolean',

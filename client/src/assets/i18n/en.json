@@ -964,6 +964,8 @@
     "device.property-melsec-ascii": "ASCII",
     "device.property-melsec-octalIO": "Octal I/O",
     "device.property-redis-target": "Connection URL",
+    "device.property-redis-readmode-simple": "Simple",
+    "device.property-redis-readmode-hash": "Hash",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.browsetopics-property-sub": "Subscribe",

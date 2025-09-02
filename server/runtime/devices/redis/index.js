@@ -119,38 +119,86 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 _checkWorking(false);
                 return;
             }
-
-            const keyReads = [];
-            const hashGroups = new Map();
-
-            for (const tagId in keyMap) {
-                const km = keyMap[tagId];
-                if (km.kind === 'hash') {
-                    if (!hashGroups.has(km.key)) hashGroups.set(km.key, []);
-                    hashGroups.get(km.key).push({ tagId, field: km.field });
-                } else {
-                    keyReads.push({ tagId: tagId, key: km.key });
-                }
-            }
-
+            const readMode = (data?.property?.connectionOption || 'simple').toLowerCase();
             const batchResults = [];
 
-            if (keyReads.length) {
-                const keys = keyReads.map(x => x.key);
-                const values = await client.mGet(keys);
-                for (let i = 0; i < keyReads.length; i++) {
-                    batchResults.push({ tagId: keyReads[i].tagId, raw: values[i] });
+            if (readMode === 'hash') {
+                const metaFields = Array.isArray(data?.property?.metaFields) && data.property.metaFields.length
+                    ? data.property.metaFields
+                    : ['Value', 'Quality', 'UtcTimeMs', 'Provider'];
+
+                const tagIdsByKey = new Map();
+                for (const tagId in keyMap) {
+                    const key = keyMap[tagId].key;
+                    if (!tagIdsByKey.has(key)) tagIdsByKey.set(key, []);
+                    tagIdsByKey.get(key).push(tagId);
+                }
+
+                const hmgetDirect = async (cli, key, fields) => {
+                    if (typeof cli.hMGet === 'function') return cli.hMGet(key, ...fields);
+                    if (typeof cli.hmGet === 'function') return cli.hmGet(key, ...fields);
+                    return Promise.all(fields.map(f => cli.hGet(key, f))); // fallback
+                };
+
+                const withTimeout = async (p, ms, label) => {
+                    let to; const t = new Promise((_, rej) => to = setTimeout(() => rej(new Error(`Timeout ${label}`)), ms));
+                    try { const r = await Promise.race([p, t]); clearTimeout(to); return r; }
+                    catch (e) { clearTimeout(to); throw e; }
+                };
+
+                const chunk = (arr, n) => Array.from({ length: Math.ceil(arr.length / n) }, (_, i) => arr.slice(i * n, (i + 1) * n));
+                const keys = Array.from(tagIdsByKey.keys());
+                const chunks = chunk(keys, data?.property?.maxKeysPerPoll || 500);
+                const timeoutMs = data?.property?.redisTimeoutMs || 3000;
+
+                for (const part of chunks) {
+                    const replies = await Promise.all(part.map(k =>
+                        withTimeout(hmgetDirect(client, k, metaFields), timeoutMs, `HMGET ${k}`)
+                            .catch(err => { logger.warn(`HMGET ${k} failed: ${err.message}`); return new Array(metaFields.length); })
+                    ));
+
+                    for (let i = 0; i < part.length; i++) {
+                        const key = part[i];
+                        const vals = replies[i] || [];
+                        const rec = { Value: vals[0], Quality: vals[1], UtcTimeMs: vals[2], Provider: vals[3] };
+                        for (const tagId of (tagIdsByKey.get(key) || [])) {
+                            batchResults.push({ tagId, raw: rec.Value, quality: rec.Quality, utc: rec.UtcTimeMs, provider: rec.Provider });
+                        }
+                    }
+                }
+
+            } else {
+                const keyReads = [];
+                const hashGroups = new Map();
+
+                for (const tagId in keyMap) {
+                    const km = keyMap[tagId];
+                    if (km.kind === 'hash') {
+                        if (!hashGroups.has(km.key)) hashGroups.set(km.key, []);
+                        hashGroups.get(km.key).push({ tagId, field: km.field });
+                    } else {
+                        keyReads.push({ tagId: tagId, key: km.key });
+                    }
+                }
+
+                // const batchResults = [];
+
+                if (keyReads.length) {
+                    const keys = keyReads.map(x => x.key);
+                    const values = await client.mGet(keys);
+                    for (let i = 0; i < keyReads.length; i++) {
+                        batchResults.push({ tagId: keyReads[i].tagId, raw: values[i] });
+                    }
+                }
+
+                for (const [hashKey, items] of hashGroups.entries()) {
+                    const fields = items.map(x => x.field);
+                    const aVals = await client.hMGet(hashKey, ...fields);
+                    for (let i = 0; i < items.length; i++) {
+                        batchResults.push({ tagId: items[i].tagId, raw: aVals[i] });
+                    }
                 }
             }
-
-            for (const [hashKey, items] of hashGroups.entries()) {
-                const fields = items.map(x => x.field);
-                const aVals = await client.hMGet(hashKey, ...fields);
-                for (let i = 0; i < items.length; i++) {
-                    batchResults.push({ tagId: items[i].tagId, raw: aVals[i] });
-                }
-            }
-
             const changed = await _updateVarsValue(batchResults);
             lastTimestampValue = Date.now();
             _emitValues(varsValue);
