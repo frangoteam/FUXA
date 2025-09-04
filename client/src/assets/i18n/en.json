@@ -1151,6 +1151,8 @@
     "gauges.property-input-type-date": "Date",
     "gauges.property-input-type-time": "Time",
     "gauges.property-input-type-datetime": "Date and Time",
+    "gauges.property-input-type-textarea": "Textarea",
+    "gauges.property-input-type-password": "Password",
     "gauges.property-input-time-format": "Time format",
     "gauges.property-input-time-format-normal": "HH:mm",
     "gauges.property-input-time-format-seconds": "HH:mm:ss",
@@ -1159,7 +1161,9 @@
     "gauges.property-input-convertion": "Convertion",
     "gauges.property-input-convertion-milliseconds": "Milliseconds",
     "gauges.property-input-convertion-string": "String",
-
+    "gauges.property-input-maxlength": "Max length",
+    "gauges.property-input-readonly": "Readonly",
+    
     "gauges.property-update-enabled": "Enable update",
     "gauges.property-update-esc": "ESC update",
     "gauges.property-input-esc-action": "Action on leave",

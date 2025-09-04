@@ -212,6 +212,8 @@ export class GaugesManager {
             HtmlVideoComponent.initElement(ga);
         } else if (elementWithLanguageText) {
             GaugeBaseComponent.setLanguageText(elementWithLanguageText, ga.property?.text);
+        } else if (ga.type.startsWith(HtmlInputComponent.TypeTag)) {
+            HtmlInputComponent.initElement(ga);
         }
         return false;
     }

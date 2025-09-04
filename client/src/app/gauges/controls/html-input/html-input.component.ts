@@ -140,14 +140,31 @@ export class HtmlInputComponent extends GaugeBaseComponent {
         }
     }
 
-    static initElement(gab: GaugeSettings, isView: boolean): HtmlInputElement {
-        let input: HTMLInputElement  = null;
+    static initElement(gab: GaugeSettings, isView: boolean = false): HtmlInputElement {
+        let input: HTMLInputElement | HTMLTextAreaElement  = null;
+        let ele = document.getElementById(gab.id);
+        if (ele && gab.property) {
+            ele?.setAttribute('data-name', gab.name);
+            input = Utils.searchTreeStartWith(ele, this.prefix);
+            // check textarea, have to be managed in any case
+            const wantsTextarea = gab?.property?.options?.type === InputOptionType.textarea;
+            if (wantsTextarea && input) {
+                const ta = document.createElement('textarea');
+                input.parentElement?.insertBefore(ta, input);
+                input.parentElement?.removeChild(input);
+                ta.style.backgroundColor = 'unset';
+                ta.style.height = '100%';
+                ta.style.width = '100%';
+                ta.style.padding = 'unset';
+                ta.style.resize = 'none';
+                ta.id = input.id;
+                input = ta;
+            }
+        }
         if (isView) {
-            let ele = document.getElementById(gab.id);
-            if (ele && gab.property) {
-                ele?.setAttribute('data-name', gab.name);
-                input = Utils.searchTreeStartWith(ele, this.prefix);
+
                 if (input) {
+
                     input.value = '';
                     HtmlInputComponent.checkInputType(input, gab.property.options);
                     input.setAttribute('autocomplete', 'off');
@@ -228,7 +245,6 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                     // Adjust the width to better fit the surrounding svg rect
                     input.style.margin = '1px 1px';
                 }
-            }
             if (ele) {
                 // Input element is npt precisely aligned to the center of the surrounding rectangle. Compensate it with the padding.
                 let fobj = ele.getElementsByTagName('foreignObject');
@@ -362,9 +378,9 @@ export interface InputValueValidation {
 }
 
 export class HtmlInputElement {
-    source: HTMLInputElement;
+    source: HTMLInputElement | HTMLTextAreaElement;
 
-    constructor(input: HTMLInputElement) {
+    constructor(input: HTMLInputElement | HTMLTextAreaElement) {
         this.source = input;
     }
 

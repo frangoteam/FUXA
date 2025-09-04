@@ -7,36 +7,34 @@
     <mat-tab-group style="width: 100%;">
         <mat-tab label="{{'gauges.property-props' | translate}}">
             <div class="mat-tab-container">
-                <div>
-                    <div class="my-form-field">
-                        <span>{{'gauges.property-name' | translate}}</span>
-                        <input [(ngModel)]="data.settings.name"
-                               style="width: 220px"
-                               type="text">
+                <div class="my-form-field">
+                    <span>{{'gauges.property-name' | translate}}</span>
+                    <input [(ngModel)]="data.settings.name"
+                            style="width: 220px"
+                            type="text">
+                </div>
+                <div class="my-form-field ml10"
+                        style="vertical-align: bottom;">
+                    <span>{{'gauges.property-permission' | translate}}</span>
+                    <div style="text-align:center;"
+                            class="my-form-field-permission pointer"
+                            (click)="onEditPermission()">
+                        <mat-icon *ngIf="havePermission(); else unlock"
+                                    class="header-icon"
+                                    style="line-height: 28px;">lock</mat-icon>
+                        <ng-template #unlock>
+                            <mat-icon class="header-icon"
+                                        style="line-height: 28px;">lock_open</mat-icon>
+                        </ng-template>
                     </div>
-                    <div class="my-form-field ml10"
-                         style="vertical-align: bottom;">
-                        <span>{{'gauges.property-permission' | translate}}</span>
-                        <div style="text-align:center;"
-                             class="my-form-field-permission pointer"
-                             (click)="onEditPermission()">
-                            <mat-icon *ngIf="havePermission(); else unlock"
-                                      class="header-icon"
-                                      style="line-height: 28px;">lock</mat-icon>
-                            <ng-template #unlock>
-                                <mat-icon class="header-icon"
-                                          style="line-height: 28px;">lock_open</mat-icon>
-                            </ng-template>
-                        </div>
-                    </div>
-                    <div class="my-form-field ml10"
-                         *ngIf="isTextToShow()">
-                        <span>{{'gauges.property-text' | translate}}</span>
-                        <input [(ngModel)]="property.text"
-                               style="width: 270px"
-                               type="text"
-                               placeholder="{{'gauges.property-language-text' | translate}}">
-                    </div>
+                </div>
+                <div class="my-form-field ml10"
+                        *ngIf="isTextToShow()">
+                    <span>{{'gauges.property-text' | translate}}</span>
+                    <input [(ngModel)]="property.text"
+                            style="width: 270px"
+                            type="text"
+                            placeholder="{{'gauges.property-language-text' | translate}}">
                 </div>
                 <div mat-dialog-content
                      style="overflow: visible; width:100%;">
@@ -49,7 +47,6 @@
                                        [withBitmask]="withBitmask">
                         </flex-variable>
                     </div>
-
                     <div class="mt15">
                         <div class="my-form-field" style="width: 140px;">
                             <span>{{'gauges.property-input-type' | translate}}</span>
@@ -112,14 +109,19 @@
                                     </mat-option>
                                 </mat-select>
                             </div>
+                            <div class="my-form-field ml20" style="width: 100px;"
+                                 *ngIf="property.options.type === inputOptionType.text
+                                    || property.options.type === inputOptionType.textarea">
+                                <span>{{'gauges.property-input-maxlength' | translate}}</span>
+                                <input numberOnly [(ngModel)]="property.options.maxlength" type="number" style="width: 80px">
+                            </div>
+                            <div class="my-form-field ml20"
+                                 *ngIf="property.options.type === inputOptionType.textarea">
+                                <span>{{'gauges.property-input-readonly' | translate}}</span>
+                                <mat-slide-toggle color="primary" [(ngModel)]="property.options.readonly" class="ml20"></mat-slide-toggle>
+                            </div>
                         </div>
                     </div>
-
-                    <flex-head [data]="data"
-                               [property]="property"
-                               [withProperty]="withProperty"
-                               #flexhead
-                               [withBitmask]="withBitmask"></flex-head>
                 </div>
             </div>
         </mat-tab>

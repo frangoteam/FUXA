@@ -2,8 +2,8 @@ import { AfterViewInit, ChangeDetectorRef, Component, Inject, ViewChild } from '
 import { FlexHeadComponent } from '../../../gauge-property/flex-head/flex-head.component';
 import { FlexEventComponent } from '../../../gauge-property/flex-event/flex-event.component';
 import { FlexActionComponent } from '../../../gauge-property/flex-action/flex-action.component';
-import { GaugeProperty, InputActionEscType, InputConvertionType, InputOptionType, InputTimeFormatType, IPropertyVariable, View } from '../../../../_models/hmi';
-import { GaugeDialogType, GaugePropertyData } from '../../../gauge-property/gauge-property.component';
+import { GaugeProperty, InputActionEscType, InputConvertionType, InputOptionsProperty, InputOptionType, InputTimeFormatType, IPropertyVariable, View } from '../../../../_models/hmi';
+import { GaugePropertyData } from '../../../gauge-property/gauge-property.component';
 import { HtmlInputComponent } from '../html-input.component';
 import { PropertyType } from '../../../gauge-property/flex-input/flex-input.component';
 import { PermissionData, PermissionDialogComponent } from '../../../gauge-property/permission-dialog/permission-dialog.component';
@@ -52,6 +52,15 @@ export class InputPropertyComponent implements AfterViewInit {
         if (!this.property) {
             this.property = new GaugeProperty();
         }
+        this.property.options = this.property.options || <InputOptionsProperty>{ updated: false, numeric: false };
+        this.property.options.type = this.property.options.type ? this.property.options.type : this.property.options.numeric ? this.inputOptionType.number : this.inputOptionType.text;
+        if (!this.property.options.actionOnEsc && this.property.options.updatedEsc) {   // compatibility 1.2.1
+            this.property.options.actionOnEsc = InputActionEscType.update;
+        } else if (this.property.options.actionOnEsc) {
+            this.property.options.updatedEsc = null;
+        }
+        this.property.options.maxlength = this.property.options?.maxlength ?? null,
+        this.property.options.readonly = !!this.property.options?.readonly;
         this.views = this.projectService.getHmi()?.views ?? [];
         this.scripts = this.projectService.getScripts();
     }
@@ -67,7 +76,7 @@ export class InputPropertyComponent implements AfterViewInit {
     }
 
     onOkClick(): void {
-        this.data.settings.property = this.flexHead?.getProperty();
+        this.data.settings.property = this.property;
         if (this.flexEvent) {
             this.data.settings.property.events = this.flexEvent.getEvents();
         }
@@ -104,10 +113,7 @@ export class InputPropertyComponent implements AfterViewInit {
     }
 
     isTextToShow() {
-        return (
-            this.data.languageTextEnabled ||
-            this.dialogType === GaugeDialogType.RangeAndText
-        );
+        return this.data.languageTextEnabled;
     }
 
     onEditPermission() {
