@@ -64,9 +64,16 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
         setTimeout(() => {
             this.map = L.map('map').setView(startLocation, this.view.property?.startZoom || 13);
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; FUXA'
-            }).addTo(this.map);
+            // === Mapa con imagen personalizada ===
+            const imageUrl = 'assets/images/mimico_electrico_panel.png';
+
+            const imageBounds: [[number, number], [number, number]] = [
+              [-34.62, -58.45],
+              [-34.60, -58.43]
+            ];
+
+            L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
+            this.map.fitBounds(imageBounds);
 
             this.loadMapsResources();
             this.projectService.onLoadHmi.pipe(
