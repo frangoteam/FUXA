@@ -14,6 +14,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { MapsLocationImportComponent } from '../maps-location-import/maps-location-import.component';
 import { MapsFabButtonMenuComponent } from './maps-fab-button-menu/maps-fab-button-menu.component';
+import { ResourcesDialogComponent } from '../../dialogs/resources/resources-dialog.component';
+
 
 @Component({
     selector: 'app-maps-view',
@@ -24,7 +26,7 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
 
     @Input() view: View;
     @Input() hmi: Hmi;
-    @Input() gaugesManager: GaugesManager;        // gauges.component
+    @Input() gaugesManager: GaugesManager; // gauges.component
     @Input() editMode: boolean;
     @Output() onGoTo: EventEmitter<string> = new EventEmitter<string>();
 
@@ -64,16 +66,22 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
         setTimeout(() => {
             this.map = L.map('map').setView(startLocation, this.view.property?.startZoom || 13);
 
-            // === Mapa con imagen personalizada ===
-            const imageUrl = 'assets/images/mimico_electrico_panel.png';
+            // 👇 Nuevo: leemos la imagen de fondo desde las propiedades de la vista
+            const imageUrl = this.view.property?.backgroundImage;
 
-            const imageBounds: [[number, number], [number, number]] = [
-              [-34.62, -58.45],
-              [-34.60, -58.43]
-            ];
-
-            L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
-            this.map.fitBounds(imageBounds);
+            if (imageUrl) {
+                const imageBounds: [[number, number], [number, number]] = [
+                    [-34.62, -58.45],
+                    [-34.60, -58.43]
+                ];
+                L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
+                this.map.fitBounds(imageBounds);
+            } else {
+                // 👇 Fallback a OpenStreetMap
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(this.map);
+            }
 
             this.loadMapsResources();
             this.projectService.onLoadHmi.pipe(
@@ -371,4 +379,20 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             this.loadMapsResources();
         });
     }
+    
+        onSelectBackgroundImage(): void {
+    const dialogRef = this.dialog.open(ResourcesDialogComponent, {
+        width: '800px',
+        data: { type: 'images' }   // 👈 limitar a imágenes
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+            this.view.property ??= new ViewProperty();
+            this.view.property.backgroundImage = result.path;
+            // guardamos el cambio en el proyecto
+            this.projectService.setViewAsync(this.view);
+        }
+    });
+}
 }
