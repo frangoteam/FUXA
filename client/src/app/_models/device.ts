@@ -322,12 +322,34 @@ export enum MelsecTagType {
 export enum RedisReadModeType {
     simple = 'simple',
     hash = 'hash',
+    custom = 'custom',
 }
 
 export enum RedisTagType {
     number = 'number',
     boolean = 'boolean',
     string = 'string'
+}
+
+export class RedisOptions {
+    redisTimeoutMs: number = 3000;
+    maxKeysPerPoll = 500;
+    readFields = {
+        value: '',
+        quality: '',
+        timestamp: ''
+      };
+    customCommand = {
+        read: {
+            name: '',
+            batchPerKey: true,
+            args: ['{{key}}','{{fields...}}']
+          },
+        write: {
+            name: '',
+            args: []
+          }
+    };
 }
 
 export enum ModbusOptionType {

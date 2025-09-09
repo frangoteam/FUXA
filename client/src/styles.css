@@ -1024,7 +1024,9 @@ mat-toolbar-row {
 .table {
     display: table;
 }
-
+.mt3 {
+    margin-top: 3px;
+}
 .mt5 {
     margin-top: 5px;
 }
@@ -1096,7 +1098,9 @@ mat-toolbar-row {
 .mr5 {
     margin-right: 5px;
 }
-
+.mb3 {
+    margin-bottom: 3px;
+}
 .mb5 {
     margin-bottom: 5px;
 }

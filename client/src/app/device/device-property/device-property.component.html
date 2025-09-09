@@ -421,7 +421,7 @@
                             <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.ascii"></mat-slide-toggle>
                         </div>
                         <div class="my-form-field inbk tac" style="width: 100px;">
-                            <span>{{'device.property-melsec-octalIO' | translate}}</span>
+                                <span>{{'device.property-melsec-octalIO' | translate}}</span>
                             <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.octalIO"></mat-slide-toggle>
                         </div>
                     </div>
@@ -431,7 +431,7 @@
                         <span>{{'device.property-redis-target' | translate}}</span>
                         <input [(ngModel)]="data.device.property.address" placeholder="redis://localhost:6379" style="width: 350px" type="ip" (click)="onAddressChanged()">
                     </div>
-                    <div class="my-form-field block mb10">
+                    <div class="my-form-field block mb5">
                         <span>{{'device.property-redis-readMode' | translate}}</span>
                         <mat-select [(value)]="data.device.property.connectionOption" style="width: 350px">
                             <mat-option *ngFor="let mode of redisReadModeType | enumToArray" [value]="mode.key">
@@ -439,9 +439,52 @@
                             </mat-option>
                         </mat-select>
                     </div>
-                    <div *ngIf="data.device.property.connectionOption !== redisReadModeSimple" class="my-form-field block mb10">
-                        <span>{{'device.property-redis-hashKey' | translate}}</span>
-                        <input [(ngModel)]="data.device.property.options" placeholder="Value" style="width: 350px" type="ip" (click)="onAddressChanged()">
+                    <div *ngIf="data.device.property.connectionOption !== redisReadModeSimple">
+                        <div class="container">
+                            <div *ngIf="data.device.property.connectionOption === redisReadModeCustom" class="my-form-field block mb3">
+                                <span>{{'device.property-redis-readName' | translate}}</span>
+                                <input [(ngModel)]="redisOptions.customCommand.read.name" style="width: 330px" type="text" (click)="onAddressChanged()">
+                            </div>
+                            <div *ngIf="data.device.property.connectionOption !== redisReadModeSimple" class="my-form-field block mb3">
+                                <span>{{'device.property-redis-keyValue' | translate}}</span>
+                                <input [(ngModel)]="redisOptions.readFields.value" style="width: 330px" type="text" (click)="onAddressChanged()">
+                            </div>
+                            <div *ngIf="data.device.property.connectionOption !== redisReadModeSimple" class="my-form-field block mb3">
+                                <span>{{'device.property-redis-keyTimestamp' | translate}}</span>
+                                <input [(ngModel)]="redisOptions.readFields.timestamp" style="width: 330px" type="text" (click)="onAddressChanged()">
+                            </div>
+                            <div *ngIf="data.device.property.connectionOption !== redisReadModeSimple" class="my-form-field block mb3">
+                                <span>{{'device.property-redis-keyQuality' | translate}}</span>
+                                <input [(ngModel)]="redisOptions.readFields.quality" style="width: 330px" type="text" (click)="onAddressChanged()">
+                            </div>
+                        </div>
+                        <div *ngIf="data.device.property.connectionOption === redisReadModeCustom" class="container mt5">
+                            <div class="my-form-field block mb5">
+                                <span>{{'device.property-redis-writeName' | translate}}</span>
+                                <input [(ngModel)]="redisOptions.customCommand.write.name" style="width: 330px" type="text" (click)="onAddressChanged()">
+                            </div>
+                            <div class="my-form-field add-write-key" style="font-size: small;">
+                                <button mat-icon-button (click)="onAddWriteKey()">
+                                    <mat-icon>add_circle_outline</mat-icon>
+                                </button>
+                                {{'device.property-redis-write-addkey' | translate}}
+                            </div>
+                            <div *ngFor="let writeKey of redisOptions.customCommand.write.args; index as i">
+                                <div class="my-form-field write-key-name">
+                                    <span>{{'device.property-redis-writeKeyName' | translate}}</span>
+                                    <input [(ngModel)]="writeKey.name" type="text" style="width: 130px">
+                                </div>
+                                <div class="my-form-field write-key-value ml10">
+                                    <span>{{'device.property-redis-writeKeyValue' | translate}}</span>
+                                    <input [(ngModel)]="writeKey.value" type="text" style="width: 130px">
+                                </div>
+                                <div class="ml5 inbk">
+                                    <button mat-icon-button (click)="onRemoveWriteKey(i)">
+                                        <mat-icon>clear</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
