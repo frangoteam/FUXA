@@ -56,6 +56,54 @@ function RedisClient(_data, _logger, _events, _runtime) {
         return Promise.all(fields.map(f => cli.hGet(key, f)));
     };
 
+    const getDeviceOptions = () => {
+        const def = {
+            readFields: { value: 'Value', quality: 'Quality', timestamp: 'UtcTimeMs' },
+            customCommand: { read: { name: '', batchPerKey: true, args: ['{{key}}', '{{fields...}}'] } },
+            maxKeysPerPoll: 500,
+            redisTimeoutMs: 3000,
+        };
+        const opt = data?.property?.options;
+        if (!opt) return def;
+        if (typeof opt === 'string') { def.readFields.value = opt.trim() || def.readFields.value; return def; }
+        if (opt.readFields) {
+            def.readFields.value = opt.readFields.value || def.readFields.value;
+            def.readFields.quality = opt.readFields.quality || def.readFields.quality;
+            def.readFields.timestamp = opt.readFields.timestamp || def.readFields.timestamp;
+        }
+        if (opt.customCommand?.read) {
+            def.customCommand.read.name = opt.customCommand.read.name || def.customCommand.read.name;
+            def.customCommand.read.batchPerKey = (opt.customCommand.read.batchPerKey !== false);
+            def.customCommand.read.args = Array.isArray(opt.customCommand.read.args) && opt.customCommand.read.args.length
+                ? opt.customCommand.read.args.slice() : def.customCommand.read.args;
+        }
+        if (typeof opt.maxKeysPerPoll === 'number') def.maxKeysPerPoll = opt.maxKeysPerPoll;
+        if (typeof opt.redisTimeoutMs === 'number') def.redisTimeoutMs = opt.redisTimeoutMs;
+        return def;
+    };
+
+    // ---- templating args per custom command
+    const expandArgs = (tplArgs, ctx) => {
+        const out = [];
+        for (const a of (tplArgs || [])) {
+            if (a === '{{key}}') out.push(ctx.key);
+            else if (a === '{{fields...}}') out.push(...ctx.fields);
+            else out.push(String(a));
+        }
+        return out;
+    };
+
+    // ---- normalizza result (array|object -> array allineata ai fields)
+    const normalizeFieldValues = (res, fields) => {
+        if (Array.isArray(res)) return res;
+        if (res && typeof res === 'object') return fields.map(f => res[f]);
+        if (res == null) return fields.map(() => undefined);
+        return [String(res)];
+    };
+
+    // ---- utility chunk
+    const chunk = (arr, n) => Array.from({ length: Math.ceil(arr.length / n) }, (_, i) => arr.slice(i * n, (i + 1) * n));
+
     // ---- tags cache and mapping
     // varsValue: map { [tagId]: { id, value, type } }
     let varsValue = {};
@@ -192,6 +240,65 @@ function RedisClient(_data, _logger, _events, _runtime) {
                         }
                     }
                 }
+            } else if (readMode === 'custom') {
+                const opts = getDeviceOptions();
+                const cc = opts.customCommand?.read || {};
+                if (!cc.name) {
+                    logger.warn('custom read selected but options.customCommand.read.name is empty');
+                    _checkWorking(false);
+                    return;
+                }
+                const timeoutMs = data?.property?.redisTimeoutMs || opts.redisTimeoutMs;
+
+                // 1) raggruppa i tag HASH per chiave e deduplica i campi richiesti per quella chiave
+                const tagItemsByKey = new Map(); // key -> [{tagId, field}, ...]
+                for (const tagId in keyMap) {
+                    const km = keyMap[tagId];
+                    if (km.kind !== 'hash') continue;           // nel custom leggiamo hash-key
+                    if (!tagItemsByKey.has(km.key)) tagItemsByKey.set(km.key, []);
+                    tagItemsByKey.get(km.key).push({ tagId, field: km.field });
+                }
+                const keys = Array.from(tagItemsByKey.keys());
+                const parts = chunk(keys, opts.maxKeysPerPoll || 500);
+
+                for (const part of parts) {
+                    // fields per chiave
+                    const fieldsPerKey = new Map();
+                    for (const key of part) {
+                        const items = tagItemsByKey.get(key) || [];
+                        fieldsPerKey.set(key, Array.from(new Set(items.map(x => x.field))));
+                    }
+
+                    const repliesByKey = new Map();
+
+                    // 2) invia un comando per chiave (autoPipelining: true nel client)
+                    const promises = part.map(async (key) => {
+                        const fields = fieldsPerKey.get(key);
+                        const args = expandArgs(cc.args, { key, fields });
+                        const res = await withTimeout(
+                            client.sendCommand([cc.name, ...args]),
+                            timeoutMs,
+                            `CUSTOM-READ ${cc.name} ${key}`
+                        ).catch(err => {
+                            logger.warn(`CUSTOM-READ ${cc.name} ${key} failed: ${err?.message || err}`);
+                            return null;
+                        });
+                        repliesByKey.set(key, normalizeFieldValues(res, fields));
+                    });
+                    await Promise.all(promises);
+
+                    // 3) mappa risposte -> tag
+                    for (const key of part) {
+                        const fields = fieldsPerKey.get(key) || [];
+                        const vals = repliesByKey.get(key) || [];
+                        const byName = {};
+                        fields.forEach((f, i) => { byName[f] = vals[i]; });
+                        const items = tagItemsByKey.get(key) || [];
+                        for (const { tagId, field } of items) {
+                            batchResults.push({ tagId, raw: byName[field] });
+                        }
+                    }
+                }
             } else {
                 const keyReads = [];
                 const hashGroups = new Map();
@@ -250,7 +357,7 @@ function RedisClient(_data, _logger, _events, _runtime) {
         try {
             const readMode = (data?.property?.connectionOption || 'simple').toLowerCase();
             const isHashMode = readMode === 'hash';
-            const deviceValueField = (typeof data?.property?.options === 'string' && data.property.options.trim()) ? data.property.options.trim() : 'Value';
+            const deviceValueField = getDeviceOptions().readFields.value;
 
             const count = Object.keys(data.tags).length;
             for (const id in data.tags) {
@@ -258,10 +365,10 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 const kind = isHashMode ? 'hash' : 'key';
 
                 const tagField = isHashMode
-                ? ((typeof tag?.options === 'string' && tag.options.trim())
-                    ? tag.options.trim()
-                    : deviceValueField)
-                : undefined;
+                    ? ((typeof tag?.options === 'string' && tag.options.trim())
+                        ? tag.options.trim()
+                        : deviceValueField)
+                    : undefined;
 
                 const entry = {
                     kind,
@@ -353,7 +460,7 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 if (ttlSeconds > 0) await withTimeout(client.expire(km.key, ttlSeconds), timeoutMs, `EXPIRE ${km.key}`);
             } else {
                 if (ttlSeconds > 0) await withTimeout(client.set(km.key, raw, { EX: ttlSeconds }), timeoutMs, `SETEX ${km.key}`);
-                else                await withTimeout(client.set(km.key, raw), timeoutMs, `SET ${km.key}`);
+                else await withTimeout(client.set(km.key, raw), timeoutMs, `SET ${km.key}`);
             }
 
             logger.info(`'${tag.name}' setValue(${tagId}, ${raw})`, true, true);
