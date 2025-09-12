@@ -4,7 +4,7 @@ import { Observable, Subject, firstValueFrom } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project';
-import { View, LayoutSettings, DaqQuery } from '../_models/hmi';
+import { View, LayoutSettings, DaqQuery, ViewType } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Graph } from '../_models/graph';
 import { Alarm, AlarmBaseType, AlarmQuery, AlarmsFilter } from '../_models/alarm';
@@ -41,6 +41,7 @@ export class ProjectService {
 
     private projectOld = '';
     private ready = false;
+    public static MainViewName = 'MainView';
 
     constructor(private resewbApiService: ResWebApiService,
         private resDemoService: ResDemoService,
@@ -298,7 +299,7 @@ export class ProjectService {
         const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
         if (existingView) {
             Object.assign(existingView, view);
-        } else {
+        } else if (!this.projectData.hmi.views.some(v => v.name === view.name)) {
             this.projectData.hmi.views.push(view);
         }
         this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData).subscribe(result => {
@@ -315,7 +316,7 @@ export class ProjectService {
         const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
         if (existingView) {
             Object.assign(existingView, view);
-        } else {
+        } else if (!this.projectData.hmi.views.some(v => v.name === view.name)) {
             this.projectData.hmi.views.push(view);
         }
         await firstValueFrom(this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData));
@@ -1051,7 +1052,19 @@ export class ProjectService {
         } else {
             delete this.projectData.server;
         }
+        let mainView = this.getNewView(ProjectService.MainViewName);
+        this.projectData.hmi.views.push(mainView);
         this.save(true);
+    }
+
+    getNewView(name: string, type?: ViewType) {
+        let view = new View(Utils.getShortGUID('v_'), type || ViewType.svg);
+        view.name = name;
+        view.profile.bkcolor = '#ffffffff';
+        if (type === ViewType.cards) {
+            view.profile.bkcolor = 'rgba(67, 67, 67, 1)';
+        }
+        return view;
     }
 
     getProject() {

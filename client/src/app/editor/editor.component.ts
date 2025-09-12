@@ -182,7 +182,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setMode('select');
         let hmi = this.projectService.getHmi();
         if (hmi) {
-            this.loadHmi();
+            this.loadHmi(true);
         }
         this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
             this.loadHmi();
@@ -320,15 +320,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * Load the hmi resource and bind it
      */
-    private loadHmi() {
+    private loadHmi(firstTime = false) {
         this.gaugesManager.initGaugesMap();
         this.currentView = null;
         this.hmi = this.projectService.getHmi();
         // check new hmi
-        if (!this.hmi.views || this.hmi.views.length <= 0) {
+        if (this.hmi.views?.length <= 0 && !firstTime) {
             this.hmi.views = [];
-            this.addView();
-            // this.selectView(this.hmi.views[0].name);
+            this.addView(ProjectService.MainViewName);
         } else {
             let oldsel = localStorage.getItem('@frango.webeditor.currentview');
             if (!oldsel && this.hmi.views.length) {
@@ -348,7 +347,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // check and set start page
         if (!this.hmi.layout.start) {
-            this.hmi.layout.start = this.hmi.views[0].id;
+            this.hmi.layout.start = this.hmi.views[0]?.id;
         }
         this.loadPanelState();
         this.isLoading = false;
@@ -1049,18 +1048,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (!found)
                     {break;}
             }
-            let v = new View(Utils.getShortGUID('v_'), type);
-            if (name) {
-                v.name = name;
-            } else if (this.hmi.views.length <= 0) {
-                v.name = 'MainView';
-            } else {
-                v.name = nn + idx;
-                v.profile.bkcolor = '#ffffffff';
+            if (!name) {
+                name = nn + idx;
             }
-            if (type === ViewType.cards) {
-                v.profile.bkcolor = 'rgba(67, 67, 67, 1)';
-            }
+            let v = this.projectService.getNewView(name, type);
             this.hmi.views.push(v);
             this.onSelectView(v);
             this.saveView(this.currentView);
