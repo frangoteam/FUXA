@@ -1052,6 +1052,7 @@ export class ProjectService {
         let changed = false;
         for (const key of Object.keys(view.items)) {
             if (!idsInSvg.has(key)) {
+                console.warn('GUI item deleted: ', key);
                 delete view.items[key];
                 changed = true;
             }
