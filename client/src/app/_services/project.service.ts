@@ -1039,6 +1039,29 @@ export class ProjectService {
         return result;
     }
 
+    cleanView(view: View): boolean {
+        if (!view.svgcontent) {
+            return false;
+        }
+        const idsInSvg = new Set<string>();
+        const re = /id=(?:"|')([^"']+)(?:"|')/g;
+        let m: RegExpExecArray | null;
+        while ((m = re.exec(view.svgcontent)) !== null) {
+            idsInSvg.add(m[1]);
+        }
+
+        let changed = false;
+        for (const key of Object.keys(view.items)) {
+            if (!idsInSvg.has(key)) {
+                console.warn('GUI item deleted: ', key);
+                delete view.items[key];
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
+
     setNewProject() {
         this.projectData = new ProjectData();
         let server = new Device(Utils.getGUID(DEVICE_PREFIX));
