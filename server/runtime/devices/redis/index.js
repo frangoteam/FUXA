@@ -356,15 +356,22 @@ function RedisClient(_data, _logger, _events, _runtime) {
         keyMap = {};
         try {
             const readMode = (data?.property?.connectionOption || 'simple').toLowerCase();
-            const isHashMode = readMode === 'hash';
+            const isHashLike = (readMode === 'hash' || readMode === 'custom');
             const deviceValueField = getDeviceOptions().readFields.value;
 
-            const count = Object.keys(data.tags).length;
-            for (const id in data.tags) {
-                const tag = data.tags[id];
-                const kind = isHashMode ? 'hash' : 'key';
+            const tags = data?.tags || {};
+            const count = Object.keys(tags).length;
 
-                const tagField = isHashMode
+            for (const id in tags) {
+                const tag = tags[id];
+
+                // In 'simple' leggiamo string keys (MGET); in 'hash' e 'custom' leggiamo hash fields
+                const kind = isHashLike ? 'hash' : 'key';
+
+                // Campo da leggere per i tag hash:
+                // - se il tag ha options string non vuota -> e il nome del field
+                // - altrimenti si usa il default device (readFields.value)
+                const tagField = isHashLike
                     ? ((typeof tag?.options === 'string' && tag.options.trim())
                         ? tag.options.trim()
                         : deviceValueField)
@@ -380,6 +387,7 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 };
                 keyMap[id] = entry;
             }
+
             logger.info(`'${data.name}' data loaded (${count})`, true);
         } catch (err) {
             logger.error(`'${data.name}' load error! ${err}`);
