@@ -614,7 +614,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         if (htmlevent.type === 'key-enter') {
             htmlevent.dom.onkeydown = function(ev) {
-                if (ev.key == 'Enter') {
+                if (ev.key === 'Enter') {
+                    const isToSkip = HtmlInputComponent.SkipEnterEvent.includes((htmlevent?.dom?.nodeName ?? '').toLowerCase());
+                    const ctrlOrMeta = ev.ctrlKey || ev.metaKey;
+                    if (!ctrlOrMeta && isToSkip) {
+                        return;
+                    }
                     htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
                     htmlevent.id = htmlevent.dom.id;
                     htmlevent.value = htmlevent.dom.value;
