@@ -121,6 +121,12 @@
                                 <mat-slide-toggle color="primary" [(ngModel)]="property.options.readonly" class="ml20"></mat-slide-toggle>
                             </div>
                         </div>
+                        <ng-container *ngIf="property.options.type === inputOptionType.textarea">
+                            <div class="my-form-field mt10">
+                                <span>{{'gauges.property-input-startText' | translate}}</span>
+                                <textarea [(ngModel)]="property.options.startText" style="width: 320px; height: 200px;"></textarea>
+                            </div>
+                        </ng-container>
                     </div>
                 </div>
             </div>

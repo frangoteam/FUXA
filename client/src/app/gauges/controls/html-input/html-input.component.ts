@@ -164,7 +164,6 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                     ta.style.setProperty('padding', 'unset !important');
                     ta.style.setProperty('overflow', 'auto');
                     ta.id = input.id;
-                    ta.innerHTML = 'textarea';
                     ta.value = 'textarea';
                     input = ta;
                 } else if (!isTextarea && input instanceof HTMLTextAreaElement) {
@@ -180,9 +179,16 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                     inp.value = '#.##';
                     input = inp;
                 }
+                if (isTextarea) {
+                    input.value = gab.property.options.startText || 'textarea';
+                }
             }
             if (isView && input) {
                 input.value = '';
+                if (isTextarea) {
+                    input.value = gab.property.options.startText || 'textarea';
+                    input.readOnly = gab.property.options.readonly;
+                }
                 HtmlInputComponent.checkInputType(input, gab.property.options);
                 input.setAttribute('autocomplete', 'off');
                 if (gab.property.options) {
