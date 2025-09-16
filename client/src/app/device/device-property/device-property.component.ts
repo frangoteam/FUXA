@@ -78,7 +78,8 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	modbusReuseModeType = ModbusReuseModeType;
     redisReadModeType = RedisReadModeType;
     redisReadModeSimple = RedisReadModeType.simple;
-    redisReadModeCustom = RedisReadModeType.custom;
+    redisReadModeHash = RedisReadModeType.hash;
+    // redisReadModeCustom = RedisReadModeType.custom;
 	redisOptions = new RedisOptions();
 
 	result = '';

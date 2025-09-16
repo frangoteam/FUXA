@@ -59,7 +59,6 @@ function RedisClient(_data, _logger, _events, _runtime) {
     const getDeviceOptions = () => {
         const def = {
             readFields: { value: 'Value', quality: 'Quality', timestamp: 'UtcTimeMs' },
-            customCommand: { read: { name: '', batchPerKey: true, args: ['{{key}}', '{{fields...}}'] } },
             maxKeysPerPoll: 500,
             redisTimeoutMs: 3000,
         };
@@ -70,12 +69,6 @@ function RedisClient(_data, _logger, _events, _runtime) {
             def.readFields.value = opt.readFields.value || def.readFields.value;
             def.readFields.quality = opt.readFields.quality || def.readFields.quality;
             def.readFields.timestamp = opt.readFields.timestamp || def.readFields.timestamp;
-        }
-        if (opt.customCommand?.read) {
-            def.customCommand.read.name = opt.customCommand.read.name || def.customCommand.read.name;
-            def.customCommand.read.batchPerKey = (opt.customCommand.read.batchPerKey !== false);
-            def.customCommand.read.args = Array.isArray(opt.customCommand.read.args) && opt.customCommand.read.args.length
-                ? opt.customCommand.read.args.slice() : def.customCommand.read.args;
         }
         if (typeof opt.maxKeysPerPoll === 'number') def.maxKeysPerPoll = opt.maxKeysPerPoll;
         if (typeof opt.redisTimeoutMs === 'number') def.redisTimeoutMs = opt.redisTimeoutMs;
@@ -195,105 +188,36 @@ function RedisClient(_data, _logger, _events, _runtime) {
             const timeoutMs = data?.property?.redisTimeoutMs || 3000;
 
             if (readMode === 'hash') {
-                const valueFieldName =
-                    (typeof data?.property?.options === 'string' && data.property.options.trim())
-                        ? data.property.options.trim()
-                        : 'Value';
-                const metaFields = (Array.isArray(data?.property?.metaFields) && data.property.metaFields.length)
-                    ? data.property.metaFields.slice()
-                    : [valueFieldName];
-
-                const tagIdsByKey = new Map();
+                // Raggruppa i tag per chiave e deduplica i field richiesti per quella chiave
+                const itemsByKey = new Map(); // key -> [{ tagId, field }]
                 for (const tagId in keyMap) {
                     const km = keyMap[tagId];
-                    if (km.kind !== 'hash') {
-                        continue;
-                    }
-                    const key = km.key;
-                    if (!tagIdsByKey.has(key)) {
-                        tagIdsByKey.set(key, []);
-                    }
-                    tagIdsByKey.get(key).push(tagId);
+                    if (km.kind !== 'hash') continue;
+                    if (!itemsByKey.has(km.key)) itemsByKey.set(km.key, []);
+                    itemsByKey.get(km.key).push({ tagId, field: km.field });
                 }
 
-                const chunk = (arr, n) => Array.from({ length: Math.ceil(arr.length / n) }, (_, i) => arr.slice(i * n, (i + 1) * n));
-                const keys = Array.from(tagIdsByKey.keys());
-                const chunks = chunk(keys, data?.property?.maxKeysPerPoll || 500);
-
-                for (const part of chunks) {
-                    const replies = await Promise.all(part.map(k =>
-                        withTimeout(hmgetCompat(client, k, metaFields), timeoutMs, `HMGET ${k}`)
-                            .catch(err => { logger.warn(`HMGET ${k} failed: ${err.message}`); return new Array(metaFields.length); })
-                    ));
-
-                    for (let i = 0; i < part.length; i++) {
-                        const key = part[i];
-                        const vals = replies[i] || [];
-                        const byName = {};
-                        metaFields.forEach((f, idx) => { byName[f] = vals[idx]; });
-
-                        const tagIds = tagIdsByKey.get(key) || [];
-                        for (const tagId of tagIds) {
-                            const km = keyMap[tagId];
-                            const fieldName = km?.field || valueFieldName;
-                            batchResults.push({ tagId, raw: byName[fieldName] });
-                        }
-                    }
-                }
-            } else if (readMode === 'custom') {
-                const opts = getDeviceOptions();
-                const cc = opts.customCommand?.read || {};
-                if (!cc.name) {
-                    logger.warn('custom read selected but options.customCommand.read.name is empty');
-                    _checkWorking(false);
-                    return;
-                }
-                const timeoutMs = data?.property?.redisTimeoutMs || opts.redisTimeoutMs;
-
-                // 1) raggruppa i tag HASH per chiave e deduplica i campi richiesti per quella chiave
-                const tagItemsByKey = new Map(); // key -> [{tagId, field}, ...]
-                for (const tagId in keyMap) {
-                    const km = keyMap[tagId];
-                    if (km.kind !== 'hash') continue;           // nel custom leggiamo hash-key
-                    if (!tagItemsByKey.has(km.key)) tagItemsByKey.set(km.key, []);
-                    tagItemsByKey.get(km.key).push({ tagId, field: km.field });
-                }
-                const keys = Array.from(tagItemsByKey.keys());
-                const parts = chunk(keys, opts.maxKeysPerPoll || 500);
+                const keys = Array.from(itemsByKey.keys());
+                const parts = chunk(keys, data?.property?.maxKeysPerPoll || 500);
 
                 for (const part of parts) {
-                    // fields per chiave
-                    const fieldsPerKey = new Map();
-                    for (const key of part) {
-                        const items = tagItemsByKey.get(key) || [];
-                        fieldsPerKey.set(key, Array.from(new Set(items.map(x => x.field))));
-                    }
-
-                    const repliesByKey = new Map();
-
-                    // 2) invia un comando per chiave (autoPipelining: true nel client)
-                    const promises = part.map(async (key) => {
-                        const fields = fieldsPerKey.get(key);
-                        const args = expandArgs(cc.args, { key, fields });
-                        const res = await withTimeout(
-                            client.sendCommand([cc.name, ...args]),
+                    const results = await Promise.all(part.map(async (key) => {
+                        const items = itemsByKey.get(key) || [];
+                        const fields = Array.from(new Set(items.map(x => x.field)));
+                        const vals = await withTimeout(
+                            hmgetCompat(client, key, fields),
                             timeoutMs,
-                            `CUSTOM-READ ${cc.name} ${key}`
+                            `HMGET ${key}`
                         ).catch(err => {
-                            logger.warn(`CUSTOM-READ ${cc.name} ${key} failed: ${err?.message || err}`);
-                            return null;
+                            logger.warn(`HMGET ${key} failed: ${err?.message || err}`);
+                            return new Array(fields.length);
                         });
-                        repliesByKey.set(key, normalizeFieldValues(res, fields));
-                    });
-                    await Promise.all(promises);
+                        return { key, fields, vals, items };
+                    }));
 
-                    // 3) mappa risposte -> tag
-                    for (const key of part) {
-                        const fields = fieldsPerKey.get(key) || [];
-                        const vals = repliesByKey.get(key) || [];
+                    for (const { fields, vals, items } of results) {
                         const byName = {};
                         fields.forEach((f, i) => { byName[f] = vals[i]; });
-                        const items = tagItemsByKey.get(key) || [];
                         for (const { tagId, field } of items) {
                             batchResults.push({ tagId, raw: byName[field] });
                         }
@@ -356,7 +280,7 @@ function RedisClient(_data, _logger, _events, _runtime) {
         keyMap = {};
         try {
             const readMode = (data?.property?.connectionOption || 'simple').toLowerCase();
-            const isHashLike = (readMode === 'hash' || readMode === 'custom');
+            const isHashLike = (readMode === 'hash');
             const deviceValueField = getDeviceOptions().readFields.value;
 
             const tags = data?.tags || {};
@@ -458,7 +382,7 @@ function RedisClient(_data, _logger, _events, _runtime) {
         }
 
         const timeoutMs = data?.property?.redisTimeoutMs || 3000;
-        const ttlSeconds = tag?.options?.redis?.ttlSeconds ?? data?.property?.ttlSeconds ?? 0;
+        const ttlSeconds = data?.property?.ttlSeconds ?? 0;
         const isHashMode = (data?.property?.connectionOption || 'simple').toLowerCase() === 'hash';
         const writeMeta = !!(data?.property?.writeMeta && isHashMode);
 

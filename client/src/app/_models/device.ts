@@ -322,7 +322,7 @@ export enum MelsecTagType {
 export enum RedisReadModeType {
     simple = 'simple',
     hash = 'hash',
-    custom = 'custom',
+    // custom = 'custom',
 }
 
 export enum RedisTagType {
