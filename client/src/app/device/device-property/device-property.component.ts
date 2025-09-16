@@ -81,7 +81,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
     redisReadModeHash = RedisReadModeType.hash;
     // redisReadModeCustom = RedisReadModeType.custom;
 	redisOptions = new RedisOptions();
-
+	writeArgsTooltip = '';
 	result = '';
 	private subscriptionDeviceProperty: Subscription;
 	private subscriptionHostInterfaces: Subscription;
@@ -213,7 +213,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			}
 			this.propertyLoading = false;
 		});
-
+		this.writeArgsTooltip = this.translateService.instant('device.property-redis-write-args-tooltip');
 		this.onDeviceTypeChanged();
 	}
 

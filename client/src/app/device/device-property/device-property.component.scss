@@ -63,3 +63,7 @@
         padding: 8px;
     }
 }
+
+:host ::ng-deep .multiline-tooltip {
+    white-space: pre-line;
+}

@@ -48,10 +48,14 @@ function RedisClient(_data, _logger, _events, _runtime) {
 
     const hmgetCompat = async (cli, key, fields) => {
         if (typeof cli.hMGet === 'function') {
-            try { return await cli.hMGet(key, ...fields); } catch (_) { /* fallthrough */ }
+            try {
+                return await cli.hMGet(key, ...fields);
+            } catch (_) { /* fallthrough */ }
         }
         if (typeof cli.hmGet === 'function') {
-            try { return await cli.hmGet(key, ...fields); } catch (_) { /* fallthrough */ }
+            try {
+                return await cli.hmGet(key, ...fields);
+            } catch (_) { /* fallthrough */ }
         }
         return Promise.all(fields.map(f => cli.hGet(key, f)));
     };
@@ -63,15 +67,24 @@ function RedisClient(_data, _logger, _events, _runtime) {
             redisTimeoutMs: 3000,
         };
         const opt = data?.property?.options;
-        if (!opt) return def;
-        if (typeof opt === 'string') { def.readFields.value = opt.trim() || def.readFields.value; return def; }
+        if (!opt) {
+            return def;
+        }
+        if (typeof opt === 'string') {
+            def.readFields.value = opt.trim() || def.readFields.value;
+            return def;
+        }
         if (opt.readFields) {
             def.readFields.value = opt.readFields.value || def.readFields.value;
             def.readFields.quality = opt.readFields.quality || def.readFields.quality;
             def.readFields.timestamp = opt.readFields.timestamp || def.readFields.timestamp;
         }
-        if (typeof opt.maxKeysPerPoll === 'number') def.maxKeysPerPoll = opt.maxKeysPerPoll;
-        if (typeof opt.redisTimeoutMs === 'number') def.redisTimeoutMs = opt.redisTimeoutMs;
+        if (typeof opt.maxKeysPerPoll === 'number') {
+            def.maxKeysPerPoll = opt.maxKeysPerPoll;
+        }
+        if (typeof opt.redisTimeoutMs === 'number') {
+            def.redisTimeoutMs = opt.redisTimeoutMs;
+        }
         return def;
     };
 
@@ -79,18 +92,30 @@ function RedisClient(_data, _logger, _events, _runtime) {
     const expandArgs = (tplArgs, ctx) => {
         const out = [];
         for (const a of (tplArgs || [])) {
-            if (a === '{{key}}') out.push(ctx.key);
-            else if (a === '{{fields...}}') out.push(...ctx.fields);
-            else out.push(String(a));
+            if (a === '{{key}}') {
+                out.push(ctx.key);
+            }
+            else if (a === '{{fields...}}') {
+                out.push(...ctx.fields);
+            }
+            else {
+                out.push(String(a));
+            }
         }
         return out;
     };
 
-    // ---- normalizza result (array|object -> array allineata ai fields)
+    // ---- normalize result (array|object -> array aligned to fields)
     const normalizeFieldValues = (res, fields) => {
-        if (Array.isArray(res)) return res;
-        if (res && typeof res === 'object') return fields.map(f => res[f]);
-        if (res == null) return fields.map(() => undefined);
+        if (Array.isArray(res)) {
+            return res;
+        }
+        if (res && typeof res === 'object') {
+            return fields.map(f => res[f]);
+        }
+        if (res == null) {
+            return fields.map(() => undefined);
+        }
         return [String(res)];
     };
 
@@ -188,12 +213,16 @@ function RedisClient(_data, _logger, _events, _runtime) {
             const timeoutMs = data?.property?.redisTimeoutMs || 3000;
 
             if (readMode === 'hash') {
-                // Raggruppa i tag per chiave e deduplica i field richiesti per quella chiave
+                // Group tags by key and deduplicate the fields required for that key.
                 const itemsByKey = new Map(); // key -> [{ tagId, field }]
                 for (const tagId in keyMap) {
                     const km = keyMap[tagId];
-                    if (km.kind !== 'hash') continue;
-                    if (!itemsByKey.has(km.key)) itemsByKey.set(km.key, []);
+                    if (km.kind !== 'hash') {
+                        continue;
+                    }
+                    if (!itemsByKey.has(km.key)) {
+                        itemsByKey.set(km.key, []);
+                    }
                     itemsByKey.get(km.key).push({ tagId, field: km.field });
                 }
 
@@ -230,7 +259,9 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 for (const tagId in keyMap) {
                     const km = keyMap[tagId];
                     if (km.kind === 'hash') {
-                        if (!hashGroups.has(km.key)) hashGroups.set(km.key, []);
+                        if (!hashGroups.has(km.key)) {
+                            hashGroups.set(km.key, []);
+                        }
                         hashGroups.get(km.key).push({ tagId, field: km.field });
                     } else {
                         keyReads.push({ tagId: tagId, key: km.key });
@@ -238,10 +269,15 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 }
 
                 if (keyReads.length) {
+                    const ids = keyReads.map(x => x.tagId);
                     const keys = keyReads.map(x => x.key);
-                    const values = await withTimeout(client.mGet(keys), timeoutMs, 'MGET');
-                    for (let i = 0; i < keyReads.length; i++) {
-                        batchResults.push({ tagId: keyReads[i].tagId, raw: values[i] });
+                    const parts = chunk(keys, data?.property?.maxKeysPerPoll || 500);
+                    let ofs = 0;
+                    for (const part of parts) {
+                        const vals = await withTimeout(client.mGet(part), timeoutMs, 'MGET');
+                        for (let i = 0; i < part.length; i++, ofs++) {
+                            batchResults.push({ tagId: ids[ofs], raw: vals[i] });
+                        }
                     }
                 }
 
@@ -264,7 +300,7 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 _emitStatus('connect-ok');
             }
         } catch (err) {
-            logger.error(`'${data.name}' polling error: ${err}`);
+            logger.error(`'${data.name}' polling error: ${err?.message || err}`);
         } finally {
             _checkWorking(false);
         }
@@ -289,12 +325,12 @@ function RedisClient(_data, _logger, _events, _runtime) {
             for (const id in tags) {
                 const tag = tags[id];
 
-                // In 'simple' leggiamo string keys (MGET); in 'hash' e 'custom' leggiamo hash fields
+                // In 'simple' read string keys (MGET); in 'hash' and 'custom' read hash fields
                 const kind = isHashLike ? 'hash' : 'key';
 
-                // Campo da leggere per i tag hash:
-                // - se il tag ha options string non vuota -> e il nome del field
-                // - altrimenti si usa il default device (readFields.value)
+                // Field to read for hash tags:
+                // - if the tag has a non-empty options string -> and the name of the field
+                // - otherwise, the default device is used (readFields.value)
                 const tagField = isHashLike
                     ? ((typeof tag?.options === 'string' && tag.options.trim())
                         ? tag.options.trim()
@@ -355,53 +391,248 @@ function RedisClient(_data, _logger, _events, _runtime) {
 
     /**
      * setValue: write SET / HSET
+     * Write modes:
+     * - Default: HSET/SET (sample-compat)
+     * - Command mode: write.name set (e.g., DAINSY.HSET)
+     *   * pairs mode: args as {name,value} or ["Field","{{token}}", ...]
+     *   * full argv: args already include {{key}}, {{history}}, {{field}}, {{value}}, ...
      */
     this.setValue = async function (tagId, value) {
         if (!client || !connected) {
             return false;
         }
-        const tag = data.tags[tagId];
-        const km = keyMap[tagId];
-        if (!tag || !km) {
-            return false;
-        }
-
-        let raw = await deviceUtils.tagRawCalculator(value, tag, runtime);
-        if (tag.type === 'boolean') raw = !!raw ? '1' : '0';
-        else if (tag.type === 'number') {
-            // normalize: "123,45" and "123.45"
-            let s = String(raw).replace(',', '.');
-            const n = Number(s);
-            if (!Number.isFinite(n)) {
-                logger.warn(`'${tag.name}' setValue rejected: NaN`);
-                return false;
-            }
-            raw = String(n);
-        } else {
-            raw = String(raw ?? '');
-        }
-
-        const timeoutMs = data?.property?.redisTimeoutMs || 3000;
-        const ttlSeconds = data?.property?.ttlSeconds ?? 0;
-        const isHashMode = (data?.property?.connectionOption || 'simple').toLowerCase() === 'hash';
-        const writeMeta = !!(data?.property?.writeMeta && isHashMode);
-
         try {
-            if (km.kind === 'hash') {
-                await withTimeout(client.hSet(km.key, km.field, raw), timeoutMs, `HSET meta ${km.key}`);
-                if (ttlSeconds > 0) await withTimeout(client.expire(km.key, ttlSeconds), timeoutMs, `EXPIRE ${km.key}`);
-            } else {
-                if (ttlSeconds > 0) await withTimeout(client.set(km.key, raw, { EX: ttlSeconds }), timeoutMs, `SETEX ${km.key}`);
-                else await withTimeout(client.set(km.key, raw), timeoutMs, `SET ${km.key}`);
+            // 1) Resolve mapping/tags
+            const km = keyMap[tagId];
+            if (!km || !km.key) {
+                throw new Error(`unknown-tag ${tagId}`);
+            }
+            const tag = data?.tags?.[tagId];
+
+            // 2) Device options
+            const timeoutMs = data?.property?.redisTimeoutMs || 3000;
+            const ttlSeconds = data?.property?.ttlSeconds ?? 0;
+            const readMode = (data?.property?.connectionOption || 'simple').toLowerCase();
+            const isHash = readMode === 'hash';
+
+            // 3) Normalise payload (supports primitive, JSON string, object)
+            let payload = { value };
+            if (typeof value === 'string') {
+                try {
+                    const parsed = JSON.parse(value);
+                    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                        payload = parsed;
+                    }
+                } catch { /* result { value: string } */ }
+            } else if (value && typeof value === 'object' && !Buffer.isBuffer(value)) {
+                payload = value;
             }
 
-            logger.info(`'${tag.name}' setValue(${tagId}, ${raw})`, true, true);
+            // 4) Pick helper
+            const pick = (obj, names) => {
+                for (const n of names) {
+                    if (obj[n] !== undefined) {
+                        return obj[n];
+                    }
+                }
+                return undefined;
+            };
+
+            // 5) Main field (hash only) and input value
+            const deviceValueField = getDeviceOptions().readFields?.value || 'Value';
+            const mainValueInput = pick(payload, ['value', 'Value', 'val', 'Val']) ?? payload;
+            const fieldOverride = pick(payload, ['field', 'Field']);
+            const mainField = isHash ? String(fieldOverride || km.field || deviceValueField) : undefined;
+
+            // 6) Calculate RAW with FUXA logic and normalise by tag type
+            let raw = await deviceUtils.tagRawCalculator(mainValueInput, tag, runtime);
+            if (tag?.type === 'boolean') {
+                raw = raw ? '1' : '0';
+            } else if (tag?.type === 'number') {
+                const str = String(raw).replace(',', '.');
+                const num = Number(str);
+                if (!Number.isFinite(num)) {
+                    logger.warn(`'${tag?.name || tagId}' setValue rejected: NaN`);
+                    return false;
+                }
+                raw = String(num);
+            } else {
+                raw = String(raw ?? '');
+            }
+            const mainValue = raw;
+
+            // 7) Optional targets from payload (only these three, no extras)
+            const quality = pick(payload, ['quality', 'Quality', 'qual', 'Qual']);
+            const timestamp = pick(payload, ['timestamp', 'Timestamp', 'utcTimeMs', 'UtcTimeMs']);
+            const provider = pick(payload, ['provider', 'Provider']);
+            const history = pick(payload, ['history', 'History', 'hist', 'Hist']);
+
+            // 8) Dynamic writing configuration (frontend)
+            const opts = data?.property?.options || {};
+            const write = opts?.customCommand?.write || {};
+            const cmdName = (write?.name || '').trim();                // es. "DAINSY.HSET" or ""
+            const writeArgsRaw = Array.isArray(write?.args) ? write.args : [];
+            if (Array.isArray(writeArgsRaw) && writeArgsRaw.some(x => x == null)) {
+                logger.warn(`'${data.name}' write.args contains null/undefined entries — ignored`);
+            }
+            const writeArgs = normalizeWriteArgs(writeArgsRaw);
+
+            // 9) Placeholder context (known tokens only)
+            const tokenCtx = {
+                key: km.key,
+                field: mainField,
+                value: mainValue,
+                quality,
+                timestamp,
+                provider,
+                history,
+            };
+
+            // 10) COMMAND MODE: if write.name
+            if (cmdName) {
+                // used:
+                //  A) argv complete in args (already with key/history/field/value)
+                //  B) pairs (field, value), including ‘history’:<n> which becomes a positional argument
+                const expanded = expandTokens(writeArgs, tokenCtx);
+
+                // complete argv if the first argument resembles the key
+                const looksLikeFullArgv =
+                    expanded.length > 0 && (expanded[0] === km.key || expanded[0].includes(':'));
+
+                if (looksLikeFullArgv) {
+                    const argv = [cmdName, ...expanded];
+                    await withTimeout(client.sendCommand(argv), timeoutMs, `${cmdName} ...`);
+                    return true;
+                }
+
+                // Pairs mode: extract history, the rest remains HSET pairs
+                const histSize = Number(history) || 100; // default 100
+                const pairs = [];
+                for (let i = 0; i < expanded.length; i += 2) {
+                    const k = expanded[i];
+                    const v = expanded[i + 1];
+                    if (k == null) {
+                        continue;
+                    }
+                    if (String(k).toLowerCase() === 'history') {
+                        continue;
+                    }
+                    pairs.push(String(k), v == null ? '' : String(v));
+                }
+
+                const argv = [cmdName, km.key, String(histSize), mainField, String(mainValue), ...pairs];
+                await withTimeout(client.sendCommand(argv), timeoutMs, `${cmdName} ...`);
+                return true;
+            }
+
+            // 11) DEFAULT (not write.name): compatible with the sample
+            if (isHash) {
+                const argv = ['HSET', km.key, mainField, String(mainValue)];
+
+                // If you have configured pairs in write.args (without name), append them as they are.
+                if (writeArgs.length > 0) {
+                    const expanded = expandTokens(writeArgs, tokenCtx);
+                    for (let i = 0; i < expanded.length; i += 2) {
+                        const k = expanded[i];
+                        const v = expanded[i + 1];
+                        if (k == null) {
+                            continue;
+                        }
+                        argv.push(String(k), v == null ? '' : String(v));
+                    }
+                } else {
+                    // No configuration: only use meta tags present in the payload (as in the sample)
+                    if (quality !== undefined) {
+                        argv.push('Quality', String(quality));
+                    }
+                    if (timestamp !== undefined) {
+                        argv.push('UtcTimeMs', String(timestamp));
+                    }
+                    if (provider !== undefined) {
+                        argv.push('Provider', String(provider));
+                    }
+                }
+
+                await withTimeout(client.sendCommand(argv), timeoutMs, `HSET ${km.key}`);
+                if (ttlSeconds > 0) {
+                    await withTimeout(
+                        client.sendCommand(['EXPIRE', km.key, String(ttlSeconds)]),
+                        timeoutMs,
+                        `EXPIRE ${km.key}`,
+                    );
+                }
+            } else {
+                // SIMPLE: SET (like sample), with EX optional
+                if (ttlSeconds > 0) {
+                    await withTimeout(
+                        client.sendCommand(['SET', km.key, String(mainValue), 'EX', String(ttlSeconds)]),
+                        timeoutMs,
+                        `SET ${km.key} EX ${ttlSeconds}`,
+                    );
+                } else {
+                    await withTimeout(
+                        client.sendCommand(['SET', km.key, String(mainValue)]),
+                        timeoutMs,
+                        `SET ${km.key}`,
+                    );
+                }
+            }
             return true;
         } catch (err) {
             logger.error(`'${tag?.name || tagId}' setValue error: ${err?.message || err}`);
             return false;
         }
     };
+
+    var expandTokens = (arr, ctx) => {
+        return (arr || []).map((x) => {
+            if (typeof x !== 'string') return x == null ? '' : String(x);
+            return x.replace(/\{\{([\w.\-]+)\}\}/g, (_, kRaw) => {
+                const k = String(kRaw);
+                let v = ctx[k];
+
+                // Automatic fallbacks for known tokens
+                if (v == null) {
+                    switch (k.toLowerCase()) {
+                        case 'timestamp':
+                        case 'utctimems':
+                        case 'now':
+                        case 'nowms':
+                            v = Date.now();
+                            break;
+                        case 'provider':
+                            v = 'app-fuxa';
+                            break;
+                        case 'quality':
+                            v = 0;
+                            break;
+                        // 'history' Not fallback
+                        default:
+                            v = '';
+                    }
+                }
+
+                return String(v);
+            });
+        });
+    }
+
+    var normalizeWriteArgs = (args) => {
+        const flat = [];
+        for (const it of args || []) {
+            if (typeof it === 'string') {
+                flat.push(it);
+            } else if (it && typeof it === 'object') {
+                // supports {name,value} or common aliases
+                const n = it.name ?? it.field ?? it.key ?? it.n;
+                const v = it.value ?? it.val ?? it.v;
+                if (n !== undefined) {
+                    flat.push(String(n), v == null ? '' : String(v));
+                }
+            }
+        }
+        return flat;
+    }
 
     this.isConnected = function () {
         return !!connected;
@@ -429,7 +660,6 @@ function RedisClient(_data, _logger, _events, _runtime) {
             utils.mergeObjectsValues(data.tags[tagId].daq, settings);
         }
     };
-
 
     var _clearVarsValue = function () {
         for (let id in varsValue) {
