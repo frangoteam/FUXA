@@ -1151,7 +1151,7 @@
     "gauges.property-input-type-date": "Date",
     "gauges.property-input-type-time": "Time",
     "gauges.property-input-type-datetime": "Date and Time",
-    "gauges.property-input-type-textarea": "Textarea",
+    "gauges.property-input-type-textarea": "Multiline",
     "gauges.property-input-type-password": "Password",
     "gauges.property-input-time-format": "Time format",
     "gauges.property-input-time-format-normal": "HH:mm",
