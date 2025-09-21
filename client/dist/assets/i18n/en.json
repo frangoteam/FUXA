@@ -1155,6 +1155,8 @@
     "gauges.property-input-type-date": "Date",
     "gauges.property-input-type-time": "Time",
     "gauges.property-input-type-datetime": "Date and Time",
+    "gauges.property-input-type-textarea": "Multiline",
+    "gauges.property-input-type-password": "Password",
     "gauges.property-input-time-format": "Time format",
     "gauges.property-input-time-format-normal": "HH:mm",
     "gauges.property-input-time-format-seconds": "HH:mm:ss",
@@ -1163,6 +1165,8 @@
     "gauges.property-input-convertion": "Convertion",
     "gauges.property-input-convertion-milliseconds": "Milliseconds",
     "gauges.property-input-convertion-string": "String",
+    "gauges.property-input-maxlength": "Max length",
+    "gauges.property-input-readonly": "Readonly",
 
     "gauges.property-update-enabled": "Enable update",
     "gauges.property-update-esc": "ESC update",
@@ -1188,6 +1192,7 @@
     "gauges.property-tag-label": "Tag",
     "gauges.property-tag-internal-title": "Set Placeholder of Destination (or Tag of internal device)",
     "gauges.property-input-range": "Allowed input range",
+    "gauges.property-input-startText": "Start text",
     "gauges.property-language-text": "Text or @TextID",
 
     "bag.property-ticks": "Ticks",
