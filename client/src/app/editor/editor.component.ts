@@ -42,6 +42,7 @@ import { PipePropertyData } from '../gauges/controls/pipe/pipe-property/pipe-pro
 import { MapsViewComponent } from '../maps/maps-view/maps-view.component';
 import { KioskWidgetsComponent } from '../resources/kiosk-widgets/kiosk-widgets.component';
 import { ResourcesService } from '../_services/resources.service';
+import { InputPropertyComponent } from '../gauges/controls/html-input/input-property/input-property.component';
 
 declare var Gauge: any;
 
@@ -1372,6 +1373,20 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.reloadGaugeDialog = !this.reloadGaugeDialog;
             return;
+        } else if (dlgType === GaugeDialogType.Input) {
+            dialogRef = this.dialog.open(InputPropertyComponent, {
+                position: { top: '60px' },
+                disableClose: true,
+                data: {
+                    settings: tempsettings,
+                    devices: Object.values(this.projectService.getDevices()),
+                    withEvents: eventsSupported,
+                    withActions: actionsSupported,
+                    inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
+                    withBitmask: bitmaskSupported,
+                    languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
+                }
+            });
         } else {
             //!TODO to be refactored (GaugePropertyComponent)
             elementWithLanguageText = this.isSelectedElementToEnableLanguageTextSettings();
