@@ -223,6 +223,7 @@ import { EditPlaceholderComponent } from './gui-helpers/edit-placeholder/edit-pl
 import { DeviceAdapterService } from './device-adapter/device-adapter.service';
 import { VideoPropertyComponent } from './gauges/controls/html-video/video-property/video-property.component';
 import { InputPropertyComponent } from './gauges/controls/html-input/input-property/input-property.component';
+import { TagPropertyEditMelsecComponent } from './device/tag-property/tag-property-edit-melsec/tag-property-edit-melsec.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -255,6 +256,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyEditEthernetipComponent,
         TagPropertyEditADSclientComponent,
         TagPropertyEditGpioComponent,
+        TagPropertyEditMelsecComponent,
         TagOptionsComponent,
         TopicPropertyComponent,
         DevicePropertyComponent,

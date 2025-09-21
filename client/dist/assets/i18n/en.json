@@ -77,7 +77,7 @@
     "dlg.menuitem-alarms": "Alarms by Click",
     "dlg.menuitem-address": "Link address",
     "dlg.menuitem-icons-filter": "Icons Filter",
-	
+
     "dlg.menuitem-submenu": "Submenu",
     "dlg.menuitem-add-submenu": "Add Submenu Item",
     "dlg.menuitem-submenu-items": "Submenu Items",
@@ -535,6 +535,7 @@
     "editor.view-property": "Property",
     "editor.view-clone": "Clone",
     "editor.view-export": "Export",
+    "editor.view-clean": "Clean",
     "editor.view-add": "Add View",
     "editor.image-add": "Add image",
     "editor.view-import": "Import View",
@@ -960,6 +961,9 @@
     "device.template-device": "Template name",
     "device.template-tags": "Template name",
     "device.property-socket-reuse": "Socket Reuse",
+    "device.property-melsec-target": "Address (IP[:port])",
+    "device.property-melsec-ascii": "ASCII",
+    "device.property-melsec-octalIO": "Octal I/O",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.browsetopics-property-sub": "Subscribe",
@@ -1630,6 +1634,7 @@
     "dlg.app-language-ko": "Korean",
     "dlg.app-language-es": "Spanish",
     "dlg.app-language-fr": "French",
+    "dlg.app-language-ja": "Japanese",
     "dlg.app-settings-server-port": "Server is listening on port",
     "dlg.app-settings-server-log-full": "Log full mode",
     "dlg.app-settings-alarms": "Alarms",
