@@ -218,8 +218,12 @@ import { LanguageTextPropertyComponent } from './language/language-text-property
 import { LanguageService } from './_services/language.service';
 import { KioskWidgetsComponent } from './resources/kiosk-widgets/kiosk-widgets.component';
 import { ClientScriptAccessComponent } from './editor/client-script-access/client-script-access.component';
+import { TagPropertyEditWebcamComponent } from './device/tag-property/tag-property-edit-webcam/tag-property-edit-webcam.component';
 import { EditPlaceholderComponent } from './gui-helpers/edit-placeholder/edit-placeholder.component';
 import { DeviceAdapterService } from './device-adapter/device-adapter.service';
+import { VideoPropertyComponent } from './gauges/controls/html-video/video-property/video-property.component';
+import { InputPropertyComponent } from './gauges/controls/html-input/input-property/input-property.component';
+import { TagPropertyEditMelsecComponent } from './device/tag-property/tag-property-edit-melsec/tag-property-edit-melsec.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -252,6 +256,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyEditEthernetipComponent,
         TagPropertyEditADSclientComponent,
         TagPropertyEditGpioComponent,
+        TagPropertyEditMelsecComponent,
         TagOptionsComponent,
         TopicPropertyComponent,
         DevicePropertyComponent,
@@ -277,6 +282,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         GaugeBaseComponent,
         HtmlInputComponent,
         HtmlButtonComponent,
+        InputPropertyComponent,
         HtmlSelectComponent,
         HtmlChartComponent,
         HtmlGraphComponent,
@@ -390,7 +396,9 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         LanguageTypePropertyComponent,
         LanguageTextPropertyComponent,
         LanguageTextListComponent,
-        ClientScriptAccessComponent
+        ClientScriptAccessComponent,
+        TagPropertyEditWebcamComponent,
+        VideoPropertyComponent
     ],
     imports: [
         BrowserModule,

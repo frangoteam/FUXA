@@ -78,6 +78,11 @@
     "dlg.menuitem-address": "Link address",
     "dlg.menuitem-icons-filter": "Icons Filter",
 
+    "dlg.menuitem-submenu": "Submenu",
+    "dlg.menuitem-add-submenu": "Add Submenu Item",
+    "dlg.menuitem-submenu-items": "Submenu Items",
+    "sidenav.new_item": "New Submenu Item",
+
     "dlg.headeritem-title": "Header Item",
     "dlg.headeritem-icon": "Icon",
     "dlg.headeritem-icons-filter": "Icons Filter",
@@ -412,8 +417,15 @@
     "graph.grouptype-days": "Days",
 
     "iframe.property-data": "Data",
-    "iframe.property-address": "Address",
-    "iframe.property-name": "Name",
+    "iframe.property-address": "Address (fix)",
+    "iframe.property-image": "Image",
+
+    "video.property-title": "Video settings",
+    "video.property-data": "Data",
+    "video.property-address": "Address",
+    "video.property-controls": "Show controls",
+    "video.property-image": "Initial image",
+    "video.property-image-placeholder": "Select the initial image",
 
     "panel.property-data": "Data",
     "panel.property-view-name": "View name",
@@ -523,6 +535,7 @@
     "editor.view-property": "Property",
     "editor.view-clone": "Clone",
     "editor.view-export": "Export",
+    "editor.view-clean": "Clean",
     "editor.view-add": "Add View",
     "editor.image-add": "Add image",
     "editor.view-import": "Import View",
@@ -565,6 +578,8 @@
     "editor.controls-image": "Image (link)",
     "editor.controls-panel": "Panel",
     "editor.controls-panel-settings": "Panel settings",
+    "editor.controls-video": "Video",
+    "editor.controls-video-settings": "Video settings",
 
     "editor.layout-settings": "Layout settings",
 
@@ -731,11 +746,16 @@
     "shapes.action-show": "Show",
     "shapes.action-blink": "Blink",
     "shapes.action-stop": "Stop",
+    "shapes.action-start": "Start",
+    "shapes.action-pause": "Pause",
+    "shapes.action-reset": "Reset",
     "shapes.action-clockwise": "Turn clockwise",
     "shapes.action-anticlockwise": "Turn anticlockwise",
     "shapes.action-downup": "Up and down",
     "shapes.action-rotate": "Rotate",
     "shapes.action-move": "Move",
+    "shapes.action-refreshImage": "Refresh image",
+
     "shapes.event-click": "Click",
     "shapes.event-dblclick": "DoubleClick",
     "shapes.event-mouseup": "MouseUp",
@@ -941,6 +961,9 @@
     "device.template-device": "Template name",
     "device.template-tags": "Template name",
     "device.property-socket-reuse": "Socket Reuse",
+    "device.property-melsec-target": "Address (IP[:port])",
+    "device.property-melsec-ascii": "ASCII",
+    "device.property-melsec-octalIO": "Octal I/O",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.browsetopics-property-sub": "Subscribe",
@@ -1031,6 +1054,17 @@
     "device.tag-scale-write-script-tooltip": "Script to transform value before write to client",
     "device.tag-scale-write-script-params": "Enter Write Script Parameter Values",
     "device.tag-scale-script-params-tooltip": "JSON formated array of parameters with values to pass to script",
+    "device.tag-property-webcam-device": "Webcam device",
+    "device.tag-property-webcam-device-address": "Webcam device ,like(/dev/video0)",
+    "device.tag-property-webcam-options.width": "width",
+    "device.tag-property-webcam-options.height": "height",
+    "device.tag-property-webcam-options.frames": "frames",
+    "device.tag-property-webcam-options.quality": "quality",
+    "device.tag-property-webcam-options.outputType": "outputType",
+    "device.tag-property-webcam-options.callbackReturn": "callbackReturn",
+
+
+
 
     "device.edit-placeholder-titel": "Edit Placeholder",
 
@@ -1121,6 +1155,8 @@
     "gauges.property-input-type-date": "Date",
     "gauges.property-input-type-time": "Time",
     "gauges.property-input-type-datetime": "Date and Time",
+    "gauges.property-input-type-textarea": "Multiline",
+    "gauges.property-input-type-password": "Password",
     "gauges.property-input-time-format": "Time format",
     "gauges.property-input-time-format-normal": "HH:mm",
     "gauges.property-input-time-format-seconds": "HH:mm:ss",
@@ -1129,6 +1165,8 @@
     "gauges.property-input-convertion": "Convertion",
     "gauges.property-input-convertion-milliseconds": "Milliseconds",
     "gauges.property-input-convertion-string": "String",
+    "gauges.property-input-maxlength": "Max length",
+    "gauges.property-input-readonly": "Readonly",
 
     "gauges.property-update-enabled": "Enable update",
     "gauges.property-update-esc": "ESC update",
@@ -1154,6 +1192,7 @@
     "gauges.property-tag-label": "Tag",
     "gauges.property-tag-internal-title": "Set Placeholder of Destination (or Tag of internal device)",
     "gauges.property-input-range": "Allowed input range",
+    "gauges.property-input-startText": "Start text",
     "gauges.property-language-text": "Text or @TextID",
 
     "bag.property-ticks": "Ticks",
@@ -1595,11 +1634,12 @@
     "dlg.app-language-ua": "Ukrainian",
     "dlg.app-language-zh-cn": "Chinese",
     "dlg.app-language-pt": "Portuguese",
-	"dlg.app-language-sv": "Swedish",
+    "dlg.app-language-sv": "Swedish",
     "dlg.app-language-tr": "Turkish",
     "dlg.app-language-ko": "Korean",
     "dlg.app-language-es": "Spanish",
     "dlg.app-language-fr": "French",
+    "dlg.app-language-ja": "Japanese",
     "dlg.app-settings-server-port": "Server is listening on port",
     "dlg.app-settings-server-log-full": "Log full mode",
     "dlg.app-settings-alarms": "Alarms",

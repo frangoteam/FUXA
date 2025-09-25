@@ -140,4 +140,11 @@ export class EditorViewsListComponent {
         let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         FileSaver.saveAs(blob, filename);
     }
+
+    onCleanView(view: View) {
+       const changed = this.projectService.cleanView(view);
+       if (changed) {
+            this.onSelectView(view);
+       }
+    }
 }

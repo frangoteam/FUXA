@@ -103,7 +103,7 @@ export class HtmlSwitchComponent extends GaugeBaseComponent {
                 }
                 componentRef.instance.isReadonly = !!ga.property?.events?.length;
                 componentRef.instance['name'] = ga.name;
-                if (permission?.show && !permission?.enabled) {
+                if (permission?.enabled === false) {
                     componentRef.instance.setDisabled(true);
                 }
                 return componentRef.instance;

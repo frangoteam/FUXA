@@ -2,7 +2,7 @@ import { Injectable, Output, EventEmitter } from '@angular/core';
 import { HmiService } from '../_services/hmi.service';
 import { ChartRangeType, ChartViewType } from '../_models/chart';
 
-import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery, TableType } from '../_models/hmi';
+import { GaugeSettings, Variable, Event, GaugeEvent, GaugeEventType, GaugeStatus, Size, DaqQuery, TableType, GaugeVideoProperty } from '../_models/hmi';
 import { ValueComponent } from './controls/value/value.component';
 import { GaugeDialogType } from './gauge-property/gauge-property.component';
 import { HtmlInputComponent } from './controls/html-input/html-input.component';
@@ -36,6 +36,7 @@ import { PanelComponent } from './controls/panel/panel.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 import { AuthService } from '../_services/auth.service';
 import { DevicesUtils, Tag } from '../_models/device';
+import { HtmlVideoComponent } from './controls/html-video/html-video.component';
 
 @Injectable()
 export class GaugesManager {
@@ -67,12 +68,12 @@ export class GaugesManager {
     HtmlSwitchComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, ShapesComponent, HtmlButtonComponent, HtmlSelectComponent,
-        ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent, PanelComponent];
+        ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent, PanelComponent, HtmlVideoComponent];
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
         PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
-        HtmlImageComponent, PanelComponent];
+        HtmlImageComponent, PanelComponent, HtmlVideoComponent];
 
     constructor(private hmiService: HmiService,
         private authService: AuthService,
@@ -207,8 +208,12 @@ export class GaugesManager {
             this.mapGauges[ga.id] = gauge;
         } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
             HtmlImageComponent.detectChange(ga, true);
+        } else if (ga.type.startsWith(HtmlVideoComponent.TypeTag)) {
+            HtmlVideoComponent.initElement(ga);
         } else if (elementWithLanguageText) {
             GaugeBaseComponent.setLanguageText(elementWithLanguageText, ga.property?.text);
+        } else if (ga.type.startsWith(HtmlInputComponent.TypeTag)) {
+            HtmlInputComponent.initElement(ga);
         }
         return false;
     }
@@ -877,11 +882,26 @@ export class GaugesManager {
             let gauge = PipeComponent.initElement(ga, isview, parent?.getGaugeStatus(ga));
             this.mapGauges[ga.id] = gauge;
             return gauge || true;
+        } else if (ga.type.startsWith(HtmlVideoComponent.TypeTag)) {
+            let gauge = HtmlVideoComponent.initElement(ga, isview);
+            this.mapGauges[ga.id] = gauge;
+            return gauge || true;
         } else {
             let ele = document.getElementById(ga.id);
             ele?.setAttribute('data-name', ga.name);
             GaugeBaseComponent.setLanguageText(ele, textTranslation);
             return ele || true;
+        }
+    }
+
+    chackSetModeParamToAddedGauge(ga: GaugeSettings, param: string | any) {
+        if (!param) {
+            return;
+        }
+        if (ga?.type === HtmlVideoComponent.TypeTag) {
+            ga.property = ga.property || new GaugeVideoProperty();
+            ga.property.options = ga.property.options || {};
+            ga.property.options.address = param;
         }
     }
 

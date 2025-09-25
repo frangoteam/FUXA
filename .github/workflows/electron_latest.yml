@@ -25,6 +25,9 @@ jobs:
       with:
         node-version: '18'
 
+    #- name: Clear npm cache
+    #  run: npm cache clean --force
+
     - name: Install server dependencies
       run: npm install
       working-directory: ./server

@@ -41,6 +41,8 @@ import { LibWidgetsService } from '../resources/lib-widgets/lib-widgets.service'
 import { PipePropertyData } from '../gauges/controls/pipe/pipe-property/pipe-property.component';
 import { MapsViewComponent } from '../maps/maps-view/maps-view.component';
 import { KioskWidgetsComponent } from '../resources/kiosk-widgets/kiosk-widgets.component';
+import { ResourcesService } from '../_services/resources.service';
+import { InputPropertyComponent } from '../gauges/controls/html-input/input-property/input-property.component';
 
 declare var Gauge: any;
 
@@ -85,6 +87,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     currentView: View = null;
     hmi: Hmi = new Hmi();// = {_id: '', name: '', networktype: '', ipaddress: '', maskaddress: '' };
     currentMode = '';
+    setModeParam: string | any;
     imagefile: string;
     ctrlInitParams: any;
     gridOn = false;
@@ -129,6 +132,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         public gaugesManager: GaugesManager,
         private viewContainerRef: ViewContainerRef,
         private resolver: ComponentFactoryResolver,
+        private resourcesService: ResourcesService,
         private libWidgetsService: LibWidgetsService,
         private mdIconRegistry: MatIconRegistry,
         private sanitizer: DomSanitizer) {
@@ -179,7 +183,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setMode('select');
         let hmi = this.projectService.getHmi();
         if (hmi) {
-            this.loadHmi();
+            this.loadHmi(true);
         }
         this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
             this.loadHmi();
@@ -317,15 +321,14 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * Load the hmi resource and bind it
      */
-    private loadHmi() {
+    private loadHmi(firstTime = false) {
         this.gaugesManager.initGaugesMap();
         this.currentView = null;
         this.hmi = this.projectService.getHmi();
         // check new hmi
-        if (!this.hmi.views || this.hmi.views.length <= 0) {
+        if (this.hmi.views?.length <= 0 && !firstTime) {
             this.hmi.views = [];
-            this.addView();
-            // this.selectView(this.hmi.views[0].name);
+            this.addView(ProjectService.MainViewName);
         } else {
             let oldsel = localStorage.getItem('@frango.webeditor.currentview');
             if (!oldsel && this.hmi.views.length) {
@@ -345,7 +348,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // check and set start page
         if (!this.hmi.layout.start) {
-            this.hmi.layout.start = this.hmi.views[0].id;
+            this.hmi.layout.start = this.hmi.views[0]?.id;
         }
         this.loadPanelState();
         this.isLoading = false;
@@ -950,6 +953,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param ga
      */
     checkGaugeAdded(ga: GaugeSettings) {
+        this.gaugesManager.chackSetModeParamToAddedGauge(ga, this.setModeParam);
         let gauge = this.gaugesManager.initElementAdded(ga, this.resolver, this.viewContainerRef, false);
         if (gauge) {
             if (gauge !== true) {
@@ -959,6 +963,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.setGaugeSettings(ga);
         }
+        this.setModeParam = null; // reset the mode param to null, because the gauge is added and not a new one;
     }
 
     /**
@@ -1044,18 +1049,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (!found)
                     {break;}
             }
-            let v = new View(Utils.getShortGUID('v_'), type);
-            if (name) {
-                v.name = name;
-            } else if (this.hmi.views.length <= 0) {
-                v.name = 'MainView';
-            } else {
-                v.name = nn + idx;
-                v.profile.bkcolor = '#ffffffff';
+            if (!name) {
+                name = nn + idx;
             }
-            if (type === ViewType.cards) {
-                v.profile.bkcolor = 'rgba(67, 67, 67, 1)';
-            }
+            let v = this.projectService.getNewView(name, type);
             this.hmi.views.push(v);
             this.onSelectView(v);
             this.saveView(this.currentView);
@@ -1363,6 +1360,33 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.reloadGaugeDialog = !this.reloadGaugeDialog;
             return;
+        } else if (dlgType === GaugeDialogType.Video) {
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings,
+                dlgType: dlgType,
+                names: names,
+                withActions: actionsSupported
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
+        } else if (dlgType === GaugeDialogType.Input) {
+            dialogRef = this.dialog.open(InputPropertyComponent, {
+                position: { top: '60px' },
+                disableClose: true,
+                data: {
+                    settings: tempsettings,
+                    devices: Object.values(this.projectService.getDevices()),
+                    withEvents: eventsSupported,
+                    withActions: actionsSupported,
+                    inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
+                    withBitmask: bitmaskSupported,
+                    languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
+                }
+            });
         } else {
             //!TODO to be refactored (GaugePropertyComponent)
             elementWithLanguageText = this.isSelectedElementToEnableLanguageTextSettings();
@@ -1495,6 +1519,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                             }
                             self.setMode('svg-image');
                         });
+                    } else if (this.resourcesService.isVideo(this.imagefile)) {
+                        this.setModeParam = this.imagefile;
+                        self.setMode('own_ctrl-video');
                     }
                     // } else {
                     //     this.getBase64Image(result, function (imgdata) {

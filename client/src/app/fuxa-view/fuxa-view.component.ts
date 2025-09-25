@@ -83,6 +83,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     protected plainVariableMapping: VariableMappingDictionary = {};
     private destroy$ = new Subject<void>();
     private loadOk = false;
+    private zIndexCounter = 1000;
 
     constructor(
         private translateService: TranslateService,
@@ -614,7 +615,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         if (htmlevent.type === 'key-enter') {
             htmlevent.dom.onkeydown = function(ev) {
-                if (ev.key == 'Enter') {
+                if (ev.key === 'Enter') {
+                    const isToSkip = HtmlInputComponent.SkipEnterEvent.includes((htmlevent?.dom?.nodeName ?? '').toLowerCase());
+                    const ctrlOrMeta = ev.ctrlKey || ev.metaKey;
+                    if (!ctrlOrMeta && isToSkip) {
+                        return;
+                    }
                     htmlevent.dbg = 'key pressed ' + htmlevent.dom.id + ' ' + htmlevent.dom.value;
                     htmlevent.id = htmlevent.dom.id;
                     htmlevent.value = htmlevent.dom.value;
@@ -795,8 +801,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    private closeAllCards(): void {
+        this.cards = [];
+    }
+
     loadPage(param: any, viewref: string, options: any) {
         let view: View = this.getView(viewref);
+        this.closeAllCards();
         if (view) {
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);
@@ -826,6 +837,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             position: { top: '60px' }
         });
         dialogRef.afterClosed().subscribe();
+    }
+
+    bringCardToFront(card: any) {
+        card.zIndex = this.nextZIndex();
+    }
+
+    private nextZIndex(): number {
+        return ++this.zIndexCounter;
     }
 
     onOpenCard(id: string, event: PointerEvent | TouchEvent | any, viewref: string, options: any = {}) {
@@ -866,11 +885,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         card.variablesMapping = options?.variablesMapping;
         card.disableDefaultClose = options?.hideClose;
         card.sourceDeviceId = options?.sourceDeviceId;
+        card.zIndex = this.nextZIndex();
+
         if (this.parentcards) {
             this.parentcards.push(card);
         } else {
             this.cards.push(card);
         }
+        this.changeDetector.detectChanges();
     }
 
     onOpenTab(event: GaugeEvent, options: any) {
@@ -1159,6 +1181,7 @@ export class CardModel {
     public view: View;
     public sourceDeviceId: string;
     disableDefaultClose: boolean;
+    zIndex: number;
 
     constructor(id: string) {
         this.id = id;

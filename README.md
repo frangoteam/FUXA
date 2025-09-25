@@ -25,6 +25,15 @@ See the Wiki for more details about installing and getting started
 
 [Wiki Installing/Building](https://github.com/frangoteam/FUXA/wiki/Installing-and-Running)
 
+### Install using prebuilt Electron Packages
+
+You will need to be logged into github to access the download button for Electron Action Builds, 
+click on the workflow and scroll down to Artifacts and click the download icon for you system
+
+[Electron Action Builds](https://github.com/frangoteam/FUXA/actions/workflows/electron_latest.yml)
+
+<img width="2082" height="531" alt="image" src="https://github.com/user-attachments/assets/40f01e1d-cf39-4145-99a0-e8fedf791edf" />
+
 
 ### Running from docker
 ```
