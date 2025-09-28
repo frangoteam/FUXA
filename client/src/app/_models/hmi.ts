@@ -249,6 +249,8 @@ export interface InputOptionsProperty {
     updatedEsc?: boolean;
     selectOnClick?: boolean;
     actionOnEsc?: InputActionEscType;
+    maxlength?: number;
+    readonly?: boolean;
 }
 
 export enum InputOptionType {
@@ -256,7 +258,9 @@ export enum InputOptionType {
     text = 'text',
     date = 'date',
     time = 'time',
-    datetime = 'datetime'
+    datetime = 'datetime',
+    textarea = 'textarea',
+    password = 'password'
 }
 
 export enum InputTimeFormatType {

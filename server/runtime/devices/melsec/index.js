@@ -43,7 +43,9 @@ function MelsecClient(_data, _logger, _events, _runtime) {
     this.connect = function () {
         return new Promise((resolve, reject) => {
             try {
-                if (_checkWorking(true) === false) return reject();
+                if (_checkWorking(true) === false) {
+                    return reject();
+                }
                 if (!data.property || !data.property.address) {
                     logger.error(`'${data.name}' missing connection data!`);
                     _emitStatus('connect-failed');
@@ -188,14 +190,18 @@ function MelsecClient(_data, _logger, _events, _runtime) {
         }
     };
 
-    this.getValues = function () { return varsValue; };
+    this.getValues = function () {
+        return varsValue;
+    };
 
     this.getValue = function (id) {
         if (varsValue[id]) return { id, value: varsValue[id].value, ts: lastTimestampValue };
         return null;
     };
 
-    this.getStatus = function () { return lastStatus; };
+    this.getStatus = function () {
+        return lastStatus;
+    };
 
     this.getTagProperty = function (tagId) {
         const t = tagMap[tagId];
@@ -224,7 +230,8 @@ function MelsecClient(_data, _logger, _events, _runtime) {
 
     /**
      * Return if device is connected
-     */
+
+    */
     this.isConnected = function () {
         return connected;
     }
@@ -262,25 +269,31 @@ function MelsecClient(_data, _logger, _events, _runtime) {
         const temp = {};
 
         for (const id in tagMap) {
+            const prevRaw = varsValue[id]?.rawValue;
             const raw = valuesObj[id]; // key = tagId via setTranslationCB
-            if (typeof raw === 'undefined') continue;
+            if (typeof raw === 'undefined') {
+                continue;
+            }
             const tagDef = tagMap[id];
             temp[id] = {
                 id,
                 rawValue: raw,
                 type: tagDef.type,
                 daq: tagDef.daq,
-                changed: true,
+                changed: prevRaw !== raw,
                 tagref: tagDef
             };
             some = true;
         }
-        if (!some) return null;
+        if (!some) {
+            return null;
+        }
 
         for (const id in temp) {
             if (!utils.isNullOrUndefined(temp[id].rawValue)) {
+                const parsed = deviceUtils.parseValue(temp[id].rawValue, temp[id].tagref?.type);  //this parser don't work because check only js types (number, string, boolean)
                 temp[id].value = await deviceUtils.tagValueCompose(
-                    temp[id].rawValue,
+                    parsed,
                     varsValue[id] ? varsValue[id].value : null,
                     temp[id].tagref,
                     runtime

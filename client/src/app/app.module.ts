@@ -222,6 +222,7 @@ import { TagPropertyEditWebcamComponent } from './device/tag-property/tag-proper
 import { EditPlaceholderComponent } from './gui-helpers/edit-placeholder/edit-placeholder.component';
 import { DeviceAdapterService } from './device-adapter/device-adapter.service';
 import { VideoPropertyComponent } from './gauges/controls/html-video/video-property/video-property.component';
+import { InputPropertyComponent } from './gauges/controls/html-input/input-property/input-property.component';
 import { TagPropertyEditMelsecComponent } from './device/tag-property/tag-property-edit-melsec/tag-property-edit-melsec.component';
 import { TagPropertyEditRedisComponent } from './device/tag-property/tag-property-edit-redis/tag-property-edit-redis.component';
 
@@ -282,6 +283,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         GaugeBaseComponent,
         HtmlInputComponent,
         HtmlButtonComponent,
+        InputPropertyComponent,
         HtmlSelectComponent,
         HtmlChartComponent,
         HtmlGraphComponent,

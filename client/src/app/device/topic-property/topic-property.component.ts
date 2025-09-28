@@ -252,7 +252,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
                     topic.type = this.topicSelectedSubType;
                     topic.address = this.selectedTopic.key;
                     topic.memaddress = this.topicContent[i].key;
-                    topic.options = { subs: this.topicContent.map((tcnt) => tcnt.key) };
+                    topic.options = { subs: [topic.memaddress] };
                     if (this.topicContent[i].name) {
                         topic.name = this.topicContent[i].name;
                     } else {
