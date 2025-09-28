@@ -874,6 +874,7 @@
     "device.list-max": "Max",
     "device.list-value": "Value",
     "device.list-timestamp": "Timestamp",
+    "device.list-quality": "Quality",
     "device.list-description": "Description",
     "device.list-edit": "Edit Tag",
     "device.list-add": "Add Tag",

@@ -216,12 +216,13 @@ export class HmiService {
         });
         // devices values
         this.socket.on(IoEventTypes.DEVICE_VALUES, (message) => {
-            const updateVariable = (id: string, value: any, timestamp: any) => {
+            const updateVariable = (id: string, value: any, timestamp: any, quality: any) => {
                 if (Utils.isNullOrUndefined(this.variables[id])) {
                     this.variables[id] = new Variable(id, null, null);
                 }
                 this.variables[id].value = value;
                 this.variables[id].timestamp = timestamp;
+                this.variables[id].quality = quality;
                 this.setSignalValue(this.variables[id]);
             };
 
@@ -229,11 +230,12 @@ export class HmiService {
                 const originalId = message.values[idx].id;
                 const value = message.values[idx].value;
                 const timestamp = message.values[idx].timestamp;
-                updateVariable(originalId, value, timestamp);
+                const quality = message.values[idx].quality;
+                updateVariable(originalId, value, timestamp, quality);
                 const adapterIds = this.deviceAdapaterService.resolveDeviceTagIdForAdapter(originalId);
                 if (adapterIds?.length) {
                     adapterIds.forEach(adapterId => {
-                        updateVariable(adapterId, value, timestamp);
+                        updateVariable(adapterId, value, timestamp, quality);
                     });
                 }
             }

@@ -576,6 +576,7 @@ export class Variable {
     error: number;
     timestamp: number;
     device?: Device;
+    quality?: string;
     constructor(id: string, name: string, device?: Device) {
         this.id = id;
         this.name = name;

@@ -49,15 +49,15 @@ function RedisClient(_data, _logger, _events, _runtime) {
     const hmgetCompat = async (cli, key, fields) => {
         if (typeof cli.hMGet === 'function') {
             try {
-                return await cli.hMGet(key, ...fields);
+                return await cli.hMGet(key, fields);
             } catch (_) { /* fallthrough */ }
         }
         if (typeof cli.hmGet === 'function') {
             try {
-                return await cli.hmGet(key, ...fields);
+                return await cli.hmGet(key, fields);
             } catch (_) { /* fallthrough */ }
         }
-        return Promise.all(fields.map(f => cli.hGet(key, f)));
+        return await cli.sendCommand(['HMGET', key, ...fields.map(String)]);
     };
 
     const getDeviceOptions = () => {
@@ -211,6 +211,7 @@ function RedisClient(_data, _logger, _events, _runtime) {
             const readMode = (data?.property?.connectionOption || 'simple').toLowerCase();
             const batchResults = [];
             const timeoutMs = data?.property?.redisTimeoutMs || 3000;
+            const deviceFields = getDeviceOptions().readFields; // { value, quality, timestamp }
 
             if (readMode === 'hash') {
                 // Group tags by key and deduplicate the fields required for that key.
@@ -232,8 +233,12 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 for (const part of parts) {
                     const results = await Promise.all(part.map(async (key) => {
                         const items = itemsByKey.get(key) || [];
-                        const fields = Array.from(new Set(items.map(x => x.field)));
-                        const vals = await withTimeout(
+                        const fields = Array.from(new Set([
+                            ...items.map(x => x.field),
+                            deviceFields?.timestamp,
+                            deviceFields?.quality
+                        ].filter(Boolean)));
+                        const valsRaw = await withTimeout(
                             hmgetCompat(client, key, fields),
                             timeoutMs,
                             `HMGET ${key}`
@@ -241,14 +246,17 @@ function RedisClient(_data, _logger, _events, _runtime) {
                             logger.warn(`HMGET ${key} failed: ${err?.message || err}`);
                             return new Array(fields.length);
                         });
+                        const vals = normalizeFieldValues(valsRaw, fields);
                         return { key, fields, vals, items };
                     }));
 
                     for (const { fields, vals, items } of results) {
                         const byName = {};
                         fields.forEach((f, i) => { byName[f] = vals[i]; });
+                        const metaTs = deviceFields?.timestamp ? byName[deviceFields.timestamp] : undefined;
+                        const metaQ = deviceFields?.quality ? byName[deviceFields.quality] : undefined;
                         for (const { tagId, field } of items) {
-                            batchResults.push({ tagId, raw: byName[field] });
+                            batchResults.push({ tagId, raw: byName[field], metaTs, metaQ });
                         }
                     }
                 }
@@ -282,12 +290,30 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 }
 
                 for (const [hashKey, items] of hashGroups.entries()) {
-                    const fields = items.map(x => x.field);
-                    const aVals = await withTimeout(hmgetCompat(client, hashKey, fields), timeoutMs, `HMGET ${hashKey}`);
-                    for (let i = 0; i < items.length; i++) {
-                        batchResults.push({ tagId: items[i].tagId, raw: aVals[i] });
+                    const fields = Array.from(new Set([
+                        ...items.map(x => x.field),
+                        deviceFields?.timestamp,
+                        deviceFields?.quality
+                    ].filter(Boolean)));
+
+                    const valsRaw = await withTimeout(
+                        hmgetCompat(client, hashKey, fields),
+                        timeoutMs,
+                        `HMGET ${hashKey}`
+                    );
+                    const vals = normalizeFieldValues(valsRaw, fields);
+
+                    const byName = {};
+                    fields.forEach((f, idx) => { byName[f] = vals[idx]; });
+
+                    const metaTs = deviceFields?.timestamp ? byName[deviceFields.timestamp] : undefined;
+                    const metaQ  = deviceFields?.quality   ? byName[deviceFields.quality]   : undefined;
+
+                    for (const { tagId, field } of items) {
+                        batchResults.push({ tagId, raw: byName[field], metaTs, metaQ });
                     }
                 }
+
             }
             const changed = await _updateVarsValue(batchResults);
             lastTimestampValue = Date.now();
@@ -366,7 +392,8 @@ function RedisClient(_data, _logger, _events, _runtime) {
      */
     this.getValue = function (id) {
         if (varsValue[id]) {
-            return { id, value: varsValue[id].value, ts: lastTimestampValue };
+            const t = varsValue[id];
+            return { id, value: t.value, ts: t.timestamp ?? lastTimestampValue };
         }
         return null;
     };
@@ -695,7 +722,9 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 type: tag.type,
                 daq: tag.daq,
                 changed,
-                tagref: tag
+                tagref: tag,
+                metaTs: item.metaTs,
+                metaQ:  item.metaQ
             };
             hasAny = true;
         }
@@ -721,10 +750,17 @@ function RedisClient(_data, _logger, _events, _runtime) {
                     runtime
                 );
 
-                t.timestamp = timestamp;
+                const fromRedis = Number(t.metaTs);
+                const ts = Number.isFinite(fromRedis) ? fromRedis : Date.now();
+                t.timestamp = ts;
+
+                if (t.metaQ !== undefined) {
+                  const q = Number(t.metaQ);
+                  if (Number.isFinite(q)) t.quality = q;
+                }
 
                 // DAQ decision
-                if (this.addDaq && deviceUtils.tagDaqToSave(t, timestamp)) {
+                if (this.addDaq && deviceUtils.tagDaqToSave(t, t.timestamp)) {
                     result[id] = t;
                 }
             }
