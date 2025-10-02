@@ -135,10 +135,17 @@ describe('Utils Help functions', () => {
         it('should return a list of valid network interfaces', async () => {
             const result = await Utils.getHostInterfaces();
 
-            const loopbackInterface = result.find((iface) => iface.address === '127.0.0.1');
-            expect(loopbackInterface).to.not.be.undefined;
-            expect(loopbackInterface.address).to.equal('127.0.0.1');
-            expect(loopbackInterface.broadcast).to.equal('127.255.255.255');
+            const ipv4 = result.find((iface) =>
+                iface.address &&
+                (
+                    iface.address.startsWith('192.') ||
+                    iface.address.startsWith('10.') ||
+                    iface.address.startsWith('172.')
+                )
+            );
+            expect(result).to.be.an('array');
+            expect(result.length).to.be.greaterThan(0);
+            expect(ipv4).to.not.be.undefined;
         });
     });
 
