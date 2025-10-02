@@ -307,7 +307,7 @@ function RedisClient(_data, _logger, _events, _runtime) {
                     fields.forEach((f, idx) => { byName[f] = vals[idx]; });
 
                     const metaTs = deviceFields?.timestamp ? byName[deviceFields.timestamp] : undefined;
-                    const metaQ  = deviceFields?.quality   ? byName[deviceFields.quality]   : undefined;
+                    const metaQ = deviceFields?.quality ? byName[deviceFields.quality] : undefined;
 
                     for (const { tagId, field } of items) {
                         batchResults.push({ tagId, raw: byName[field], metaTs, metaQ });
@@ -688,6 +688,29 @@ function RedisClient(_data, _logger, _events, _runtime) {
         }
     };
 
+    /**
+     * Scan tags
+     */
+    this.browse = function (node) {
+        return new Promise(async function (resolve, reject) {
+            try {
+                const page1 = await scanAddresses(client, {
+                    // match: 'dainsy:*',   // filtra per prefisso
+                    count: 2000,         // batch SCAN
+                    max: 10000,          // al massimo 10k chiavi per questa chiamata
+                    includeType: true,   // aggiunge type (string, hash, set, zset, list, stream, ...)
+                  });
+                var result = {};
+                resolve(result);
+            } catch (err) {
+                if (err) {
+                    logger.error(`'${data.name}' scan failure! ${err}`);
+                }
+                reject();
+            }
+        });
+    }
+
     var _clearVarsValue = function () {
         for (let id in varsValue) {
             varsValue[id].value = null;
@@ -724,7 +747,7 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 changed,
                 tagref: tag,
                 metaTs: item.metaTs,
-                metaQ:  item.metaQ
+                metaQ: item.metaQ
             };
             hasAny = true;
         }
@@ -755,8 +778,8 @@ function RedisClient(_data, _logger, _events, _runtime) {
                 t.timestamp = ts;
 
                 if (t.metaQ !== undefined) {
-                  const q = Number(t.metaQ);
-                  if (Number.isFinite(q)) t.quality = q;
+                    const q = Number(t.metaQ);
+                    if (Number.isFinite(q)) t.quality = q;
                 }
 
                 // DAQ decision
@@ -798,6 +821,63 @@ function RedisClient(_data, _logger, _events, _runtime) {
             working = false;
             return true;
         }
+    }
+
+    var scanAddresses = async (client, {
+        match = '*',
+        count = 1000,
+        max = 50000,
+        cursor = '0',
+        includeType = true,
+    } = {}) => {
+        let cur = cursor;
+        const items = [];
+        let total = 0;
+
+        // loop finche non esauriamo chiavi o raggiungiamo max
+        do {
+            // SCAN cursor [MATCH pattern] [COUNT count]
+            const scanArgs = [
+                cur,
+                ...(match ? ['MATCH', String(match)] : []),
+                ...(count ? ['COUNT', String(count)] : [])
+              ];
+              const res = await client.scan(...scanArgs);
+
+              // compat: array [cursor, keys] oppure object { cursor, keys }
+              const next = Array.isArray(res) ? res[0] : (res && res.cursor) || '0';
+              const keys = Array.isArray(res) ? res[1] : (res && res.keys) || [];
+
+            if (keys && keys.length) {
+                total += keys.length;
+
+                if (includeType) {
+                    // Pipeline per TYPE su tutte le chiavi trovate in questo batch
+                    const m = client.multi();
+                    for (const k of keys) m.type(k);
+                    const types = await m.exec();
+
+                    for (let i = 0; i < keys.length; i++) {
+                        const typeReply = Array.isArray(types?.[i]) ? types[i][1] : types?.[i];
+                        items.push({ address: keys[i], type: String(typeReply || 'unknown') });
+                        if (items.length >= max) break;
+                    }
+                } else {
+                    for (const k of keys) {
+                        items.push({ address: k });
+                        if (items.length >= max) break;
+                    }
+                }
+            }
+
+            // abbiamo raggiunto il limite richiesto: fermiamoci e restituiamo il cursore per continuare dopo
+            if (items.length >= max) {
+                return { items, nextCursor: cur, total };
+            }
+        } while (cur !== '0');
+
+        // Nessun altro risultato: nextCursor nullo
+        return { items, nextCursor: null, total };
     }
 
     /**

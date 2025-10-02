@@ -20,7 +20,8 @@ import { ToastrService } from 'ngx-toastr';
 import { TagPropertyEditGpioComponent, TagPropertyGpioData } from './tag-property-edit-gpio/tag-property-edit-gpio.component';
 import { TagPropertyEditWebcamComponent, TagPropertyWebcamData } from './tag-property-edit-webcam/tag-property-edit-webcam.component';
 import { TagPropertyEditMelsecComponent } from './tag-property-edit-melsec/tag-property-edit-melsec.component';
-import { TagPropertyEditRedisComponent } from './tag-property-edit-redis/tag-property-edit-redis.component';
+import { TagPropertyEditRedisComponent, TagPropertyRedisData } from './tag-property-edit-redis/tag-property-edit-redis.component';
+import { TagPropertyRedisScanComponent } from './tag-property-edit-redis/tag-property-redis-scan/tag-property-redis-scan.component';
 
 @Injectable({
     providedIn: 'root'
@@ -227,6 +228,24 @@ export class TagPropertyService {
                         tagsMap[tag.id] = tag;
                     }
                 });
+                this.projectService.setDeviceTags(device);
+                dialogRef.close();
+                return result;
+            })
+        );
+    }
+
+    public scanTagsRedis(device: Device): Observable<any> {
+        let dialogRef = this.dialog.open(TagPropertyRedisScanComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            data: <TagPropertyRedisData> {
+                device: device,
+            },
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
                 this.projectService.setDeviceTags(device);
                 dialogRef.close();
                 return result;

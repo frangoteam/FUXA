@@ -359,7 +359,7 @@ export class HmiService {
     /**
      * Ask device browse to backend
      */
-    public askDeviceBrowse(deviceId: string, node: any) {
+    public askDeviceBrowse(deviceId: string, node?: any) {
         if (this.socket) {
             let msg = { device: deviceId, node: node };
             this.socket.emit(IoEventTypes.DEVICE_BROWSE, msg);

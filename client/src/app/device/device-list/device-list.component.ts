@@ -234,6 +234,14 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         }
     }
 
+    onScanRedisTag() {
+        if (this.deviceSelected.type === DeviceType.REDIS) {
+            this.tagPropertyService.scanTagsRedis(this.deviceSelected).subscribe(result => {
+                this.bindToTable(this.deviceSelected.tags);
+            });
+        }
+    }
+
     getTagLabel(tag: Tag) {
         if (this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
             return tag.label || tag.name;
