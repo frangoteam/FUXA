@@ -26,6 +26,7 @@
             "styles": [
               "src/styles.css",
               "src/theme.scss",
+              "src/material-overrides.scss",
               "node_modules/uplot/dist/uPlot.min.css",
               "node_modules/ngx-toastr/toastr.css",
               "node_modules/leaflet/dist/leaflet.css",
@@ -165,7 +166,8 @@
             "karmaConfig": "src/karma.conf.js",
             "styles": [
               "src/styles.css",
-              "src/theme.scss"
+              "src/theme.scss",
+              "src/material-overrides.scss"
             ],
             "scripts": [],
             "assets": [

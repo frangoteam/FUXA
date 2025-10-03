@@ -5,8 +5,19 @@
 // If you don't need the default component typographies but still want the hierarchy styles,
 // you can delete this line and instead use:
 // `@include mat.legacy-typography-hierarchy(mat.define-legacy-typography-config());`
-@include mat.all-component-typographies();
 @include mat.core();
+
+// tipografie
+$app-font-family: '"Segoe UI","Helvetica Neue","Arial",sans-serif';
+$my-typography: mat.define-typography-config(
+  $font-family: $app-font-family,
+  $body-1:  mat.define-typography-level($font-size: 13px, $line-height: 18px, $font-weight: 400),
+  $body-2:  mat.define-typography-level($font-size: 14px, $line-height: 20px, $font-weight: 400),
+  $button:  mat.define-typography-level($font-size: 12px, $line-height: 20px, $font-weight: 600),
+  $caption: mat.define-typography-level($font-size: 12px, $line-height: 16px, $font-weight: 400)
+);
+
+@include mat.typography-hierarchy($my-typography);
 
 // Header theme
 $my-header-primary: mat.define-palette(mat.$grey-palette, 100);
@@ -18,7 +29,7 @@ $my-header-theme: mat.define-light-theme((
     accent: $my-header-accent,
     warn: $my-header-warn,
   ),
-  typography: mat.define-typography-config(),
+  typography: $my-typography,
   density: 0,
 ));
 @include mat.menu-theme($my-header-theme);
@@ -33,7 +44,7 @@ $my-checkbox-theme: mat.define-light-theme((
     accent: $my-checkbox-accent,
     warn: $my-checkbox-warn,
   ),
-  typography: mat.define-typography-config(),
+  typography: $my-typography,
   density: 0,
 ));
 @include mat.checkbox-theme($my-checkbox-theme);
@@ -49,7 +60,7 @@ $my-radio-theme: mat.define-light-theme((
     accent: $my-radio-accent,
     warn: $my-radio-warn,
   ),
-  typography: mat.define-typography-config(),
+  typography: $my-typography,
   density: 0,
 ));
 @include mat.radio-theme($my-radio-theme);
@@ -64,7 +75,7 @@ $my-button-theme: mat.define-light-theme((
     accent: $my-button-accent,
     warn: $my-button-warn,
   ),
-  typography: mat.define-typography-config(),
+  typography: $my-typography,
   density: 0,
 ));
 @include mat.button-theme($my-button-theme);
@@ -79,7 +90,7 @@ $my-slide-toggle-theme: mat.define-light-theme((
     accent: $my-slide-toggle-accent,
     warn: $my-slide-toggle-warn,
   ),
-  typography: mat.define-typography-config(),
+  typography: $my-typography,
   density: 0,
 ));
 @include mat.slide-toggle-theme($my-slide-toggle-theme);
@@ -94,7 +105,7 @@ $my-slider-theme: mat.define-light-theme((
     accent: $my-slider-accent,
     warn: $my-slider-warn,
   ),
-  typography: mat.define-typography-config(),
+  typography: $my-typography,
   density: 0,
 ));
 @include mat.slider-theme($my-slider-theme);
@@ -109,7 +120,7 @@ $dark-theme: mat.define-dark-theme((
     accent: $dark-accent,
     warn: $dark-warn,
   ),
-  typography: mat.define-typography-config(),
+  typography: $my-typography,
   density: 0,
 ));
 
@@ -122,3 +133,68 @@ $dark-theme: mat.define-dark-theme((
 @import 'codemirror/theme/material';
 @import 'codemirror/addon/lint/lint';
 @import 'codemirror/addon/hint/show-hint';
+
+
+/* ===== Token overrides: label/tab/icon ===== */
+
+/* Variante DARK (wrapper con .dark-theme sul root o su app-root) */
+.dark-theme {
+  /* icone usano currentColor */
+  color: #fff;
+
+  /* Tabs */
+  --mat-tab-header-label-text-color: #fff;
+  --mat-tab-header-label-text-color-hover: #fff;
+  --mat-tab-header-active-label-text-color: #fff;
+  --mat-tab-header-inactive-label-text-color: #fff;
+  --mat-tab-header-disabled-label-text-color: rgba(255,255,255,0.5);
+
+  /* Form field / helper */
+  --mat-form-field-label-text-color: #fff;
+  --mat-form-field-focus-label-text-color: #fff;
+  --mat-form-field-subscript-text-color: #fff;
+
+  /* Input / Select / Option */
+  --mat-input-text-color: #fff;
+  --mat-input-placeholder-text-color: rgba(255,255,255,0.7);
+  --mat-select-enabled-trigger-text-color: #fff;
+  --mat-option-label-text-color: #fff;
+
+  mat-icon { color: inherit; }
+}
+
+/* Variante LIGHT (default della pagina senza .dark-theme) */
+:root {
+  color: #111;
+
+  --mat-tab-header-label-text-color: #111;
+  --mat-tab-header-label-text-color-hover: #111;
+  --mat-tab-header-active-label-text-color: #111;
+  --mat-tab-header-inactive-label-text-color: #444;
+  --mat-tab-header-disabled-label-text-color: rgba(0,0,0,0.38);
+
+  --mat-form-field-label-text-color: #111;
+  --mat-form-field-focus-label-text-color: #111;
+  --mat-form-field-subscript-text-color: #333;
+
+  --mat-input-text-color: #111;
+  --mat-input-placeholder-text-color: rgba(0,0,0,0.6);
+  --mat-select-enabled-trigger-text-color: #111;
+  --mat-option-label-text-color: #111;
+
+  mat-icon { color: inherit; }
+}
+
+.dark-theme .mat-mdc-tab .mdc-tab__text-label { color: #fff !important; opacity: 1; }
+.dark-theme .mat-mdc-tab-header { --mdc-tab-indicator-active-indicator-color: #fff; }
+.dark-theme .mat-mdc-dialog-container .mat-mdc-dialog-title,
+.dark-theme .mat-mdc-dialog-container [mat-dialog-title] {
+  color: #fff;
+  opacity: 1;
+}
+
+.dark-theme .mat-mdc-icon-button {
+  --mdc-icon-button-icon-color: #fff;
+  --mdc-icon-button-disabled-icon-color: rgba(255,255,255,0.38);
+  color: #fff;
+}
