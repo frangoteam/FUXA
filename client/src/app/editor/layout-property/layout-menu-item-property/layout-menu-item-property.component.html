@@ -1,11 +1,13 @@
-<div>
+<div class="dialog-mdsd-main">
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'dlg.menuitem-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div mat-dialog-content>
+    <div mat-dialog-content class="dialog-mdsd-content content">
         <div class="my-form-field block mb10">
             <span>{{'dlg.menuitem-icon' | translate}}</span>
             <mat-select [(value)]="data.item.icon"
-                        style="width: 60px; height: 30px"
+                        panelClass="icon-grid-panel"
+                        panelWidth="310px"
+                        style="width: 60px; height: 40px"
                         #iconsel>
                 <mat-select-trigger>
                     <mat-icon>{{iconsel.value}}</mat-icon>
@@ -27,7 +29,7 @@
                             autocomplete="off"/>
                     </div>
                 </mat-option>
-                <mat-option *ngFor="let icon of filteredIcons$ | async" [value]="icon" (click)="data.item.image = ''" style="display: inline-block !important;">
+                <mat-option *ngFor="let icon of filteredIcons$ | async" [value]="icon" (click)="data.item.image = ''" style="display: inline-block !important; width: 18px;">
                     <mat-icon class="">{{ icon }}</mat-icon>
                 </mat-option>
             </mat-select>
@@ -59,11 +61,11 @@
         <div class="my-form-field block mb10 submenu-header">
             <button mat-icon-button (click)="onAddChild()">
                 <mat-icon aria-label="Add">control_point</mat-icon>
-                <span>{{'dlg.menuitem-add-submenu' | translate}}</span>
             </button>
+            <span>{{'dlg.menuitem-add-submenu' | translate}}</span>
         </div>
         <!-- List submenu -->
-        <div *ngIf="data.item.children?.length">
+        <div *ngIf="data.item.children?.length" style="max-height: 200px;">
             <div *ngFor="let child of data.item.children; let i = index" class="submenu-item">
                 <div class="my-form-field inbk mr10">
                     <span>{{'dlg.menuitem-text' | translate}}</span>

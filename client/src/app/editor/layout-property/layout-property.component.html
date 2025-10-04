@@ -1,7 +1,7 @@
 <div style="position: relative;" class="dialog-mdsd-main">
-    <h1 mat-dialog-title style="display:inline-block; cursor:move" mat-dialog-draggable>{{'dlg.layout-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
-    <div class="dialog-mdsd-content content">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'dlg.layout-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="dialog-mdsd-content content">
         <mat-tab-group (selectedTabChange)="onTabChanged($event)">
             <mat-tab label="{{'dlg.layout-general' | translate}}">
                 <div class="container-split-ver mt25">
@@ -77,11 +77,11 @@
             <mat-tab label="{{'dlg.layout-navigation' | translate}}">
                 <div class="tab-container">
                     <div [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
-                        <button mat-icon-button>
+                        <button mat-icon-button [style.color]="data.layout.header.fgcolor">
                             <mat-icon aria-label="Menu">menu</mat-icon>
                         </button>
                         <div style="display: inline-block;padding-left: 140px">
-                            <button mat-icon-button (click)="onAddMenuItem()">
+                            <button mat-icon-button (click)="onAddMenuItem()" [style.color]="data.layout.header.fgcolor">
                                 <mat-icon aria-label="Add">control_point</mat-icon>
                             </button>
                         </div>
@@ -91,15 +91,21 @@
                             <div class="sidenav-menu" [style.background-color]="data.layout.navigation.bkcolor" [style.color]="data.layout.navigation.fgcolor"
                                 style="height: calc(100% - 50px);" [ngClass]="'sidenav-menu-' + data.layout.navigation.type">
                                 <mat-list class="dndList" style="padding-top: 10px; background-color: inherit;">
-                                    <mat-list-item style="display: flex; justify-content: center; height: 35px; font-weight: bold; padding-bottom: 10px;margin-bottom: 10px; width: unset" [style.color]="data.layout.navigation.fgcolor">
-                                        <span *ngIf="!data.layout.navigation.logo; else hasLogo">{{'sidenav.title' | translate}}</span>
+                                    <mat-list-item style="display: flex; justify-content: center; height: 35px; font-weight: bold; padding-bottom: 10px;margin-bottom: 10px; width: unset">
+                                        <span [style.color]="data.layout.navigation.fgcolor"
+                                              style="font-weight: bold;"
+                                              *ngIf="!data.layout.navigation.logo; else hasLogo">
+                                            {{'sidenav.title' | translate}}
+                                        </span>
                                         <ng-template #hasLogo><img src="{{data.layout.navigation.logo}}" style="max-width: 100%; max-height: 100%;"></ng-template>
                                     </mat-list-item>
                                     <ng-container *ngFor="let item of draggableListLeft; let i = index">
                                         <mat-list-item [ngClass]="'menu-item-' + data.layout.navigation.type"
-                                                    (click)="toggleSubMenu(item)"
-                                                    style="width: unset">
+                                                       [style.color]="data.layout.header.fgcolor"
+                                                       (click)="toggleSubMenu(item)"
+                                                       style="width: unset">
                                             <button type="button"
+                                                    [ngClass]="'menu-item-' + data.layout.navigation.type"
                                                     [ngSwitch]="data.layout.navigation.type"
                                                     mat-button class="sidenav-btn sidenav-submenu-btn"
                                                     [style.color]="data.layout.navigation.fgcolor">
@@ -224,7 +230,7 @@
                                 <mat-icon aria-label="Menu">menu</mat-icon>
                             </button>
                         </div>
-                        <div class="items" [style.textAlign]="data.layout.header.itemsAnchor">
+                        <div class="header-items-button" [style.textAlign]="data.layout.header.itemsAnchor">
                             <ng-container *ngFor="let item of headerItems; let i = index" [ngSwitch]="item.type">
                                 <ng-container *ngSwitchCase="'button'">
                                     <button mat-raised-button
@@ -260,7 +266,8 @@
                                 </ng-container>
                             </ng-container>
                         </div>
-                        <div class="header-notify-button">
+                        <div class="header-notify-button"
+                             [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
                             <button mat-icon-button class="alarm-button">
                                 <mat-icon aria-label="Alarms">notifications_none</mat-icon>
                             </button>

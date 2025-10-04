@@ -4,7 +4,10 @@
     <div mat-dialog-content>
         <div class="my-form-field block mb10">
             <span>{{'dlg.headeritem-icon' | translate}}</span>
-            <mat-select [(value)]="item.icon" class="icons-selector" #iconsel>
+            <mat-select [(value)]="item.icon"
+                        panelWidth="310px"
+                        class="icons-selector"
+                        #iconsel>
                 <mat-select-trigger>
                     <mat-icon>{{iconsel.value}}</mat-icon>
                 </mat-select-trigger>

@@ -40,7 +40,11 @@
                 display: flex;
                 line-height: 35px;
                 min-width: max-content;
-
+                position: absolute;
+                right: -300px;
+                width: 300px;
+                top: 50%;
+                transform: translateY(-50%);
                 .position {
                     display: inline-block;
                     line-height: 35px;
@@ -178,9 +182,11 @@
             }
         }
 
-        .items {
+        .header-items-button {
             flex: 1;
             align-items: center;
+            display: flex;
+            line-height: 46px;
         }
     }
 
@@ -314,4 +320,10 @@
         margin: 0;
         list-style: none;
     }
+}
+
+:host ::ng-deep .dndList .mat-mdc-list-item,
+:host ::ng-deep .dndList .mat-mdc-list-item .mdc-list-item {
+  position: relative;
+  overflow: visible;
 }

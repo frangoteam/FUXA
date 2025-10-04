@@ -123,3 +123,48 @@
   padding-top: 0;
   padding-bottom: 0;
 }
+
+/* --- Force 46x46 for icon buttons, including focus ring --- */
+
+/* Base icon-button size + ripple/touch area */
+button.mat-mdc-icon-button,
+a.mat-mdc-icon-button {
+  --mdc-icon-button-size: 46px;               /* button size var */
+  --mdc-icon-button-state-layer-size: 46px;   /* ripple/hover layer */
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure the internal touch target matches 46x46 */
+button.mat-mdc-icon-button .mat-mdc-button-touch-target,
+a.mat-mdc-icon-button .mat-mdc-button-touch-target {
+  width: 46px;
+  height: 46px;
+}
+
+/* Do NOT force 46x46 on the <mat-icon> itself; let MDC center it */
+button.mat-mdc-icon-button mat-icon,
+a.mat-mdc-icon-button mat-icon {
+  font-size: 24px;  /* tweak as needed */
+  line-height: 1;
+  width: auto;
+  height: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fix the focus indicator (Material defaults to 48x48).
+   We set both size and centering relative to the button center. */
+button.mat-mdc-icon-button .mat-mdc-focus-indicator,
+a.mat-mdc-icon-button .mat-mdc-focus-indicator {
+  width: 46px !important;
+  height: 46px !important;
+  top: calc(50% - 23px) !important;   /* center for 46px */
+  left: calc(50% - 23px) !important;  /* center for 46px */
+  border-radius: 50%;
+}
