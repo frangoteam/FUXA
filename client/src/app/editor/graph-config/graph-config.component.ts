@@ -17,7 +17,7 @@ import { EditPlaceholderComponent } from '../../gui-helpers/edit-placeholder/edi
 @Component({
     selector: 'app-graph-config',
     templateUrl: './graph-config.component.html',
-    styleUrls: ['./graph-config.component.css']
+    styleUrls: ['./graph-config.component.scss']
 })
 export class GraphConfigComponent implements OnInit {
 
