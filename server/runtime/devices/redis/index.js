@@ -689,19 +689,84 @@ function RedisClient(_data, _logger, _events, _runtime) {
     };
 
     /**
-     * Scan tags
+     * One-shot full scan, max (default 100k)
+     * node = {
+     *   match?: string,       // es. 'dainsy:*' or '*' (default)
+     *   count?: number,       // hint for SCAN (default 2000)
+     *   max?: number,         // max element to return (default 100000)
+     *   includeType?: boolean // include TYPE for every key (default true)
+     * }
      */
     this.browse = function (node) {
         return new Promise(async function (resolve, reject) {
             try {
-                const page1 = await scanAddresses(client, {
-                    // match: 'dainsy:*',   // filtra per prefisso
-                    count: 2000,         // batch SCAN
-                    max: 10000,          // al massimo 10k chiavi per questa chiamata
-                    includeType: true,   // aggiunge type (string, hash, set, zset, list, stream, ...)
-                  });
-                var result = {};
-                resolve(result);
+                if (!client || !connected || client.isOpen === false) {
+                    return resolve({ items: [], total: 0 });
+                }
+
+                const opts = node || {};
+                const match = (typeof opts.match === 'string' && opts.match.length) ? opts.match : '*';
+                const count = Number.isFinite(opts.count) ? opts.count : 2000;
+                const max = Number.isFinite(opts.max) ? opts.max : 100000;
+                const includeType = opts.includeType !== false;
+
+                /** Temporary storage of keys (always strings) */
+                const keysBuffer = [];
+                let produced = 0;
+
+                // 1) SCAN → accumulates only single strings
+                for await (const key of client.scanIterator({ MATCH: match, COUNT: count })) {
+                    // defence: if an array results, splat it; otherwise, use the string
+                    if (Array.isArray(key)) {
+                        for (const k of key) {
+                            keysBuffer.push(String(k));
+                            produced++;
+                            if (produced >= max) {
+                                break;
+                            }
+                        }
+                    } else {
+                        keysBuffer.push(String(key));
+                        produced++;
+                        if (produced >= max) {
+                            break;
+                        }
+                    }
+                    if (produced >= max) {
+                        break;
+                    }
+                }
+
+                if (keysBuffer.length === 0) {
+                    return resolve({ items: [], total: 0 });
+                }
+
+                // 2) Build items with/without TYPE
+                const items = [];
+
+                if (!includeType) {
+                    for (const k of keysBuffer) {
+                        items.push({ address: k, type: 'unknown' });
+                    }
+                    return resolve({ items, total: items.length });
+                }
+
+                // with TYPE: pipeline in batch
+                const batchSize = 500;
+                for (let start = 0; start < keysBuffer.length; start += batchSize) {
+                    const chunk = keysBuffer.slice(start, start + batchSize);
+                    const multi = client.multi();
+                    for (const k of chunk) {
+                        multi.type(k);
+                    }
+                    const replies = await multi.exec();                // ex. ['string','hash',...]
+                    for (let i = 0; i < chunk.length; i++) {
+                        const t = (typeof replies?.[i] === 'string') ? replies[i] : 'unknown';
+                        items.push({ address: chunk[i], type: t || 'unknown' });
+                    }
+                }
+
+                resolve({ items, total: items.length });
             } catch (err) {
                 if (err) {
                     logger.error(`'${data.name}' scan failure! ${err}`);
@@ -821,63 +886,6 @@ function RedisClient(_data, _logger, _events, _runtime) {
             working = false;
             return true;
         }
-    }
-
-    var scanAddresses = async (client, {
-        match = '*',
-        count = 1000,
-        max = 50000,
-        cursor = '0',
-        includeType = true,
-    } = {}) => {
-        let cur = cursor;
-        const items = [];
-        let total = 0;
-
-        // loop finche non esauriamo chiavi o raggiungiamo max
-        do {
-            // SCAN cursor [MATCH pattern] [COUNT count]
-            const scanArgs = [
-                cur,
-                ...(match ? ['MATCH', String(match)] : []),
-                ...(count ? ['COUNT', String(count)] : [])
-              ];
-              const res = await client.scan(...scanArgs);
-
-              // compat: array [cursor, keys] oppure object { cursor, keys }
-              const next = Array.isArray(res) ? res[0] : (res && res.cursor) || '0';
-              const keys = Array.isArray(res) ? res[1] : (res && res.keys) || [];
-
-            if (keys && keys.length) {
-                total += keys.length;
-
-                if (includeType) {
-                    // Pipeline per TYPE su tutte le chiavi trovate in questo batch
-                    const m = client.multi();
-                    for (const k of keys) m.type(k);
-                    const types = await m.exec();
-
-                    for (let i = 0; i < keys.length; i++) {
-                        const typeReply = Array.isArray(types?.[i]) ? types[i][1] : types?.[i];
-                        items.push({ address: keys[i], type: String(typeReply || 'unknown') });
-                        if (items.length >= max) break;
-                    }
-                } else {
-                    for (const k of keys) {
-                        items.push({ address: k });
-                        if (items.length >= max) break;
-                    }
-                }
-            }
-
-            // abbiamo raggiunto il limite richiesto: fermiamoci e restituiamo il cursore per continuare dopo
-            if (items.length >= max) {
-                return { items, nextCursor: cur, total };
-            }
-        } while (cur !== '0');
-
-        // Nessun altro risultato: nextCursor nullo
-        return { items, nextCursor: null, total };
     }
 
     /**

@@ -21,7 +21,7 @@ import { TagPropertyEditGpioComponent, TagPropertyGpioData } from './tag-propert
 import { TagPropertyEditWebcamComponent, TagPropertyWebcamData } from './tag-property-edit-webcam/tag-property-edit-webcam.component';
 import { TagPropertyEditMelsecComponent } from './tag-property-edit-melsec/tag-property-edit-melsec.component';
 import { TagPropertyEditRedisComponent, TagPropertyRedisData } from './tag-property-edit-redis/tag-property-edit-redis.component';
-import { TagPropertyRedisScanComponent } from './tag-property-edit-redis/tag-property-redis-scan/tag-property-redis-scan.component';
+import { TagPropertyRedisScanComponent, TagPropertyRedisScanData } from './tag-property-edit-redis/tag-property-redis-scan/tag-property-redis-scan.component';
 
 @Injectable({
     providedIn: 'root'
@@ -228,24 +228,6 @@ export class TagPropertyService {
                         tagsMap[tag.id] = tag;
                     }
                 });
-                this.projectService.setDeviceTags(device);
-                dialogRef.close();
-                return result;
-            })
-        );
-    }
-
-    public scanTagsRedis(device: Device): Observable<any> {
-        let dialogRef = this.dialog.open(TagPropertyRedisScanComponent, {
-            disableClose: true,
-            position: { top: '60px' },
-            data: <TagPropertyRedisData> {
-                device: device,
-            },
-        });
-
-        return dialogRef.componentInstance.result.pipe(
-            map(result => {
                 this.projectService.setDeviceTags(device);
                 dialogRef.close();
                 return result;
@@ -516,7 +498,7 @@ export class TagPropertyService {
         let tagToEdit: Tag = Utils.clone(tag);
         let dialogRef = this.dialog.open(TagPropertyEditRedisComponent, {
             disableClose: true,
-            data: {
+            data: <TagPropertyRedisData>{
                 device: device,
                 tag: tagToEdit
             },
@@ -541,6 +523,36 @@ export class TagPropertyService {
                 }
                 dialogRef.close();
                 return result;
+            })
+        );
+    }
+
+    public scanTagsRedis(device: Device): Observable<any> {
+        const existing = device.tags ? Object.values(device.tags).map(tag => tag.address) : [];
+        let dialogRef = this.dialog.open(TagPropertyRedisScanComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            data: <TagPropertyRedisScanData> {
+                device: device,
+                existing: existing
+            },
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                if (result) {
+                    debugger;
+                    result.selectedKeys?.forEach(key => {
+                        let tag = new Tag(Utils.getGUID(TAG_PREFIX));
+                        tag.name = key;
+                        tag.type = 'number';
+                        tag.address = key;
+                        this.checkToAdd(tag, device);
+                    });
+                    this.projectService.setDeviceTags(device);
+                }
+                dialogRef.close();
+                return device.tags;
             })
         );
     }

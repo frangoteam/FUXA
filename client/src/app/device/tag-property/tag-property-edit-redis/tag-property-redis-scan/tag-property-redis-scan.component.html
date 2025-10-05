@@ -1,7 +1,73 @@
-<p>
-    tag-property-redis-scan works!
-</p>
-<div mat-dialog-actions class="dialog-action">
-    <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-    <!-- <button mat-raised-button color="primary" (click)="onOkClick()" [disabled]="formGroup.invalid">{{'dlg.ok' | translate}}</button> -->
+<div class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'device.property-redis-scan-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="toolbox">
+            <div class="my-form-field">
+                <span>{{'device.property-redis-scan-filter-query' | translate}}</span>
+                <input matInput [(ngModel)]="match" (keyup.enter)="runScan()">
+            </div>
+            <button class="field-action" mat-icon-button matSuffix [disabled]="loading" (click)="runScan()">
+                <mat-icon>search</mat-icon>
+            </button>
+
+            <div class="my-form-field ml10">
+                <span>{{'device.property-redis-scan-filter-list' | translate}}</span>
+                <input matInput (input)="applyFilter($event)">
+            </div>
+
+            <span style="flex:1 1 auto;"></span>
+
+            <button mat-stroked-button color="primary" (click)="toggleSelectAllFiltered()" [disabled]="loading || selectableCountFiltered===0">
+                <mat-icon>playlist_add_check</mat-icon>
+                <span>{{allFilteredSelected ? ('device.property-redis-scan-unselect' | translate) : ('device.property-redis-scan-select' | translate)}} ({{selectableCountFiltered | number}})</span>
+            </button>
+        </div>
+
+        <div *ngIf="loading" class="loading">
+            <mat-progress-spinner mode="indeterminate" diameter="28"></mat-progress-spinner>
+            <span>{{'device.property-redis-scan-scanning' | translate}}</span>
+        </div>
+
+        <div *ngIf="!loading" style="opacity:.8; margin-bottom:6px;">
+            {{'device.property-redis-scan-found' | translate}}: <b>{{dataSource.data.length | number}}</b>
+        </div>
+
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z2" style="width:100%;">
+            <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef style="width:48px;">
+                    <mat-checkbox [disabled]="selectableCountFiltered===0" [checked]="allFilteredSelected" [indeterminate]="someFilteredSelected && !allFilteredSelected"
+                        (change)="toggleSelectAllFiltered()">
+                    </mat-checkbox>
+                </th>
+                <td mat-cell *matCellDef="let row">
+                    <mat-checkbox (click)="$event.stopPropagation()" (change)="toggleRow(row)" [disabled]="!isRowSelectable(row)"
+                        [checked]="!isRowSelectable(row) ? true : selection.isSelected(row)">
+                    </mat-checkbox>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="address">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Address</th>
+                <td mat-cell *matCellDef="let row">
+                    <code style="white-space:nowrap">{{row.address}}</code>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="type">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+                <td mat-cell *matCellDef="let row">{{row.type}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let r; columns: displayedColumns; trackBy: trackByAddr" (click)="toggleRow(r)"></tr>
+        </table>
+
+        <mat-paginator [length]="dataSource.data.length" [pageSize]="50" [pageSizeOptions]="[25,50,100,250,500]" showFirstLastButtons>
+        </mat-paginator>
+    </div>
+    <div mat-dialog-actions class="dialog-action" style="margin-top:12px;">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [disabled]="selection.isEmpty() && existingKeys.size===0">{{'dlg.ok' | translate}}</button>
+    </div>
 </div>
