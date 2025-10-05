@@ -1,5 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { Input, Output, EventEmitter } from '@angular/core';
 import { PermissionData, PermissionDialogComponent } from '../../../gauge-property/permission-dialog/permission-dialog.component';
 import { GaugeEventActionType, View } from '../../../../_models/hmi';
 import { Script } from '../../../../_models/script';
@@ -31,6 +32,9 @@ interface SchedulerDeviceAction {
     styleUrls: ['./scheduler-property.component.scss']
 })
 export class SchedulerPropertyComponent implements OnInit {
+    @Input() data: any;
+    @Input() reload: any;
+    @Output() onPropChanged = new EventEmitter<any>();
     deviceList: SchedulerDevice[] = [];
     deviceActionsOn: SchedulerDeviceAction[] = [];  // Actions triggered when device turns ON
     deviceActionsOff: SchedulerDeviceAction[] = []; // Actions triggered when device turns OFF
@@ -41,12 +45,17 @@ export class SchedulerPropertyComponent implements OnInit {
     actionTypeKeys: any = {};
 
     constructor(
-        public dialogRef: MatDialogRef<SchedulerPropertyComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any,
-        private dialog: MatDialog,
-        private projectService: ProjectService,
-        private translateService: TranslateService
-    ) { }
+        public dialogRef?: MatDialogRef<SchedulerPropertyComponent>,
+        @Inject(MAT_DIALOG_DATA) dialogData?: any,
+        private dialog?: MatDialog,
+        private projectService?: ProjectService,
+        private translateService?: TranslateService
+    ) {
+        // If dialogData is provided, use it for 'data' (dialog mode)
+        if (dialogData) {
+            this.data = dialogData;
+        }
+    }
 
     ngOnInit(): void {
         // Load views and scripts from project
