@@ -129,6 +129,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.subscriptionOnChange) {
                 this.subscriptionOnChange.unsubscribe();
             }
+            if (this['subscriptionOnGaugeEvent']) {
+                this['subscriptionOnGaugeEvent'].unsubscribe();
+            }
             if (this.inputDialogRef) {
                 this.inputDialogRef.nativeElement.style.display = 'none';
             }
@@ -341,6 +344,21 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (!this.subscriptionOnChange) {
                 this.subscriptionOnChange = this.gaugesManager.onchange.subscribe(this.handleSignal.bind(this));
+            }
+            // Subscribe to gauge events from scheduler (or other components)
+            if (!this['subscriptionOnGaugeEvent']) {
+                this['subscriptionOnGaugeEvent'] = this.hmiService.onGaugeEvent.subscribe((event: any) => {
+                    console.log('[FUXA-VIEW] Received gauge event:', event);
+                    if (event && event.action) {
+                        // Create a minimal gauge settings object for runEvents
+                        const gaugeSettings: any = { id: 'scheduler-trigger', property: {} };
+                        // runEvents expects an array of events
+                        console.log('[FUXA-VIEW] Calling runEvents with event:', event);
+                        this.runEvents(this, gaugeSettings, null, [event]);
+                    } else {
+                        console.warn('[FUXA-VIEW] Event missing action:', event);
+                    }
+                });
             }
             for (let variableId in this.staticValues) {
                 if (!this.staticValues.hasOwnProperty(variableId)) {

@@ -30,6 +30,10 @@ export class HmiService {
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
     @Output() onOpen: EventEmitter<ScriptOpenCard> = new EventEmitter();
+    @Output() onSchedulerUpdated: EventEmitter<any> = new EventEmitter();
+    @Output() onSchedulerEventActive: EventEmitter<any> = new EventEmitter();
+    @Output() onSchedulerRemainingTime: EventEmitter<any> = new EventEmitter();
+    @Output() onGaugeEvent: EventEmitter<any> = new EventEmitter();
 
     onServerConnection$ = new BehaviorSubject<boolean>(false);
 
@@ -241,6 +245,18 @@ export class HmiService {
         // device browse
         this.socket.on(IoEventTypes.DEVICE_BROWSE, (message) => {
             this.onDeviceBrowse.emit(message);
+        });
+        // scheduler updated (one-time events removed, etc.)
+        this.socket.on('scheduler:updated', (message) => {
+            this.onSchedulerUpdated.emit(message);
+        });
+        // scheduler event active state changed (START/STOP fired)
+        this.socket.on('scheduler:event-active', (message) => {
+            this.onSchedulerEventActive.emit(message);
+        });
+        // scheduler remaining time update
+        this.socket.on('scheduler:remaining-time', (message) => {
+            this.onSchedulerRemainingTime.emit(message);
         });
         // device node attribute
         this.socket.on(IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
@@ -589,6 +605,20 @@ export class HmiService {
     //#region DAQ functions served from project service
     getDaqValues(query: DaqQuery) {
         return this.projectService.getDaqValues(query);
+    }
+    //#endregion
+
+    //#region Scheduler functions served from project service
+    askSchedulerData(id: string) {
+        return this.projectService.getSchedulerData(id);
+    }
+
+    setSchedulerData(id: string, data: any) {
+        return this.projectService.setSchedulerData(id, data);
+    }
+    
+    deleteSchedulerData(id: string) {
+        return this.projectService.deleteSchedulerData(id);
     }
     //#endregion
 

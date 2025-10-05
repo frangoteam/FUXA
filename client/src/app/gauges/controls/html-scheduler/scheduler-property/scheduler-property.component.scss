@@ -1,0 +1,434 @@
+:host {
+    .container {
+        width: 760px;
+        position: relative;
+        color: white;
+    }
+
+    ::ng-deep .mat-dialog-container {
+        display: inline-table !important;
+    }
+
+    ::ng-deep .mat-tab-label {
+        height: 34px !important;
+    }
+
+    .mat-tab-container {
+        min-height: 300px;
+        height: 60vmin;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-top: 15px;
+    }
+
+    .mat-tab-container > div {
+        display: block;
+    }
+
+    .toolbox {
+        float: right;
+        line-height: 44px;
+    }
+
+    .toolbox button {
+        margin-left: 10px;
+    }
+
+    ::ng-deep .input-text .mat-form-field-infix {
+        padding-top: 5px;
+        padding-bottom: 0px;
+    }
+
+    .grid-conta {
+        .item {
+            .device-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 15px;
+                padding: 10px 0;
+                
+                .name-auth-container {
+                    display: flex;
+                    align-items: flex-end;
+                    
+                    .my-form-field {
+                        margin-bottom: 0;
+                        
+                        input {
+                            background-color: var(--formInputBackground);
+                            color: var(--formInputColor);
+                            height: 32px;
+                            box-sizing: border-box;
+                        }
+                    }
+                    
+                    .ml10 {
+                        margin-left: 13px;
+                    }
+                    
+                    .my-form-field-permission {
+                        width: 32px;
+                        height: 32px;
+                        border: 1px solid rgba(255, 255, 255, 0.3);
+                        border-radius: 4px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background-color: var(--formInputBackground);
+                        
+                        &:hover {
+                            background-color: rgba(255, 255, 255, 0.1);
+                        }
+                        
+                        mat-icon {
+                            color: var(--formInputColor);
+                            font-size: 18px;
+                        }
+                    }
+                    
+                    .pointer {
+                        cursor: pointer;
+                    }
+                }
+                
+                .tag-field {
+                    flex: 1;
+                    
+                    ::ng-deep flex-variable {
+                        .container {
+                            display: block;
+                            margin-bottom: 0;
+                        }
+                    }
+                }
+                
+                .item-remove {
+                    flex-shrink: 0;
+                    display: flex;
+                    align-items: center;
+                    margin-left: 10px;
+                    
+                    button {
+                        width: 32px;
+                        height: 32px;
+                        min-height: 32px;
+                        line-height: 32px;
+                        color: white;
+                        background: transparent;
+                        
+                        &:disabled {
+                            opacity: 0.5;
+                            cursor: not-allowed;
+                        }
+                        
+                        mat-icon {
+                            font-size: 18px;
+                            width: 18px;
+                            height: 18px;
+                            color: white;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .my-form-field {
+    margin-bottom: 15px !important;
+    
+    span {
+        margin-bottom: 4px !important;
+        display: block !important;
+        line-height: 1.2 !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        color: white !important;
+        height: 16px !important;
+    }
+    
+    input {
+        height: 32px;
+        box-sizing: border-box;
+    }
+}
+
+    .my-form-field {
+        display: inline-block;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    
+    span {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: white;
+        margin-bottom: 4px;
+    }
+    
+    input, select {
+        padding: 4px 8px;
+        border: none;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+        font-size: 14px;
+        color: white;
+        
+        &:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+    }
+    
+    &.link {
+        .span-link {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .tag-link {
+            display: inline-block;
+            width: 200px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            padding: 4px 8px;
+            line-height: 20px;
+            font-size: 13px;
+            color: white;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: 5px;
+            vertical-align: top;
+        }
+        
+        button {
+            height: 28px;
+            width: 28px;
+            line-height: 1;
+            background: transparent;
+            
+            mat-icon {
+                font-size: 16px;
+                line-height: 16px;
+                color: white;
+            }
+        }
+    }
+    
+    &.input {
+        span {
+            color: white;
+        }
+        
+        .variable-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            
+            &::placeholder {
+                color: rgba(255, 255, 255, 0.7);
+            }
+        }
+    }
+    
+    .input-color {
+        border: none;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+        }
+    }
+
+    .toolbox {
+    float: right;
+    margin-top: 10px;  
+    margin-right: 10px;
+    
+    button {
+        background: transparent;
+        
+        mat-icon {
+            color: white;
+            }
+        }
+    }
+
+    .mat-tab-container {
+    background: transparent;
+    
+    .mat-dialog-content {
+        background: transparent;
+    }
+
+    .grid-conta {
+    margin-bottom: 15px;
+    
+    .item {
+        .item-step {
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            
+            .my-form-field {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
+
+        }
+    }
+
+    .dialog-action {
+        padding-top: 20px;
+        
+        button {
+            margin-right: 10px;
+        }
+    }
+
+        ::ng-deep .mat-autocomplete-panel {
+        background: #424242;
+        color: white;
+        
+        .mat-option {
+            color: white;
+            
+            &:hover, &:focus {
+                background: rgba(255, 255, 255, 0.1);
+            }
+            
+            &.mat-selected {
+                background: rgba(255, 255, 255, 0.2);
+            }
+        }
+        
+        .mat-optgroup-label {
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 500;
+        }
+    }
+    
+    // Events Tab Styles
+    .event-item {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 15px;
+        position: relative;
+        background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .event-header {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+    
+    .remove-btn {
+        color: rgba(255, 255, 255, 0.7);
+        
+        &:hover {
+            color: #ff4444;
+        }
+    }
+    
+    .event-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .add-event-btn {
+        text-align: center;
+        padding: 10px;
+        
+        button {
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px dashed rgba(255, 255, 255, 0.3);
+            
+            &:hover {
+                border-color: rgba(255, 255, 255, 0.6);
+                background: rgba(255, 255, 255, 0.05);
+            }
+        }
+    }
+    
+    .mb10 {
+        margin-bottom: 10px;
+    }
+    
+    .mt10 {
+        margin-top: 10px;
+    }
+    
+    .mt15 {
+        margin-top: 15px;
+    }
+    
+    .ml10 {
+        margin-left: 10px;
+    }
+    
+    .dialog-hint {
+        padding: 10px;
+        background: rgba(85, 110, 130, 0.2);
+        border-left: 3px solid rgba(85, 110, 130, 0.8);
+        border-radius: 4px;
+        
+        label {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            margin: 0;
+        }
+    }
+    
+    // Event items styling (matching flex-event component)
+    .item {
+        display: block;
+        width: 100%;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 0px 0px 5px 0px;
+        min-width: 664px;
+        margin-bottom: 3px;
+    }
+    
+    .remove {
+        position: relative;
+        top: 4px;
+        right: 0px;
+    }
+    
+    .item-remove {
+        float: right;
+    }
+    
+    .inbk {
+        display: inline-block;
+    }
+    
+    .lbk {
+        display: block;
+    }
+    
+    .ml15 {
+        margin-left: 15px;
+    }
+    
+    .mt5 {
+        margin-top: 5px;
+    }
+    
+    .mt8 {
+        margin-top: 8px;
+    }
+
