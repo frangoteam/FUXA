@@ -590,6 +590,13 @@ app-root {
     color: var(--formInputColor);
 }
 
+.icon-button-text span  {
+    display: inline-block;
+    font-size: 14px;
+    text-align: left;
+    line-height: 26px;
+}
+
 /*
 .my-form-field mat-select:focus {
   padding: 4px 1px 5px 2px;
