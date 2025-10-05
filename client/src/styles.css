@@ -597,6 +597,16 @@ app-root {
     line-height: 26px;
 }
 
+.fill-box {
+    width: 100%;                    /* fallback base */
+    width: -webkit-fill-available;  /* Chrome/Safari/Edge */
+    width: -moz-available;          /* old Firefox */
+}
+
+@supports (width: stretch) {
+    .fill-box { width: stretch; }
+}
+
 /*
 .my-form-field mat-select:focus {
   padding: 4px 1px 5px 2px;
