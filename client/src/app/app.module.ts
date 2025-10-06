@@ -1,6 +1,6 @@
 // the start/root module that tells Angular how to assemble the application.
 
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -435,6 +435,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         NgxDaterangepickerMd.forRoot(),
         FrameworkModule
     ],
+        schemas: [CUSTOM_ELEMENTS_SCHEMA],
     providers: [
         // providersResourceService,
         ResClientService,
