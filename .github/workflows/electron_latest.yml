@@ -37,7 +37,7 @@ jobs:
       working-directory: ./client
 
     - name: Build client
-      run: npm run build -- --configuration=production --no-cache
+      run: npm run build -- --configuration=production
       working-directory: ./client
 
     - name: Install app dependencies
