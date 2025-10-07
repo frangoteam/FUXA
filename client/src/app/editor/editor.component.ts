@@ -326,7 +326,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentView = null;
         this.hmi = this.projectService.getHmi();
         // check new hmi
-        if (this.hmi.views?.length <= 0 && !firstTime) {
+        if (this.hmi.views?.length <= 0) {
             this.hmi.views = [];
             this.addView(ProjectService.MainViewName);
         } else {
