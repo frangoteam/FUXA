@@ -50,7 +50,6 @@ jobs:
         mkdir -p app/client/dist
         cp -r server/. app/server/
         cp -r client/dist/. app/client/dist
-        cp -r node-red app/
       #ls -R app/server
       #ls -R app/client/dist
       shell: bash

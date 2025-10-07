@@ -385,7 +385,7 @@ function startFuxa() {
             httpAdminRoot: '/nodered',
             httpNodeRoot: '/nodered/api',
             userDir: userDir,
-            nodesDir: [path.join(__dirname, '..', 'node-red', 'node-red-contrib-fuxa')],
+            nodesDir: [path.join(__dirname, 'node-red-contrib-fuxa')],
             flowFile: 'flows.json',
             editorTheme: {
                 notifications: {
