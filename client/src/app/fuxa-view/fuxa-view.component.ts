@@ -643,7 +643,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     htmlevent.dom.blur();
                 }
             };
-            if (this.hmi.layout.inputdialog === 'true') {
+            if (this.hmi?.layout?.inputdialog === 'true') {
                 htmlevent.dom.onfocus = function(ev) {
                     if (ev.currentTarget) {
                         var inputRect = ev.currentTarget.getBoundingClientRect();
