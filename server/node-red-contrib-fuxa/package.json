@@ -18,6 +18,7 @@
     "nodes": {
       "get tag": "nodes/fuxa-get-tag.js",
       "set tag": "nodes/fuxa-set-tag.js",
+      "get tag change": "nodes/fuxa-get-tag-change.js",
       "get daq": "nodes/fuxa-get-daq.js",
       "get historical tags": "nodes/fuxa-get-historical-tags.js",
       "execute script": "nodes/fuxa-execute-script.js",

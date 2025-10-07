@@ -100,6 +100,32 @@ The FUXA contrib package provides specialized nodes for SCADA integration, this 
 }
 ```
 
+#### get-tag-change
+**Purpose**: Monitor a FUXA tag for value changes based on device polling events
+
+**Parameters**:
+- **Name**: Optional node name for identification
+- **Tag**: Tag name (dropdown populated from FUXA devices)
+
+**Input**: None (event-driven)
+**Output**: `msg.payload` contains the new tag value when it changes
+
+**How it works**: This node subscribes to FUXA's device polling events. When devices are polled and a tag value has changed since the last poll, the node outputs a message with the new value. The timing depends on the device's polling interval (typically 1-5 seconds).
+
+**Example Output**:
+```json
+{
+  "payload": 25.3,
+  "topic": "temperature",
+  "tagId": "device1.temperature",
+  "tagName": "temperature",
+  "timestamp": "2025-01-01T10:30:00.000Z",
+  "previousValue": 24.8
+}
+```
+
+**Note**: This node only outputs messages when tag values actually change, not on every polling cycle. It efficiently monitors for changes without requiring manual polling.
+
 #### get-tag-id
 **Purpose**: Get the internal ID of a tag by name
 

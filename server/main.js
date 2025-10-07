@@ -400,11 +400,14 @@ function startFuxa() {
             },
             functionGlobalContext: {
                 fuxa: {
+                    runtime: runtime,
                     getTag: require('./runtime/devices').getTagValue,
                     setTag: require('./runtime/devices').setTagValue,
                     getDaq: require('./runtime/storage/daqstorage').getNodeValues,
                     getTagId: require('./runtime/devices').getTagId,
                     emit: events.emit.bind(events),
+                    on: events.on.bind(events),
+                    removeListener: events.removeListener.bind(events),
                     sendMessage: async (address, subject, message) => await runtime.notificatorMgr.sendMailMessage(null, address, subject, message, null, null),
                     getAlarms: async () => await runtime.alarmsMgr.getAlarmsValues(null, -1),
                     getHistoryAlarms: async (start, end) => { const query = { start: start, end: end }; return await runtime.alarmsMgr.getAlarmsHistory(query, -1); },
