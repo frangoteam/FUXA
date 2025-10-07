@@ -2,7 +2,7 @@ module.exports = function(RED) {
     function FuxaOpenCardNode(config) {
         RED.nodes.createNode(this, config);
         var node = this;
-        var fuxa = this.context().global.get('fuxa');
+        var fuxa = RED.settings.functionGlobalContext.fuxa;
 
         this.on('input', async function(msg) {
             try {

@@ -2,7 +2,8 @@ module.exports = function(RED) {
     function FuxaGetTagNode(config) {
         RED.nodes.createNode(this, config);
         var node = this;
-        var fuxa = this.context().global.get('fuxa');
+        // Access FUXA functions from global context
+        var fuxa = RED.settings.functionGlobalContext.fuxa;
 
         this.on('input', function(msg) {
             try {
