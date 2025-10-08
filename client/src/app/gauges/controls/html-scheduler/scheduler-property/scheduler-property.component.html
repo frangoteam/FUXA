@@ -1,0 +1,268 @@
+<div class="container">
+    <h1 mat-dialog-title mat-dialog-draggable style="display: inline-block; cursor: move;">Scheduler Settings</h1>
+    <mat-icon style="float: right; margin-right: -10px; margin-top: -10px; cursor: pointer; color: gray;"
+              (click)="onNoClick()">clear</mat-icon>
+    
+    <mat-tab-group style="width: 100%;">
+        <mat-tab label="Property">
+            <div class="mat-tab-container">
+                <!-- Master Name and Authorization -->
+                <div style="padding-top: 20px; padding-bottom: 15px; display: flex; align-items: flex-end;">
+                    <div class="my-form-field">
+                        <span>Name</span>
+                        <input type="text" style="width: 220px;" [(ngModel)]="data.settings.name">
+                    </div>
+                    <div class="my-form-field ml10" style="vertical-align: bottom;">
+                        <span>Authorization</span>
+                        <div style="text-align:center;cursor:pointer;" 
+                             class="my-form-field-permission pointer" 
+                             (click)="onEditMasterPermission()">
+                            <mat-icon *ngIf="haveMasterPermission(); else masterUnlock"
+                                      class="header-icon"
+                                      style="line-height: 28px;">lock</mat-icon>
+                            <ng-template #masterUnlock>
+                                <mat-icon class="header-icon"
+                                          style="line-height: 28px;">lock_open</mat-icon>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <!-- Add Device Button moved to same row -->
+                    <div class="toolbox" style="margin-left: auto; margin-right: 10px;">
+                        <button mat-icon-button (click)="addDevice()" title="Add Device">
+                            <mat-icon>add_circle_outline</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Device Configuration with increased top spacing -->
+                <div mat-dialog-content class="mat-dialog-content" style="overflow: visible; width: 100%; margin-top: 35px; max-width: 100%; box-sizing: border-box;">
+                    <!-- Device Rows using FUXA Pattern -->
+                    <div *ngFor="let device of deviceList; let i = index" class="grid-conta" style="margin-bottom: 15px;">
+                        <div class="item">
+                            <!-- Name and Authorization in same row -->
+                            <div style="display: flex; align-items: flex-end; margin-bottom: 10px;">
+                                <div class="my-form-field">
+                                    <span>Name</span>
+                                    <input [(ngModel)]="device.name" 
+                                           style="width: 220px" 
+                                           type="text">
+                                </div>
+                                <div class="my-form-field ml10" style="vertical-align: bottom;">
+                                    <span>Authorization</span>
+                                    <div style="text-align:center;cursor:pointer;" 
+                                         class="my-form-field-permission pointer" 
+                                         (click)="onEditDevicePermission(i)">
+                                        <mat-icon *ngIf="haveDevicePermission(device); else deviceUnlock"
+                                                  class="header-icon"
+                                                  style="line-height: 28px;">lock</mat-icon>
+                                        <ng-template #deviceUnlock>
+                                            <mat-icon class="header-icon"
+                                                      style="line-height: 28px;">lock_open</mat-icon>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                                <!-- Remove Button in same row -->
+                                <div class="item-remove" style="margin-left: auto;">
+                                    <button mat-icon-button 
+                                            class="remove"
+                                            (click)="removeDevice(i)"
+                                            [disabled]="deviceList.length <= 1">
+                                        <mat-icon>clear</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Tag Field on separate line -->
+                            <div class="my-form-field tag-field">
+                                <flex-variable [data]="data" 
+                                               [variableId]="device.variableId"
+                                               (onchange)="onTagChanged(i, $event)"
+                                               [withStaticValue]="false">
+                                </flex-variable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- Appearance Settings -->
+                <div style="padding: 30px 0 15px 0; border-top: 1px solid #e0e0e0; margin-top: 30px;">
+                    <h3 style="margin: 0 0 20px 0; color: rgba(255, 255, 255, 0.8); font-size: 16px; font-weight: 500;">Appearance Settings</h3>
+                    
+                    <!-- Time Format Selection -->
+                    <div style="margin-bottom: 20px;">
+                        <div class="my-form-field">
+                            <span>Time Format</span>
+                            <mat-select style="width: 280px;"
+                                        [(ngModel)]="data.settings.property.timeFormat">
+                                <mat-option value="12hr">12-Hour (8:00am - 10:00pm)</mat-option>
+                                <mat-option value="24hr">24-Hour (08:00 - 22:00)</mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                    
+                    <!-- All color pickers in single row with responsive wrapping -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: flex-start;">
+                        <div class="my-form-field">
+                            <span>Theme</span>
+                            <input class="input-color" 
+                                   style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;"
+                                   type="color"
+                                   [(ngModel)]="data.settings.property.accentColor">
+                        </div>
+                        <div class="my-form-field">
+                            <span>Background</span>
+                            <input class="input-color" 
+                                   style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;"
+                                   type="color"
+                                   [(ngModel)]="data.settings.property.backgroundColor">
+                        </div>
+                        <div class="my-form-field">
+                            <span>Border</span>
+                            <input class="input-color" 
+                                   style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;"
+                                   type="color"
+                                   [(ngModel)]="data.settings.property.borderColor">
+                        </div>
+                        <div class="my-form-field">
+                            <span>Primary Text</span>
+                            <input class="input-color" 
+                                   style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;"
+                                   type="color"
+                                   [(ngModel)]="data.settings.property.textColor">
+                        </div>
+                        <div class="my-form-field">
+                            <span>Secondary Text</span>
+                            <input class="input-color" 
+                                   style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;"
+                                   type="color"
+                                   [(ngModel)]="data.settings.property.secondaryTextColor">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+        
+        <mat-tab label="Actions">
+            <div class="mat-tab-container" style="padding-top: 15px;">
+                
+                <!-- ON Actions Section -->
+                <div class="dialog-hint" style="margin-bottom: 15px;">
+                    <label>Actions when Device Turns ON</label>
+                </div>
+                
+                <div *ngFor="let action of deviceActionsOn; let i = index" class="item">
+                    <div class="item-remove">
+                        <button mat-icon-button (click)="removeActionOn(i)" class="remove">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="addActionOn()" class="remove">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                    
+                    <ng-container *ngTemplateOutlet="actionRow; context: {action: action}"></ng-container>
+                </div>
+                
+                <!-- Separator -->
+                <div style="height: 30px; border-top: 2px solid rgba(85, 110, 130, 0.3); margin: 20px 0;"></div>
+                
+                <!-- OFF Actions Section -->
+                <div class="dialog-hint" style="margin-bottom: 15px;">
+                    <label>Actions when Device Turns OFF</label>
+                </div>
+                
+                <div *ngFor="let action of deviceActionsOff; let i = index" class="item">
+                    <div class="item-remove">
+                        <button mat-icon-button (click)="removeActionOff(i)" class="remove">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                        <button mat-icon-button (click)="addActionOff()" class="remove">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                    
+                    <ng-container *ngTemplateOutlet="actionRow; context: {action: action}"></ng-container>
+                </div>
+            </div>
+        </mat-tab>
+        
+        <!-- Reusable Action Row Template -->
+        <ng-template #actionRow let-action="action">
+            <div class="inbk" style="vertical-align: top;">
+                <div class="my-form-field" style="width: 160px;">
+                    <span>Device</span>
+                    <mat-select [(value)]="action.deviceName">
+                        <mat-option *ngFor="let device of deviceList" [value]="device.name">
+                            {{device.name}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+                
+                <div class="my-form-field ml15" style="width: 160px;">
+                    <span>Action</span>
+                    <mat-select [(value)]="action.action" (change)="action.actparam = ''">
+                        <mat-option *ngFor="let key of actionTypeKeys | keyvalue" [value]="key.key">
+                            {{key.value}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            
+            <!-- Set Value -->
+            <div class="inbk ml15" *ngIf="withSetValue(action.action)">
+                <div class="my-form-field">
+                    <span>Value</span>
+                    <input [(ngModel)]="action.actparam" type="text" style="width: 180px">
+                </div>
+                <div class="my-form-field ml10">
+                    <span>Function</span>
+                    <mat-select [(value)]="action.actoptions.function" style="width: 80px;">
+                        <mat-option value=""></mat-option>
+                        <mat-option value="add">Add</mat-option>
+                        <mat-option value="remove">Remove</mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div style="display: block; padding-top: 5px; padding-left: 25px;" *ngIf="withSetValue(action.action)">
+                <flex-variable style="display: block" [data]="data" [(value)]="action.actoptions.variable" [withStaticValue]="false"></flex-variable>
+            </div>
+            
+            <!-- Toggle Value -->
+            <div style="display: block; padding-top: 5px; padding-left: 25px;" *ngIf="withToggleValue(action.action)">
+                <flex-variable style="display: block" [data]="data" [(value)]="action.actoptions.variable" [withBitmask]="true" [bitmask]="action.actoptions.variable?.bitmask" [withStaticValue]="false"></flex-variable>
+            </div>
+            
+            <!-- Run Script -->
+            <ng-container *ngIf="isRunScript(action.action)">
+                <div class="my-form-field inbk" style="width: 260px; padding-left: 20px;">
+                    <span>Script</span>
+                    <mat-select [(value)]="action.actparam" (selectionChange)="onScriptChanged($event.value, action)">
+                        <mat-option *ngFor="let script of scripts" [value]="script.id">{{script.name}}</mat-option>
+                    </mat-select>
+                </div>
+                <div style="display: table; padding-top: 5px;">
+                    <div *ngFor="let scriptParam of action.actoptions['params']" style="padding-left: 10px; padding-top: 5px;">
+                        <div class="my-form-field">
+                            <span>Parameter</span>
+                            <input [(ngModel)]="scriptParam.name" type="text" style="width: 160px" readonly [disabled]="true">
+                        </div>
+                        <div style="margin-left: 10px; display: inline-block;">
+                            <div class="my-form-field" *ngIf="scriptParam.type === 'value'">
+                                <span>Value</span>
+                                <input [(ngModel)]="scriptParam.value" type="text" style="width: 260px">
+                            </div>
+                            <div class="my-form-field" *ngIf="scriptParam.type === 'tagid'">
+                                <flex-variable style="display: block" (onchange)="setScriptParam(scriptParam, $event)" [data]="data" [variableId]="scriptParam.value" [withStaticValue]="false"></flex-variable>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </ng-template>
+    </mat-tab-group>
+    
+    <div mat-dialog-actions class="mat-dialog-actions dialog-action">
+        <button mat-raised-button (click)="onNoClick()">CANCEL</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">OK</button>
+    </div>
+</div>

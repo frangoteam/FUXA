@@ -83,8 +83,22 @@ function FuxaServer(_data, _logger, _events) {
         for (var id in data.tags) {
             tagsMap[id] = data.tags[id];
             const dataTag = data.tags[id];
-            if (dataTag.init) {
+            const shouldRestore = dataTag.daq && dataTag.daq.restored;
+            
+            if (shouldRestore) {
+                data.tags[id].value = null; 
+            } else if (dataTag.init !== undefined && dataTag.init !== null && dataTag.init !== '') {
                 data.tags[id].value = deviceUtils.parseValue(dataTag.init, dataTag.type);
+            } else {
+                if (dataTag.type === 'boolean') {
+                    data.tags[id].value = false; 
+                } else if (dataTag.type === 'number') {
+                    data.tags[id].value = 0; 
+                } else if (dataTag.type === 'string') {
+                    data.tags[id].value = ''; 
+                } else {
+                    data.tags[id].value = null; 
+                }
             }
             if (dataTag.sysType === TagSystemTypeEnum.deviceConnectionStatus) {
                 data.tags[id].timestamp = Date.now();
@@ -207,8 +221,14 @@ function FuxaServer(_data, _logger, _events) {
         if (type === 'number') {
             return parseFloat(value);
         } else if (type === 'boolean') {
+            // Handle null, undefined, empty string cases
+            if (value === null || value === undefined || value === '') {
+                return false; // Default to false for safety
+            }
             if (typeof value === 'string') {
-                return value.toLowerCase() !== 'false';
+                // Properly handle boolean string values
+                const lowerValue = value.toLowerCase().trim();
+                return lowerValue === 'true' || lowerValue === '1';
             }
             return Boolean(value);
         } else if (type === 'string') {

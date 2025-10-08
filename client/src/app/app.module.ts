@@ -1,6 +1,6 @@
 // the start/root module that tells Angular how to assemble the application.
 
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -148,6 +148,9 @@ import { IframePropertyComponent } from './gauges/controls/html-iframe/iframe-pr
 import { TablePropertyComponent } from './gauges/controls/html-table/table-property/table-property.component';
 import { TableCustomizerComponent } from './gauges/controls/html-table/table-customizer/table-customizer.component';
 import { DataTableComponent } from './gauges/controls/html-table/data-table/data-table.component';
+import { HtmlSchedulerComponent } from './gauges/controls/html-scheduler/html-scheduler.component';
+import { SchedulerComponent } from './gauges/controls/html-scheduler/scheduler/scheduler.component';
+import { SchedulerPropertyComponent } from './gauges/controls/html-scheduler/scheduler-property/scheduler-property.component';
 import { ReportListComponent } from './reports/report-list/report-list.component';
 import { ReportEditorComponent } from './reports/report-editor/report-editor.component';
 import { DataConverterService } from './_services/data-converter.service';
@@ -398,7 +401,10 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         LanguageTextListComponent,
         ClientScriptAccessComponent,
         TagPropertyEditWebcamComponent,
-        VideoPropertyComponent
+        VideoPropertyComponent,
+        HtmlSchedulerComponent,
+        SchedulerComponent,
+        SchedulerPropertyComponent
     ],
     imports: [
         BrowserModule,
@@ -429,6 +435,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         NgxDaterangepickerMd.forRoot(),
         FrameworkModule
     ],
+        schemas: [CUSTOM_ELEMENTS_SCHEMA],
     providers: [
         // providersResourceService,
         ResClientService,

@@ -980,6 +980,20 @@ export class ProjectService {
     }
     //#endregion
 
+    //#region Scheduler query
+    getSchedulerData(id: string): Observable<any> {
+        return this.storage.getSchedulerData(id);
+    }
+
+    setSchedulerData(id: string, data: any): Observable<any> {
+        return this.storage.setSchedulerData(id, data);
+    }
+    
+    deleteSchedulerData(id: string): Observable<any> {
+        return this.storage.deleteSchedulerData(id);
+    }
+    //#endregion
+
     async getTagsValues(tagsIds: string[], sourceScriptName?: string): Promise<any[]> {
         let values = await firstValueFrom(this.storage.getTagsValues(tagsIds, sourceScriptName));
         return values;
