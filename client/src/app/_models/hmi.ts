@@ -465,6 +465,25 @@ export interface GaugeTableProperty {
     events: GaugeEvent[];
 }
 
+export interface GaugeSchedulerProperty {
+    id: string;
+    devices: SchedulerDevice[];
+    colors: SchedulerColors;
+}
+
+export interface SchedulerDevice {
+    name: string;
+    tagId: string;
+    label: string;
+}
+
+export interface SchedulerColors {
+    background: string;
+    text: string;
+    accent: string;
+    border: string;
+}
+
 export enum TableType {
     data = 'data',
     history = 'history',

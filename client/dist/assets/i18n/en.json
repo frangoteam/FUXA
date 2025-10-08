@@ -580,6 +580,19 @@
     "editor.controls-panel-settings": "Panel settings",
     "editor.controls-video": "Video",
     "editor.controls-video-settings": "Video settings",
+    "editor.controls-scheduler": "Time Scheduler",
+    "editor.controls-scheduler-settings": "Time Scheduler settings",
+
+    "scheduler.devices": "Devices",
+    "scheduler.device-name": "Device Name",
+    "scheduler.friendly-name": "Friendly Name",
+    "scheduler.add-device": "Add Device",
+    "scheduler.remove-device": "Remove Device",
+    "scheduler.colors": "Colors",
+    "scheduler.background-color": "Background Color",
+    "scheduler.text-color": "Text Color",
+    "scheduler.accent-color": "Accent Color",
+    "scheduler.border-color": "Border Color",
 
     "editor.layout-settings": "Layout settings",
 

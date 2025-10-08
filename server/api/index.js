@@ -18,6 +18,7 @@ var diagnoseApi = require('./diagnose');
 var scriptsApi = require('./scripts');
 var resourcesApi = require('./resources');
 var daqApi = require('./daq');
+var schedulerApi = require('./scheduler');
 var commandApi = require('./command');
 const reports = require('../dist/reports.service');
 const reportsApi = new reports.ReportsApiService();
@@ -53,6 +54,8 @@ function init(_server, _runtime) {
             apiApp.use(diagnoseApi.app());
             daqApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(daqApi.app());
+            schedulerApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            apiApp.use(schedulerApi.app());
             scriptsApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(scriptsApi.app());
             resourcesApi.init(runtime, authJwt.verifyToken, verifyGroups);
