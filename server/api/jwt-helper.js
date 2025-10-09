@@ -76,46 +76,6 @@ function verifyToken (req, res, next) {
     }
 }
 
-function requireAuth (req, res, next) {
-    // Allow requests from FUXA interface (iframe embedding)
-    // Check for common FUXA referer patterns
-    const referer = req.headers.referer;
-    if (referer) {
-        // Allow if referer contains common FUXA paths or is from the same server
-        const fuxaPatterns = [
-            '/fuxa', '/editor', '/viewer', '/lab', '/home',
-            'localhost:', '127.0.0.1:', '0.0.0.0:'
-        ];
-        const hasFuxaReferer = fuxaPatterns.some(pattern => referer.includes(pattern));
-        if (hasFuxaReferer) {
-            return next();
-        }
-    }
-
-    // For direct access, require authentication
-    let token = req.headers['x-access-token'];
-
-    if (!token) {
-        return res.status(401).json({ error: "unauthorized_error", message: "Authentication required!" });
-    }
-
-    jwt.verify(token, secretCode, (err, decoded) => {
-        if (err) {
-            return res.status(401).json({ error: "unauthorized_error", message: "Invalid token!" });
-        } else {
-            req.userId = decoded.id;
-            req.userGroups = decoded.groups;
-            if (req.headers['x-auth-user']) {
-                let user = JSON.parse(req.headers['x-auth-user']);
-                if (user && user.groups != req.userGroups) {
-                    return res.status(403).json({ error: "unauthorized_error", message: "User Profile Corrupted!" });
-                }
-            }
-            next();
-        }
-    });
-}
-
 function getNewToken(headers) {
     const authUser = (headers['x-auth-user']) ? JSON.parse(headers['x-auth-user']) : null;
     if (authUser) {
@@ -159,7 +119,6 @@ module.exports = {
     init: init,
     verify: verify,
     verifyToken: verifyToken,
-    requireAuth: requireAuth,
     getNewToken: getNewToken,
     getGuestToken: getGuestToken,
     get secretCode() { return secretCode },

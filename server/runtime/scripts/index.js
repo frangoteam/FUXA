@@ -73,7 +73,9 @@ function ScriptsManager(_runtime) {
                     const result = await scriptModule.runTestScript(script);
                     resolve(result !== null ? result : `Script OK: ${script.name}`);
                 } else {
-                    // Removed logging for script execution
+                    if (!script.notLog) {
+                        logger.info(`Run script ${script.name}`);
+                    }
                     const result = await scriptModule.runScript(script);
                     resolve(result);
                 }
