@@ -43,7 +43,6 @@ import { MapsViewComponent } from '../maps/maps-view/maps-view.component';
 import { KioskWidgetsComponent } from '../resources/kiosk-widgets/kiosk-widgets.component';
 import { ResourcesService } from '../_services/resources.service';
 import { InputPropertyComponent } from '../gauges/controls/html-input/input-property/input-property.component';
-import { SchedulerPropertyComponent } from '../gauges/controls/html-scheduler/scheduler-property/scheduler-property.component';
 
 declare var Gauge: any;
 
@@ -1389,17 +1388,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
         } else if (dlgType === GaugeDialogType.Scheduler) {
-            dialogRef = this.dialog.open(SchedulerPropertyComponent, {
-                position: { top: '60px' },
-                disableClose: true,
-                data: {
-                    settings: tempsettings,
-                    devices: Object.values(this.projectService.getDevices()),
-                    withEvents: eventsSupported,
-                    withActions: actionsSupported,
-                    languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
-                }
-            });
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings,
+                devices: Object.values(this.projectService.getDevices()),
+                withEvents: eventsSupported,
+                withActions: actionsSupported,
+                languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
         } else {
             //!TODO to be refactored (GaugePropertyComponent)
             elementWithLanguageText = this.isSelectedElementToEnableLanguageTextSettings();

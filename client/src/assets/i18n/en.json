@@ -583,6 +583,7 @@
     "editor.controls-scheduler": "Time Scheduler",
     "editor.controls-scheduler-settings": "Time Scheduler settings",
 
+    "scheduler.property-settings-title": "Scheduler settings",
     "scheduler.devices": "Devices",
     "scheduler.device-name": "Device Name",
     "scheduler.friendly-name": "Friendly Name",
@@ -593,6 +594,18 @@
     "scheduler.text-color": "Text Color",
     "scheduler.accent-color": "Accent Color",
     "scheduler.border-color": "Border Color",
+    "scheduler.property-settings-devices": "Devices",
+    "scheduler.property-settings-add-device": "Add Device",
+    "scheduler.property-settings-device-name": "Device Name",
+    "scheduler.property-settings-layout": "Appearance",
+    "scheduler.property-settings-time-format": "Time Format",
+    "scheduler.property-settings-theme": "Theme",
+    "scheduler.property-settings-background": "Background",
+    "scheduler.property-settings-border": "Border",
+    "scheduler.property-settings-primary-text": "Primary Text",
+    "scheduler.property-settings-secondary-text": "Secondary Text",
+
+    "scheduler.property-data": "Data",
 
     "editor.layout-settings": "Layout settings",
 
