@@ -224,8 +224,6 @@
     flex-direction: column;
     height: 100%;
     min-height: 400px;
-    padding: 12px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     font-size: 14px;
 }
 
@@ -667,7 +665,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
-    margin-top: 16px;
+    margin-top: 5px;
 }
 
 .device-mode, .overview-mode {
@@ -878,7 +876,7 @@
                             background: var(--scheduler-accent-color, #1976d2);
                         }
 
-                        .material-icons {
+                        .material-icons, .material-icons-outlined {
                             font-size: 14px;
                         }
                     }
@@ -1401,13 +1399,12 @@
 
 // Overview mode
 .device-group {
-    margin-bottom: 16px;
 
     .device-header {
         background: var(--scheduler-accent-color, #2196f3);
         color: var(--scheduler-secondary-text-color, #ffffff);
         padding: 8px 12px;
-        margin: 0 0 8px 0;
+        margin: 0 0 0 0;
         border-radius: 4px 4px 0 0;
         font-size: 14px;
         font-weight: 500;
