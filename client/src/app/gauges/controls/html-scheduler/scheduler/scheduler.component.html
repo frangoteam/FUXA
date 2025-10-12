@@ -795,7 +795,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="button" (click)="cancelForm()" class="cancel-btn">{{ 'dlg.cancel' | translate }}</button>
+                <button type="button" (click)="cancelForm()" class="cancel-btn">{{ 'scheduler.cancel' | translate }}</button>
                 <button type="submit" class="save-btn">{{ 'scheduler.save' | translate }}</button>
             </div>
         </form>
@@ -820,6 +820,9 @@
                 <div [innerHTML]="confirmDialogData?.message"></div>
             </div>
             <div class="dialog-actions">
-                <button type="button" class="cancel-btn" (click)="closeConfirmDialog()" *ngIf="confirmDialogData?.showCancel !== false">Cancel</button>
+                <button type="button" class="cancel-btn" (click)="closeConfirmDialog()" *ngIf="confirmDialogData?.showCancel !== false">{{ 'scheduler.cancel' | translate }}</button>
                 <button type="button" class="confirm-btn" (click)="confirmAction()">{{confirmDialogData?.confirmText || 'Confirm'}}</button>
             </div>
+        </div>
+    </div>
+</div>

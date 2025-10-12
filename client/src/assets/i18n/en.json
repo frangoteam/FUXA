@@ -659,6 +659,7 @@
     "scheduler.editor-placeholder.hint": "Configure in properties panel",
     "scheduler.start": "Start",
     "scheduler.end": "End",
+    "scheduler.cancel": "Cancel",
     "scheduler.monthly-schedule-details": "Monthly Schedule Details",
     "scheduler.unnamed-device": "Unnamed Device",
     "scheduler.update-schedule": "Update Schedule",
