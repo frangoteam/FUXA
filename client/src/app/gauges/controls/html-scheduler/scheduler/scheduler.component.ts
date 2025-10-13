@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, AfterViewInit, NgZone } from '@angular/core';
-import { Subject } from 'rxjs';
+import { fromEvent, Subject, take, takeUntil } from 'rxjs';
 import { HmiService } from '../../../../_services/hmi.service';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { AuthService } from '../../../../_services/auth.service';
@@ -183,14 +183,18 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         this.initI18nLists();
 
         // Listen for scheduler updates from server
-        this.hmiService.onSchedulerUpdated.subscribe((message) => {
+        this.hmiService.onSchedulerUpdated.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((message) => {
             if (message.id === this.id) {
                 this.loadSchedulesFromServer();
             }
         });
 
         // Listen for scheduler event active state changes
-        this.hmiService.onSchedulerEventActive.subscribe((message) => {
+        this.hmiService.onSchedulerEventActive.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((message) => {
             if (message.schedulerId === this.id) {
 
                 const eventId = message.eventData?.id;
@@ -221,7 +225,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         });
 
         // Listen for remaining time updates from server
-        this.hmiService.onSchedulerRemainingTime.subscribe((message) => {
+        this.hmiService.onSchedulerRemainingTime.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((message) => {
             if (message.schedulerId === this.id) {
                 const eventId = message.eventId;
                 if (!eventId) {
@@ -251,7 +257,10 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             this.initializeEventDrivenScheduler();
         }
 
-        document.addEventListener('click', this.onDocumentClick.bind(this));
+
+        fromEvent<MouseEvent>(document, 'click').pipe(
+            takeUntil(this.destroy$)
+        ).subscribe(this.onDocumentClick.bind(this));
 
     }
 
@@ -311,12 +320,6 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     ngOnDestroy() {
         this.destroy$.next();
         this.destroy$.complete();
-
-        if (this.signalSubscription) {
-            this.signalSubscription.unsubscribe();
-        }
-
-        document.removeEventListener('click', this.onDocumentClick.bind(this));
 
         if (this.transitionWatcher) {
             cancelAnimationFrame(this.transitionWatcher);
@@ -584,7 +587,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     loadSchedulesFromServer() {
         if (!this.id) return;
 
-        this.hmiService.askSchedulerData(this.id).subscribe({
+        this.hmiService.askSchedulerData(this.id).pipe(
+            take(1)
+        ).subscribe({
             next: (data) => {
                 if (data && data.schedules) {
                     // Convert old format to device name-based format if needed
@@ -843,7 +848,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             }
         };
 
-        this.hmiService.setSchedulerData(this.id, dataToSave).subscribe({
+        this.hmiService.setSchedulerData(this.id, dataToSave).pipe(
+            take(1)
+        ).subscribe({
             next: (response) => {
                 // Server will handle device control
                 this.refreshTagSubscriptions();
@@ -1189,7 +1196,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
             this.hmiService.viewsTagsSubscribe(tagIds, true);
 
-            this.signalSubscription = this.hmiService.onVariableChanged.subscribe(
+            this.signalSubscription = this.hmiService.onVariableChanged.pipe(
+                takeUntil(this.destroy$)
+            ).subscribe(
                 (signal) => this.handleSignalChange(signal)
             );
         }
@@ -1299,7 +1308,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         // Delete this scheduler's data from database completely
         // WARNING: This permanently deletes all schedule data for this scheduler!
         if (this.id) {
-            this.hmiService.deleteSchedulerData(this.id).subscribe({
+            this.hmiService.deleteSchedulerData(this.id).pipe(
+                take(1)
+            ).subscribe({
                 next: (result) => { },
                 error: (error) => {
                     console.error('Error deleting scheduler data:', error);
@@ -1864,63 +1875,52 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         return minute || '00';
     }
 
-    getTimePeriod(type: 'start' | 'end'): string {
+    getTimePeriod(type: 'start' | 'end'): 'am' | 'pm' {
         const time = type === 'start' ? this.formTimer.startTime : this.formTimer.endTime;
-        if (!time) return 'AM';
+        if (!time) return 'am';
         const [hour] = time.split(':');
         const hourNum = parseInt(hour);
-        return hourNum >= 12 ? 'PM' : 'AM';
+        return hourNum >= 12 ? 'pm' : 'am';
     }
 
     setTimeHour(type: 'start' | 'end', hour: string): void {
         const currentMinute = this.getTimeMinute(type);
-        const currentPeriod = this.getTimePeriod(type);
+        const currentPeriod = this.getTimePeriod(type); // 'am' | 'pm'
 
         let hour24 = parseInt(hour);
-        if (currentPeriod === 'PM' && hour24 !== 12) hour24 += 12;
-        if (currentPeriod === 'AM' && hour24 === 12) hour24 = 0;
+        if (currentPeriod === 'pm' && hour24 !== 12) hour24 += 12;
+        if (currentPeriod === 'am' && hour24 === 12) hour24 = 0;
 
         const newTime = `${hour24.toString().padStart(2, '0')}:${currentMinute}`;
-
-        if (type === 'start') {
-            this.formTimer.startTime = newTime;
-        } else {
-            this.formTimer.endTime = newTime;
-        }
+        if (type === 'start') this.formTimer.startTime = newTime;
+        else this.formTimer.endTime = newTime;
     }
 
     setTimeMinute(type: 'start' | 'end', minute: string): void {
         const currentHour = this.getTimeHour(type);
-        const currentPeriod = this.getTimePeriod(type);
+        const currentPeriod = this.getTimePeriod(type); // 'am' | 'pm'
 
         let hour24 = parseInt(currentHour);
-        if (currentPeriod === 'PM' && hour24 !== 12) hour24 += 12;
-        if (currentPeriod === 'AM' && hour24 === 12) hour24 = 0;
+        if (currentPeriod === 'pm' && hour24 !== 12) hour24 += 12;
+        if (currentPeriod === 'am' && hour24 === 12) hour24 = 0;
 
         const newTime = `${hour24.toString().padStart(2, '0')}:${minute}`;
-
-        if (type === 'start') {
-            this.formTimer.startTime = newTime;
-        } else {
-            this.formTimer.endTime = newTime;
-        }
+        if (type === 'start') this.formTimer.startTime = newTime;
+        else this.formTimer.endTime = newTime;
     }
 
     setTimePeriod(type: 'start' | 'end', period: string): void {
+        const p = (period || '').toLowerCase() as 'am' | 'pm';
         const currentHour = this.getTimeHour(type);
         const currentMinute = this.getTimeMinute(type);
 
         let hour24 = parseInt(currentHour);
-        if (period === 'PM' && hour24 !== 12) hour24 += 12;
-        if (period === 'AM' && hour24 === 12) hour24 = 0;
+        if (p === 'pm' && hour24 !== 12) hour24 += 12;
+        if (p === 'am' && hour24 === 12) hour24 = 0;
 
         const newTime = `${hour24.toString().padStart(2, '0')}:${currentMinute}`;
-
-        if (type === 'start') {
-            this.formTimer.startTime = newTime;
-        } else {
-            this.formTimer.endTime = newTime;
-        }
+        if (type === 'start') this.formTimer.startTime = newTime;
+        else this.formTimer.endTime = newTime;
     }
 
     setDurationValue(field: 'hours' | 'minutes' | 'seconds', value: number): void {
@@ -2010,7 +2010,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             });
 
             // Clear database
-            this.hmiService.setSchedulerData(this.id, { schedules: {}, settings: {} }).subscribe();
+            this.hmiService.setSchedulerData(this.id, { schedules: {}, settings: {} }).pipe(
+                take(1)
+            ).subscribe();
         }
     }
 

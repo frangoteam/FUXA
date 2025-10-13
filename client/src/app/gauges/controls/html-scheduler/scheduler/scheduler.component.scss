@@ -665,7 +665,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
-    margin-top: 5px;
+    margin-top: 2px;
 }
 
 .device-mode, .overview-mode {
@@ -1412,7 +1412,7 @@
 
     // Mode section tables (Timer Mode and Event Mode)
     .mode-section {
-        margin-bottom: 12px;
+        margin-bottom: 1px;
 
         .schedule-headers .header-row {
             // Lighter shade of accent color for mode table headers
