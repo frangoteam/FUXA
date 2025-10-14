@@ -15,8 +15,8 @@ var scripts = require('./scripts');
 var plugins = require('./plugins');
 var utils = require('./utils');
 const daqstorage = require('./storage/daqstorage');
-const schedulerStorage = require('./storage/scheduler-storage');
-const schedulerService = require('./scheduler-service');
+const schedulerStorage = require('./scheduler/scheduler-storage');
+const schedulerService = require('./scheduler/scheduler-service');
 var jobs = require('./jobs');
 
 var api;
@@ -48,7 +48,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
 
 
     daqstorage.init(settings, logger, runtime);
-    
+
     // Initialize scheduler services
     schedulerStorage.init(settings, logger, runtime).then(() => {
         return schedulerService.init(settings, logger, runtime);
