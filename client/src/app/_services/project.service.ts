@@ -988,7 +988,7 @@ export class ProjectService {
     setSchedulerData(id: string, data: any): Observable<any> {
         return this.storage.setSchedulerData(id, data);
     }
-    
+
     deleteSchedulerData(id: string): Observable<any> {
         return this.storage.deleteSchedulerData(id);
     }

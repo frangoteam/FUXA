@@ -247,15 +247,15 @@ export class HmiService {
             this.onDeviceBrowse.emit(message);
         });
         // scheduler updated (one-time events removed, etc.)
-        this.socket.on('scheduler:updated', (message) => {
+        this.socket.on(IoEventTypes.SCHEDULER_UPDATED, (message) => {
             this.onSchedulerUpdated.emit(message);
         });
         // scheduler event active state changed (START/STOP fired)
-        this.socket.on('scheduler:event-active', (message) => {
+        this.socket.on(IoEventTypes.SCHEDULER_ACTIVE, (message) => {
             this.onSchedulerEventActive.emit(message);
         });
         // scheduler remaining time update
-        this.socket.on('scheduler:remaining-time', (message) => {
+        this.socket.on(IoEventTypes.SCHEDULER_REMAINING, (message) => {
             this.onSchedulerRemainingTime.emit(message);
         });
         // device node attribute
@@ -616,7 +616,7 @@ export class HmiService {
     setSchedulerData(id: string, data: any) {
         return this.projectService.setSchedulerData(id, data);
     }
-    
+
     deleteSchedulerData(id: string) {
         return this.projectService.deleteSchedulerData(id);
     }
@@ -707,7 +707,10 @@ export enum IoEventTypes {
     HOST_INTERFACES = 'host-interfaces',
     SCRIPT_CONSOLE = 'script-console',
     SCRIPT_COMMAND = 'script-command',
-    ALIVE = 'heartbeat'
+    ALIVE = 'heartbeat',
+    SCHEDULER_UPDATED = 'scheduler:updated',
+    SCHEDULER_ACTIVE = 'scheduler:event-active',
+    SCHEDULER_REMAINING = 'scheduler:remaining-time'
 }
 
 export const ScriptCommandEnum = {
