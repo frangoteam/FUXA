@@ -30,6 +30,10 @@ export class HmiService {
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
     @Output() onOpen: EventEmitter<ScriptOpenCard> = new EventEmitter();
+    @Output() onSchedulerUpdated: EventEmitter<any> = new EventEmitter();
+    @Output() onSchedulerEventActive: EventEmitter<any> = new EventEmitter();
+    @Output() onSchedulerRemainingTime: EventEmitter<any> = new EventEmitter();
+    @Output() onGaugeEvent: EventEmitter<any> = new EventEmitter();
 
     onServerConnection$ = new BehaviorSubject<boolean>(false);
 
@@ -241,6 +245,18 @@ export class HmiService {
         // device browse
         this.socket.on(IoEventTypes.DEVICE_BROWSE, (message) => {
             this.onDeviceBrowse.emit(message);
+        });
+        // scheduler updated (one-time events removed, etc.)
+        this.socket.on(IoEventTypes.SCHEDULER_UPDATED, (message) => {
+            this.onSchedulerUpdated.emit(message);
+        });
+        // scheduler event active state changed (START/STOP fired)
+        this.socket.on(IoEventTypes.SCHEDULER_ACTIVE, (message) => {
+            this.onSchedulerEventActive.emit(message);
+        });
+        // scheduler remaining time update
+        this.socket.on(IoEventTypes.SCHEDULER_REMAINING, (message) => {
+            this.onSchedulerRemainingTime.emit(message);
         });
         // device node attribute
         this.socket.on(IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
@@ -592,6 +608,20 @@ export class HmiService {
     }
     //#endregion
 
+    //#region Scheduler functions served from project service
+    askSchedulerData(id: string) {
+        return this.projectService.getSchedulerData(id);
+    }
+
+    setSchedulerData(id: string, data: any) {
+        return this.projectService.setSchedulerData(id, data);
+    }
+
+    deleteSchedulerData(id: string) {
+        return this.projectService.deleteSchedulerData(id);
+    }
+    //#endregion
+
     //#region My Static functions
     public static toVariableId(src: string, name: string) {
         return src + HmiService.separator + name;
@@ -677,7 +707,10 @@ export enum IoEventTypes {
     HOST_INTERFACES = 'host-interfaces',
     SCRIPT_CONSOLE = 'script-console',
     SCRIPT_COMMAND = 'script-command',
-    ALIVE = 'heartbeat'
+    ALIVE = 'heartbeat',
+    SCHEDULER_UPDATED = 'scheduler:updated',
+    SCHEDULER_ACTIVE = 'scheduler:event-active',
+    SCHEDULER_REMAINING = 'scheduler:remaining-time'
 }
 
 export const ScriptCommandEnum = {

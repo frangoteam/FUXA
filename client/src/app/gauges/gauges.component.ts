@@ -29,6 +29,8 @@ import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.
 import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.component';
 import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
+import { HtmlSchedulerComponent } from './controls/html-scheduler/html-scheduler.component';
+import { SchedulerComponent } from './controls/html-scheduler/scheduler/scheduler.component';
 import { ChartOptions } from '../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
 import { HtmlImageComponent } from './controls/html-image/html-image.component';
@@ -73,7 +75,7 @@ export class GaugesManager {
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
         PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
-        HtmlImageComponent, PanelComponent, HtmlVideoComponent];
+        HtmlImageComponent, PanelComponent, HtmlVideoComponent, HtmlSchedulerComponent];
 
     constructor(private hmiService: HmiService,
         private authService: AuthService,
@@ -124,7 +126,7 @@ export class GaugesManager {
     createGaugeStatus(ga: GaugeSettings): GaugeStatus {
         let result = new GaugeStatus();
         if (!ga.type.startsWith(HtmlChartComponent.TypeTag) && !ga.type.startsWith(HtmlGraphComponent.TypeTag) &&
-            !ga.type.startsWith(HtmlTableComponent.TypeTag)) {
+            !ga.type.startsWith(HtmlTableComponent.TypeTag) && !ga.type.startsWith(HtmlSchedulerComponent.TypeTag)) {
             result.onlyChange = true;
         }
         if (ga.type.startsWith(SliderComponent.TypeTag)) {
@@ -205,6 +207,10 @@ export class GaugesManager {
             delete this.mapGauges[ga.id];
             let gauge = HtmlTableComponent.detectChange(ga, res, ref);
             this.setTablePropety(gauge, ga.property);
+            this.mapGauges[ga.id] = gauge;
+        } else if (ga.type.startsWith(HtmlSchedulerComponent.TypeTag)) {
+            delete this.mapGauges[ga.id];
+            let gauge = HtmlSchedulerComponent.detectChange(ga, res, ref);
             this.mapGauges[ga.id] = gauge;
         } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
             HtmlImageComponent.detectChange(ga, true);
@@ -572,6 +578,13 @@ export class GaugesManager {
                         });
                     }
                     break;
+                } else if (ga.type.startsWith(HtmlSchedulerComponent.TypeTag)) {
+                    Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
+                        if (k === ga.id && this.mapGauges[k]) {
+                            HtmlSchedulerComponent.processValue(ga, svgele, sig, gaugeStatus, this.mapGauges[k]);
+                        }
+                    });
+                    break;
                 } else if (ga.type.startsWith(PanelComponent.TypeTag)) {
                     if (this.memorySigGauges[sig.id]) {
                         Object.keys(this.memorySigGauges[sig.id]).forEach(k => {
@@ -762,6 +775,8 @@ export class GaugesManager {
             return 'output_';
         } else if (type.startsWith(HtmlTableComponent.TypeTag)) {
             return 'table_';
+        } else if (type.startsWith(HtmlSchedulerComponent.TypeTag)) {
+            return 'scheduler_';
         }
         return 'shape_';
     }
@@ -861,6 +876,12 @@ export class GaugesManager {
                         this.hmiService.queryDaqValues(data);
                     }
                 });
+                this.mapGauges[ga.id] = gauge;
+            }
+            return gauge;
+        } else if (ga.type.startsWith(HtmlSchedulerComponent.TypeTag)) {
+            let gauge = HtmlSchedulerComponent.initElement(ga, res, ref, isview);
+            if (gauge) {
                 this.mapGauges[ga.id] = gauge;
             }
             return gauge;

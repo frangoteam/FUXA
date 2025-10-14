@@ -1387,6 +1387,20 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
                 }
             });
+        } else if (dlgType === GaugeDialogType.Scheduler) {
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings,
+                devices: Object.values(this.projectService.getDevices()),
+                withEvents: eventsSupported,
+                withActions: actionsSupported,
+                languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
         } else {
             //!TODO to be refactored (GaugePropertyComponent)
             elementWithLanguageText = this.isSelectedElementToEnableLanguageTextSettings();

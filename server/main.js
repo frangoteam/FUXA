@@ -12,7 +12,6 @@ const paths = require('./paths');
 const logger = require('./runtime/logger');
 const utils = require('./runtime/utils');
 var events = require("./runtime/events").create();
-
 const FUXA = require('./fuxa.js');
 
 const express = require('express');
@@ -219,9 +218,9 @@ if (!fs.existsSync(settings.webcamSnapShotsDir)) {
 
 // Server settings
 if (settings.https) {
-    server = https.createServer(settings.https, function (req, res) { app(req, res); });
+    server = https.createServer(settings.https, app);
 } else {
-    server = http.createServer(function (req, res) { app(req, res); });
+    server = http.createServer(app);
 }
 server.setMaxListeners(0);
 
