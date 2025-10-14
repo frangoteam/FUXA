@@ -118,6 +118,10 @@ $internal-backcolor: rgb(114, 120, 125);
     .device-icon {
         position: absolute;
         cursor: pointer;
+
+        mat-icon {
+            overflow: visible;
+        }
     }
 
     .device-edit {
@@ -125,6 +129,10 @@ $internal-backcolor: rgb(114, 120, 125);
         bottom: 0px;
         right: 0px;
         font-size: 17px;
+
+        mat-icon {
+            overflow: visible;
+        }
     }
 
     .device-edit-disabled {
@@ -137,6 +145,10 @@ $internal-backcolor: rgb(114, 120, 125);
         top: 0px;
         right: 0px;
         font-size: 17px;
+
+        mat-icon {
+            overflow: visible;
+        }
     }
 
     .device-list {
@@ -144,6 +156,10 @@ $internal-backcolor: rgb(114, 120, 125);
         right: 30px;
         font-size: 24px;
         bottom: 0px;
+
+        mat-icon {
+            overflow: visible;
+        }
     }
 
     .device-status {

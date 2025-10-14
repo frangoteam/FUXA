@@ -1,15 +1,15 @@
-<div style="width: 100%;position: relative;">
-    <div *ngIf="isToRemove" style="margin-top: 20px;margin-bottom: 20px;">
-        {{'msg.device-remove' | translate}} '{{data.device.name}}' ?
+<div class="container">
+    <div *ngIf="isToRemove" mat-dialog-content class="content-remove">
+        {{'msg.device-remove' | translate:{ value: data.device.name} }}'
     </div>
     <div *ngIf="!isToRemove">
-        <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable *ngIf="!isFuxaServer">
+        <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable *ngIf="!isFuxaServer">
             {{'device.property-client' | translate}}</h1>
-        <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable *ngIf="isFuxaServer">
+        <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable *ngIf="isFuxaServer">
             {{'device.property-server' | translate}}</h1>
-        <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
+        <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     </div>
-    <div style="overflow-y: hidden; overflow-x: hidden; padding-top: 5px;" *ngIf="!isToRemove">
+    <div mat-dialog-content class="content" *ngIf="!isToRemove">
         <div style="display: block;">
             <div class="my-form-field" style="display: block;margin-bottom: 10px;">
                 <span>{{'device.property-name' | translate}}</span>
