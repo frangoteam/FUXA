@@ -1066,6 +1066,7 @@
     "device.topic-publish-path": "Topic path",
     "device.topic-publish": "Publish",
     "device.topic-subscribe": "Subscribe",
+    "device.topic-select-all": "Select All",
     "device.topic-subscription-content": "Content",
     "device.topic-subscription-name": "Name",
     "device.topic-subscription-address": "Address",
