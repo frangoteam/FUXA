@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, 
 
 import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType, ChartLineZone } from '../../../../_models/chart';
 import { NgxUplotComponent, NgxSeries, ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
-import { DaqQuery, DateFormatType, TimeFormatType, IDateRange, GaugeChartProperty, DaqChunkType } from '../../../../_models/hmi';
+import { DaqQuery, DateFormatType, TimeFormatType, IDateRange, GaugeChartProperty, DaqChunkType, GaugeEventType } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -44,6 +44,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     chartName: string;
     addValueInterval = 0;
     zoomSize = 0;
+    eventChartClick = Utils.getEnumKey(GaugeEventType, GaugeEventType.click);
 
     constructor(
         private projectService: ProjectService,
@@ -228,6 +229,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.nguplot.init(this.options, (this.property?.type === ChartViewType.custom) ? true : false);
         this.updateDomOptions(this.nguplot);
+        if (this.property.events.find(ev => ev.type === this.eventChartClick)) {
+            this.nguplot.onChartClick = this.handleChartClick.bind(this);
+        }
     }
 
     public setInitRange(startRange?: string) {
@@ -661,6 +665,40 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => {
             this.setLoading(false);
         }, 500);
+    }
+
+    handleChartClick(x: number, y: number ) {
+        const eventClick = this.property?.events?.find(ev => ev.type === this.eventChartClick);
+        const script = this.projectService.getScripts()?.find(script => script.id === eventClick?.actparam);
+        if (eventClick && script) {
+            let scriptToRun = Utils.clone(script);
+            let chart = this.hmiService.getChart(this.property.id);
+            this.reloadActive = true;
+            scriptToRun.parameters = <ScriptParam[]>[{
+                type: ScriptParamType.chart,
+                value: chart?.lines,
+                name: script.parameters[0]?.name
+            },
+            {
+                type: ScriptParamType.value,
+                value: x,
+                name: script.parameters[1]?.name
+            },
+            {
+                type: ScriptParamType.value,
+                value: y,
+                name: script.parameters[2]?.name
+            }];
+            this.scriptService.runScript(scriptToRun).pipe(
+                delay(200)
+            ).subscribe(customData => {
+                this.setCustomValues(customData);
+            }, err => {
+                console.error(err);
+            }, () => {
+                this.reloadActive = false;
+            });
+        }
     }
 }
 

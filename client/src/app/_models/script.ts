@@ -254,7 +254,7 @@ export class TemplatesCode {
         this.functions = this.allFunctions.filter(sf => !sf.mode || !mode || sf.mode === mode);
     }
     allFunctions = <SystemFunction[]>[{
-        name: 'chart-data', mode: ScriptMode.CLIENT, text: 'script.template-chart-data-text', tooltip: 'script.template-chart-data-tooltip',
+        name: 'chart-data', mode: null, text: 'script.template-chart-data-text', tooltip: 'script.template-chart-data-tooltip',
         code: `// Add script parameter 'paramLines' as Chart lines (array)
 if (paramLines && Array.isArray(paramLines)) {
     const count = 10;

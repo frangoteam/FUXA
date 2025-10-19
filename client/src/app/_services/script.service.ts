@@ -90,18 +90,20 @@ export class ScriptService {
                         parameterToAdd += `let ${param.name} = '${param.value}';`;
                     }
                 });
-                try {
-                    const code = `${parameterToAdd}${script.code}`;
-                    const asyncText = script.sync ? 'function' : 'async function';
-                    const callText = `${asyncText} ${script.name}() {\n${this.addSysFunctions(code)} \n }\n${script.name}.call(this);\n`;
-                    const result = eval(callText);
-                    observer.next(result);
-                } catch (err) {
-                    console.error(err);
-                    observer.error(err);
-                } finally {
-                    observer.complete();
-                }
+                (async () => {
+                    try {
+                        const code = `${parameterToAdd}${script.code}`;
+                        const asyncText = script.sync ? 'function' : 'async function';
+                        const callText = `${asyncText} ${script.name}() {\n${this.addSysFunctions(code)} \n }\n${script.name}.call(this);\n`;
+                        const result = await eval(callText);
+                        observer.next(result);
+                    } catch (err) {
+                        console.error(err);
+                        observer.error(err);
+                    } finally {
+                        observer.complete();
+                    }
+                })();
             }
         });
     }
