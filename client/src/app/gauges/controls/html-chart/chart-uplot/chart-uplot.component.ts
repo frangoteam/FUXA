@@ -229,7 +229,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.nguplot.init(this.options, (this.property?.type === ChartViewType.custom) ? true : false);
         this.updateDomOptions(this.nguplot);
-        if (this.property?.events?.find(ev => ev.type === this.eventChartClick)) {
+        if (!this.isEditor && this.property?.events?.find(ev => ev.type === this.eventChartClick)) {
             this.nguplot.onChartClick = this.handleChartClick.bind(this);
         }
     }
