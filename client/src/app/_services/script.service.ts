@@ -4,7 +4,7 @@ import { Observable, lastValueFrom } from 'rxjs';
 
 import { EndPointApi } from '../_helpers/endpointapi';
 import { environment } from '../../environments/environment';
-import { Script, ScriptMode, SystemFunctions } from '../_models/script';
+import { Script, ScriptMode, ScriptParamType, SystemFunctions } from '../_models/script';
 import { ProjectService } from './project.service';
 import { HmiService, ScriptCommandEnum, ScriptCommandMessage } from './hmi.service';
 import { Utils } from '../_helpers/utils';
@@ -86,9 +86,12 @@ export class ScriptService {
                         parameterToAdd += `let ${param.name} = ${param.value};`;
                     } else if (Utils.isObject(param.value)) {
                         parameterToAdd += `let ${param.name} = ${JSON.stringify(param.value)};`;
+                    } else if (param.type === ScriptParamType.value && !param.value) {
+                        parameterToAdd += `let ${param.name} = ${param.value};`;
                     } else {
                         parameterToAdd += `let ${param.name} = '${param.value}';`;
                     }
+                    parameterToAdd += `\n`;
                 });
                 (async () => {
                     try {

@@ -275,6 +275,31 @@ if (paramLines && Array.isArray(paramLines)) {
 }`
     },
     {
+        name: 'chart-data-touch', mode: null, text: 'script.template-chart-data-touch-text', tooltip: 'script.template-chart-data-touch-tooltip',
+        code: `// Add script parameters 'paramLines' as Chart lines (array), 'xVal' as X axis touch point, 'yVal' as Y axis touch point
+if (paramLines && Array.isArray(paramLines)) {
+    const count = 10;
+    paramLines.forEach(line => {
+        var y = [];
+        var x = [];
+        for (var i = 0; i < count; i++) {
+            const randomNumber = Math.floor(Math.random() * 21);
+            y.push(randomNumber);
+            x.push(i);
+        }
+      	if (typeof xVal === 'number' && typeof yVal === 'number') {
+       		x.push(Math.round(xVal));
+       		y.push(Math.round(yVal));
+      	}
+        line['y'] = y;
+        line['x'] = x;
+    });
+    return paramLines;
+} else {
+    return 'Missing chart lines';
+}`
+    },
+    {
         name: 'invoke-chart-update-options', mode: ScriptMode.CLIENT, text: 'script.template-invoke-chart-update-options-text', tooltip: 'script.template-invoke-chart-update-options-tooltip',
         code: `let opt = $invokeObject('chart_1', 'getOptions');
 if (opt) {

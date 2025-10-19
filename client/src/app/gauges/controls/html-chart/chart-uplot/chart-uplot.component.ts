@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 
-import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType, ChartLineZone } from '../../../../_models/chart';
+import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType, ChartLineZone, Chart } from '../../../../_models/chart';
 import { NgxUplotComponent, NgxSeries, ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { DaqQuery, DateFormatType, TimeFormatType, IDateRange, GaugeChartProperty, DaqChunkType, GaugeEventType } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
@@ -229,7 +229,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.nguplot.init(this.options, (this.property?.type === ChartViewType.custom) ? true : false);
         this.updateDomOptions(this.nguplot);
-        if (this.property.events.find(ev => ev.type === this.eventChartClick)) {
+        if (this.property?.events?.find(ev => ev.type === this.eventChartClick)) {
             this.nguplot.onChartClick = this.handleChartClick.bind(this);
         }
     }
@@ -611,11 +611,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             let scriptToRun = Utils.clone(script);
             let chart = this.hmiService.getChart(this.property.id);
             this.reloadActive = true;
-            scriptToRun.parameters = [<ScriptParam>{
-                type: ScriptParamType.chart,
-                value: chart?.lines,
-                name: script.parameters[0]?.name
-            }];
+            scriptToRun.parameters = this.getCustomParameters(script.parameters, chart);
             this.scriptService.runScript(scriptToRun).pipe(
                 delay(200)
             ).subscribe(customData => {
@@ -674,21 +670,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             let scriptToRun = Utils.clone(script);
             let chart = this.hmiService.getChart(this.property.id);
             this.reloadActive = true;
-            scriptToRun.parameters = <ScriptParam[]>[{
-                type: ScriptParamType.chart,
-                value: chart?.lines,
-                name: script.parameters[0]?.name
-            },
-            {
-                type: ScriptParamType.value,
-                value: x,
-                name: script.parameters[1]?.name
-            },
-            {
-                type: ScriptParamType.value,
-                value: y,
-                name: script.parameters[2]?.name
-            }];
+            scriptToRun.parameters = this.getCustomParameters(script.parameters, chart, x, y);
             this.scriptService.runScript(scriptToRun).pipe(
                 delay(200)
             ).subscribe(customData => {
@@ -699,6 +681,34 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.reloadActive = false;
             });
         }
+    }
+
+    getCustomParameters(params: ScriptParam[], chart: Chart, x: number = null, y: number = null): ScriptParam[] {
+        let result = [];
+        for (let param of params) {
+            if (param.type === ScriptParamType.chart) {
+                result.push(<ScriptParam>{
+                        type: ScriptParamType.chart,
+                        value: chart?.lines,
+                        name: param?.name
+                });
+            } else if (param.type === ScriptParamType.value) {
+                let scriptParam = <ScriptParam>{
+                    type: param.type,
+                    value: param.value,
+                    name: param.name
+                };
+                if (param.name.toLocaleLowerCase().indexOf('x') !== -1) {
+                    scriptParam.value = x;
+                } else if (param.name.toLocaleLowerCase().indexOf('y') !== -1) {
+                    scriptParam.value = y;
+                }
+                result.push(scriptParam);
+            } else {
+                result.push(param);
+            }
+        }
+        return result;
     }
 }
 
