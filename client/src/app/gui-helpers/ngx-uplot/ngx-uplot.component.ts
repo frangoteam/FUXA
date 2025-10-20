@@ -18,7 +18,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
     @Input() public id: string;
     @Input() public options: NgxOptions;
     @ViewChild('graph', {static: true}) public graph: ElementRef;
-
+    @Input() onChartClick: (x: number, y: number ) => void;
 
     readonly lineInterpolations = {
         linear: 0,
@@ -241,6 +241,44 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         }
         this.uplot = new uPlot(opt, this.data, this.graph.nativeElement);
 
+        const over = this.uplot.root.querySelector('.u-over');
+        if (over) {
+            over.addEventListener('click', e => {
+                if (this.onChartClick) {
+                    const coords = this.getDataCoordsFromEvent(e);
+                    if (coords) {
+                        this.onChartClick(coords.x, coords.y);
+                    }
+                }
+            });
+            over.addEventListener('touchstart', e => {
+                if (this.onChartClick) {
+                    const coords = this.getDataCoordsFromEvent(e);
+                    if (coords) {
+                        this.onChartClick(coords.x, coords.y);
+                    }
+                }
+            });
+        }
+    }
+
+
+    private getDataCoordsFromEvent(e: MouseEvent | TouchEvent): { x: number, y: number } | null {
+        const over = this.uplot?.root?.querySelector('.u-over');
+        if (!over || !this.uplot) return null;
+
+        const rect = over.getBoundingClientRect();
+        const clientX = (e instanceof TouchEvent) ? e.touches[0].clientX : e.clientX;
+        const clientY = (e instanceof TouchEvent) ? e.touches[0].clientY : e.clientY;
+
+        const left = clientX - rect.left;
+        const top = clientY - rect.top;
+
+        const x = this.uplot.posToVal(left, 'x');
+        const yScaleKey = this.uplot.series[1]?.scale ?? 'y';
+        const y = this.uplot.posToVal(top, yScaleKey);
+
+        return { x, y };
     }
 
     setOptions(options: Options) {
