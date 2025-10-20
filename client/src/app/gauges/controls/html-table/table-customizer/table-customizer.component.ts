@@ -106,7 +106,9 @@ export class TableCustomizerComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result: TableCustomizerCellType) => {
             if (result) {
                 this.data.rows[rowIndex].cells[colIndex] = <TableCell>result.cell;
-                this.loadData();
+                const currentData = this.dataSource.data.slice(); // Create a shallow copy
+                currentData[rowIndex][columnId] = result.cell;
+                this.dataSource.data = currentData;
             }
         });
     }
@@ -119,7 +121,9 @@ export class TableCustomizerComponent implements OnInit {
     onRemoveRow(row) {
         const index = this.dataSource.data.indexOf(row, 0);
         this.data.rows.splice(index, 1);
-        this.ngOnInit();
+        const currentData = this.dataSource.data.slice();
+        currentData.splice(index, 1);
+        this.dataSource.data = currentData;
     }
 
     getColumnType(colIndex: number) {
