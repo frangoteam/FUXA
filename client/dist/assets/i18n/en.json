@@ -1510,6 +1510,8 @@
 
     "script.template-chart-data-text": "Customized chart data",
     "script.template-chart-data-tooltip": "Code template of customized chart data to return",
+    "script.template-chart-data-touch-text": "Customized chart data with touch event",
+    "script.template-chart-data-touch-tooltip": "Code template of customized chart data to return and set value with coordinate(x/y) of touch event",
     "script.template-invoke-chart-update-options-text": "Update Chart options",
     "script.template-invoke-chart-update-options-tooltip": "Code template to update Chart options (Y-axis scale range). CLIENT mode only!",
     "script.template-getHistoricalTagsoptions-text": "Get Historical Tags values",
