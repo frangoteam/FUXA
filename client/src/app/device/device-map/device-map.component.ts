@@ -509,9 +509,16 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                         device.property.format = tempdevice.property.format;
                         device.property.broadcastAddress = tempdevice.property.broadcastAddress;
                         device.property.adpuTimeout = tempdevice.property.adpuTimeout;
+                        device.property.local = tempdevice.property.local;
+                        device.property.router = tempdevice.property.router;
+                        if (device.type === DeviceType.MELSEC) {
+                            device.property.ascii = tempdevice.property.ascii;
+                            device.property.octalIO = tempdevice.property.octalIO;
+                        }
                         if (tempdevice.property.connectionOption) {
                             device.property.connectionOption = tempdevice.property.connectionOption;
                         }
+                        device.property.socketReuse = (device.type === DeviceType.ModbusTCP) ? tempdevice.property.socketReuse : null;
                     }
                     this.projectService.setDevice(device, olddevice, result.security);
                 }
@@ -535,11 +542,13 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     plcs(): Device[] {
         return <Device[]>Object.values(this.devices).filter((d: Device) => d.type !== DeviceType.WebAPI
             && d.type !== DeviceType.FuxaServer
-            && d.type !== DeviceType.ODBC);
+            && d.type !== DeviceType.ODBC
+            && d.type !== DeviceType.internal);
     }
 
     flows(): Device[] {
         return <Device[]>Object.values(this.devices).filter((d: Device) => d.type === DeviceType.WebAPI
-            || d.type === DeviceType.ODBC);
+            || d.type === DeviceType.ODBC
+            || d.type === DeviceType.internal);
     }
 }

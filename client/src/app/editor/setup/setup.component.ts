@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
+import { NavigationExtras, Router } from '@angular/router';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { Router } from '@angular/router';
 
 import { ProjectService } from '../../_services/project.service';
 import { AppService } from '../../_services/app.service';
@@ -10,6 +10,9 @@ import { GraphConfigComponent } from '../../editor/graph-config/graph-config.com
 import { ILayoutPropertyData, LayoutPropertyComponent } from '../../editor/layout-property/layout-property.component';
 import { PluginsComponent } from '../../editor/plugins/plugins.component';
 import { AppSettingsComponent } from '../../editor/app-settings/app-settings.component';
+import { ClientScriptAccessComponent } from '../client-script-access/client-script-access.component';
+
+const clientOnlyToDisable = ['messages', 'users', 'userRoles', 'plugins', 'notifications', 'scripts', 'reports', 'materials', 'logs', 'events', 'language'];
 
 @Component({
     selector: 'app-setup',
@@ -19,18 +22,24 @@ import { AppSettingsComponent } from '../../editor/app-settings/app-settings.com
 export class SetupComponent {
 
     constructor(private router: Router,
-        private appService: AppService,
-        public dialog: MatDialog,
-        private projectService: ProjectService,
-        public dialogRef: MatDialogRef<SetupComponent>) { }
+                private appService: AppService,
+                public dialog: MatDialog,
+                private projectService: ProjectService,
+                public dialogRef: MatDialogRef<SetupComponent>) {
+
+        this.router.routeReuseStrategy.shouldReuseRoute = function() { return false; };
+    }
 
     onNoClick() {
         this.dialogRef.close();
     }
 
-    goTo(destination: string) {
+    goTo(destination: string, type?: string) {
         this.onNoClick();
-        this.router.navigate([destination]);
+        let navigationExtras: NavigationExtras = {
+            queryParams: { type: type }
+        };
+        this.router.navigate([destination], navigationExtras);
     }
 
     /**
@@ -109,19 +118,18 @@ export class SetupComponent {
     }
 
     isToDisable(section: string) {
-        if (section === 'messages') {
-            return this.appService.isClientApp;
-        } else if (section === 'users') {
-            return this.appService.isClientApp;
-        } else if (section === 'plugins') {
-            return this.appService.isClientApp;
-        } else if (section === 'notifications') {
-            return this.appService.isClientApp;
-        } else if (section === 'scripts') {
-            return this.appService.isClientApp;
-        } else if (section === 'reports') {
+        if (clientOnlyToDisable.indexOf(section) !== -1) {
             return this.appService.isClientApp;
         }
         return false;
+    }
+
+    onWidgets() {
+        this.onNoClick();
+        let dialogRef = this.dialog.open(ClientScriptAccessComponent, {
+            position: { top: '60px' },
+        });
+        dialogRef.afterClosed().subscribe(result => {
+        });
     }
 }

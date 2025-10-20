@@ -1,0 +1,39 @@
+<form [formGroup]="languagesForm" class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'language.settings-title' | translate}}</h1>
+    <div class="toolbox">
+        <button mat-icon-button (click)="onAddLanguage()" matTooltip="{{'language.settings-add-tooltip' | translate}}">
+            <mat-icon>add_circle_outline</mat-icon>
+        </button>
+    </div>
+    <div mat-dialog-content>
+        <div class="block mb5">
+            <div class="my-form-field mt5 inbk">
+                <span>*{{'language.settings-default-id' | translate}}</span>
+                <input matInput formControlName="defaultId" maxlength="2" placeholder="{{'language.settings-id-placeholder' | translate}}" type="text" style="width: 80px;">
+            </div>
+            <div class="my-form-field mt5 ml10 inbk">
+                <span>*{{'language.settings-default-name' | translate}}</span>
+                <input matInput formControlName="defaultName" placeholder="{{'language.settings-name-placeholder' | translate}}" type="text" style="width: 200px;">
+            </div>
+        </div>
+        <div *ngFor="let lang of languages.controls; let i = index" formArrayName="languages">
+            <div [formGroupName]="i" class="language-item">
+                <div class="my-form-field inbk">
+                    <span>*{{'language.settings-id' | translate}}</span>
+                    <input matInput formControlName="id" maxlength="2" placeholder="{{'language.settings-id-placeholder' | translate}}" type="text" style="width: 80px;">
+                </div>
+                <div class="my-form-field ml10 inbk">
+                    <span>*{{'language.settings-name' | translate}}</span>
+                    <input matInput formControlName="name" placeholder="{{'language.settings-name-placeholder' | translate}}" type="text" style="width: 200px;">
+                </div>
+                <button mat-icon-button (click)="onRemoveLanguage(i)" class="remove inbk">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action mt10">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button [disabled]="languagesForm.invalid" (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

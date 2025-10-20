@@ -10,10 +10,9 @@ const utils = require('../utils');
 
 var SCRIPT_CHECK_STATUS_INTERVAL = 1000;
 
-function ScriptsManager(_runtime) {    
+function ScriptsManager(_runtime) {
     var runtime = _runtime;
     var events = runtime.events;        // Events to commit change to runtime
-    var settings = runtime.settings;    // Settings
     var logger = runtime.logger;        // Logger
     var scriptsCheckStatus = null;      // TimerInterval to check scripts manager status
     var working = false;                // Working flag to manage overloading of check notificator status
@@ -62,41 +61,56 @@ function ScriptsManager(_runtime) {
     this.removeScript = function (script) {
         this.reset();
     }
-    
+
     /**
      * Run script, <script> {id, name, parameters: <ScriptParam> {name, type: <ScriptParamType>[tagid, value], value: any} }
-     * @returns 
+     * @returns
      */
-    this.runScript = function (script) {
+    this.runScript = function (script, toLogEvent = true) {
         return new Promise(async function (resolve, reject) {
             try {
-                var result;
                 if (script.test) {
-                    result = await scriptModule.runTestScript(script);
+                    const result = await scriptModule.runTestScript(script);
+                    resolve(result !== null ? result : `Script OK: ${script.name}`);
                 } else {
                     if (!script.notLog) {
                         logger.info(`Run script ${script.name}`);
                     }
-                    result = await scriptModule.runScript(script);
+                    const result = await scriptModule.runScript(script);
+                    resolve(result);
                 }
-                resolve(result || `Script OK: ${script.name}`);
             } catch (err) {
                 reject(err);
             }
         });
     }
 
-    this.isAuthorised = function (_script, groups) {
+    this.isAuthorised = function (_script, permission) {
         try {
             const st = scriptModule.getScript(_script);
-            var admin = (groups === -1 || groups === 255) ? true : false;
-            if (admin || (st && (!st.permission || st.permission & groups))) {
+            var admin = (permission === -1 || permission === 255) ? true : false;
+            if (runtime.settings.userRole) {
+                if (!st.permissionRoles || !st.permissionRoles.enabled) {
+                    return true;
+                }
+                if (permission && permission.info && permission.info.roles) {
+                    return st.permissionRoles.enabled.length <= 0 || permission.info.roles.some(role => st.permissionRoles.enabled.includes(role));
+                }
+            } else if (admin || (st && (!st.permission || st.permission & permission))) {
                 return true;
             }
         } catch (err) {
             logger.error(err);
         }
         return false;
+    }
+
+    this.isAuthorisedByScriptName = function (scriptName, permission) {
+        const script = scriptModule.getScriptByName(scriptName);
+        if (!script) {
+            return true;
+        }
+        return this.isAuthorised(script, permission);
     }
 
     this.sysFunctionExist = (functionName) => {
@@ -228,12 +242,46 @@ function ScriptsManager(_runtime) {
         sysFncs['$setTagDaqSettings'] = runtime.devices.setTagDaqSettings;
         sysFncs['$getDeviceProperty'] = runtime.devices.getDeviceProperty;
         sysFncs['$setDeviceProperty'] = runtime.devices.setDeviceProperty;
+        sysFncs['$getHistoricalTags'] = runtime.devices.getHistoricalTags;
+        sysFncs['$sendMessage'] = _sendMessage;
+        sysFncs['$getAlarms'] = _getAlarms;
+        sysFncs['$getAlarmsHistory'] = _getAlarmsHistory;
+        sysFncs['$ackAlarm'] = _ackAlarm;
+
         return sysFncs;
     }
 
     var _setCommandView = function (view, force) {
         let command = { command: ScriptCommandEnum.SETVIEW, params: [view, force] };
         runtime.scriptSendCommand(command);
+    }
+
+    var _sendMessage = async function (address, subject, message) {
+        var temp = await runtime.notificatorMgr.sendMailMessage(null, address, subject, message, null, null);
+        return temp;
+    }
+
+    var _getAlarms = async function () {
+        return await runtime.alarmsMgr.getAlarmsValues(null, -1);
+    }
+
+    var _getAlarmsHistory = async function (start, end) {
+        const query = { start: start, end: end };
+        return await runtime.alarmsMgr.getAlarmsHistory(query, -1);
+    }
+
+    var _ackAlarm = async function (alarmName, types) {
+        const separator = runtime.alarmsMgr.getIdSeparator();
+        if (alarmName.indexOf(separator) === -1 && !utils.isNullOrUndefined(types)) {
+            var result = [];
+            for(var i = 0; i < types.length; i++) {
+                const alarmId = `${alarmName}${separator}${types[i]}`;
+                result.push(await runtime.alarmsMgr.setAlarmAck(alarmId, null, -1));
+            }
+            return result;
+        } else {
+            return await runtime.alarmsMgr.setAlarmAck(alarmName, null, -1);
+        }
     }
 }
 
@@ -275,14 +323,18 @@ function ScriptSchedule(script) {
                 if (schedule.type === SchedulerType.date && schedule.date) {
                     var date = new Date(schedule.date);
                     if (schedule.time) {
-                        const [hour, minute, seconds] = schedule.time.split(':');
-                        if (hour) date.setHours(hour);
-                        if (minute) date.setMinutes(minute);
-                        if (seconds) date.setSeconds(seconds);
+                        const [hStr, mStr, sStr] = schedule.time.split(':');
+                        const h = parseInt(hStr, 10);
+                        const m = parseInt(mStr, 10);
+                        const s = sStr != null ? parseInt(sStr, 10) : 0;
+                        if (!Number.isNaN(h)) date.setHours(h);
+                        if (!Number.isNaN(m)) date.setMinutes(m);
+                        if (!Number.isNaN(s)) date.setSeconds(s);
                     }
                     result.push(date);
                 } else {
                     const rule = new nodeSchedule.RecurrenceRule();
+
                     if (!utils.isNullOrUndefined(schedule.hour)) rule.hour = schedule.hour;
                     if (!utils.isNullOrUndefined(schedule.minute)) rule.minute = schedule.minute;
                     if (schedule.days) {

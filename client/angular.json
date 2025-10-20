@@ -27,7 +27,9 @@
               "src/styles.css",
               "src/theme.scss",
               "node_modules/uplot/dist/uPlot.min.css",
-              "node_modules/ngx-toastr/toastr.css"
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/leaflet/dist/leaflet.css",
+              "node_modules/angular2-draggable/css/resizable.min.css"
             ],
             "scripts": [
               "node_modules/uplot/dist/uPlot.iife.min.js",
@@ -45,6 +47,7 @@
               "chartjs-plugin-datalabels",
               "codemirror/addon/lint/lint",
               "codemirror/mode/javascript/javascript",
+              "codemirror/mode/css/css",
               "codemirror/mode/markdown/markdown",
               "file-saver",
               "moment",
@@ -52,11 +55,12 @@
               "pdfmake/build/pdfmake",
               "pdfmake/build/vfs_fonts",
               "socket.io-client",
-                "eventemitter3",
-                "delegate",
-                "flv.js",
-                "danmu.js",
-                "downloadjs"
+              "eventemitter3",
+              "delegate",
+              "flv.js",
+              "danmu.js",
+              "downloadjs",
+              "leaflet"
             ]
           },
           "configurations": {

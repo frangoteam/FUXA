@@ -1,0 +1,14 @@
+:host {
+    display: block;
+
+    .container {
+        width: 400px;
+    }
+
+    .item-block {
+        display: block;
+        mat-select, input, span {
+            width:calc(100% - 5px);
+        }
+    }
+}

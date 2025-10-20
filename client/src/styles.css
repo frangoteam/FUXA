@@ -1,6 +1,5 @@
 @import 'material-icons/iconfont/material-icons.css';
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
-@import "~angular2-draggable/css/resizable.min.css";
 
 @font-face {
     font-family: "myicons";
@@ -1046,6 +1045,10 @@ mat-toolbar-row {
     margin-top: 25px;
 }
 
+.mt30 {
+    margin-top: 30px;
+}
+
 .ml10 {
     margin-left: 10px;
 }
@@ -1162,4 +1165,20 @@ mat-toolbar-row {
 }
 .wp100 {
     width: 100%;
+}
+
+.fs-10 {
+    font-size: 10px;
+}
+.fs-11 {
+    font-size: 11px;
+}
+.fs-12 {
+    font-size: 12px;
+}
+.fs-13 {
+    font-size: 13px;
+}
+.fs-14 {
+    font-size: 14px;
 }

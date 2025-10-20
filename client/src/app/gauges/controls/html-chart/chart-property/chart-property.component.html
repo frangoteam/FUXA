@@ -17,8 +17,9 @@
                         <span>{{'chart.property-chart' | translate}}</span>
                         <mat-select [formControl]="chartCtrl" (selectionChange)="onChartChanged()">
                             <mat-select-search [formControl]="chartFilterCtrl"></mat-select-search>
-                            <mat-option (click)="onEditNewChart();">{{'chart.property-newchart' | translate}}</mat-option>
-                            <mat-option *ngFor="let chart of filteredChart | async" [value]="chart">
+                            <mat-option [value]="" class="chart-filter-option"></mat-option>
+                            <mat-option (click)="onEditNewChart();" class="chart-filter-option">{{'chart.property-newchart' | translate}}</mat-option>
+                            <mat-option *ngFor="let chart of filteredChart | async" [value]="chart" class="chart-filter-option">
                                 {{ chart.name }}
                             </mat-option>
                         </mat-select>
@@ -48,6 +49,7 @@
                             <div class="my-form-field inbk" style="width: 180px">
                                 <span>{{'chart.property-script' | translate}}</span>
                                 <mat-select [(value)]="options.scriptId" (selectionChange)="onChartChanged()">
+                                    <mat-option [value]=""></mat-option>
                                     <mat-option *ngFor="let script of scripts$ | async; index as i" [value]="script.id">{{script.name}}</mat-option>
                                 </mat-select>
                             </div>
@@ -61,6 +63,10 @@
                                 <div class="my-form-field inbk ml10 tac">
                                     <span>{{'chart.property-hide-toolbar' | translate}}</span>
                                     <mat-slide-toggle color="primary" [(ngModel)]="options.hideToolbar" (change)="onChartChanged()"></mat-slide-toggle>
+                                </div>
+                                <div class="my-form-field inbk ml10 tac">
+                                    <span>{{'chart.property-thouch-zoom' | translate}}</span>
+                                    <mat-slide-toggle color="primary" [(ngModel)]="options.thouchZoom" (change)="onChartChanged()"></mat-slide-toggle>
                                 </div>
                             </ng-container>
                         </div>
@@ -273,7 +279,7 @@
                                     <div class="my-form-field inbk event-script-param">
                                         <span>{{'gauges.property-event-script-param-name' | translate}}</span>
                                         <input [(ngModel)]="scriptParam.name"
-                                                (change)="onChartChanged()" 
+                                                (change)="onChartChanged()"
                                                 type="text"
                                                 readonly
                                                 matTooltip="{{scriptParam.name}}"
@@ -282,7 +288,7 @@
                                     <div class="my-form-field inbk event-script-value" *ngIf="scriptParam.type === 'value'">
                                         <span>{{'gauges.property-event-script-param-value' | translate}}</span>
                                         <input [(ngModel)]="scriptParam.value"
-                                                (change)="onChartChanged()" 
+                                                (change)="onChartChanged()"
                                                 type="text">
                                     </div>
                                     <div class="my-form-field inbk event-script-tag" *ngIf="scriptParam.type === 'tagid'">
@@ -296,7 +302,7 @@
                         </div>
                     </div>
                 </div>
-            </mat-tab>            
+            </mat-tab>
         </mat-tab-group>
     </div>
 </div>

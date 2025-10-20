@@ -6,6 +6,7 @@ var express = require("express");
 const authJwt = require('../jwt-helper');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 var runtime;
 var secureFnc;
@@ -29,11 +30,11 @@ module.exports = {
 
         /**
          * GET Project data
-         * Take from project storage and reply 
+         * Take from project storage and reply
          */
         prjApp.get("/api/project", secureFnc, function(req, res) {
-            var groups = checkGroupsFnc(req);
-            runtime.project.getProject(req.userId, groups).then(result => {
+            const permission = checkGroupsFnc(req);
+            runtime.project.getProject(req.userId, permission).then(result => {
                 // res.header("Access-Control-Allow-Origin", "*");
                 // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 if (result) {
@@ -60,10 +61,10 @@ module.exports = {
          * Set to project storage
          */
         prjApp.post("/api/project", secureFnc, function(req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post project: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post project: Unauthorized");
             } else {
@@ -88,10 +89,10 @@ module.exports = {
          * Set the value (general/view/device/...) to project storage
          */
         prjApp.post("/api/projectData", secureFnc, function(req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post projectData: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post projectData: Unauthorized");
             } else {
@@ -113,7 +114,7 @@ module.exports = {
 
         /**
          * GET Project demo data
-         * Take the project demo file from server folder 
+         * Take the project demo file from server folder
          */
         prjApp.get("/api/projectdemo", secureFnc, function (req, res) {
             const data = runtime.project.getProjectDemo();
@@ -129,13 +130,13 @@ module.exports = {
 
         /**
          * GET Device property like security
-         * Take from project storage and reply 
+         * Take from project storage and reply
          */
         prjApp.get("/api/device", secureFnc, function(req, res) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api get device: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api get device: Unauthorized");
             } else {
@@ -164,10 +165,10 @@ module.exports = {
          * Set to project storage
          */
         prjApp.post("/api/device", secureFnc, function(req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post device: Tocken Expired");
-            } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
+            } else if (!authJwt.haveAdminPermission(permission)) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post device: Unauthorized");
             } else {
@@ -181,7 +182,7 @@ module.exports = {
                         res.status(400).json({error:"unexpected_error", message: err});
                         runtime.logger.error("api post device: " + err);
                     }
-                });                
+                });
             }
         });
 
@@ -198,20 +199,29 @@ module.exports = {
                 // let basedata = file.data.replace(/^data:.*,/, '');
                 // let basedata = file.data.replace(/^data:image\/png;base64,/, "");
                 let fileName = file.name.replace(new RegExp('../', 'g'), '');
+                let fullPath = file.fullPath || file.name;
+                fullPath = fullPath.replace(/(\.\.[/\\])/g, '');
+                fullPath = path.normalize(fullPath).replace(/^(\.\.[/\\])+/, '');
+
                 if (file.type !== 'svg') {
                     basedata = file.data.replace(/^data:.*,/, '');
                     encoding = {encoding: 'base64'};
                 }
-                var filePath = path.join(runtime.settings.uploadFileDir, fileName);
+                let filePath = path.join(runtime.settings.uploadFileDir, fullPath || fileName);
                 if (destination) {
-                    const destinationDir = path.resolve(runtime.settings.appDir, `_${destination}`);
-                    if (!fs.existsSync(destinationDir)) {
-                        fs.mkdirSync(destinationDir);
+                    let destinationDir = path.resolve(runtime.settings.appDir, `_${destination}`);
+                    if (process.versions.electron) {
+                        const userDataDir = process.env.userDir || path.join(os.homedir(), '.fuxa');
+                        destinationDir = path.join(userDataDir, `_${destination}`);
                     }
-                    filePath = path.join(destinationDir, fileName);
+                    filePath = path.join(destinationDir, fullPath || fileName);
+                    const dir = path.dirname(filePath);
+                    if (!fs.existsSync(dir)) {
+                        fs.mkdirSync(dir, { recursive: true });
+                    }
                 }
                 fs.writeFileSync(filePath, basedata, encoding);
-                let result = {'location': '/' + runtime.settings.httpUploadFileStatic + '/' + fileName };
+                let result = {'location': '/' + runtime.settings.httpUploadFileStatic + '/' + fullPath || fileName };
                 res.json(result);
             } catch (err) {
                 if (err && err.code) {

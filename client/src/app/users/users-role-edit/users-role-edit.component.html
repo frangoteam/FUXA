@@ -1,0 +1,22 @@
+<form [formGroup]="formGroup">
+    <h1 mat-dialog-title class="force-lbk pointer-move" mat-dialog-draggable>{{'user-role-edit-title' | translate}}</h1>
+    <mat-icon (click)="onCancelClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field block mb10">
+            <span>{{'user-role-edit-name' | translate}}</span>
+            <input formControlName="name" type="text" style="width: 250px">
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'user-role-edit-index' | translate}}</span>
+            <input formControlName="index" type="number" style="width: 250px">
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'user-role-edit-description' | translate}}</span>
+            <input formControlName="description" type="text" style="width: 250px">
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onCancelClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button [disabled]="formGroup.invalid" color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

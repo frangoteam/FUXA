@@ -1,0 +1,226 @@
+<div class="element-property">
+    <div class="element-property-title">
+        {{'scheduler.property-settings-title' | translate}}
+    </div>
+    <div class="container">
+        <mat-tab-group style="height: 100%;">
+            <mat-tab style="height: 100%;" label="{{'editor.settings-general' | translate}}">
+                <!-- Master Name and Authorization -->
+                <div class="element-property-header">
+                    <span>{{'scheduler.property-data' | translate}}</span>
+                </div>
+                <div class="block mt5">
+                    <flex-auth [name]="data.settings.name" [permission]="property.permission" (onChanged)="onFlexAuthChanged($event)" [permissionRoles]="property.permissionRoles">
+                    </flex-auth>
+                </div>
+                <!-- Appearance Settings -->
+                <div class="layout-content mt15">
+                    <div class="element-property-header mt10">
+                        <span>{{'scheduler.property-settings-layout' | translate}}</span>
+                    </div>
+                    <!-- Time Format Selection -->
+                    <div class="my-form-field mt10">
+                        <span>{{'scheduler.property-settings-time-format' | translate}}</span>
+                        <mat-select style="width: 280px;" [(ngModel)]="data.settings.property.timeFormat" (selectionChange)="onPropertyChanged()">
+                            <mat-option value="12hr">12-Hour (8:00am - 10:00pm)</mat-option>
+                            <mat-option value="24hr">24-Hour (08:00 - 22:00)</mat-option>
+                        </mat-select>
+                    </div>
+
+                    <!-- All color pickers in single row with responsive wrapping -->
+                    <div class="flex mt5"  style="flex-wrap: wrap; gap: 15px; justify-content: flex-start;">
+                        <div class="my-form-field">
+                            <span>{{'scheduler.property-settings-theme' | translate}}</span>
+                            <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                                (change)="onPropertyChanged()" [(ngModel)]="data.settings.property.accentColor">
+                        </div>
+                        <div class="my-form-field">
+                            <span>{{'scheduler.property-settings-background' | translate}}</span>
+                            <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                                (change)="onPropertyChanged()" [(ngModel)]="data.settings.property.backgroundColor">
+                        </div>
+                        <div class="my-form-field">
+                            <span>{{'scheduler.property-settings-border' | translate}}</span>
+                            <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                                (change)="onPropertyChanged()" [(ngModel)]="data.settings.property.borderColor">
+                        </div>
+                        <div class="my-form-field">
+                            <span>{{'scheduler.property-settings-primary-text' | translate}}</span>
+                            <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                                (change)="onPropertyChanged()" [(ngModel)]="data.settings.property.textColor">
+                        </div>
+                        <div class="my-form-field">
+                            <span>{{'scheduler.property-settings-secondary-text' | translate}}</span>
+                            <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                                (change)="onPropertyChanged()" [(ngModel)]="data.settings.property.secondaryTextColor">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Device Button moved to same row -->
+                <div class="element-property-header mt20">
+                    <span>{{'scheduler.property-settings-devices' | translate}}</span>
+                </div>
+                <div class="toolbox">
+                    <button mat-icon-button (click)="addDevice()">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                    <span class="fs-14">{{'scheduler.property-settings-add-device' | translate}}</span>
+                </div>
+                <!-- Device Configuration with increased top spacing -->
+                <div class="devices-content">
+                    <!-- Device Rows using FUXA Pattern -->
+                    <div *ngFor="let device of deviceList; let i = index" class="row-item">
+                        <div class="item">
+                            <!-- Name and Authorization in same row -->
+                            <div class="mt5" style="display: flex; align-items: flex-end;">
+                                <div class="my-form-field">
+                                    <span>{{'scheduler.property-settings-device-name' | translate}}</span>
+                                    <input [(ngModel)]="device.name" (change)="onPropertyChanged()" style="width: 200px" type="text">
+                                </div>
+                                <div class="my-form-field ml10" style="vertical-align: bottom;">
+                                    <span>{{'gauges.property-permission' | translate}}</span>
+                                    <div style="text-align:center;cursor:pointer;" class="my-form-field-permission pointer" (click)="onEditDevicePermission(i)">
+                                        <mat-icon *ngIf="haveDevicePermission(device); else deviceUnlock" class="header-icon" style="line-height: 28px;">lock</mat-icon>
+                                        <ng-template #deviceUnlock>
+                                            <mat-icon class="header-icon" style="line-height: 28px;">lock_open</mat-icon>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                                <!-- Remove Button in same row -->
+                                <div class="item-remove" style="margin-left: auto;">
+                                    <button mat-icon-button class="remove" (click)="removeDevice(i)" [disabled]="deviceList.length <= 1">
+                                        <mat-icon>clear</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Tag Field on separate line -->
+                            <app-flex-device-tag class="block mt5 item-device-tag" (onchange)="onTagChanged(i, $event)" [variableId]="device.variableId">
+                            </app-flex-device-tag>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <mat-tab style="height: 100%;" label="{{'editor.settings-actions' | translate}}" [disabled]="true">
+                <div class="mat-tab-container" style="padding-top: 15px;">
+
+                    <!-- ON Actions Section -->
+                    <div class="dialog-hint" style="margin-bottom: 15px;">
+                        <label>Actions when Device Turns ON</label>
+                    </div>
+
+                    <div *ngFor="let action of deviceActionsOn; let i = index" class="item">
+                        <div class="item-remove">
+                            <button mat-icon-button (click)="removeActionOn(i)" class="remove">
+                                <mat-icon>clear</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="addActionOn()" class="remove">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+
+                        <ng-container *ngTemplateOutlet="actionRow; context: {action: action}"></ng-container>
+                    </div>
+
+                    <!-- Separator -->
+                    <div style="height: 30px; border-top: 2px solid rgba(85, 110, 130, 0.3); margin: 20px 0;"></div>
+
+                    <!-- OFF Actions Section -->
+                    <div class="dialog-hint" style="margin-bottom: 15px;">
+                        <label>Actions when Device Turns OFF</label>
+                    </div>
+
+                    <div *ngFor="let action of deviceActionsOff; let i = index" class="item">
+                        <div class="item-remove">
+                            <button mat-icon-button (click)="removeActionOff(i)" class="remove">
+                                <mat-icon>clear</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="addActionOff()" class="remove">
+                                <mat-icon>add</mat-icon>
+                            </button>
+                        </div>
+
+                        <ng-container *ngTemplateOutlet="actionRow; context: {action: action}"></ng-container>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Reusable Action Row Template -->
+            <ng-template #actionRow let-action="action">
+                <div class="inbk" style="vertical-align: top;">
+                    <div class="my-form-field" style="width: 160px;">
+                        <span>Device</span>
+                        <mat-select [(value)]="action.deviceName">
+                            <mat-option *ngFor="let device of deviceList" [value]="device.name">
+                                {{device.name}}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+
+                    <div class="my-form-field ml15" style="width: 160px;">
+                        <span>Action</span>
+                        <mat-select [(value)]="action.action" (change)="action.actparam = ''">
+                            <mat-option *ngFor="let key of actionTypeKeys | keyvalue" [value]="key.key">
+                                {{key.value}}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+
+                <!-- Set Value -->
+                <div class="inbk ml15" *ngIf="withSetValue(action.action)">
+                    <div class="my-form-field">
+                        <span>Value</span>
+                        <input [(ngModel)]="action.actparam" type="text" style="width: 180px">
+                    </div>
+                    <div class="my-form-field ml10">
+                        <span>Function</span>
+                        <mat-select [(value)]="action.actoptions.function" style="width: 80px;">
+                            <mat-option value=""></mat-option>
+                            <mat-option value="add">Add</mat-option>
+                            <mat-option value="remove">Remove</mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+                <div style="display: block; padding-top: 5px; padding-left: 25px;" *ngIf="withSetValue(action.action)">
+                    <flex-variable style="display: block" [data]="data" [(value)]="action.actoptions.variable" [withStaticValue]="false"></flex-variable>
+                </div>
+
+                <!-- Toggle Value -->
+                <div style="display: block; padding-top: 5px; padding-left: 25px;" *ngIf="withToggleValue(action.action)">
+                    <flex-variable style="display: block" [data]="data" [(value)]="action.actoptions.variable" [withBitmask]="true" [bitmask]="action.actoptions.variable?.bitmask"
+                        [withStaticValue]="false"></flex-variable>
+                </div>
+
+                <!-- Run Script -->
+                <ng-container *ngIf="isRunScript(action.action)">
+                    <div class="my-form-field inbk" style="width: 260px; padding-left: 20px;">
+                        <span>Script</span>
+                        <mat-select [(value)]="action.actparam" (selectionChange)="onScriptChanged($event.value, action)">
+                            <mat-option *ngFor="let script of scripts" [value]="script.id">{{script.name}}</mat-option>
+                        </mat-select>
+                    </div>
+                    <div style="display: table; padding-top: 5px;">
+                        <div *ngFor="let scriptParam of action.actoptions['params']" style="padding-left: 10px; padding-top: 5px;">
+                            <div class="my-form-field">
+                                <span>Parameter</span>
+                                <input [(ngModel)]="scriptParam.name" type="text" style="width: 160px" readonly [disabled]="true">
+                            </div>
+                            <div style="margin-left: 10px; display: inline-block;">
+                                <div class="my-form-field" *ngIf="scriptParam.type === 'value'">
+                                    <span>Value</span>
+                                    <input [(ngModel)]="scriptParam.value" type="text" style="width: 260px">
+                                </div>
+                                <div class="my-form-field" *ngIf="scriptParam.type === 'tagid'">
+                                    <flex-variable style="display: block" (onchange)="setScriptParam(scriptParam, $event)" [data]="data" [variableId]="scriptParam.value"
+                                        [withStaticValue]="false"></flex-variable>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-template>
+        </mat-tab-group>
+    </div>
+</div>

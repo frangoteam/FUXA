@@ -1,0 +1,18 @@
+:host {
+    mat-option {
+        .my-form-field {
+            width: 100%;
+            input {
+                width: calc(100% - 17px);
+                margin-left: 5px;
+                height: 13px;;
+            }
+        }
+    }
+
+    .submenu-header {
+        span {
+            font-size: 14px;
+            margin-left: 10px;
+        }
+    }}

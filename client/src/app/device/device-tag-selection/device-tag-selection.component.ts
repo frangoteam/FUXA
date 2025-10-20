@@ -68,7 +68,7 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
     }
 
     ngOnDestroy() {
-        this.destroy$.next();
+        this.destroy$.next(null);
         this.destroy$.complete();
     }
 
@@ -129,7 +129,7 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
     onAddDeviceTag(device: Device) {
         let newTag = new Tag(Utils.getGUID(TAG_PREFIX));
         if (device.type === DeviceType.OPCUA) {
-            this.tagPropertyService.editTagPropertyOpcUa(device).subscribe(result => {
+            this.tagPropertyService.addTagsOpcUa(device).subscribe(result => {
                 this.loadDevicesTags();
             });
         } else if (device.type === DeviceType.BACnet) {
@@ -160,6 +160,22 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
             this.tagPropertyService.editTagPropertyEthernetIp(device, newTag, true).subscribe(result => {
                 this.loadDevicesTags(newTag, device.name);
             });
+        } else if (device.type === DeviceType.ADSclient) {
+            this.tagPropertyService.editTagPropertyADSclient(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        } else if (device.type === DeviceType.GPIO) {
+            this.tagPropertyService.editTagPropertyGpio(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        } else if (device.type === DeviceType.WebCam) {
+            this.tagPropertyService.editTagPropertyWebcam(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        } else if (device.type === DeviceType.MELSEC) {
+            this.tagPropertyService.editTagPropertyMelsec(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
         }
     }
 
@@ -175,13 +191,29 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
                 if (this.data.deviceFilter && this.data.deviceFilter.indexOf(device.type) !== -1) {
                     // filtered device
                 } else if (device.tags) {
-                    Object.values(device.tags).forEach((t: Tag) => {
-                        this.tags.push(<TagElement>{
-                            id: t.id, name: t.name, address: t.address,
-                            device: device.name, checked: (t.id === this.data.variableId), error: null
+                    if (this.data.isHistorical) {
+                        Object.values(device.tags).filter((t: Tag) => t.daq.enabled).forEach((t: Tag) => {
+                            this.tags.push(<TagElement> {
+                                id: t.id,
+                                name: t.name,
+                                address: t.address,
+                                device: device.name,
+                                checked: (t.id === this.data.variableId),
+                                error: null
+                            });
+                        });
+                    } else {
+                        Object.values(device.tags).forEach((t: Tag) => {
+                            this.tags.push(<TagElement> {
+                                id: t.id,
+                                name: t.name,
+                                address: t.address,
+                                device: device.name,
+                                checked: (t.id === this.data.variableId),
+                                error: null
+                            });
                         });
                     }
-                    );
                 }
             }
             );
@@ -211,4 +243,5 @@ export interface DeviceTagSelectionData {
     deviceFilter?: DeviceType[];
     variablesId?: string[];
     deviceName?: string;
+    isHistorical?: boolean;
 }

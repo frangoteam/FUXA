@@ -1,0 +1,18 @@
+:host {
+
+    .container {
+        min-width: 680px;
+        min-height: 400px;
+
+        .report-column {
+            mat-checkbox {
+                font-size: 14px;
+                margin: 7px 30px 7px 10px;
+            }
+        }
+
+        .report-filter {
+            font-size: 16px;
+        }
+    }
+}

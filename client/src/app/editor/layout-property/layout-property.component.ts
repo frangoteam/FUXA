@@ -1,21 +1,23 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, OnInit, Inject, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { TranslateService } from '@ngx-translate/core';
 
-import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
 import { ProjectService } from '../../_services/project.service';
 
-import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, LinkType, View, HeaderItem, HeaderItemType, AnchorType, GaugeProperty, LoginInfoType, LoginOverlayColorType } from '../../_models/hmi';
+import { LayoutSettings, NaviModeType, NaviItem, NaviItemType, NotificationModeType, ZoomModeType, InputModeType, HeaderBarModeType, View, HeaderItem, AnchorType, GaugeProperty, LoginInfoType, LoginOverlayColorType, LanguageShowModeType } from '../../_models/hmi';
 import { Define } from '../../_helpers/define';
-import { UserGroups } from '../../_models/user';
 import { Utils } from '../../_helpers/utils';
-import { UploadFile } from '../../_models/project';
 import { ResourceGroup, ResourceItem, Resources, ResourceType } from '../../_models/resources';
 import { ResourcesService } from '../../_services/resources.service';
-import { interval, map, Observable, of, Subject, takeUntil } from 'rxjs';
+import { interval, Subject, takeUntil } from 'rxjs';
 import { GaugeDialogType, GaugePropertyComponent } from '../../gauges/gauge-property/gauge-property.component';
 import { HtmlButtonComponent } from '../../gauges/controls/html-button/html-button.component';
+import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+import 'codemirror/mode/css/css';
+import { LayoutMenuItemPropertyComponent } from './layout-menu-item-property/layout-menu-item-property.component';
+import { LayoutHeaderItemPropertyComponent } from './layout-header-item-property/layout-header-item-property.component';
 
 @Component({
     selector: 'app-layout-property',
@@ -31,6 +33,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
     fonts = Define.fonts;
     anchorType = <AnchorType[]>['left', 'center', 'right'];
     loginInfoType = <LoginInfoType[]>['nothing', 'username', 'fullname', 'both'];
+    languageShowModeType = <LanguageShowModeType[]>['nothing', 'simple', 'key', 'fullname'];
     currentDateTime: Date;
     private unsubscribeTimer$ = new Subject<void>();
 
@@ -45,11 +48,22 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
     headerMode = HeaderBarModeType;
     logo = null;
     loginOverlayColor = LoginOverlayColorType;
-
+    ready = false;
+    @ViewChild(CodemirrorComponent, {static: false}) CodeMirror: CodemirrorComponent;
+    codeMirrorContent: string;
+    codeMirrorOptions = {
+        lineNumbers: true,
+        theme: 'material',
+        mode: 'css',
+        lint: true,
+    };
+    expandedItems: Set<string> = new Set();
+    private expandableNavItems = [Utils.getEnumKey(NaviItemType, NaviItemType.text), Utils.getEnumKey(NaviItemType, NaviItemType.inline)];
     constructor(@Inject(MAT_DIALOG_DATA) public data: ILayoutPropertyData,
         public dialog: MatDialog,
         public dialogRef: MatDialogRef<LayoutPropertyComponent>,
         private projectService: ProjectService,
+        private changeDetector: ChangeDetectorRef,
         private translateService: TranslateService,
         private resourcesService: ResourcesService) {
 
@@ -97,8 +111,18 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.unsubscribeTimer$.next();
+        this.unsubscribeTimer$.next(null);
         this.unsubscribeTimer$.complete();
+    }
+
+
+    onTabChanged(event: MatTabChangeEvent): void {
+        if (event.index == 3) {
+            this.changeDetector.detectChanges();
+            this.CodeMirror?.codeMirror?.refresh();
+        } else if (event.index == 2) {
+            this.checkTimer();
+        }
     }
 
     checkTimer(): void {
@@ -111,7 +135,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
                 });
             }
         } else {
-            this.unsubscribeTimer$.next();
+            this.unsubscribeTimer$.next(null);
             this.currentDateTime = null;
         }
     }
@@ -123,28 +147,33 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
         }
         let views = JSON.parse(JSON.stringify(this.data.views));
         views.unshift({id: '', name: ''});
-        let dialogRef = this.dialog.open(DialogMenuItem, {
+        let dialogRef = this.dialog.open(LayoutMenuItemPropertyComponent, {
+            disableClose: true,
             position: { top: '60px' },
-            data: { item: eitem, views: views, permission: eitem.permission }
+            data: { item: eitem, views: views, permission: eitem.permission, permissionRoles: eitem.permissionRoles }
         });
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (item) {
+                    Object.assign(item, result.item);
                     item.icon = result.item.icon;
                     item.image = result.item.image;
                     item.text = result.item.text;
                     item.view = result.item.view;
                     item.link = result.item.link;
                     item.permission = result.permission;
+                    item.permissionRoles = result.permissionRoles;
                 } else {
                     let nitem = new NaviItem();
+                    Object.assign(nitem, result.item);
                     nitem.icon = result.item.icon;
                     nitem.image = result.item.image;
                     nitem.text = result.item.text;
                     nitem.view = result.item.view;
                     nitem.link = result.item.link;
                     nitem.permission = result.permission;
+                    nitem.permissionRoles = result.permissionRoles;
                     this.draggableListLeft.push(nitem);
                 }
             }
@@ -183,7 +212,7 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
             marginLeft: 5,
             marginRight: 5
         };
-        let dialogRef = this.dialog.open(DialogHeaderItem, {
+        let dialogRef = this.dialog.open(LayoutHeaderItemPropertyComponent, {
             position: { top: '60px' },
             data: eitem
         });
@@ -245,100 +274,27 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
     onNoClick(): void {
         this.dialogRef.close();
     }
-}
 
-@Component({
-    selector: 'dialog-menuitem',
-    templateUrl: './menuitem.dialog.html',
-})
-export class DialogMenuItem {
-	selectedGroups = [];
-    groups = UserGroups.Groups;
-    icons$: Observable<string[]>;
-    linkAddress = LinkType.address;
-    linkAlarms = LinkType.alarms;
-
-    @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
-
-    constructor(public projectService: ProjectService,
-                public dialogRef: MatDialogRef<DialogMenuItem>,
-                @Inject(MAT_DIALOG_DATA) public data: any) {
-        this.selectedGroups = UserGroups.ValueToGroups(this.data.permission);
-
-        this.icons$ = of(Define.MaterialIconsRegular).pipe(
-          map((data: string) => data.split('\n')),
-          map(lines => lines.map(line => line.split(' ')[0])),
-          map(names => names.filter(name => !!name))
-        );
-    }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    onOkClick(): void {
-		this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
-        this.dialogRef.close(this.data);
-    }
-
-    /**
-     * add image to view
-     * @param event selected file
-     */
-    onSetImage(event) {
-        if (event.target.files) {
-            let filename = event.target.files[0].name;
-            let fileToUpload = { type: filename.split('.').pop().toLowerCase(), name: filename.split('/').pop(), data: null };
-            let reader = new FileReader();
-            reader.onload = () => {
-                try {
-                    fileToUpload.data = reader.result;
-                    this.projectService.uploadFile(fileToUpload).subscribe((result: UploadFile) => {
-                        this.data.item.image = result.location;
-                        this.data.item.icon = null;
-                    });
-                } catch (err) {
-                    console.error(err);
-                }
-            };
-            if (fileToUpload.type === 'svg') {
-                reader.readAsText(event.target.files[0]);
+    toggleSubMenu(item: NaviItem) {
+        if (item.id && item.children?.length) {
+            if (this.expandedItems.has(item.id)) {
+                this.expandedItems.delete(item.id);
             } else {
-                reader.readAsDataURL(event.target.files[0]);
+                this.expandedItems.add(item.id);
             }
+            this.changeDetector.detectChanges();
         }
     }
-}
 
-@Component({
-    selector: 'dialog-headeritem',
-    templateUrl: './dialog-header-item.html',
-    styleUrls: ['./layout-property.component.scss']
-})
-export class DialogHeaderItem {
-    item: HeaderItem;
-    icons$: Observable<string[]>;
-    headerType = <HeaderItemType[]>['button', 'label', 'image'];
-    defaultColor = Utils.defaultColor;
-
-    constructor(
-        public projectService: ProjectService,
-        public dialogRef: MatDialogRef<DialogHeaderItem>,
-        @Inject(MAT_DIALOG_DATA) public data: HeaderItem) {
-        this.item = data;
-        this.icons$ = of(Define.MaterialIconsRegular).pipe(
-            map((data: string) => data.split('\n')),
-            map(lines => lines.map(line => line.split(' ')[0])),
-            map(names => names.filter(name => !!name))
-          );
+    isExpanded(item: NaviItem): boolean {
+        if (!item.id) {
+            item.id = Utils.getShortGUID();
+        }
+        return item.id ? this.expandedItems.has(item.id) : false;
     }
 
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    onOkClick(): void {
-        this.dialogRef.close(this.item);
+    isExpandable(item: NaviItem): boolean {
+        return this.expandableNavItems.includes(this.data.layout.navigation.type) && item.children?.length > 0;
     }
 }
 

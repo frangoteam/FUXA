@@ -11,7 +11,7 @@
             "Client Chrome localhost"
         ]
     }
-  ],  
+  ],
   "configurations": [
     {
       "type": "node",
@@ -42,5 +42,18 @@
         "--env=test"
       ]
     },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Server Mocha Tests",
+      "program": "${workspaceFolder}/server/node_modules/mocha/bin/_mocha",
+      "args": [
+        "--timeout",
+        "999999",
+        "--colors",
+        "server/test/**/*.test.js"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+    }
   ]
 }

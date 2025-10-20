@@ -1,4 +1,4 @@
-name: BP Release Candidate
+name: Build and Publish DHI RC
 
 env:
   app: fuxa

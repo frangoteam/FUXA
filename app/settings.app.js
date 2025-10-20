@@ -1,7 +1,7 @@
 
 module.exports = {
     // Version to manage update
-    version: 1.1,
+    version: 1.2,
 
     // Standard language (editor)
     language: 'en',
@@ -12,6 +12,22 @@ module.exports = {
     // Used to identify a directory of logger
     // Default: '_logs'
     // logDir: '_logs',
+
+    logApiLevel: 'tiny',
+    // logApiLevel Configuration for Morgan Logging
+    //
+    // This configuration determines the format of logging by Morgan, indirectly acting as a 'level' of logging detail.
+    // The setting influences which predefined format or custom function Morgan uses to log HTTP requests.
+    //
+    // Possible values for logApiLevel:
+    // - 'dev': Colorful and concise output for development environments, showing the method, URL, status, response length, and response time.
+    // - 'combined': Apache combined log format. Very detailed, suitable for production environments.
+    // - 'common': Less detailed than 'combined', omitting the referrer and user-agent.
+    // - 'short': Shorter format that includes the remote address and request details.
+    // - 'tiny': Minimalist format, showing just the method, URL, status, response length, and response time.
+    //
+    // Default Value:
+    // - 'combined': By default, logApiLevel is set to 'combined', providing detailed logs suitable for thorough tracking and analysis.
 
     // Used to storage Database like DAQ, User
     // Default: '_db'
@@ -63,4 +79,17 @@ module.exports = {
     // Enable GPIO in Raspberry
     // To enable only by Raspberry Host
 
+    // CORS (Cross-Origin Resource Sharing)
+    // Used to enable CORS for all HTTP request
+    // "allowedOrigins": ["https://example.com", "https://dashboard.example.com"]
+    // Default: ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*"]
+    "allowedOrigins": ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*"],
+
+    //Location to output webcam capture
+    webcamSnapShotsDir: '_webcam_snapshots',
+    //cleanup old snapshots
+    //Default: false
+    webcamSnapShotsCleanup: false,
+    //snapshots retention in days
+    webcamSnapShotsRetain: 7,
 }

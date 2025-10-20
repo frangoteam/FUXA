@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, OnInit, Inject, ViewChild } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -12,6 +12,8 @@ import { Chart, ChartLine } from '../../_models/chart';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
+import { ChartLineAndInterpolationsType, ChartLinePropertyComponent } from './chart-line-property/chart-line-property.component';
+import { EditPlaceholderComponent } from '../../gui-helpers/edit-placeholder/edit-placeholder.component';
 
 @Component({
   selector: 'app-chart-config',
@@ -41,7 +43,7 @@ export class ChartConfigComponent implements OnInit {
 
     ngOnInit() {
         for (let i = 0; i < this.lineInterpolationType.length; i++) {
-            this.translateService.get(this.lineInterpolationType[i].text).subscribe((txt: string) => { this.lineInterpolationType[i].text = txt; });
+            this.lineInterpolationType[i].text = this.translateService.instant(this.lineInterpolationType[i].text);
         }
     }
 
@@ -139,8 +141,14 @@ export class ChartConfigComponent implements OnInit {
                     if (tag) {
                         let exist = chart.lines.find(line => line.id === tag.id);
                         if (!exist) {
-                            const myCopiedObject: ChartLine = {id: tag.id, name: this.getTagLabel(tag), device: device.name, color: this.getNextColor(),
-                                label: this.getTagLabel(tag), yaxis: 1 };
+                            const myCopiedObject = <ChartLine>{
+                                id: tag.id,
+                                name: this.getTagLabel(tag),
+                                device: device.name,
+                                color: this.getNextColor(),
+                                label: this.getTagLabel(tag), yaxis: 1,
+                                spanGaps: true
+                            };
                             chart.lines.push(myCopiedObject);
                         }
                     }
@@ -149,11 +157,46 @@ export class ChartConfigComponent implements OnInit {
         });
     }
 
+    onAddChartLinePlaceholder(chart: Chart) {
+        let dialogRef = this.dialog.open(EditPlaceholderComponent, {
+            disableClose: true,
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(placeholder => {
+            if (placeholder) {
+                const label = placeholder;
+                placeholder = '@' + placeholder;
+                const myCopiedObject = <ChartLine>{
+                    id: placeholder,
+                    name: placeholder,
+                    device: '@',
+                    color: this.getNextColor(),
+                    label: label,
+                    yaxis: 1,
+                    spanGaps: true
+                };
+                chart.lines.push(myCopiedObject);
+            }
+        });
+    }
+
     editChartLine(line: ChartLine) {
-        let dialogRef = this.dialog.open(DialogChartLine, {
+        let dialogRef = this.dialog.open(ChartLinePropertyComponent, {
             position: { top: '60px' },
-            data: <ChartLine>{ id: line.id, device: line.device, name: line.name, label: line.label, color: line.color, yaxis: line.yaxis,
-                lineInterpolation: line.lineInterpolation, fill: line.fill, lineInterpolationType: this.lineInterpolationType }
+            data: <ChartLineAndInterpolationsType>{
+                id: line.id,
+                device: line.device,
+                name: line.name,
+                label: line.label,
+                color: line.color,
+                yaxis: line.yaxis,
+                lineInterpolation: line.lineInterpolation,
+                fill: line.fill,
+                lineInterpolationType: this.lineInterpolationType,
+                zones: line.zones,
+                lineWidth: line.lineWidth,
+                spanGaps: line.spanGaps
+            }
         });
         dialogRef.afterClosed().subscribe((result: ChartLine) => {
             if (result) {
@@ -162,6 +205,9 @@ export class ChartConfigComponent implements OnInit {
                 line.yaxis = result.yaxis;
                 line.lineInterpolation = result.lineInterpolation;
                 line.fill = result.fill;
+                line.zones = result.zones;
+                line.lineWidth = result.lineWidth;
+                line.spanGaps = result.spanGaps ?? false;
             }
         });
     }
@@ -184,6 +230,9 @@ export class ChartConfigComponent implements OnInit {
     }
 
     getDeviceTagName(line: ChartLine) {
+        if (line.device === '@') {
+            return line.name;
+        }
         let devices = this.data.devices.filter(x => x.name === line.device);
         if (devices && devices.length > 0) {
             let tags = Object.values<Tag>(devices[0].tags);
@@ -221,30 +270,6 @@ export class ChartConfigComponent implements OnInit {
         return '';
     }
 }
-
-@Component({
-    selector: 'dialog-chart-line',
-    templateUrl: './chart-line.dialog.html',
-    styleUrls: ['./chart-config.component.css']
-})
-export class DialogChartLine {
-    defaultColor = Utils.defaultColor;
-    chartAxesType = [1, 2, 3, 4];
-
-    constructor(
-        public dialogRef: MatDialogRef<DialogChartLine>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-    }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    onOkClick(): void {
-        this.dialogRef.close(this.data);
-    }
-}
-
 
 interface IDataChartConfig {
     charts: Chart[];

@@ -42,7 +42,7 @@ export class TagPropertyEditWebapiComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.destroy$.next();
+        this.destroy$.next(null);
         this.destroy$.complete();
     }
 

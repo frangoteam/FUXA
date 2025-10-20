@@ -18,7 +18,7 @@
     <div [ngSwitch]="gaugeDialog.type">
         <div *ngSwitchCase="gaugeDialogType.Chart">
             <app-chart-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-chart-property>
-        </div>        
+        </div>
         <div *ngSwitchCase="gaugeDialogType.Graph">
             <app-graph-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-graph-property>
         </div>
@@ -30,6 +30,15 @@
         </div>
         <div *ngSwitchCase="gaugeDialogType.Panel">
             <app-panel-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-panel-property>
+        </div>
+        <div *ngSwitchCase="gaugeDialogType.Pipe">
+            <app-pipe-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-pipe-property>
+        </div>
+        <div *ngSwitchCase="gaugeDialogType.Video">
+            <app-video-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-video-property>
+        </div>
+        <div *ngSwitchCase="gaugeDialogType.Scheduler">
+            <app-scheduler-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-scheduler-property>
         </div>
     </div>
 </mat-drawer>
@@ -46,7 +55,8 @@
                             <mat-icon aria-label="Select" *ngIf="!panelsState.panelView">expand_more</mat-icon>
                             <span>{{'editor.views' | translate}}</span> <!-- PROJECT VIEWS -->
                         </mat-panel-title>
-                        <mat-icon aria-label="Add" matTooltip="{{'editor.view-add' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn" (click)="onAddDoc();$event.stopPropagation()">add
+                        <mat-icon aria-label="Add" matTooltip="{{'editor.view-add' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn"
+                            (click)="onAddDoc();$event.stopPropagation()">add
                         </mat-icon>
                         <mat-icon aria-label="Import" matTooltip="{{'editor.view-import' | translate}}" *ngIf="panelsState.panelView" class="leftbar-edit-btn"
                             (click)="onImportView();$event.stopPropagation()">system_update_alt</mat-icon>
@@ -55,27 +65,12 @@
                     </mat-expansion-panel-header>
                     <div appResize class="leftbar-panel view-panel" [(height)]="panelsState.panelViewHeight" [style.height.px]="panelsState.panelViewHeight"
                         (changeEnd)="savePanelState()">
-                        <div *ngIf="hmi.views && hmi.views.length <= 0">
-                            <br>
-                        </div>
-                        <div *ngFor="let item of getViewsSorted()" (click)="onSelectView(item, false)" [ngClass]="{'leftbar-item-active': isViewActive(item)}"
-                            class="leftbar-item mycursor-pointer">
-                            <mat-icon *ngIf="!item.type || item.type === svgViewType" matTooltip="{{'editor.view-svg' | translate}}" class="leftbar-item-type">
-                                wysiwyg
-                            </mat-icon>
-                            <mat-icon *ngIf="item.type === cardViewType" matTooltip="{{'editor.view-cards' | translate}}" class="leftbar-item-type">
-                                grid_view
-                            </mat-icon>
-                            <span class="view-item-text" matTooltip="{{item.name}}">{{item.name}}</span>
-                            <mat-icon aria-label="More" [matMenuTriggerFor]="menuview">more_vert</mat-icon>
-                            <mat-menu #menuview="matMenu" class="leftbar-item-menu">
-                                <button mat-menu-item (click)="onDeleteView(item)">{{'editor.view-delete' | translate}}</button>
-                                <button mat-menu-item (click)="onRenameView(item)">{{'editor.view-rename' | translate}}</button>
-                                <button mat-menu-item (click)="onPropertyView(item)">{{'editor.view-property' | translate}}</button>
-                                <button mat-menu-item (click)="onCloneView(item)" *ngIf="item.type !== cardViewType">{{'editor.view-clone' | translate}}</button>
-                                <button mat-menu-item (click)="onExportView(item)" *ngIf="item.type !== cardViewType">{{'editor.view-export' | translate}}</button>
-                            </mat-menu>
-                        </div>
+                        <app-editor-views-list [(views)]="hmi.views"
+                                               [select]="currentView"
+                                               (selected)="onSelectView($event, false)"
+                                               (viewPropertyChanged)="onViewPropertyChanged($event)"
+                                               (cloneView)="onCloneView($event)">
+                        </app-editor-views-list>
                     </div>
                 </mat-expansion-panel>
                 <div *ngIf="editorMode === editorModeType.SVG">
@@ -203,7 +198,15 @@
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-panel' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-panel')}"
                                 (click)="setMode('own_ctrl-panel')">
                                 <span class="material-icon-tool material-icons" style="font-size: 25px;">web_asset</span>
-                            </div>                            
+                            </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-video' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-video')}"
+                                (click)="setMode('own_ctrl-video')">
+                                <span class="material-icon-tool material-icons" style="font-size: 23px;">ondemand_video</span>
+                            </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-scheduler' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-scheduler')}"
+                                (click)="setMode('own_ctrl-scheduler')">
+                                <span class="material-icon-tool material-icons" style="font-size: 23px;">schedule</span>
+                            </div>
                         </div>
                     </mat-expansion-panel>
                     <!-- SHAPES -->
@@ -222,6 +225,22 @@
                                 <span class="icon-tool" [style.backgroundImage]="'url(' + shape.ico + ')'"> </span>
                             </div>
                         </div>
+                    </mat-expansion-panel>
+                    <!-- WIDGETS -->
+                    <mat-expansion-panel class="svg-workarea-leftbar-p" (opened)="panelsState.panelWidgets=true;savePanelState()" (closed)="panelsState.panelWidgets=false;savePanelState()"
+                        hideToggle="true" [expanded]="panelsState.panelWidgets">
+                        <mat-expansion-panel-header class="svg-workarea-leftbar-h">
+                            <mat-panel-title>
+                                <mat-icon aria-label="Select" *ngIf="panelsState.panelWidgets">expand_less</mat-icon>
+                                <mat-icon aria-label="Select" *ngIf="!panelsState.panelWidgets">expand_more</mat-icon>
+                                <span>{{ 'resources.lib-widgets' | translate }}</span>
+                            </mat-panel-title>
+                            <mat-icon class="leftbar-edit-btn" (click)="onWidgetKiosk();$event.stopPropagation()">widgets</mat-icon>
+                        </mat-expansion-panel-header>
+                        <ng-template matExpansionPanelContent>
+                            <app-lib-widgets>
+                            </app-lib-widgets>
+                        </ng-template>
                     </mat-expansion-panel>
                     <!-- RESOURCES -->
                     <mat-expansion-panel class="svg-workarea-leftbar-p" hideToggle="true">
@@ -266,7 +285,7 @@
                             </div>
                         </div>
                     </mat-expansion-panel>
-                    <mat-expansion-panel class="svg-workarea-fly-p" [style.display]="(selectedElement)?'block':'none'" (opened)="panelPropertyTransformOpenState = true" 
+                    <mat-expansion-panel class="svg-workarea-fly-p" [style.display]="(selectedElement)?'block':'none'" (opened)="panelPropertyTransformOpenState = true"
                         (closed)="panelPropertyTransformOpenState = false" hideToggle="true" expanded="true">
                         <mat-expansion-panel-header class="svg-workarea-leftbar-h">
                             <mat-panel-title>
@@ -281,7 +300,7 @@
                                     <div class="svg-property-split2">
                                         <div class="svg-property">
                                             <span>{{'editor.transform-x' | translate}}</span>
-                                            <input numberOnly id="selected_x" class="attr_changer rightbar-input" type="number" matTooltip="{{'editor.transform-x-title' | translate}}" 
+                                            <input numberOnly id="selected_x" class="attr_changer rightbar-input" type="number" matTooltip="{{'editor.transform-x-title' | translate}}"
                                                     size="4" data-attr="x" />
                                         </div>
                                         <div class="svg-property">
@@ -462,13 +481,13 @@
                                             <span>{{'editor.transform-angle' | translate}}</span>
                                             <input numberOnly id="angle" size="4" value="0" type="number" class="rightbar-input"/>
                                         </div>
-                                        <div class="svg-property">
-                                            <!-- <div class="svg-tool-button" (click)="flipSelected('vertical')" matTooltip="Flip vertically">
-                                        <span class="icon-flip-vertical"></span>
+                                        <div class="svg-property" style="vertical-align: top;">
+                                            <span>{{'editor.transform-hide' | translate}}</span>
+                                            <input [(ngModel)]="gaugeSettingsHide" type="checkbox" style="margin-top: 2px;" (change)="onHideSelectionToggle(gaugeSettingsHide)"/>
                                         </div>
-                                        <div class="svg-tool-button" (click)="flipSelected('orizontal')" matTooltip="Flip orizontally">
-                                        <span class="icon-flip-orizontal"></span>
-                                        </div> -->
+                                        <div class="svg-property" style="vertical-align: top;">
+                                            <span>{{'editor.transform-lock' | translate}}</span>
+                                            <input [(ngModel)]="gaugeSettingsLock" type="checkbox" style="margin-top: 2px;" (change)="onLockSelectionToggle(gaugeSettingsLock)"/>
                                         </div>
                                     </div>
                                 </div>
@@ -619,7 +638,7 @@
                             </div>
                         </div>
                     </mat-expansion-panel>
-                    <mat-expansion-panel id="interaction_panel" class="svg-workarea-fly-p" [style.display]="(selectedElement)?'block':'none'" (opened)="panelEventOpenState = true" 
+                    <mat-expansion-panel id="interaction_panel" class="svg-workarea-fly-p" [style.display]="(selectedElement)?'block':'none'" (opened)="panelEventOpenState = true"
                         (closed)="panelEventOpenState = false" hideToggle="true" expanded="true">
                         <mat-expansion-panel-header class="svg-workarea-leftbar-h">
                             <mat-panel-title>
@@ -822,21 +841,26 @@
                     </div>
                 </div>
             </div>
-            <div *ngIf="editorMode === editorModeType.CARDS" style="width:100%; height:100%">
-                <div class="tools_panel" style="display: inline-flex; width: 100%; height: 37px;">
-                    <div class="main-btn-sep" style="display: inline-block;"></div>
-                    <button mat-button class="main-btn" style="display: inline-block;" matTooltip="{{'editor.tools-launch-title' | translate}}" (click)="onStartCurrent()">
-                        <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
-                    </button>
-                </div>
-                <div style="position: absolute; top: 37px; left: 0px;right: 0px; bottom: 0px; background-color: rgba(247, 247, 247, 1);">
-                    <app-cards-view #cardsview [edit]="true" [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager" 
-                                (editCard)="editCardsWidget($event)" (save)="onSaveProject()"></app-cards-view>
-                    <!-- <div class="grid-stack"></div> -->
-                    <button mat-fab color="primary" (click)="addCard()" class="fab-add">
-                        <mat-icon class="">add</mat-icon>
-                    </button>
-                </div>
+            <div style="width:100%; height:100%">
+                <ng-container *ngIf="editorMode === editorModeType.CARDS">
+                    <div class="tools_panel" style="display: inline-flex; width: 100%; height: 37px;">
+                        <div class="main-btn-sep" style="display: inline-block;"></div>
+                        <button mat-button class="main-btn" style="display: inline-block;" matTooltip="{{'editor.tools-launch-title' | translate}}" (click)="onStartCurrent()">
+                            <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
+                        </button>
+                    </div>
+                    <div style="position: absolute; top: 37px; left: 0px;right: 0px; bottom: 0px; background-color: rgba(247, 247, 247, 1);">
+                        <app-cards-view #cardsview [edit]="true" [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager"
+                                    (editCard)="editCardsWidget($event)" (save)="onSaveProject()"></app-cards-view>
+                        <!-- <div class="grid-stack"></div> -->
+                        <button mat-fab color="primary" (click)="addCard()" class="fab-add">
+                            <mat-icon class="">add</mat-icon>
+                        </button>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="editorMode === editorModeType.MAPS">
+                    <app-maps-view #mapsView [view]="currentView" [hmi]="hmi" [gaugesManager]="gaugesManager" [editMode]="true"></app-maps-view>
+                </ng-container>
             </div>
         </mat-drawer-content>
         <!-- work area END -->
@@ -1032,7 +1056,7 @@
     <!-- canvas context menu -->
     <ul id="cmenu_canvas" class="contextMenu svg-workarea-contextmenu">
         <li>
-            <a id="#interactivity" (click)="isInteractivtyEnabled(selectedElement) && onGaugeEditEx()">{{'editor.interactivity' | translate}}</a>
+            <a id="#interactivity" (click)="onInteractivityClick(selectedElement)">{{'editor.interactivity' | translate}}</a>
         </li>
         <li>
             <a id="#editBindOfTags" (click)="editBindOfTags(selectedElement)">{{'editor.edit-bind-of-tags' | translate}}</a>

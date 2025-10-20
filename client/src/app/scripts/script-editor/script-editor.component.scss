@@ -1,0 +1,262 @@
+
+:host {
+    .container {
+        height: 100%;
+    }
+    
+    .panel-header {
+        width: 100%;
+        display: block;
+    }
+    
+    .panel-footer {
+        float: left;
+        height: 22px;
+        font-family: monospace;
+    }
+    
+    .panel-function {
+        display: inline-block;
+        width: calc(100% - 90px);
+        margin-top: 10px;
+        font-family: monospace;
+    }
+    
+    .panel-toolbar {
+        float: right;
+    }
+    
+    .panel-code {
+        width: 100%;
+        --tab-height: 30px;
+    }
+    
+    .system-function button {
+        width: 100%;
+        font-size: 12px !important;
+        font-weight: 100 !important;
+        margin-top: 2px;
+        margin-bottom: 2px;
+        background-color: #424242;
+        color: white;
+    }
+    
+    .test-parameters {
+        display: block;
+        font-size: 12px;
+        padding: 5px 5px 5px 5px;
+    }
+    
+    .test-console {
+        display: block;
+        font-size: 12px;
+        /* background-color: black; */
+        /* color: white; */
+        padding-left: 5px;
+        border-top: 1px solid #2D3335;
+    }
+    
+    .test-parameters .header {
+        line-height: 24px;
+        width: 100%;
+    }
+    
+    .test-parameters .content {
+        overflow: auto;
+    }
+    
+    .content .my-form-field {
+        margin-top: 5px;
+    }
+    
+    .content .content-input {
+        width: 220px;
+        background-color: #242b2e;
+    }
+    
+    .content .content-button {
+        margin-left: 10px;
+        height: 27px;
+    }
+    
+    .test-panel {
+        overflow: auto;
+        position: relative;
+    }
+    
+    .test-panel .test-button {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+    }
+    
+    .test-console .header {
+        line-height: 20px;
+        width: 100%;
+    }
+    
+    .test-console .content {
+    }
+    
+    
+    .small-icon-button {
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+    }
+    
+    .small-icon-button .mat-icon {
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+    }
+    
+    .small-icon-button .material-icons {
+        font-size: 16px;
+    }
+    
+    .console-text {
+        display: block;
+        line-height: 14px;
+        white-space: nowrap;
+    }
+    
+    ::ng-deep .mat-tab-label {
+        height: var(--tab-height) !important;
+        color: white;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        min-width: 100px;
+    }
+    
+    ::ng-deep .cm-system-function {
+        color: greenyellow;
+    }
+    
+    @media screen and (max-height: 1500px) {
+        ::ng-deep .CodeMirror{
+            height: 600px;
+        }
+        .test-panel {
+            height: calc(299px - var(--tab-height) / 2);
+        }
+    }
+    
+    @media screen and (max-height: 960px) {
+        ::ng-deep .CodeMirror{
+            height: 600px;
+        }
+        .test-panel {
+            height: calc(299px - var(--tab-height) / 2);
+        }
+    }
+    
+    @media screen and (max-height: 920px) {
+        ::ng-deep .CodeMirror{
+            height: 540px;
+        }
+        .test-panel {
+            height: calc(269px - var(--tab-height) / 2);
+        }
+    }
+    
+    @media screen and (max-height: 870px) {
+        ::ng-deep .CodeMirror{
+            height: 480px;
+        }
+        .test-panel {
+            height: calc(239px - var(--tab-height) / 2);
+        }
+    }
+    
+    @media screen and (max-height: 820px) {
+        ::ng-deep .CodeMirror{
+            height: 400px;
+        }
+        .test-panel {
+            height: calc(199px - var(--tab-height) / 2);
+        }
+    }
+    
+    @media screen and (max-height: 720px) {
+        ::ng-deep .CodeMirror{
+            height: 300px;
+        }
+        .test-panel {
+            height: calc(149px - var(--tab-height) / 2);
+        }
+    }
+    
+    .side-panel {
+        background-color: #333a3c;
+        color: rgb(255, 255, 255);
+    }
+    
+    .side-panel-header {
+        font-size: 15px;
+        margin-top: 5px;
+        line-height: 25px;
+        margin-bottom: 5px;
+    }
+    
+    .side-toggle {
+        transform-origin: center center;
+        -webkit-transition: all 0.3s ease-in-out;
+        -moz-transition: all 0.3s ease-in-out;
+        -o-transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
+    }
+    
+    .side-toggle-expand {
+        transform: rotate(0deg);
+    }
+    
+    .side-toggle-collapse {
+        transform: rotate(180deg);
+    }
+    
+    .function-text {
+        color:rgb(0, 110, 255);
+        line-height: 25px;
+    }
+    
+    .mychips {
+        display: inline-block;
+        font-size: inherit;
+        height: 26px;
+        line-height: 24px;
+        border-radius: 13px;
+        background-color: var(--chipsBackground);
+        cursor: pointer;
+        font-family: monospace;
+        vertical-align: middle;
+        margin-left: 2px;
+        margin-right: 2px;
+    }
+    
+    .mychips mat-icon {
+        margin: 3px 3px 4px 2px;
+        opacity: 0.5;
+        font-size: 20px;
+        text-align: center;
+    }
+    
+    .mychips span {
+        padding-left: 3px;
+        padding-right: 13px;
+        vertical-align: top;
+    }
+}
+
+.code-menu-sync-select {
+
+    mat-icon {
+        font-size: 18px;
+        margin-right: unset !important;
+    }
+
+    span {
+        line-height: 20px;
+        margin-right: 25px;
+    }
+}

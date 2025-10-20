@@ -26,7 +26,7 @@
                     <span>{{'graph.property-date-last-range' | translate}}</span>
                     <mat-select [(value)]="options.lastRange" [disabled]="!isDateTime(graphCtrl.value)" (selectionChange)="onGraphChanged()">
                         <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
-                            {{ ev.value }}
+                            {{ 'graph.rangetype-' + ev.key | translate }}
                         </mat-option>
                     </mat-select>
                 </div>
@@ -34,13 +34,13 @@
                     <span>{{'graph.property-date-group' | translate}}</span>
                     <mat-select [(value)]="options.dateGroup" [disabled]="!isDateTime(graphCtrl.value)" (selectionChange)="onGraphChanged()">
                         <mat-option *ngFor="let ev of dateGroupType | enumToArray" [value]="ev.key">
-                            {{ ev.value }}
+                            {{ 'graph.grouptype-' + ev.key | translate }}
                         </mat-option>
                     </mat-select>
                 </div>
                 <div class="my-form-field section-inline-toggle slider-field ml10">
                     <span>{{'graph.property-offline' | translate}}</span>
-                    <mat-slide-toggle color="primary" [checked]="!options.offline" (change)="options.offline = !options.offline;onGraphChanged();" 
+                    <mat-slide-toggle color="primary" [checked]="!options.offline" (change)="options.offline = !options.offline;onGraphChanged();"
                                     [disabled]="isDateTime(graphCtrl.value)">
                     </mat-slide-toggle>
                 </div>
@@ -98,7 +98,7 @@
                 <div class="my-form-field section-inline-number section-toogle ml15">
                     <span>{{'graph.property-decimals' | translate}}</span>
                     <input numberOnly [(ngModel)]="options.decimals" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="0">
-                </div>          
+                </div>
                 <div class="my-form-field section-inline-toggle slider-field ml10">
                     <span>{{'graph.property-yaxis-show' | translate}}</span>
                     <mat-slide-toggle color="primary" [(ngModel)]="options.scales['y'].display" (change)="onGraphChanged()"></mat-slide-toggle>

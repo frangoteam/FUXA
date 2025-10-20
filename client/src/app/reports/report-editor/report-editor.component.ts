@@ -17,7 +17,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { ProjectService } from '../../_services/project.service';
 import { PluginService } from '../../_services/plugin.service';
 import { PluginGroupType } from '../../_models/plugin';
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
+pdfMake.vfs = pdfFonts;
 
 @Component({
     selector: 'app-report-editor',
@@ -87,7 +87,7 @@ export class ReportEditorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.destroy$.next();
+        this.destroy$.next(null);
         this.destroy$.complete();
     }
 

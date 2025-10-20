@@ -4,13 +4,13 @@ import { Observable, Subject, firstValueFrom } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project';
-import { View, LayoutSettings, DaqQuery } from '../_models/hmi';
+import { View, LayoutSettings, DaqQuery, ViewType } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Graph } from '../_models/graph';
-import { Alarm, AlarmQuery } from '../_models/alarm';
+import { Alarm, AlarmBaseType, AlarmQuery, AlarmsFilter } from '../_models/alarm';
 import { Notification } from '../_models/notification';
 import { Script } from '../_models/script';
-import { Text } from '../_models/text';
+import { Languages, LanguageText } from '../_models/language';
 import { Device, DeviceType, DeviceNetProperty, DEVICE_PREFIX, DevicesUtils, Tag, FuxaServer, TagSystemType, TAG_PREFIX, ServerTagType, TagDevice } from '../_models/device';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,12 +23,15 @@ import { Utils } from '../_helpers/utils';
 
 import * as FileSaver from 'file-saver';
 import { Report } from '../_models/report';
+import { MapsLocation } from '../_models/maps';
+import { ClientAccess } from '../_models/client-access';
 
 @Injectable()
 export class ProjectService {
 
     @Output() onSaveCurrent: EventEmitter<SaveMode> = new EventEmitter();
     @Output() onLoadHmi: EventEmitter<boolean> = new EventEmitter();
+    public onLoadClientAccess: Subject<void> = new Subject<void>();
 
     private projectData = new ProjectData();            // Project data
     public AppId = '';
@@ -38,6 +41,7 @@ export class ProjectService {
 
     private projectOld = '';
     private ready = false;
+    public static MainViewName = 'MainView';
 
     constructor(private resewbApiService: ResWebApiService,
         private resDemoService: ResDemoService,
@@ -292,15 +296,10 @@ export class ProjectService {
      * @param view
      */
     setView(view: View, notify = false) {
-        let v = null;
-        for (let i = 0; i < this.projectData.hmi.views.length; i++) {
-            if (this.projectData.hmi.views[i].id === view.id) {
-                v = this.projectData.hmi.views[i];
-            }
-        }
-        if (v) {
-            v = view;
-        } else {
+        const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
+        if (existingView) {
+            Object.assign(existingView, view);
+        } else if (!this.projectData.hmi.views.some(v => v.name === view.name)) {
             this.projectData.hmi.views.push(view);
         }
         this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData).subscribe(result => {
@@ -311,6 +310,19 @@ export class ProjectService {
             console.error(err);
             this.notifySaveError(err);
         });
+    }
+
+    async setViewAsync(view: View, notify = false): Promise<void> {
+        const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
+        if (existingView) {
+            Object.assign(existingView, view);
+        } else if (!this.projectData.hmi.views.some(v => v.name === view.name)) {
+            this.projectData.hmi.views.push(view);
+        }
+        await firstValueFrom(this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData));
+        if (notify) {
+            this.notifySuccessMessage('msg.project-save-success');
+        }
     }
 
     /**
@@ -498,10 +510,10 @@ export class ProjectService {
             this.storage.setServerProjectData(ProjectDataCmdType.SetAlarm, alarm, this.projectData).subscribe(result => {
                 if (old && old.name && old.name !== alarm.name) {
                     this.removeAlarm(old).subscribe(result => {
-                        observer.next();
+                        observer.next(null);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                 }
             }, err => {
                 console.error(err);
@@ -525,7 +537,7 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelAlarm, alarm, this.projectData).subscribe(result => {
-                observer.next();
+                observer.next(null);
             }, err => {
                 console.error(err);
                 this.notifySaveError(err);
@@ -534,8 +546,8 @@ export class ProjectService {
         });
     }
 
-    getAlarmsValues(): Observable<any> {
-        return this.storage.getAlarmsValues();
+    getAlarmsValues(alarmFilter?: AlarmsFilter): Observable<AlarmBaseType[]> {
+        return this.storage.getAlarmsValues(alarmFilter);
     }
 
     getAlarmsHistory(query: AlarmQuery): Observable<any> {
@@ -578,12 +590,12 @@ export class ProjectService {
                 this.projectData.notifications.push(notification);
             }
             this.storage.setServerProjectData(ProjectDataCmdType.SetNotification, notification, this.projectData).subscribe(result => {
-                if (old && old.id && old.id !== notification.id) {
+                if (old?.id && old.id !== notification.id) {
                     this.removeNotification(old).subscribe(result => {
-                        observer.next();
+                        observer.next(null);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                 }
             }, err => {
                 console.error(err);
@@ -607,7 +619,73 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelNotification, notification, this.projectData).subscribe(result => {
-                observer.next();
+                observer.next(null);
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+    //#endregion
+
+    //#region Maps Locations
+    /**
+     * get maps locations
+     */
+    getMapsLocations(filter?: string[]): MapsLocation[] {
+        if (!this.projectData?.mapsLocations) {
+            return [];
+        }
+        if (filter) {
+            return this.projectData.mapsLocations.filter(location => filter.includes(location.id));
+        }
+        return this.projectData.mapsLocations;
+    }
+
+    /**
+     * save the maps location to project
+     */
+    setMapsLocation(newLocation: MapsLocation, oldLocation?: MapsLocation) {
+        return new Observable((observer) => {
+            if (!this.projectData.mapsLocations) {
+                this.projectData.mapsLocations = [];
+            }
+            let exist = this.projectData.mapsLocations.find(ml => ml.id === newLocation.id);
+            if (exist) {
+                Object.assign(exist, newLocation);
+            } else {
+                this.projectData.mapsLocations.push(newLocation);
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.SetMapsLocation, newLocation, this.projectData).subscribe(result => {
+                if (oldLocation?.id && newLocation.id !== oldLocation.id) {
+                    this.removeMapsLocation(oldLocation).subscribe(result => {
+                        observer.next(null);
+                    });
+                } else {
+                    observer.next(null);
+                }
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+
+    /**
+     * remove the maps location from project
+     */
+    removeMapsLocation(location: MapsLocation) {
+        return new Observable((observer) => {
+            for (let i = 0; i < this.projectData.mapsLocations?.length; i++) {
+                if (this.projectData.mapsLocations[i].id === location.id) {
+                    this.projectData.mapsLocations.splice(i, 1);
+                    break;
+                }
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.DelMapsLocation, location, this.projectData).subscribe(result => {
+                observer.next(null);
             }, err => {
                 console.error(err);
                 this.notifySaveError(err);
@@ -639,16 +717,17 @@ export class ProjectService {
                 exist.code = script.code;
                 exist.parameters = script.parameters;
                 exist.mode = script.mode;
+                exist.sync = script.sync;
             } else {
                 this.projectData.scripts.push(script);
             }
             this.storage.setServerProjectData(ProjectDataCmdType.SetScript, script, this.projectData).subscribe(result => {
                 if (old && old.id && old.id !== script.id) {
                     this.removeScript(old).subscribe(result => {
-                        observer.next();
+                        observer.next(null);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                 }
             }, err => {
                 console.error(err);
@@ -672,7 +751,7 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelScript, script, this.projectData).subscribe(result => {
-                observer.next();
+                observer.next(null);
             }, err => {
                 console.error(err);
                 this.notifySaveError(err);
@@ -707,10 +786,10 @@ export class ProjectService {
             this.storage.setServerProjectData(ProjectDataCmdType.SetReport, report, this.projectData).subscribe(result => {
                 if (old && old.id && old.id !== report.id) {
                     this.removeReport(old).subscribe(result => {
-                        observer.next();
+                        observer.next(null);
                     });
                 } else {
-                    observer.next();
+                    observer.next(null);
                 }
             }, err => {
                 console.error(err);
@@ -734,7 +813,7 @@ export class ProjectService {
                 }
             }
             this.storage.setServerProjectData(ProjectDataCmdType.DelReport, report, this.projectData).subscribe(result => {
-                observer.next();
+                observer.next(null);
             }, err => {
                 console.error(err);
                 this.notifySaveError(err);
@@ -756,21 +835,18 @@ export class ProjectService {
      * save the text to project
      * @param text
      */
-    setText(text: Text, old: Text) {
+    setText(text: LanguageText) {
         if (!this.projectData.texts) {
             this.projectData.texts = [];
         }
-        let exist = this.projectData.texts.find(tx => tx.name === text.name);
+        let exist = this.projectData.texts.find(tx => tx.id === text.id);
         if (exist) {
-            exist.group = text.group;
-            exist.value = text.value;
+            Utils.assign(exist, text);
         } else {
+            text.id ??= Utils.getShortGUID('w_');
             this.projectData.texts.push(text);
         }
-        this.storage.setServerProjectData(ProjectDataCmdType.SetText, text, this.projectData).subscribe(result => {
-            if (old && old.name && old.name !== text.name) {
-                this.removeText(old);
-            }
+        this.storage.setServerProjectData(ProjectDataCmdType.SetText, text, this.projectData).subscribe(_ => {
         }, err => {
             console.error(err);
             this.notifySaveError(err);
@@ -781,16 +857,61 @@ export class ProjectService {
      * remove the text from project
      * @param text
      */
-    removeText(text: Text) {
+    removeText(text: LanguageText) {
         if (this.projectData.texts) {
             for (let i = 0; i < this.projectData.texts.length; i++) {
-                if (this.projectData.texts[i].name === text.name) {
+                if (this.projectData.texts[i].id === text.id) {
                     this.projectData.texts.splice(i, 1);
                     break;
                 }
             }
         }
-        this.storage.setServerProjectData(ProjectDataCmdType.DelText, text, this.projectData).subscribe(result => {
+        this.storage.setServerProjectData(ProjectDataCmdType.DelText, text, this.projectData).subscribe(_ => {
+        }, err => {
+            console.error(err);
+            this.notifySaveError(err);
+        });
+    }
+    //#endregion
+
+    //#region Languages resource
+    /**
+     * get languages resource
+     */
+    getLanguages() {
+        return (this.projectData) ? (this.projectData.languages) ? this.projectData.languages : new Languages() : null;
+    }
+
+    /**
+     * save the text to project
+     * @param text
+     */
+    setLanguages(languages: Languages) {
+        this.projectData.languages = languages;
+        this.storage.setServerProjectData(ProjectDataCmdType.Languages, languages, this.projectData).subscribe(result => {
+        }, err => {
+            console.error(err);
+            this.notifySaveError(err);
+        });
+    }
+    //#endregion
+
+    //#region ClientAccess
+    /**
+     * get client access
+     */
+    getClientAccess(): ClientAccess {
+        return (this.projectData) ? (this.projectData.clientAccess) ? this.projectData.clientAccess : new ClientAccess() : null;
+    }
+
+    /**
+     * save client access
+     * @param text
+     */
+    setClientAccess(clientAccess: ClientAccess) {
+        this.projectData.clientAccess = clientAccess;
+        this.storage.setServerProjectData(ProjectDataCmdType.ClientAccess, clientAccess, this.projectData).subscribe(result => {
+            this.onLoadClientAccess.next();
         }, err => {
             console.error(err);
             this.notifySaveError(err);
@@ -806,10 +927,11 @@ export class ProjectService {
 
     private notifySaveError(err: any) {
         console.error('FUXA notifySaveError error', err);
-        let msg = null;
-        this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt; });
+        let msg = this.translateService.instant('msg.project-save-error');
         if (err.status === 401) {
-            this.translateService.get('msg.project-save-unauthorized').subscribe((txt: string) => { msg = txt; });
+            msg = this.translateService.instant('msg.project-save-unauthorized');
+        } else if (err.status === 413) {
+            msg = err.error?.message || err.message || err.statusText;
         }
         if (msg) {
             this.toastr.error(msg, '', {
@@ -834,10 +956,10 @@ export class ProjectService {
     }
 
     private notifyError(msgCode: string) {
-        this.translateService.get(msgCode).subscribe((txt: string) => { msgCode = txt; });
+        const msg = this.translateService.instant(msgCode);
         if (msgCode) {
-            console.error(`FUXA Error: ${msgCode}`);
-            this.toastr.error(msgCode, '', {
+            console.error(`FUXA Error: ${msg}`);
+            this.toastr.error(msg, '', {
                 timeOut: 3000,
                 closeButton: true,
                 disableTimeOut: true
@@ -858,8 +980,22 @@ export class ProjectService {
     }
     //#endregion
 
-    async getTagsValues(tagsIds: string[]): Promise<any[]> {
-        let values = await firstValueFrom(this.storage.getTagsValues(tagsIds));
+    //#region Scheduler query
+    getSchedulerData(id: string): Observable<any> {
+        return this.storage.getSchedulerData(id);
+    }
+
+    setSchedulerData(id: string, data: any): Observable<any> {
+        return this.storage.setSchedulerData(id, data);
+    }
+
+    deleteSchedulerData(id: string): Observable<any> {
+        return this.storage.deleteSchedulerData(id);
+    }
+    //#endregion
+
+    async getTagsValues(tagsIds: string[], sourceScriptName?: string): Promise<any[]> {
+        let values = await firstValueFrom(this.storage.getTagsValues(tagsIds, sourceScriptName));
         return values;
     }
 
@@ -874,12 +1010,71 @@ export class ProjectService {
      * @param prj project data to save
      */
     setProject(prj: ProjectData, skipNotification = false) {
-        this.projectData = prj;
-        if (this.appService.isClientApp) {
-            this.projectData = ResourceStorageService.defileProject(prj);
+        if (this.verifyProject(prj)) {
+            this.projectData = prj;
+            if (this.appService.isClientApp) {
+                this.projectData = ResourceStorageService.defileProject(prj);
+            }
+            this.save(skipNotification);
         }
-        this.save(skipNotification);
     }
+
+    verifyProject(prj: ProjectData): boolean {
+        let result = true;
+        if (Utils.isNullOrUndefined(prj.version)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(prj.hmi)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(prj.devices)) {
+            result = false;
+        }
+        if (!result) {
+            this.notifyError('msg.project-format-error');
+        }
+        return result;
+    }
+
+    verifyView(view: View): boolean {
+        let result = true;
+        if (Utils.isNullOrUndefined(view.svgcontent)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.id)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.profile)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.type)) {
+            result = false;
+        } else if (Utils.isNullOrUndefined(view.items)) {
+            result = false;
+        }
+        if (!result) {
+            this.notifyError('msg.view-format-error');
+        }
+        return result;
+    }
+
+    cleanView(view: View): boolean {
+        if (!view.svgcontent) {
+            return false;
+        }
+        const idsInSvg = new Set<string>();
+        const re = /id=(?:"|')([^"']+)(?:"|')/g;
+        let m: RegExpExecArray | null;
+        while ((m = re.exec(view.svgcontent)) !== null) {
+            idsInSvg.add(m[1]);
+        }
+
+        let changed = false;
+        for (const key of Object.keys(view.items)) {
+            if (!idsInSvg.has(key)) {
+                console.warn('GUI item deleted: ', key);
+                delete view.items[key];
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
 
     setNewProject() {
         this.projectData = new ProjectData();
@@ -894,7 +1089,19 @@ export class ProjectService {
         } else {
             delete this.projectData.server;
         }
+        let mainView = this.getNewView(ProjectService.MainViewName);
+        this.projectData.hmi.views.push(mainView);
         this.save(true);
+    }
+
+    getNewView(name: string, type?: ViewType) {
+        let view = new View(Utils.getShortGUID('v_'), type || ViewType.svg);
+        view.name = name;
+        view.profile.bkcolor = '#ffffffff';
+        if (type === ViewType.cards) {
+            view.profile.bkcolor = 'rgba(67, 67, 67, 1)';
+        }
+        return view;
     }
 
     getProject() {
@@ -917,7 +1124,7 @@ export class ProjectService {
         let result = {};
         if (this.projectData) {
             result = this.projectData.devices;
-            if (!result[this.projectData.server.id]) {
+            if (this.projectData.server && !result[this.projectData.server?.id]) {
                 // add server as device to use in script and logic
                 let server: Device = JSON.parse(JSON.stringify(this.projectData.server));
                 server.enabled = true;
@@ -926,6 +1133,10 @@ export class ProjectService {
             }
         }
         return result;
+    }
+
+    getDeviceList(): Device[] {
+        return Object.values(this.getDevices());
     }
 
     getDeviceFromId(id: string): any {
@@ -985,6 +1196,7 @@ export class ProjectService {
         let devices = Object.values(this.projectData.devices).filter((device: Device) => device.id !== FuxaServer.id);
         let fuxaServer = <Device>this.projectData.devices[FuxaServer.id];
         if (fuxaServer) {
+            let changed = false;
             devices.forEach((device: Device) => {
                 if (!Object.values(fuxaServer.tags).find((tag: Tag) => tag.sysType === TagSystemType.deviceConnectionStatus && tag.memaddress === device.id)) {
                     let tag = new Tag(Utils.getGUID(TAG_PREFIX));
@@ -995,9 +1207,12 @@ export class ProjectService {
                     tag.sysType = TagSystemType.deviceConnectionStatus;
                     tag.init = tag.value = '';
                     fuxaServer.tags[tag.id] = tag;
+                    changed = true;
                 }
             });
-            this.setDeviceTags(fuxaServer);
+            if (changed) {
+                this.setDeviceTags(fuxaServer);
+            }
         }
         return this.getDevices();
     }

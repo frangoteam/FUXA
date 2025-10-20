@@ -1,8 +1,22 @@
 import { Component } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeActionsType, GaugeProperty, GaugePropertyColor, GaugeSettings, GaugeStatus, Variable } from '../../../_models/hmi';
+import {
+    Event, GaugeAction,
+    GaugeActionsType,
+    GaugeProperty,
+    GaugePropertyColor,
+    GaugeSettings,
+    GaugeStatus,
+    Variable,
+    WidgetProperty
+} from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { ShapesComponent } from '../../shapes/shapes.component';
+import { EndPointApi } from '../../../_helpers/endpointapi';
+import { SvgUtils, WidgetPropertyVariable } from '../../../_helpers/svg-utils';
+import { DeviceType } from '../../../_models/device';
+
+declare var SVG: any;
 
 @Component({
     selector: 'app-html-image',
@@ -14,10 +28,21 @@ export class HtmlImageComponent extends GaugeBaseComponent {
     static TypeTag = 'svg-ext-own_ctrl-image';
     static LabelTag = 'HtmlImage';
     static prefixD = 'D-OXC_';
+    static endPointConfig: string = EndPointApi.getURL();
+    static propertyWidgetType = 'widget';
 
-    static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
-                        clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, rotate : GaugeActionsType.rotate,
-                        move: GaugeActionsType.move };
+    static actionsType = {
+        hide: GaugeActionsType.hide,
+        show: GaugeActionsType.show,
+        blink: GaugeActionsType.blink,
+        stop: GaugeActionsType.stop,
+        clockwise: GaugeActionsType.clockwise,
+        anticlockwise: GaugeActionsType.anticlockwise,
+        rotate: GaugeActionsType.rotate,
+        move: GaugeActionsType.move,
+        refreshImage: GaugeActionsType.refreshImage,
+    };
+
     constructor() {
         super();
     }
@@ -29,21 +54,76 @@ export class HtmlImageComponent extends GaugeBaseComponent {
             ele?.setAttribute('data-name', gaugeSettings.name);
             svgImageContainer = Utils.searchTreeStartWith(ele, this.prefixD);
             if (svgImageContainer) {
-                svgImageContainer.innerHTML = '';
-                let image = document.createElement('img');
-                image.style['width'] = '100%';
-                image.style['height'] = '100%';
-                image.style['border'] = 'none';
-                if (gaugeSettings.property && gaugeSettings.property.address) {
-                    image.setAttribute('src', gaugeSettings.property.address);
+                let svgContent = gaugeSettings.property.svgContent ?? localStorage.getItem(gaugeSettings.property.address);
+                if (SvgUtils.isSVG(gaugeSettings.property.address) && svgContent) {
+                    svgImageContainer.innerHTML = '';
+                    svgImageContainer.setAttribute('type', HtmlImageComponent.propertyWidgetType);
+                    const parser = new DOMParser();
+                    const svgDocument = parser.parseFromString(svgContent, 'image/svg+xml');
+                    const svgElement = svgDocument.querySelector('svg');
+                    const originSize = SvgUtils.getSvgSize(svgElement);
+                    SvgUtils.resizeSvgNodes(svgImageContainer.parentElement.parentElement, originSize);
+                    svgImageContainer.parentElement?.parentElement?.removeAttribute('stroke');
+                    svgElement.setAttribute('width', originSize.width.toString());
+                    svgElement.setAttribute('height', originSize.height.toString());
+                    if (!gaugeSettings.property.svgContent) {
+                        const scripts = svgElement.querySelectorAll('script');
+                        const svgGuid = Utils.getShortGUID('', '_');
+                        const svgIdsMap = SvgUtils.renameIdsInSvg(svgElement, svgGuid);
+                        const moduleId = `wModule_${svgGuid}`;
+                        let widgetResult;
+                        scripts?.forEach(script => {
+                            widgetResult = SvgUtils.processWidget(script.textContent, moduleId, svgIdsMap, gaugeSettings.property?.varsToBind);
+                            script.parentNode.removeChild(script);
+                        });
+                        svgImageContainer.appendChild(svgElement);
+                        gaugeSettings.property = <WidgetProperty>{
+                            ...gaugeSettings.property,
+                            type: HtmlImageComponent.propertyWidgetType,
+                            svgGuid: svgGuid,
+                            svgContent: svgImageContainer.innerHTML,
+                            scriptContent: { moduleId: moduleId, content: widgetResult?.content },
+                            varsToBind: Utils.mergeArray([widgetResult?.vars, gaugeSettings.property.varsToBind], 'originalName')
+                        };
+                    } else {
+                        svgImageContainer.appendChild(svgElement);
+                    }
+                    if (gaugeSettings.property.scriptContent) {
+                        const newScript = document.createElement('script');
+                        newScript.textContent = SvgUtils.initWidget(gaugeSettings.property.scriptContent.content, gaugeSettings.property.varsToBind);
+                        document.body.appendChild(newScript);
+                    }
+                } else {
+                    svgImageContainer.innerHTML = '';
+                    let image = document.createElement('img');
+                    image.style['width'] = '100%';
+                    image.style['height'] = '100%';
+                    image.style['border'] = 'none';
+                    if (gaugeSettings.property && gaugeSettings.property.address) {
+                        image.setAttribute('src', gaugeSettings.property.address);
+                    }
+                    svgImageContainer.appendChild(image);
                 }
-                svgImageContainer.appendChild(image);
             }
         }
         return svgImageContainer;
     }
 
-    static getSignals(pro: any) {
+    static resize(gaugeSettings: GaugeSettings) {
+        const ele = document.getElementById(gaugeSettings.id);
+        if (ele) {
+            const svgImageContainer = Utils.searchTreeStartWith(ele, this.prefixD);
+            const svgElement = svgImageContainer.querySelector('svg');
+            if (svgElement && svgImageContainer.getAttribute('type') === HtmlImageComponent.propertyWidgetType) {
+                const boxSize = SvgUtils.getSvgSize(svgImageContainer.parentElement);
+                svgElement.setAttribute('width', boxSize.width.toString());
+                svgElement.setAttribute('height', boxSize.height.toString());
+                gaugeSettings.property.svgContent = svgImageContainer.innerHTML;
+            }
+        }
+    }
+
+    static getSignals(pro: any | WidgetProperty) {
         let res: string[] = [];
         if (pro.variableId) {
             res.push(pro.variableId);
@@ -56,6 +136,11 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                 res.push(act.variableId);
             });
         }
+        pro.varsToBind?.forEach((varToBind: WidgetPropertyVariable) => {
+            if (varToBind.variableId) {
+                res.push(varToBind.variableId);
+            }
+        });
         return res;
     }
 
@@ -67,9 +152,32 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         return true;
     }
 
+    /**
+     * process value from webcam
+     * @param ga
+     * @param svgele
+     * @param sig
+     * @param gaugeStatus
+     */
+    static processWebcamValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
+        if (sig.value && ga.property.actions) {
+            ga.property.actions.forEach(act => {
+                //process refresh image only
+                if (act.variableId === sig.id && this.actionsType[act.type] === GaugeActionsType.refreshImage) {
+                    this.actionRefreshImage(act, svgele, sig, gaugeStatus);
+                    return;
+                }
+            });
+        }
+    }
+
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
             if (svgele.node) {
+                if (sig.device?.type === DeviceType.WebCam) {
+                    HtmlImageComponent.processWebcamValue(ga, svgele, sig, gaugeStatus);
+                    return;
+                }
                 let value = parseFloat(sig.value);
                 if (Number.isNaN(value)) {
                     // maybe boolean
@@ -104,10 +212,56 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                             }
                         });
                     }
+                    // check widget
+                    if (ga.property.type === HtmlImageComponent.propertyWidgetType && ga.property.scriptContent && ga.property.varsToBind?.length) {
+                        const scriptContent = ga.property.scriptContent;
+                        if (window[scriptContent.moduleId]['putValue']) {
+                            const widgetVar = <WidgetPropertyVariable>ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.variableId === sig.id);
+                            if (widgetVar) {
+                                window[scriptContent.moduleId]['putValue'](widgetVar.name, sig.value);
+                            }
+                        }
+                    }
                 }
             }
         } catch (err) {
             console.error(err);
+        }
+    }
+
+    static bindEvents(ga: GaugeSettings, callback?: any): Event {
+        if (ga.property.type === HtmlImageComponent.propertyWidgetType && ga.property.scriptContent && ga.property.varsToBind?.length) {
+            const scriptContent = ga.property.scriptContent;
+            if (window[scriptContent.moduleId]?.['postValue']) {
+                window[scriptContent.moduleId]['postValue'] = (varName, value) => {
+                    const widgetVar = <WidgetPropertyVariable>ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.name === varName);
+                    if (widgetVar) {
+                        let event = new Event();
+                        event.type = HtmlImageComponent.propertyWidgetType;
+                        event.ga = ga;
+                        event.value = value;
+                        event.variableId = widgetVar.variableId;
+                        callback(event);
+                    } else {
+                        console.error(`Variable name (${varName}) not found!`);
+                    }
+                };
+            } else {
+                console.error(`Module (${scriptContent.moduleId}) or postValue function not found!`);
+            }
+        }
+        return null;
+    }
+
+    static detectChange(gab: GaugeSettings, isview: boolean): HTMLElement {
+        return HtmlImageComponent.initElement(gab, isview);
+    }
+
+    static actionRefreshImage(act: GaugeAction, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
+        let element = SVG.adopt(svgele.node);
+        let img = Utils.searchTreeTagName(element.node, 'IMG');
+        if (img) {
+            img.setAttribute('src', `/snapshots${sig.value}?${new Date().getTime()}`);
         }
     }
 }

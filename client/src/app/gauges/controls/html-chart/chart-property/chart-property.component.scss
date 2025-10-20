@@ -79,8 +79,8 @@
 
     ::ng-deep .mat-tab-label {
         height: 34px !important;
-        min-width: 120px !important;
-        width: 140px !important;
+        min-width: 110px !important;
+        width: 110px !important;
     }
 
     .events-section {
@@ -121,7 +121,7 @@
     .events-toolbox {
         display: block;
         width: 100%;
-        
+
         button {
             margin-left: 10px;
         }
@@ -129,5 +129,15 @@
 
     .section-item-block mat-select, input {
         width:calc(100% - 15px);
+    }
+}
+
+::ng-deep .chart-filter-option  {
+
+    line-height: 28px !important;
+    height: 28px !important;
+
+    span {
+        font-size: 13px;
     }
 }

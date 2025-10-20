@@ -1,0 +1,39 @@
+<div #mapContainer class="container">
+    <div *ngIf="editMode" class="tools_panel">
+        <!-- <div class="main-btn-sep" style="display: inline-block;">
+        </div>
+        <button mat-button class="main-btn" style="display: inline-block;" matTooltip="{{'editor.tools-launch-title' | translate}}"
+                (click)="onStartCurrent()">
+            <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
+        </button> -->
+    </div>
+    <div id="map" [ngStyle]="{'top.px': editMode ? 37 : 0}"></div>
+</div>
+
+<button #menuTrigger="matMenuTrigger" mat-button [matMenuTriggerFor]="contextMenu" class="hidden-trigger">
+</button>
+<mat-menu #contextMenu="matMenu" [overlapTrigger]="false">
+    <ng-container *ngIf="!lastClickMarker">
+        <button *ngIf="editMode" mat-menu-item (click)="onAddLocation()">
+            {{'maps.edit-add-location' | translate}}
+        </button>
+        <button *ngIf="editMode" mat-menu-item (click)="onImportLocation()">
+            {{'maps.edit-import-location' | translate}}
+        </button>
+    </ng-container>
+    <ng-container *ngIf="lastClickMarker">
+        <button *ngIf="editMode" mat-menu-item (click)="onEditLocation()">
+            {{'maps.edit-edit-location' | translate}}
+        </button>
+        <button *ngIf="editMode" mat-menu-item (click)="onRemoveLocation()">
+            {{'maps.edit-remove-location' | translate}}
+        </button>
+    </ng-container>
+    <mat-divider class="menu-separator"></mat-divider>
+    <button *ngIf="editMode" mat-menu-item (click)="onSetStartLocation()">
+        {{'maps.edit-start-location' | translate}}
+    </button>
+    <button mat-menu-item (click)="onCloseAllPopup()">
+        {{'maps.close-popups' | translate}}
+    </button>
+</mat-menu>

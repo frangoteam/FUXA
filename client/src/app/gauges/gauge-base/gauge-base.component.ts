@@ -17,6 +17,8 @@ export class GaugeBaseComponent {
     @Input() settings: GaugeSettings;
     @Output() edit: EventEmitter<any> = new EventEmitter();
 
+    static GAUGE_TEXT = 'text';
+
     constructor() { }
 
     onEdit() {
@@ -108,7 +110,8 @@ export class GaugeBaseComponent {
         }
         gaugeStatus.actionRef.type = act.type;
         if (toEnable) {
-            if (gaugeStatus.actionRef.timer) {
+            if (gaugeStatus.actionRef.timer &&
+                (GaugeBaseComponent.getBlinkActionId(act) === gaugeStatus.actionRef.spool?.actId)) {
                 return;
             }
             GaugeBaseComponent.clearAnimationTimer(gaugeStatus.actionRef);
@@ -208,6 +211,36 @@ export class GaugeBaseComponent {
         return value;
     }
 
+    static toggleBitmask(value: number, bitmask: number): number {
+        return value ^ bitmask;
+    }
+
+    /**
+     * maskedShiftedValue(0b11010110, 0b00011100) // → 5
+     * @param rawValue
+     * @param bitmask
+     * @returns
+     */
+    static maskedShiftedValue(rawValue: string, bitmask: number): number | string {
+        if (!bitmask) {
+            return rawValue;
+        }
+        if (rawValue == null) {
+            return null;
+        }
+        const parsed = parseInt(rawValue, 0);
+        if (isNaN(parsed)) {
+            return null;
+        }
+        let shift = 0;
+        let mask = bitmask;
+        while ((mask & 1) === 0) {
+            mask >>= 1;
+            shift++;
+        }
+        return (parsed & bitmask) >> shift;
+    }
+
     static getBlinkActionId(act: GaugeAction) {
         return `${act.variableId}-${act.range.max}-${act.range.min}`;
     }
@@ -219,5 +252,13 @@ export class GaugeBaseComponent {
                 element.setAttribute(attributeName, attributeValue);
             }
         });
+    }
+
+    static setLanguageText(elementWithLanguageText: any, text: string) {
+        if (text) {
+            if (elementWithLanguageText?.tagName?.toLowerCase() === GaugeBaseComponent.GAUGE_TEXT) {
+                elementWithLanguageText.textContent = text;
+            }
+        }
     }
 }

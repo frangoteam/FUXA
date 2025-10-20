@@ -6,7 +6,7 @@
                 </button>
                 <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
                     <mat-icon aria-label="time range">access_time</mat-icon>
-                </button>                    
+                </button>
                 <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground">
                     <mat-icon aria-label="back">skip_previous</mat-icon>
                 </button>
@@ -18,26 +18,26 @@
                 </button> -->
             </div>
             <div *ngIf="!isEditor" >
-                <mat-select [(value)]="rangeTypeValue" class="mychart-toolbar-srange" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
+                <mat-select [(value)]="rangeTypeValue" class="mychart-toolbar-srange" [style.color]="options.axisLabelColor" [style.backgroundColor]="options.colorBackground"
                     panelClass="my-select-panel-class" (selectionChange)="onRangeChanged($event.source.value)">
-                    <mat-option *ngFor="let ev of rangeType | enumToArray" [value]="ev.key" [style.color]="options.axisLabelColor" 
-                        [style.background-color]="options.colorBackground">
+                    <mat-option *ngFor="let ev of rangeType | enumToArray" [value]="ev.key" [style.color]="options.axisLabelColor"
+                        [style.backgroundColor]="options.colorBackground">
                         {{ ev.value | translate }}
                     </mat-option>
                 </mat-select>
-                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
+                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground"
                     (click)="onDateRange()">
                     <mat-icon aria-label="time range">access_time</mat-icon>
                 </button>
-                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
+                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground"
                     (click)="onClick('B')">
                     <mat-icon aria-label="back">skip_previous</mat-icon>
                 </button>
-                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
+                <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground"
                     (click)="onClick('F')">
                     <mat-icon aria-label="forward">skip_next</mat-icon>
                 </button>
-                <!-- <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground" 
+                <!-- <button mat-flat-button class="mychart-toolbar-step" [style.color]="options.axisLabelColor" [style.background-color]="options.colorBackground"
                     (click)="onExportData()">
                     <mat-icon aria-label="export data">vertical_align_bottom</mat-icon>
                 </button> -->
@@ -49,7 +49,7 @@
         <button mat-icon-button (click)="onRefresh(true)" class="small-icon-button default-color" [style.color]="options.axisLabelColor">
             <mat-icon  [ngClass]="{'reload-active': reloadActive}">autorenew</mat-icon>
         </button>
-    </div>    
+    </div>
     <div *ngIf="loading" class="spinner">
         <mat-spinner style="margin: auto" diameter="40"></mat-spinner>
     </div>

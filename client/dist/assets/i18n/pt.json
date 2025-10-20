@@ -340,6 +340,8 @@
     "shapes.action-clockwise": "Mudar sentido do Relógio",
     "shapes.action-anticlockwise": "Mudar Contra-relógio",
     "shapes.action-downup": "Cima e abaixo",
+    "shapes.event-relativefrom-window": "Janela",
+    "shapes.event-relativefrom-mouse": "Cursor",
 
     "pipe.property-props": "Propriedade",
     "pipe.property-border-width": "Largura da fronteira",
@@ -509,6 +511,7 @@
     "gauges.property-tooltip-add-event": "Adicionar evento",
     "gauges.property-interval-msec": "Intervalo (msec.)",
 
+
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisões",
     "bag.property-subdivisions": "Subdivisões",
@@ -583,10 +586,10 @@
     "texts.list-group": "Grupo",
     "texts.list-value": "Texto",
 
-    "dlg.textproperty-title": "Texto",
-    "dlg.textproperty-id": "ID",
-    "dlg.textproperty-group": "Grupo",
-    "dlg.textproperty-value": "Texto",
+    "text.settings-title": "Texto",
+    "text.settings-id": "ID",
+    "text.settings-group": "Grupo",
+    "text.settings-value": "Texto",
 
     "dlg.plugins-title": "Plugins",
     "dlg.plugins-name": "Nome",

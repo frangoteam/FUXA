@@ -1,15 +1,15 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 
-import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType } from '../../../../_models/chart';
+import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType, ChartLineZone } from '../../../../_models/chart';
 import { NgxUplotComponent, NgxSeries, ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
-import { DaqQuery, DateFormatType, TimeFormatType, IDateRange, GaugeChartProperty } from '../../../../_models/hmi';
+import { DaqQuery, DateFormatType, TimeFormatType, IDateRange, GaugeChartProperty, DaqChunkType } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Subject, interval, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { delay, takeUntil } from 'rxjs/operators';
 import { ScriptService } from '../../../../_services/script.service';
 import { ProjectService } from '../../../../_services/project.service';
 import { ScriptParam, ScriptParamType } from '../../../../_models/script';
@@ -77,7 +77,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.nguplot.ngOnDestroy();
             }
             delete this.nguplot;
-            this.destroy$.next();
+            this.destroy$.next(null);
             this.destroy$.unsubscribe();
         } catch (e) {
             console.error(e);
@@ -146,6 +146,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (daqQuery) {
             this.lastDaqQuery = <DaqQuery>Utils.mergeDeep(this.lastDaqQuery, daqQuery);
         }
+        this.lastDaqQuery.chunked = true;
         this.onTimeRange.emit(this.lastDaqQuery);
         if (this.withToolbar) {
             this.setLoading(true);
@@ -177,6 +178,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public resize(height?: number, width?: number) {
+        if (!this.chartPanel) {
+            return;
+        }
         let chart = this.chartPanel.nativeElement;
         if (!height && chart.offsetParent) {
             height = chart.offsetParent.clientHeight;
@@ -210,7 +214,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (options) {
             this.options = options;
         }
-        this.destroy$.next();
+        this.destroy$.next(null);
         if (this.property?.type === ChartViewType.history && this.options.refreshInterval) {
             interval(this.options.refreshInterval * 60000).pipe(
                 takeUntil(this.destroy$)
@@ -280,9 +284,34 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 serie.scale = '1';
             }
-            if (line.fill) {
+            serie.spanGaps = Utils.isNullOrUndefined(line.spanGaps) ? true : line.spanGaps;
+
+            if (line.lineWidth) {
+                serie.width = line.lineWidth;
+            }
+
+            const fallbackFill = line.fill || 'rgba(0,0,0,0)';
+
+            const fallbackStroke = line.color || 'rgb(0,0,0)';
+
+            if (line.zones?.some(zone => zone.fill)) {
+                const zones = this.generateZones(line.zones, 'fill', fallbackFill);
+                if (zones) {
+                    serie.fill = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || fallbackFill;
+                }
+            } else if (line.fill) {
                 serie.fill = line.fill;
             }
+
+            if (line.zones?.some(zone => zone.stroke)) {
+                const zones = this.generateZones(line.zones, 'stroke', fallbackStroke);
+                if (zones) {
+                    serie.stroke = (self, seriesIndex) => this.nguplot.scaleGradient(self, line.yaxis, 1, zones, true) || fallbackStroke;
+                }
+            } else if (line.color) {
+                serie.stroke = line.color;
+            }
+
             serie.lineInterpolation = line.lineInterpolation;
             this.mapData[id] = <MapDataType>{
                 index: Object.keys(this.mapData).length + 1,
@@ -295,6 +324,36 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.nguplot.setSample();
         }
     }
+
+    private generateZones(ranges: ChartLineZone[], attribute: 'stroke' | 'fill', baseColor: string): Zone[] {
+
+        const result: Zone[] = [];
+        const sorted = ranges.sort((a, b) => a.min - b.min);
+
+        // ── 1. Color for –∞ comes from the first zone ───────────────
+        const firstColor = sorted[0]?.[attribute] || baseColor;
+        result.push([-Infinity, firstColor]);
+
+        // ── 2. Mid‑zone stops (same as before) ──────────────────────
+        sorted.forEach((r, i) => {
+            const color = r[attribute] || baseColor;
+            result.push([r.min, color]);
+
+            const nextMin = sorted[i + 1]?.min;
+            if (nextMin !== undefined && r.max < nextMin) {
+            result.push([r.max, color]);
+            } else if (nextMin === undefined) {
+            // last zone – we’ll add +∞ after the loop
+            result.push([r.max, color]);
+            }
+        });
+
+        // ── 3. Color for +∞ comes from the last zone ────────────────
+        const lastColor = sorted[sorted.length - 1]?.[attribute] || baseColor;
+        result.push([Infinity, lastColor]);
+
+        return result;
+        }
 
     /**
      * add value to a realtime chart
@@ -322,43 +381,105 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    /**
-     * set values to a history chart
-     * the values is composed of a matrix of array, array of lines values[]<datetime, value> [line][pos]{dt, value}
-     * the have to be transform in uplot format. a matrix with array of datetime and arrays of values [datetime[dt], lineN[value]]
-     * @param values
-     */
-    public setValues(values) {
-        let result = [];
-        result.push([]);    // timestamp, index 0
-        let xmap = {};
-        for (var i = 0; i < values.length; i++) {
-            result.push([]);    // line
-            for (var x = 0; x < values[i].length; x++) {
-                let t = values[i][x].dt / 1e3;
-                if (result[0].indexOf(t) === -1) {
-                    result[0].push(t);
-                    xmap[t] = {};
+    private chunkBuffer = new Map<number, any[]>();  // Buffer for received chunks
+    private processedChunks = new Set<number>();     // Prevent duplicates
+    private totalChunks = 0;
+
+    public setValues(values: any[][], chunk: DaqChunkType) {
+        const missingOrInvalidChunk = !chunk || !chunk.index || !chunk.of;
+        if (missingOrInvalidChunk) {
+            try {
+                const first = values?.[0]?.[0];
+                // Case A: data unified -> [timestamps[], serie1[], serie2[], ...]
+                if (Array.isArray(values) && Array.isArray(values[0]) && typeof first === 'number') {
+                    this.nguplot.setData(values);
+                    this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+                    setTimeout(() => this.setLoading(false), 300);
+                    return;
                 }
-                xmap[t][i] = values[i][x].value;
+                // Case B: array of object -> [[{dt,value|v}, ...], ...] -> normalize e unified
+                if (first && typeof first === 'object') {
+                    const normalized = values.map(serie =>
+                        serie.map(p => ({
+                            dt: (p.dt ?? p.time),                           // tollera 'time'
+                            value: (p.value !== undefined ? p.value : p.v)  // tollera 'v'
+                        }))
+                    );
+                    const mergedData = this.buildUnifiedData([normalized]);
+                    this.nguplot.setData(mergedData);
+                    this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+                    setTimeout(() => this.setLoading(false), 300);
+                    return;
+                }
+                console.warn('setValues (not-chunk): format unknow', values);
+            } catch (err) {
+                console.error('setValues (not-chunk): error parsing/application', err);
+            }
+            return;
+        }
+
+        // Reset if this is the first chunk of a new series
+        if (chunk.index === 1) {
+            this.chunkBuffer.clear();
+            this.processedChunks.clear();
+            this.totalChunks = chunk.of;
+        }
+
+        // Skip duplicate chunks
+        if (this.processedChunks.has(chunk.index)) {
+            // console.warn(`⚠️ Duplicate chunk ignored: ${chunk.index}`);
+            return;
+        }
+
+        // Store chunk
+        this.chunkBuffer.set(chunk.index, values);
+        this.processedChunks.add(chunk.index);
+
+        // If all expected chunks have been received
+        if (this.chunkBuffer.size === this.totalChunks) {
+            const sortedChunks = Array.from(this.chunkBuffer.entries())
+                .sort((a, b) => a[0] - b[0])
+                .map(entry => entry[1]);
+
+            const mergedData = this.buildUnifiedData(sortedChunks);
+
+            this.nguplot.setData(mergedData);
+            this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
+
+            setTimeout(() => this.setLoading(false), 300);
+        }
+    }
+
+    // Converts chunks into format: [timestamps[], line1[], line2[], ...]
+    private buildUnifiedData(chunks: any[][][]): any[] {
+        const timestampsSet = new Set<number>();
+        const xmap = new Map<number, Record<number, any>>();
+
+        for (let chunk of chunks) {
+            for (let i = 0; i < chunk.length; i++) {
+                for (const v of chunk[i]) {
+                    const t = Math.floor(v.dt / 1000);
+                    timestampsSet.add(t);
+                    if (!xmap.has(t)) {
+                        xmap.set(t, {});
+                    }
+                    xmap.get(t)[i] = v.value;
+                }
             }
         }
-        result[0].sort(function(a, b) { return a - b; });
-        for (var i = 0; i < result[0].length; i++) {
-            let t = result[0][i];
-            for (var x = 1; x < result.length; x++) {
-                if (xmap[t][x - 1] !== undefined) {
-                    result[x].push(xmap[t][x - 1]);
-                } else {
-                    result[x].push(null);
-                }
+        const sortedTimestamps = Array.from(timestampsSet).sort((a, b) => a - b);
+        const result = [sortedTimestamps];
+        const seriesCount = chunks[0].length;
+
+        for (let i = 0; i < seriesCount; i++) {
+            const line = [];
+            for (const t of sortedTimestamps) {
+                const val = xmap.get(t)?.[i];
+                line.push(val !== undefined ? val : null);
             }
+            result.push(line);
         }
-        this.nguplot.setData(result);
-        this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
-        setTimeout(() => {
-            this.setLoading(false);
-        }, 500);
+        return result;
     }
 
     public redraw() {
@@ -486,8 +607,14 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             let scriptToRun = Utils.clone(script);
             let chart = this.hmiService.getChart(this.property.id);
             this.reloadActive = true;
-            scriptToRun.parameters = [<ScriptParam>{ type: ScriptParamType.chart, value: chart?.lines }];
-            this.scriptService.runScript(scriptToRun).subscribe(customData => {
+            scriptToRun.parameters = [<ScriptParam>{
+                type: ScriptParamType.chart,
+                value: chart?.lines,
+                name: script.parameters[0]?.name
+            }];
+            this.scriptService.runScript(scriptToRun).pipe(
+                delay(200)
+            ).subscribe(customData => {
                 this.setCustomValues(customData);
             }, err => {
                 console.error(err);
@@ -566,3 +693,5 @@ interface ValueType {
 interface ValueDictionary {
     [key: string]: ValueType[];
 }
+
+type Zone = [number, string];

@@ -13,8 +13,16 @@
             <div class="btn-card">
                 <button mat-button (click)="goTo('/editor')" class="card-btn">
                     <div class="card-btn-content">
-                        <mat-icon>dashboard</mat-icon>
+                        <mat-icon>view_module</mat-icon>
                         <span>{{'dlg.setup-views' | translate}}</span>
+                    </div>
+                </button>
+            </div>
+            <div class="btn-card">
+                <button mat-button (click)="onLayoutConfig()" class="card-btn">
+                    <div class="card-btn-content">
+                        <mat-icon>perm_data_setting</mat-icon>
+                        <span>{{'dlg.setup-layout' | translate}}</span>
                     </div>
                 </button>
             </div>
@@ -27,18 +35,18 @@
                 </button>
             </div>
             <div class="btn-card">
-                <button mat-button (click)="onLayoutConfig()" class="card-btn">
+                <button mat-button (click)="onGraphConfig('bar')" class="card-btn">
                     <div class="card-btn-content">
-                        <mat-icon>view_compact</mat-icon>
-                        <span>{{'dlg.setup-layout' | translate}}</span>
+                        <mat-icon>insert_chart_outlined</mat-icon>
+                        <span>{{'dlg.setup-bar-charts' | translate}}</span>
                     </div>
                 </button>
             </div>
             <div class="btn-card">
-                <button mat-button (click)="onGraphConfig('bar')" class="card-btn">
+                <button mat-button (click)="goTo('/mapsLocations')" class="card-btn">
                     <div class="card-btn-content">
-                        <mat-icon>insert_chart</mat-icon>
-                        <span>{{'dlg.setup-bar-charts' | translate}}</span>
+                        <mat-icon>location_on</mat-icon>
+                        <span>{{'dlg.setup-maps-locations' | translate}}</span>
                     </div>
                 </button>
             </div>
@@ -54,7 +62,7 @@
             <div class="btn-card">
                 <button mat-button (click)="goTo('/device')" class="card-btn">
                     <div class="card-btn-content">
-                        <mat-icon>device_hub</mat-icon>
+                        <mat-icon>lan</mat-icon>
                         <span>{{'dlg.setup-connections' | translate}}</span>
                     </div>
                 </button>
@@ -68,10 +76,26 @@
                 </button>
             </div>
             <div class="btn-card">
+                <button mat-button (click)="goTo('/userRoles')" class="card-btn" [disabled]="isToDisable('userRoles')">
+                    <div class="card-btn-content">
+                        <mat-icon>groups</mat-icon>
+                        <span>{{'dlg.setup-user-roles' | translate}}</span>
+                    </div>
+                </button>
+            </div>
+            <div class="btn-card">
                 <button mat-button (click)="onPlugins()" class="card-btn" [disabled]="isToDisable('plugins')">
                     <div class="card-btn-content">
                         <mat-icon>extension</mat-icon>
                         <span>{{'dlg.setup-plugins' | translate}}</span>
+                    </div>
+                </button>
+            </div>
+            <div class="btn-card">
+                <button mat-button (click)="onWidgets()" class="card-btn">
+                    <div class="card-btn-content">
+                        <mat-icon>lock_open</mat-icon>
+                        <span>{{'dlg.setup-client-access' | translate}}</span>
                     </div>
                 </button>
             </div>
@@ -82,8 +106,26 @@
                         <span>{{'dlg.setup-settings' | translate}}</span>
                     </div>
                 </button>
-            </div>            
-        </div>        
+            </div>
+        </div>
+        <div class="btn-cards">
+            <!-- <div class="btn-card">
+                <button mat-button (click)="goTo('/materials')" class="card-btn" [disabled]="isToDisable('resources')">
+                    <div class="card-btn-content">
+                        <mat-icon>folder</mat-icon>
+                        <span>{{'dlg.setup-resources' | translate}}</span>
+                    </div>
+                </button>
+            </div> -->
+            <!-- <div class="btn-card">
+                <button mat-button (click)="goTo('/materials', 'fonts')" class="card-btn" [disabled]="isToDisable('fonts')">
+                    <div class="card-btn-content">
+                        <mat-icon>font_download</mat-icon>
+                        <span>{{'dlg.setup-fonts' | translate}}</span>
+                    </div>
+                </button>
+            </div> -->
+        </div>
         <div class="separator">
             <div class="separator-line" style="position:absolute;left: 0px"></div>
             <div class="separator-text">
@@ -124,6 +166,14 @@
                     </div>
                 </button>
             </div>
+            <div class="btn-card">
+                <button mat-button (click)="goTo('/language')" class="card-btn" [disabled]="isToDisable('language')">
+                    <div class="card-btn-content">
+                        <mat-icon>language</mat-icon>
+                        <span>{{'dlg.setup-language' | translate}}</span>
+                    </div>
+                </button>
+            </div>
         </div>
         <div class="separator">
             <div class="separator-line" style="position:absolute;left: 0px"></div>
@@ -134,13 +184,21 @@
         </div>
         <div class="btn-cards">
             <div class="btn-card">
-                <button mat-button (click)="goTo('/events')" class="card-btn" [disabled]="isToDisable('events')">
+                <button mat-button (click)="goTo('/logs')" class="card-btn" [disabled]="isToDisable('logs')">
                     <div class="card-btn-content">
                         <mat-icon>assignment</mat-icon>
                         <span>{{'dlg.setup-logs' | translate}}</span>
                     </div>
                 </button>
             </div>
+            <!-- <div class="btn-card">
+                <button mat-button (click)="goTo('/events')" class="card-btn" [disabled]="isToDisable('events')">
+                    <div class="card-btn-content">
+                        <mat-icon>report_gmailerrorred</mat-icon>
+                        <span>{{'dlg.setup-events' | translate}}</span>
+                    </div>
+                </button>
+            </div> -->
         </div>
     </div>
 </div>

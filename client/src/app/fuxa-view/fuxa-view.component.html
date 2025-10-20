@@ -1,12 +1,14 @@
-<div #dataContainer class="view-container" id="content">
+<div  [ngStyle]="{ visibility: viewLoaded ? 'visible' : 'hidden' }" #dataContainer class="view-container" id="content">
 </div>
 <div *ngFor="let card of cards; let i = index"
-     [style.height]="getCardHeight(card.height) + 'px'" 
-     [style.left]="card.x + 'px'" 
+     (pointerdown)="bringCardToFront(card)"
+     [style.zIndex]="card.zIndex ?? 1"
+     [style.height]="getCardHeight(card.height) + 'px'"
+     [style.left]="card.x + 'px'"
      [style.top]="card.y +'px'"
-     [style.width]="card.width +'px'" 
-     class="fab-card" 
-     style="cursor: auto !important;" 
+     [style.width]="card.width +'px'"
+     class="fab-card"
+     style="cursor: auto !important;"
      [handle]="DemoHandle"
      ngDraggable>
     <div #DemoHandle
@@ -16,8 +18,15 @@
         </a>
     </div>
 
-    <app-fuxa-view (onclose)="onCloseCard(card)" [child]='true' [gaugesManager]="gaugesManager" [hmi]="hmi" [parentcards]="cards" [variablesMapping]="card.variablesMapping"
-        [view]="card.view"></app-fuxa-view>
+    <app-fuxa-view (onclose)="onCloseCard(card)"
+                   [child]='true'
+                   [gaugesManager]="gaugesManager"
+                   [hmi]="hmi"
+                   [parentcards]="cards"
+                   [variablesMapping]="card.variablesMapping"
+                   [view]="card.view"
+                   [sourceDeviceId]="card.sourceDeviceId">
+    </app-fuxa-view>
 </div>
 <div (rzResizing)="onIframeResizing(iframe, $event)" *ngFor="let iframe of iframes; let i = index" [handle]="iframeHandle" [style.height]="(iframe.height + 22) + 'px'"
     [style.left]="iframe.x + 'px'" [style.top]="iframe.y + 'px'" [style.width]="iframe.width + 'px'" class="fab-iframe" ngDraggable ngResizable>

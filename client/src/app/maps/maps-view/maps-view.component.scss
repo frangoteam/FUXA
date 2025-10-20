@@ -1,0 +1,48 @@
+:host {
+    .container {
+        width: 100%;
+
+        .tools_panel {
+            display: inline-flex;
+            width: 100%; height: 37px;
+            background-color: var(--headerBackground);
+            color: var(--headerColor);
+        }
+        #map {
+            // width: 100%;
+            // height: 100%;
+            position: absolute;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+        }
+
+        ::ng-deep .leaflet-popup-content-wrapper {
+            padding: unset;
+            border-radius: unset;
+            background-color: transparent;
+        }
+
+        ::ng-deep .leaflet-popup-content {
+            width: auto !important;
+            border-radius: unset;
+            margin: unset;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        ::ng-deep .leaflet-popup-close-button {
+            font-size: 24px;
+        }
+
+        ::ng-deep .leaflet-popup-tip-container {
+            display: none !important;
+        }
+
+        .hidden-trigger {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+    }
+}

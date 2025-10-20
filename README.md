@@ -1,15 +1,15 @@
-![fuxa logo](/client/src/favicon.ico) 
+![fuxa logo](/client/src/favicon.ico)
 # FUXA
 FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With FUXA you can create modern process visualizations with individual designs for your machines and real-time data display.
 
-![fuxa editor](/screenshot/fuxa-editor.png) 
+![fuxa editor](/screenshot/fuxa-editor.png)
 
-![fuxa ani](/screenshot/fuxa-ani.gif)
+![fuxa ani](/screenshot/fuxa-thinglinks.gif)
 
 ![fuxa action](/screenshot/feature-action-move.gif)
 
 ## Features
-- Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley)
+- Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley), ADSclient, Gpio (Raspberry), WebCam, MELSEC
 - SCADA/HMI Web-Editor - Engineering and Design completely web-based
 - Cross-Platform Full-Stack - Backend with NodeJs and Frontend with Web technologies (HTML5, CSS, Javascript, Angular, SVG)
 
@@ -18,6 +18,22 @@ Here is a [live demo](https://frangoteam.github.io) example of FUXA editor.
 
 ## Installing and Running
 FUXA is developed with NodeJS (backend) and Angular (frontend).
+
+See the Wiki for more details about installing and getting started
+
+[Wiki](https://github.com/frangoteam/FUXA/wiki)
+
+[Wiki Installing/Building](https://github.com/frangoteam/FUXA/wiki/Installing-and-Running)
+
+### Install using prebuilt Electron Packages
+
+You will need to be logged into github to access the download button for Electron Action Builds,
+click on the workflow and scroll down to Artifacts and click the download icon for you system
+
+[Electron Action Builds](https://github.com/frangoteam/FUXA/actions/workflows/electron_latest.yml)
+
+<img width="2082" height="531" alt="image" src="https://github.com/user-attachments/assets/40f01e1d-cf39-4145-99a0-e8fedf791edf" />
+
 
 ### Running from docker
 ```
@@ -35,9 +51,9 @@ docker compose up -d
 
 ### Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa)
 
-You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 14 || 16 || 18.
+You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
 
-**WARNING** In linux with nodejs Version 16 || 18 the installation could be a challenge.
+**WARNING** In linux with nodejs Version 18 the installation could be a challenge.
 If you don't intend communicate with Siemens PLCs via S7 (node-snap7 library) you can install from [NPM @frangoteam/fuxa-min](https://www.npmjs.com/package/@frangoteam/fuxa-min)
 
 ```
@@ -48,10 +64,10 @@ fuxa
 ### Install from source
 [Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it
 
-You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 14 || 16 || 18.
+You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
 
-**WARNING** In linux with nodejs Version 16 || 18 the installation could be a challenge.
-If you don't intend communicate with Siemens PLCs via S7 you can remove the node-snap7 library from the server/package.json
+**WARNING** In linux with nodejs Version 18 the installation could be a challenge.
+If you don't intend to communicate with Siemens PLCs via S7, you can remove the ```node-snap7``` library from the ```server/package.json```. Similarly, if you don't intend to use ODBC to communicate with an external database, you can remove the ```odbc``` library from the ```server/package.json```.
 
 ```
 cd ./server
@@ -60,6 +76,8 @@ npm start
 ```
 
 Open up a browser (better Chrome) and navigate to http://localhost:1881
+
+**Note** If you intend to use nodejs version 14, please remove odbc from the package.json dependencies. nodejs 14 may have compatibility issues with certain versions of odbc, which could lead to installation errors.
 
 ### Creating the Electron Application
 Electron is a framework for building cross-platform desktop applications using web technologies. An Electron application is standalone, meaning it can be run independently on your desktop without needing a web browser.
@@ -89,6 +107,15 @@ After following these steps, you will have a standalone Electron application for
 - Look video from [frangoteam](https://www.youtube.com/@umbertonocelli5301)
 - Look video from [Fusion Automate - Urvish Nakum](https://youtube.com/playlist?list=PLxrSjjYyzaaK8uY3kVaFzfGnwhVXiCEAO&si=aU1OxgkUvLQ3bXHq)
 
+## Community SVG Widgets
+
+Looking for ready-made, reusable SVG widgets?
+Check out the companion repository **FUXA-SVG-Widgets**:
+
+- Repository: https://github.com/frangoteam/FUXA-SVG-Widgets
+- Authoring guide & examples: see the repo README and the Wiki page:
+  https://github.com/frangoteam/FUXA/wiki/HowTo-Widgets
+
 ## To Debug (Full Stack)
 Install and start to serve the frontend
 ```
@@ -114,6 +141,8 @@ Any contributions you make are greatly appreciated.
 If you identify any errors, or have an idea for an improvement, please open an [issue](/../../issues).
 But before filing a new issue, please look through already existing issues. Search open and closed issues first.
 
+Non-code contributions are also highly appreciated, such as improving the documentation or promoting FUXA on social media.
+
 ### Pull-Requests
 If you want to raise a pull-request with a new feature, or a refactoring of existing code please first open an issue explaining the problem.
 ```
@@ -128,12 +157,6 @@ If you want to raise a pull-request with a new feature, or a refactoring of exis
 Please ensure you follow the coding standards used through-out the existing code base. Some basic rules include:
 - Indent with 4-spaces, no tabs.
 - Opening brace on same line as if/for/function and so on, closing brace on its own line.
-
-## Some collaborations
-<div >
-    <a href="https://wiki.seeedstudio.com/reTerminal-DM_intro_FUXA/" target="_blank" style="margin-right: 100px; line-height: 60px">
-        <img src="https://frangoteam.org/assets/images/seeed-studio2.png" alt="" style="vertical-align: top"></a>
-</div>
 
 ## Let us know!
 We’d be really happy if you send us your own shapes in order to collect a library to share it with others. Just send an email to info@frangoteam.org and do let us know if you have any questions or suggestions regarding our work.

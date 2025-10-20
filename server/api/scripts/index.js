@@ -28,17 +28,19 @@ module.exports = {
 
         /**
          * POST runscript
-         * Run script, can be call with script id or script content as test 
+         * Run script, can be call with script id or script content as test
          */
          scriptsApp.post("/api/runscript", secureFnc, function (req, res, next) {
-            var groups = checkGroupsFnc(req);
+            const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post runscript: Tocken Expired");
-            } else if (!runtime.scriptsMgr.isAuthorised(req.body.params.script, groups)) {
-                res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+                //runtime.settings.secureEnabled
+            } else if (!runtime.scriptsMgr.isAuthorised(req.body.params.script, permission)) {
+                res.status(400).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api post runscript: Unauthorized");
             } else {
-                runtime.scriptsMgr.runScript(req.body.params.script).then(function (result) {
+                //req.body.params.script.parameters.permission = groups;
+                runtime.scriptsMgr.runScript(req.body.params.script, req.body.params.toLogEvent).then(function (result) {
                     res.json(result);
                 }).catch(function (err) {
                     if (err.code) {
@@ -60,12 +62,13 @@ module.exports = {
             if (res.statusCode === 403) {
                 runtime.logger.error("api post runSysFunction: Tocken Expired");
             } else if (authJwt.adminGroups.indexOf(groups) === -1 ) {
-                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                res.status(400).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post runSysFunction: Unauthorized");
             } else {
                 try {
                     if (runtime.scriptsMgr.sysFunctionExist(req.body.params.functionName)) {
-                        const result = runtime.scriptsMgr.runSysFunction(req.body.params.functionName, req.body.params.parameters);
+                        //req.body.params.parameters.permission = groups;
+                        const result = await runtime.scriptsMgr.runSysFunction(req.body.params.functionName, req.body.params.parameters);
                         res.json(result);
                     } else {
                         res.status(400).json({ error: "not_found", message: 'script not found!'});
@@ -74,8 +77,8 @@ module.exports = {
                 } catch (error) {
                     res.status(400).json({ error: "error", message: error});
                     runtime.logger.error("api post runSysFunction: " + error);
-                }                
-            }            
+                }
+            }
         });
         return scriptsApp;
     }

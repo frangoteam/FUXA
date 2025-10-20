@@ -1,0 +1,71 @@
+:host {
+    .pipe-selection {
+        position: absolute;
+        top: 35px;
+        bottom: 0px;
+        overflow: auto;
+        width:calc(100% - 10px);
+        padding-top: 5px;
+
+        .style-size {
+            width: 80px;
+            text-align: left;
+        }
+    }
+
+    ::ng-deep .mat-tab-label {
+        height: 34px !important;
+        min-width: 110px !important;
+        width: 110px !important;
+    }
+
+    .toolbox {
+        float: right;
+        // margin-top: 5px;
+        margin-bottom: 3px;
+    }
+
+    .toolbox button {
+        margin-right: 8px;
+        margin-left: 8px;
+    }
+
+    .action-readonly-item {
+        display: block;
+        /* min-height: 100px; */
+        width: 100%;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        padding: 5px 0px 5px 0px;
+
+
+        .tag {
+            width: calc(100% - 5px);
+            input {
+                width: inherit;
+            }
+        }
+        .value {
+            width: calc(100% - 5px);
+
+            .number > input {
+                width: 50px;
+            }
+            .type > input {
+                width: auto;
+            }
+        }
+    }
+
+    .image-animation {
+        mat-select, span {
+            width: calc(100% - 10px);
+        }
+
+        img {
+            max-width: 200px;
+        }
+        button {
+            float: right;
+        }
+    }
+}

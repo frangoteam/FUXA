@@ -16,18 +16,19 @@ import { HmiService } from '../../_services/hmi.service';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { Utils } from '../../_helpers/utils';
 import { TagPropertyService } from '../tag-property/tag-property.service';
-import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.component';
 
 @Component({
     selector: 'app-device-list',
     templateUrl: './device-list.component.html',
-    styleUrls: ['./device-list.component.css'],
+    styleUrls: ['./device-list.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DeviceListComponent implements OnInit, AfterViewInit {
 
     readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'logger', 'options', 'remove'];
     readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'description', 'options', 'remove'];
+    readonly defGpipColumns = ['select', 'name', 'device', 'address', 'direction', 'value', 'timestamp', 'description', 'logger', 'options', 'remove'];
+    readonly defWebcamColumns = ['select', 'name', 'device', 'address', 'value', 'timestamp', 'description', 'logger', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
     readonly defInternalRowWidth = 1200;
@@ -42,6 +43,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     tagsMap = {};
     deviceSelected: Device = null;
     isDeviceToEdit = true;
+    isWithOptions = true;
 
     @Input() readonly = false;
     @Output() save = new EventEmitter();
@@ -114,10 +116,17 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         if (this.deviceSelected.type === DeviceType.internal) {
             this.displayedColumns = this.defInternalColumns;
             this.tableWidth = this.defInternalRowWidth;
+        } else if (this.deviceSelected.type === DeviceType.GPIO) {
+            this.displayedColumns = this.defGpipColumns;
+            this.tableWidth = this.defAllRowWidth;
+        } else if (this.deviceSelected.type === DeviceType.WebCam){
+            this.displayedColumns = this.defWebcamColumns;
+            this.tableWidth = this.defAllRowWidth;
         } else {
             this.displayedColumns = this.defAllColumns;
             this.tableWidth = this.defAllRowWidth;
         }
+        this.isWithOptions = (this.deviceSelected.type === this.deviceType.internal || this.deviceSelected.type === DeviceType.WebCam) ? false : true;
     }
 
     onGoBack() {
@@ -202,7 +211,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     addOpcTags() {
         if (this.deviceSelected.type === DeviceType.OPCUA) {
-            this.tagPropertyService.editTagPropertyOpcUa(this.deviceSelected, this.tagsMap).subscribe(result => {
+            this.tagPropertyService.addTagsOpcUa(this.deviceSelected, this.tagsMap).subscribe(result => {
                 this.bindToTable(this.deviceSelected.tags);
             });
             return;
@@ -253,7 +262,9 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     isToEdit(type, tag: Tag) {
         if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
-            type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer) {
+            type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer ||
+            type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.ADSclient ||
+            type === DeviceType.WebCam || type === DeviceType.MELSEC) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -299,6 +310,41 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             });
             return;
         }
+        if (this.deviceSelected.type === DeviceType.OPCUA) {
+            this.tagPropertyService.editTagPropertyOpcUa(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
+        if (this.deviceSelected.type === DeviceType.ADSclient) {
+            this.tagPropertyService.editTagPropertyADSclient(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
+        if (this.deviceSelected.type === DeviceType.GPIO) {
+            this.tagPropertyService.editTagPropertyGpio(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
+        if (this.deviceSelected.type === DeviceType.WebCam) {
+            this.tagPropertyService.editTagPropertyWebcam(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
+        if (this.deviceSelected.type === DeviceType.MELSEC) {
+            this.tagPropertyService.editTagPropertyMelsec(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
     }
 
     editTagOptions(tags: Tag[]) {
@@ -312,6 +358,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                 for (let i = 0; i < tags.length; i++) {
                     tags[i].daq = tagOption.daq;
                     tags[i].format = tagOption.format;
+                    tags[i].deadband = tagOption.deadband;
                     tags[i].scale = tagOption.scale;
                     tags[i].scaleReadFunction = tagOption.scaleReadFunction;
                     tags[i].scaleReadParams = tagOption.scaleReadParams;
@@ -339,41 +386,18 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         return Object.values(this.devices);
     }
 
-
     /**
      * to add or edit MQTT topic for subscription or publish
      */
     editTopics(topic: Tag = null) {
-        if (topic && topic.options && topic.options.subs) {
-            // edit only name (subscription)
-            let existNames = Object.values(this.deviceSelected.tags).filter((t: Tag) => { if (t.id !== topic.id) {return t;} }).map((t: Tag) => t.name);
-            let dialogRef = this.dialog.open(EditNameComponent, {
-                disableClose: true,
-                position: { top: '60px' },
-                data: {
-                    name: topic.name,
-                    exist: existNames,
-                    error: this.translateService.instant('msg.device-tag-exist')
-                }
-            });
-            dialogRef.afterClosed().subscribe(result => {
-                if (result) {
-                    this.deviceSelected.tags[topic.id].name = result.name;
-                    this.tagsMap[topic.id].name = result.name;
-                    this.bindToTable(this.deviceSelected.tags);
-                    this.projectService.setDeviceTags(this.deviceSelected);
-                }
-            });
-        } else {
-            this.tagPropertyService.editTagPropertyMqtt(
-                this.deviceSelected,
-                topic,
-                this.tagsMap,
-                () => {
-                    this.bindToTable(this.deviceSelected.tags);
-                }
-            );
-        }
+        this.tagPropertyService.editTagPropertyMqtt(
+            this.deviceSelected,
+            topic,
+            this.tagsMap,
+            () => {
+                this.bindToTable(this.deviceSelected.tags);
+            }
+        );
     }
 
     onCopyTagToClipboard(tag: Tag) {
@@ -384,5 +408,3 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 export interface Element extends Tag {
     position: number;
 }
-
-

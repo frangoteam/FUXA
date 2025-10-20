@@ -1,0 +1,48 @@
+<div>
+    <h1 *ngIf="data.type === cellType.column" mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.column-dialog-title' | translate}}</h1>
+    <h1 *ngIf="data.type === cellType.row" mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.row-dialog-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div *ngIf="data.type === cellType.column" class="my-form-field" style="display: block;">
+            <span>{{'table.cell-column-name' | translate}}</span>
+            <input [(ngModel)]="data.cell.label" type="text" style="width: 260px">
+        </div>
+        <div style="display: block; margin-top: 10px;">
+            <div class="my-form-field" style="display: inline-block">
+                <span *ngIf="data.type === cellType.column">{{'table.cell-column-type' | translate}}</span>
+                <span *ngIf="data.type === cellType.row">{{'table.cell-row-type' | translate}}</span>
+                <mat-select [(value)]="data.cell.type" style="width: 260px">
+                    <mat-option *ngIf="data.table === tableType.data" [value]="columnType.label">
+                        {{'table.property-column-label' | translate}}</mat-option>
+                    <mat-option *ngIf="!(data.table === tableType.data && data.type === cellType.column)" [value]="columnType.variable">
+                        {{'table.property-column-variable' | translate}}</mat-option>
+                    <mat-option *ngIf="!(data.table === tableType.data && data.type === cellType.column)" [value]="columnType.device">
+                        {{'table.property-column-device' | translate}}</mat-option>
+                    <mat-option [value]="columnType.timestamp">
+                        {{'table.property-column-timestamp' | translate}}</mat-option>
+                </mat-select>
+            </div>
+            <div *ngIf="data.cell.type === columnType.timestamp" class="my-form-field" style="display: inline-block; margin-left: 16px;">
+                <span>{{'table.cell-ts-format' | translate}}</span>
+                <input [(ngModel)]="data.cell.valueFormat" type="text" style="width: 265px">
+            </div>
+            <div *ngIf="data.type === cellType.row && data.cell.type === columnType.label" class="my-form-field" style="display: inline-block; margin-left: 16px;">
+                <span>{{'table.cell-text' | translate}}</span>
+                <input [(ngModel)]="data.cell.label" type="text" style="width: 265px">
+            </div>
+            <div *ngIf="data.cell.type === columnType.variable" class="my-form-field" style="display: inline-block; margin-left: 16px;">
+                <span>{{'table.cell-value-format' | translate}}</span>
+                <input [(ngModel)]="data.cell.valueFormat" type="text" style="width: 265px">
+            </div>
+        </div>
+        <div *ngIf="data.cell.type === columnType.variable || data.cell.type === columnType.device" class="my-form-field variable-input">
+            <flex-variable [data]="devicesValues" (onchange)="onSetVariable($event)" [variableId]="data.cell.variableId" [bitmask]="data.cell.bitmask" [withStaticValue]="false"
+                [withBitmask]="true">
+            </flex-variable>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

@@ -12,8 +12,21 @@
 
                     </mat-panel-description>
                 </mat-expansion-panel-header>
-                <div *ngFor="let item of grpImages.items" (click)="onSelect(item.path)" class="lib-image-item" matTooltip="{{item.name}}">
-                    <img src="{{item.path}}" id="{{item.path}}">
+                <div *ngFor="let
+                     item of grpImages.items"
+                     (click)="onSelect(item.path)"
+                     class="lib-image-item"
+                     matTooltip="{{item.name}}">
+
+                    <ng-container *ngIf="isVideo(item.path); else imageTemplate">
+                        <video width="300" height="auto" controls>
+                            <source [src]="item.path" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </ng-container>
+                    <ng-template #imageTemplate>
+                        <img [src]="item.path" [id]="item.path">
+                    </ng-template>
                 </div>
 
             </mat-expansion-panel>

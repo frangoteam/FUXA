@@ -4,7 +4,8 @@ export class Resources {
 }
 
 export enum ResourceType {
-    images = 'images'
+    images = 'images',
+    widgets = 'widgets'
 }
 
 export class ResourceGroup {
@@ -18,3 +19,20 @@ export class ResourceItem {
     label?: string;
     path: string;
 }
+
+export interface WidgetsResource extends WidgetResource {
+
+    children: WidgetsResource;
+}
+
+export interface WidgetResource {
+    name: string;
+    type: WidgetsResourceType;
+    path: string;
+}
+
+export enum WidgetsResourceType {
+    dir = 'folder',
+    file = 'file',
+}
+

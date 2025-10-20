@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EndPointSettings, HmiService } from '../../_services/hmi.service';
 import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
-import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType } from './../../_models/device';
+import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType, ModbusReuseModeType } from './../../_models/device';
 
 @Component({
 	selector: 'app-device-property',
@@ -29,6 +29,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	showPassword: boolean;
 
 	pollingPlcType = [{text: '200 ms', value: 200},
+					  {text: '350 ms', value: 350},
 					  {text: '500 ms', value: 500},
 					  {text: '700 ms', value: 700},
 					  {text: '1 sec', value: 1000},
@@ -54,10 +55,11 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 						 {text: '30 min', value: 60000 * 30},
 						 {text: '60 min', value: 60000 * 60}];
 
+    pollingWebCamType = this.pollingWebApiType.concat([{text: 'Disabled', value: -1}]);
+
 	pollingType = this.pollingPlcType;
 
 	isFuxaServer = false;
-	isWithPolling = true;
 	isToRemove = false;
 	propertyError = '';
 	propertyExpanded: boolean;
@@ -73,6 +75,8 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	hostInterfaces = [];
 	modbusRtuOptionType = [ModbusOptionType.SerialPort, ModbusOptionType.RTUBufferedPort, ModbusOptionType.AsciiPort];
 	modbusTcpOptionType = [ModbusOptionType.TcpPort, ModbusOptionType.UdpPort, ModbusOptionType.TcpRTUBufferedPort, ModbusOptionType.TelnetPort];
+	modbusReuseModeType = ModbusReuseModeType;
+
 	result = '';
 	private subscriptionDeviceProperty: Subscription;
 	private subscriptionHostInterfaces: Subscription;
@@ -92,9 +96,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.isToRemove = this.data.remove;
 		this.isFuxaServer = (this.data.device.type && this.data.device.type === DeviceType.FuxaServer) ? true : false;
-		if (this.appService.isClientApp || this.appService.isDemoApp) {
-			this.isWithPolling = false;
-		}
 		for (let key in DeviceType) {
 			if (!this.isFuxaServer && key !== DeviceType.FuxaServer) {
 				for (let idx = 0; idx < this.data.availableType.length; idx++) {
@@ -266,9 +267,11 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	onDeviceTypeChanged() {
-		if (this.data.device.type === DeviceType.WebAPI) {
+		if (this.data.device.type === DeviceType.WebAPI ) {
 			this.pollingType = this.pollingWebApiType;
-		} else {
+		} else if (this.data.device.type === DeviceType.WebCam) {
+            this.pollingType = this.pollingWebCamType;
+        } else {
 			this.pollingType = this.pollingPlcType;
 		}
 	}
@@ -347,6 +350,23 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
     keyDownStopPropagation(event) {
         event.stopPropagation();
     }
+
+	isWithPolling() {
+		if (this.data.device?.type === DeviceType.internal) {
+			return false;
+		}
+		if (this.appService.isClientApp || this.appService.isDemoApp) {
+			return false;
+		}
+		return true;
+	}
+
+	canEnable() {
+		if (this.isFuxaServer || this.data.device?.type === this.deviceType.internal) {
+			return false;
+		}
+		return true;
+	}
 
 	private securityModeToString(mode): string {
 		let secMode = MessageSecurityMode;

@@ -69,13 +69,16 @@
             </ng-container>
 
             <ng-container matColumnDef="detailColumns">
-                <td mat-cell *matCellDef="let details" [attr.colspan]="displayedColumns.length" class="details-container">
+                <td mat-cell *matCellDef="let details; let element" [attr.colspan]="displayedColumns.length" class="details-container">
                     <div class="report-details" [@detailExpand]="details === expandedElement ? 'expanded' : 'collapsed'">
                         <div class="details-description">
                             <div *ngFor="let file of currentDetails" class="report-detail">
                                 <div>{{file}}</div>
                                 <button mat-icon-button (click)="$event.stopPropagation();onDownloadDetail(file)">
                                     <mat-icon>download</mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="$event.stopPropagation();onRemoveFile(file, element)">
+                                    <mat-icon>delete_forever</mat-icon>
                                 </button>
                             </div>
                         </div>

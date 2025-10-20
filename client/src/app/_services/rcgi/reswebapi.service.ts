@@ -6,17 +6,24 @@ import { map, Observable, of, switchMap } from 'rxjs';
 import { EndPointApi } from '../../_helpers/endpointapi';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
-import { AlarmQuery, IAlarmHistory } from '../../_models/alarm';
+import { AlarmQuery, AlarmBaseType, AlarmsFilter } from '../../_models/alarm';
 import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
+import { Report, ReportFile, ReportsQuery } from '../../_models/report';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
+import { Role } from '../../_models/user';
 
 @Injectable()
 export class ResWebApiService implements ResourceStorageService {
 
-    private endPointConfig: string = EndPointApi.getURL();
+    public endPointConfig = EndPointApi.getURL();
     public onRefreshProject: () => boolean;
 
-    constructor(private http: HttpClient) {
+    constructor(
+        private http: HttpClient,
+        private translateService: TranslateService,
+        private toastr: ToastrService) {
     }
 
     init(): boolean {
@@ -63,11 +70,13 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.post<any>(this.endPointConfig + '/api/device', { headers: header, params: params });
     }
 
-    getAlarmsValues(): Observable<any> {
-        return this.http.get<any>(this.endPointConfig + '/api/alarms', {});
+    getAlarmsValues(alarmFilter?: AlarmsFilter): Observable<AlarmBaseType[]> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = alarmFilter ? { filter: JSON.stringify(alarmFilter) } : null;
+        return this.http.get<any>(this.endPointConfig + '/api/alarms', { headers: header, params });
     }
 
-    getAlarmsHistory(query: AlarmQuery): Observable<IAlarmHistory[]> {
+    getAlarmsHistory(query: AlarmQuery): Observable<AlarmBaseType[]> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         const requestOptions: Object = {
             /* other options here */
@@ -78,14 +87,14 @@ export class ResWebApiService implements ResourceStorageService {
             },
             observe: 'response'
         };
-        return this.http.get<IAlarmHistory[]>(this.endPointConfig + '/api/alarmsHistory', requestOptions).pipe(
+        return this.http.get<AlarmBaseType[]>(this.endPointConfig + '/api/alarmsHistory', requestOptions).pipe(
             switchMap((response: any) => {
                 if (response.body === null || response.body === undefined) {
                   return of([]);
                 }
                 return of(response.body);
             }),
-            map((body: IAlarmHistory[]) => body)
+            map((body: AlarmBaseType[]) => body)
         );
         // // let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         // let params = { query: JSON.stringify(query) };
@@ -96,7 +105,7 @@ export class ResWebApiService implements ResourceStorageService {
         return new Observable((observer) => {
             let header = new HttpHeaders({ 'Content-Type': 'application/json' });
             this.http.post<any>(this.endPointConfig + '/api/alarmack', { headers: header, params: name }).subscribe(result => {
-                observer.next();
+                observer.next(null);
             }, err => {
                 observer.error(err);
             });
@@ -117,9 +126,26 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.get<any>(this.endPointConfig + '/api/daq', { headers: header, params });
     }
 
-    getTagsValues(tagsIds: string[]): Observable<any> {
+    getSchedulerData(id: string): Observable<any> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        let params = { ids: JSON.stringify(tagsIds) };
+        let params = { id: id };
+        return this.http.get<any>(this.endPointConfig + '/api/scheduler', { headers: header, params });
+    }
+
+    setSchedulerData(id: string, data: any): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.post<any>(this.endPointConfig + '/api/scheduler', { id: id, data: data }, { headers: header });
+    }
+
+    deleteSchedulerData(id: string): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { id: id };
+        return this.http.delete<any>(this.endPointConfig + '/api/scheduler', { headers: header, params });
+    }
+
+    getTagsValues(tagsIds: string[], sourceScriptName?: string): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { ids: JSON.stringify(tagsIds), sourceScriptName: sourceScriptName };
         return this.http.get<any>(this.endPointConfig + '/api/getTagValue', { headers: header, params });
     }
 
@@ -141,5 +167,74 @@ export class ResWebApiService implements ResourceStorageService {
             name: fileName,
         };
         return this.http.get(this.endPointConfig + '/api/download', { headers: header, params: params, responseType: 'blob' });
+    }
+
+    getRoles(): Observable<Role[]> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.get<Role[]>(this.endPointConfig + '/api/roles', { headers: header });
+    }
+
+    setRoles(roles: Role[]): Observable<any> {
+        return new Observable((observer) => {
+            let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+            this.http.post<Role[]>(this.endPointConfig + '/api/roles', { headers: header, params: roles }).subscribe(result => {
+                observer.next(null);
+            }, err => {
+                observer.error(err);
+            });
+        });
+    }
+
+    removeRoles(roles: Role[]): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.delete<any>(this.endPointConfig + '/api/roles', { headers: header, params: { roles:  JSON.stringify(roles) } });
+    }
+
+    getReportsDir(report: Report): Observable<string[]> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = {
+            id: report.id,
+            name: report.name,
+        };
+        return this.http.get<string[]>(this.endPointConfig + '/api/reportsdir', { headers: header, params: params });
+    }
+
+    getReportsQuery(query: ReportsQuery): Observable<ReportFile[]> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { query: JSON.stringify(query) };
+        return this.http.get<ReportFile[]>(this.endPointConfig + '/api/reportsQuery', { headers: header, params: params });
+    }
+
+    buildReport(report: Report): Observable<void> {
+        return new Observable((observer) => {
+                let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+                let params = report;
+                this.http.post<void>(this.endPointConfig + '/api/reportBuild', { headers: header, params: params }).subscribe(result => {
+                    observer.next(null);
+                    var msg = '';
+                    this.translateService.get('msg.report-build-forced').subscribe((txt: string) => { msg = txt; });
+                    this.toastr.success(msg);
+                }, err => {
+                    console.error(err);
+                    observer.error(err);
+                    this.notifyError(err);
+                });
+        });
+    }
+
+    removeReportFile(fileName: string): Observable<void> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { fileName };
+        return this.http.post<any>(this.endPointConfig + '/api/reportRemoveFile', { headers: header, params: params });
+    }
+
+    private notifyError(err: any) {
+        var msg = '';
+        this.translateService.get('msg.report-build-error').subscribe((txt: string) => { msg = txt; });
+        this.toastr.error(msg, '', {
+            timeOut: 3000,
+            closeButton: true,
+            disableTimeOut: true
+        });
     }
 }

@@ -19,15 +19,21 @@ module.exports = {
         return false;
     },
 
-    tagValueCompose: async function (value, tag, runtime = undefined) {
-        var obj = {value: null };     
+    tagValueCompose: async function (value, oldValue, tag, runtime = undefined) {
+        var obj = {value: null };
         if (tag) {
             try {
                 if (tag.scaleReadFunction) {
                     value = await callScaleScript(tag.scaleReadFunction, tag.scaleReadParams ? tag.scaleReadParams : undefined, runtime, true, value);
                 }
-                if (utils.isNumber(value, obj)) {
+                const type = tag?.type;
+                if (!(type === 'String' || type === 'ByteString' || type === 'string') && utils.isNumber(value, obj)) {
                     value = obj.value;
+                    if (tag.deadband && tag.deadband.value && !utils.isNullOrUndefined(oldValue)) {
+                        if (Math.abs(value - oldValue) <= tag.deadband.value) {
+                            value = oldValue;
+                        }
+                    }
                     if (tag.scale) {
                         if (tag.scale.mode === 'linear') {
                             value = (tag.scale.scaledHigh - tag.scale.scaledLow) * (value - tag.scale.rawLow) / (tag.scale.rawHigh - tag.scale.rawLow) + tag.scale.scaledLow;
@@ -41,7 +47,7 @@ module.exports = {
                         value = +value.toFixed(tag.format);
                     }
                 }
-            } catch (err) { 
+            } catch (err) {
                 console.error(err);
             }
         }
@@ -50,7 +56,7 @@ module.exports = {
 
     tagRawCalculator: async function (value, tag, runtime = undefined) {
         var obj = {value: null };
-        
+
         if (tag) {
             try {
                 if (utils.isNumber(value, obj)) {
@@ -67,6 +73,36 @@ module.exports = {
             }
         }
         return value;
+    },
+
+    parseValue: function (value, type) {
+        if (type === 'number') {
+            return parseFloat(value);
+        } else if (type === 'boolean') {
+            if (value === null || value === undefined || value === '') {
+                return false;
+            }
+            if (typeof value === 'string') {
+                const lowerValue = value.toLowerCase().trim();
+                return lowerValue === 'true' || lowerValue === '1';
+            }
+            return Boolean(value);
+        } else if (type === 'string') {
+            return value;
+        } else {
+            let val = parseFloat(value);
+            if (Number.isNaN(val)) {
+                // maybe boolean
+                val = Number(value);
+
+                if (Number.isNaN(val)) {
+                    val = value;
+                }
+            } else {
+                val = parseFloat(val.toFixed(5));
+            }
+            return val;
+        }
     }
 }
 
@@ -115,7 +151,7 @@ const callScaleScript = async (scriptId, params, runtime, isRead, value) => {
             try {
                 tagParams = JSON.parse(params);
             } catch (error) {
-                runtime.logger.error(`'${tag.name}' error decoding ${isRead ? 'read' : 'write' } scale script params ${error.toString()}`);
+                runtime.logger.error(`'${params}' error decoding ${isRead ? 'read' : 'write' } scale script params ${error.toString()}`);
             }
             parameters = [...parameters, ...tagParams];
         }
@@ -126,9 +162,9 @@ const callScaleScript = async (scriptId, params, runtime, isRead, value) => {
             notLog: true
         };
         try {
-            value = await runtime.scriptsMgr.runScript(script);
+            value = await runtime.scriptsMgr.runScript(script, false);
         } catch (error) {
-            runtime.logger.error(`'${tag.name}' ${isRead ? 'read' : 'write'} script error! ${error.toString()}`);
+            runtime.logger.error(`'${params}' ${isRead ? 'read' : 'write'} script error! ${error.toString()}`);
         }
         return value;
     }

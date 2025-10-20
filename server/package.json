@@ -1,11 +1,12 @@
 {
   "name": "fuxa-server",
-  "version": "1.2.0-1783",
+  "version": "1.2.8-2533",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node main.js"
+    "test": "mocha --recursive --timeout 10000",
+    "start": "node main.js",
+    "build": "tsc"
   },
   "author": "frangoteam <info@frangoteam.org>",
   "license": "MIT",
@@ -16,36 +17,45 @@
   "dependencies": {
     "@influxdata/influxdb-client": "1.25.0",
     "@tdengine/rest": "3.0.2",
-    "@types/socket.io": "2.1.2",
+    "ads-client": "2.1.0",
     "app-root-path": "2.2.1",
     "async": "3.2.3",
-    "axios": "0.28.0",
+    "async-mutex": "0.5.0",
+    "axios": "0.30.0",
     "bcryptjs": "2.4.3",
     "bluebird": "3.7.2",
-    "body-parser": "1.20.0",
+    "body-parser": "1.20.3",
+    "csv-parser": "3.0.0",
     "dayjs": "1.11.9",
-    "express": "4.19.2",
+    "express": "4.21.2",
     "express-rate-limit": "5.5.1",
+    "fontkit": "^2.0.2",
     "fs-extra": "7.0.1",
     "influx": "5.9.3",
     "ip": "2.0.1",
     "jsonwebtoken": "9.0.0",
     "live-plugin-manager": "0.15.1",
-    "modbus-serial": "8.0.16",
+    "modbus-serial": "8.0.19",
     "morgan": "1.10.0",
     "mqtt": "4.3.7",
     "node-bacnet": "0.2.4",
-    "node-opcua": "2.123.0",
+    "node-opcua": "2.149.0",
     "node-schedule": "2.1.1",
     "nodemailer": "6.9.9",
     "nopt": "5.0.0",
-    "odbc": "2.4.8",
+    "odbc": "2.4.9",
     "pdfmake": "0.2.5",
-    "socket.io": "2.5.0",
+    "socket.io": "4.8.1",
     "sqlite3": "5.1.5",
-    "winston": "3.7.2"
+    "winston": "3.7.2",
+    "ws": "8.18.0"
   },
   "devDependencies": {
-    "@mapbox/node-pre-gyp": "^1.0.0"
+    "@mapbox/node-pre-gyp": "^1.0.0",
+    "@types/express": "5.0.0",
+    "chai": "^5.1.2",
+    "mocha": "^10.8.2",
+    "sinon": "^19.0.2",
+    "typescript": "^5.6.3"
   }
 }

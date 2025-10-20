@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from '@ang
 import { Utils } from '../../_helpers/utils';
 
 import { Series, Options, Legend } from './uPlot';
+import { ChartLineZone } from '../../_models/chart';
 
 declare const uPlot: any;
 declare const placement: any;
@@ -122,7 +123,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             spanGaps: false,
             // // in-legend display
             label: 'Serie',
-            value: (self, rawValue) => rawValue.toFixed(this.options.decimalsPrecision),
+            value: (self, rawValue) => rawValue?.toFixed(this.options.decimalsPrecision),
             // // series style
             stroke: 'red',
             width: 1,
@@ -153,6 +154,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.options = this.defOptions;
+        //this.options.cursor = { drag: { x: true, y: true } };
         this.uplot = new uPlot(this.defOptions, this.sampleData, this.graph.nativeElement);
     }
 
@@ -182,6 +184,9 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
     init(options?: ChartOptions, rawData?: boolean) {
         this.data = [[]];
         this.rawData = rawData;
+        if (!Utils.isNullOrUndefined(options?.rawData)) {
+            this.rawData = options.rawData;
+        }
         if (options) {
             this.options = options;
             if (!options.id) {
@@ -228,15 +233,14 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             3: { range: [Utils.isNumeric(options.scaleY3min) ? options.scaleY3min : null, Utils.isNumeric(options.scaleY3max) ? options.scaleY3max : null] },
             4: { range: [Utils.isNumeric(options.scaleY4min) ? options.scaleY4min : null, Utils.isNumeric(options.scaleY4max) ? options.scaleY4max : null] },
         };
-        // if (Utils.isNumeric(options.scaleY1min) || Utils.isNumeric(options.scaleY1max)) {
-            // this.options.scales['4'] = {
-            //     range: [Utils.isNumeric(options.scaleY1min) ? options.scaleY1min : null, Utils.isNumeric(options.scaleY1max) ? options.scaleY1max : null]
-            // };
-        // }
+
         // set plugins
         opt.plugins = (this.options.tooltip && this.options.tooltip.show) ? [this.tooltipPlugin()] : [];
-
+        if (this.options.thouchZoom) {
+            opt.plugins.push(this.touchZoomPlugin(opt));
+        }
         this.uplot = new uPlot(opt, this.data, this.graph.nativeElement);
+
     }
 
     setOptions(options: Options) {
@@ -267,6 +271,13 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
     setData(data = [[]]) {
         this.data = data;
+        this.uplot.setData(this.data);
+    }
+
+    addData(data = [[]]) {
+        for (var index = 0; index < data.length; index++) {
+            this.data[index] = this.data[index].concat(data[index]);
+        }
         this.uplot.setData(this.data);
     }
 
@@ -365,6 +376,101 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         };
     }
 
+    getColorForValue(ranges: ChartLineZone[], value: number): string {
+        // Sort ranges by the min value (just in case)
+        const sortedRanges = ranges.sort((a, b) => a.min - b.min);
+
+        // Iterate through the sorted ranges to find the corresponding color for the value
+        for (let i = 0; i < sortedRanges.length; i++) {
+            const range = sortedRanges[i];
+
+            // Check if the value falls within the range
+            if (value >= range.min && value <= range.max) {
+                return range.stroke;  // Return the corresponding color
+            }
+        }
+
+        // If no range was found for the value, return a default color (base color)
+        return 'red';  // Or any other default color you prefer
+    }
+
+    scaleGradient(u, scaleKey, ori, scaleStops, discrete = false) {
+        let scale = u.scales[scaleKey];
+
+        // we want the stop below or at the scaleMax
+        // and the stop below or at the scaleMin, else the stop above scaleMin
+        let minStopIdx;
+        let maxStopIdx;
+
+        for (let i = 0; i < scaleStops.length; i++) {
+            let stopVal = scaleStops[i][0];
+
+            if (stopVal <= scale.min || minStopIdx == null) {
+                minStopIdx = i;
+            }
+
+            maxStopIdx = i;
+
+            if (stopVal >= scale.max) {
+                break;
+            }
+        }
+
+        if (minStopIdx == maxStopIdx) {
+            return scaleStops[minStopIdx][1];
+        }
+
+        let minStopVal = scaleStops[minStopIdx][0];
+        let maxStopVal = scaleStops[maxStopIdx][0];
+
+        if (minStopVal == -Infinity) {
+            minStopVal = scale.min;
+        }
+
+        if (maxStopVal == Infinity) {
+            maxStopVal = scale.max;
+        }
+
+        let minStopPos = u.valToPos(minStopVal, scaleKey, true);
+        let maxStopPos = u.valToPos(maxStopVal, scaleKey, true);
+
+        let range = minStopPos - maxStopPos;
+
+        let x0, y0, x1, y1;
+
+        if (ori == 1) {
+            x0 = x1 = 0;
+            y0 = minStopPos;
+            y1 = maxStopPos;
+        }
+        else {
+            y0 = y1 = 0;
+            x0 = minStopPos;
+            x1 = maxStopPos;
+        }
+
+        if (Number.isNaN(y0) || Number.isNaN(y1)) {
+            return null;
+        }
+        let grd = this.uplot.ctx.createLinearGradient(x0, y0, x1, y1);
+
+        let prevColor;
+
+        for (let i = minStopIdx; i <= maxStopIdx; i++) {
+            let s = scaleStops[i];
+
+            let stopPos = i == minStopIdx ? minStopPos : i == maxStopIdx ? maxStopPos : u.valToPos(s[0], scaleKey, true);
+            let pct = (minStopPos - stopPos) / range;
+
+            if (discrete && i > minStopIdx) {
+                grd.addColorStop(pct, prevColor);
+            }
+            grd.addColorStop(pct, prevColor = s[1]);
+        }
+
+        return grd;
+    }
+
     _proximityIndex(self, seriesIdx, hoveredIdx, cursorXVal) {
         let hoverProximityPx = 30;
         let seriesData = self.data[seriesIdx];
@@ -406,6 +512,125 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
         return hoveredIdx;
     }
+
+    touchZoomPlugin(opts) {
+        function init(u, opts, data) {
+            let over = u.over;
+            let rect, oxRange, oyRange, xVal, yVal;
+            let fr = {x: 0, y: 0, dx: 0, dy: 0};
+            let to = {x: 0, y: 0, dx: 0, dy: 0};
+
+            function storePos(t, e) {
+                let ts = e.touches;
+
+                let t0 = ts[0];
+                let t0x = t0.clientX - rect.left;
+                let t0y = t0.clientY - rect.top;
+
+                if (ts.length == 1) {
+                    t.x = t0x;
+                    t.y = t0y;
+                    t.d = t.dx = t.dy = 1;
+                }
+                else {
+                    let t1 = e.touches[1];
+                    let t1x = t1.clientX - rect.left;
+                    let t1y = t1.clientY - rect.top;
+
+                    let xMin = Math.min(t0x, t1x);
+                    let yMin = Math.min(t0y, t1y);
+                    let xMax = Math.max(t0x, t1x);
+                    let yMax = Math.max(t0y, t1y);
+
+                    // midpts
+                    t.y = (yMin+yMax)/2;
+                    t.x = (xMin+xMax)/2;
+
+                    t.dx = xMax - xMin;
+                    t.dy = yMax - yMin;
+
+                    // dist
+                    t.d = Math.sqrt(t.dx * t.dx + t.dy * t.dy);
+                }
+            }
+
+            let rafPending = false;
+
+            function zoom() {
+                rafPending = false;
+
+                let left = to.x;
+                let top = to.y;
+
+                // non-uniform scaling
+            //	let xFactor = fr.dx / to.dx;
+            //	let yFactor = fr.dy / to.dy;
+
+                // uniform x/y scaling
+                let xFactor = fr.dx / to.dx;
+                let yFactor = fr.dy / to.dy;
+
+                let leftPct = left/rect.width;
+                let btmPct = 1 - top/rect.height;
+
+                let nxRange = oxRange * xFactor;
+                let nxMin = xVal - leftPct * nxRange;
+                let nxMax = nxMin + nxRange;
+
+                let nyRange = oyRange * yFactor;
+                let nyMin = yVal - btmPct * nyRange;
+                let nyMax = nyMin + nyRange;
+
+                u.batch(() => {
+                    u.setScale('x', {
+                        min: nxMin,
+                        max: nxMax,
+                    });
+
+                    u.setScale('y', {
+                        min: nyMin,
+                        max: nyMax,
+                    });
+                });
+            }
+
+            function touchmove(e) {
+                storePos(to, e);
+
+                if (!rafPending) {
+                    rafPending = true;
+                    requestAnimationFrame(zoom);
+                }
+            }
+
+            over.addEventListener('touchstart', function(e) {
+                rect = over.getBoundingClientRect();
+
+                storePos(fr, e);
+
+                oxRange = u.scales.x.max - u.scales.x.min;
+                oyRange = u.scales.y.max - u.scales.y.min;
+
+                let left = fr.x;
+                let top = fr.y;
+
+                xVal = u.posToVal(left, 'x');
+                yVal = u.posToVal(top, 'y');
+
+                document.addEventListener('touchmove', touchmove, {passive: true});
+            });
+
+            over.addEventListener('touchend', function(e) {
+                document.removeEventListener('touchmove', touchmove, {});
+            });
+        }
+
+        return {
+            hooks: {
+                init
+            }
+        };
+    }
 }
 
 export interface NgxOptions extends Options {
@@ -414,6 +639,7 @@ export interface NgxOptions extends Options {
     tooltip?: Legend;
     dateFormat?: string;
     timeFormat?: string;
+    thouchZoom?: boolean;
 }
 
 export interface ChartOptions extends NgxOptions {
@@ -455,6 +681,7 @@ export interface ChartOptions extends NgxOptions {
     loadOldValues?: boolean;
 
     scriptId?: string;
+    rawData?: boolean;
 }
 
 export interface NgxSeries extends Series {

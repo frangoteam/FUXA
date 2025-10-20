@@ -26,18 +26,23 @@ var plugins = {};
 plugins['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '2.78.0', PluginGroupType.connectionDevice);
 plugins['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.9', PluginGroupType.connectionDevice);
 plugins['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4', PluginGroupType.connectionDevice);
-plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.6', PluginGroupType.connectionDevice);
+plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.7', PluginGroupType.connectionDevice);
+plugins['ads-client'] = new Plugin('ads-client', './ads-client', 'ADSclient', '2.1.0', PluginGroupType.connectionDevice);
 plugins['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.17', PluginGroupType.connectionDevice, true);
 plugins['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8', PluginGroupType.connectionDatabase);
 // plugins['influxdb-client'] = new Plugin('@influxdata/influxdb-client', '../storage/influxdb', 'influxDB', '1.25.0', true);
 // plugins['onoff'] = new Plugin('onoff', './raspy', 'Raspberry', '6.0.1');
 plugins['chart.js'] = new Plugin('chart.js', './chartjs', 'Chart', '2.9.4', PluginGroupType.chartReport);
 plugins['chartjs-node-canvas'] = new Plugin('chartjs-node-canvas', 'chartjs-canvas', 'Chart', '3.2.0', PluginGroupType.chartReport);
+plugins['onoff'] = new Plugin('onoff', './onoff', 'GPIO', '6.0.3', PluginGroupType.connectionDevice);
+plugins['node-webcam'] = new Plugin('node-webcam', './node-webcam', 'WebCam', '0.8.2', PluginGroupType.connectionDevice, true);
+plugins['mcprotocol'] = new Plugin('mcprotocol', './mcprotocol', 'MELSEC', '0.1.2', PluginGroupType.connectionDevice, true);
+
 
 /**
  * Init plugin resource
- * @param {*} _settings 
- * @param {*} log 
+ * @param {*} _settings
+ * @param {*} log
  */
 function init(_settings, log) {
     settings = _settings;

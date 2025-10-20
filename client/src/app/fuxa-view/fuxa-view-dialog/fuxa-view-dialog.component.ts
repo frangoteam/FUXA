@@ -36,4 +36,5 @@ export interface FuxaViewDialogData {
     gaugesManager: GaugesManager;
     view: View;
     variablesMapping: [];
+    sourceDeviceId?: string;
 }

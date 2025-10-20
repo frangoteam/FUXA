@@ -39,7 +39,7 @@ export class Device {
         id: 'Device id, GUID',
         name: 'Device name',
         enabled: 'Enabled',
-        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP',
+        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | ADSclient | Gpio | WebCam | MELSEC',
         polling: 'Polling interval in millisec., check changed value after ask value, by OPCUA there is a monitor',
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
@@ -67,7 +67,7 @@ export class Tag {
     type: string;
     /** Address of Tag, combine with address by Modbus, some property for WebAPI */
     memaddress: string;
-    /** Tag address, for OPCUA like the id */
+    /** Tag address, for OPCUA like the id , for GPIO the io number */
     address: string;
     /** Value divisor, used by Modbus */
     divisor: number;
@@ -95,6 +95,14 @@ export class Tag {
     sysType: TagSystemType;
     /** Description */
     description?: string;
+    /** Deadband to set changed value */
+    deadband?: TagDeadband;
+    /**
+     * Optional GPIO direction,edge
+     */
+    direction?: string;
+    edge?: string;
+
 
     constructor(_id: string) {
         this.id = _id;
@@ -115,7 +123,9 @@ export class Tag {
             enabled: 'Daq enabled storage',
             interval: 'min storage interval (without change value)'
         },
-        format: 'Number of digits to appear after the decimal point'
+        format: 'Number of digits to appear after the decimal point',
+        direction: 'A string specifying whether the GPIO should be configured as an input or output. The valid values are: \'in\', \'out\', \'high\', and \'low\'. If \'out\' is specified the GPIO will be configured as an output and the value of the GPIO will be set to 0. \'high\' and \'low\' are variants of \'out\' that configure the GPIO as an output with an initial level of 1 or 0 respectively.',
+        edge: 'An optional string specifying the interrupt generating edge or edges for an input GPIO. The valid values are: \'none\', \'rising\', \'falling\' or \'both\'. The default value is \'none\' indicating that the GPIO will not generate interrupts. Whether or not interrupts are supported by an input GPIO is GPIO specific. If interrupts are not supported by a GPIO the edge argument should not be specified. The edge argument is ignored for output GPIOs.',
     };
 }
 
@@ -140,6 +150,15 @@ export class TagDaq {
         this.interval = _interval;
         this.restored = _restored;
     }
+}
+
+export interface TagDeadband {
+    value: number;
+    mode: TagDeadbandModeType;
+}
+
+export enum TagDeadbandModeType {
+    absolute = 'absolute'
 }
 
 export class DeviceNetProperty {
@@ -171,6 +190,11 @@ export class DeviceNetProperty {
     connectionOption: string;
     /** Delay used for Modbus RTU/TCP delay between frame*/
     delay: number = 10;
+    /** Modbus TCP socket reuse flag */
+    socketReuse?: string;
+    /** MELSEC */
+    ascii?: boolean;
+    octalIO?: boolean;
 
     static descriptor = {
         address: 'Device address (IP)',
@@ -217,7 +241,11 @@ export enum DeviceType {
     MQTTclient = 'MQTTclient',
     internal = 'internal',
     EthernetIP = 'EthernetIP',
-    ODBC = 'ODBC'
+    ODBC = 'ODBC',
+    ADSclient = 'ADSclient',
+    GPIO = 'GPIO',
+    WebCam = 'WebCam',
+    MELSEC = 'MELSEC'
     // Template: 'template'
 }
 
@@ -246,11 +274,48 @@ export enum ModbusTagType {
     UInt32LE = 'UInt32LE',
     Float32LE = 'Float32LE',
     Float64LE = 'Float64LE',
+    Float64MLE = 'Float64MLE',
     Int64LE = 'Int64LE',
     Float32MLE = 'Float32MLE',
     Int32MLE = 'Int32MLE',
     UInt32MLE = 'UInt32MLE'
     // String = 'String'
+}
+
+export enum OpcUaTagType {
+    Boolean = 'Boolean',
+    SByte = 'SByte',
+    Byte = 'Byte',
+    Int16 = 'Int16',
+    UInt16 = 'UInt16',
+    Int32 = 'Int32',
+    UInt32 = 'UInt32',
+    Int64 = 'Int64',
+    UInt64 = 'UInt64',
+    Float = 'Float',
+    Double = 'Double',
+    String = 'String',
+    DateTime = 'DateTime',
+    Guid = 'Guid',
+    ByteString = 'ByteString'
+}
+
+export enum AdsClientTagType {
+    Number = 'number',
+    Boolean = 'boolean',
+    String = 'string'
+}
+
+export enum MelsecTagType {
+    BOOL = 'BOOL',
+    BYTE = 'BYTE',
+    WORD = 'WORD',
+    INT = 'INT',
+    UINT = 'UINT',
+    DINT = 'DINT',
+    UDINT = 'UDINT',
+    REAL = 'REAL',
+    STRING = 'STRING'
 }
 
 export enum ModbusOptionType {
@@ -261,6 +326,31 @@ export enum ModbusOptionType {
     UdpPort = 'UdpPort',
     TcpRTUBufferedPort = 'TcpRTUBufferedPort',
     TelnetPort = 'TelnetPort'
+}
+
+export enum ModbusReuseModeType {
+    Reuse = 'Reuse',
+    ReuseSerial = 'ReuseSerial',
+}
+
+/**
+ * A string specifying whether the GPIO should be configured as an input or output. The valid values are: 'in', 'out', 'high', and 'low'. If 'out' is specified the GPIO will be configured as an output and the value of the GPIO will be set to 0. 'high' and 'low' are variants of 'out' that configure the GPIO as an output with an initial level of 1 or 0 respectively.
+ */
+export enum GpioDirectionType {
+    in = 'in',
+    out = 'out',
+    high = ' - high',
+    low = ' - low',
+}
+
+/**
+ * An optional string specifying the interrupt generating edge or edges for an input GPIO. The valid values are: 'none', 'rising', 'falling' or 'both'. The default value is 'none' indicating that the GPIO will not generate interrupts. Whether or not interrupts are supported by an input GPIO is GPIO specific. If interrupts are not supported by a GPIO the edge argument should not be specified. The edge argument is ignored for output GPIOs.
+ */
+export enum GpioEdgeType {
+    none = 'none',
+    rising = 'rising',
+    falling = 'falling',
+    both = 'both',
 }
 
 export enum MessageSecurityMode {
@@ -459,7 +549,7 @@ export class DevicesUtils {
         let result = `${DevicesUtils.lineDevice}${DevicesUtils.columnDelimiter}`;
         dkeys.forEach(dk => {
             if (dk !== 'property') {
-                let text = (device[dk]) ? device[dk].toString() : '' || '';
+                let text = (device[dk]) ? device[dk].toString() : '';
                 result += `${text.replace(new RegExp(DevicesUtils.columnDelimiter, 'g'), DevicesUtils.columnMaske)}${DevicesUtils.columnDelimiter}`;
             }
         });
@@ -480,8 +570,8 @@ export class DevicesUtils {
         device.name = items[2].replace(new RegExp(DevicesUtils.columnMaske, 'g'), DevicesUtils.columnDelimiter);
         device.enabled = items[3].toLowerCase() === 'true' ? true : false;
         device.type = <DeviceType>items[4];
-        device.polling = parseInt(items[5]) || 1000,
-        device.property = <DeviceNetProperty> {
+        device.polling = parseInt(items[5]) || 1000;
+        device.property = <DeviceNetProperty>{
             address: items[6],
             port: items[7],
             slot: items[8],
@@ -531,16 +621,45 @@ export class DevicesUtils {
         if (tag.options && Utils.isJson(tag.options)) {
             tag.options = JSON.parse(tag.options);
         }
-        tag.daq = <TagDaq> {
-            enabled:  Utils.Boolify(items[12]) ? true : false,
+        tag.daq = <TagDaq>{
+            enabled: Utils.Boolify(items[12]) ? true : false,
             changed: true,
             interval: parseInt(items[13]) || 60
         };
         return { tag, deviceId };
     }
     //#endregion
+
+    //#region Placeholder
+    static placeholderToTag(variableId: string, tags: Tag[]): Tag {
+        const placeholder = DevicesUtils.getPlaceholderContent(variableId);
+        if (placeholder.firstContent) {
+            return tags?.find(t => t.name === placeholder.firstContent);
+        }
+        return null;
+    }
+
+    static getPlaceholderContent(text: string): Placeholder {
+        const firstAt = text.indexOf('@');
+        if (firstAt === -1) {
+            return { firstContent: null, secondContent: null };
+        }
+        const secondAt = text.indexOf('@', firstAt + 1);
+        if (secondAt === -1) {
+            const firstContent = text.substring(firstAt + 1).trim();
+            return { firstContent, secondContent: null };
+        }
+        const firstContent = text.substring(firstAt + 1, secondAt).trim();
+        const secondContent = text.substring(secondAt + 1).trim();
+        return { firstContent, secondContent };
+    }
+    //# endregion
 }
 
+export interface Placeholder {
+    firstContent: string;
+    secondContent?: string;
+}
 
 export enum DeviceViewModeType {
     tags = 'tags',

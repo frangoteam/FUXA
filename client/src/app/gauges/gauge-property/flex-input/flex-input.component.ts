@@ -1,9 +1,8 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { GaugeProperty, GaugeRangeProperty, InputConvertionType, InputOptionType, InputOptionsProperty, InputTimeFormatType } from '../../../_models/hmi';
+import { GaugeProperty, GaugeRangeProperty } from '../../../_models/hmi';
 import { DevicesUtils, Tag } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
 import { FlexVariableComponent } from '../flex-variable/flex-variable.component';
-import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
 
 @Component({
     selector: 'flex-input',
@@ -27,9 +26,6 @@ export class FlexInputComponent implements OnInit {
     slideView = true;
     defaultColor = Utils.defaultColor;
     valueresult = '123';
-    inputOptionType = InputOptionType;
-    inputTimeFormatType = InputTimeFormatType;
-    inputConvertionType = InputConvertionType;
 
     constructor() {
     }
@@ -59,10 +55,6 @@ export class FlexInputComponent implements OnInit {
                 this.withValue = this.ranges[0].style[1];
             }
         } else if (this.isOutputCtrl()) {
-        }
-        if (this.isInputCtrl()) {
-            this.property.options = this.property.options || <InputOptionsProperty>{ updated: false, numeric: false };
-            this.property.options.type = this.property.options.type ? this.property.options.type : this.property.options.numeric ? this.inputOptionType.number : this.inputOptionType.text;
         }
         this.ranges.forEach(range => {
             if (!range.color) {
@@ -154,10 +146,6 @@ export class FlexInputComponent implements OnInit {
         return this.propertyType === PropertyType.output;
     }
 
-    isInputCtrl() {
-        return this.propertyType === PropertyType.input;
-    }
-
     isInputMinMax(){
         if (this.data.dlgType === 16) {  // GaugeDialogType.Input
             return true;
@@ -173,15 +161,6 @@ export class FlexInputComponent implements OnInit {
     onUnitChanged(range: GaugeRangeProperty, event) {
         range.textId = event.variableId;
         range.text = event.variableValue;
-    }
-
-    onTypeChange(select: MatSelectChange) {
-        if (!this.property.options.timeformat && (select.value === InputOptionType.time || select.value === InputOptionType.datetime)) {
-            this.property.options.timeformat = InputTimeFormatType.normal;
-        }
-        if (!this.property.options.convertion && (select.value === InputOptionType.time || select.value === InputOptionType.date || select.value === InputOptionType.datetime)) {
-            this.property.options.convertion = InputConvertionType.milliseconds;
-        }
     }
 
     private addInput(gap: GaugeRangeProperty) {

@@ -1,4 +1,6 @@
-FROM node:16-bookworm
+FROM node:18-bookworm
+
+ARG NODE_SNAP=false
 
 RUN apt-get update && apt-get install -y dos2unix
 
@@ -23,29 +25,35 @@ WORKDIR /usr/src/app
 # Copy odbcinst.ini to /etc
 RUN cp FUXA/odbc/odbcinst.ini /etc/odbcinst.ini
 
-# Clone node-odbc repository
-RUN git clone https://github.com/markdirish/node-odbc.git
-
-# Change working directory to node-odbc
-WORKDIR /usr/src/app/node-odbc
-
-# Install compatible versions of global npm packages
-RUN npm install -g node-gyp && \
-    npm install -g npm@8 && \
-    npm install -g node-addon-api && \
-    npm install -g @mapbox/node-pre-gyp
-
-# Install dependencies and build node-odbc
-RUN npm ci --production && \
-    ./node_modules/.bin/node-pre-gyp rebuild --production && \
-    ./node_modules/.bin/node-pre-gyp package
-
-# Build and install node-odbc
-#RUN npm install
-
 # Install Fuxa server
 WORKDIR /usr/src/app/FUXA/server
-RUN npm install
+
+# More tolerant npm config
+ENV NODE_OPTIONS=--dns-result-order=ipv4first
+RUN npm config set registry https://registry.npmjs.org/ \
+ && npm config set fetch-retries 8 \
+ && npm config set fetch-retry-factor 2 \
+ && npm config set fetch-retry-mintimeout 30000 \
+ && npm config set fetch-retry-maxtimeout 300000 \
+ && npm config set audit false \
+ && npm config set fund false
+
+# Retry loop con backoff + timeout alto
+RUN bash -lc '\
+  for i in 1 2 3 4 5 6 7 8; do \
+    echo "npm install - attempt $i/8"; \
+    npm install --no-audit --no-fund --prefer-offline --network-timeout=600000 && exit 0; \
+    echo "Failed, wait $((10*i))s and try again..."; \
+    sleep $((10*i)); \
+  done; \
+  echo "npm install failed after 8 attempts"; \
+  exit 1'
+
+
+# Install options snap7
+RUN if [ "$NODE_SNAP" = "true" ]; then \
+    npm install node-snap7; \
+    fi
 
 # Workaround for sqlite3 https://stackoverflow.com/questions/71894884/sqlite3-err-dlopen-failed-version-glibc-2-29-not-found
 RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && \

@@ -127,3 +127,26 @@ export enum ReportFunctionType {
 }
 
 export const REPORT_PREFIX = 'r_';
+
+export enum ReportColumnsType {
+    name = 'name',
+    ontime = 'ontime',
+    download =  'download',
+    delete = 'delete'
+}
+export const ReportColumns: string[] = Object.values(ReportColumnsType);
+
+export interface ReportsFilter {
+    name?: string;
+    count?: string;
+}
+
+export interface ReportsQuery extends ReportsFilter {
+}
+
+export interface ReportFile {
+    fileName: string;
+    reportName: string;
+    created: Date;
+    deletable?: boolean;
+}

@@ -10,11 +10,11 @@ import { SidenavComponent } from '../sidenav/sidenav.component';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
 import { CardsViewComponent } from '../cards-view/cards-view.component';
 
-import { HmiService, ScriptSetView } from '../_services/hmi.service';
+import { HmiService, ScriptOpenCard, ScriptSetView } from '../_services/hmi.service';
 import { ProjectService } from '../_services/project.service';
 import { AuthService } from '../_services/auth.service';
 import { GaugesManager } from '../gauges/gauges.component';
-import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType, HeaderItem, Variable, GaugeStatus, GaugeSettings, GaugeEventType, LoginOverlayColorType } from '../_models/hmi';
+import { Hmi, View, ViewType, NaviModeType, NotificationModeType, ZoomModeType, HeaderSettings, LinkType, HeaderItem, Variable, GaugeStatus, GaugeSettings, GaugeEventType, LoginOverlayColorType, GaugeEvent } from '../_models/hmi';
 import { LoginComponent } from '../login/login.component';
 import { AlarmViewComponent } from '../alarms/alarm-view/alarm-view.component';
 import { Utils } from '../_helpers/utils';
@@ -32,6 +32,10 @@ import { Intervals } from '../_helpers/intervals';
 import { Script, ScriptMode } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
 // declare var panzoom: any;
+
+import { ToastrService } from 'ngx-toastr';
+import { LanguageService, LanguageConfiguration } from '../_services/language.service';
+import { Language } from '../_models/language';
 
 @Component({
     selector: 'app-home',
@@ -66,7 +70,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     viewAsAlarms = LinkType.alarms;
     alarmPanelWidth = '100%';
     serverErrorBanner$: Observable<boolean>;
-    cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
+    cardViewType = ViewType.cards;
+    mapsViewType = ViewType.maps;
     gridOptions = <GridsterConfig>new GridOptions();
     intervalsScript = new Intervals();
     currentDateTime: Date = new Date();
@@ -74,8 +79,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscriptionLoad: Subscription;
     private subscriptionAlarmsStatus: Subscription;
     private subscriptiongoTo: Subscription;
+    private subscriptionOpen: Subscription;
     private destroy$ = new Subject<void>();
     loggedUser$: Observable<User>;
+    language$: Observable<LanguageConfiguration>;
 
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
@@ -83,7 +90,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute,
         private hmiService: HmiService,
+        private toastr: ToastrService,
         private scriptService: ScriptService,
+        private languageService: LanguageService,
         private authService: AuthService,
         public gaugesManager: GaugesManager) {
         this.gridOptions.draggable = { enabled: false };
@@ -107,6 +116,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptiongoTo = this.hmiService.onGoTo.subscribe((viewToGo: ScriptSetView) => {
                 this.onGoToPage(this.projectService.getViewId(viewToGo.viewName), viewToGo.force);
             });
+            this.subscriptionOpen = this.hmiService.onOpen.subscribe((viewToOpen: ScriptOpenCard) => {
+                const viewId = this.projectService.getViewId(viewToOpen.viewName);
+                this.fuxaview.onOpenCard(viewId, null, viewId, viewToOpen.options);
+            });
 
             this.serverErrorBanner$ = combineLatest([
                 this.hmiService.onServerConnection$,
@@ -123,6 +136,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 takeUntil(this.destroy$)
             );
 
+            this.language$ = this.languageService.languageConfig$;
             this.loggedUser$ = this.authService.currentUser$;
 
             this.gaugesManager.onchange.pipe(
@@ -158,10 +172,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.subscriptionAlarmsStatus) {
                 this.subscriptionAlarmsStatus.unsubscribe();
             }
+            if (this.subscriptionOpen) {
+                this.subscriptionOpen.unsubscribe();
+            }
             if (this.subscriptiongoTo) {
                 this.subscriptiongoTo.unsubscribe();
             }
-            this.destroy$.next();
+            this.destroy$.next(null);
             this.destroy$.complete();
             this.intervalsScript.clearIntervals();
         } catch (e) {
@@ -181,7 +198,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private initScheduledScripts() {
         this.intervalsScript.clearIntervals();
         this.projectService.getScripts()?.forEach((script: Script) => {
-            if (script.mode == ScriptMode.CLIENT && script.scheduling?.interval > 0) {
+            if (script.mode === ScriptMode.CLIENT && script.scheduling?.interval > 0) {
                 this.intervalsScript.addInterval(
                     script.scheduling.interval * 1000,
                     this.scriptService.evalScript,
@@ -196,7 +213,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         if (viewId === this.viewAsAlarms) {
             this.onAlarmsShowMode('expand');
             this.checkToCloseSideNav();
-        } else if (!this.homeView || viewId !== this.homeView?.id || force || this.fuxaview.view?.id !== viewId) {
+        } else if (!this.homeView || viewId !== this.homeView?.id || force || this.fuxaview?.view?.id !== viewId) {
             const view = this.hmi.views.find(x => x.id === viewId);
             this.setIframe();
             this.showHomeLink = false;
@@ -205,7 +222,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.homeView = view;
                 this.changeDetector.detectChanges();
                 this.setBackground();
-                if (this.homeView.type !== this.cardViewType) {
+                if (this.homeView.type !== this.cardViewType && this.homeView.type !== this.mapsViewType) {
                     this.checkZoom();
                     this.fuxaview.hmi.layout = this.hmi.layout;
                     this.fuxaview.loadHmi(this.homeView);
@@ -335,6 +352,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
+    onSetLanguage(language: Language) {
+        this.languageService.setCurrentLanguage(language);
+        window.location.reload();
+    }
+
     private processValueInHeaderItem(varTag: Variable) {
         this.headerItemsMap.get(varTag.id)?.forEach(item => {
             if (item.status.variablesValue[varTag.id] !== varTag.value) {
@@ -400,7 +422,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.infos.mode = this.hmi.layout.header.infos;
                     }
                     this.checkHeaderButton();
-                    this.layoutHeader = this.hmi.layout.header;
+                    this.layoutHeader = Utils.clone(this.hmi.layout.header);
                     this.changeDetector.detectChanges();
                     this.loadHeaderItems();
                 }
@@ -443,6 +465,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             item.status.onlyChange = true;
             item.status.variablesValue = {};
             item.element = Utils.findElementByIdRecursive(this.header.nativeElement, item.id);
+            (item as any).text = this.languageService.getTranslation(item.property?.text) ?? item.property?.text;
             const signalsIds = HtmlButtonComponent.getSignals(item.property);
             signalsIds.forEach(sigId => {
                 if (!this.headerItemsMap.has(sigId)) {
@@ -450,10 +473,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
                 this.headerItemsMap.get(sigId).push(item);
             });
-            const settingsProperty = <GaugeSettings>{
-                property: item.property,
-                type: HtmlButtonComponent.TypeTag
-            };
+            const settingsProperty = new GaugeSettings(null, HtmlButtonComponent.TypeTag);
+            settingsProperty.property = item.property;
             this.onBindMouseEvents(item.element, settingsProperty);
         });
         this.hmiService.homeTagsSubscribe(Array.from(this.headerItemsMap.keys()));
@@ -462,32 +483,51 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private onBindMouseEvents(element: HTMLElement, ga: GaugeSettings) {
         if (element) {
             let clickEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.click);
-            if (clickEvents && clickEvents.length > 0) {
+            if (clickEvents?.length > 0) {
                 element.onclick = (ev: MouseEvent) => {
-                    this.fuxaview.runEvents(this.fuxaview, ga, ev, clickEvents);
+                    this.handleMouseEvent(ga, ev, clickEvents);
                 };
                 element.ontouchstart = (ev) => {
-                    this.fuxaview.runEvents(this.fuxaview, ga, ev, clickEvents);
+                    this.handleMouseEvent(ga, ev, clickEvents);
                 };
 
             }
             let mouseDownEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mousedown);
-            if (mouseDownEvents && mouseDownEvents.length > 0) {
+            if (mouseDownEvents?.length > 0) {
                 element.onmousedown = (ev) => {
-                    this.fuxaview.runEvents(this.fuxaview, ga, ev, mouseDownEvents);
+                    this.handleMouseEvent(ga, ev, mouseDownEvents);
                 };
             }
             let mouseUpEvents = this.gaugesManager.getBindMouseEvent(ga, GaugeEventType.mouseup);
-            if (mouseUpEvents && mouseUpEvents.length > 0) {
+            if (mouseUpEvents?.length > 0) {
                 element.onmouseup = (ev) => {
-                    this.fuxaview.runEvents(this.fuxaview, ga, ev, mouseUpEvents);
+                    this.handleMouseEvent(ga, ev, mouseUpEvents);
                 };
             }
         }
     }
 
+    private handleMouseEvent(
+        ga: GaugeSettings,
+        ev: Event,
+        events: GaugeEvent[]
+    ) {
+        let fuxaviewRef = this.fuxaview ?? this.cardsview.getFuxaView(0);
+        if (!fuxaviewRef) {
+            return;
+        }
+        const homeEvents = events.filter(event => event.action === 'onpage');
+        homeEvents.forEach(event => {
+            this.onGoToPage(event.actparam);
+        });
+        const fuxaViewEvents = events.filter(event => event.action !== 'onpage');
+        if (fuxaViewEvents.length > 0) {
+            fuxaviewRef.runEvents(fuxaviewRef, ga, ev, events);
+        }
+    }
+
     private setBackground() {
-        if (this.homeView && this.homeView.profile) {
+        if (this.homeView?.profile) {
             this.backgroudColor = this.homeView.profile.bkcolor;
         }
     }
@@ -524,6 +564,21 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.fuxaview.openDialog(null, act.params, {});
                 } else if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.setView)) {
                     this.onGoToPage(act.params);
+                } else if (act.type === Utils.getEnumKey(AlarmActionsType, AlarmActionsType.toastMessage)) {
+                    var msg = act.params;
+                    // Check if the toast with the same message is already being displayed
+                    const resetOnDuplicate = true;  // Reset the duplicate toast
+                    // Use findDuplicate to check if the toast already exists
+                    const duplicateToast = this.toastr.findDuplicate('', msg, resetOnDuplicate, false);
+                    if (!duplicateToast) {
+                        const toastType = act.options?.type ?? 'info';
+                        // If no duplicate exists, show the toast
+                        this.toastr[toastType](msg, '', {
+                            timeOut: 3000,
+                            closeButton: true,
+                            disableTimeOut: true
+                        });
+                    }
                 }
             });
         }

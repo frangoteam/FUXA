@@ -1,0 +1,18 @@
+<div class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'client.script-access-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="info">{{'client.script-access-info' | translate}}</div>
+        <div class="function-list">
+            <div class="function-item" *ngFor="let fn of scriptFunctions">
+                <mat-slide-toggle color="primary" [(ngModel)]="fn.enabled">
+                    <code>{{ fn.name }}</code> <span matTooltip="{{fn.tooltip | translate}}">{{ fn.tooltip | translate }}</span>
+                </mat-slide-toggle>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

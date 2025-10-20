@@ -1,10 +1,10 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import * as io from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 import { environment } from '../../environments/environment';
 import { Tag, DeviceType } from '../_models/device';
 import { Hmi, Variable, GaugeSettings, DaqQuery, DaqResult, GaugeEventSetValueType } from '../_models/hmi';
-import { AlarmQuery } from '../_models/alarm';
+import { AlarmQuery, AlarmsFilter } from '../_models/alarm';
 import { ProjectService } from '../_services/project.service';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { Utils } from '../_helpers/utils';
@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { AuthService, UserProfile } from './auth.service';
+import { DeviceAdapterService } from '../device-adapter/device-adapter.service';
 
 @Injectable()
 export class HmiService {
@@ -28,6 +29,11 @@ export class HmiService {
     @Output() onDeviceTagsRequest: EventEmitter<any> = new EventEmitter();
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
+    @Output() onOpen: EventEmitter<ScriptOpenCard> = new EventEmitter();
+    @Output() onSchedulerUpdated: EventEmitter<any> = new EventEmitter();
+    @Output() onSchedulerEventActive: EventEmitter<any> = new EventEmitter();
+    @Output() onSchedulerRemainingTime: EventEmitter<any> = new EventEmitter();
+    @Output() onGaugeEvent: EventEmitter<any> = new EventEmitter();
 
     onServerConnection$ = new BehaviorSubject<boolean>(false);
 
@@ -50,6 +56,7 @@ export class HmiService {
     constructor(public projectService: ProjectService,
         private translateService: TranslateService,
         private authService: AuthService,
+        private deviceAdapaterService: DeviceAdapterService,
         private toastr: ToastrService) {
 
         this.initSocket();
@@ -59,7 +66,7 @@ export class HmiService {
         });
 
         this.authService.currentUser$.subscribe((userProfile: UserProfile) => {
-           this.initSocket(userProfile?.token);
+            this.initSocket(userProfile?.token);
         });
     }
 
@@ -82,6 +89,7 @@ export class HmiService {
      * @param value
      */
     putSignalValue(sigId: string, value: string, fnc: string = null) {
+        sigId = this.deviceAdapaterService.resolveAdapterTagsId([sigId])[0];
         if (!this.variables[sigId]) {
             this.variables[sigId] = new Variable(sigId, null, null);
         }
@@ -110,6 +118,14 @@ export class HmiService {
         return this.variables;
     }
 
+    public initSignalValues(sigIds: Record<string, string>) {
+        for (const [adapterId, deviceId] of Object.entries(sigIds)) {
+            if (!Utils.isNullOrUndefined(this.variables[adapterId])) {
+                this.variables[adapterId].value = this.variables[deviceId]?.value || null;
+            }
+        }
+    }
+
     /**
      * return the value calculated with the function if defined
      * @param value
@@ -117,7 +133,7 @@ export class HmiService {
      */
     private getValueInFunction(current: any, value: string, fnc: string) {
         try {
-            if (!fnc) {return value;}
+            if (!fnc) { return value; }
             if (!current) {
                 current = 0;
             }
@@ -139,7 +155,7 @@ export class HmiService {
      * @returns
      */
     initClient(bridge?: any) {
-        if (!bridge) {return false;}
+        if (!bridge) { return false; }
         this.bridge = bridge;
         if (this.bridge) {
             this.bridge.onDeviceValues = (tags: Variable[]) => this.onDeviceValues(tags);
@@ -173,9 +189,14 @@ export class HmiService {
         this.socket = io(`${this.endPointConfig}/?token=${token}`);
         this.socket.on('connect', () => {
             this.onServerConnection$.next(true);
+            this.tagsSubscribe();
         });
-        this.socket.on('disconnect', () => {
+        this.socket.on('disconnect', (reason) => {
             this.onServerConnection$.next(false);
+            console.log('socket disconnected: ', reason);
+        });
+        this.socket.io.on('reconnect_attempt', () => {
+            console.log('socket.io try to reconnect...');
         });
         // devicse status
         this.socket.on(IoEventTypes.DEVICE_STATUS, (message) => {
@@ -183,7 +204,7 @@ export class HmiService {
             if (message.status === 'connect-error' && this.hmi?.layout?.show_connection_error) {
                 let name = message.id;
                 let device = this.projectService.getDeviceFromId(message.id);
-                if (device) {name = device.name;}
+                if (device) { name = device.name; }
                 let msg = '';
                 this.translateService.get('msg.device-connection-error', { value: name }).subscribe((txt: string) => { msg = txt; });
                 this.toastr.error(msg, '', {
@@ -199,19 +220,43 @@ export class HmiService {
         });
         // devices values
         this.socket.on(IoEventTypes.DEVICE_VALUES, (message) => {
-            for (let idx = 0; idx < message.values.length; idx++) {
-                let varid = message.values[idx].id;
-                if (!this.variables[varid]) {
-                    this.variables[varid] = new Variable(varid, null, null);
+            const updateVariable = (id: string, value: any, timestamp: any) => {
+                if (Utils.isNullOrUndefined(this.variables[id])) {
+                    this.variables[id] = new Variable(id, null, null);
                 }
-                this.variables[varid].value = message.values[idx].value;
-                this.variables[varid].timestamp = message.values[idx].timestamp;
-                this.setSignalValue(this.variables[varid]);
+                this.variables[id].value = value;
+                this.variables[id].timestamp = timestamp;
+                this.setSignalValue(this.variables[id]);
+            };
+
+            for (let idx = 0; idx < message.values.length; idx++) {
+                const originalId = message.values[idx].id;
+                const value = message.values[idx].value;
+                const timestamp = message.values[idx].timestamp;
+                updateVariable(originalId, value, timestamp);
+                const adapterIds = this.deviceAdapaterService.resolveDeviceTagIdForAdapter(originalId);
+                if (adapterIds?.length) {
+                    adapterIds.forEach(adapterId => {
+                        updateVariable(adapterId, value, timestamp);
+                    });
+                }
             }
         });
         // device browse
         this.socket.on(IoEventTypes.DEVICE_BROWSE, (message) => {
             this.onDeviceBrowse.emit(message);
+        });
+        // scheduler updated (one-time events removed, etc.)
+        this.socket.on(IoEventTypes.SCHEDULER_UPDATED, (message) => {
+            this.onSchedulerUpdated.emit(message);
+        });
+        // scheduler event active state changed (START/STOP fired)
+        this.socket.on(IoEventTypes.SCHEDULER_ACTIVE, (message) => {
+            this.onSchedulerEventActive.emit(message);
+        });
+        // scheduler remaining time update
+        this.socket.on(IoEventTypes.SCHEDULER_REMAINING, (message) => {
+            this.onSchedulerRemainingTime.emit(message);
         });
         // device node attribute
         this.socket.on(IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
@@ -301,7 +346,7 @@ export class HmiService {
      */
     public askDeviceValues() {
         if (this.socket) {
-            this.socket.emit(IoEventTypes.DEVICE_VALUES, 'get');
+            this.socket.emit(IoEventTypes.DEVICE_VALUES, { cmd: 'get' });
         } else if (this.bridge) {
             this.bridge.getDeviceValues(null);
         }
@@ -347,14 +392,16 @@ export class HmiService {
 
     public queryDaqValues(msg: DaqQuery) {
         if (this.socket) {
+            msg.sids = this.deviceAdapaterService.resolveAdapterTagsId(msg.sids);
             this.socket.emit(IoEventTypes.DAQ_QUERY, msg);
         }
     }
 
-    private tagsSubscribe() {
+    private tagsSubscribe(sendLastValue: boolean = false) {
         if (this.socket) {
             const mergedArray = this.viewsTagsSubscription.concat(this.homeTagsSubscription);
-            let msg = { tagsId: [...new Set(mergedArray)] };
+            const mergedArrayResolvedAdapter = this.deviceAdapaterService.resolveAdapterTagsId(mergedArray);
+            let msg = { tagsId: [...new Set(mergedArrayResolvedAdapter)], sendLastValue: sendLastValue };
             this.socket.emit(IoEventTypes.DEVICE_TAGS_SUBSCRIBE, msg);
         }
     }
@@ -362,9 +409,9 @@ export class HmiService {
     /**
      * Subscribe views tags values
      */
-    public viewsTagsSubscribe(tagsId: string[]) {
+    public viewsTagsSubscribe(tagsId: string[], sendLastValue: boolean = false) {
         this.viewsTagsSubscription = tagsId;
-        this.tagsSubscribe();
+        this.tagsSubscribe(sendLastValue);
     }
 
     /**
@@ -402,7 +449,7 @@ export class HmiService {
     //#endregion
 
     //#region Signals Gauges Mapping
-    addSignal(signalId: string, ga: GaugeSettings) {
+    addSignal(signalId: string) {
         // add to variable list
         if (!this.variables[signalId]) {
             this.variables[signalId] = new Variable(signalId, null, this.projectService.getDeviceFromTagId(signalId));
@@ -481,7 +528,7 @@ export class HmiService {
      * @param fulltext
      */
     getMappedVariable(sigid: string, fulltext: boolean): Variable {
-        if (!this.variables[sigid]) {return null;}
+        if (!this.variables[sigid]) { return null; }
 
         if (this.variables[sigid]) {
             let result = this.variables[sigid];
@@ -542,8 +589,8 @@ export class HmiService {
     //#endregion
 
     //#region Current Alarms functions
-    getAlarmsValues() {
-        return this.projectService.getAlarmsValues();
+    getAlarmsValues(alarmFilter?: AlarmsFilter) {
+        return this.projectService.getAlarmsValues(alarmFilter);
     }
 
     getAlarmsHistory(query: AlarmQuery) {
@@ -561,6 +608,20 @@ export class HmiService {
     }
     //#endregion
 
+    //#region Scheduler functions served from project service
+    askSchedulerData(id: string) {
+        return this.projectService.getSchedulerData(id);
+    }
+
+    setSchedulerData(id: string, data: any) {
+        return this.projectService.setSchedulerData(id, data);
+    }
+
+    deleteSchedulerData(id: string) {
+        return this.projectService.deleteSchedulerData(id);
+    }
+    //#endregion
+
     //#region My Static functions
     public static toVariableId(src: string, name: string) {
         return src + HmiService.separator + name;
@@ -569,12 +630,17 @@ export class HmiService {
     //#endregion
 
     public onScriptCommand(message: ScriptCommandMessage) {
-        switch (message.command) {
-            case ScriptCommandEnum.SETVIEW:
-                if (message.params && message.params.length) {
+        if (message.params && message.params.length) {
+            switch (message.command) {
+                case ScriptCommandEnum.SETVIEW:
                     this.onGoTo.emit(<ScriptSetView>{ viewName: message.params[0], force: message.params[1] });
-                }
-                break;
+                    break;
+                case ScriptCommandEnum.OPENCARD:
+                    this.onOpen.emit(<ScriptOpenCard>{ viewName: message.params[0], options: message.params[1] });
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
@@ -641,11 +707,15 @@ export enum IoEventTypes {
     HOST_INTERFACES = 'host-interfaces',
     SCRIPT_CONSOLE = 'script-console',
     SCRIPT_COMMAND = 'script-command',
-    ALIVE = 'heartbeat'
+    ALIVE = 'heartbeat',
+    SCHEDULER_UPDATED = 'scheduler:updated',
+    SCHEDULER_ACTIVE = 'scheduler:event-active',
+    SCHEDULER_REMAINING = 'scheduler:remaining-time'
 }
 
 export const ScriptCommandEnum = {
     SETVIEW: 'SETVIEW',
+    OPENCARD: 'OPENCARD',
 };
 
 export interface ScriptCommandMessage {
@@ -656,6 +726,11 @@ export interface ScriptCommandMessage {
 export interface ScriptSetView {
     viewName: string;
     force: boolean;
+}
+
+export interface ScriptOpenCard {
+    viewName: string;
+    options: {};
 }
 
 export interface EndPointSettings {

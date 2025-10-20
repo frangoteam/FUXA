@@ -20,7 +20,7 @@ function init(_secureEnabled, _secretCode, _tokenExpires) {
 
 /**
  * Verify token
- * @param {*} token 
+ * @param {*} token
  */
 function verify (token) {
     return new Promise ((resolve, reject) => {
@@ -31,29 +31,28 @@ function verify (token) {
             } else {
                 resolve(true);
             }
-        });    
+        });
     });
 }
 
 /**
  * Verify WebAPI token (take from header)
- * @param {*} req 
+ * @param {*} req
  * @param {*} res
  * @param {*} next
  */
 function verifyToken (req, res, next) {
     let token = req.headers['x-access-token'];
 
+    if (!token) {
+        token = getGuestToken();
+    }
+
     if (token) {
         jwt.verify(token, secretCode, (err, decoded) => {
             if (err) {
-                req.userId = null;
-                req.userGroups = null;
-                if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
-                    req.tokenExpired = true;
-                    res.status(403).json({error:"unauthorized_error", message: "Token Expired!"});
-                }
-                next();
+                req.userId = "guest";
+                req.userGroups = ["guest"];
             } else {
                 req.userId = decoded.id;
                 req.userGroups = decoded.groups;
@@ -63,8 +62,8 @@ function verifyToken (req, res, next) {
                         res.status(403).json({ error: "unauthorized_error", message: "User Profile Corrupted!" });
                     }
                 }
-                next();
             }
+            next();
         });
     } else {
         // notice that no token was provided...}
@@ -84,11 +83,32 @@ function getNewToken(headers) {
             id: authUser.user,
             groups: authUser.groups
         },
-        secretCode, { 
-            expiresIn: tokenExpiresIn 
+        secretCode, {
+            expiresIn: tokenExpiresIn
         });
     }
     return null;
+}
+
+function getGuestToken() {
+    const token = jwt.sign({
+            id: "guest",
+            groups: ["guest"]
+        },
+        secretCode, {
+            expiresIn: tokenExpiresIn
+        });
+    return token;
+}
+
+function haveAdminPermission(permission) {
+    if (permission === null || permission === undefined) {
+        return false;
+    }
+    if (adminGroups.indexOf(permission) !== -1) {
+        return true;
+    }
+    return false;
 }
 
 function getTokenExpiresIn() {
@@ -100,7 +120,9 @@ module.exports = {
     verify: verify,
     verifyToken: verifyToken,
     getNewToken: getNewToken,
+    getGuestToken: getGuestToken,
     get secretCode() { return secretCode },
     get tokenExpiresIn() { return tokenExpiresIn },
+    haveAdminPermission: haveAdminPermission,
     adminGroups: adminGroups
 };

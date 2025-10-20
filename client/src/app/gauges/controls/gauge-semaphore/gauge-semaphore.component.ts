@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeSettings, GaugeStatus, Variable, GaugeActionsType, GaugeAction } from '../../../_models/hmi';
+import { GaugeSettings, GaugeStatus, Variable, GaugeActionsType, GaugeAction, GaugeProperty } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 declare var SVG: any;
@@ -43,6 +43,10 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent {
         return this.actionsType;
     }
 
+    static isBitmaskSupported(): boolean {
+        return true;
+    }
+
     static processValue(ga: GaugeSettings, svgele: any, sig: Variable, gaugeStatus: GaugeStatus) {
         try {
             if (svgele.node && svgele.node.children && svgele.node.children.length <= 1) {
@@ -53,9 +57,10 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent {
                     // maybe boolean
                     val = Number(sig.value);
                 }
+                let procValue = GaugeBaseComponent.checkBitmask((<GaugeProperty>ga.property).bitmask, val);
                 if (ga.property && ga.property.ranges) {
                     for (let idx = 0; idx < ga.property.ranges.length; idx++) {
-                        if (ga.property.ranges[idx].min <= val && ga.property.ranges[idx].max >= val) {
+                        if (ga.property.ranges[idx].min <= procValue && ga.property.ranges[idx].max >= procValue) {
                             clr = ga.property.ranges[idx].color;
                         }
                     }
@@ -64,7 +69,7 @@ export class GaugeSemaphoreComponent extends GaugeBaseComponent {
                     if (ga.property.actions) {
                         ga.property.actions.forEach(act => {
                             if (act.variableId === sig.id) {
-                                GaugeSemaphoreComponent.processAction(act, svgele, val, gaugeStatus);
+                                GaugeSemaphoreComponent.processAction(act, svgele, procValue, gaugeStatus);
                             }
                         });
                     }

@@ -2,8 +2,8 @@ import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } fro
 import { UntypedFormControl } from '@angular/forms';
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { FlexInputComponent } from '../flex-input/flex-input.component';
-import { GaugeProperty, IPropertyVariable } from '../../../_models/hmi';
+import { FlexInputComponent, PropertyType } from '../flex-input/flex-input.component';
+import { GaugeProperty, IPropertyVariable, WidgetProperty } from '../../../_models/hmi';
 import { Device, Tag } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
 
@@ -21,13 +21,13 @@ interface Variable {
 export class FlexHeadComponent implements OnInit, OnDestroy {
 
     @Input() data: any;
-    @Input() property: GaugeProperty;
+    @Input() property: GaugeProperty | WidgetProperty;
     @Input() withStaticValue = true;
     @Input() withBitmask = false;
     @ViewChild('flexinput', {static: false}) flexInput: FlexInputComponent;
+    @Input() withProperty: PropertyType | null = null;
 
     variable: any;
-    withProperty = null;
     alarme: any;
     currentTag: Tag = null;
     defaultValue: any;
@@ -58,7 +58,7 @@ export class FlexHeadComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this._onDestroy.next();
+        this._onDestroy.next(null);
         this._onDestroy.complete();
     }
 

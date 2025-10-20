@@ -1,21 +1,20 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, Inject, Input, AfterViewInit, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Inject, Input, AfterViewInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-
-import { SelOptionsComponent } from '../../gui-helpers/sel-options/sel-options.component';
-
 import { FlexHeadComponent } from './flex-head/flex-head.component';
 import { FlexEventComponent } from './flex-event/flex-event.component';
 import { FlexActionComponent } from './flex-action/flex-action.component';
-import { GaugeProperty, GaugeSettings, View } from '../../_models/hmi';
+import { GaugeProperty, GaugeSettings, View, WidgetProperty } from '../../_models/hmi';
 import { Script } from '../../_models/script';
-import { UserGroups } from '../../_models/user';
 import { PropertyType } from './flex-input/flex-input.component';
+import { PermissionData, PermissionDialogComponent } from './permission-dialog/permission-dialog.component';
+import { SettingsService } from '../../_services/settings.service';
+import { Device } from '../../_models/device';
 
 @Component({
     selector: 'gauge-property',
     templateUrl: './gauge-property.component.html',
-    styleUrls: ['./gauge-property.component.css'],
+    styleUrls: ['./gauge-property.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GaugePropertyComponent implements AfterViewInit {
@@ -28,7 +27,7 @@ export class GaugePropertyComponent implements AfterViewInit {
     slideView = true;
     slideActionView = true;
     withBitmask = false;
-    property: GaugeProperty;
+    property: GaugeProperty | WidgetProperty;
     dialogType: GaugeDialogType = GaugeDialogType.RangeWithAlarm;
     eventsSupported: boolean;
     actionsSupported: any;
@@ -39,7 +38,9 @@ export class GaugePropertyComponent implements AfterViewInit {
 
     constructor(public dialog: MatDialog,
                 public dialogRef: MatDialogRef<GaugePropertyComponent>,
-                @Inject(MAT_DIALOG_DATA) public data: any) {
+                private settingsService: SettingsService,
+                private cdr: ChangeDetectorRef,
+                @Inject(MAT_DIALOG_DATA) public data: GaugePropertyData | any) {
         this.dialogType = this.data.dlgType;
         this.eventsSupported = this.data.withEvents;
         this.actionsSupported = this.data.withActions;
@@ -54,7 +55,7 @@ export class GaugePropertyComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.defaultValue = this.data.default;
-        if (this.data.withProperty !== false) { // else undefined
+        if (!this.isWidget() && this.data.withProperty !== false) { // else undefined
             if (this.dialogType === GaugeDialogType.Input) {
                 this.flexHead.withProperty = PropertyType.input;
             } else if (this.dialogType === GaugeDialogType.ValueAndUnit) {
@@ -81,8 +82,11 @@ export class GaugePropertyComponent implements AfterViewInit {
     }
 
     onOkClick(): void {
-        // this.data.settings.property = this.flexHead.property;
-        this.data.settings.property = this.flexHead.getProperty();
+        if (this.isWidget()) {
+            this.data.settings.property = this.property;
+        } else {
+            this.data.settings.property = this.flexHead?.getProperty();
+        }
         if (this.flexEvent) {
             this.data.settings.property.events = this.flexEvent.getEvents();
         }
@@ -132,10 +136,7 @@ export class GaugePropertyComponent implements AfterViewInit {
     }
 
     isTextToShow() {
-        if (this.dialogType === GaugeDialogType.RangeAndText) {
-            return true;
-        }
-        return false;
+        return this.data.languageTextEnabled || (this.dialogType === GaugeDialogType.RangeAndText);
     }
 
     isAlarmToShow() {
@@ -151,19 +152,35 @@ export class GaugePropertyComponent implements AfterViewInit {
         }
         return false;
     }
-
     onEditPermission() {
-        let permission = this.property.permission;
-        let dialogRef = this.dialog.open(DialogGaugePermission, {
+        let dialogRef = this.dialog.open(PermissionDialogComponent, {
             position: { top: '60px' },
-            data: { permission: permission }
+            data: <PermissionData>{ permission: this.property.permission, permissionRoles: this.property.permissionRoles }
         });
 
-        dialogRef.afterClosed().subscribe(result => {
+        dialogRef.afterClosed().subscribe((result: PermissionData) => {
             if (result) {
                 this.property.permission = result.permission;
+                this.property.permissionRoles = result.permissionRoles;
             }
+            this.cdr.detectChanges();
         });
+    }
+
+    isWidget() {
+        return (this.property as WidgetProperty).type;
+    }
+
+    isRolePermission() {
+        return this.settingsService.getSettings()?.userRole;
+    }
+
+    havePermission() {
+        if (this.isRolePermission()) {
+            return this.property.permissionRoles?.show?.length || this.property.permissionRoles?.enabled?.length;
+        } else {
+            return this.property.permission;
+        }
     }
 }
 
@@ -184,52 +201,24 @@ export enum GaugeDialogType {
     Iframe,
     Table,
     Input,
-    Panel
+    Panel,
+    Video,
+    Scheduler
 }
 
-@Component({
-    selector: 'dialog-gaugepermission',
-    templateUrl: './gauge-permission.dialog.html',
-})
-export class DialogGaugePermission {
-    selectedGroups = [];
-    extensionGroups = [];
-    groups = UserGroups.Groups;
-
-    @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
-
-    constructor(
-        public dialogRef: MatDialogRef<DialogGaugePermission>,
-        @Inject(MAT_DIALOG_DATA) public data: any) {
-        this.selectedGroups = UserGroups.ValueToGroups(this.data.permission);
-        this.extensionGroups = UserGroups.ValueToGroups(this.data.permission, true);
-
-    }
-
-    onNoClick(): void {
-        this.dialogRef.close();
-    }
-
-    onOkClick(): void {
-        this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
-        this.data.permission += UserGroups.GroupsToValue(this.seloptions.extSelected, true);
-        this.dialogRef.close(this.data);
-    }
+export interface GaugePropertyData {
+    dlgType: GaugeDialogType;
+    withEvents: boolean;
+    withActions: any;
+    withBitmask: boolean;
+    views: View[];
+    view: View;
+    inputs: GaugeSettings[];
+    scripts: Script[];
+    settings: any;
+    default: any;
+    devices: Device[];
+    title: string;
+    names: string[];
+    languageTextEnabled: boolean;
 }
-
-// export interface GaugePropertyData {
-//     settings: any;
-//     //devices: Device[];
-//     title: string;
-//     //views: View[];
-//     view: View;
-//     dlgType: GaugeDialogType;
-//     withEvents: boolean;
-//     withActions: boolean;
-//     default: any;
-//     withBitmask: boolean;
-
-//     //inputs: Object.values(this.currentView.items).filter(gs => gs.name && (gs.id.startsWith('HXS_') || gs.id.startsWith('HXI_'))),
-//     // let names = Object.values(this.currentView.items).map(gs => gs.name);
-//     // scripts: this.projectService.getScripts(),
-// }

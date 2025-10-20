@@ -1,0 +1,93 @@
+name: Build FUXA Electron App (Latest)
+
+on:
+  #push:
+    #branches:
+  #pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        arch: [x64, arm64]
+        exclude:
+          - os: windows-latest
+            arch: arm64
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Clear npm cache
+      run: npm cache clean --force
+
+    - name: Install server dependencies
+      run: npm install
+      working-directory: ./server
+
+    - name: Install client dependencies
+      run: npm install
+      working-directory: ./client
+
+    - name: Build client
+      run: npm run build -- --configuration=production
+      working-directory: ./client
+
+    - name: Install app dependencies
+      run: npm install
+      working-directory: ./app
+
+    - name: Copy server and client build to app
+      run: |
+        mkdir -p app/server
+        mkdir -p app/client/dist
+        cp -r server/. app/server/
+        cp -r client/dist/. app/client/dist
+      #ls -R app/server
+      #ls -R app/client/dist
+      shell: bash
+
+    - name: Package for Windows
+      if: matrix.os == 'windows-latest' && matrix.arch == 'x64'
+      run: npx electron-builder --win nsis --x64
+      working-directory: ./app
+
+    - name: Package for Linux
+      if: matrix.os == 'ubuntu-latest'
+      run: npx electron-builder --linux appimage --${{ matrix.arch }}
+      working-directory: ./app
+
+    - name: Package for macOS
+      if: matrix.os == 'macos-latest'
+      run: npx electron-builder --mac dmg --${{ matrix.arch }}
+      working-directory: ./app
+
+    - name: Prepare artifacts
+      run: |
+        mkdir -p artifacts
+        if [ "${{ matrix.os }}" = "windows-latest" ]; then
+          mv dist/*.exe artifacts/FUXA-windows-x64.exe
+        elif [ "${{ matrix.os }}" = "ubuntu-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
+          mv dist/*.AppImage artifacts/FUXA-linux-x64.AppImage
+        elif [ "${{ matrix.os }}" = "ubuntu-latest" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
+          mv dist/*.AppImage artifacts/FUXA-linux-arm64.AppImage
+        elif [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
+          mv dist/*.dmg artifacts/FUXA-macos-x64.dmg
+        elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+          mv dist/*.dmg artifacts/FUXA-macos-arm64.dmg
+        fi
+      working-directory: ./app
+      shell: bash
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: FUXA-${{ matrix.os }}-${{ matrix.arch }}
+        path: app/artifacts/*

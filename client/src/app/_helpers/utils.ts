@@ -7,6 +7,8 @@ declare const numeral: any;
 export class Utils {
 
     static _seed = Date.now();
+    static minDate = new Date(1970, 0, 1);
+    static maxDate = new Date(2100, 11, 31);
 
     static defaultColor = ['#FFFFFF', '#000000', '#EEECE1', '#1F497D', '#4F81BD', '#C0504D', '#9BBB59', '#8064A2', '#4BACC6',
         '#F79646', '#C00000', '#FF0000', '#FFC000', '#FFD04A', '#FFFF00', '#92D050', '#0AC97D', '#00B050', '#00B0F0', '#4484EF', '#3358C0',
@@ -40,6 +42,16 @@ export class Utils {
         return null;
     }
 
+    static childrenStartWith(element, matchingStart) {
+        let result = [];
+        for (let i = 0; i < element.children?.length; i++) {
+            if (element.children[i].id.startsWith(matchingStart)) {
+                result.push(element.children[i]);
+            }
+        }
+        return result;
+    }
+
     static searchTreeTagName(element, tagMatching: string) {
         if (element.tagName === tagMatching) {
             return element;
@@ -57,17 +69,17 @@ export class Utils {
 
     static findElementByIdRecursive(root: HTMLElement, id: string): HTMLElement | null {
         if (!root) {
-          return null;
+            return null;
         }
         if (root.id === id) {
-          return root;
+            return root;
         }
         for (let i = 0; i < root.children.length; i++) {
-          const child = root.children[i] as HTMLElement;
-          const foundElement = this.findElementByIdRecursive(child, id);
-          if (foundElement) {
-            return foundElement;
-          }
+            const child = root.children[i] as HTMLElement;
+            const foundElement = this.findElementByIdRecursive(child, id);
+            if (foundElement) {
+                return foundElement;
+            }
         }
         return null;
     }
@@ -77,16 +89,16 @@ export class Utils {
         function search(jsonData: any): void {
             if (Array.isArray(jsonData)) {
                 for (const item of jsonData) {
-                  search(item);
+                    search(item);
                 }
             } else if (typeof jsonData === 'object' && jsonData !== null) {
                 if (jsonData.hasOwnProperty(attributeName)) {
                     result.push(jsonData[attributeName]);
                 }
                 for (const key in jsonData) {
-                  search(jsonData[key]);
+                    search(jsonData[key]);
                 }
-              }
+            }
         }
         search(jsonData);
         return result;
@@ -105,9 +117,19 @@ export class Utils {
                 for (const key in jsonData) {
                     change(jsonData[key]);
                 }
-              }
+            }
         }
         change(jsonData);
+    }
+
+    static replaceStringInObject<T>(obj: T,
+                                 searchKey: string,
+                                 replaceKey: string): T {
+        let jsonString = JSON.stringify(obj);
+        const regex = new RegExp(searchKey, 'g');
+        jsonString = jsonString.replace(regex, replaceKey);
+        const modifiedObject = JSON.parse(jsonString);
+        return modifiedObject;
     }
 
     static getInTreeIdAndType(element: Element): any[] {
@@ -125,6 +147,16 @@ export class Utils {
             result = [...result, ...idsAndTypes];
         }
         return result;
+    }
+
+    static cleanObject(object: any): any {
+        const cleanObject: any = {};
+        for (const key in object) {
+            if (object[key] != null) {
+                cleanObject[key] = object[key];
+            }
+        }
+        return cleanObject;
     }
 
     static isNullOrUndefined(ele) {
@@ -155,12 +187,12 @@ export class Utils {
         return prefix + uuid;
     };
 
-    static getShortGUID(prefix: string = ''): string {
+    static getShortGUID(prefix: string = '', splitter: string = '-'): string {
         var uuid = '', i, random;
         for (i = 0; i < 12; i++) {
             random = Math.random() * 16 | 0;
             if (i == 8) {
-                uuid += '-';
+                uuid += splitter;
             }
             uuid += (i == 4 ? 4 : (i == 6 ? (random & 3 | 8) : random)).toString(12);
         }
@@ -492,6 +524,68 @@ export class Utils {
         return result;
     };
 
+    static mergeArray(arrArray: any[][], key: string): any[] {
+        const mergedMap = new Map<string, any>();
+        if (arrArray) {
+            for (const arr of arrArray) {
+                if (arr) {
+                    for (const obj of arr) {
+                        const keyValue = obj[key];
+
+                        if (keyValue) {
+                            // Se la chiave esiste già, sovrascrivi l'oggetto esistente
+                            mergedMap.set(keyValue, { ...mergedMap.get(keyValue), ...obj });
+                        } else {
+                            console.warn(`L'oggetto ${JSON.stringify(obj)} non ha la chiave ${key}`);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Converte la mappa in un array
+        return Array.from(mergedMap.values());
+    }
+
+    /**
+     * Merges two arrays of objects into one, ensuring uniqueness based on a specified object key.
+     * @template T - The type of objects in the arrays.
+     * @param {T[] | null | undefined} base - The base array to start from. Can be null or undefined.
+     * @param {T[] | null | undefined} toAdd - The array of elements to add, if they are not already present.
+     * @param {keyof T} key - The object key used to determine uniqueness.
+     * @returns {T[]} A new array containing all unique elements from both arrays based on the specified key.
+     * @example
+     * const base = [{ id: 1, name: 'A' }];
+     * const toAdd = [{ id: 2, name: 'B' }, { id: 1, name: 'A' }];
+     * const result = Utils.mergeUniqueBy(base, toAdd, 'id');
+     * // result: [{ id: 1, name: 'A' }, { id: 2, name: 'B' }]
+     */
+    static mergeUniqueBy<T>(base: T[] | null | undefined, toAdd: T[] | null | undefined, key: keyof T): T[] | null {
+        if ((!base || base.length === 0) && (!toAdd || toAdd.length === 0)) {
+            return null;
+        }
+
+        const result: T[] = base ? [...base] : [];
+        const existingKeys = new Set(result.map(item => item[key]));
+        let added = false;
+
+        if (toAdd) {
+            toAdd.forEach(item => {
+                if (!existingKeys.has(item[key])) {
+                    result.push(item);
+                    existingKeys.add(item[key]);
+                    added = true;
+                }
+            });
+        }
+
+        if (!added) {
+            return base ?? null;
+        }
+
+        return result;
+    }
+
     static copyToClipboard(text) {
         // Create a temporary textarea element
         const textarea = document.createElement('textarea');
@@ -569,9 +663,14 @@ export class Utils {
 
     static isValidUrl(url: string): boolean {
         try {
+            // Check if it's an absolute URL
             new URL(url);
             return true;
         } catch (error) {
+            // Check if it's a relative URL (starts with / or is a valid relative path)
+            if (url.startsWith('/') || (!url.includes('://') && url.length > 0)) {
+                return true;
+            }
             return false;
         }
     }
