@@ -723,7 +723,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
             case opcua.DataType.Int16:
             case opcua.DataType.UInt16:
             case opcua.DataType.Int32:
-            case opcua.DataType.UInt3:
+            case opcua.DataType.UInt32:
             case opcua.DataType.Int64:
             case opcua.DataType.UInt64:
                 return parseInt(value);
