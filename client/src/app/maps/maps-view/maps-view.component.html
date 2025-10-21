@@ -1,12 +1,39 @@
 <div #mapContainer class="container">
     <div *ngIf="editMode" class="tools_panel">
+        <!-- Herramientas existentes (comentadas) -->
         <!-- <div class="main-btn-sep" style="display: inline-block;">
         </div>
         <button mat-button class="main-btn" style="display: inline-block;" matTooltip="{{'editor.tools-launch-title' | translate}}"
                 (click)="onStartCurrent()">
             <mat-icon aria-label="Launch Current View">play_arrow</mat-icon>
         </button> -->
+
+        <!-- 👇 Nuevo: selector de plano de fondo -->
+        <mat-form-field appearance="fill" style="width: 100%; margin-top: 8px;">
+  <mat-label>Plano de fondo</mat-label>
+  <input
+    matInput
+    [(ngModel)]="view.property.backgroundImage"
+    placeholder="/_images/planos/planta_baja.png"
+    readonly>
+  <button mat-icon-button matSuffix (click)="onSelectBackgroundImage()">
+    <mat-icon>folder_open</mat-icon>
+  </button>
+        </mat-form-field>
+        <!-- 👆 Fin del nuevo selector -->
+
+        <div class="main-btn-sep" style="display: inline-block; margin-top: 8px;">
+        </div>
+        <button mat-button class="main-btn" style="display: inline-block; margin-top: 8px;" matTooltip="{{'maps.edit-save-title' | translate}}"
+                (click)="onSaveChanges()">
+            <mat-icon aria-label="Save Changes">save</mat-icon>
+        </button>
+        <button mat-button class="main-btn" style="display: inline-block; margin-top: 8px;" matTooltip="{{'maps.edit-cancel-title' | translate}}"
+                (click)="onCancelChanges()">
+            <mat-icon aria-label="Cancel Changes">cancel</mat-icon>
+        </button>
     </div>
+
     <div id="map" [ngStyle]="{'top.px': editMode ? 37 : 0}"></div>
 </div>
 
