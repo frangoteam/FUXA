@@ -13,6 +13,8 @@ const logger = require('./runtime/logger');
 const utils = require('./runtime/utils');
 var events = require("./runtime/events").create();
 const FUXA = require('./fuxa.js');
+const runtime = require('./runtime');
+const authJwt = require('./api/jwt-helper');
 
 const express = require('express');
 const app = express();
@@ -353,9 +355,7 @@ app.use(morgan('dev', {
 // })
 
 // set api to listen
-if (settings.disableServer !== false) {
-    app.use('/', FUXA.httpApi);
-}
+// Moved to startFuxa() after Node-RED mounting
 
 function getListenPath() {
     var port = settings.serverPort;
@@ -375,6 +375,190 @@ function getListenPath() {
 // Start FUXA
 function startFuxa() {
     FUXA.start().then(function () {
+        const RED = require('node-red');
+        // Init Node-RED
+        const userDir = path.join(settings.workDir, 'node-red');
+        if (!fs.existsSync(userDir)) {
+            fs.mkdirSync(userDir, { recursive: true });
+        }
+        const redSettings = {
+            httpAdminRoot: '/nodered',
+            httpNodeRoot: '/nodered/api',
+            userDir: userDir,
+            nodesDir: [path.join(__dirname, 'node-red-contrib-fuxa')],
+            flowFile: 'flows.json',
+            editorTheme: {
+                notifications: {
+                    enabled: false
+                },
+                tours: {
+                    enabled: false
+                }
+            },
+            ui: {
+                path: '/'
+            },
+            functionGlobalContext: {
+                fuxa: {
+                    runtime: runtime,
+                    getTag: require('./runtime/devices').getTagValue,
+                    setTag: require('./runtime/devices').setTagValue,
+                    getDaq: require('./runtime/storage/daqstorage').getNodeValues,
+                    getTagId: require('./runtime/devices').getTagId,
+                    emit: events.emit.bind(events),
+                    on: events.on.bind(events),
+                    removeListener: events.removeListener.bind(events),
+                    sendMessage: async (address, subject, message) => await runtime.notificatorMgr.sendMailMessage(null, address, subject, message, null, null),
+                    getAlarms: async () => await runtime.alarmsMgr.getAlarmsValues(null, -1),
+                    getHistoryAlarms: async (start, end) => { const query = { start: start, end: end }; return await runtime.alarmsMgr.getAlarmsHistory(query, -1); },
+                    ackAlarm: async (alarmName, types) => {
+                        const utils = require('./runtime/utils');
+                        const separator = runtime.alarmsMgr.getIdSeparator();
+                        if (alarmName.indexOf(separator) === -1 && !utils.isNullOrUndefined(types)) {
+                            var result = [];
+                            for(var i = 0; i < types.length; i++) {
+                                const alarmId = `${alarmName}${separator}${types[i]}`;
+                                result.push(await runtime.alarmsMgr.setAlarmAck(alarmId, null, -1));
+                            }
+                            return result;
+                        } else {
+                            return await runtime.alarmsMgr.setAlarmAck(alarmName, null, -1);
+                        }
+                    },
+                    getScripts: async () => {
+                        const scripts = await runtime.project.getScripts();
+                        return scripts ? scripts.map(script => ({ id: script.id, name: script.name })) : [];
+                    },
+                    runScript: async (scriptName, params) => {
+                        const scripts = await runtime.project.getScripts();
+                        const script = scripts ? scripts.find(s => s.name === scriptName) : null;
+                        if (script) {
+                            return await runtime.scriptsMgr.runScript(script, null, params);
+                        } else {
+                            throw new Error(`Script with name ${scriptName} not found`);
+                        }
+                    }
+                },
+                fs: require('fs').promises,
+                fsSync: require('fs'),
+                path: require('path'),
+                util: require('util'),
+                os: require('os'),
+                child_process: require('child_process'),
+                http: require('http'),
+                https: require('https'),
+                net: require('net'),
+                dgram: require('dgram'),
+                dns: require('dns'),
+                url: require('url'),
+                querystring: require('querystring'),
+                crypto: require('crypto'),
+                zlib: require('zlib'),
+                stream: require('stream'),
+                events: require('events'),
+                buffer: require('buffer'),
+                sqlite3: require('sqlite3'),
+                serialport: require('serialport')
+            }
+        };
+        RED.init(server, redSettings);
+        
+        // Create a middleware that allows dashboard routes without auth
+        const allowDashboard = (req, res, next) => {
+            // Allow dashboard and socket.io routes without authentication
+            if (req.path.includes('/dashboard') || req.path.includes('/socket.io')) {
+                return next();
+            }
+            // For other routes, check referer for iframe access or require auth
+            const referer = req.headers.referer;
+            if (referer) {
+                // Allow iframe access from FUXA interface regardless of hostname/IP
+                const fuxaInterfacePatterns = [
+                    '/editor', '/viewer', '/lab', '/home', '/fuxa', '/flows', '/nodered'
+                ];
+                const isFromFuxaInterface = fuxaInterfacePatterns.some(pattern => referer.includes(pattern));
+                if (isFromFuxaInterface) {
+                    return next();
+                }
+            }
+            return authJwt.requireAuth(req, res, next);
+        };
+        
+        // Protect Node-RED routes with conditional auth
+        app.use('/nodered', allowDashboard, RED.httpAdmin);
+        app.use('/nodered/api', allowDashboard, RED.httpNode);
+        
+        // Public dashboard alias
+        app.use('/dashboard', RED.httpNode);
+        
+        // Allow /flows route for Angular client-side routing
+        // (Authentication is handled by Angular AuthGuard on the client side)
+        
+        RED.start();
+
+        RED.httpAdmin.get('/fuxa/devices', function(req, res) {
+            const devices = runtime.project.getDevices();
+            const result = [];
+            for (const id in devices) {
+                const device = devices[id];
+                const tags = [];
+                for (const tagId in device.tags) {
+                    tags.push({ id: tagId, name: device.tags[tagId].name });
+                }
+                result.push({ id: device.id, name: device.name, tags });
+            }
+            res.json(result);
+        });
+
+        RED.httpAdmin.get('/fuxa/scripts', async function(req, res) {
+            try {
+                const scripts = await runtime.project.getScripts();
+                const result = scripts ? scripts.map(script => ({ id: script.id, name: script.name })) : [];
+                res.json(result);
+            } catch (err) {
+                res.status(500).json({ error: err.message });
+            }
+        });
+
+        RED.httpAdmin.get('/fuxa/views', async function(req, res) {
+            try {
+                const project = await runtime.project.getProject();
+                const result = project && project.hmi && project.hmi.views ? 
+                    project.hmi.views.map(view => ({ id: view.id, name: view.name })) : [];
+                res.json(result);
+            } catch (err) {
+                res.status(500).json({ error: err.message });
+            }
+        });
+
+        RED.httpAdmin.get('/fuxa/alarms', async function(req, res) {
+            try {
+                const alarms = await runtime.project.getAlarms();
+                const result = alarms ? 
+                    alarms.map(alarm => ({ id: alarm.id, name: alarm.name })) : [];
+                res.json(result);
+            } catch (err) {
+                res.status(500).json({ error: err.message });
+            }
+        });
+
+        // set api to listen (moved here to avoid rate limiting Node-RED routes)
+        if (settings.disableServer !== false) {
+            // Catch-all route for SPA - serve Angular index.html for client routes
+            // Exclude API routes and static assets
+            app.get('*', (req, res, next) => {
+                // Skip API routes and static assets
+                if (req.path.startsWith('/api/') ||
+                    req.path.includes('.') ||
+                    req.path.startsWith('/nodered') ||
+                    req.path.startsWith('/dashboard')) {
+                    return next();
+                }
+                res.sendFile(path.join(settings.httpStatic, 'index.html'));
+            });
+            app.use('/', FUXA.httpApi);
+        }
+
         if (settings.httpStatic) {
             server.on('error', function (err) {
                 if (err.errno === 'EADDRINUSE') {
