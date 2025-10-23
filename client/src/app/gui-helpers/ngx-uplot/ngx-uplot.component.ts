@@ -25,6 +25,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         stepAfter: 1,
         stepBefore: 2,
         spline: 3,
+        none: 4
     };
 
     rawData = false;
@@ -294,6 +295,10 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             attribute.paths = uPlot.paths.stepped({ align: -1 });
         } else if (attribute.lineInterpolation === this.lineInterpolations.spline) {
             attribute.paths = uPlot.paths.spline();
+        } else if (attribute.lineInterpolation === this.lineInterpolations.none) {
+            attribute.points = { show: true, size: attribute.width ?? 5, width: 1, stroke: attribute.stroke, fill: attribute.fill };
+            attribute.stroke = null;
+            attribute.fill = null;
         }
         this.uplot.addSeries(attribute, index);
         this.uplot.setData(this.data);
