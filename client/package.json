@@ -11,6 +11,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:lan": "ng serve --host 0.0.0.0 --disable-host-check",
     "demo": "ng serve -c demo",
     "client": "ng serve -c client",
     "build": "ng build",
