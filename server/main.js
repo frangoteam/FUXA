@@ -356,9 +356,9 @@ app.use(morgan('dev', {
 
 // set api to listen
 // Moved to startFuxa() after Node-RED mounting
-if (settings.disableServer !== false) {
-    app.use('/', FUXA.httpApi);
-}
+// if (settings.disableServer !== false) {
+//     app.use('/', FUXA.httpApi);
+// }
 
 function getListenPath() {
     var port = settings.serverPort;
@@ -396,6 +396,8 @@ function startFuxa() {
             });
 
             await mountNodeRedIfInstalled({ app, server, settings, runtime, logger, authJwt, events });
+
+            app.use('/', FUXA.httpApi);
 
             server.listen(settings.uiPort, settings.uiHost, function () {
                 settings.serverPort = server.address().port;

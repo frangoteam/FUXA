@@ -129,6 +129,69 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
     app.use('/nodered', allowDashboard, RED.httpNode);
 
     await RED.start();
+
+    RED.httpAdmin.get('/fuxa/devices', function(req, res) {
+        const devices = runtime.project.getDevices();
+        const result = [];
+        for (const id in devices) {
+            const device = devices[id];
+            const tags = [];
+            for (const tagId in device.tags) {
+                tags.push({ id: tagId, name: device.tags[tagId].name });
+            }
+            result.push({ id: device.id, name: device.name, tags });
+        }
+        res.json(result);
+    });
+
+    RED.httpAdmin.get('/fuxa/scripts', async function(req, res) {
+        try {
+            const scripts = await runtime.project.getScripts();
+            const result = scripts ? scripts.map(script => ({ id: script.id, name: script.name })) : [];
+            res.json(result);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
+
+    RED.httpAdmin.get('/fuxa/views', async function(req, res) {
+        try {
+            const project = await runtime.project.getProject();
+            const result = project && project.hmi && project.hmi.views ?
+                project.hmi.views.map(view => ({ id: view.id, name: view.name })) : [];
+            res.json(result);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
+
+    RED.httpAdmin.get('/fuxa/alarms', async function(req, res) {
+        try {
+            const alarms = await runtime.project.getAlarms();
+            const result = alarms ?
+                alarms.map(alarm => ({ id: alarm.id, name: alarm.name })) : [];
+            res.json(result);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    });
+
+    // set api to listen (moved here to avoid rate limiting Node-RED routes)
+    if (settings.disableServer !== false) {
+        // Catch-all route for SPA - serve Angular index.html for client routes
+        // Exclude API routes and static assets
+        app.get('*', (req, res, next) => {
+            // Skip API routes and static assets
+            if (req.path.startsWith('/api/') ||
+                req.path.includes('.') ||
+                req.path.startsWith('/nodered') ||
+                req.path.startsWith('/dashboard')) {
+                return next();
+            }
+            res.sendFile(path.join(settings.httpStatic, 'index.html'));
+        });
+    }
+
     logger.info('[Node-RED] Started at /nodered');
 }
 
