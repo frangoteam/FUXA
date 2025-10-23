@@ -1776,6 +1776,7 @@
     "plugin.group-connection-device": "Connection device",
     "plugin.group-connection-database": "Connection database",
     "plugin.group-chart-report": "Chart image for Report",
+    "plugin.group-service": "Service",
 
     "action-settings-title": "Actions Settings",
     "action-settings-readonly-tag": "Tag",
