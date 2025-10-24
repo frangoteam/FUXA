@@ -155,7 +155,6 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.options = this.defOptions;
-        //this.options.cursor = { drag: { x: true, y: true } };
         this.uplot = new uPlot(this.defOptions, this.sampleData, this.graph.nativeElement);
     }
 
@@ -241,7 +240,6 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             opt.plugins.push(this.touchZoomPlugin(opt));
         }
         this.uplot = new uPlot(opt, this.data, this.graph.nativeElement);
-
         const over = this.uplot.root.querySelector('.u-over');
         if (over) {
             over.addEventListener('click', e => {
@@ -395,29 +393,87 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                 setSize: u => {
                     syncBounds();
                 },
-                setCursor: u => {
-                    const { left, top, idx } = u.cursor;
-                    const x = u.data[0][idx];
-                    const anchor = { left: left + bLeft, top: top + bTop };
-                    const time = this.fmtDate(new Date(x * 1e3));
-                    const xdiv = `<div class="ut-head">${u.series[0].label}: ${this.rawData ? x : time}</div>`;
-                    let series = '';
-                    for (let i = 1; i < u.series.length; i++) {
-                        let value = '';
-                        try {
-                            var ydx = this._proximityIndex(u, i, idx, x);
-                            if (!isNaN(u.data[i][ydx])) {
-                                value = u.data[i][ydx];
-                            }
-                        } catch { }
-                        series = series + `<div class="ut-serie"><div class="ut-marker" style="border-color: ${u.series[i]._stroke}"></div>${u.series[i].label}: <div class="ut-value">${value}</div></div>`;
-                    }
-                    overlay.innerHTML = xdiv + series;// + `${x},${y} at ${Math.round(left)},${Math.round(top)}`;
-                    placement(overlay, anchor, 'right', 'start', { bound });
-                }
+                setCursor: (u: any) => {
+                    this.paintLegendCuror(u, overlay, bLeft, bTop, bound);
+                },
+                setSeries: (u: any) => {
+                    this.paintLegendMarkers(u);
+                },
+                setData: (u: any) => {
+                    this.paintLegendMarkers(u);
+                },
             }
         };
     }
+
+    paintLegendCuror = (u: any, overlay, bLeft, bTop, bound) => {
+        const { left, top, idx } = u.cursor;
+        const x = u.data[0][idx];
+        const anchor = { left: left + bLeft, top: top + bTop };
+        const time = this.fmtDate(new Date(x * 1e3));
+        const xdiv = `<div class="ut-head">${u.series[0].label}: ${this.rawData ? x : time}</div>`;
+        let series = '';
+        for (let i = 1; i < u.series.length; i++) {
+            let value = '';
+            try {
+                var ydx = this._proximityIndex(u, i, idx, x);
+                if (!isNaN(u.data[i][ydx])) {
+                    value = u.data[i][ydx];
+                }
+            } catch { }
+            var strokeColor = u.series[i]._stroke;
+            var fillColor = u.series[i]._fill;
+            if (u.series[i].lineInterpolation === this.lineInterpolations.none) {
+                strokeColor = u.series[i].points._stroke;
+                fillColor = u.series[i].points._fill;
+            }
+            series = series + `<div class="ut-serie"><div class="ut-marker" style="background: ${fillColor};border-color: ${strokeColor}"></div>${u.series[i].label}: <div class="ut-value">${value}</div></div>`;
+        }
+        overlay.innerHTML = xdiv + series;// + `${x},${y} at ${Math.round(left)},${Math.round(top)}`;
+        placement(overlay, anchor, 'right', 'start', { bound });
+    };
+
+    paintLegendMarkers = (u: any) => {
+        const legend = u.root.querySelector('.u-legend') as HTMLElement | null;
+        if (!legend) {
+            return;
+        }
+
+        const rows = legend.querySelectorAll('.u-series');
+
+        for (let i = 1; i < u.series.length && i < rows.length; i++) {
+            if (u.series[i].lineInterpolation !== this.lineInterpolations?.none) {
+                continue;
+            }
+
+            if (!u.series[i].points) {
+                continue;
+            }
+
+            const row = rows[i] as HTMLElement;
+            const swatch = row.firstElementChild as HTMLElement | null;
+            if (!swatch) {
+                continue;
+            }
+            const markers = row.querySelectorAll('.u-marker');
+            if (!markers || markers.length !== 1) {
+                continue;
+            }
+            const marker = markers[0] as HTMLElement;
+            let strokeColor = u.series[i]._stroke;
+            let fillColor   = u.series[i]._fill;
+
+            strokeColor = u.series[i].points._stroke ?? strokeColor;
+            fillColor   = u.series[i].points._fill   ?? fillColor;
+
+            if (fillColor) {
+                marker.style.background  = String(fillColor);
+            }
+            if (strokeColor) {
+                marker.style.border = `2px solid ${strokeColor}`;
+            }
+        }
+    };
 
     getColorForValue(ranges: ChartLineZone[], value: number): string {
         // Sort ranges by the min value (just in case)
