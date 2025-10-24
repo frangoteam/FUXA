@@ -1700,6 +1700,7 @@
     "dlg.setup-layout": "Layout",
     "dlg.setup-plugins": "Plugins",
     "dlg.setup-scripts": "Scripts",
+    "dlg.setup-node-red-flows": "Node-RED Flows",
     "dlg.setup-reports": "Reports",
     "dlg.setup-settings": "Settings",
     "dlg.setup-client-access": "Frontend Scripts",
