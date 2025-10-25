@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="misc1.svg"
+   id="svg8"
+   version="1.1"
+   height="24"
+   width="24">
+  <defs
+     id="defs12" />
+  <sodipodi:namedview
+     inkscape:current-layer="svg8"
+     inkscape:window-maximized="1"
+     inkscape:window-y="-8"
+     inkscape:window-x="-8"
+     inkscape:cy="12"
+     inkscape:cx="12"
+     inkscape:zoom="9.4889455"
+     showgrid="false"
+     id="namedview10"
+     inkscape:window-height="1017"
+     inkscape:window-width="1920"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0"
+     guidetolerance="10"
+     gridtolerance="10"
+     objecttolerance="10"
+     borderopacity="1"
+     bordercolor="#666666"
+     pagecolor="#ffffff" />
+  <metadata
+     id="metadata2">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     style="fill:none;stroke:#ffffff;stroke-width:4.9669;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+     transform="matrix(0.2353976,0,0,0.2353976,2.6028002,1.9131935)"
+     id="g10">
+    <path
+       id="rect4"
+       style="fill:none;stroke:#ffffff;stroke-width:4.9669;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 0,60 H 80 V 80 H 0 Z" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:4.9669;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 8,60 40,0 72,60 Z"
+       fill="#ffffff"
+       stroke="#000000"
+       stroke-miterlimit="10"
+       pointer-events="all"
+       id="path6" />
+    <path
+       style="fill:none;stroke:#ffffff;stroke-width:4.9669;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 20,60 40,24 60,60"
+       fill="none"
+       stroke="#000000"
+       stroke-miterlimit="10"
+       pointer-events="all"
+       id="path8" />
+  </g>
+</svg>
