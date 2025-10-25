@@ -3,6 +3,7 @@
 * [Installing and Running](https://github.com/frangoteam/FUXA/wiki/Installing-and-Running)
 * [HowTo Devices and Tags](https://github.com/frangoteam/FUXA/wiki/HowTo-Devices-and-Tags)
 * [HowTo Scheduler](https://github.com/frangoteam/FUXA/wiki/HowTo-Scheduler)
+* [HowTo Node-RED](https://github.com/frangoteam/FUXA/wiki/HowTo-Node-Red)
 * [HowTo bind Controls](https://github.com/frangoteam/FUXA/wiki/HowTo-bind-Controls)
 * [HowTo Chart Control](https://github.com/frangoteam/FUXA/wiki/HowTo-Chart-Control)
 * [HowTo UI Layout](https://github.com/frangoteam/FUXA/wiki/HowTo-UI-Layout)

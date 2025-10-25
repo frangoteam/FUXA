@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Node-RED style figure only: white strokes on transparent background -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" width="100%" height="100%">
+  <!-- All shapes are strokes only; background is transparent -->
+  <g fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Top-left rounded rectangle -->
+    <rect x="10" y="18" width="60" height="36" rx="10" ry="10"/>
+    <!-- Top-right rounded rectangle -->
+    <rect x="130" y="12" width="60" height="36" rx="10" ry="10"/>
+    <!-- Bottom-right rounded rectangle -->
+    <rect x="130" y="72" width="60" height="36" rx="10" ry="10"/>
+
+    <!-- Curved connectors -->
+    <!-- From left rect to top-right -->
+    <path d="M70,36 C90,36 100,28 120,28 L130,28"/>
+    <!-- From left rect to bottom-right -->
+    <path d="M70,36 C90,36 100,84 120,90 L130,90"/>
+  </g>
+</svg>

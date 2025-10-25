@@ -20,5 +20,6 @@ export enum PluginType {
 }
 
 export enum PluginGroupType {
-    Chart = 'Chart'
+    Chart = 'Chart',
+    Service = 'Service'
 }
