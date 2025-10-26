@@ -137,7 +137,7 @@ export class AdvancedReportsApiService {
             }
 
             // Load advanced reports
-            const configsDir = path.join(this.runtime.settings.appDir, '_reports', 'configs');
+            const configsDir = path.join(this.runtime.settings.reportsDir, 'configs');
             let advancedReports: any[] = [];
             if (fs.existsSync(configsDir)) {
                 const configFiles = fs.readdirSync(configsDir).filter((file: string) => file.endsWith('.json'));
@@ -207,7 +207,7 @@ export class AdvancedReportsApiService {
                     }
 
                     // Load pdfme advanced reports from _reports/configs
-                    const configsDir = path.join(this.runtime.settings.appDir, '_reports', 'configs');
+                    const configsDir = path.join(this.runtime.settings.reportsDir, 'configs');
                     if (fs.existsSync(configsDir)) {
                         const configFiles = fs.readdirSync(configsDir).filter((file: string) => file.endsWith('.json'));
                         for (const file of configFiles) {
@@ -380,7 +380,7 @@ export class AdvancedReportsApiService {
             } else {
                 try {
                     const configId = req.params.id;
-                    const configsDir = path.join(this.runtime.settings.appDir, '_reports', 'configs');
+                    const configsDir = path.join(this.runtime.settings.reportsDir, 'configs');
                     const configFile = path.join(configsDir, `${configId}.json`);
 
                     if (!fs.existsSync(configFile)) {
@@ -1151,10 +1151,10 @@ export class AdvancedReportsApiService {
             });
 
             // Use the same save path logic as the /api/pdfme/generate-pdf endpoint
-            const defaultDir = path.join(this.runtime.settings.appDir, '_reports', 'generated');
+            const defaultDir = path.join(this.runtime.settings.reportsDir, 'generated');
             const settings = report.pdfmeData ? report.pdfmeData.settings : (report.pdfmeSettings || {});
             const savePath = settings.savePath || null;
-            const reportsDir = savePath ? (path.isAbsolute(savePath) ? savePath : path.join(this.runtime.settings.appDir, savePath)) : defaultDir;
+            const reportsDir = savePath ? (path.isAbsolute(savePath) ? savePath : path.join(this.runtime.settings.reportsDir, savePath)) : defaultDir;
 
             // Always save PDF to disk first
             // Ensure the directory exists
@@ -1237,7 +1237,7 @@ export class AdvancedReportsApiService {
 
     public loadScheduledReports() {
         try {
-            const configsDir = path.join(this.runtime.settings.appDir, '_reports', 'configs');
+            const configsDir = path.join(this.runtime.settings.reportsDir, 'configs');
 
             if (fs.existsSync(configsDir)) {
                 const configFiles = fs.readdirSync(configsDir).filter((file: string) => file.endsWith('.json'));

@@ -401,6 +401,7 @@ async function restartApp(dataDir, win) {
         }
         serverProcess = fork(serverEntry, [], {
             env: { ...process.env, userDir: dataDir, PORT: 1881 },
+            cwd: dataDir,
             silent: false
         });
         serverProcess.on('error', (error) => {
