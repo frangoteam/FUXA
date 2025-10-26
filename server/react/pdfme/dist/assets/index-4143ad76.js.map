@@ -1,1 +1,0 @@
-{"version":3,"file":"index-4143ad76.js","sources":["../../node_modules/@pdfme/common/dist/esm/src/version.js"],"sourcesContent":["export const PDFME_VERSION = '5.4.6';\n//# sourceMappingURL=version.js.map"],"names":["PDFME_VERSION"],"mappings":"mkBAAY,MAACA,EAAgB","x_google_ignoreList":[0]}

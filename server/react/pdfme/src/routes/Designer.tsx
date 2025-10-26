@@ -126,6 +126,11 @@ function DesignerApp() {
         if (template) {
           checkTemplate(template);
           buildDesigner(template);
+          // Send confirmation that template is loaded
+          window.parent.postMessage({
+            type: 'TEMPLATE_LOADED',
+            success: true
+          }, '*');
         }
       } else if (event.data.type === 'UPDATE_TEMPLATE_BASEPDF') {
         const { basePdf } = event.data;

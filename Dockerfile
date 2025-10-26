@@ -10,8 +10,8 @@ WORKDIR /usr/src/app
 # Clone FUXA repository
 RUN git clone https://github.com/frangoteam/FUXA.git
 
-# Install build dependencies for node-odbc
-RUN apt-get update && apt-get install -y build-essential unixodbc unixodbc-dev
+# Install build dependencies for node-odbc and graphics libraries
+RUN apt-get update && apt-get install -y build-essential unixodbc unixodbc-dev libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev pkg-config
 
 # Convert the script to Unix format and make it executable
 RUN dos2unix FUXA/odbc/install_odbc_drivers.sh && chmod +x FUXA/odbc/install_odbc_drivers.sh

@@ -56,19 +56,19 @@
                     </mat-form-field>
                     <mat-form-field *ngIf="pdfmeSettings.pageSize === 'custom'">
                         <mat-label>Custom Width (mm)</mat-label>
-                        <input matInput type="number" [(ngModel)]="pdfmeSettings.customWidth" (input)="updateBasePdf()">
+                        <input matInput type="number" [(ngModel)]="pdfmeSettings.customWidth" (input)="onCustomSizeChange()">
                     </mat-form-field>
                 </div>
                 <div *ngIf="pdfmeSettings.pageSize === 'custom'" class="form-row">
                     <mat-form-field>
                         <mat-label>Custom Height (mm)</mat-label>
-                        <input matInput type="number" [(ngModel)]="pdfmeSettings.customHeight" (input)="updateBasePdf()">
+                        <input matInput type="number" [(ngModel)]="pdfmeSettings.customHeight" (input)="onCustomSizeChange()">
                     </mat-form-field>
                 </div>
                 <div class="form-row">
                     <mat-form-field>
                         <mat-label>Page Margins (mm)</mat-label>
-                        <input matInput placeholder="top,right,bottom,left (e.g. 10,10,10,10)" [(ngModel)]="pdfmeSettings.padding" (input)="updateBasePdf()">
+                        <input matInput placeholder="top,right,bottom,left (e.g. 10,10,10,10)" [(ngModel)]="pdfmeSettings.padding" (input)="onPaddingChange()">
                         <mat-hint>The red boundary margins around the page content</mat-hint>
                     </mat-form-field>
                 </div>

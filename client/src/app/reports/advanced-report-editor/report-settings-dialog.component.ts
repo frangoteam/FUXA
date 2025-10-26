@@ -144,8 +144,8 @@ export class ReportSettingsDialogComponent {
 
             this.pdfmeSettings = { ...defaultSettings, ...(this.report.pdfmeSettings || {}) };
 
-            // Sync page size with basePdf
-            this.syncPageSizeFromBasePdf();
+            // Sync page size with basePdf from template (what PDFME actually uses)
+            this.syncPageSizeFromTemplateBasePdf();
 
             // Detect table fields in the template
             this.detectTableFields();
@@ -166,6 +166,17 @@ export class ReportSettingsDialogComponent {
 
     onPageSizeChange() {
         this.updateBasePdf();
+        this.updateDesignerBasePdf();
+    }
+
+    onPaddingChange() {
+        this.updateBasePdf();
+        this.updateDesignerBasePdf();
+    }
+
+    onCustomSizeChange() {
+        this.updateBasePdf();
+        this.updateDesignerBasePdf();
     }
 
     onTriggerTagChange(tagValue: FlexDeviceTagValueType) {
@@ -286,6 +297,51 @@ export class ReportSettingsDialogComponent {
                     padding: padding
                 };
             }
+        }
+    }
+
+    updateDesignerBasePdf() {
+        // Update the PDFME designer's template basePdf in real-time when settings change
+        const designerFrame = document.querySelector('iframe[src*="/api/pdfme-static"]') as HTMLIFrameElement;
+        if (designerFrame && designerFrame.contentWindow && this.pdfmeSettings.basePdf) {
+            designerFrame.contentWindow.postMessage({
+                type: 'UPDATE_TEMPLATE_BASEPDF',
+                basePdf: this.pdfmeSettings.basePdf
+            }, '*');
+        }
+    }
+
+    syncPageSizeFromTemplateBasePdf() {
+        // Sync settings from the template's basePdf (what PDFME actually uses)
+        if (this.report.template && this.report.template.basePdf && typeof this.report.template.basePdf === 'object') {
+            const basePdf = this.report.template.basePdf;
+            this.pdfmeSettings.customWidth = basePdf.width;
+            this.pdfmeSettings.customHeight = basePdf.height;
+            this.pdfmeSettings.padding = basePdf.padding ? basePdf.padding.join(',') : '10,10,10,10';
+
+            // Try to match to predefined page sizes
+            const pageSizes: { [key: string]: { width: number, height: number } } = {
+                'A4': { width: 210, height: 297 },
+                'A3': { width: 297, height: 420 },
+                'Letter': { width: 215.9, height: 279.4 },
+                'Legal': { width: 215.9, height: 355.6 }
+            };
+
+            let matchedSize = 'custom';
+            for (const [size, dims] of Object.entries(pageSizes)) {
+                if (Math.abs(basePdf.width - dims.width) < 1 && Math.abs(basePdf.height - dims.height) < 1) {
+                    matchedSize = size;
+                    break;
+                }
+            }
+
+            this.pdfmeSettings.pageSize = matchedSize;
+            
+            // Also update the settings basePdf to match
+            this.pdfmeSettings.basePdf = basePdf;
+        } else {
+            // Fallback to sync from settings basePdf
+            this.syncPageSizeFromBasePdf();
         }
     }
 
@@ -593,6 +649,14 @@ export class ReportSettingsDialogComponent {
             }
 
             this.report.pdfmeSettings = this.pdfmeSettings;
+            
+            // Ensure basePdf is up to date in settings
+            this.updateBasePdf();
+            
+            // Update the template's basePdf to match the settings
+            if (this.report.template) {
+                this.report.template.basePdf = this.pdfmeSettings.basePdf;
+            }
             
             // Sync table configs with current template
             this.syncTableConfigsWithTemplate();

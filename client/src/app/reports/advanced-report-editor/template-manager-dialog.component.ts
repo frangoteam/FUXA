@@ -217,15 +217,73 @@ export class TemplateManagerDialogComponent {
         const file = event.target.files[0];
         if (file && file.name.endsWith('.json')) {
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 try {
                     const templateData = JSON.parse(e.target?.result as string);
                     const templateName = file.name.replace('.json', '');
                     
+                    // Generate thumbnail by loading template into designer and saving it
+                    let thumbnailData: string | undefined;
+                    try {
+                        const designerFrame = document.querySelector('iframe[src*="/api/pdfme-static"]') as HTMLIFrameElement;
+                        if (designerFrame && designerFrame.contentWindow) {
+                            // Load the template into the designer
+                            designerFrame.contentWindow.postMessage({ 
+                                type: 'LOAD_TEMPLATE', 
+                                template: templateData 
+                            }, '*');
+
+                            // Wait for the template to be loaded in the designer
+                            await new Promise<void>((resolve, reject) => {
+                                const handleTemplateLoaded = (event: MessageEvent) => {
+                                    if (event.data.type === 'TEMPLATE_LOADED') {
+                                        window.removeEventListener('message', handleTemplateLoaded);
+                                        resolve();
+                                    }
+                                };
+                                window.addEventListener('message', handleTemplateLoaded);
+
+                                // Timeout after 10 seconds
+                                setTimeout(() => {
+                                    window.removeEventListener('message', handleTemplateLoaded);
+                                    reject(new Error('Timeout waiting for template to load'));
+                                }, 10000);
+                            });
+
+                            // Now generate thumbnail using the same method as save
+                            designerFrame.contentWindow.postMessage({ type: 'SAVE_TEMPLATE' }, '*');
+
+                            // Wait for the template response with thumbnail
+                            const savedData = await new Promise<any>((resolve, reject) => {
+                                const handleSaveData = (event: MessageEvent) => {
+                                    if (event.data.type === 'TEMPLATE_SAVED') {
+                                        window.removeEventListener('message', handleSaveData);
+                                        resolve(event.data);
+                                    }
+                                };
+                                window.addEventListener('message', handleSaveData);
+
+                                // Timeout after 15 seconds
+                                setTimeout(() => {
+                                    window.removeEventListener('message', handleSaveData);
+                                    reject(new Error('Timeout waiting for thumbnail generation'));
+                                }, 15000);
+                            });
+
+                            thumbnailData = savedData.thumbnail;
+                        } else {
+                            console.warn('Designer iframe not found for thumbnail generation');
+                        }
+                    } catch (thumbnailError) {
+                        console.warn('Failed to generate thumbnail for uploaded template:', thumbnailError);
+                        // Continue with upload even if thumbnail generation fails
+                    }
+                    
                     // Upload the template
                     this.http.post('/api/advanced-reports/templates', {
                         name: templateName,
-                        template: templateData
+                        template: templateData,
+                        thumbnailData: thumbnailData
                     }).subscribe({
                         next: () => {
                             this.snackBar.open('Template uploaded successfully', 'OK', { duration: 3000 });

@@ -649,22 +649,9 @@ class AdvancedReportsApiService {
                     }
                     else {
                         // Create a minimal placeholder PNG if no thumbnail provided
-                        const minimalPNG = Buffer.from([
-                            0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
-                            0x00, 0x00, 0x00, 0x0D, // IHDR chunk length
-                            0x49, 0x48, 0x44, 0x52, // IHDR
-                            0x00, 0x00, 0x00, 0x01, // width 1
-                            0x00, 0x00, 0x00, 0x01, // height 1
-                            0x08, 0x02, 0x00, 0x00, 0x00, // bit depth 8, color type 2, etc.
-                            0x90, 0x77, 0x53, 0xDE, // CRC
-                            0x00, 0x00, 0x00, 0x0C, // IDAT chunk length
-                            0x49, 0x44, 0x41, 0x54, // IDAT
-                            0x08, 0x99, 0x01, 0x01, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01, // image data
-                            0x00, 0x00, 0x00, 0x00, // IEND chunk length
-                            0x49, 0x45, 0x4E, 0x44, // IEND
-                            0xAE, 0x42, 0x60, 0x82 // CRC
-                        ]);
-                        fs.writeFileSync(thumbnailPath, minimalPNG);
+                        // This is a base64 encoded 1x1 transparent PNG
+                        const minimalPNGBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+                        fs.writeFileSync(thumbnailPath, minimalPNGBase64, 'base64');
                     }
                     res.json({ success: true, name });
                 }
@@ -699,11 +686,17 @@ class AdvancedReportsApiService {
                     // Update template.json
                     const templatePath = path.join(templateDir, 'template.json');
                     fs.writeFileSync(templatePath, JSON.stringify(template, null, 2));
-                    // Update thumbnail.png if provided
+                    // Update thumbnail.png if provided, otherwise create a placeholder
+                    const thumbnailPath = path.join(templateDir, 'thumbnail.png');
                     if (thumbnailData) {
-                        const thumbnailPath = path.join(templateDir, 'thumbnail.png');
                         const base64Data = thumbnailData.replace(/^data:image\/png;base64,/, '');
                         fs.writeFileSync(thumbnailPath, base64Data, 'base64');
+                    }
+                    else {
+                        // Create a minimal placeholder PNG if no thumbnail provided
+                        // This is a base64 encoded 1x1 transparent PNG
+                        const minimalPNGBase64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+                        fs.writeFileSync(thumbnailPath, minimalPNGBase64, 'base64');
                     }
                     res.json({ success: true, name: templateName });
                 }

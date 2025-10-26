@@ -317,6 +317,35 @@ export class AdvancedReportEditorComponent implements OnInit, OnDestroy {
                 // Update pdfme designer with new settings and template
                 const designerFrame = document.querySelector('iframe[src*="/api/pdfme-static"]') as HTMLIFrameElement;
                 if (designerFrame && designerFrame.contentWindow) {
+                    // Update the template's basePdf with the new settings before loading
+                    if (this.report.template && this.report.pdfmeSettings) {
+                        if (this.report.pdfmeSettings.basePdf) {
+                            this.report.template.basePdf = this.report.pdfmeSettings.basePdf;
+                        } else if (this.report.pdfmeSettings.pageSize === 'custom') {
+                            this.report.template.basePdf = {
+                                width: this.report.pdfmeSettings.customWidth || 210,
+                                height: this.report.pdfmeSettings.customHeight || 297,
+                                padding: this.report.pdfmeSettings.padding ? this.report.pdfmeSettings.padding.split(',').map((p: string) => parseFloat(p.trim())) : [10, 10, 10, 10]
+                            };
+                        } else {
+                            // Set predefined page sizes
+                            const pageSizes: { [key: string]: { width: number, height: number } } = {
+                                'A4': { width: 210, height: 297 },
+                                'A3': { width: 297, height: 420 },
+                                'Letter': { width: 215.9, height: 279.4 },
+                                'Legal': { width: 215.9, height: 355.6 }
+                            };
+                            const size = pageSizes[this.report.pdfmeSettings.pageSize];
+                            if (size) {
+                                this.report.template.basePdf = {
+                                    width: size.width,
+                                    height: size.height,
+                                    padding: this.report.pdfmeSettings.padding ? this.report.pdfmeSettings.padding.split(',').map((p: string) => parseFloat(p.trim())) : [10, 10, 10, 10]
+                                };
+                            }
+                        }
+                    }
+
                     designerFrame.contentWindow.postMessage({
                         type: 'UPDATE_SETTINGS',
                         settings: this.report.pdfmeSettings
