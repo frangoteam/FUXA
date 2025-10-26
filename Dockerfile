@@ -50,7 +50,7 @@ RUN npm config set registry https://registry.npmjs.org/ \
 RUN bash -lc '\
   for i in 1 2 3 4 5 6 7 8; do \
     echo "npm install - attempt $i/8"; \
-    npm install --no-audit --no-fund --prefer-offline --network-timeout=600000 && exit 0; \
+    NODE_OPTIONS="--max-old-space-size=8192" npm install --no-audit --no-fund --prefer-offline --network-timeout=600000 && exit 0; \
     echo "Failed, wait $((10*i))s and try again..."; \
     sleep $((10*i)); \
   done; \
@@ -68,7 +68,7 @@ RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && \
     apt-get autoremove -yqq --purge && \
     apt-get clean  && \
     rm -rf /var/lib/apt/lists/*  && \
-    npm install --build-from-source --sqlite=/usr/bin sqlite3
+    NODE_OPTIONS="--max-old-space-size=8192" npm install --build-from-source --sqlite=/usr/bin sqlite3
 
 # Add project files 
 ADD . /usr/src/app/FUXA
@@ -77,7 +77,7 @@ ADD . /usr/src/app/FUXA
 WORKDIR /usr/src/app/FUXA/server
 
 # Build the pdfme React app
-RUN npm run build:all
+RUN NODE_OPTIONS="--max-old-space-size=8192" npm run build:all
 
 # Clean up react node_modules
 RUN rm -rf react/pdfme/node_modules
