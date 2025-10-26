@@ -25,24 +25,44 @@ jobs:
       with:
         node-version: '18'
 
+    - name: Configure npm for reliable CI builds
+      run: |
+        npm config set registry https://registry.npmjs.org/
+        npm config set fetch-retries 8
+        npm config set fetch-retry-factor 2
+        npm config set fetch-retry-mintimeout 30000
+        npm config set fetch-retry-maxtimeout 300000
+        npm config set audit false
+        npm config set fund false
+      env:
+        NODE_OPTIONS: --dns-result-order=ipv4first
+
     - name: Clear npm cache
       run: npm cache clean --force
 
     - name: Install server dependencies
       run: npm install && npm run build:all
       working-directory: ./server
+      env:
+        NODE_OPTIONS: --dns-result-order=ipv4first
 
     - name: Install client dependencies
       run: npm install
       working-directory: ./client
+      env:
+        NODE_OPTIONS: --dns-result-order=ipv4first
 
     - name: Build client
       run: npm run build -- --configuration=production
       working-directory: ./client
+      env:
+        NODE_OPTIONS: --dns-result-order=ipv4first
 
     - name: Install app dependencies
       run: npm install
       working-directory: ./app
+      env:
+        NODE_OPTIONS: --dns-result-order=ipv4first
 
     - name: Copy server and client build to app
       run: |
