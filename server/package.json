@@ -19,6 +19,8 @@
   },
   "dependencies": {
     "@influxdata/influxdb-client": "1.25.0",
+    "@pdfme/generator": "^5.4.6",
+    "@pdfme/schemas": "^5.4.6",
     "@tdengine/rest": "3.0.2",
     "ads-client": "2.1.0",
     "app-root-path": "2.2.1",
