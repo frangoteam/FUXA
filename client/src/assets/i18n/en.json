@@ -1675,6 +1675,7 @@
     "dlg.setup-layout": "Layout",
     "dlg.setup-plugins": "Plugins",
     "dlg.setup-scripts": "Scripts",
+    "dlg.setup-node-red-flows": "Node-RED Flows",
     "dlg.setup-reports": "Reports",
     "dlg.setup-settings": "Settings",
     "dlg.setup-logs": "Logs",
@@ -1749,6 +1750,7 @@
     "plugin.group-connection-device": "Connection device",
     "plugin.group-connection-database": "Connection database",
     "plugin.group-chart-report": "Chart image for Report",
+    "plugin.group-service": "Service",
 
     "action-settings-title": "Actions Settings",
     "action-settings-readonly-tag": "Tag",
