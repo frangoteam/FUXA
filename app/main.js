@@ -399,8 +399,7 @@ async function restartApp(dataDir, win) {
         if (!require('fs').existsSync(serverEntry)) {
             throw new Error(`Server file not found: ${serverEntry}`);
         }
-        serverProcess = fork(serverEntry, [], {
-            env: { ...process.env, userDir: dataDir, PORT: 1881 },
+        serverProcess = fork(serverEntry, ['--userDir', dataDir, '--port', '1881'], {
             cwd: dataDir,
             silent: false
         });
