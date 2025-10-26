@@ -63,7 +63,7 @@ RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && \
     npm install --build-from-source --sqlite=/usr/bin sqlite3
 
 # Build the pdfme React app
-RUN npm run build:all
+RUN npm run install:pdfme && npm run build:pdfme && npm run build
 
 # Clean up react node_modules
 RUN rm -rf react/pdfme/node_modules
