@@ -272,6 +272,7 @@
     "chart.config-interpo-stepAfter": "step after",
     "chart.config-interpo-stepBefore": "step before",
     "chart.config-interpo-spline": "spline",
+    "chart.config-interpo-none": "none (points)",
     "chart.config-line-width": "Line Width",
     "chart.config-line-gap": "Fill Gaps",
     "chart.config-line-add-zone": "Add Zone",

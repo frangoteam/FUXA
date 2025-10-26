@@ -369,16 +369,19 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
      */
     this.setValue = async function (tagId, value) {
         if (the_session && data.tags[tagId]) {
-            let opctype = _toDataType(data.tags[tagId].type);
-            let valueToSend = _toValue(opctype, value);
+            let opcType = _toDataType(data.tags[tagId].type);
+            let valueToSend = _toValue(opcType, value);
             valueToSend = await deviceUtils.tagRawCalculator(valueToSend, data.tags[tagId], runtime);
+            if (opcType === opcua.DataType.String || opcType === opcua.DataType.ByteString) {
+                valueToSend = valueToSend?.toString();
+            }
             var nodesToWrite = [
                 {
                     nodeId: data.tags[tagId].address,
                     attributeId: opcua.AttributeIds.Value,
                     value: /*new DataValue(*/{
                         value: {/* Variant */
-                            dataType: opctype,
+                            dataType: opcType,
                             value: valueToSend
                         }
                     }
