@@ -53,7 +53,7 @@ class AdvancedReportsApiService {
     syncDefaultTemplates() {
         try {
             const sourceDir = path.join(this.runtime.settings.appDir, 'react', 'pdfme', 'public', 'template-assets');
-            const destDir = path.join(this.runtime.settings.appDir, '_reports', 'templates');
+            const destDir = path.join(this.runtime.settings.reportsDir, 'templates');
             // Check if source directory exists
             if (!fs.existsSync(sourceDir)) {
                 console.log('Default templates source directory not found:', sourceDir);
@@ -283,7 +283,7 @@ class AdvancedReportsApiService {
                 try {
                     const reportId = req.body.id;
                     // Load the saved configuration from file to ensure consistency with tag triggers
-                    const configPath = path.join(this.runtime.settings.appDir, '_reports', 'configs', `${reportId}.json`);
+                    const configPath = path.join(this.runtime.settings.reportsDir, 'configs', `${reportId}.json`);
                     if (!fs.existsSync(configPath)) {
                         throw new Error(`Report configuration not found: ${reportId}`);
                     }
@@ -331,7 +331,7 @@ class AdvancedReportsApiService {
                         }
                     }
                     // Try to delete from _reports/configs directory
-                    const configsDir = path.join(this.runtime.settings.appDir, '_reports', 'configs');
+                    const configsDir = path.join(this.runtime.settings.reportsDir, 'configs');
                     const configFile = path.join(configsDir, `${reportId}.json`);
                     if (fs.existsSync(configFile)) {
                         fs.unlinkSync(configFile);
@@ -405,7 +405,7 @@ class AdvancedReportsApiService {
                 try {
                     const reportId = req.params.id;
                     // Load the report configuration from file
-                    const configsDir = path.join(this.runtime.settings.appDir, '_reports', 'configs');
+                    const configsDir = path.join(this.runtime.settings.reportsDir, 'configs');
                     const configFile = path.join(configsDir, `${reportId}.json`);
                     if (!fs.existsSync(configFile)) {
                         res.status(404).json({ error: 'not_found', message: 'Report configuration not found' });
@@ -486,7 +486,7 @@ class AdvancedReportsApiService {
                     const reportId = req.params.id;
                     const { reportData, tableData } = req.body;
                     // Load the report configuration
-                    const configsDir = path.join(this.runtime.settings.appDir, '_reports', 'configs');
+                    const configsDir = path.join(this.runtime.settings.reportsDir, 'configs');
                     const configFile = path.join(configsDir, `${reportId}.json`);
                     if (!fs.existsSync(configFile)) {
                         res.status(404).json({ error: 'Report not found' });
@@ -520,7 +520,7 @@ class AdvancedReportsApiService {
             else {
                 try {
                     const configId = req.params.id;
-                    const configsDir = path.join(this.runtime.settings.appDir, '_reports', 'configs');
+                    const configsDir = path.join(this.runtime.settings.reportsDir, 'configs');
                     const configFile = path.join(configsDir, `${configId}.json`);
                     if (!fs.existsSync(configFile)) {
                         res.status(404).json({ error: 'Config not found' });
@@ -545,7 +545,7 @@ class AdvancedReportsApiService {
             }
             else {
                 try {
-                    const templatesDir = path.join(this.runtime.settings.appDir, '_reports', 'templates');
+                    const templatesDir = path.join(this.runtime.settings.reportsDir, 'templates');
                     if (!fs.existsSync(templatesDir)) {
                         res.json([]);
                         return;
@@ -573,7 +573,7 @@ class AdvancedReportsApiService {
             else {
                 try {
                     const templateName = req.params.name;
-                    const templatesDir = path.join(this.runtime.settings.appDir, '_reports', 'templates');
+                    const templatesDir = path.join(this.runtime.settings.reportsDir, 'templates');
                     const templateFile = path.join(templatesDir, templateName, 'template.json');
                     if (!fs.existsSync(templateFile)) {
                         res.status(404).json({ error: 'Template not found' });
@@ -599,7 +599,7 @@ class AdvancedReportsApiService {
             else {
                 try {
                     const templateName = req.params.name;
-                    const templatesDir = path.join(this.runtime.settings.appDir, '_reports', 'templates');
+                    const templatesDir = path.join(this.runtime.settings.reportsDir, 'templates');
                     const thumbnailFile = path.join(templatesDir, templateName, 'thumbnail.png');
                     if (!fs.existsSync(thumbnailFile)) {
                         res.status(404).json({ error: 'Thumbnail not found' });
@@ -628,7 +628,7 @@ class AdvancedReportsApiService {
             else {
                 try {
                     const { name, template, thumbnailData } = req.body;
-                    const templatesDir = path.join(this.runtime.settings.appDir, '_reports', 'templates');
+                    const templatesDir = path.join(this.runtime.settings.reportsDir, 'templates');
                     const templateDir = path.join(templatesDir, name);
                     if (!fs.existsSync(templatesDir)) {
                         fs.mkdirSync(templatesDir, { recursive: true });
@@ -690,7 +690,7 @@ class AdvancedReportsApiService {
                 try {
                     const templateName = req.params.name;
                     const { template, thumbnailData } = req.body;
-                    const templatesDir = path.join(this.runtime.settings.appDir, '_reports', 'templates');
+                    const templatesDir = path.join(this.runtime.settings.reportsDir, 'templates');
                     const templateDir = path.join(templatesDir, templateName);
                     if (!fs.existsSync(templateDir)) {
                         res.status(404).json({ error: 'Template not found' });
@@ -728,7 +728,7 @@ class AdvancedReportsApiService {
             else {
                 try {
                     const templateName = req.params.name;
-                    const templatesDir = path.join(this.runtime.settings.appDir, '_reports', 'templates');
+                    const templatesDir = path.join(this.runtime.settings.reportsDir, 'templates');
                     const templateDir = path.join(templatesDir, templateName);
                     if (!fs.existsSync(templateDir)) {
                         res.status(404).json({ error: 'Template not found' });
@@ -755,7 +755,7 @@ class AdvancedReportsApiService {
             else {
                 try {
                     const config = req.body;
-                    const configsDir = path.join(this.runtime.settings.appDir, '_reports', 'configs');
+                    const configsDir = path.join(this.runtime.settings.reportsDir, 'configs');
                     if (!fs.existsSync(configsDir)) {
                         fs.mkdirSync(configsDir, { recursive: true });
                     }
@@ -892,7 +892,7 @@ class AdvancedReportsApiService {
                 traditionalReports = JSON.parse(fs.readFileSync(reportsPath, 'utf8'));
             }
             // Load advanced reports
-            const configsDir = path.join(this.runtime.settings.appDir, '_reports', 'configs');
+            const configsDir = path.join(this.runtime.settings.reportsDir, 'configs');
             let advancedReports = [];
             if (fs.existsSync(configsDir)) {
                 const configFiles = fs.readdirSync(configsDir).filter((file) => file.endsWith('.json'));
@@ -966,10 +966,10 @@ class AdvancedReportsApiService {
             // Plugins as object with plugin names as keys
             const plugins = { text: schemas_1.text, multiVariableText: schemas_1.multiVariableText, image: schemas_1.image, svg: schemas_1.svg, line: schemas_1.line, table: schemas_1.table, rectangle: schemas_1.rectangle, ellipse: schemas_1.ellipse, dateTime: schemas_1.dateTime, date: schemas_1.date, time: schemas_1.time, select: schemas_1.select, checkbox: schemas_1.checkbox, radioGroup: schemas_1.radioGroup, signature, qrcode: schemas_1.barcodes.qrcode, ean13: schemas_1.barcodes.ean13, code128: schemas_1.barcodes.code128 };
             // Use the same save path logic as the /api/pdfme/generate-pdf endpoint
-            const defaultDir = path.join(this.runtime.settings.appDir, '_reports', 'generated');
+            const defaultDir = path.join(this.runtime.settings.reportsDir, 'generated');
             const settings = report.pdfmeData ? report.pdfmeData.settings : (report.pdfmeSettings || {});
             const savePath = settings.savePath || null;
-            const reportsDir = savePath ? (path.isAbsolute(savePath) ? savePath : path.join(this.runtime.settings.appDir, savePath)) : defaultDir;
+            const reportsDir = savePath ? (path.isAbsolute(savePath) ? savePath : path.join(this.runtime.settings.reportsDir, savePath)) : defaultDir;
             const pdf = await (0, generator_1.generate)({
                 template: processedTemplate,
                 inputs: processedInputs,
