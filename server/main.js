@@ -13,6 +13,8 @@ const logger = require('./runtime/logger');
 const utils = require('./runtime/utils');
 var events = require("./runtime/events").create();
 const FUXA = require('./fuxa.js');
+const runtime = require('./runtime');
+const authJwt = require('./api/jwt-helper');
 
 const express = require('express');
 const app = express();
@@ -353,9 +355,9 @@ app.use(morgan('dev', {
 // })
 
 // set api to listen
-if (settings.disableServer !== false) {
-    app.use('/', FUXA.httpApi);
-}
+// if (settings.disableServer !== false) {
+//     app.use('/', FUXA.httpApi);
+// }
 
 function getListenPath() {
     var port = settings.serverPort;
@@ -372,9 +374,11 @@ function getListenPath() {
     return listenPath;
 }
 
+const { mountNodeRedIfInstalled } = require('./integrations/node-red');
+
 // Start FUXA
 function startFuxa() {
-    FUXA.start().then(function () {
+    FUXA.start().then(async () => {
         if (settings.httpStatic) {
             server.on('error', function (err) {
                 if (err.errno === 'EADDRINUSE') {
@@ -389,6 +393,18 @@ function startFuxa() {
                 }
                 process.exit(1);
             });
+
+            // Mount Node-RED if present; never block FUXA if it fails
+            try {
+                await mountNodeRedIfInstalled({ app, server, settings, runtime, logger, authJwt, events });
+            } catch (e) {
+                logger.warn('[Node-RED] Failed to initialize, continuing without it.', e);
+            }
+
+            if (settings.disableServer !== false) {
+                app.use('/', FUXA.httpApi);
+            }
+
             server.listen(settings.uiPort, settings.uiHost, function () {
                 settings.serverPort = server.address().port;
                 process.title = 'FUXA';
