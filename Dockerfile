@@ -2,6 +2,9 @@ FROM node:18-bookworm
 
 ARG NODE_SNAP=false
 
+# Increase Node.js memory limit for all builds
+ENV NODE_OPTIONS="--dns-result-order=ipv4first --max-old-space-size=4096"
+
 RUN apt-get update && apt-get install -y dos2unix
 
 # Change working directory
@@ -30,9 +33,7 @@ RUN cp FUXA/odbc/odbcinst.ini /etc/odbcinst.ini
 # Install Fuxa server
 WORKDIR /usr/src/app/FUXA/server
 
-# More tolerant npm config & Increase Node.js memory limit for all builds
-ENV NODE_OPTIONS="--dns-result-order=ipv4first --max-old-space-size=4096"
-
+# More tolerant npm config
 RUN npm config set registry https://registry.npmjs.org/ \
  && npm config set fetch-retries 8 \
  && npm config set fetch-retry-factor 2 \
