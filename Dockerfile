@@ -62,17 +62,17 @@ RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && \
     rm -rf /var/lib/apt/lists/*  && \
     npm install --build-from-source --sqlite=/usr/bin sqlite3
 
-# Build the pdfme React app
-RUN cd react/pdfme && npm install && npm run build && cd ../.. && npm run build
-
-# Clean up react node_modules
-RUN rm -rf react/pdfme/node_modules
-
-# Add project files
+# Add project files 
 ADD . /usr/src/app/FUXA
 
 # Set working directory
 WORKDIR /usr/src/app/FUXA/server
+
+# Build the pdfme React app
+RUN npm run build:all
+
+# Clean up react node_modules
+RUN rm -rf react/pdfme/node_modules
 
 # Expose port
 EXPOSE 1881
