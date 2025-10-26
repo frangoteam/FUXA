@@ -53,7 +53,7 @@ jobs:
         npm config set audit false
         npm config set fund false
       env:
-        NODE_OPTIONS: --dns-result-order=ipv4first
+        NODE_OPTIONS: --max-old-space-size=4096 --dns-result-order=ipv4first
 
     - name: Clear npm cache
       run: npm cache clean --force
@@ -62,25 +62,25 @@ jobs:
       run: npm install && npm run build:all
       working-directory: ./server
       env:
-        NODE_OPTIONS: --dns-result-order=ipv4first
+        NODE_OPTIONS: --max-old-space-size=4096 --dns-result-order=ipv4first
 
     - name: Install client dependencies
       run: npm install
       working-directory: ./client
       env:
-        NODE_OPTIONS: --dns-result-order=ipv4first
+        NODE_OPTIONS: --max-old-space-size=4096 --dns-result-order=ipv4first
 
     - name: Build client
       run: npm run build -- --configuration=production
       working-directory: ./client
       env:
-        NODE_OPTIONS: --dns-result-order=ipv4first
+        NODE_OPTIONS: --max-old-space-size=4096 --dns-result-order=ipv4first
 
     - name: Install app dependencies
       run: npm install
       working-directory: ./app
       env:
-        NODE_OPTIONS: --dns-result-order=ipv4first
+        NODE_OPTIONS: --max-old-space-size=4096 --dns-result-order=ipv4first
 
     - name: Copy server and client build to app
       run: |
