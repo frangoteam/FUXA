@@ -30,6 +30,7 @@ import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip';
+import { MatTreeModule } from '@angular/material/tree';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
@@ -69,6 +70,7 @@ import { CdkTableModule } from '@angular/cdk/table';
         MatTabsModule,
         MatToolbarModule,
         MatTooltipModule,
+        MatTreeModule,
     ],
     exports: [
         CdkTableModule,
@@ -103,6 +105,7 @@ import { CdkTableModule } from '@angular/cdk/table';
         MatTabsModule,
         MatToolbarModule,
         MatTooltipModule,
+        MatTreeModule,
     ],
     providers: [{
         provide: MatPaginatorIntl,

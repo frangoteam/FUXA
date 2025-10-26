@@ -1,0 +1,81 @@
+{
+  "name": "playground",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "ESLINT_USE_FLAT_CONFIG=false eslint . --ext ts,tsx",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist -b playground",
+    "copy-vercel-config": "node -e \"require('fs').copyFileSync('vercel.json', 'dist/vercel.json')\"",
+    "generate-template-assets": "node scripts/generate-templates-list-json.mjs && node scripts/generate-templates-thumbnail.mjs",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "test:update-snapshots": "node --experimental-vm-modules node_modules/.bin/jest --updateSnapshot",
+    "test:local": "LOCAL=true node --experimental-vm-modules node_modules/.bin/jest"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@pdfme/common": "file:../packages/common/dist",
+    "@pdfme/converter": "file:../packages/converter/dist",
+    "@pdfme/generator": "file:../packages/generator/dist",
+    "@pdfme/manipulator": "file:../packages/manipulator/dist",
+    "@pdfme/schemas": "file:../packages/schemas/dist",
+    "@pdfme/ui": "file:../packages/ui/dist",
+    "@sentry/react": "^9.5.0",
+    "@sentry/vite-plugin": "^3.2.2",
+    "canvas": "^2.11.2",
+    "esbuild": "^0.19.10",
+    "lucide-react": "^0.475.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.18.0",
+    "react-toastify": "^11.0.3",
+    "signature_pad": "^4.1.6"
+  },
+  "devDependencies": {
+    "@puppeteer/replay": "^3.1.1",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.3",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "gh-pages": "^6.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-image-snapshot": "^6.4.0",
+    "postcss": "^8.4.49",
+    "puppeteer": "^24.3.0",
+    "tailwindcss": "^3.4.17",
+    "ts-jest": "^29.2.6",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  },
+  "jest": {
+    "resolver": "ts-jest-resolver",
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
+    "transform": {
+      "^.+\\.ts?$": [
+        "ts-jest",
+        {
+          "tsconfig": "tsconfig.json"
+        }
+      ]
+    },
+    "testMatch": [
+      "**/*.test.ts"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.js"
+    ]
+  }
+}

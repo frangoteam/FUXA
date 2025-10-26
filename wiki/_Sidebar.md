@@ -14,5 +14,6 @@
 * [HowTo configure events](https://github.com/frangoteam/FUXA/wiki/HowTo-configure-events)
 * [HowTo use same view](https://github.com/frangoteam/FUXA/wiki/HowTo-use-same-view)
 * [HowTo configure Script](https://github.com/frangoteam/FUXA/wiki/HowTo-configure-Script)
+* [HowTo Reports](https://github.com/frangoteam/FUXA/wiki/HowTo-Reports)
 * [Settings](https://github.com/frangoteam/FUXA/wiki/Settings)
 * [Tips and Tricks](https://github.com/frangoteam/FUXA/wiki/Tips-and-Tricks)

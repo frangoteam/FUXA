@@ -1,0 +1,128 @@
+<script type="text/x-red" data-template-name="report-generate">
+    <div class="form-row">
+        <label for="node-input-report"><i class="fa fa-file-pdf-o"></i> Report</label>
+        <select id="node-input-report">
+            <option value="">Select a report...</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-triggerMode"><i class="fa fa-play"></i> Trigger Mode</label>
+        <select id="node-input-triggerMode">
+            <option value="auto">Auto (trigger on any input)</option>
+            <option value="manual">Manual (trigger only on msg.trigger = true)</option>
+        </select>
+    </div>
+    <div class="form-tips">
+        <p><strong>Input Methods:</strong> Combines data from report-data and report-table-data nodes</p>
+        <p><strong>Output:</strong> Generated PDF report file details</p>
+
+        <h4>Data Combination:</h4>
+        <p>Merges reportData (scalars) and tableData (arrays) into JSON structure required by PDFme templates.</p>
+
+        <h4>Input Options:</h4>
+        <ul>
+            <li><strong>Combined payload:</strong> <code>msg.payload = {reportData: {...}, tableData: {...}}</code></li>
+            <li><strong>Join node output:</strong> Array of messages from multiple data nodes</li>
+            <li><strong>Separate properties:</strong> <code>msg.reportData</code> + <code>msg.tableData</code></li>
+        </ul>
+
+        <h4>Trigger Modes:</h4>
+        <ul>
+            <li><strong>Auto:</strong> Generates report on any input message</li>
+            <li><strong>Manual:</strong> Only generates when <code>msg.trigger = true</code></li>
+        </ul>
+
+        <h4>Success Output:</h4>
+        <pre>msg.payload = {
+  success: true,
+  report: "report-id",
+  fileName: "report-2025-10-26.pdf",
+  path: "/path/to/generated/report.pdf"
+}</pre>
+
+        <h4>Error Output:</h4>
+        <pre>msg.payload = {
+  success: false,
+  error: "Report generation failed"
+}</pre>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="report-generate">
+    <p>Generates an advanced PDF report using FUXA's reporting system by combining report data and table data.</p>
+
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Report <span class="property-type">string</span></dt>
+        <dd>ID of the PDFme report template to generate (loaded from FUXA)</dd>
+        <dt>Trigger Mode <span class="property-type">string</span></dt>
+        <dd>"Auto" (generate on any input) or "Manual" (generate only when msg.trigger = true)</dd>
+        <dt>Name <span class="property-type">string</span></dt>
+        <dd>Optional name for the node</dd>
+    </dl>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object|array</span></dt>
+        <dd>Combined report data or array of partial messages from join node</dd>
+        <dt>reportData <span class="property-type">object</span></dt>
+        <dd>Scalar values for report placeholders (from report-data node)</dd>
+        <dt>tableData <span class="property-type">object</span></dt>
+        <dd>Table data for report tables (from report-table-data node)</dd>
+        <dt>trigger <span class="property-type">boolean</span></dt>
+        <dd>Trigger generation in manual mode (only needed when Trigger Mode = "Manual")</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>Output 1 (Success) <span class="property-type">object</span></dt>
+        <dd>Report generation result with file path and metadata</dd>
+        <dt>Output 2 (Error) <span class="property-type">object</span></dt>
+        <dd>Error information if generation failed</dd>
+    </dl>
+
+    <h3>Processing</h3>
+    <p>Combines reportData and tableData into JSON structure required by FUXA's PDFme reporting system. Handles multiple input methods: direct combined object, arrays from join nodes, or separate message properties.</p>
+
+    <h3>Supported Input Methods</h3>
+    <ul>
+        <li><strong>Combined object:</strong> <code>msg.payload = {reportData: {...}, tableData: {...}}</code></li>
+        <li><strong>Join node array:</strong> Array of messages from report-data and report-table-data nodes</li>
+        <li><strong>Message properties:</strong> <code>msg.reportData</code> and <code>msg.tableData</code></li>
+    </ul>
+
+    <h3>Usage</h3>
+    <p>Connect report-data and/or report-table-data nodes to this node. Select your PDFme report template from the dropdown. Use join nodes to combine multiple data sources. The node sends the formatted data to FUXA's report generation API.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('report-generate', {
+        category: 'FUXA',
+        color: '#C0DEED',
+        defaults: {
+            report: { value: "", required: true },
+            triggerMode: { value: "auto" },
+            name: { value: "" }
+        },
+        inputs: 1,
+        outputs: 2,
+        icon: "file-pdf-o",
+        label: function() {
+            return this.name || "Generate Report";
+        },
+        oneditprepare: function() {
+            // Load available reports
+            $.getJSON('/api/advanced-reports', function(data) {
+                var select = $('#node-input-report');
+                select.empty();
+                select.append('<option value="">Select a report...</option>');
+                data.forEach(function(report) {
+                    select.append('<option value="' + report.id + '">' + report.name + '</option>');
+                });
+                select.val(this.report);
+            }.bind(this)).fail(function() {
+                console.error('Failed to load reports');
+            });
+        }
+    });
+</script>

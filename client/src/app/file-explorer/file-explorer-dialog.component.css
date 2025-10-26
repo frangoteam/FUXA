@@ -1,0 +1,300 @@
+/* File Explorer Dialog - Specific targeting to avoid affecting other dialogs */
+::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-container {
+    width: 900px !important;
+    height: 750px !important;
+    max-width: 900px !important;
+    max-height: 750px !important;
+    min-width: 900px !important;
+    min-height: 750px !important;
+    box-sizing: border-box !important;
+    transition: none !important;
+    animation: none !important;
+    /* Prevent inline style overrides */
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-container * {
+    transition: none !important;
+    animation: none !important;
+}
+
+::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-surface {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    box-sizing: border-box !important;
+    transition: none !important;
+    animation: none !important;
+    /* Force the surface to fill the container exactly */
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+::ng-deep .file-explorer-dialog-panel .cdk-overlay-pane {
+    width: 900px !important;
+    height: 750px !important;
+    max-width: 900px !important;
+    max-height: 750px !important;
+    min-width: 900px !important;
+    min-height: 750px !important;
+    transition: none !important;
+    animation: none !important;
+    /* Prevent any dynamic positioning */
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+}
+
+/* Additional aggressive overrides to prevent any Angular Material sizing logic */
+::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-container,
+::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-surface,
+::ng-deep .file-explorer-dialog-panel .cdk-overlay-pane {
+    /* Disable all CSS transitions and animations that might cause size changes */
+    transition-property: none !important;
+    animation-name: none !important;
+    /* Force exact dimensions */
+    flex-basis: auto !important;
+    /* Prevent any margin/padding from affecting size */
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* ABSOLUTE LAST RESORT - Override any inline styles set by JavaScript */
+::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-container[style],
+::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-surface[style],
+::ng-deep .file-explorer-dialog-panel .cdk-overlay-pane[style] {
+    width: 900px !important;
+    height: 750px !important;
+    max-width: 900px !important;
+    max-height: 750px !important;
+    min-width: 900px !important;
+    min-height: 750px !important;
+}
+
+/* Main dialog container - responsive flexbox layout */
+.file-explorer-dialog {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+/* Header - fixed height, no overflow */
+.dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    flex-shrink: 0;
+    background: inherit;
+    min-height: 64px;
+    box-sizing: border-box;
+}
+
+.dialog-header h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    color: white;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.close-button {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* Body - flexible container */
+.dialog-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+/* Toolbar - fixed height within body */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    background: inherit;
+    box-sizing: border-box;
+    min-height: 56px;
+}
+
+.toolbar-button {
+    flex-shrink: 0;
+}
+
+/* Current path - flexible text that truncates */
+.current-path {
+    flex: 1;
+    min-width: 0;
+    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    font-size: 13px;
+    margin-left: 16px;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+
+/* Selection count - shows number of selected items */
+.selection-count {
+    font-size: 12px;
+    color: #666;
+    margin-left: 8px;
+    font-weight: 500;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+/* File list container - takes remaining space, scrolls internally */
+.file-list-container {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+/* Material selection list styling */
+mat-selection-list {
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Individual list items */
+mat-list-option {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    min-height: 48px;
+    padding: 8px 16px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+mat-list-option:last-child {
+    border-bottom: none;
+}
+
+/* Item name styling */
+.item-name {
+    font-weight: 500;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Loading state */
+.loading {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+/* Empty state */
+.empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+.empty mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    color: rgba(0, 0, 0, 0.3);
+}
+
+/* Selection info - shown when items are selected */
+.selection-info {
+    padding: 12px 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    font-size: 13px;
+    text-align: center;
+    font-weight: 500;
+    user-select: none;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+/* Footer - fixed at bottom */
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    flex-shrink: 0;
+    background: inherit;
+    box-sizing: border-box;
+    min-height: 64px;
+}
+
+/* Custom scrollbar styling */
+.file-list-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.file-list-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.file-list-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.file-list-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.5);
+}

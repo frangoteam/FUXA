@@ -1,0 +1,109 @@
+<div class="template-manager-dialog">
+    <h2 mat-dialog-title>
+        {{ data.mode === 'select' ? 'Select Template' : 'Template Manager' }}
+    </h2>
+
+    <mat-dialog-content>
+        <div class="templates-grid" *ngIf="!loading">
+            <div
+                class="template-card"
+                *ngFor="let template of templates"
+                [class.selected]="selectedTemplate === template"
+                (click)="selectTemplate(template)"
+            >
+                <div class="template-thumbnail">
+                    <img
+                        *ngIf="template.thumbnailUrl"
+                        [src]="template.thumbnailUrl"
+                        [alt]="template.name"
+                        class="thumbnail-image"
+                    >
+                    <div *ngIf="!template.thumbnailUrl" class="no-thumbnail">
+                        <mat-icon>image</mat-icon>
+                        <span>No Preview</span>
+                    </div>
+                </div>
+                <div class="template-info">
+                    <div class="template-name">{{ template.name }}</div>
+                </div>
+                <div class="template-actions" *ngIf="data.mode === 'manage' && selectedTemplate === template">
+                    <button mat-icon-button (click)="editTemplate(template); $event.stopPropagation()" matTooltip="Edit template">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="deleteTemplate(template); $event.stopPropagation()" matTooltip="Delete template">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+                <div class="template-select" *ngIf="data.mode === 'select' || data.mode === 'manage'">
+                    <mat-icon *ngIf="selectedTemplate === template" color="primary">check_circle</mat-icon>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" *ngIf="loading">
+            <p>Loading templates...</p>
+        </div>
+
+        <!-- Save Template Form -->
+        <div class="save-template-form" *ngIf="data.mode === 'save'">
+            <h3>Save Template</h3>
+            <mat-form-field appearance="outline" class="compact-form-field">
+                <mat-label>Template Name</mat-label>
+                <input matInput [(ngModel)]="saveTemplateName" placeholder="Enter template name" required>
+            </mat-form-field>
+            <mat-checkbox [(ngModel)]="overwriteExisting" class="overwrite-checkbox">
+                Overwrite existing template with same name
+            </mat-checkbox>
+            <div class="save-form-actions">
+                <button mat-button (click)="cancelSaveTemplate()">Cancel</button>
+                <button mat-raised-button color="primary" (click)="saveTemplate()">
+                    <mat-icon>save</mat-icon>
+                    Save Template
+                </button>
+            </div>
+        </div>
+
+        <div class="create-template" *ngIf="data.mode === 'manage'">
+            <div class="upload-download-section">
+                <input type="file" #fileInput (change)="onFileSelected($event)" accept=".json" style="display: none;">
+                <button mat-stroked-button (click)="fileInput.click()">
+                    <mat-icon>upload</mat-icon>
+                    Upload Template
+                </button>
+                <button mat-stroked-button (click)="downloadTemplate(); $event.stopPropagation()" [disabled]="!selectedTemplate">
+                    <mat-icon>download</mat-icon>
+                    Download Template
+                </button>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Dialog -->
+        <div class="delete-confirm-overlay" *ngIf="showDeleteConfirm">
+            <div class="delete-confirm-dialog">
+                <h3>Delete Template</h3>
+                <p>Are you sure you want to delete the template "<strong>{{ templateToDelete?.name }}</strong>"?</p>
+                <p class="warning-text">This action cannot be undone.</p>
+                <mat-dialog-actions align="end">
+                    <button mat-button (click)="cancelDelete()">Cancel</button>
+                    <button mat-raised-button color="warn" (click)="confirmDelete()">
+                        <mat-icon>delete</mat-icon>
+                        Delete
+                    </button>
+                </mat-dialog-actions>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button (click)="onCancel()">Cancel</button>
+        <button
+            mat-raised-button
+            color="primary"
+            (click)="confirmSelection()"
+            *ngIf="data.mode === 'select'"
+            [disabled]="!selectedTemplate"
+        >
+            Select Template
+        </button>
+    </mat-dialog-actions>
+</div>

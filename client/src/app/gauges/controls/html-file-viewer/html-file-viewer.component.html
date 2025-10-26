@@ -1,0 +1,120 @@
+<div #fileViewerContainer class="file-viewer-container" [style.background-color]="property?.backgroundColor" [style.border-color]="property?.borderColor" [style.color]="property?.textColor"
+     [style.--accent-color]="property?.accentColor"
+     [style.--background-color]="property?.backgroundColor"
+     [style.--border-color]="property?.borderColor"
+     [style.--text-color]="property?.textColor"
+     [style.--secondary-text-color]="property?.secondaryTextColor"
+     [style.--accent-color-light]="property?.accentColor + '20'"
+     [style.--background-color-hover]="property?.backgroundColor + '10'">
+    <div class="file-viewer-header">
+        <div class="header-buttons">
+            <button mat-icon-button (click)="loadFiles()" matTooltip="{{ 'file-viewer.refresh' | translate }}">
+                <mat-icon>refresh</mat-icon>
+            </button>
+            <button mat-icon-button (click)="openFileSelectorWithRefresh()" matTooltip="{{ 'file-viewer.select-file' | translate }}">
+                <mat-icon>insert_drive_file</mat-icon>
+            </button>
+        </div>
+        <h3>{{ property?.headerText || 'File Viewer' }}</h3>
+        <div class="header-spacer"></div>
+    </div>
+    <div class="file-viewer-content">
+        <div class="file-list" *ngIf="canView && showFileList">
+            <div class="file-list-header" [style.background-color]="property?.accentColor" [style.color]="property?.secondaryTextColor">
+                <div class="header-title">
+                    <mat-icon>folder</mat-icon>
+                    <span>{{ 'file-viewer.files' | translate }}</span>
+                </div>
+                <input type="text" [(ngModel)]="searchTerm" (input)="filterFiles()" placeholder="{{ 'file-viewer.search' | translate }}" [style.background-color]="property?.backgroundColor" [style.color]="property?.textColor" [style.border-color]="property?.borderColor">
+                <div class="filter-controls">
+                    <div class="custom-select" 
+                         [class.open]="sortByDropdownOpen">
+                        <div class="custom-select-trigger" 
+                             (click)="toggleSortByDropdown()"
+                             [style]="getSelectStyles()">
+                            <span class="selected-text">{{ getSortByLabel() }}</span>
+                            <span class="material-icons arrow">{{sortByDropdownOpen ? 'arrow_drop_up' : 'arrow_drop_down'}}</span>
+                        </div>
+                        <div class="custom-select-dropdown" *ngIf="sortByDropdownOpen">
+                            <div class="custom-option" 
+                                 [class.selected]="sortBy === 'name'"
+                                 [class.hovered]="hoveredSortBy === 'name'"
+                                 (click)="selectSortBy('name')"
+                                 (mouseenter)="hoveredSortBy = 'name'"
+                                 (mouseleave)="hoveredSortBy = null">
+                                {{ 'file-viewer.sort-name' | translate }}
+                            </div>
+                            <div class="custom-option" 
+                                 [class.selected]="sortBy === 'date'"
+                                 [class.hovered]="hoveredSortBy === 'date'"
+                                 (click)="selectSortBy('date')"
+                                 (mouseenter)="hoveredSortBy = 'date'"
+                                 (mouseleave)="hoveredSortBy = null">
+                                {{ 'file-viewer.sort-date' | translate }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="custom-select" 
+                         [class.open]="sortOrderDropdownOpen">
+                        <div class="custom-select-trigger" 
+                             (click)="toggleSortOrderDropdown()"
+                             [style]="getSelectStyles()">
+                            <span class="selected-text">{{ getSortOrderLabel() }}</span>
+                            <span class="material-icons arrow">{{sortOrderDropdownOpen ? 'arrow_drop_up' : 'arrow_drop_down'}}</span>
+                        </div>
+                        <div class="custom-select-dropdown" *ngIf="sortOrderDropdownOpen">
+                            <div class="custom-option" 
+                                 [class.selected]="sortOrder === 'asc'"
+                                 [class.hovered]="hoveredSortOrder === 'asc'"
+                                 (click)="selectSortOrder('asc')"
+                                 (mouseenter)="hoveredSortOrder = 'asc'"
+                                 (mouseleave)="hoveredSortOrder = null">
+                                {{ 'file-viewer.asc' | translate }}
+                            </div>
+                            <div class="custom-option" 
+                                 [class.selected]="sortOrder === 'desc'"
+                                 [class.hovered]="hoveredSortOrder === 'desc'"
+                                 (click)="selectSortOrder('desc')"
+                                 (mouseenter)="hoveredSortOrder = 'desc'"
+                                 (mouseleave)="hoveredSortOrder = null">
+                                {{ 'file-viewer.desc' | translate }}
+                            </div>
+                        </div>
+                    </div>
+                    <button mat-icon-button class="calendar-filter-btn" *ngIf="property.dateFilter?.enabled" (click)="toggleDateFilter()" matTooltip="{{ 'file-viewer.date-filter' | translate }}" [style.color]="property?.secondaryTextColor">
+                        <mat-icon>date_range</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <div class="date-filter-panel" *ngIf="property.dateFilter?.enabled && showDateFilter" [style.background-color]="property?.backgroundColor" [style.border-color]="property?.borderColor">
+                <div class="date-inputs">
+                    <div class="date-input">
+                        <label>{{ 'file-viewer.start-date' | translate }}</label>
+                        <input type="date" [(ngModel)]="property.dateFilter.startDate" (change)="filterFiles()" class="custom-date-picker">
+                    </div>
+                    <div class="date-input">
+                        <label>{{ 'file-viewer.end-date' | translate }}</label>
+                        <input type="date" [(ngModel)]="property.dateFilter.endDate" (change)="filterFiles()" class="custom-date-picker">
+                    </div>
+                </div>
+            </div>
+            <div class="file-items" [style.background-color]="property?.backgroundColor">
+                <div *ngFor="let file of filteredFiles" class="file-item" (click)="selectFile(file)" [class.selected]="selectedFile === file" [style.color]="property?.textColor" [style.border-color]="property?.borderColor">
+                    <mat-icon [style.color]="property?.textColor">{{ getFileIcon(file) }}</mat-icon>
+                    <span class="file-name">{{ file.name }}</span>
+                    <span class="file-date">{{ file.modified | date:'dd/MM/yyyy' }}</span>
+                    <button mat-icon-button *ngIf="canDelete" (click)="$event.stopPropagation(); deleteFile(file)" matTooltip="{{ 'file-viewer.delete' | translate }}" [style.color]="property?.textColor">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="permission-message" *ngIf="property.viewEnabled && !canView">
+            <mat-icon>lock</mat-icon>
+            <p>{{ 'file-viewer.insufficient-view-permission' | translate }}</p>
+        </div>
+        <div class="file-viewer-iframe" *ngIf="selectedFile && canView">
+            <iframe [src]="fileUrl" width="100%" height="100%" frameborder="0"></iframe>
+        </div>
+    </div>
+</div>

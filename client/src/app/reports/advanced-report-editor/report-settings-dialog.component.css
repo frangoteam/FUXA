@@ -1,0 +1,282 @@
+.settings-dialog {
+    /* Ensure single scrollbar on dialog content only */
+    ::ng-deep .mat-mdc-dialog-content {
+        max-height: 70vh !important;
+        overflow-y: auto !important;
+    }
+
+    .settings-form {
+        display: flex;
+        flex-direction: column;
+        gap: 24px; 
+        min-width: 550px;
+        max-width: 700px; 
+
+        mat-form-field {
+            width: 100%; /* Ensure all form fields stretch fully */
+        }
+    }
+
+    .form-row {
+        display: flex;
+        gap: 20px;
+
+        mat-form-field {
+            flex: 1;
+            min-width: 0; 
+        }
+
+        &:not(:last-child) {
+            margin-bottom: 16px;
+        }
+    }
+
+    .pdfme-settings-section {
+        h3 {
+            margin-bottom: 16px;
+        }
+
+        .form-row {
+            &:not(:last-child) {
+                margin-bottom: 20px; 
+            }
+        }
+    }
+    .emails-section, .table-source-section, .execute-tag-section, .trigger-tags-section, .scheduling-section, .email-settings-section {
+        margin-top: 32px; 
+
+        h3, h4 {
+            margin-bottom: 12px; 
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .section-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px; 
+            line-height: 1.4;
+        }
+
+        mat-chip-listbox {
+            margin-bottom: 8px;
+            min-height: 40px;
+        }
+
+        button {
+            margin-top: 12px; 
+        }
+
+        .email-checkbox, .save-disk-checkbox {
+            margin-bottom: 16px;
+
+            mat-checkbox {
+                display: block;
+                margin-bottom: 8px;
+            }
+
+            mat-hint {
+                margin-left: 0;
+                margin-top: 4px;
+                font-size: 12px;
+                color: rgba(255, 255, 255, 0.6);
+            }
+        }
+
+        .email-settings {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 16px;
+
+            mat-form-field {
+                width: 100%; 
+
+                textarea {
+                    resize: vertical;
+                    width: 100% !important; 
+                    box-sizing: border-box;
+                }
+            }
+
+            .email-addresses {
+                label {
+                    display: block;
+                    font-size: 14px;
+                    font-weight: 500;
+                    margin-bottom: 12px;
+                    color: rgba(255, 255, 255, 0.87);
+                }
+
+                .email-input {
+                    margin-bottom: 12px;
+
+                    mat-form-field {
+                        width: 100%;
+                    }
+                }
+
+                button {
+                    margin-top: 8px;
+                    align-self: flex-start;
+                }
+            }
+        }
+    }
+
+    .trigger-tag-section {
+        margin-top: 32px; 
+        padding: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 4px;
+        background-color: rgba(255, 255, 255, 0.02);
+
+        .trigger-tag-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.87);
+        }
+
+        app-flex-device-tag {
+            display: block;
+            width: 100%;
+        }
+
+        mat-hint {
+            display: block;
+            margin-top: 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+    }
+
+    .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 32px; 
+        padding-top: 20px; 
+        border-top: 1px solid rgba(0, 0, 0, 0.12);
+
+        button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 48px;
+            font-weight: 500;
+
+            mat-icon {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        button[mat-stroked-button] {
+            background-color: rgba(0, 0, 0, 0.04);
+            transition: background-color 0.2s ease;
+        }
+
+        button[mat-stroked-button]:hover {
+            background-color: rgba(0, 0, 0, 0.08);
+        }
+    }
+
+    ::ng-deep .mat-mdc-dialog-content {
+        overflow: hidden !important;
+        max-height: none !important;
+    }
+
+    /* Ensure only the form scrolls */
+    ::ng-deep .mat-mdc-dialog-container .mat-mdc-dialog-content .settings-form {
+        overflow-y: auto !important;
+        max-height: 70vh !important;
+    }
+
+    .global-time-range-section {
+        margin-top: 32px;
+
+        h3 {
+            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .section-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+
+            mat-form-field {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+    }
+
+    .table-configs-section {
+        margin-top: 32px;
+
+        h3 {
+            margin-bottom: 12px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .section-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .table-field {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.02);
+
+            .table-field-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                .table-field-name {
+                    font-weight: 500;
+                    color: rgba(255, 255, 255, 0.87);
+                }
+            }
+
+            .table-field-status {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+
+                &.configured {
+                    color: #4caf50;
+                }
+
+                .warning-icon {
+                    color: #ff9800;
+                }
+
+                .success-icon {
+                    color: #4caf50;
+                }
+            }
+        }
+    }
+}

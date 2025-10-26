@@ -62,6 +62,12 @@ RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && \
     rm -rf /var/lib/apt/lists/*  && \
     npm install --build-from-source --sqlite=/usr/bin sqlite3
 
+# Build the pdfme React app
+RUN npm run build:all
+
+# Clean up react node_modules
+RUN rm -rf react/pdfme/node_modules
+
 # Add project files
 ADD . /usr/src/app/FUXA
 

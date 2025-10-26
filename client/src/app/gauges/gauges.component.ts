@@ -27,6 +27,7 @@ import { NgxGaugeComponent } from '../gui-helpers/ngx-gauge/ngx-gauge.component'
 import { NgxNouisliderComponent } from '../gui-helpers/ngx-nouislider/ngx-nouislider.component';
 import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.component';
 import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.component';
+import { HtmlFileViewerComponent } from './controls/html-file-viewer/html-file-viewer.component';
 import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
 import { HtmlSchedulerComponent } from './controls/html-scheduler/html-scheduler.component';
@@ -74,7 +75,7 @@ export class GaugesManager {
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
-        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
+        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlFileViewerComponent, HtmlTableComponent,
         HtmlImageComponent, PanelComponent, HtmlVideoComponent, HtmlSchedulerComponent];
 
     constructor(private hmiService: HmiService,
@@ -203,6 +204,11 @@ export class GaugesManager {
             return this.mapGauges[ga.id] = HtmlSwitchComponent.detectChange(ga, res, ref);
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
             HtmlIframeComponent.detectChange(ga);
+        } else if (ga.type.startsWith(HtmlFileViewerComponent.TypeTag)) {
+            let gauge = HtmlFileViewerComponent.detectChange(ga, res, ref);
+            if (gauge) {
+                this.mapGauges[ga.id] = gauge;
+            }
         } else if (ga.type.startsWith(HtmlTableComponent.TypeTag)) {
             delete this.mapGauges[ga.id];
             let gauge = HtmlTableComponent.detectChange(ga, res, ref);
@@ -888,6 +894,14 @@ export class GaugesManager {
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
             let gauge = HtmlIframeComponent.initElement(ga, isview);
             return gauge || true;
+        } else if (ga.type.startsWith(HtmlFileViewerComponent.TypeTag)) {
+            console.log('Creating File Viewer runtime component for:', ga.id);
+            let gauge = HtmlFileViewerComponent.initElement(ga, res, ref, isview);
+            console.log('File Viewer runtime component created:', gauge);
+            if (gauge) {
+                this.mapGauges[ga.id] = gauge;
+            }
+            return gauge;
         } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
             let gauge = HtmlImageComponent.initElement(ga, isview);
             this.mapGauges[ga.id] = gauge;
