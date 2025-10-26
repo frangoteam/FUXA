@@ -16,7 +16,7 @@ jobs:
   build-container:
     runs-on: ubuntu-latest
     env:
-      NODE_OPTIONS: --max-old-space-size=4096
+      NODE_OPTIONS: --max-old-space-size=8192
 
     steps:
       - name: Checkout repository
@@ -38,6 +38,7 @@ jobs:
           build-args: |
             REPO_URL=${{ github.server_url }}/${{ github.repository }}
             BRANCH_NAME=${{ github.head_ref || github.ref_name }}
+            NODE_OPTIONS_ARG=--max-old-space-size=8192
 
       - name: Upload Docker image as artifact
         uses: actions/upload-artifact@v4

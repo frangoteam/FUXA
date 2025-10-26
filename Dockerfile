@@ -3,7 +3,7 @@ FROM node:18-bookworm
 ARG NODE_SNAP=false
 
 # Increase Node.js memory limit for all builds
-ENV NODE_OPTIONS="--dns-result-order=ipv4first --max-old-space-size=4096"
+ENV NODE_OPTIONS="--dns-result-order=ipv4first --max-old-space-size=8192"
 
 RUN apt-get update && apt-get install -y dos2unix
 
@@ -13,6 +13,7 @@ WORKDIR /usr/src/app
 # Clone FUXA repository from the current repository and branch
 ARG REPO_URL
 ARG BRANCH_NAME
+ARG NODE_OPTIONS_ARG
 RUN git clone -b ${BRANCH_NAME:-master} ${REPO_URL:-https://github.com/frangoteam/FUXA.git}
 
 # Install build dependencies for node-odbc and graphics libraries
@@ -32,6 +33,9 @@ RUN cp FUXA/odbc/odbcinst.ini /etc/odbcinst.ini
 
 # Install Fuxa server
 WORKDIR /usr/src/app/FUXA/server
+
+# Update Node.js memory limit if build arg was provided
+ENV NODE_OPTIONS=${NODE_OPTIONS_ARG:-$NODE_OPTIONS}
 
 # More tolerant npm config
 RUN npm config set registry https://registry.npmjs.org/ \
