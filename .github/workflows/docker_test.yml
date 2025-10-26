@@ -32,7 +32,7 @@ jobs:
           context: .
           platforms: ${{ env.platforms }}
           tags: frangoteam/${{ env.app }}:${{ env.version }}
-          outputs: type=docker,dest=/tmp/${{ env.app }}-${{ env.version }}.tar
+          outputs: type=oci,dest=/tmp/${{ env.app }}-${{ env.version }}.tar
 
       - name: Upload Docker image as artifact
         uses: actions/upload-artifact@v4
