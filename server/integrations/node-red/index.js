@@ -36,6 +36,7 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
         httpAdminRoot: '/nodered',
         httpNodeRoot: '/nodered/api',
         userDir,
+        nodesDir: [path.join(__dirname, 'node-red-contrib-fuxa')],
         flowFile: 'flows.json',
         editorTheme: {
             notifications: { enabled: false },
@@ -46,10 +47,10 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
             // Expose essential FUXA runtime helpers
             fuxa: {
                 runtime,
-                getTag: require('../../runtime/devices').getTagValue,
-                setTag: require('../../runtime/devices').setTagValue,
-                getDaq: require('../../runtime/storage/daqstorage').getNodeValues,
-                getTagId: require('../../runtime/devices').getTagId,
+                getTag: require(path.join(settings.appDir, 'runtime/devices')).getTagValue,
+                setTag: require(path.join(settings.appDir, 'runtime/devices')).setTagValue,
+                getDaq: require(path.join(settings.appDir, 'runtime/storage/daqstorage')).getNodeValues,
+                getTagId: require(path.join(settings.appDir, 'runtime/devices')).getTagId,
                 emit: events.emit.bind(events),
                 on: events.on.bind(events),
                 removeListener: events.removeListener.bind(events),
@@ -61,7 +62,7 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
                     return runtime.alarmsMgr.getAlarmsHistory(query, -1);
                 },
                 ackAlarm: async (alarmName, types) => {
-                    const utils = require('../../runtime/utils');
+                    const utils = require(path.join(settings.appDir, 'runtime/utils'));
                     const sep = runtime.alarmsMgr.getIdSeparator();
                     if (alarmName.indexOf(sep) === -1 && !utils.isNullOrUndefined(types)) {
                         const results = [];

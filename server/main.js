@@ -355,9 +355,9 @@ app.use(morgan('dev', {
 // })
 
 // set api to listen
-if (settings.disableServer !== false) {
-    app.use('/', FUXA.httpApi);
-}
+// if (settings.disableServer !== false) {
+//     app.use('/', FUXA.httpApi);
+// }
 
 function getListenPath() {
     var port = settings.serverPort;
@@ -399,6 +399,10 @@ function startFuxa() {
                 await mountNodeRedIfInstalled({ app, server, settings, runtime, logger, authJwt, events });
             } catch (e) {
                 logger.warn('[Node-RED] Failed to initialize, continuing without it.', e);
+            }
+
+            if (settings.disableServer !== false) {
+                app.use('/', FUXA.httpApi);
             }
 
             server.listen(settings.uiPort, settings.uiHost, function () {
