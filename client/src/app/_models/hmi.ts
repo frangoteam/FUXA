@@ -446,6 +446,27 @@ export interface GaugeIframeProperty {
     variableId: string;
 }
 
+export interface GaugeFileViewerProperty {
+    directory: string;
+    headerText: string;
+    viewEnabled: boolean;
+    deleteEnabled: boolean;
+    permission: number;
+    permissionRoles?: PermissionRoles;
+    accentColor: string;
+    backgroundColor: string;
+    borderColor: string;
+    textColor: string;
+    secondaryTextColor: string;
+    fileTypeFilter: string;
+    dateFilter?: {
+        enabled: boolean;
+        startDate?: string;
+        endDate?: string;
+    };
+    defaultFile?: string;
+}
+
 export interface GaugePanelProperty {
     viewName: string;
     variableId: string;
