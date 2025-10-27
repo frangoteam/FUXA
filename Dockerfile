@@ -3,7 +3,7 @@ FROM node:18-bookworm
 ARG NODE_SNAP=false
 
 # Increase Node.js memory limit for all builds
-ENV NODE_OPTIONS="--dns-result-order=ipv4first --max-old-space-size=8192"
+ENV NODE_OPTIONS=--max-old-space-size=8192
 
 RUN apt-get update && apt-get install -y dos2unix
 
@@ -34,29 +34,26 @@ RUN cp FUXA/odbc/odbcinst.ini /etc/odbcinst.ini
 # Install Fuxa server
 WORKDIR /usr/src/app/FUXA/server
 
-# Update Node.js memory limit if build arg was provided
-ENV NODE_OPTIONS=${NODE_OPTIONS_ARG:-$NODE_OPTIONS}
-
 # More tolerant npm config
-RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set registry https://registry.npmjs.org/
-RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set fetch-retries 8
-RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set fetch-retry-factor 2
-RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set fetch-retry-mintimeout 30000
-RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set fetch-retry-maxtimeout 300000
-RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set audit false
-RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set fund false
+ENV NODE_OPTIONS=--dns-result-order=ipv4first
+RUN npm config set registry https://registry.npmjs.org/ \
+ && npm config set fetch-retries 8 \
+ && npm config set fetch-retry-factor 2 \
+ && npm config set fetch-retry-mintimeout 30000 \
+ && npm config set fetch-retry-maxtimeout 300000 \
+ && npm config set audit false \
+ && npm config set fund false
 
 # Retry loop con backoff + timeout alto
 RUN bash -lc '\
   for i in 1 2 3 4 5 6 7 8; do \
     echo "npm install - attempt $i/8"; \
-    NODE_OPTIONS="--max-old-space-size=8192" npm install --no-audit --no-fund --prefer-offline --network-timeout=600000 && exit 0; \
+    NODE_OPTIONS="--max-old-space-size=8192" npm install --registry=https://registry.npmjs.org/ --fetch-retries=8 --fetch-retry-factor=2 --fetch-retry-mintimeout=30000 --fetch-retry-maxtimeout=300000 --no-audit --no-fund --prefer-offline --network-timeout=600000 && exit 0; \
     echo "Failed, wait $((10*i))s and try again..."; \
     sleep $((10*i)); \
   done; \
   echo "npm install failed after 8 attempts"; \
   exit 1'
-
 
 # Install options snap7
 RUN if [ "$NODE_SNAP" = "true" ]; then \
