@@ -524,7 +524,7 @@ function app() {
     // GET /api/pdfme/templates - List templates
     pdfmeApp.get('/api/pdfme/templates', (req, res) => {
         try {
-            const templatesDir = path.join(runtime.settings.appDir, '_reports', 'templates');
+            const templatesDir = path.join(runtime.settings.reportsDir, 'templates');
             if (!fs.existsSync(templatesDir)) {
                 return res.json([]);
             }
@@ -552,7 +552,7 @@ function app() {
     // GET /api/pdfme/templates/:id - Get template data
     pdfmeApp.get('/api/pdfme/templates/:id', (req, res) => {
         try {
-            const templatePath = path.join(runtime.settings.appDir, '_reports', 'templates', req.params.id, 'template.json');
+            const templatePath = path.join(runtime.settings.reportsDir, 'templates', req.params.id, 'template.json');
             if (!fs.existsSync(templatePath)) {
                 return res.status(404).json({ error: 'Template not found' });
             }
@@ -565,7 +565,7 @@ function app() {
     });
     // GET /api/pdfme/templates/:id/thumbnail.png - Serve thumbnail
     pdfmeApp.get('/api/pdfme/templates/:id/thumbnail.png', (req, res) => {
-        const thumbnailPath = path.join(runtime.settings.appDir, '_reports', 'templates', req.params.id, 'thumbnail.png');
+        const thumbnailPath = path.join(runtime.settings.reportsDir, 'templates', req.params.id, 'thumbnail.png');
         if (fs.existsSync(thumbnailPath)) {
             res.sendFile(thumbnailPath);
         }
@@ -577,7 +577,7 @@ function app() {
     pdfmeApp.post('/api/pdfme/templates', (req, res) => {
         try {
             const { id, template } = req.body;
-            const templateDir = path.join(runtime.settings.appDir, '_reports', 'templates', id);
+            const templateDir = path.join(runtime.settings.reportsDir, 'templates', id);
             if (!fs.existsSync(templateDir)) {
                 fs.mkdirSync(templateDir, { recursive: true });
             }
@@ -631,7 +631,7 @@ function app() {
                 options: options || {}
             });
             // Use custom save path or default to _reports/generated
-            const defaultDir = path.join(runtime.settings.appDir, '_reports', 'generated');
+            const defaultDir = path.join(runtime.settings.reportsDir, 'generated');
             const targetDir = savePath ? path.join(runtime.settings.appDir, savePath) : defaultDir;
             if (!fs.existsSync(targetDir)) {
                 fs.mkdirSync(targetDir, { recursive: true });
@@ -665,7 +665,7 @@ function app() {
     pdfmeApp.post('/api/pdfme/save-config', (req, res) => {
         try {
             const { id, config } = req.body;
-            const configsDir = path.join(runtime.settings.appDir, '_reports', 'configs');
+            const configsDir = path.join(runtime.settings.reportsDir, 'configs');
             if (!fs.existsSync(configsDir)) {
                 fs.mkdirSync(configsDir, { recursive: true });
             }
@@ -681,7 +681,7 @@ function app() {
     pdfmeApp.post('/api/pdfme/configs', (req, res) => {
         try {
             const config = req.body;
-            const configsDir = path.join(runtime.settings.appDir, '_reports', 'configs');
+            const configsDir = path.join(runtime.settings.reportsDir, 'configs');
             if (!fs.existsSync(configsDir)) {
                 fs.mkdirSync(configsDir, { recursive: true });
             }
@@ -696,7 +696,7 @@ function app() {
     // GET /api/pdfme/configs/:id - Load config
     pdfmeApp.get('/api/pdfme/configs/:id', (req, res) => {
         try {
-            const filePath = path.join(runtime.settings.appDir, '_reports', 'configs', `${req.params.id}.json`);
+            const filePath = path.join(runtime.settings.reportsDir, 'configs', `${req.params.id}.json`);
             if (!fs.existsSync(filePath)) {
                 return res.status(404).json({ error: 'Config not found' });
             }

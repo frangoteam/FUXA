@@ -1,0 +1,142 @@
+<script type="text/x-red" data-template-name="report-table-data">
+    <div class="form-row">
+        <label for="node-input-tableName"><i class="fa fa-table"></i> Table Name</label>
+        <input type="text" id="node-input-tableName" placeholder="my-table">
+    </div>
+    <div class="form-row">
+        <input type="checkbox" id="node-input-includeTimestamp" style="display: inline-block; width: auto; margin-right: 10px;">
+        <label for="node-input-includeTimestamp" style="display: inline-block;">Include timestamp column</label>
+    </div>
+    <div class="form-row">
+        <label for="node-input-timestampFormat"><i class="fa fa-clock-o"></i> Timestamp Format</label>
+        <input type="text" id="node-input-timestampFormat" placeholder="DD-MM-YYYY HH:mm:ss">
+    </div>
+    <div class="form-row">
+        <label for="node-input-numberFormat"><i class="fa fa-calculator"></i> Number Format</label>
+        <input type="text" id="node-input-numberFormat" placeholder="0.00">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Format Table Data">
+    </div>
+    <div class="form-tips">
+        <p><strong>Input:</strong> <code>msg.payload</code> - FUXA historical data from get-historical-tags</p>
+        <p><strong>Output:</strong> <code>msg.tableData[tableName]</code> - 2D array for PDF tables</p>
+
+        <h4>Table Generation:</h4>
+        <p>Creates 2D arrays from time-series data. Aligns multiple tags by timestamp, fills missing values with empty strings.</p>
+
+        <h4>FUXA Historical Data Format:</h4>
+        <pre>msg.payload = {
+  "temperature": [
+    {"x": "2025-10-26T13:54:21.000Z", "y": "25.123"},
+    {"x": "2025-10-26T13:55:22.000Z", "y": "25.456"}
+  ],
+  "pressure": [
+    {"x": "2025-10-26T13:54:21.000Z", "y": "1012.567"},
+    {"x": "2025-10-26T13:55:22.000Z", "y": "1012.890"}
+  ]
+}</pre>
+
+        <p><strong>With timestamp column:</strong></p>
+        <pre>msg.tableData["my-table"] = [
+  ["26-10-2025 13:54:21", "25.12", "1012.57"],
+  ["26-10-2025 13:55:22", "25.46", "1012.89"]
+]</pre>
+
+        <p><strong>Without timestamp column:</strong></p>
+        <pre>msg.tableData["my-table"] = [
+  ["25.12", "1012.57"],
+  ["25.46", "1012.89"]
+]</pre>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="report-table-data">
+    <p>Formats FUXA historical data into 2D arrays for PDFme table generation.</p>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Complete historical data object with tag names as keys and arrays of {x,y} points as values</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>tableData <span class="property-type">object</span></dt>
+        <dd>Contains the formatted table data as <code>msg.tableData[tableName]</code></dd>
+    </dl>
+
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Table Name <span class="property-type">string</span></dt>
+        <dd>Name of the table in the PDFme report template (must match template exactly)</dd>
+        <dt>Include timestamp column <span class="property-type">boolean</span></dt>
+        <dd>Whether to include formatted timestamps as the first column</dd>
+        <dt>Timestamp Format <span class="property-type">string</span></dt>
+        <dd>Format template for timestamps using YYYY (year), MM (month), DD (day), HH (hours), mm (minutes), ss (seconds)</dd>
+        <dt>Number Format <span class="property-type">string</span></dt>
+        <dd>Format template for numeric values (e.g., "0.00" for 2 decimals, "0.000" for 3 decimals)</dd>
+        <dt>Name <span class="property-type">string</span></dt>
+        <dd>Optional name for the node</dd>
+    </dl>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>FUXA historical data object with tag names as keys</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>tableData <span class="property-type">object</span></dt>
+        <dd>Contains formatted table as <code>msg.tableData[tableName]</code></dd>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Contains tableData object for chaining</dd>
+    </dl>
+
+    <h3>Processing</h3>
+    <p>Converts FUXA historical data into 2D arrays suitable for PDFme table elements. Aligns data by timestamp, formats timestamps and numbers according to specified templates.</p>
+
+    <h3>Supported Input Format</h3>
+    <pre>{
+  "tag1": [
+    {"x": "2025-10-26T13:54:21.000Z", "y": "25.1"},
+    {"x": "2025-10-26T13:55:22.000Z", "y": "25.3"}
+  ],
+  "tag2": [
+    {"x": "2025-10-26T13:54:21.000Z", "y": "1012.5"},
+    {"x": "2025-10-26T13:55:22.000Z", "y": "1012.8"}
+  ]
+}</pre>
+
+    <h3>Timestamp Format Examples</h3>
+    <ul>
+        <li><code>"DD-MM-YYYY HH:mm:ss"</code> → <code>"26-10-2025 13:54:21"</code></li>
+        <li><code>"YYYY-MM-DD HH:mm:ss"</code> → <code>"2025-10-26 13:54:21"</code></li>
+        <li><code>"MM/DD/YYYY HH:mm"</code> → <code>"10/26/2025 13:54"</code></li>
+    </ul>
+
+    <h3>Usage</h3>
+    <p>Connect to get-historical-tags node. Set Table Name to match your PDFme template. Configure timestamp and number formatting as needed. Connect output to report-generate node.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('report-table-data', {
+        category: 'FUXA',
+        color: '#C0DEED',
+        defaults: {
+            tableName: { value: "my-table", required: true },
+            includeTimestamp: { value: true },
+            timestampFormat: { value: "YYYY-MM-DDTHH:mm:ss.sssZ" },
+            numberFormat: { value: "0.00" },
+            name: { value: "" }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "table.png",
+        label: function() {
+            return this.name || this.tableName || "Table Data";
+        }
+    });
+</script>
