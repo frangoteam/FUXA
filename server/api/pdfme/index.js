@@ -7,7 +7,7 @@ const { getInputFromTemplate, getDefaultFont } = require('@pdfme/common');
 const { multiVariableText, text, barcodes, image, svg, line, table, rectangle, ellipse, dateTime, date, time, select, checkbox, radioGroup } = require('@pdfme/schemas');
 // Custom signature plugin that uses image.pdf for rendering
 const signature = {
-    ui: () => null, // Dummy UI for server-side
+    ui: () => null, 
     pdf: image.pdf,
     propPanel: {
         schema: {},
@@ -60,10 +60,8 @@ async function processDynamicData(template, inputs, tableConfigs = [], _runtime 
             templateJson = templateJson.replace(new RegExp(match.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), replacement);
         } catch (error) {
             console.error(`Failed to process tag match ${match}:`, error.message);
-            // Continue processing other matches
         }
     }
-    // Parse back to object
     const processedTemplate = JSON.parse(templateJson);
 
     // Process table configurations
@@ -99,7 +97,6 @@ async function processDynamicData(template, inputs, tableConfigs = [], _runtime 
         for (const key of Object.keys(inputs[0])) {
             const value = inputs[0][key];
             if (Array.isArray(value) && value.length > 0 && Array.isArray(value[0])) {
-                // This looks like table data (2D array)
                 let fieldFound = false;
                 for (const schema of processedTemplate.schemas) {
                     for (const field of schema) {
@@ -135,7 +132,7 @@ function getTagValue(tagName, activeRuntime = runtime) {
         return tagValue;
     }
     catch (error) {
-        throw error; // Re-throw to fail the PDF generation
+        throw error; 
     }
 }
 // Get alarm history data
@@ -606,15 +603,15 @@ function app() {
             // Set default basePdf if not provided
             if (!processedTemplate.basePdf) {
                 processedTemplate.basePdf = {
-                    width: 210, // A4 width in mm
-                    height: 297, // A4 height in mm
-                    padding: [0, 0, 0, 0] // No padding for blank PDF
+                    width: 210, 
+                    height: 297, 
+                    padding: [0, 0, 0, 0] 
                 };
             }
             // Ensure inputs is not empty - pdfme requires at least one input object
             let processedInputs = inputs || [];
             if (processedInputs.length === 0) {
-                processedInputs = [{}]; // Add empty object as minimum requirement
+                processedInputs = [{}]; 
             }
             // If this is a dynamic report, process live data
             if (isDynamicReport) {
@@ -646,7 +643,7 @@ function app() {
             let fileName = `${baseName}.pdf`;
             let counter = 1;
             let filePath = path.join(targetDir, fileName);
-            // Check for existing files and append number if needed
+
             while (fs.existsSync(filePath)) {
                 fileName = `${baseName}_${counter}.pdf`;
                 filePath = path.join(targetDir, fileName);

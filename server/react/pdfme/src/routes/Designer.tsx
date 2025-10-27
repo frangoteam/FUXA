@@ -90,8 +90,6 @@ function DesignerApp() {
           if (designer.current) {
             // Update designer options
             if (settings.language) {
-              // Note: pdfme doesn't support changing language dynamically
-              // We would need to recreate the designer
             }
             // Update template properties
             const template = designer.current.getTemplate();

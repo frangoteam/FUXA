@@ -130,7 +130,7 @@ export class TemplateManagerDialogComponent {
             this.http.delete(`/api/advanced-reports/templates/${this.templateToDelete.name}`).subscribe({
                 next: () => {
                     this.snackBar.open('Template deleted successfully', 'OK', { duration: 3000 });
-                    this.loadTemplates(); // Refresh the template list
+                    this.loadTemplates();
                     this.cancelDelete();
                 },
                 error: (error) => {
