@@ -38,13 +38,13 @@ WORKDIR /usr/src/app/FUXA/server
 ENV NODE_OPTIONS=${NODE_OPTIONS_ARG:-$NODE_OPTIONS}
 
 # More tolerant npm config
-RUN npm config set registry https://registry.npmjs.org/ \
- && npm config set fetch-retries 8 \
- && npm config set fetch-retry-factor 2 \
- && npm config set fetch-retry-mintimeout 30000 \
- && npm config set fetch-retry-maxtimeout 300000 \
- && npm config set audit false \
- && npm config set fund false
+RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set registry https://registry.npmjs.org/
+RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set fetch-retries 8
+RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set fetch-retry-factor 2
+RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set fetch-retry-mintimeout 30000
+RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set fetch-retry-maxtimeout 300000
+RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set audit false
+RUN NODE_OPTIONS="--max-old-space-size=8192" npm config set fund false
 
 # Retry loop con backoff + timeout alto
 RUN bash -lc '\
