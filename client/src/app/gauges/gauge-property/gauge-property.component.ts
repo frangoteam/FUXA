@@ -112,6 +112,10 @@ export class GaugePropertyComponent implements AfterViewInit {
         this.flexAction.onAddAction();
     }
 
+    onPropertyChanged(settings: any) {
+        this.data.settings = settings;
+    }
+
     onRangeViewToggle() {
         this.flexHead.onRangeViewToggle(this.slideView);
     }

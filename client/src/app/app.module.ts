@@ -112,6 +112,7 @@ import { HtmlSelectComponent } from './gauges/controls/html-select/html-select.c
 import { HtmlChartComponent } from './gauges/controls/html-chart/html-chart.component';
 import { HtmlGraphComponent } from './gauges/controls/html-graph/html-graph.component';
 import { HtmlIframeComponent } from './gauges/controls/html-iframe/html-iframe.component';
+import { HtmlFileViewerComponent } from './gauges/controls/html-file-viewer/html-file-viewer.component';
 import { HtmlFileViewerRuntimeComponent } from './gauges/controls/html-file-viewer/html-file-viewer-runtime.component';
 import { HtmlBagComponent } from './gauges/controls/html-bag/html-bag.component';
 import { HtmlTableComponent } from './gauges/controls/html-table/html-table.component';
@@ -315,6 +316,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         PipePropertyComponent,
         SliderPropertyComponent,
         HtmlSwitchPropertyComponent,
+        FileViewerPropertyComponent,
         ShapesComponent,
         ProcEngComponent,
         ApeShapesComponent,
@@ -487,6 +489,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         PipeComponent,
         SliderComponent,
         HtmlTableComponent,
+        HtmlFileViewerComponent,
         Dictionary,
         ModalPositionCache,
         Define,
