@@ -966,6 +966,18 @@ export class ProjectService {
             });
         }
     }
+    // private notifyError(msgCode: string) {
+    //     this.translateService.get(msgCode).subscribe((msg: string) => {
+    //         if (msg) {
+    //             console.error(`FUXA Error: ${msg}`);
+    //             this.toastr.error(msg, '', {
+    //                 timeOut: 3000,
+    //                 closeButton: true,
+    //                 disableTimeOut: true
+    //             });
+    //         }
+    //     });
+    // }
     //#endregion
 
     //#region Upload resource to server
@@ -988,7 +1000,7 @@ export class ProjectService {
     setSchedulerData(id: string, data: any): Observable<any> {
         return this.storage.setSchedulerData(id, data);
     }
-    
+
     deleteSchedulerData(id: string): Observable<any> {
         return this.storage.deleteSchedulerData(id);
     }

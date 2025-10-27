@@ -489,20 +489,34 @@ export interface GaugeTableProperty {
 export interface GaugeSchedulerProperty {
     id: string;
     devices: SchedulerDevice[];
-    colors: SchedulerColors;
+    deviceActions: SchedulerDeviceAction[];
+    permission: number;
+    permissionRoles: PermissionRoles;
+    accentColor: string;
+    backgroundColor: string;
+    textColor: string;
+    secondaryTextColor: string;
+    borderColor: string;
+    hoverColor: string;
+    timeFormat: string;
+}
+
+export interface SchedulerDeviceAction {
+    deviceName: string;
+    action: string;
+    actparam?: string;
+    actoptions?: any;
+    eventTrigger?: 'on' | 'off';
 }
 
 export interface SchedulerDevice {
+    variableId: string;
     name: string;
-    tagId: string;
-    label: string;
-}
-
-export interface SchedulerColors {
-    background: string;
-    text: string;
-    accent: string;
-    border: string;
+    permission?: number;
+    permissionRoles?: {
+        show: string[];
+        enabled: string[];
+    };
 }
 
 export enum TableType {

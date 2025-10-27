@@ -1,10 +1,10 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef, ChangeDetectorRef, ViewEncapsulation, AfterViewInit, NgZone } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { fromEvent, Subject, take, takeUntil } from 'rxjs';
 import { HmiService } from '../../../../_services/hmi.service';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { AuthService } from '../../../../_services/auth.service';
 import { Utils } from '../../../../_helpers/utils';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-scheduler',
@@ -21,11 +21,13 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     @Input() id: string;
 
     private destroy$ = new Subject<void>();
-    
-    static TypeTag = 'svg-ext-html_scheduler';
-    
 
-    static LabelTag = 'HtmlScheduler';
+    dayLabelsShort: string[] = [];
+    dayLabelsLong: string[] = [];
+    monthLabelsShort: string[] = [];
+    monthLabelsLong: string[] = [];
+    periods: Array<'am' | 'pm'> = ['am', 'pm'];
+    unnamedDevice = '-';
 
     static getSignals(pro: any): string[] {
         let res: string[] = [];
@@ -41,35 +43,35 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
     schedules: { [deviceName: string]: any[] } = {};
     selectedDevice: string = 'OVERVIEW';
-    selectedDeviceIndex: number = -1; 
+    selectedDeviceIndex: number = -1;
     deviceList: any[] = [];
     hoveredDevice: string = null;
-    
+
     activeStates: Map<string, boolean> = new Map();
-    
+
     // Get time format from property (12hr or 24hr)
     get timeFormat(): '12hr' | '24hr' {
         return this.property?.timeFormat || '12hr'; // Default to 12hr
     }
-    
+
     // Filter properties
     showFilterOptions: boolean = false;
     filterOptions = {
         showDisabled: true,
         showActive: true
     };
-    
+
     // Scrolling detection
     needsScrolling: boolean = false;
     overviewNeedsScrolling: boolean = false;
-    
+
     // Settings properties
     showSettingsOptions: boolean = false;
-    
+
     // Event mode tracking
     hasEventModeSchedules: boolean = false;
-    eventStartTimes: Map<string, number> = new Map(); 
-    remainingTimes: Map<string, number> = new Map(); 
+    eventStartTimes: Map<string, number> = new Map();
+    remainingTimes: Map<string, number> = new Map();
 
     // Form properties
     isEditMode: boolean = false;
@@ -86,8 +88,8 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         monthMode: false,
         disabled: false,
         deviceName: '',
-        recurring: true,  
-        eventMode: false,  
+        recurring: true,
+        eventMode: false,
         durationHours: 0,
         durationMinutes: 1,
         durationSeconds: 0
@@ -98,8 +100,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         if (!schedule.daysOfMonth) schedule.daysOfMonth = Array(31).fill(false);
         if (!schedule.days) schedule.days = Array(7).fill(false);
     }
-    monthsOfYear = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    daysOfMonth = Array.from({length: 31}, (_, i) => i + 1);
+    daysOfMonth = Array.from({ length: 31 }, (_, i) => i + 1);
     toggleMonth(index: number) {
         if (!this.formTimer.months) this.formTimer.months = Array(12).fill(false);
         this.formTimer.months[index] = !this.formTimer.months[index];
@@ -117,19 +118,18 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         let message = '<div class="calendar-popup-content">';
 
         // Months section
-        message += '<label>Months Active:</label>';
+        message += `<label>${this.translateService.instant('scheduler.months-active')}:</label>`;
         message += '<div class="months-row">';
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        for (let i = 0; i < monthNames.length; i++) {
+        for (let i = 0; i < this.monthLabelsShort.length; i++) {
             const isActive = schedule.months && schedule.months[i];
             message += `<div class="day-btn month-btn${isActive ? ' active' : ''}">`;
-            message += monthNames[i];
+            message += this.monthLabelsShort[i];
             message += '</div>';
         }
         message += '</div>';
 
         // Days of month section
-        message += '<label>Days of Month:</label>';
+        message += `<label>${this.translateService.instant('scheduler.days-of-month')}:</label>`;
         message += '<div class="days-of-month-calendar">';
         for (let i = 0; i < 31; i++) {
             const isActive = schedule.daysOfMonth && schedule.daysOfMonth[i];
@@ -143,9 +143,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
         // Show calendar dialog
         this.confirmDialogData = {
-            title: 'Monthly Schedule Details',
+            title: this.translateService.instant('scheduler.monthly-schedule-details'),
             message: message,
-            confirmText: 'Close',
+            confirmText: this.translateService.instant('general.close'),
             icon: 'calendar_month',
             showCancel: false,
             action: () => this.closeConfirmDialog()
@@ -154,9 +154,6 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     }
 
     // UI properties
-    daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    dayLabels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    
     // Required for external interface
     tagValues: { [tagId: string]: any } = {};
 
@@ -174,33 +171,39 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         private cdr: ChangeDetectorRef,
         private dialog: MatDialog,
         private authService: AuthService,
+        private translateService: TranslateService,
         private ngZone: NgZone
-    ) {}
+    ) { }
 
     ngOnInit() {
 
         this.initializeDevices();
         this.applyCustomColors();
         this.loadSchedulesFromServer();
-        
-        // Listen for scheduler updates from server 
-        this.hmiService.onSchedulerUpdated.subscribe((message) => {
+        this.initI18nLists();
+
+        // Listen for scheduler updates from server
+        this.hmiService.onSchedulerUpdated.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((message) => {
             if (message.id === this.id) {
                 this.loadSchedulesFromServer();
             }
         });
-        
+
         // Listen for scheduler event active state changes
-        this.hmiService.onSchedulerEventActive.subscribe((message) => {
+        this.hmiService.onSchedulerEventActive.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((message) => {
             if (message.schedulerId === this.id) {
-                
+
                 const eventId = message.eventData?.id;
                 if (!eventId) {
                     return;
                 }
                 const stateKey = `${message.deviceName}_${eventId}`;
                 this.activeStates.set(stateKey, message.active);
-                
+
                 // For event mode: track start time and duration
                 if (message.active && message.eventData?.eventMode && message.eventData?.duration) {
                     this.eventStartTimes.set(stateKey, Date.now());
@@ -210,7 +213,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                     this.eventStartTimes.delete(stateKey);
                     this.remainingTimes.delete(stateKey);
                 }
-                
+
                 // Use NgZone.run() to force Angular change detection and UI update
                 this.ngZone.run(() => {
                     // Force multiple change detection cycles to ensure animation updates
@@ -220,9 +223,11 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 });
             }
         });
-        
+
         // Listen for remaining time updates from server
-        this.hmiService.onSchedulerRemainingTime.subscribe((message) => {
+        this.hmiService.onSchedulerRemainingTime.pipe(
+            takeUntil(this.destroy$)
+        ).subscribe((message) => {
             if (message.schedulerId === this.id) {
                 const eventId = message.eventId;
                 if (!eventId) {
@@ -233,26 +238,29 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 this.cdr.detectChanges();
             }
         });
-        
+
         // MASTER CONTROL: Start immediately
         if (!this.isEditor) {
             // Start master control as soon as possible
             setTimeout(() => {
                 this.loadDeviceStatesForDisplay();
-            }, 100); 
+            }, 100);
         }
-        
+
         // Force initial change detection
         setTimeout(() => {
             this.cdr.detectChanges();
         }, 100);
-        
-        // Initialize event-driven scheduler 
+
+        // Initialize event-driven scheduler
         if (!this.isEditor) {
             this.initializeEventDrivenScheduler();
         }
-        
-        document.addEventListener('click', this.onDocumentClick.bind(this));
+
+
+        fromEvent<MouseEvent>(document, 'click').pipe(
+            takeUntil(this.destroy$)
+        ).subscribe(this.onDocumentClick.bind(this));
 
     }
 
@@ -264,10 +272,10 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                     changes.property.currentValue.devices || []
                 );
             }
-            
+
             this.initializeDevices();
             this.applyCustomColors();
-            
+
             // we need to save to server so the actions are persisted and executed server-side
             if (!this.isEditor) {
                 this.saveSchedulesToServer(true);
@@ -282,7 +290,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     checkScrollingState() {
         setTimeout(() => {
             let changed = false;
-            
+
             // Check device scroll container
             if (this.deviceScrollContainer && this.deviceScrollContainer.nativeElement) {
                 const element = this.deviceScrollContainer.nativeElement;
@@ -292,7 +300,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                     changed = true;
                 }
             }
-            
+
             // Check overview scroll container
             if (this.overviewScrollContainer && this.overviewScrollContainer.nativeElement) {
                 const element = this.overviewScrollContainer.nativeElement;
@@ -302,7 +310,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                     changed = true;
                 }
             }
-            
+
             if (changed) {
                 this.cdr.detectChanges();
             }
@@ -312,35 +320,29 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     ngOnDestroy() {
         this.destroy$.next();
         this.destroy$.complete();
-        
-        if (this.signalSubscription) {
-            this.signalSubscription.unsubscribe();
-        }
-        
-        document.removeEventListener('click', this.onDocumentClick.bind(this));
-        
+
         if (this.transitionWatcher) {
             cancelAnimationFrame(this.transitionWatcher);
         }
-        
+
         Object.values(this.tagWriteTimeout).forEach(timeout => {
             if (timeout) clearTimeout(timeout);
         });
         this.tagWriteTimeout = {};
         this.recentTagWrites.clear();
-        
+
     }
 
     initializeDevices() {
         if (this.property && this.property.devices && this.property.devices.length > 0) {
             this.deviceList = this.property.devices.map(device => ({
-                name: device.name || device.label || 'Unnamed Device',
-                label: device.label || device.name || 'Unnamed Device', 
+                name: device.name || device.label || this.unnamedDevice,
+                label: device.label || device.name || this.unnamedDevice,
                 variableId: device.variableId || '',
-                permission: device.permission,  
+                permission: device.permission,
                 permissionRoles: device.permissionRoles
             }));
-            
+
         } else {
             this.deviceList = [];
         }
@@ -359,7 +361,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     }
 
     // ==================== PERMISSION CHECKING METHODS ====================
-    
+
     /**
      * Check if user has master scheduler permission
      * @returns { show: boolean, enabled: boolean }
@@ -369,7 +371,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             // In editor mode, always allow full access
             return { show: true, enabled: true };
         }
-        
+
         const permission = this.authService.checkPermission(this.property);
         return permission || { show: true, enabled: true };
     }
@@ -383,16 +385,16 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         if (this.isEditor) {
             return { show: true, enabled: true };
         }
-        
+
         const device = this.deviceList.find(d => d.name === deviceName);
         if (!device) {
             return { show: false, enabled: false };
         }
-        
+
         if (!device.permission && !device.permissionRoles) {
             return this.checkMasterPermission();
         }
-        
+
         const permission = this.authService.checkPermission(device);
         return permission || { show: true, enabled: true };
     }
@@ -426,14 +428,14 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         if (!device) {
             return false;
         }
-        
+
         const masterPermission = this.checkMasterPermission();
-        
+
         // If device has no explicit permission set, inherit master permission
         if (!device.permission && !device.permissionRoles) {
             return masterPermission.enabled;
         }
-        
+
         // If device has explicit permission, require BOTH master AND device enabled
         const devicePermission = this.checkDevicePermission(deviceName);
         return masterPermission.enabled && devicePermission.enabled;
@@ -463,14 +465,14 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         const oldDeviceMap = new Map<number, { name: string, variableId: string }>();
         oldDevices.forEach((device, index) => {
             oldDeviceMap.set(index, {
-                name: device.name || device.label || 'Unnamed Device',
+                name: device.name || device.label || this.unnamedDevice,
                 variableId: device.variableId || ''
             });
         });
 
         // Process each new device and migrate/update schedules
         newDevices.forEach((newDevice, index) => {
-            const newDeviceName = newDevice.name || newDevice.label || 'Unnamed Device';
+            const newDeviceName = newDevice.name || newDevice.label || this.unnamedDevice;
             const newVariableId = newDevice.variableId || '';
 
             // Get corresponding old device by index (same position in list)
@@ -495,8 +497,8 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                     // Update all schedules for this device
                     const updatedSchedules = deviceSchedules.map(schedule => ({
                         ...schedule,
-                        deviceName: newDeviceName,      
-                        variableId: newVariableId        
+                        deviceName: newDeviceName,
+                        variableId: newVariableId
                     }));
 
                     // Store under new device name
@@ -524,8 +526,8 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         // Handle orphaned schedules (devices that were removed)
         Object.keys(this.schedules).forEach(oldDeviceName => {
             // Check if this device name still exists in new devices
-            const stillExists = newDevices.some(device => 
-                (device.name || device.label || 'Unnamed Device') === oldDeviceName
+            const stillExists = newDevices.some(device =>
+                (device.name || device.label || this.unnamedDevice) === oldDeviceName
             );
 
             if (!stillExists && !newSchedules[oldDeviceName]) {
@@ -536,7 +538,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
         // Apply migrated schedules
         if (changesMade) {
-            this.schedules = newSchedules;            
+            this.schedules = newSchedules;
             // Save to server to persist changes in database - force update to ensure changes are saved
             this.saveSchedulesToServer(true);
         }
@@ -562,7 +564,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         // Update variableIds in all schedules to match current device configuration
         Object.keys(this.schedules).forEach(deviceName => {
             const currentVariableId = deviceMap.get(deviceName);
-            
+
             if (currentVariableId) {
                 // Device exists in current configuration
                 this.schedules[deviceName].forEach(schedule => {
@@ -584,8 +586,10 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
     loadSchedulesFromServer() {
         if (!this.id) return;
-        
-        this.hmiService.askSchedulerData(this.id).subscribe({
+
+        this.hmiService.askSchedulerData(this.id).pipe(
+            take(1)
+        ).subscribe({
             next: (data) => {
                 if (data && data.schedules) {
                     // Convert old format to device name-based format if needed
@@ -598,7 +602,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 } else {
                     this.schedules = {};
                 }
-                
+
                 // Ensure all events have unique IDs for proper tracking
                 for (const deviceName in this.schedules) {
                     if (this.schedules[deviceName]) {
@@ -611,18 +615,18 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                         });
                     }
                 }
-                
+
                 this.syncSchedulesWithDeviceList();
                 this.initializeActiveStates();
                 this.cdr.detectChanges();
-                
+
                 // This ensures server has deviceActions even without client intervention
                 if (this.property?.deviceActions && !data?.settings?.deviceActions) {
                     this.saveSchedulesToServer(true);
                 } else if (!this.property?.deviceActions && data?.settings?.deviceActions) {
 
                 }
-                
+
                 if (!this.isEditor) {
                     this.loadDeviceStatesForDisplay();
                 }
@@ -634,7 +638,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 }
                 this.schedules = {};
                 this.cdr.detectChanges();
-                
+
                 if (!this.isEditor) {
                     this.loadDeviceStatesForDisplay();
                 }
@@ -680,7 +684,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             this.onDeviceSelectionChange(deviceIndexOrName);
             return;
         }
-        
+
         // Handle number selection (existing logic)
         const deviceIndex = deviceIndexOrName;
         if (deviceIndex === -1) {
@@ -720,15 +724,15 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
     getFilteredOverviewSchedules(): any[] {
         const deviceGroups = [];
-        
+
         Object.keys(this.schedules).forEach(deviceName => {
             const schedules = this.schedules[deviceName] || [];
             if (schedules.length === 0) return;
-            
+
             // Filter schedules based on filter options
             const filteredSchedules = schedules.filter(schedule => {
                 const isCurrentlyActive = this.isScheduleActive(schedule);
-                
+
                 // If schedule is currently running, only show it if showActive is true
                 if (isCurrentlyActive) {
                     return this.filterOptions.showActive;
@@ -738,11 +742,11 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                     return this.filterOptions.showDisabled;
                 }
             });
-            
+
             // Separate Timer Mode and Event Mode schedules
             const timerModeSchedules = filteredSchedules.filter(s => !s.eventMode);
             const eventModeSchedules = filteredSchedules.filter(s => s.eventMode === true);
-            
+
             // Only include device group if it has schedules after filtering
             if (filteredSchedules.length > 0) {
                 deviceGroups.push({
@@ -753,7 +757,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 });
             }
         });
-        
+
         return deviceGroups.sort((a, b) => a.deviceName.localeCompare(b.deviceName));
     }
 
@@ -761,7 +765,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         this.showFilterOptions = !this.showFilterOptions;
         this.cdr.detectChanges();
     }
-    
+
     toggleSettings() {
         this.showSettingsOptions = !this.showSettingsOptions;
         this.cdr.detectChanges();
@@ -769,27 +773,27 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
     getSelectStyles(): { [key: string]: string } {
         return {
-            'background-color': 'rgba(255, 255, 255, 0.2)',
-            'border': '1px solid rgba(255, 255, 255, 0.5)',
-            'color': this.property?.secondaryTextColor || '#ffffff',
-            'border-radius': '3px',
-            'padding': '4px 8px',
-            'height': '20px',
-            'display': 'flex',
-            'align-items': 'center'
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            border: '1px solid rgba(255, 255, 255, 0.5)',
+            color: this.property?.secondaryTextColor || '#ffffff',
+            borderRadius: '3px',
+            padding: '4px 8px',
+            height: '20px',
+            display: 'flex',
+            alignItems: 'center'
         };
     }
 
     getOptionStyle(isSelected: boolean): { [key: string]: string } {
         if (isSelected) {
             return {
-                'color': this.property?.secondaryTextColor || '#ffffff',
-                'background-color': this.property?.accentColor || '#2196f3'
+                color: this.property?.secondaryTextColor || '#ffffff',
+                backgroundColor: this.property?.accentColor || '#2196f3'
             };
         } else {
             return {
-                'color': this.property?.textColor || '#333333',
-                'background-color': this.property?.backgroundColor || '#ffffff'
+                color: this.property?.textColor || '#333333',
+                backgroundColor: this.property?.backgroundColor || '#ffffff'
             };
         }
     }
@@ -804,12 +808,12 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 const deviceSchedules = this.schedules[deviceName] || [];
                 allSchedules.push(...deviceSchedules);
             });
-            return [...allSchedules]; 
+            return [...allSchedules];
         }
-        
+
         // Get schedules for specific device
         const deviceSchedules = this.schedules[this.selectedDevice] || [];
-        return [...deviceSchedules]; 
+        return [...deviceSchedules];
     }
 
     getDeviceTimerModeSchedules(): any[] {
@@ -830,7 +834,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
     saveSchedulesToServer(forceUpdate: boolean = false) {
         if (!this.id) return;
-        
+
         if (this.isEditor && !forceUpdate) {
             return;
         }
@@ -843,9 +847,11 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 deviceActions: this.property?.deviceActions || []
             }
         };
-                        
-        this.hmiService.setSchedulerData(this.id, dataToSave).subscribe({
-                next: (response) => {
+
+        this.hmiService.setSchedulerData(this.id, dataToSave).pipe(
+            take(1)
+        ).subscribe({
+            next: (response) => {
                 // Server will handle device control
                 this.refreshTagSubscriptions();
             },
@@ -861,7 +867,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         if (!this.canModifyDevice(deviceName)) {
             return;
         }
-        
+
         this.isEditMode = !this.isEditMode;
         this.showAddForm = this.isEditMode;
         if (this.isEditMode) {
@@ -882,8 +888,8 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             monthMode: false,
             disabled: false,
             deviceName: this.selectedDevice === 'OVERVIEW' ? (this.deviceList[0]?.name || '') : this.selectedDevice,
-            recurring: true,  
-            eventMode: false,  
+            recurring: true,
+            eventMode: false,
             durationHours: 0,
             durationMinutes: 1,
             durationSeconds: 0
@@ -897,7 +903,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         const deviceName = this.formTimer.deviceName;
         const device = this.deviceList.find(d => d.name === deviceName);
         if (!device) return;
-        
+
         // Check permission before allowing save
         if (!this.canModifyDevice(deviceName)) {
             return;
@@ -919,9 +925,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         // Add mode-specific fields
         if (this.formTimer.eventMode) {
             // Event Mode: duration in seconds
-            newSchedule.duration = (this.formTimer.durationHours * 3600) + 
-                                   (this.formTimer.durationMinutes * 60) + 
-                                   this.formTimer.durationSeconds;
+            newSchedule.duration = (this.formTimer.durationHours * 3600) +
+                (this.formTimer.durationMinutes * 60) +
+                this.formTimer.durationSeconds;
         } else {
             // Timer Mode: end time
             newSchedule.endTime = this.formTimer.endTime;
@@ -930,9 +936,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         // Show confirmation dialog with schedule details
         const scheduleDetails = this.formatScheduleDetails(newSchedule);
         this.confirmDialogData = {
-            title: this.editingIndex >= 0 ? 'Update Schedule' : 'Add Schedule',
+            title: this.editingIndex >= 0 ? this.translateService.instant('scheduler.update-schedule') : this.translateService.instant('scheduler.add-schedule'),
             message: scheduleDetails,
-            confirmText: 'Confirm',
+            confirmText: this.translateService.instant('general.confirm'),
             icon: 'event',
             action: () => this.executeSaveSchedule(newSchedule)
         };
@@ -951,10 +957,10 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             if (schedules[this.editingIndex]) {
                 const oldSchedule = schedules[this.editingIndex];
                 const oldDeviceName = oldSchedule.deviceName;
-                
+
                 // Preserve the ID from the old schedule
                 newSchedule.id = oldSchedule.id;
-                
+
                 // Remove from old device if device changed
                 if (oldDeviceName && oldDeviceName !== deviceName) {
                     const oldIndex = this.schedules[oldDeviceName]?.findIndex(s => s === oldSchedule);
@@ -962,7 +968,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                         this.schedules[oldDeviceName].splice(oldIndex, 1);
                     }
                 }
-                
+
                 // Add to new device
                 if (oldDeviceName === deviceName) {
                     const scheduleIndex = this.schedules[deviceName].findIndex(s => s === oldSchedule);
@@ -983,10 +989,10 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         this.showAddForm = false;
         this.isEditMode = false;
         this.editingIndex = -1;
-        
+
         // Return to OVERVIEW mode after save
         this.selectedDevice = 'OVERVIEW';
-        
+
         this.cdr.detectChanges();
         this.checkScheduleStates();
     }
@@ -994,12 +1000,12 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     editSchedule(index: number) {
         const schedules = this.getDeviceSchedules();
         if (!schedules[index]) return;
-        
+
         const schedule = schedules[index];
-        
+
         // Use schedule.deviceName if available (overview mode), otherwise use selectedDevice
         const deviceName = schedule.deviceName || this.selectedDevice;
-        
+
         // Check permission before allowing edit
         if (!this.canModifyDevice(deviceName)) {
             return;
@@ -1009,7 +1015,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         let durationHours = 0;
         let durationMinutes = 1;
         let durationSeconds = 0;
-        
+
         if (schedule.eventMode && schedule.duration !== undefined) {
             const totalSeconds = schedule.duration;
             durationHours = Math.floor(totalSeconds / 3600);
@@ -1027,7 +1033,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             monthMode: schedule.monthMode || false,
             disabled: schedule.disabled || false,
             deviceName: deviceName,
-            recurring: schedule.recurring !== undefined ? schedule.recurring : true, 
+            recurring: schedule.recurring !== undefined ? schedule.recurring : true,
             eventMode: schedule.eventMode || false,
             durationHours: durationHours,
             durationMinutes: durationMinutes,
@@ -1038,45 +1044,45 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         this.showAddForm = true;
         this.isEditMode = true;
     }
-    
+
     editScheduleFromOverview(schedule: any, scheduleIndex: number) {
         // Find the global index for this schedule
         const allSchedules = this.getDeviceSchedules();
-        const globalIndex = allSchedules.findIndex(s => 
-            s.deviceName === schedule.deviceName && 
-            s.startTime === schedule.startTime && 
+        const globalIndex = allSchedules.findIndex(s =>
+            s.deviceName === schedule.deviceName &&
+            s.startTime === schedule.startTime &&
             s.endTime === schedule.endTime &&
             JSON.stringify(s.days) === JSON.stringify(schedule.days)
         );
-        
+
         if (globalIndex >= 0) {
             this.editSchedule(globalIndex);
         }
     }
-    
+
     confirmDeleteFromOverview(schedule: any, scheduleIndex: number) {
         this.confirmDialogData = {
-            title: 'Delete Schedule',
-            message: `Are you sure you want to delete this schedule for ${schedule.deviceName}?`,
-            confirmText: 'Delete',
+            title: this.translateService.instant('scheduler.delete-schedule'),
+            message: this.translateService.instant('scheduler.to-remove', { value: schedule.deviceName }),
+            confirmText: this.translateService.instant('general.delete'),
             icon: 'warning',
             action: () => this.executeDeleteFromOverview(schedule, scheduleIndex)
         };
         this.showConfirmDialog = true;
     }
-    
+
     private executeDeleteFromOverview(schedule: any, scheduleIndex: number) {
         const deviceName = schedule.deviceName;
         if (this.schedules[deviceName]) {
-            const scheduleIndex = this.schedules[deviceName].findIndex(s => 
-                s.startTime === schedule.startTime && 
+            const scheduleIndex = this.schedules[deviceName].findIndex(s =>
+                s.startTime === schedule.startTime &&
                 s.endTime === schedule.endTime &&
                 JSON.stringify(s.days) === JSON.stringify(schedule.days)
             );
-            
+
             if (scheduleIndex >= 0) {
                 this.schedules[deviceName].splice(scheduleIndex, 1);
-                
+
                 this.saveSchedulesToServer(true);
                 this.cdr.detectChanges();
             }
@@ -1086,36 +1092,36 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     deleteSchedule(index: number) {
         const schedules = this.getDeviceSchedules();
         const schedule = schedules[index];
-        
+
         // Use schedule.deviceName if available (overview mode), otherwise use selectedDevice
         const deviceName = schedule.deviceName || this.selectedDevice;
-        
+
         // Check permission before allowing delete
         if (!this.canModifyDevice(deviceName)) {
             return;
         }
-        
+
         this.confirmDialogData = {
-            title: 'Delete Schedule',
-            message: `Are you sure you want to delete this schedule for ${deviceName}?`,
-            confirmText: 'Delete',
+            title: this.translateService.instant('scheduler.delete-schedule'),
+            message: this.translateService.instant('scheduler.to-remove', { value: schedule.deviceName }),
+            confirmText: this.translateService.instant('general.delete'),
             icon: 'warning',
             action: () => this.executeDeleteSchedule(index)
         };
         this.showConfirmDialog = true;
     }
-    
+
     private executeDeleteSchedule(index: number) {
         const schedules = this.getDeviceSchedules();
         if (schedules[index]) {
             const scheduleToDelete = schedules[index];
             const deviceName = scheduleToDelete.deviceName || this.selectedDevice;
-            
+
             if (this.schedules[deviceName]) {
                 const scheduleIndex = this.schedules[deviceName].findIndex(s => s === scheduleToDelete);
                 if (scheduleIndex >= 0) {
                     this.schedules[deviceName].splice(scheduleIndex, 1);
-                    
+
                     this.saveSchedulesToServer(true);
                     this.cdr.detectChanges();
                     this.checkScrollingState();
@@ -1130,20 +1136,20 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             const scheduleToToggle = schedules[index];
             // Use schedule.deviceName if available, otherwise use selectedDevice
             const deviceName = scheduleToToggle.deviceName || this.selectedDevice;
-            
+
             // Check permission before allowing toggle
             if (!this.canModifyDevice(deviceName)) {
                 return;
             }
-            
+
             if (this.schedules[deviceName]) {
                 const scheduleIndex = this.schedules[deviceName].findIndex(s => s === scheduleToToggle);
                 if (scheduleIndex >= 0) {
                     this.schedules[deviceName][scheduleIndex].disabled = !this.schedules[deviceName][scheduleIndex].disabled;
-                    
+
                     // Re-evaluate device state after enabling/disabling schedule
                     const hasActiveSchedules = this.schedules[deviceName].some(s => !s.disabled);
-                    
+
                     if (!hasActiveSchedules) {
                         // No active schedules left, reset device to OFF
                         this.resetDeviceTag(deviceName);
@@ -1151,7 +1157,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                         // Has active schedules, re-evaluate current state
                         this.checkScheduleStates();
                     }
-                    
+
                     this.saveSchedulesToServer(true);
                     this.cdr.detectChanges();
                     this.checkScheduleStates();
@@ -1160,7 +1166,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         }
     }
 
-    // Track previous states 
+    // Track previous states
     private deviceStates: { [deviceName: string]: boolean } = {};
     private signalSubscription: any = null;
     private scheduledTags: Set<string> = new Set();
@@ -1170,7 +1176,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     private tagWriteTimeout: { [key: string]: any } = {};
 
     initializeEventDrivenScheduler() {
-        
+
         this.loadDeviceStatesForDisplay();
         this.subscribeToScheduledTags();
         this.startTransitionWatcher();
@@ -1178,19 +1184,21 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
     private subscribeToScheduledTags() {
         this.scheduledTags.clear();
-        
+
         this.deviceList.forEach(device => {
             if (device.variableId && this.schedules[device.name]?.length > 0) {
                 this.scheduledTags.add(device.variableId);
             }
         });
-        
+
         if (this.scheduledTags.size > 0) {
             const tagIds = Array.from(this.scheduledTags);
-            
+
             this.hmiService.viewsTagsSubscribe(tagIds, true);
-            
-            this.signalSubscription = this.hmiService.onVariableChanged.subscribe(
+
+            this.signalSubscription = this.hmiService.onVariableChanged.pipe(
+                takeUntil(this.destroy$)
+            ).subscribe(
                 (signal) => this.handleSignalChange(signal)
             );
         }
@@ -1200,72 +1208,72 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         if (!this.scheduledTags.has(signal.id)) {
             return;
         }
-        
+
         this.tagValues[signal.id] = signal.value;
-        
+
         const now = Date.now();
-        if (now - this.lastScheduleCheck < 500) { 
-            this.cdr.detectChanges(); 
+        if (now - this.lastScheduleCheck < 500) {
+            this.cdr.detectChanges();
             return;
         }
         this.lastScheduleCheck = now;
-        
+
         const tagWriteKey = `write_${signal.id}`;
         if (this.recentTagWrites && this.recentTagWrites.has(tagWriteKey)) {
-            this.cdr.detectChanges(); 
+            this.cdr.detectChanges();
             return;
         }
-        
+
         this.enforceSchedulerControl();
         this.cdr.detectChanges();
     }
 
     private startTransitionWatcher() {
         let lastCheck = 0;
-        const CHECK_INTERVAL = 2000; 
-        
+        const CHECK_INTERVAL = 2000;
+
         const checkTransitions = (timestamp: number) => {
             if (timestamp - lastCheck >= CHECK_INTERVAL) {
                 this.checkEventTransitions();
-                this.checkScheduleStates(); 
-                this.enforceSchedulerControl(); 
+                this.checkScheduleStates();
+                this.enforceSchedulerControl();
                 lastCheck = timestamp;
             }
-            
+
             this.transitionWatcher = requestAnimationFrame(checkTransitions);
         };
-        
+
         this.transitionWatcher = requestAnimationFrame(checkTransitions);
     }
 
     private refreshTagSubscriptions() {
-        
+
         if (this.signalSubscription) {
             this.signalSubscription.unsubscribe();
         }
-        
+
         this.subscribeToScheduledTags();
     }
 
 
     loadDeviceStatesForDisplay() {
-        
+
         this.deviceList.forEach(device => {
             const deviceName = device.name;
             this.deviceStates[deviceName] = false;
         });
-        
+
         this.cdr.detectChanges();
     }
 
     checkEventTransitions() {
         if (this.isEditor) return;
-        
+
     }
 
     checkScheduleStates() {
         if (this.isEditor) return;
-        
+
     }
 
     writeDeviceTag(deviceName: string, value: any) {
@@ -1273,7 +1281,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
     enforceSchedulerControl() {
         if (this.isEditor) return;
-        
+
     }
 
     private isValueTrue(value: any): boolean {
@@ -1282,7 +1290,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             return value;
         }
         if (typeof value === 'number') {
-           return value !== 0;
+            return value !== 0;
         }
         if (typeof value === 'string') {
             const strValue = value.toLowerCase();
@@ -1300,19 +1308,21 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         // Delete this scheduler's data from database completely
         // WARNING: This permanently deletes all schedule data for this scheduler!
         if (this.id) {
-            this.hmiService.deleteSchedulerData(this.id).subscribe({
-                next: (result) => {},
+            this.hmiService.deleteSchedulerData(this.id).pipe(
+                take(1)
+            ).subscribe({
+                next: (result) => { },
                 error: (error) => {
                     console.error('Error deleting scheduler data:', error);
                 }
             });
         }
     }
-    
+
     // Method called when scheduler component is actually deleted from editor canvas
     onCanvasDelete() {
         if (this.isEditor) {
-            this.deleteSchedulerData(); 
+            this.deleteSchedulerData();
         }
     }
 
@@ -1323,7 +1333,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             console.error('Error during scheduler destroy:', e);
         }
     }
-    
+
     startAddFromOverview() {
         // Start adding a schedule from overview - select first device by default
         if (this.deviceList.length > 0) {
@@ -1337,7 +1347,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         const current = this.timeToMinutes(currentTime);
         const start = this.timeToMinutes(startTime);
         const end = this.timeToMinutes(endTime);
-        
+
         if (start <= end) {
             return current >= start && current <= end;
         } else {
@@ -1368,17 +1378,17 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                     return;
                 }
                 const stateKey = `${deviceName}_${eventId}`;
-                
+
                 // Event Mode events are ONLY controlled by server emits (START/END callbacks)
                 if (schedule.eventMode === true) {
                     return;
                 }
-                
+
                 // Use time-based calculation for Timer Mode events only
                 const now = new Date();
                 const currentTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
                 const currentDay = now.getDay();
-                
+
                 if (!schedule.disabled && schedule.days[currentDay]) {
                     const isActive = this.isTimeInRange(currentTime, schedule.startTime, schedule.endTime || '23:59');
                     this.activeStates.set(stateKey, isActive);
@@ -1391,7 +1401,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
     isScheduleActive(schedule: any): boolean {
         if (schedule.disabled) return false;
-        
+
         // ALWAYS use server-provided active state for both Timer Mode and Event Mode
         const eventId = schedule.id;
         if (!eventId) {
@@ -1402,25 +1412,25 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             const serverState = this.activeStates.get(stateKey);
             return serverState;
         }
-        
+
         return false;
     }
 
     formatTime(time: string): string {
         if (!time) return '';
-        
+
         if (this.timeFormat === '12hr') {
             const [hourStr, minute] = time.split(':');
             let hour = parseInt(hourStr);
             const period = hour >= 12 ? 'pm' : 'am';
-            
+
             // Convert to 12-hour format
             if (hour === 0) hour = 12;
             else if (hour > 12) hour -= 12;
-            
+
             return `${hour}:${minute}<span class="time-period">${period}</span>`;
         }
-        
+
         return time; // 24hr format
     }
 
@@ -1428,18 +1438,18 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         if (schedule.event || !schedule.endTime) {
             return 'Event';
         }
-        
+
         const start = this.timeToMinutes(schedule.startTime);
         let end = this.timeToMinutes(schedule.endTime);
-        
+
         if (end < start) {
             end += 24 * 60; // Next day
         }
-        
+
         const durationMinutes = end - start;
         const hours = Math.floor(durationMinutes / 60);
         const minutes = durationMinutes % 60;
-        
+
         return `${hours}h ${minutes}m`;
     }
 
@@ -1455,12 +1465,12 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             const deviceSchedules = this.schedules[deviceName] || [];
             return deviceSchedules.some(s => !s.disabled);
         }
-        
+
         // Return actual tag value if available, otherwise fallback to schedule check
         if (device.variableId in this.tagValues) {
             return !!this.tagValues[device.variableId];
         }
-        
+
         // Fallback: check if any schedule exists and is not disabled
         const deviceSchedules = this.schedules[deviceName] || [];
         return deviceSchedules.some(s => !s.disabled);
@@ -1470,7 +1480,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         const activeDays = [];
         days.forEach((active, index) => {
             if (active) {
-                activeDays.push(this.daysOfWeek[index]);
+                activeDays.push(this.dayLabelsShort[index]);
             }
         });
         return activeDays.join(', ');
@@ -1490,8 +1500,10 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     }
 
     getSelectAllText(): string {
-        const allSelected = this.formTimer.days.every(day => day);
-        return allSelected ? 'Deselect All' : 'Select All';
+        const allSelected =
+          Array.isArray(this.formTimer?.days) && this.formTimer.days.length &&
+          this.formTimer.days.every(Boolean);
+        return this.translateService.instant(allSelected ? 'scheduler.deselect-all' : 'scheduler.select-all');
     }
 
     onSelectAllDays(): void {
@@ -1626,7 +1638,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
     getFormSelectedDeviceLabel(): string {
         if (!this.formTimer.deviceName) {
-            return 'Select Device';
+            return this.translateService.instant('scheduler.device-selector-select-device');
         }
         const device = this.deviceList.find(d => d.name === this.formTimer.deviceName);
         return device?.label || device?.name || this.formTimer.deviceName;
@@ -1636,10 +1648,10 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
     getSelectedDeviceLabel(): string {
         if (this.selectedDevice === 'OVERVIEW') {
-            return 'Overview';
+            return this.translateService.instant('scheduler.device-selector-overview');
         }
         const device = this.deviceList.find(d => d.name === this.selectedDevice);
-        return device?.label || device?.name || 'Select Device';
+        return device?.label || device?.name || this.translateService.instant('scheduler.device-selector-select-device');
     }
 
     onDocumentClick(event: Event): void {
@@ -1649,27 +1661,27 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         const timePicker = target.closest('.custom-time-picker');
         const filterSection = target.closest('.filter-section');
         const settingsSection = target.closest('.settings-section');
-        
+
         if (!headerDropdown && this.isDropdownOpen) {
             this.isDropdownOpen = false;
             this.hoveredDevice = null;
         }
-        
+
         if (!formDropdown && this.isFormDropdownOpen) {
             this.isFormDropdownOpen = false;
             this.formHoveredDevice = null;
         }
-        
+
         if (!timePicker && this.activeTimePicker) {
             this.closeTimePicker();
         }
-        
+
         // Close filter dropdown when clicking outside
         if (!filterSection && this.showFilterOptions) {
             this.showFilterOptions = false;
             this.cdr.detectChanges();
         }
-        
+
         // Close settings dropdown when clicking outside
         if (!settingsSection && this.showSettingsOptions) {
             this.showSettingsOptions = false;
@@ -1680,8 +1692,8 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     // Custom time picker methods
     activeTimePicker: string | null = null;
     timeDropdowns: { [key: string]: boolean } = {};
-    minuteInterval: number = 1; 
-    
+    minuteInterval: number = 1;
+
     // Confirmation dialog properties
     showConfirmDialog: boolean = false;
     confirmDialogData: any = null;
@@ -1691,7 +1703,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         // Close other dropdowns
         this.isDropdownOpen = false;
         this.isFormDropdownOpen = false;
-        
+
         // Scroll to selected time after dropdown renders
         setTimeout(() => {
             this.scrollToSelectedTime(type);
@@ -1729,7 +1741,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         setTimeout(() => {
             // Get the active time picker dropdown
             const activePickerSelector = `[class*="activeTimePicker"][*ngIf="activeTimePicker === '${type}'"]`;
-            
+
             // Scroll hour into view within its container
             const hourContainer = document.querySelector(
                 `.time-picker-dropdown .time-part:nth-child(1) .time-options`
@@ -1743,7 +1755,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 const scrollOffset = elementRect.top - containerRect.top - (containerRect.height / 2) + (elementRect.height / 2);
                 hourContainer.scrollTop += scrollOffset;
             }
-            
+
             // Scroll minute into view within its container
             const minuteContainer = document.querySelector(
                 `.time-picker-dropdown .time-part:nth-child(2) .time-options`
@@ -1751,14 +1763,14 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             let minuteElement = document.querySelector(
                 `.time-picker-dropdown .time-part:nth-child(2) .time-option.selected`
             );
-            
+
             // If no exact match, find the closest minute option
             if (!minuteElement && minuteContainer && (type === 'start' || type === 'end')) {
                 const currentMinute = parseInt(this.getTimeMinute(type));
                 const minuteOptions = Array.from(minuteContainer.querySelectorAll('.time-option'));
                 let closestOption = null;
                 let closestDiff = Infinity;
-                
+
                 minuteOptions.forEach((option: Element) => {
                     const optionValue = parseInt((option as HTMLElement).textContent?.trim() || '0');
                     const diff = Math.abs(optionValue - currentMinute);
@@ -1767,10 +1779,10 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                         closestOption = option;
                     }
                 });
-                
+
                 minuteElement = closestOption;
             }
-            
+
             if (minuteElement && minuteContainer) {
                 const containerRect = minuteContainer.getBoundingClientRect();
                 const elementRect = minuteElement.getBoundingClientRect();
@@ -1800,7 +1812,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     getFormattedInputTime(type: 'start' | 'end'): string {
         const time = type === 'start' ? this.formTimer.startTime : this.formTimer.endTime;
         if (!time) return '';
-        
+
         // If 12hr format, convert for display
         if (this.timeFormat === '12hr') {
             const [hour, minute] = time.split(':');
@@ -1810,7 +1822,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             if (displayHour === 0) displayHour = 12;
             return `${displayHour}:${minute}${period}`;
         }
-        
+
         // 24hr format - return as is
         return time;
     }
@@ -1818,18 +1830,18 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     // Update time from input (handles both 12hr and 24hr formats)
     updateTimeFromInput(type: 'start' | 'end', value: string): void {
         if (!value) return;
-        
+
         // Check if input includes am/pm (12hr format)
         const ampmMatch = value.match(/(\d{1,2}):(\d{2})\s*(am|pm)/i);
         if (ampmMatch) {
             let hour = parseInt(ampmMatch[1]);
             const minute = ampmMatch[2];
             const period = ampmMatch[3].toLowerCase();
-            
+
             // Convert to 24hr format for storage
             if (period === 'pm' && hour !== 12) hour += 12;
             if (period === 'am' && hour === 12) hour = 0;
-            
+
             const time24 = `${hour.toString().padStart(2, '0')}:${minute}`;
             if (type === 'start') {
                 this.formTimer.startTime = time24;
@@ -1863,63 +1875,52 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         return minute || '00';
     }
 
-    getTimePeriod(type: 'start' | 'end'): string {
+    getTimePeriod(type: 'start' | 'end'): 'am' | 'pm' {
         const time = type === 'start' ? this.formTimer.startTime : this.formTimer.endTime;
-        if (!time) return 'AM';
+        if (!time) return 'am';
         const [hour] = time.split(':');
         const hourNum = parseInt(hour);
-        return hourNum >= 12 ? 'PM' : 'AM';
+        return hourNum >= 12 ? 'pm' : 'am';
     }
 
     setTimeHour(type: 'start' | 'end', hour: string): void {
         const currentMinute = this.getTimeMinute(type);
-        const currentPeriod = this.getTimePeriod(type);
-        
+        const currentPeriod = this.getTimePeriod(type); // 'am' | 'pm'
+
         let hour24 = parseInt(hour);
-        if (currentPeriod === 'PM' && hour24 !== 12) hour24 += 12;
-        if (currentPeriod === 'AM' && hour24 === 12) hour24 = 0;
-        
+        if (currentPeriod === 'pm' && hour24 !== 12) hour24 += 12;
+        if (currentPeriod === 'am' && hour24 === 12) hour24 = 0;
+
         const newTime = `${hour24.toString().padStart(2, '0')}:${currentMinute}`;
-        
-        if (type === 'start') {
-            this.formTimer.startTime = newTime;
-        } else {
-            this.formTimer.endTime = newTime;
-        }
+        if (type === 'start') this.formTimer.startTime = newTime;
+        else this.formTimer.endTime = newTime;
     }
 
     setTimeMinute(type: 'start' | 'end', minute: string): void {
         const currentHour = this.getTimeHour(type);
-        const currentPeriod = this.getTimePeriod(type);
-        
+        const currentPeriod = this.getTimePeriod(type); // 'am' | 'pm'
+
         let hour24 = parseInt(currentHour);
-        if (currentPeriod === 'PM' && hour24 !== 12) hour24 += 12;
-        if (currentPeriod === 'AM' && hour24 === 12) hour24 = 0;
-        
+        if (currentPeriod === 'pm' && hour24 !== 12) hour24 += 12;
+        if (currentPeriod === 'am' && hour24 === 12) hour24 = 0;
+
         const newTime = `${hour24.toString().padStart(2, '0')}:${minute}`;
-        
-        if (type === 'start') {
-            this.formTimer.startTime = newTime;
-        } else {
-            this.formTimer.endTime = newTime;
-        }
+        if (type === 'start') this.formTimer.startTime = newTime;
+        else this.formTimer.endTime = newTime;
     }
 
     setTimePeriod(type: 'start' | 'end', period: string): void {
+        const p = (period || '').toLowerCase() as 'am' | 'pm';
         const currentHour = this.getTimeHour(type);
         const currentMinute = this.getTimeMinute(type);
-        
+
         let hour24 = parseInt(currentHour);
-        if (period === 'PM' && hour24 !== 12) hour24 += 12;
-        if (period === 'AM' && hour24 === 12) hour24 = 0;
-        
+        if (p === 'pm' && hour24 !== 12) hour24 += 12;
+        if (p === 'am' && hour24 === 12) hour24 = 0;
+
         const newTime = `${hour24.toString().padStart(2, '0')}:${currentMinute}`;
-        
-        if (type === 'start') {
-            this.formTimer.startTime = newTime;
-        } else {
-            this.formTimer.endTime = newTime;
-        }
+        if (type === 'start') this.formTimer.startTime = newTime;
+        else this.formTimer.endTime = newTime;
     }
 
     setDurationValue(field: 'hours' | 'minutes' | 'seconds', value: number): void {
@@ -1966,20 +1967,20 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         }
         const stateKey = `${deviceName}_${eventId}`;
         const remaining = this.remainingTimes.get(stateKey);
-        
+
         if (remaining === undefined || remaining === null) {
             return '--';
         }
-        
+
         const hours = Math.floor(remaining / 3600);
         const minutes = Math.floor((remaining % 3600) / 60);
         const seconds = remaining % 60;
-        
+
         const parts = [];
         if (hours > 0) parts.push(`${hours}h`);
         if (minutes > 0 || hours > 0) parts.push(`${minutes}m`);
         parts.push(`${seconds}s`);
-        
+
         return parts.join(' ');
     }
 
@@ -2007,12 +2008,14 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                     this.writeDeviceTag(deviceName, 0);
                 }
             });
-            
+
             // Clear database
-            this.hmiService.setSchedulerData(this.id, { schedules: {}, settings: {} }).subscribe();
+            this.hmiService.setSchedulerData(this.id, { schedules: {}, settings: {} }).pipe(
+                take(1)
+            ).subscribe();
         }
     }
-    
+
     // Confirmation dialog methods
     confirmAction(): void {
         if (this.confirmDialogData && this.confirmDialogData.action) {
@@ -2020,31 +2023,31 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         }
         this.closeConfirmDialog();
     }
-    
+
     closeConfirmDialog(): void {
         this.showConfirmDialog = false;
         this.confirmDialogData = null;
     }
 
     private formatScheduleDetails(schedule: any): string {
-        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        
+        const dayNames = this.dayLabelsShort;
+        const monthNames = this.monthLabelsShort;
+
         const selectedDays = schedule.days
             .map((isSelected: boolean, index: number) => isSelected ? dayNames[index] : null)
             .filter((day: string | null) => day !== null)
             .join(', ');
-        
+
         const selectedMonths = schedule.months
             .map((isSelected: boolean, index: number) => isSelected ? monthNames[index] : null)
             .filter((month: string | null) => month !== null)
             .join(', ');
-        
+
         const selectedDaysOfMonth = schedule.daysOfMonth
             .map((isSelected: boolean, index: number) => isSelected ? (index + 1).toString() : null)
             .filter((day: string | null) => day !== null)
             .join(', ');
-        
+
         const formatTime = (time: string) => {
             if (this.timeFormat === '12hr') {
                 const [hours, minutes] = time.split(':').map(Number);
@@ -2067,36 +2070,36 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         };
 
         let details = '<table style="width: 100%; border-collapse: collapse; line-height: 2;">';
-        details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">Mode:</td><td style="padding: 4px 0;">${schedule.eventMode ? 'Event Mode' : 'Timer Mode'}</td></tr>`;
-        details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">Device:</td><td style="padding: 4px 0;">${schedule.deviceName}</td></tr>`;
-        details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">Start Time:</td><td style="padding: 4px 0;">${formatTime(schedule.startTime)}</td></tr>`;
-        
+        details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">${this.translateService.instant('scheduler.col-mode')}:</td><td style="padding: 4px 0;">${schedule.eventMode ? this.translateService.instant('scheduler.event-mode') : this.translateService.instant('scheduler.time-mode')}</td></tr>`;
+        details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">${this.translateService.instant('scheduler.col-device')}:</td><td style="padding: 4px 0;">${schedule.deviceName}</td></tr>`;
+        details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">${this.translateService.instant('scheduler.start-time')}:</td><td style="padding: 4px 0;">${formatTime(schedule.startTime)}</td></tr>`;
+
         if (schedule.eventMode) {
-            details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">Duration:</td><td style="padding: 4px 0;">${formatDuration(schedule.duration)}</td></tr>`;
+            details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">${this.translateService.instant('scheduler.col-duration')}:</td><td style="padding: 4px 0;">${formatDuration(schedule.duration)}</td></tr>`;
         } else {
-            details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">End Time:</td><td style="padding: 4px 0;">${formatTime(schedule.endTime)}</td></tr>`;
+            details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">${this.translateService.instant('scheduler.end-time')}:</td><td style="padding: 4px 0;">${formatTime(schedule.endTime)}</td></tr>`;
         }
-        
+
         if (schedule.monthMode) {
-            details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">Months:</td><td style="padding: 4px 0;">${selectedMonths || 'None'}</td></tr>`;
-            details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">Days of Month:</td><td style="padding: 4px 0;">${selectedDaysOfMonth || 'None'}</td></tr>`;
+            details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">${this.translateService.instant('scheduler.months')}:</td><td style="padding: 4px 0;">${selectedMonths || '-'}</td></tr>`;
+            details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">${this.translateService.instant('scheduler.days-of-month')}:</td><td style="padding: 4px 0;">${selectedDaysOfMonth || '-'}</td></tr>`;
         } else {
-            details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">Days:</td><td style="padding: 4px 0;">${selectedDays || 'None'}</td></tr>`;
+            details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">${this.translateService.instant('scheduler.days')}:</td><td style="padding: 4px 0;">${selectedDays || '-'}</td></tr>`;
         }
-        
-        details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">Recurring:</td><td style="padding: 4px 0;">${schedule.recurring ? 'Yes' : 'No'}</td></tr>`;
-        details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">Status:</td><td style="padding: 4px 0;">${schedule.disabled ? 'Disabled' : 'Enabled'}</td></tr>`;
+
+        details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">${this.translateService.instant('scheduler.recurring')}:</td><td style="padding: 4px 0;">${schedule.recurring ? this.translateService.instant('general.yes') : this.translateService.instant('general.no')}</td></tr>`;
+        details += `<tr><td class="schedule-label" style="padding: 4px 8px 4px 0;">${this.translateService.instant('scheduler.col-status')}:</td><td style="padding: 4px 0;">${schedule.disabled ? this.translateService.instant('general.disabled') : this.translateService.instant('general.enabled')}</td></tr>`;
         details += '</table>';
-        
+
         return details;
     }
-    
+
     // Update clearAllSchedules to use confirmation dialog
     clearAllSchedules(): void {
         if (!this.canModifyScheduler()) {
             return;
         }
-        
+
         // Count how many schedules user can actually clear
         let scheduleCount = 0;
         if (this.selectedDevice === 'OVERVIEW') {
@@ -2112,28 +2115,28 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 scheduleCount = this.getDeviceSchedules().length;
             }
         }
-        
+
         if (scheduleCount === 0) {
             return;
         }
-        
+
         this.confirmDialogData = {
-            title: 'Clear Schedules',
-            message: `Are you sure you want to delete ${scheduleCount} schedule${scheduleCount !== 1 ? 's' : ''} you have permission to modify? This action cannot be undone.`,
-            confirmText: 'Delete',
+            title: this.translateService.instant('scheduler.clear-schedules'),
+            message: this.translateService.instant('scheduler.to-remove-permission', { value: scheduleCount }),
+            confirmText: this.translateService.instant('general.delete'),
             icon: 'warning',
             action: () => this.executeClearAllSchedules()
         };
         this.showConfirmDialog = true;
     }
-    
+
     private executeClearAllSchedules(): void {
         // Clear schedules only for devices user has permission to modify
         if (this.selectedDevice === 'OVERVIEW') {
             // In overview mode, clear schedules for all devices user can modify
             let clearedCount = 0;
             let blockedCount = 0;
-            
+
             Object.keys(this.schedules).forEach(deviceName => {
                 if (this.canModifyDevice(deviceName)) {
                     this.schedules[deviceName] = [];
@@ -2143,7 +2146,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                     blockedCount++;
                 }
             });
-            
+
         } else {
             // In device mode, clear schedules for selected device only if user has permission
             if (this.canModifyDevice(this.selectedDevice)) {
@@ -2153,10 +2156,34 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 return; // Don't save if nothing was cleared
             }
         }
-        
+
         this.saveSchedulesToServer(true);
         this.cdr.detectChanges();
         this.checkScheduleStates();
     }
-    
+
+    /** Build localized arrays from translation JSON. */
+    private initI18nLists(): void {
+        // general.weekdays, general.weekdays-short, general.months, general.months-short
+        const wd = this.translateService.instant('general.weekdays');
+        const wds = this.translateService.instant('general.weekdays-short');
+        const mm = this.translateService.instant('general.months');
+        const mms = this.translateService.instant('general.months-short');
+
+        // Be defensive in case of misconfiguration:
+        this.dayLabelsLong = Array.isArray(wd) ? wd : [];
+        this.dayLabelsShort = Array.isArray(wds) ? wds : [];
+        this.monthLabelsLong = Array.isArray(mm) ? mm : [];
+        this.monthLabelsShort = Array.isArray(mms) ? mms : [];
+
+        // Optional: simple fallbacks if any array is missing
+        if (!this.dayLabelsShort.length && this.dayLabelsLong.length) {
+            this.dayLabelsShort = this.dayLabelsLong.map(s => s.substring(0, 3));
+        }
+        if (!this.monthLabelsShort.length && this.monthLabelsLong.length) {
+            this.monthLabelsShort = this.monthLabelsLong.map(s => s.substring(0, 3));
+        }
+
+        this.unnamedDevice = this.translateService.instant('scheduler.unnamed-device');
+    }
 }

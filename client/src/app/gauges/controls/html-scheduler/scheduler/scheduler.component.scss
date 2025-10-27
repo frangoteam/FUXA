@@ -218,14 +218,12 @@
     --mdc-menu-item-selected-container-fill-color: var(--scheduler-accent-color) !important;
     --mdc-menu-item-selected-label-text-color: var(--scheduler-secondary-text-color, #ffffff) !important;
     --mdc-menu-item-hover-container-fill-color: var(--scheduler-hover-color) !important;
-    
+
     // Main container layout
     display: flex;
     flex-direction: column;
     height: 100%;
     min-height: 400px;
-    padding: 12px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     font-size: 14px;
 }
 
@@ -237,10 +235,10 @@
     background: var(--scheduler-accent-color, #2196f3);
     color: var(--scheduler-secondary-text-color, #ffffff);
     border-bottom: 1px solid var(--scheduler-border-color, #cccccc);
-    
+
         .device-selector, .device-name {
         flex: none;
-        
+
         .device-select {
             ::ng-deep .mat-mdc-select {
                 background: rgba(255, 255, 255, 0.2) !important;
@@ -252,75 +250,75 @@
                 min-width: 150px !important;
                 display: flex !important;
                 align-items: center !important;
-                
+
                 .mat-mdc-select-value {
                     color: var(--scheduler-secondary-text-color, #ffffff) !important;
                     flex: 1 !important;
                 }
-                
+
                 .mat-mdc-select-arrow {
                     color: var(--scheduler-secondary-text-color, #ffffff) !important;
                     margin-left: 8px !important;
                 }
-                
+
                 &:hover {
                     background: rgba(255, 255, 255, 0.3) !important;
-                    
+
                     .mat-mdc-select-arrow {
                         color: var(--scheduler-accent-color) !important;
                     }
                 }
-                
+
                 &.mat-focused {
                     background: var(--scheduler-accent-color) !important;
                     border-color: var(--scheduler-accent-color) !important;
                     color: var(--scheduler-secondary-text-color, #ffffff) !important;
-                    
+
                     .mat-mdc-select-value {
                         color: var(--scheduler-secondary-text-color, #ffffff) !important;
                     }
-                    
+
                     .mat-mdc-select-arrow {
                         color: var(--scheduler-secondary-text-color, #ffffff) !important;
                     }
                 }
             }
-            
+
             ::ng-deep .mat-mdc-select-panel {
                 background: var(--scheduler-bg-color) !important;
                 border: 1px solid var(--scheduler-border-color) !important;
                 border-radius: 4px !important;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
-                
+
                 .mat-mdc-option {
                     color: var(--scheduler-text-color) !important;
                     background: transparent !important;
-                    
+
                     &.mdc-list-item--selected {
                         background: var(--scheduler-accent-color) !important;
                         color: var(--scheduler-secondary-text-color, #ffffff) !important;
                     }
-                    
+
                     &:hover:not(.mdc-list-item--selected) {
                         background: var(--scheduler-hover-color) !important;
                         background-color: var(--scheduler-hover-color) !important;
                     }
-                    
+
                     &.mdc-list-item--highlighted:not(.mdc-list-item--selected) {
                         background: var(--scheduler-hover-color) !important;
                         background-color: var(--scheduler-hover-color) !important;
                     }
                 }
-                
+
                 .mat-mdc-select-panel-wrap {
                     background: var(--scheduler-bg-color) !important;
                 }
-                
+
                 .cdk-overlay-pane {
                     background: var(--scheduler-bg-color) !important;
                 }
             }
-            
+
             // Override Angular Material theme colors
             ::ng-deep .mat-primary {
                 .mat-mdc-option.mdc-list-item--selected {
@@ -338,16 +336,16 @@
     border: 1px solid var(--scheduler-border-color) !important;
     border-radius: 4px !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
-    
+
     .mat-mdc-option {
         color: var(--scheduler-text-color) !important;
         transition: background-color 0.2s ease !important;
-        
+
         &.mdc-list-item--selected {
             background: var(--scheduler-accent-color) !important;
             color: var(--scheduler-secondary-text-color, #ffffff) !important;
         }
-        
+
         ::ng-deep &:hover:not(.mdc-list-item--selected) {
             background: var(--scheduler-hover-color, rgba(173, 216, 230, 0.3)) !important;
         }
@@ -382,7 +380,7 @@
 .custom-select {
     position: relative;
     min-width: 150px;
-    
+
     .custom-select-trigger {
         background: rgba(255, 255, 255, 0.2);
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -394,34 +392,34 @@
         align-items: center;
         justify-content: space-between;
         transition: background-color 0.2s ease;
-        
+
         &:hover:not(.disabled) {
             background: rgba(255, 255, 255, 0.3);
         }
-        
+
         .selected-text {
             flex: 1;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
         }
-        
+
         .arrow {
             margin-left: 8px;
             font-size: 18px;
             transition: transform 0.2s ease;
         }
     }
-    
+
     &.open .custom-select-trigger .arrow {
         transform: rotate(180deg);
     }
-    
+
     &.disabled .custom-select-trigger {
         opacity: 0.6;
         cursor: not-allowed;
     }
-    
+
     .custom-select-dropdown {
         position: absolute;
         top: 100%;
@@ -434,24 +432,24 @@
         z-index: 1000;
         max-height: 200px;
         overflow-y: auto;
-        
+
         .custom-option {
             padding: 12px 16px;
             cursor: pointer;
             color: var(--scheduler-text-color, #333333);
             background: transparent;
             transition: background-color 0.2s ease;
-            
+
             &:hover {
                 background: var(--scheduler-hover-color) !important;
                 color: var(--scheduler-text-color, #333333);
             }
-            
+
             &.selected {
                 background: var(--scheduler-accent-color, #2196f3);
                 color: var(--scheduler-secondary-text-color, #ffffff);
             }
-            
+
             &.selected:hover {
                 background: var(--scheduler-accent-color, #2196f3) !important;
                 color: var(--scheduler-secondary-text-color, #ffffff) !important;
@@ -483,7 +481,7 @@
         display: flex;
         gap: 8px;
         align-items: center;
-        
+
         button {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.3);
@@ -495,41 +493,41 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            
+
             &:hover {
                 background: rgba(255, 255, 255, 0.3);
             }
-            
+
             &.active {
                 background: rgba(76, 175, 80, 0.8);
             }
-            
+
             &.status-btn, &.action-btn {
                 background: rgba(255, 255, 255, 0.2);
                 border: 1px solid rgba(255, 255, 255, 0.3);
-                
+
                 .material-icons {
                     color: var(--scheduler-secondary-text-color, #ffffff);
                 }
-                
+
                 &:hover {
                     background: rgba(255, 255, 255, 0.3);
                 }
-                
+
                 &.active {
                     background: var(--scheduler-accent-color, #2196f3);
                     border: 1px solid var(--scheduler-accent-color, #2196f3);
-                    
+
                     .material-icons {
                         color: var(--scheduler-secondary-text-color, #ffffff);
                     }
                 }
             }
         }
-        
+
         .filter-menu {
             position: relative;
-            
+
             .filter-dropdown {
                 position: absolute;
                 top: 100%;
@@ -541,28 +539,28 @@
                 box-shadow: 0 2px 8px rgba(0,0,0,0.15);
                 z-index: 1000;
                 min-width: 120px;
-                
+
                 label {
                     display: block;
                     color: #333;
                     font-size: 12px;
                     margin-bottom: 4px;
                     cursor: pointer;
-                    
+
                     input[type="checkbox"] {
                         margin-right: 6px;
                     }
                 }
             }
         }
-        
+
         // Inline filter and settings sections
         .filter-section, .settings-section {
             position: relative;
             display: flex;
             align-items: center;
             gap: 8px;
-            
+
             .filter-btn, .settings-btn {
                 background: rgba(255, 255, 255, 0.2);
                 border: 1px solid rgba(255, 255, 255, 0.3);
@@ -574,16 +572,16 @@
                 align-items: center;
                 justify-content: center;
                 height: 32px;
-                
+
                 &:hover {
                     background: rgba(255, 255, 255, 0.3);
                 }
-                
+
                 &.active {
                     background: rgba(76, 175, 80, 0.8);
                 }
             }
-            
+
             // Settings dropdown container
             .settings-dropdown {
                 position: absolute;
@@ -593,7 +591,7 @@
                 margin-top: 4px;
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             }
-            
+
             .settings-option {
                 background: var(--scheduler-accent-color, #2196f3);
                 color: var(--scheduler-secondary-text-color, #ffffff);
@@ -606,22 +604,22 @@
                 align-items: center;
                 gap: 4px;
                 white-space: nowrap;
-                
+
                 &:hover {
                     background: var(--scheduler-accent-color, #1976d2);
                 }
-                
+
                 .material-icons {
                     font-size: 14px;
                 }
             }
-            
+
             .edit-mode-actions {
                 display: flex;
                 flex-direction: row;
                 align-items: center;
                 gap: 12px;
-                
+
                 .action-btn {
                     background: rgba(255, 255, 255, 0.2);
                     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -632,26 +630,26 @@
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    
+
                     .material-icons {
                         color: var(--scheduler-secondary-text-color, #ffffff);
                         font-size: 18px;
                     }
-                    
+
                     &:hover {
                         background: rgba(255, 255, 255, 0.3);
                     }
-                    
+
                     &:disabled {
                         opacity: 0.5;
                         cursor: not-allowed;
                     }
                 }
-                
+
                 .save-btn {
                     background: var(--scheduler-accent-color, #2196f3);
                     border: 1px solid var(--scheduler-accent-color, #2196f3);
-                    
+
                     &:hover {
                         background: var(--scheduler-accent-color, #1976d2);
                         border-color: var(--scheduler-accent-color, #1976d2);
@@ -667,7 +665,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
-    margin-top: 16px;
+    margin-top: 2px;
 }
 
 .device-mode, .overview-mode {
@@ -681,25 +679,25 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    
+
     // Custom scrollbar styling
     &::-webkit-scrollbar {
         width: 6px;
     }
-    
+
     &::-webkit-scrollbar-track {
         background: transparent;
     }
-    
+
     &::-webkit-scrollbar-thumb {
         background: var(--scheduler-accent-color, #2196f3);
         border-radius: 3px;
     }
-    
+
     &::-webkit-scrollbar-thumb:hover {
         background: var(--scheduler-accent-hover, #1976d2);
     }
-    
+
     // Only add margin when scrollbar is present
     &.has-scrollbar {
         .header-row,
@@ -714,7 +712,7 @@
     padding: 40px 20px;
     color: #666;
     font-style: italic;
-    
+
     p {
         margin: 0;
         font-size: 14px;
@@ -732,20 +730,20 @@
         font-weight: 500;
         font-size: 12px;
         border-radius: 4px 4px 0 0;
-        
+
         .header-cell {
             display: flex;
             align-items: center;
             justify-content: center;
-            
+
             &.schedule-num {
                 justify-content: center;
             }
-            
+
             &.device-name {
                 justify-content: flex-start;
             }
-            
+
             &.actions {
                 justify-content: flex-end;
             }
@@ -755,7 +753,7 @@
 
 .schedule-list {
     // No scrolling properties - handled by parent device-scroll-container
-    
+
     .schedule-item {
         border: 1px solid var(--scheduler-border-color, #e0e0e0);
         border-radius: 0;
@@ -763,37 +761,37 @@
         border-bottom: none;
         background: var(--scheduler-bg-color, #ffffff);
         color: var(--scheduler-text-color, #333333);
-        
+
         // First item gets top border radius
         &:first-child {
             border-radius: 0 0 0 0;
         }
-        
+
         // Last item gets bottom border radius and border
         &:last-child {
             border-radius: 0 0 4px 4px;
             border-bottom: 1px solid var(--scheduler-border-color, #e0e0e0);
         }
-        
+
         &:hover {
             background: var(--scheduler-hover-color, #f5f5f5);
-            
+
             .schedule-main-row {
                 background: var(--scheduler-hover-color, #f5f5f5);
             }
         }
-        
+
         &.disabled {
             opacity: 0.6;
             background: #f9f9f9;
         }
-        
+
         &.read-only {
             cursor: default !important;
             pointer-events: none !important;
             opacity: 0.7;
             position: relative;
-            
+
             // Add visual indicator that item is read-only
             &::after {
                 content: '';
@@ -805,21 +803,21 @@
                 background: rgba(128, 128, 128, 0.05);
                 pointer-events: none;
             }
-            
+
             .schedule-main-row {
                 cursor: default !important;
                 pointer-events: none !important;
             }
-            
+
             &:hover {
                 background: var(--scheduler-bg-color, #ffffff);
-                
+
                 .schedule-main-row {
                     background: var(--scheduler-bg-color, #ffffff);
                 }
             }
         }
-        
+
             .schedule-main-row {
                 display: grid;
                 grid-template-columns: 30px 1fr 1fr 1fr 40px 40px;
@@ -829,21 +827,21 @@
                 font-size: 14px;
                 cursor: pointer;
                 transition: background-color 0.2s ease;
-                
+
                 > * {
                     display: flex;
                     align-items: center;
                     justify-content: center;
                 }
-                
+
                 .schedule-number {
                     justify-content: center;
                 }
-                
+
                 .start-time, .end-time, .duration {
                     justify-content: center;
                 }
-                
+
                 // Small am/pm indicator in 12hr format
                 .start-time, .end-time {
                     ::ng-deep .time-period {
@@ -853,14 +851,14 @@
                         font-weight: 400;
                     }
                 }
-                
+
                 .status-switch {
                     justify-content: center;
                 }
-                
+
                 .actions {
                     justify-content: flex-end;
-                    
+
                     .delete-btn {
                         background: var(--scheduler-accent-color, #2196f3);
                         color: var(--scheduler-secondary-text-color, #ffffff);
@@ -873,18 +871,18 @@
                         align-items: center;
                         justify-content: center;
                         min-width: 0;
-                        
+
                         &:hover {
                             background: var(--scheduler-accent-color, #1976d2);
                         }
-                        
-                        .material-icons {
+
+                        .material-icons, .material-icons-outlined {
                             font-size: 14px;
                         }
                     }
                 }
             }
-            
+
             .calendar-view-btn {
                 background: var(--scheduler-accent-color, #2196f3);
                 color: var(--scheduler-secondary-text-color, #ffffff);
@@ -897,28 +895,28 @@
                 align-items: center;
                 justify-content: center;
                 min-width: 0;
-                
+
                 &:hover {
                     background: var(--scheduler-accent-color, #1976d2);
                 }
-                
+
                 .material-icons {
                     font-size: 14px;
                     margin-right: 4px;
                 }
-                
+
                 .calendar-btn-text {
                     font-size: 11px;
                     font-weight: 500;
                     white-space: nowrap;
                 }
             }
-            
+
             .schedule-number {
                 font-weight: bold;
                 color: var(--scheduler-accent-color, #2196f3);
             }
-            
+
             .device-name {
                 font-weight: 500;
                 overflow: hidden;
@@ -926,50 +924,50 @@
                 white-space: nowrap;
                 color: var(--scheduler-text-color, #333333);
             }
-            
+
             .start-time, .end-time {
                 font-family: 'Courier New', monospace;
                 font-size: 13px;
                 color: var(--scheduler-text-color, #333333);
             }
-            
+
             .duration {
                 font-size: 12px;
                 color: var(--scheduler-text-color, #333333);
             }
-            
+
             .status-switch {
                 display: flex;
                 justify-content: center;
             }
-            
+
             .actions {
                 display: flex;
                 gap: 4px;
                 justify-content: flex-end;
-                
+
                 button {
                     padding: 4px 8px;
                     border: 1px solid #ccc;
                     border-radius: 3px;
                     cursor: pointer;
                     font-size: 11px;
-                    
+
                     &.edit-btn {
                         background: #e3f2fd;
                         border-color: #2196f3;
                         color: #1976d2;
-                        
+
                         &:hover {
                             background: #bbdefb;
                         }
                     }
-                    
+
                     &.delete-btn {
                         background: #ffebee;
                         border-color: #f44336;
                         color: #d32f2f;
-                        
+
                         &:hover {
                             background: #ffcdd2;
                         }
@@ -977,13 +975,13 @@
                 }
             }
         }
-        
+
         .days-display {
             display: flex;
             gap: 3px;
             justify-content: center;
             padding: 6px 8px 8px 8px;
-            
+
             .day-circle {
                 width: 18px;
                 height: 18px;
@@ -996,7 +994,7 @@
                 background: var(--scheduler-border-color, #cccccc);
                 border: 1px solid var(--scheduler-border-color, #cccccc);
                 color: var(--scheduler-text-color, #333333);
-                
+
                 &.active {
                     background: var(--scheduler-accent-color, #2196f3);
                     color: var(--scheduler-secondary-text-color, #ffffff);
@@ -1004,21 +1002,21 @@
                 }
             }
         }
-        
+
         .calendar-display {
             display: flex;
             justify-content: center;
             padding: 6px 8px 8px 8px;
         }
-        
+
         .schedule-days-row {
             padding: 8px 12px 12px 12px;
-            
+
             .days-display {
                 display: flex;
                 gap: 4px;
                 justify-content: center;
-                
+
                 .day-circle {
                     width: 24px;
                     height: 24px;
@@ -1031,7 +1029,7 @@
                     background: var(--scheduler-border-color, #cccccc);
                     border: 1px solid var(--scheduler-border-color, #cccccc);
                     color: var(--scheduler-text-color, #333333);
-                    
+
                     &.active {
                         background: var(--scheduler-accent-color, #2196f3);
                         color: var(--scheduler-secondary-text-color, #ffffff);
@@ -1045,30 +1043,30 @@
 .overview-scroll-container {
     flex: 1;
     overflow-y: auto;
-    
+
     // Custom scrollbar styling - only visible when scrolling
     &::-webkit-scrollbar {
         width: 6px;
     }
-    
+
     &::-webkit-scrollbar-track {
         background: transparent;
     }
-    
+
     &::-webkit-scrollbar-thumb {
         background: var(--scheduler-accent-color, #2196f3);
         border-radius: 3px;
-        
+
         &:hover {
             background: var(--scheduler-accent-color, #1976d2);
         }
     }
-    
+
     // Hide scrollbar track when not needed
     &::-webkit-scrollbar-corner {
         background: transparent;
     }
-    
+
     // Only add margin when scrollbar is present
     &.has-scrollbar {
         .header-row,
@@ -1085,13 +1083,13 @@
     display: inline-block;
     width: 40px;
     height: 20px;
-    
+
     input {
         opacity: 0;
         width: 0;
         height: 0;
     }
-    
+
     .slider {
         position: absolute;
         cursor: pointer;
@@ -1102,7 +1100,7 @@
         background-color: var(--scheduler-border-color, #cccccc);
         transition: .4s;
         border-radius: 20px;
-        
+
         &:before {
             position: absolute;
             content: "";
@@ -1115,11 +1113,11 @@
             border-radius: 50%;
         }
     }
-    
+
     input:checked + .slider {
         background-color: var(--scheduler-accent-color, #2196f3);
     }
-    
+
     input:checked + .slider:before {
         transform: translateX(20px);
     }
@@ -1128,7 +1126,7 @@
 // Device assignment form styling
 .device-assignment {
     margin-bottom: 16px;
-    
+
     label {
         display: block;
         font-size: 12px;
@@ -1136,7 +1134,7 @@
         color: var(--scheduler-text-color);
         margin-bottom: 4px;
     }
-    
+
     select {
         width: 100%;
         padding: 8px 12px;
@@ -1145,7 +1143,7 @@
         background: var(--scheduler-bg-color);
         color: var(--scheduler-text-color);
         font-size: 14px;
-        
+
         &:focus {
             outline: none;
             border-color: var(--scheduler-accent-color);
@@ -1163,34 +1161,34 @@
     border: 1px solid var(--scheduler-border-color, #cccccc);
     border-radius: 4px;
     color: var(--scheduler-text-color, #333333);
-    
+
     // Custom scrollbar styling for the form
     &::-webkit-scrollbar {
         width: 6px;
     }
-    
+
     &::-webkit-scrollbar-track {
         background: #f1f1f1;
         border-radius: 3px;
     }
-    
+
     &::-webkit-scrollbar-thumb {
         background: var(--scheduler-accent-color, #2196f3);
         border-radius: 3px;
     }
-    
+
     &::-webkit-scrollbar-thumb:hover {
         background: var(--scheduler-accent-hover, #1976d2);
     }
-    
+
     h3 {
         margin: 0 0 16px 0;
         color: var(--scheduler-accent-color, #2196f3);
     }
-    
+
     .form-row {
         margin-bottom: 12px;
-        
+
         label {
             display: block;
             font-size: 12px;
@@ -1198,7 +1196,7 @@
             margin-bottom: 4px;
             color: var(--scheduler-text-color, #333333);
         }
-        
+
         input, select {
             width: 100%;
             padding: 8px;
@@ -1206,21 +1204,21 @@
             border-radius: 3px;
             background: var(--scheduler-bg-color, #ffffff);
             color: var(--scheduler-text-color, #333333);
-            
+
             &:focus {
                 outline: none;
                 border-color: var(--scheduler-accent-color, #2196f3);
             }
         }
     }
-    
+
     .recurring-toggle {
         margin-bottom: 16px;
         padding: 12px;
         background: rgba(var(--scheduler-accent-color-rgb, 33, 150, 243), 0.05);
         border: 1px solid rgba(var(--scheduler-accent-color-rgb, 33, 150, 243), 0.2);
         border-radius: 4px;
-        
+
         .toggle-label {
             display: flex;
             flex-direction: row;
@@ -1228,40 +1226,40 @@
             margin: 0;
             pointer-events: none;
             align-items: center;
-            justify-content: center; 
-            
+            justify-content: center;
+
             .toggle-text {
                 font-size: 12px;
                 font-weight: 500;
                 color: var(--scheduler-text-color, #333333);
                 cursor: default;
             }
-            
+
             .toggle-switch-container {
                 display: flex;
                 align-items: center;
                 gap: 12px;
-                
+
                 .switch {
                     flex-shrink: 0;
                     cursor: pointer;
-                    pointer-events: auto; 
-                    
+                    pointer-events: auto;
+
                     .slider {
                         cursor: pointer;
                     }
                 }
-                
+
                 .toggle-description {
                     font-size: 11px;
                     color: var(--scheduler-text-color, #666666);
                     font-style: italic;
-                    cursor: default; 
+                    cursor: default;
                 }
             }
         }
     }
-    
+
     .toggle-row-horizontal {
         display: flex;
         gap: 16px;
@@ -1270,27 +1268,27 @@
         background: rgba(var(--scheduler-accent-color-rgb, 33, 150, 243), 0.05);
         border: 1px solid rgba(var(--scheduler-accent-color-rgb, 33, 150, 243), 0.2);
         border-radius: 4px;
-        
+
         .toggle-item {
             flex: 1;
-            
+
             .toggle-label {
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 margin: 0;
-                
+
                 .toggle-text {
                     font-size: 12px;
                     font-weight: 500;
                     color: var(--scheduler-text-color, #333333);
                     white-space: nowrap;
                 }
-                
+
                 .toggle-switch-container {
                     display: flex;
                     align-items: center;
-                    
+
                     .switch {
                         cursor: pointer;
                     }
@@ -1298,22 +1296,22 @@
             }
         }
     }
-    
+
     .days-selection {
         margin-bottom: 16px;
-        
+
         label {
             display: block;
             font-size: 12px;
             font-weight: 500;
             margin-bottom: 8px;
         }
-        
+
         .days-grid {
             display: flex;
             gap: 4px;
             margin-bottom: 8px;
-            
+
             .day-btn {
                 flex: 1;
                 padding: 8px 4px;
@@ -1323,17 +1321,17 @@
                 cursor: pointer;
                 border-radius: 3px;
                 font-size: 11px;
-                
+
                 &.active {
                     background: var(--scheduler-accent-color, #2196f3);
                     color: var(--scheduler-secondary-text-color, #ffffff);
                     border-color: var(--scheduler-accent-color, #2196f3);
                 }
-                
+
                 &:hover {
                     background: #e0e0e0;
                     color: var(--scheduler-text-color, #333333);
-                    
+
                     &.active {
                         background: var(--scheduler-accent-color, #1976d2);
                         color: var(--scheduler-secondary-text-color, #ffffff);
@@ -1341,7 +1339,7 @@
                 }
             }
         }
-        
+
         .select-all-btn {
             width: 100%;
             padding: 6px;
@@ -1351,38 +1349,38 @@
             cursor: pointer;
             border-radius: 3px;
             font-size: 11px;
-            
+
             &:hover {
                 background: var(--scheduler-hover-bg, #f5f5f5);
             }
         }
     }
-    
+
     .form-actions {
         display: flex;
         gap: 8px;
         justify-content: flex-end;
-        
+
         button {
             padding: 8px 16px;
             border: 1px solid #ccc;
             border-radius: 3px;
             cursor: pointer;
-            
+
             &.cancel-btn {
                 background: #f5f5f5;
                 color: var(--scheduler-text-color, #333333);
-                
+
                 &:hover {
                     background: #e0e0e0;
                 }
             }
-            
+
             &.save-btn {
                 background: var(--scheduler-accent-color, #2196f3);
                 color: var(--scheduler-secondary-text-color, #ffffff);
                 border-color: var(--scheduler-accent-color, #2196f3);
-                
+
                 &:hover {
                     background: var(--scheduler-accent-color, #1976d2);
                 }
@@ -1401,22 +1399,21 @@
 
 // Overview mode
 .device-group {
-    margin-bottom: 16px;
-    
+
     .device-header {
         background: var(--scheduler-accent-color, #2196f3);
         color: var(--scheduler-secondary-text-color, #ffffff);
         padding: 8px 12px;
-        margin: 0 0 8px 0;
+        margin: 0 0 0 0;
         border-radius: 4px 4px 0 0;
         font-size: 14px;
         font-weight: 500;
     }
-    
+
     // Mode section tables (Timer Mode and Event Mode)
     .mode-section {
-        margin-bottom: 12px;
-        
+        margin-bottom: 1px;
+
         .schedule-headers .header-row {
             // Lighter shade of accent color for mode table headers
             background: color-mix(in srgb, var(--scheduler-accent-color, #2196f3) 70%, white 30%);
@@ -1432,18 +1429,18 @@
     justify-content: center;
     height: 100%;
     color: #666;
-    
+
     .material-icons {
         font-size: 48px;
         margin-bottom: 8px;
     }
-    
+
     p {
         margin: 0 0 4px 0;
         font-size: 16px;
         font-weight: 500;
     }
-    
+
     small {
         font-size: 12px;
         opacity: 0.7;
@@ -1453,15 +1450,15 @@
 // Global override for dropdown panel background - applied to entire component
 ::ng-deep .cdk-overlay-pane .mat-mdc-select-panel {
     background: var(--scheduler-bg-color, #ffffff) !important;
-    
+
     .mat-mdc-option {
         background: transparent !important;
         color: var(--scheduler-text-color, #333333) !important;
-        
+
         &:hover:not(.mdc-list-item--selected) {
             background: var(--scheduler-hover-color, rgba(0, 0, 0, 0.1)) !important;
         }
-        
+
         &.mdc-list-item--selected {
             background: var(--scheduler-accent-color, #2196f3) !important;
             color: var(--scheduler-secondary-text-color, #ffffff) !important;
@@ -1469,16 +1466,16 @@
     }
 }
 
-// Form custom dropdown styles 
+// Form custom dropdown styles
 .form-custom-select {
     position: relative;
     width: 100%;
-    
+
     &.error .form-custom-select-trigger {
         border-color: #f44336;
         background-color: rgba(244, 67, 54, 0.1);
     }
-    
+
     .form-custom-select-trigger {
         background: var(--scheduler-bg-color, #ffffff);
         border: 1px solid var(--scheduler-border-color, #cccccc);
@@ -1493,18 +1490,18 @@
         min-height: 28px;
         max-height: 28px;
         height: 28px;
-        
+
         &:hover {
             border-color: var(--scheduler-accent-color, #2196f3);
             background-color: rgba(33, 150, 243, 0.05);
         }
-        
+
         &:focus-within {
             border-color: var(--scheduler-accent-color, #2196f3);
             box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
             outline: none;
         }
-        
+
         .selected-text {
             flex: 1;
             text-overflow: ellipsis;
@@ -1512,7 +1509,7 @@
             white-space: nowrap;
             text-align: left;
         }
-        
+
         .arrow {
             margin-left: 8px;
             font-size: 20px;
@@ -1520,11 +1517,11 @@
             color: var(--scheduler-accent-color, #2196f3);
         }
     }
-    
+
     &.open .form-custom-select-trigger .arrow {
         transform: rotate(180deg);
     }
-    
+
     .form-custom-select-dropdown {
         position: absolute;
         top: 100%;
@@ -1534,34 +1531,34 @@
         border: 1px solid var(--scheduler-border-color, #cccccc);
         border-radius: 4px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 1001; 
-        max-height: 120px !important; 
+        z-index: 1001;
+        max-height: 120px !important;
         overflow-y: auto;
         overflow-x: hidden;
-        
+
         // Enhanced scrollbar styling
         &::-webkit-scrollbar {
             width: 8px;
         }
-        
+
         &::-webkit-scrollbar-track {
             background: rgba(0,0,0,0.05);
             border-radius: 4px;
         }
-        
+
         &::-webkit-scrollbar-thumb {
             background: var(--scheduler-accent-color, #2196f3);
             border-radius: 4px;
             opacity: 0.6;
         }
-        
+
         &::-webkit-scrollbar-thumb:hover {
             opacity: 0.8;
         }
-        
+
         scrollbar-width: thin;
         scrollbar-color: var(--scheduler-accent-color, #2196f3) rgba(0,0,0,0.05);
-        
+
         .form-custom-option {
             padding: 6px 10px;
             cursor: pointer;
@@ -1574,41 +1571,41 @@
             min-height: 28px;
             max-height: 28px;
             height: 28px;
-            
+
             &:last-child {
                 border-bottom: none;
             }
-            
+
             &:hover {
                 background: var(--scheduler-hover-color) !important;
                 color: var(--scheduler-text-color, #333333);
-                transform: translateX(2px); 
+                transform: translateX(2px);
             }
-            
+
             &.selected {
                 background: var(--scheduler-accent-color, #2196f3);
                 color: var(--scheduler-secondary-text-color, #ffffff);
                 font-weight: 500;
-                
+
                 &::after {
                     content: '✓';
                     margin-left: auto;
                     font-size: 16px;
                 }
             }
-            
+
             &.selected:hover {
                 background: var(--scheduler-accent-color, #2196f3) !important;
                 color: var(--scheduler-secondary-text-color, #ffffff) !important;
                 transform: none;
             }
-            
+
             // Long device name handling
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        
+
         // Loading state for many devices
         .loading-more {
             padding: 8px 16px;
@@ -1617,7 +1614,7 @@
             font-size: 12px;
             font-style: italic;
         }
-        
+
         // Empty state
         .no-devices {
             padding: 16px;
@@ -1631,15 +1628,15 @@
 // Custom time picker styles
 .custom-time-picker {
     position: relative;
-    
+
     .time-input-wrapper {
         position: relative;
         display: flex;
         align-items: center;
-        
+
         .time-input {
             width: 100%;
-            padding: 8px 35px 8px 12px; 
+            padding: 8px 35px 8px 12px;
             border: 1px solid var(--scheduler-border-color, #cccccc);
             border-radius: 4px;
             background: var(--scheduler-bg-color, #ffffff);
@@ -1648,24 +1645,24 @@
             font-size: 14px;
             cursor: pointer;
             transition: all 0.2s ease;
-            
+
             &:hover {
                 border-color: var(--scheduler-accent-color, #2196f3);
                 background-color: rgba(33, 150, 243, 0.05);
             }
-            
+
             &:focus, &.active {
                 outline: none;
                 border-color: var(--scheduler-accent-color, #2196f3);
                 box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
                 background-color: rgba(33, 150, 243, 0.05);
             }
-            
+
             &::placeholder {
                 color: rgba(0, 0, 0, 0.4);
             }
         }
-        
+
         .time-icon {
             position: absolute;
             right: 8px;
@@ -1677,32 +1674,32 @@
             transition: color 0.2s ease;
         }
     }
-    
+
     .time-picker-dropdown {
         position: absolute;
         top: 100%;
         left: 0;
-        width: 280px; 
+        width: 280px;
         background: var(--scheduler-bg-color, #ffffff);
         border: 1px solid var(--scheduler-border-color, #cccccc);
         border-radius: 4px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         z-index: 2000;
         padding: 12px;
-        
+
         // Ensure it doesn't go off screen
         &.align-right {
             left: auto;
             right: 0;
         }
-        
+
         .time-controls {
             display: flex;
             gap: 8px;
-            
+
             .time-part {
                 flex: 1;
-                
+
                 label {
                     font-size: 11px;
                     font-weight: 500;
@@ -1711,31 +1708,31 @@
                     display: block;
                     text-align: center;
                 }
-                
+
                 .time-options {
                     background: var(--scheduler-bg-color, #ffffff);
                     border: 1px solid var(--scheduler-border-color, #cccccc);
                     border-radius: 3px;
                     max-height: 140px;
                     overflow-y: auto;
-                    padding-right: 2px; 
-                    
+                    padding-right: 2px;
+
                     // Custom scrollbar for time options
                     &::-webkit-scrollbar {
                         width: 6px;
                     }
-                    
+
                     &::-webkit-scrollbar-track {
                         background: rgba(0,0,0,0.05);
                         border-radius: 3px;
                     }
-                    
+
                     &::-webkit-scrollbar-thumb {
                         background: var(--scheduler-accent-color, #2196f3);
                         border-radius: 3px;
                         opacity: 0.6;
                     }
-                    
+
                     .time-option {
                         padding: 6px 8px;
                         cursor: pointer;
@@ -1744,33 +1741,33 @@
                         transition: background-color 0.2s ease;
                         text-align: center;
                         border-bottom: 1px solid rgba(0,0,0,0.05);
-                        
+
                         &:last-child {
                             border-bottom: none;
                         }
-                        
+
                         &:hover {
                             background: var(--scheduler-hover-color) !important;
                         }
-                        
+
                         &.selected {
                             background: var(--scheduler-accent-color, #2196f3);
                             color: var(--scheduler-secondary-text-color, #ffffff);
                             font-weight: 500;
                         }
-                        
+
                         &.selected:hover {
                             background: var(--scheduler-accent-color, #2196f3) !important;
                             color: var(--scheduler-secondary-text-color, #ffffff) !important;
                         }
                     }
                 }
-                
+
                 .minute-interval-selector {
                     margin-top: 8px;
                     padding-top: 8px;
                     border-top: 1px solid var(--scheduler-border-color, #cccccc);
-                    
+
                     label {
                         font-size: 10px;
                         font-weight: 500;
@@ -1779,12 +1776,12 @@
                         display: block;
                         text-align: center;
                     }
-                    
+
                     .interval-buttons {
                         display: grid;
                         grid-template-columns: repeat(2, 1fr);
                         gap: 4px;
-                        
+
                         .interval-btn {
                             padding: 4px 6px;
                             font-size: 11px;
@@ -1795,12 +1792,12 @@
                             cursor: pointer;
                             transition: all 0.2s ease;
                             font-weight: 500;
-                            
+
                             &:hover {
                                 background: var(--scheduler-hover-color);
                                 border-color: var(--scheduler-accent-color, #2196f3);
                             }
-                            
+
                             &.active {
                                 background: var(--scheduler-accent-color, #2196f3);
                                 color: var(--scheduler-secondary-text-color, #ffffff);
@@ -1845,12 +1842,12 @@
     gap: 8px;
     padding: 16px 20px;
     border-bottom: 1px solid #e0e0e0;
-    
+
     .material-icons {
         color: var(--scheduler-accent-color, #2196f3);
         font-size: 24px;
     }
-    
+
     h3 {
         margin: 0;
         font-size: 18px;
@@ -1867,7 +1864,7 @@
     .schedule-label {
         font-weight: 700;
     }
-    
+
     .calendar-popup-content {
         label {
             display: block;
@@ -1876,20 +1873,20 @@
             margin-bottom: 8px;
             font-size: 14px;
         }
-        
+
         // Disable hover effects and cursor for popup indicators
         .day-btn,
         .month-btn,
         .day-of-month-btn {
             cursor: default !important;
             pointer-events: none !important;
-            
+
             &:hover {
                 background: #f9f9f9 !important;
                 color: var(--scheduler-text-color, #333333) !important;
                 border-color: #ccc !important;
             }
-            
+
             &.active:hover {
                 background: var(--scheduler-accent-color, #2196f3) !important;
                 color: var(--scheduler-secondary-text-color, #ffffff) !important;
@@ -1905,7 +1902,7 @@
     padding: 16px 20px;
     border-top: 1px solid #e0e0e0;
     justify-content: flex-end;
-    
+
     button {
         padding: 8px 16px;
         border: none;
@@ -1913,20 +1910,20 @@
         cursor: pointer;
         font-weight: 500;
         transition: background-color 0.2s ease;
-        
+
         &.cancel-btn {
             background: #f5f5f5;
             color: var(--scheduler-text-color, #666666);
-            
+
             &:hover {
                 background: #e0e0e0;
             }
         }
-        
+
         &.confirm-btn {
             background: var(--scheduler-accent-color, #2196f3);
             color: var(--scheduler-secondary-text-color, #ffffff);
-            
+
             &:hover {
                 background: var(--scheduler-accent-color, #1976d2);
             }
@@ -1969,7 +1966,7 @@
     cursor: pointer;
     color: var(--scheduler-secondary-text-color, #ffffff);
     font-size: 12px;
-    
+
     input[type="checkbox"] {
         position: absolute;
         opacity: 0;
@@ -1977,7 +1974,7 @@
         height: 0;
         width: 0;
     }
-    
+
     .checkmark {
         height: 16px;
         width: 16px;
@@ -1987,7 +1984,7 @@
         margin-right: 6px;
         position: relative;
         transition: all 0.2s ease;
-        
+
         &:after {
             content: "";
             position: absolute;
@@ -2001,21 +1998,21 @@
             transform: rotate(45deg);
         }
     }
-    
+
     &:hover .checkmark {
         background-color: var(--scheduler-hover-color, rgba(173, 216, 230, 0.6));
         border-color: var(--scheduler-hover-color, rgba(173, 216, 230, 0.8));
     }
-    
+
     input:checked ~ .checkmark {
         background-color: var(--scheduler-hover-color, rgba(173, 216, 230, 0.9));
         border-color: var(--scheduler-hover-color, rgba(173, 216, 230, 1));
-        
+
         &:after {
             display: block;
         }
     }
-    
+
     .checkbox-label {
         user-select: none;
     }

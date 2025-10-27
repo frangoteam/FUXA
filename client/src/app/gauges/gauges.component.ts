@@ -31,7 +31,6 @@ import { HtmlFileViewerComponent } from './controls/html-file-viewer/html-file-v
 import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
 import { HtmlSchedulerComponent } from './controls/html-scheduler/html-scheduler.component';
-import { SchedulerComponent } from './controls/html-scheduler/scheduler/scheduler.component';
 import { ChartOptions } from '../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
 import { HtmlImageComponent } from './controls/html-image/html-image.component';
@@ -75,7 +74,7 @@ export class GaugesManager {
     // list of gauges components
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
-        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlFileViewerComponent, HtmlTableComponent,
+        PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
         HtmlImageComponent, PanelComponent, HtmlVideoComponent, HtmlSchedulerComponent];
 
     constructor(private hmiService: HmiService,

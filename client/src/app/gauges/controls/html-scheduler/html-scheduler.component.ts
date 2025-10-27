@@ -39,7 +39,7 @@ export class HtmlSchedulerComponent extends GaugeBaseComponent {
         let ele = document.getElementById(gab.id);
         if (ele) {
             ele?.setAttribute('data-name', gab.name);
-            
+
             // Set default fill color for the scheduler shape
             const rect = ele.querySelector('rect');
             if (rect && !rect.hasAttribute('data-initialized')) {
@@ -49,12 +49,12 @@ export class HtmlSchedulerComponent extends GaugeBaseComponent {
                 }
                 rect.setAttribute('data-initialized', 'true');
             }
-            
+
             let htmlScheduler = Utils.searchTreeStartWith(ele, this.prefixD);
             if (htmlScheduler) {
                 const factory = resolver.resolveComponentFactory(SchedulerComponent);
                 const componentRef: ComponentRef<SchedulerComponent> = viewContainerRef.createComponent(factory);
-                
+
                 if (!gab.property) {
                     gab.property = {
                         id: null,
@@ -67,7 +67,7 @@ export class HtmlSchedulerComponent extends GaugeBaseComponent {
                         }
                     };
                 }
-                
+
                 // Set default color scheme if not already set
                 if (!gab.property.accentColor) {
                     gab.property.accentColor = '#556e82'; // RGB(85,110,130) - Theme
@@ -84,18 +84,18 @@ export class HtmlSchedulerComponent extends GaugeBaseComponent {
                 if (!gab.property.secondaryTextColor) {
                     gab.property.secondaryTextColor = '#ffffff'; // RGB(255,255,255) - Secondary Text
                 }
-                
+
                 htmlScheduler.innerHTML = '';
                 componentRef.instance.isEditor = !isview;
                 componentRef.instance.property = gab.property;
                 componentRef.instance.id = gab.id;
-                
+
                 componentRef.changeDetectorRef.detectChanges();
                 htmlScheduler.appendChild(componentRef.location.nativeElement);
-                
+
                 componentRef.instance['myComRef'] = componentRef;
                 componentRef.instance['name'] = gab.name;
-                
+
                 return componentRef.instance;
             }
         }

@@ -342,7 +342,8 @@ export class TagPropertyService {
             },
             position: { top: '60px' }
         });
-        dialogRef.componentInstance.invokeSubscribe = (oldtopic, newtopics) => this.addTopicSubscription(device, oldtopic, newtopics, tagsMap, callbackModify);
+        dialogRef.componentInstance.invokeSubscribe =
+            (oldtopic, newtopics, sendToProjectDevice = true) => this.addTopicSubscription(device, oldtopic, newtopics, tagsMap, sendToProjectDevice, callbackModify);
         dialogRef.componentInstance.invokePublish = (oldtopic, newtopic) => this.addTopicToPublish(device, oldtopic, newtopic, tagsMap, callbackModify);
         dialogRef.afterClosed().subscribe();
     }
@@ -515,7 +516,7 @@ export class TagPropertyService {
         return result;
     }
 
-    private addTopicSubscription(device: Device, oldTopic: Tag, topics: Tag[], tagsMap: {}, callbackModify: () => void) {
+    private addTopicSubscription(device: Device, oldTopic: Tag, topics: Tag[], tagsMap: {}, sendToProjectDevice, callbackModify: () => void) {
         if (topics) {
             let existNames = Object.values(device.tags).filter((t: Tag) => { if (!oldTopic || t.id !== oldTopic.id) {return t.name;} }).map((t: Tag) => t.name);
             topics.forEach((topic: Tag) => {
@@ -543,6 +544,8 @@ export class TagPropertyService {
                     }
                 }
             });
+        }
+        if (sendToProjectDevice) {
             this.projectService.setDeviceTags(device);
             if (callbackModify) {
                 callbackModify();

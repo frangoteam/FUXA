@@ -3,8 +3,6 @@ import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ViewCon
 import { ChangeDetectorRef } from '@angular/core';
 import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA} from '@angular/material/legacy-dialog';
 import { MatDrawer } from '@angular/material/sidenav';
-import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry } from '@angular/material/icon';
 import { Subject, Subscription, switchMap, takeUntil } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -134,12 +132,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         private viewContainerRef: ViewContainerRef,
         private resolver: ComponentFactoryResolver,
         private resourcesService: ResourcesService,
-        private libWidgetsService: LibWidgetsService,
-        private mdIconRegistry: MatIconRegistry,
-        private sanitizer: DomSanitizer) {
-        mdIconRegistry.addSvgIcon('group', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/group.svg'));
-        mdIconRegistry.addSvgIcon('to_bottom', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/to-bottom.svg'));
-        mdIconRegistry.addSvgIcon('to_top', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/to-top.svg'));
+        private libWidgetsService: LibWidgetsService) {
     }
 
     //#region Implemented onInit / onAfterInit event
@@ -1399,17 +1392,19 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
         } else if (dlgType === GaugeDialogType.Scheduler) {
-            dialogRef = this.dialog.open(SchedulerPropertyComponent, {
-                position: { top: '60px' },
-                disableClose: true,
-                data: {
-                    settings: tempsettings,
-                    devices: Object.values(this.projectService.getDevices()),
-                    withEvents: eventsSupported,
-                    withActions: actionsSupported,
-                    languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
-                }
-            });
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings,
+                devices: Object.values(this.projectService.getDevices()),
+                withEvents: eventsSupported,
+                withActions: actionsSupported,
+                languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
         } else {
             //!TODO to be refactored (GaugePropertyComponent)
             elementWithLanguageText = this.isSelectedElementToEnableLanguageTextSettings();
