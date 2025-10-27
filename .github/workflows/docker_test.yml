@@ -35,6 +35,7 @@ jobs:
           platforms: ${{ env.platforms }}
           tags: frangoteam/${{ env.app }}:${{ env.version }}
           outputs: type=oci,dest=/tmp/${{ env.app }}-${{ env.version }}.tar
+          no-cache: true
           build-args: |
             REPO_URL=${{ github.server_url }}/${{ github.repository }}
             BRANCH_NAME=${{ github.head_ref || github.ref_name }}
