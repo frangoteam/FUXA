@@ -230,14 +230,15 @@ function NotificatorManager(_runtime) {
         return new Promise(function (resolve, reject) {
             var time = new Date().getTime();
             // check alarms categorie subscriptions
-            var alarms = runtime.alarmsMgr.getAlarmsValues();
-            var alarmsStatus = { highhigh: 0, high: 0, low: 0, info: 0 };
-            alarms.forEach(alr => {
-                if (alr.status === 'N') {
-                    alarmsStatus[alr.type]++;
-                }
-            });
-            Object.keys(alarmsStatus).forEach(async stkey => {
+            try {
+                var alarms = runtime.alarmsMgr.getAlarmsValues();
+                var alarmsStatus = { highhigh: 0, high: 0, low: 0, info: 0 };
+                alarms.forEach(alr => {
+                    if (alr.status === 'N') {
+                        alarmsStatus[alr.type]++;
+                    }
+                });
+                Object.keys(alarmsStatus).forEach(async stkey => {
                     var isActive = alarmsStatus[stkey];
                     var wasActive = subscriptionStatus[stkey];
                     var statusChanged = !wasActive && isActive || (wasActive && isActive && subscriptionStatus[stkey] < alarmsStatus[stkey]);
@@ -295,7 +296,10 @@ function NotificatorManager(_runtime) {
                     subscriptionStatus[stkey] = isActive;
                 });
                 resolve(true);
-            });
+            } catch (err) {
+                reject(err);
+            }
+        });
     }
 
     /**
