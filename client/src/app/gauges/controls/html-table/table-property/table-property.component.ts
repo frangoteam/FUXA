@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { TableType, TableCellType, TableCellAlignType, TableRangeType, GaugeTableProperty, GaugeEvent, GaugeEventType, GaugeEventActionType, TableColumn } from '../../../../_models/hmi';
 import { DataTableComponent } from '../data-table/data-table.component';
+import { FlexDeviceTagValueType } from '../../../gauge-property/flex-device-tag/flex-device-tag.component';
 import { TableCustomizerComponent, TableCustomizerType } from '../table-customizer/table-customizer.component';
 import { Utils } from '../../../../_helpers/utils';
 import { SCRIPT_PARAMS_MAP, Script } from '../../../../_models/script';
@@ -44,6 +45,7 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
     eventType = [Utils.getEnumKey(GaugeEventType, GaugeEventType.select)];
     selectActionType = {};
     actionRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
+    actionSetTag = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onSetTag);
     scripts$: Observable<Script[]>;
 
     constructor(private dialog: MatDialog,
@@ -52,6 +54,7 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
         // this.selectActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow)] = this.translateService.instant(GaugeEventActionType.onwindow);
         // this.selectActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.ondialog)] = this.translateService.instant(GaugeEventActionType.ondialog);
         this.selectActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript)] = this.translateService.instant(GaugeEventActionType.onRunScript);
+        this.selectActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onSetTag)] = 'Tag';
     }
 
     ngOnInit() {
@@ -216,6 +219,11 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
                 event.actoptions[SCRIPT_PARAMS_MAP] = Utils.clone(script.parameters);
             }
         }
+        this.onTableChanged();
+    }
+
+    onTagSelected(deviceTag: FlexDeviceTagValueType, event: GaugeEvent) {
+        event.actparam = deviceTag.variableId;
         this.onTableChanged();
     }
 }

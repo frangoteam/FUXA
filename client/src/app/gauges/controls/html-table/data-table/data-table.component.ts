@@ -1,6 +1,7 @@
-import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatLegacyRow as MatRow, MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { PageEvent } from '@angular/material/paginator';
 import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
 import { MatSort } from '@angular/material/sort';
 import { Utils } from '../../../../_helpers/utils';
@@ -9,7 +10,7 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
-import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType, GaugeEvent, GaugeEventType, TableFilter } from '../../../../_models/hmi';
+import { IDateRange, DaqQuery, TableType, TableOptions, TableColumn, TableCellType, TableCell, TableRangeType, TableCellAlignType, GaugeEvent, GaugeEventType, GaugeEventActionType, TableFilter } from '../../../../_models/hmi';
 import { format } from 'fecha';
 import { BehaviorSubject, Observable, Subject, of, timer } from 'rxjs';
 import { catchError, concatMap, switchMap, takeUntil } from 'rxjs/operators';
@@ -39,6 +40,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatMenuTrigger, { static: false }) trigger: MatMenuTrigger;
     @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
     onTimeRange$ = new BehaviorSubject<DaqQuery>(null);
+
+    settings: any;
+    property: any;
 
     rxjsPollingTimer: Observable<number>;
     statusText = AlarmStatusType;
@@ -73,6 +77,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     events: GaugeEvent[];
     eventSelectionType = Utils.getEnumKey(GaugeEventType, GaugeEventType.select);
     dataFilter: TableFilter | AlarmsFilter | ReportsFilter;
+    isRangeDropdownOpen = false;
+    isPageSizeDropdownOpen = false;
+    selectedPageSize = 25;
+    pageSizeOptions = [10, 25, 100];
 
     constructor(
         private dataService: DataConverterService,
@@ -83,7 +91,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         private languageService: LanguageService,
         private commandService: CommandService,
         public dialog: MatDialog,
-        private translateService: TranslateService) { }
+        private translateService: TranslateService,
+        private cdr: ChangeDetectorRef) { }
 
     ngOnInit() {
         this.dataSource.data = this.data;
@@ -115,6 +124,17 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         this.sort.disabled = this.type === TableType.data;
         this.bindTableControls();
+        if (this.paginator) {
+            this.selectedPageSize = this.paginator.pageSize;
+        }
+        // Reset tags for unselected state on initialization
+        if (this.events) {
+            this.events.forEach(event => {
+                if (event.type === 'select' && event.action === 'onSetTag') {
+                    this.setTagValue(event, null);
+                }
+            });
+        }
     }
 
     ngOnDestroy() {
@@ -124,6 +144,100 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch (e) {
             console.error(e);
         }
+    }
+
+    toggleRangeDropdown() {
+        this.isRangeDropdownOpen = !this.isRangeDropdownOpen;
+        this.isPageSizeDropdownOpen = false;
+    }
+
+    togglePageSizeDropdown() {
+        this.isPageSizeDropdownOpen = !this.isPageSizeDropdownOpen;
+        this.isRangeDropdownOpen = false;
+    }
+
+    selectRange(key: string) {
+        this.tableOptions.lastRange = TableRangeType[key];
+        this.onRangeChanged(key);
+        this.isRangeDropdownOpen = false;
+    }
+
+    canGoPrevious(): boolean {
+        return this.paginator && this.paginator.pageIndex > 0;
+    }
+
+    canGoNext(): boolean {
+        return this.paginator && this.paginator.pageIndex < this.paginator.getNumberOfPages() - 1;
+    }
+
+    previousPage() {
+        if (this.canGoPrevious()) {
+            this.paginator.previousPage();
+        }
+    }
+
+    nextPage() {
+        if (this.canGoNext()) {
+            this.paginator.nextPage();
+        }
+    }
+
+    selectPageSize(value: number) {
+        this.selectedPageSize = value;
+        this.cdr.detectChanges();
+        if (this.paginator) {
+            this.paginator.pageSize = value;
+            this.paginator.page.emit({
+                pageIndex: this.paginator.pageIndex,
+                pageSize: value,
+                length: this.paginator.length
+            });
+        }
+        this.isPageSizeDropdownOpen = false;
+    }
+
+    get selectedRangeLabel(): string {
+        if (this.tableOptions.lastRange === TableRangeType.last1h) return 'Last 1 hour';
+        if (this.tableOptions.lastRange === TableRangeType.last1d) return 'Last 1 day';
+        if (this.tableOptions.lastRange === TableRangeType.last3d) return 'Last 3 days';
+        return 'Last 1 hour';
+    }
+
+    get selectedPageSizeLabel(): string {
+        return this.selectedPageSize.toString();
+    }
+
+    getSelectStyles(isOpen: boolean = false): { [key: string]: string } {
+        return {
+            backgroundColor: this.tableOptions.toolbar?.buttonColor || this.tableOptions.header.background,
+            color: this.tableOptions.toolbar?.color || this.tableOptions.header.color,
+            borderRadius: '3px',
+            padding: '0px 8px',
+            height: '26px',
+            display: 'flex',
+            alignItems: 'center',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+        };
+    }
+
+    getDropdownStyles(): { [key: string]: string } {
+        return {
+            backgroundColor: this.tableOptions.toolbar?.background || this.tableOptions.header.background,
+            color: this.tableOptions.toolbar?.color || this.tableOptions.header.color
+        };
+    }
+
+    getOptionStyle(isSelected: boolean): { [key: string]: string } {
+        if (isSelected) {
+            return {
+                backgroundColor: this.tableOptions.toolbar?.buttonColor || this.tableOptions.header.background,
+                color: this.tableOptions.toolbar?.color || this.tableOptions.header.color,
+                fontWeight: 'bold'
+            };
+        }
+        return {
+            color: this.tableOptions.toolbar?.color || this.tableOptions.header.color
+        };
     }
 
     private startPollingAlarms() {
@@ -200,7 +314,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     setOptions(options: TableOptions): void {
         this.tableOptions = { ...this.tableOptions, ...options };
         this.loadData();
-        this.onRangeChanged(this.tableOptions.lastRange || TableRangeType.last1h);
+        const key = Object.keys(TableRangeType).find(k => TableRangeType[k] === this.tableOptions.lastRange) || 'last1h';
+        this.onRangeChanged(key);
     }
 
     addValue(variableId: string, dt: number, variableValue: string) {
@@ -347,15 +462,24 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataSource.data = rows;
     }
 
-    isSelectable(): boolean {
-        return this.events?.some(event => event.type === this.eventSelectionType);
-    }
+    isSelectable(row: any): boolean {
+    const selectable = this.events && this.events.length > 0 && this.events.some(event => event.type === 'select' && event.action === 'onSetTag');
+    return selectable;
+  }
 
     selectRow(row: MatRow) {
-        if (this.isSelectable()) {
-            this.selectedRow = row;
+        if (this.isSelectable(row)) {
+            if (this.selectedRow === row) {
+                this.selectedRow = null;
+            } else {
+                this.selectedRow = row;
+            }
             this.events.forEach(event => {
-                this.runScript(event, this.selectedRow);
+                if (event.action === Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onSetTag)) {
+                    this.setTagValue(event, this.selectedRow);
+                } else {
+                    this.runScript(event, this.selectedRow);
+                }
             });
         }
     }
@@ -377,6 +501,44 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }, err => {
                 console.error(err);
             });
+        }
+    }
+
+    private setTagValue(event: GaugeEvent, selected: MatRow) {
+        if (event.actparam) {
+            const tagId = event.actparam;
+            const tag = this.projectService.getTagFromId(tagId);
+            if (tag) {
+                let value: any;
+                const type = tag.type.toLowerCase();
+                if (type.includes('bool')) {
+                    value = selected ? true : false;
+                } else if (type.includes('number') || type.includes('int') || type.includes('word') || type.includes('real')) {
+                    value = selected ? this.dataSource.data.indexOf(selected) + 1 : 0; // 1-based index
+                } else if (type.includes('string') || type.includes('char')) {
+                    if (selected) {
+                        const rowData = {};
+                        this.displayedColumns.forEach(col => {
+                            const cell = selected[col];
+                            if (cell && cell.stringValue !== undefined) {
+                                const columnName = this.columnsStyle[col] && this.columnsStyle[col].label && this.columnsStyle[col].label !== 'undefined' ? this.columnsStyle[col].label : col;
+                                let value: any = cell.stringValue;
+                                // Try to parse as number if it looks like one
+                                if (!isNaN(Number(value)) && value.trim() !== '' && !isNaN(parseFloat(value))) {
+                                    value = Number(value);
+                                }
+                                rowData[columnName] = value;
+                            }
+                        });
+                        value = JSON.stringify(rowData);
+                    } else {
+                        value = '';
+                    }
+                } else {
+                    return;
+                }
+                this.scriptService.$setTag(tagId, value);
+            }
         }
     }
 
@@ -447,8 +609,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if (tableData.columns) {
             this.displayedColumns = tableData.columns.map(cln => cln.id);
             this.columnsStyle = tableData.columns;
-            tableData.columns.forEach(clnData => {
-                let column = clnData;
+            tableData.columns.forEach((clnData, index) => {
+                let column = clnData as any;
+                column.label = column.label || 'Column ' + (index + 1);
                 column.fontSize = tableData.header?.fontSize;
                 column.color = column.color || tableData.header?.color;
                 column.background = column.background || tableData.header?.background;
@@ -644,7 +807,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 show: false
             },
             realtime: false,
-            lastRange: Utils.getEnumKey(TableRangeType, TableRangeType.last1h),
+            lastRange: TableRangeType.last1h,
             gridColor: '#E0E0E0',
             header: {
                 show: true,
@@ -653,16 +816,21 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 background: '#F0F0F0',
                 color: '#757575',
             },
+            toolbar: {
+                background: '#F0F0F0',
+                color: '#757575',
+                buttonColor: '#F0F0F0',
+            },
             row: {
                 height: 30,
                 fontSize: 10,
                 background: '#F9F9F9',
-                color: '#000000',
+                color: '#757575ff',
 
             },
             selection: {
-                background: '#3059AF',
-                color: '#FFFFFF',
+                background: '#e0e0e0ff',
+                color: '#757575ff',
                 fontBold: true,
             },
             columns: [new TableColumn(Utils.getShortGUID('c_'), TableCellType.timestamp, 'Date/Time'), new TableColumn(Utils.getShortGUID('c_'), TableCellType.label, 'Tags')],

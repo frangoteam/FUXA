@@ -396,6 +396,7 @@ export enum GaugeEventActionType {
     onRunScript = 'shapes.event-onrunscript',
     onViewToPanel = 'shapes.event-onViewToPanel',
     onMonitor = 'shapes.event-onmonitor',
+    onSetTag = 'shapes.event-onsettag',
 }
 
 export enum ViewEventType {
@@ -525,6 +526,11 @@ export interface TableOptions {
         fontSize?: number;
         color?: string;
         background?: string;
+    };
+    toolbar?: {
+        background?: string;
+        color?: string;
+        buttonColor?: string;
     };
     row?: {
         height: number;

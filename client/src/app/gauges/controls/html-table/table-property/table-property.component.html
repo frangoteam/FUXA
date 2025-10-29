@@ -101,6 +101,32 @@
                     </div>
                 </div>
                 <div class="element-property-header">
+                    <span>{{'table.property-toolbar' | translate}}</span>
+                </div>
+                <div class="block mt5">
+                    <div class="my-form-field section-inline-color color-field ml5">
+                        <span>{{'table.property-toolbar-background' | translate}}</span>
+                        <input [(colorPicker)]="options.toolbar.background" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.toolbar.background"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml15">
+                        <span>{{'table.property-toolbar-color' | translate}}</span>
+                        <input [(colorPicker)]="options.toolbar.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.toolbar.color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml15">
+                        <span>{{'table.property-toolbar-button-color' | translate}}</span>
+                        <input [(colorPicker)]="options.toolbar.buttonColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.toolbar.buttonColor"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                </div>
+                <div class="element-property-header">
                     <span>{{'table.property-selection' | translate}}</span>
                 </div>
                 <div class="block mt5">
@@ -270,6 +296,12 @@
                                         </app-flex-device-tag>
                                     </div>
                                 </div>
+                            </div>
+                            <div *ngSwitchCase="actionSetTag" class="block event-tag">
+                                <app-flex-device-tag class="block mt5 item-device-tag"
+                                                    (onchange)="onTagSelected($event, item)"
+                                                    [variableId]="item.actparam">
+                                </app-flex-device-tag>
                             </div>
                         </div>
                     </div>
