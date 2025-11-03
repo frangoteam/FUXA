@@ -448,10 +448,57 @@
                                         <mat-option *ngFor="let op of getConditionOperators(condition)" [value]="op">{{op}}</mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL'" class="condition-field">
+                                
+                                <!-- Regular value input for non-date/time columns or NULL operators -->
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && !isDateTimeColumn(condition)" class="condition-field">
                                     <mat-label>{{'odbc.value' | translate}}</mat-label>
                                     <input matInput [(ngModel)]="condition.value" placeholder="Enter value">
                                 </mat-form-field>
+                                
+                                <!-- Date picker for DATE columns -->
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'DATE'" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput 
+                                           [matDatepicker]="datePicker" 
+                                           [(ngModel)]="condition.value" 
+                                           (dateChange)="onDatePickerChange(condition, $event)"
+                                           placeholder="YYYY-MM-DD">
+                                    <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #datePicker></mat-datepicker>
+                                </mat-form-field>
+                                
+                                <!-- Time picker for TIME columns -->
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'TIME'" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput 
+                                           type="time" 
+                                           [(ngModel)]="condition.value"
+                                           (change)="onTimeChange(condition, $event)"
+                                           placeholder="HH:MM:SS">
+                                </mat-form-field>
+                                
+                                <!-- DateTime picker for DATETIME/TIMESTAMP columns -->
+                                <div *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'DATETIME'" class="datetime-picker-container">
+                                    <mat-form-field class="condition-field datetime-date">
+                                        <mat-label>Date</mat-label>
+                                        <input matInput 
+                                               [matDatepicker]="dateTimePicker" 
+                                               [value]="getDateFromValue(condition.value)"
+                                               (dateChange)="onDatePickerChange(condition, $event)"
+                                               placeholder="YYYY-MM-DD">
+                                        <mat-datepicker-toggle matSuffix [for]="dateTimePicker"></mat-datepicker-toggle>
+                                        <mat-datepicker #dateTimePicker></mat-datepicker>
+                                    </mat-form-field>
+                                    <mat-form-field class="condition-field datetime-time">
+                                        <mat-label>Time</mat-label>
+                                        <input matInput 
+                                               type="time" 
+                                               [value]="getTimeFromValue(condition.value)"
+                                               (change)="onTimeChange(condition, $event)"
+                                               placeholder="HH:MM">
+                                    </mat-form-field>
+                                </div>
+                                
                                 <button mat-icon-button (click)="removeCondition(i)" [matTooltip]="'odbc.remove-condition' | translate">
                                     <mat-icon>delete</mat-icon>
                                 </button>
@@ -493,10 +540,57 @@
                                         <mat-option *ngFor="let op of getConditionOperators(condition)" [value]="op">{{op}}</mat-option>
                                     </mat-select>
                                 </mat-form-field>
-                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL'" class="condition-field">
+                                
+                                <!-- Regular value input for non-date/time columns or NULL operators -->
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && !isDateTimeColumn(condition)" class="condition-field">
                                     <mat-label>{{'odbc.value' | translate}}</mat-label>
                                     <input matInput [(ngModel)]="condition.value" placeholder="Enter value">
                                 </mat-form-field>
+                                
+                                <!-- Date picker for DATE columns -->
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'DATE'" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput 
+                                           [matDatepicker]="havingDatePicker" 
+                                           [(ngModel)]="condition.value" 
+                                           (dateChange)="onDatePickerChange(condition, $event)"
+                                           placeholder="YYYY-MM-DD">
+                                    <mat-datepicker-toggle matSuffix [for]="havingDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #havingDatePicker></mat-datepicker>
+                                </mat-form-field>
+                                
+                                <!-- Time picker for TIME columns -->
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'TIME'" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput 
+                                           type="time" 
+                                           [(ngModel)]="condition.value"
+                                           (change)="onTimeChange(condition, $event)"
+                                           placeholder="HH:MM:SS">
+                                </mat-form-field>
+                                
+                                <!-- DateTime picker for DATETIME/TIMESTAMP columns -->
+                                <div *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'DATETIME'" class="datetime-picker-container">
+                                    <mat-form-field class="condition-field datetime-date">
+                                        <mat-label>Date</mat-label>
+                                        <input matInput 
+                                               [matDatepicker]="havingDateTimePicker" 
+                                               [value]="getDateFromValue(condition.value)"
+                                               (dateChange)="onDatePickerChange(condition, $event)"
+                                               placeholder="YYYY-MM-DD">
+                                        <mat-datepicker-toggle matSuffix [for]="havingDateTimePicker"></mat-datepicker-toggle>
+                                        <mat-datepicker #havingDateTimePicker></mat-datepicker>
+                                    </mat-form-field>
+                                    <mat-form-field class="condition-field datetime-time">
+                                        <mat-label>Time</mat-label>
+                                        <input matInput 
+                                               type="time" 
+                                               [value]="getTimeFromValue(condition.value)"
+                                               (change)="onTimeChange(condition, $event)"
+                                               placeholder="HH:MM">
+                                    </mat-form-field>
+                                </div>
+                                
                                 <button mat-icon-button (click)="removeHavingCondition(i)" [matTooltip]="'odbc.remove-condition' | translate">
                                     <mat-icon>delete</mat-icon>
                                 </button>

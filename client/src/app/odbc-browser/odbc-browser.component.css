@@ -1244,6 +1244,34 @@ mat-list-option {
     width: 100%;
 }
 
+/* DateTime Picker Container */
+.datetime-picker-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+    width: 100%;
+}
+
+.datetime-date,
+.datetime-time {
+    width: 100%;
+}
+
+/* Date/Time input styling */
+input[type="time"] {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    color: inherit;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0.5);
+}
+
 /* HAVING Conditions Builder Styles */
 .having-container {
     display: flex;

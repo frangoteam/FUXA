@@ -1256,6 +1256,160 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Check if a condition column is a date/time type
+   */
+  isDateTimeColumn(condition: any): boolean {
+    if (!condition.column || !this.availableColumns) {
+      return false;
+    }
+    const column = this.availableColumns.find(c => c.name === condition.column);
+    if (!column || !column.type) {
+      return false;
+    }
+    const typeUpper = column.type.toUpperCase();
+    return typeUpper.includes('DATE') || typeUpper.includes('TIME') || typeUpper.includes('TIMESTAMP');
+  }
+
+  /**
+   * Get date/time type for a condition column
+   * Returns: 'DATE', 'TIME', 'DATETIME', or null
+   */
+  getDateTimeType(condition: any): string | null {
+    if (!condition.column || !this.availableColumns) {
+      return null;
+    }
+    const column = this.availableColumns.find(c => c.name === condition.column);
+    if (!column || !column.type) {
+      return null;
+    }
+    const typeUpper = column.type.toUpperCase();
+    
+    // TIME type (without date)
+    if (typeUpper === 'TIME' || typeUpper.includes('TIME') && !typeUpper.includes('TIMESTAMP')) {
+      return 'TIME';
+    }
+    
+    // DATE type (without time)
+    if (typeUpper === 'DATE' && !typeUpper.includes('TIME')) {
+      return 'DATE';
+    }
+    
+    // DATETIME/TIMESTAMP types
+    if (typeUpper.includes('DATETIME') || typeUpper.includes('TIMESTAMP')) {
+      return 'DATETIME';
+    }
+    
+    return null;
+  }
+
+  /**
+   * Open date picker for a condition
+   */
+  openDatePicker(condition: any, picker: any) {
+    if (picker) {
+      picker.open();
+    }
+  }
+
+  /**
+   * Format date value for SQL query
+   */
+  formatDateForSQL(date: Date | string): string {
+    if (!date) return '';
+    const d = typeof date === 'string' ? new Date(date) : date;
+    if (isNaN(d.getTime())) return '';
+    
+    // Format as YYYY-MM-DD for SQL
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Format time value for SQL query
+   */
+  formatTimeForSQL(time: string): string {
+    if (!time) return '';
+    // HTML time input returns HH:mm format, convert to HH:mm:ss for SQL
+    if (time.match(/^\d{2}:\d{2}$/)) {
+      return `${time}:00`;
+    }
+    return time;
+  }
+
+  /**
+   * Format datetime value for SQL query
+   */
+  formatDateTimeForSQL(date: Date | string, time: string = '00:00:00'): string {
+    if (!date) return '';
+    const dateStr = this.formatDateForSQL(date);
+    const timeStr = time || '00:00:00';
+    return `${dateStr} ${timeStr}`;
+  }
+
+  /**
+   * Handle date change from picker
+   */
+  onDatePickerChange(condition: any, event: any) {
+    const date = event.value;
+    if (date) {
+      const dateTimeType = this.getDateTimeType(condition);
+      if (dateTimeType === 'DATE') {
+        condition.value = this.formatDateForSQL(date);
+      } else if (dateTimeType === 'DATETIME') {
+        // For datetime, preserve existing time or use current time
+        const existingTime = condition.value ? condition.value.split(' ')[1] : null;
+        condition.value = this.formatDateTimeForSQL(date, existingTime);
+      }
+    }
+  }
+
+  /**
+   * Handle time change from input
+   */
+  onTimeChange(condition: any, event: any) {
+    const time = event.target.value;
+    if (time) {
+      const dateTimeType = this.getDateTimeType(condition);
+      if (dateTimeType === 'TIME') {
+        condition.value = this.formatTimeForSQL(time);
+      } else if (dateTimeType === 'DATETIME') {
+        // For datetime, preserve existing date or use today
+        const existingDate = condition.value ? condition.value.split(' ')[0] : null;
+        const dateStr = existingDate || this.formatDateForSQL(new Date());
+        condition.value = `${dateStr} ${this.formatTimeForSQL(time)}`;
+      }
+    }
+  }
+
+  /**
+   * Get date part from condition value for date picker
+   */
+  getDateFromValue(value: string): Date | null {
+    if (!value) return null;
+    const dateStr = value.split(' ')[0]; // Get date part if datetime
+    const date = new Date(dateStr);
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  /**
+   * Get time part from condition value for time input
+   */
+  getTimeFromValue(value: string): string {
+    if (!value) return '';
+    const parts = value.split(' ');
+    if (parts.length > 1) {
+      // Datetime value
+      return parts[1].substring(0, 5); // Get HH:mm part
+    } else if (value.match(/^\d{2}:\d{2}(:\d{2})?$/)) {
+      // Time-only value
+      return value.substring(0, 5); // Get HH:mm part
+    }
+    return '';
+  }
+
+  /**
    * Add HAVING condition
    */
   addHavingCondition() {
