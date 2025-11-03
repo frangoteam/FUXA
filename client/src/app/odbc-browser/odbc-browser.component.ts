@@ -48,7 +48,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
 
   // Tab management
   selectedTabIndex = 0;
-  
+
   // Device & Table Selection
   devices: Device[] = [];
   selectedDevice: Device = null;
@@ -57,19 +57,19 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
   columns: any[] = [];
   selectedColumns: string[] = [];
   selectedColumn: string = '';
-  
+
   // Data Viewer
   tableData: QueryResult = { columns: [], rows: [], rowCount: 0 };
   rowLimit = 10;
   rowLimitOptions = [10, 50, 100, 500];
   displayedColumns: string[] = [];
-  
+
   // SQL Query Editor
   sqlQuery: string = '';
   customSqlQuery: string = '';
   sqlExecutionResult: QueryResult = { columns: [], rows: [], rowCount: 0 };
   sqlExecutionError: string = '';
-  
+
   // Table Creator
   newTableName: string = '';
   newTableColumns: ColumnDefinition[] = [];
@@ -111,7 +111,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     'ARRAY',
     'BYTEA'
   ];
-  
+
   // Table Management
   isEditingTable: boolean = false;
   editingTableName: string = '';
@@ -121,14 +121,14 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
   generatedQuery: string = '';
   showQueryPreview: boolean = false;
   deleteConfirmation: { show: boolean; tableName: string } = { show: false, tableName: '' };
-  
+
   // Query Builder
   queryBuilderConfig: QueryBuilderConfig;
   queryBuilderResults: QueryResult = null;
   availableColumns: Array<{ name: string; type: string; selected: boolean; aggregate?: string }> = [];
   queryBuilderSelectAll: boolean = false;
   queryBuilderConditionOperators: string[] = [];
-  
+
   // State flags
   loading = false;
   error = '';
@@ -306,7 +306,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     }
   ];
 
-  
+
   // Subscriptions
   private subscriptions: Subscription[] = [];
   private browseSubscription: Subscription;
@@ -381,13 +381,13 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
       if (result && result.type === DeviceType.ODBC && result.result) {
         this.tables = result.result;
         this.loading = false;
-        
+
         // If a table is pre-selected, select and load it
         if (this.data.preselectedTable && this.tables.includes(this.data.preselectedTable)) {
           this.selectedTable = this.data.preselectedTable;
           this.loadColumns();
         }
-        
+
         if (this.propertySubscription) {
           this.propertySubscription.unsubscribe();
         }
@@ -507,7 +507,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     this.error = '';
     const query = `SELECT ${this.selectedColumns.join(', ')} FROM ${this.selectedTable} LIMIT ${this.rowLimit}`;
     console.log('ODBC Browser: Loading table data with query:', query);
-    
+
     // Create a subscription to listen for ODBC query results
     const querySubscription = this.hmiService.onDeviceOdbcQuery.subscribe(result => {
       console.log('ODBC Browser: Query result received:', result);
@@ -551,7 +551,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.sqlExecutionError = '';
     this.success = '';
-    
+
     // Create a subscription to listen for ODBC query results
     const querySubscription = this.hmiService.onDeviceOdbcQuery.subscribe(result => {
       if (result && Array.isArray(result)) {
@@ -640,27 +640,27 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
 
     const columns = this.newTableColumns.map(col => {
       let columnDef = `${col.name} ${col.type}`;
-      
+
       // Add AUTO_INCREMENT if enabled
       if (col.autoIncrement) {
         columnDef += ' AUTO_INCREMENT';
       }
-      
+
       // Add DEFAULT CURRENT_TIMESTAMP if enabled (before NOT NULL)
       if (col.autoTimestamp) {
         columnDef += ' DEFAULT CURRENT_TIMESTAMP';
       }
-      
+
       // Add NOT NULL constraint
       if (!col.nullable) {
         columnDef += ' NOT NULL';
       }
-      
+
       // Add DEFAULT VALUE if provided (and not using autoTimestamp)
       if (col.defaultValue && !col.autoTimestamp) {
         columnDef += ` DEFAULT '${col.defaultValue}'`;
       }
-      
+
       return columnDef;
     }).join(', ');
 
@@ -689,41 +689,41 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     // Generate clean standard SQL - the ODBC server driver will normalize for the specific database
     let alterQueries = [];
     const tableName = this.newTableName || this.originalTableName;
-    
+
     // 1. Handle table rename
     if (this.newTableName !== this.originalTableName && this.originalTableName) {
       alterQueries.push(`ALTER TABLE ${this.originalTableName} RENAME TO ${this.newTableName};`);
     }
-    
+
     // 2. Detect column additions, deletions, and modifications
     const originalColMap = new Map(this.originalTableColumns.map(c => [c.name, c]));
     const newColMap = new Map(this.newTableColumns.map(c => [c.name, c]));
-    
+
     // Detect deleted columns
     for (const [colName, originalCol] of originalColMap.entries()) {
       if (!newColMap.has(colName)) {
         alterQueries.push(`ALTER TABLE ${tableName} DROP COLUMN ${colName};`);
       }
     }
-    
+
     // Detect new columns and modified columns
     for (const [colName, newCol] of newColMap.entries()) {
       const originalCol = originalColMap.get(colName);
-      
+
       if (!originalCol) {
         // New column added - server normalizes types
         let columnDef = `${colName} ${newCol.type}`;
-        
+
         // Add AUTO_INCREMENT if enabled
         if (newCol.autoIncrement) {
           columnDef += ' AUTO_INCREMENT';
         }
-        
+
         // Add DEFAULT CURRENT_TIMESTAMP if enabled (before NOT NULL)
         if (newCol.autoTimestamp) {
           columnDef += ' DEFAULT CURRENT_TIMESTAMP';
         }
-        
+
         if (!newCol.nullable) {
           columnDef += ' NOT NULL';
         }
@@ -734,17 +734,17 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
       } else if (originalCol.type !== newCol.type || originalCol.nullable !== newCol.nullable || originalCol.defaultValue !== newCol.defaultValue || originalCol.autoIncrement !== newCol.autoIncrement || originalCol.autoTimestamp !== newCol.autoTimestamp) {
         // Column was modified - server normalizes types
         let columnDef = `${colName} ${newCol.type}`;
-        
+
         // Add AUTO_INCREMENT if enabled
         if (newCol.autoIncrement) {
           columnDef += ' AUTO_INCREMENT';
         }
-        
+
         // Add DEFAULT CURRENT_TIMESTAMP if enabled (before NOT NULL)
         if (newCol.autoTimestamp) {
           columnDef += ' DEFAULT CURRENT_TIMESTAMP';
         }
-        
+
         if (!newCol.nullable) {
           columnDef += ' NOT NULL';
         }
@@ -754,9 +754,9 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
         alterQueries.push(`ALTER TABLE ${tableName} MODIFY COLUMN ${columnDef};`);
       }
     }
-    
+
     if (alterQueries.length > 0) {
-      return alterQueries.join('\n') + 
+      return alterQueries.join('\n') +
              `\n\n-- ODBC Server normalizes types and syntax for your database\n` +
              `-- Table: ${this.originalTableName}\n` +
              `-- Statements: ${alterQueries.length}`;
@@ -930,13 +930,13 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
           isPrimaryKey: col.isPrimaryKey || false,
           foreignKey: col.foreignKey
         }));
-        
+
         // Find and set the primary key column
         const pkCol = result.result.find(col => col.isPrimaryKey);
         if (pkCol) {
           this.primaryKeyColumn = pkCol.id || pkCol.name;
         }
-        
+
         // Store original columns for change detection
         this.originalTableColumns = JSON.parse(JSON.stringify(this.newTableColumns));
         this.tableCreationMode = true;
@@ -1094,12 +1094,12 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
       this.foreignKeyReferencedColumn = '';
       // Ask for columns of the selected table
       this.hmiService.askDeviceBrowse(this.selectedDevice.id, tableName);
-      
+
       // Subscribe to get the columns
       if (this.browseSubscription) {
         this.browseSubscription.unsubscribe();
       }
-      
+
       this.browseSubscription = this.hmiService.onDeviceBrowse.subscribe(result => {
         if (result && Array.isArray(result)) {
           // Direct array response
@@ -1134,11 +1134,11 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     // Load columns for the selected table
     if (this.queryBuilderConfig.mainTable) {
       this.hmiService.askDeviceBrowse(this.selectedDevice.id, this.queryBuilderConfig.mainTable);
-      
+
       if (this.browseSubscription) {
         this.browseSubscription.unsubscribe();
       }
-      
+
       this.browseSubscription = this.hmiService.onDeviceBrowse.subscribe(result => {
         if (result && Array.isArray(result)) {
           this.availableColumns = result.map(col => ({
@@ -1182,7 +1182,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
         }
         return selectCol;
       });
-    this.queryBuilderSelectAll = this.availableColumns.length > 0 && 
+    this.queryBuilderSelectAll = this.availableColumns.length > 0 &&
                                  this.availableColumns.every(col => col.selected);
   }
 
@@ -1283,22 +1283,22 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
       return null;
     }
     const typeUpper = column.type.toUpperCase();
-    
+
     // TIME type (without date)
     if (typeUpper === 'TIME' || typeUpper.includes('TIME') && !typeUpper.includes('TIMESTAMP')) {
       return 'TIME';
     }
-    
+
     // DATE type (without time)
     if (typeUpper === 'DATE' && !typeUpper.includes('TIME')) {
       return 'DATE';
     }
-    
+
     // DATETIME/TIMESTAMP types
     if (typeUpper.includes('DATETIME') || typeUpper.includes('TIMESTAMP')) {
       return 'DATETIME';
     }
-    
+
     return null;
   }
 
@@ -1318,7 +1318,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     if (!date) return '';
     const d = typeof date === 'string' ? new Date(date) : date;
     if (isNaN(d.getTime())) return '';
-    
+
     // Format as YYYY-MM-DD for SQL
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -1453,7 +1453,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     if (!this.queryBuilderConfig.mainTable) {
       return '-- Select a table first';
     }
-    
+
     // Determine database type from device
     const dbType = this.selectedDevice?.type?.toLowerCase() || 'postgresql';
     return this.queryBuilderService.generateQuery(this.queryBuilderConfig, dbType);
@@ -1500,7 +1500,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
 
     const querySubscription = this.hmiService.onDeviceOdbcQuery.subscribe(result => {
       this.loading = false;
-      
+
       if (result && result.error) {
         this.error = result.error;
       } else if (result && result.result) {

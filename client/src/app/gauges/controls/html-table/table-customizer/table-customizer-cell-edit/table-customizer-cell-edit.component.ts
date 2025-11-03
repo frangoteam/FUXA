@@ -15,14 +15,14 @@ export class TableCustomizerCellEditComponent {
     cellType = TableCustomizerCellRowType;
     columnType = TableCellType;
     devicesValues = { devices: null };
-    
+
     constructor(
         private projectService: ProjectService,
         public dialogRef: MatDialogRef<TableCustomizerCellEditComponent>,
         @Inject(MAT_DIALOG_DATA) public data: TableCustomizerCellType,
         private dialog: MatDialog) {
         this.devicesValues.devices = Object.values(this.projectService.getDevices());
-        
+
         // Initialize odbcTimestampColumns array if not present
         if (!this.data.cell.odbcTimestampColumns) {
             this.data.cell.odbcTimestampColumns = [];
@@ -97,16 +97,16 @@ export class TableCustomizerCellEditComponent {
             if (result && result.column && result.tableName) {
                 // For backward compatibility, store in single column as well
                 this.data.cell.odbcTimestampColumn = result.column;
-                
+
                 // Also add to the multi-source array if not already present
                 if (!this.data.cell.odbcTimestampColumns) {
                     this.data.cell.odbcTimestampColumns = [];
                 }
-                
-                const existing = this.data.cell.odbcTimestampColumns.find(ts => 
+
+                const existing = this.data.cell.odbcTimestampColumns.find(ts =>
                     ts.table === result.tableName && ts.column === result.column
                 );
-                
+
                 if (!existing) {
                     this.data.cell.odbcTimestampColumns.push({
                         table: result.tableName,
@@ -137,12 +137,12 @@ export class TableCustomizerCellEditComponent {
                 if (!this.data.cell.odbcTimestampColumns) {
                     this.data.cell.odbcTimestampColumns = [];
                 }
-                
+
                 // Check if this table/column combo already exists
-                const existing = this.data.cell.odbcTimestampColumns.find(ts => 
+                const existing = this.data.cell.odbcTimestampColumns.find(ts =>
                     ts.table === result.tableName && ts.column === result.column
                 );
-                
+
                 if (!existing) {
                     this.data.cell.odbcTimestampColumns.push({
                         table: result.tableName,

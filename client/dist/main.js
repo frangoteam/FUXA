@@ -53633,10 +53633,10 @@ var __metadata = undefined && undefined.__metadata || function (k, v) {
 let QueryBuilderService = class QueryBuilderService {
   // Operators for different data types
   operatorsByType = {
-    'STRING': ['=', '!=', 'LIKE', 'NOT LIKE', 'ILIKE', 'SIMILAR TO', 'IN', 'NOT IN', 'IS NULL', 'IS NOT NULL'],
-    'NUMBER': ['=', '!=', '>', '<', '>=', '<=', 'BETWEEN', 'IN', 'NOT IN', 'IS NULL', 'IS NOT NULL'],
-    'DATE': ['=', '!=', '>', '<', '>=', '<=', 'BETWEEN', 'IS NULL', 'IS NOT NULL'],
-    'BOOLEAN': ['=', '!=', 'IS NULL', 'IS NOT NULL']
+    STRING: ['=', '!=', 'LIKE', 'NOT LIKE', 'ILIKE', 'SIMILAR TO', 'IN', 'NOT IN', 'IS NULL', 'IS NOT NULL'],
+    NUMBER: ['=', '!=', '>', '<', '>=', '<=', 'BETWEEN', 'IN', 'NOT IN', 'IS NULL', 'IS NOT NULL'],
+    DATE: ['=', '!=', '>', '<', '>=', '<=', 'BETWEEN', 'IS NULL', 'IS NOT NULL'],
+    BOOLEAN: ['=', '!=', 'IS NULL', 'IS NOT NULL']
   };
   // Aggregate functions
   aggregateFunctions = ['COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'COUNT(DISTINCT)'];
@@ -53886,7 +53886,7 @@ let QueryBuilderService = class QueryBuilderService {
     }
     if (typeof value === 'string') {
       // Escape single quotes
-      const escaped = value.replace(/'/g, "''");
+      const escaped = value.replace(/'/g, '\'\'');
       return `'${escaped}'`;
     }
     return value.toString();

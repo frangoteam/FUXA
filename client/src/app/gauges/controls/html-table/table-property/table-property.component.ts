@@ -75,7 +75,7 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
         if (this.property) {
             this.tableTypeCtrl.setValue(this.property.type);
             this.options = Object.assign(this.options, DataTableComponent.DefaultOptions(), this.property.options);
-            
+
             // If table type is history and date range is set to none, force date range toggle to false
             if (this.tableTypeCtrl.value === this.tableType.history && this.options.lastRange === this.lastRangeType.none) {
                 this.options.daterange.show = false;
@@ -90,7 +90,7 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
         if (this.tableTypeCtrl.value === this.tableType.history && this.options.lastRange === this.lastRangeType.none) {
             this.options.daterange.show = false;
         }
-        
+
         this.property.options = JSON.parse(JSON.stringify(this.options));
         this.property.type = this.tableTypeCtrl.value;
         this.onPropChanged.emit(this.data.settings);
