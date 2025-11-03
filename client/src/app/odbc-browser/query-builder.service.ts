@@ -6,6 +6,10 @@ export interface QueryBuilderCondition {
     operator: string;
     value: string | number | boolean;
     dataType?: string;
+    // Cached properties for date/time picker performance
+    dateTimeType?: 'DATE' | 'TIME' | 'DATETIME' | null;
+    cachedDateValue?: Date | null;
+    cachedTimeValue?: string;
 }
 
 export interface QueryBuilderJoin {
