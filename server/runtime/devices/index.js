@@ -441,6 +441,43 @@ function setDeviceConnectionStatus(deviceId, status) {
 }
 
 /**
+ * Execute ODBC query
+ * @param {*} deviceid
+ * @param {*} query
+ */
+function executeOdbcQuery(deviceid, query) {
+    return new Promise(function (resolve, reject) {
+        console.log(`executeOdbcQuery called for device: ${deviceid}`);
+        console.log(`Available devices:`, Object.keys(activeDevices));
+        console.log(`Device names:`, Object.values(activeDevices).map(d => d ? d.getName() : 'null'));
+        
+        let device = activeDevices[deviceid];
+        
+        // If not found by ID, try to find by name
+        if (!device) {
+            device = Object.values(activeDevices).find(d => d && d.getName() === deviceid);
+            console.log(`Device found by name:`, device ? device.getName() : 'not found');
+        }
+        
+        console.log(`Device ${deviceid} exists:`, !!device);
+        if (device) {
+            const comm = device.getComm();
+            console.log(`Device ${deviceid} has executeQuery:`, typeof comm.executeQuery);
+            console.log(`Device ${deviceid} name:`, device.getName());
+        }
+        if (device && device.getComm && device.getComm().executeQuery) {
+            device.getComm().executeQuery(query).then(result => {
+                resolve(result);
+            }).catch(err => {
+                reject(err);
+            });
+        } else {
+            reject('Device not found or does not support queries');
+        }
+    });
+}
+
+/**
  * Return the Device browser result Tags/Nodes
  * @param {*} deviceid
  * @param {*} node
@@ -514,6 +551,25 @@ function getRequestResult(property) {
 }
 
 /**
+ * Get all devices values
+ * @returns {Object} Object with device IDs as keys and their values as values
+ */
+function getDevicesValues() {
+    var result = {};
+    for (var id in activeDevices) {
+        try {
+            var values = activeDevices[id].getValues();
+            if (values && values.length > 0) {
+                result[id] = values;
+            }
+        } catch (err) {
+            runtime.logger.error(`devices.getDevicesValues for ${id}: ${err}`);
+        }
+    }
+    return result;
+}
+
+/**
  * Return result of get node values
  * @param {*} tagId
  * @param {*} fromDate
@@ -563,5 +619,6 @@ var devices = module.exports = {
     setTagDaqSettings: setTagDaqSettings,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
+    executeOdbcQuery: executeOdbcQuery,
     getHistoricalTags: getHistoricalTags
 }

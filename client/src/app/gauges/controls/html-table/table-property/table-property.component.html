@@ -28,14 +28,20 @@
                         <div class="my-form-field inbk data-range">
                             <span>{{'table.property-date-last-range' | translate}}</span>
                             <mat-select [(value)]="options.lastRange" (selectionChange)="onTableChanged()">
-                                <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
-                                    {{ ev.value }}
-                                </mat-option>
+                                <mat-option [value]="lastRangeType.none">{{'table.rangetype-none' | translate}}</mat-option>
+                                <mat-option [value]="lastRangeType.last1h">{{'table.rangetype-last1h' | translate}}</mat-option>
+                                <mat-option [value]="lastRangeType.last1d">{{'table.rangetype-last1d' | translate}}</mat-option>
+                                <mat-option [value]="lastRangeType.last3d">{{'table.rangetype-last3d' | translate}}</mat-option>
                             </mat-select>
                         </div>
                         <div class="my-form-field inbk tac data-realtime">
                             <span>{{'table.property-type-with-realtime' | translate}}</span>
                             <mat-slide-toggle color="primary" [(ngModel)]="options.realtime" (change)="onTableChanged()"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field inbk data-refresh-interval">
+                            <span>{{'table.property-refresh-interval' | translate}}</span>
+                            <input numberOnly [(ngModel)]="options.refreshInterval" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="1000" max="60000" step="1000" [disabled]="!options.realtime">
+                            <span class="unit">ms</span>
                         </div>
                     </ng-container>
                 </div>
@@ -172,7 +178,7 @@
                         <div class="section-inline-margin2"></div>
                         <div class="my-form-field section-inline-toggle slider-field">
                             <span>{{'table.property-daterange' | translate}}</span>
-                            <mat-slide-toggle color="primary" [(ngModel)]="options.daterange.show" (change)="onTableChanged()"></mat-slide-toggle>
+                            <mat-slide-toggle color="primary" [(ngModel)]="options.daterange.show" (change)="onTableChanged()" [disabled]="tableTypeCtrl.value === tableType.history && options.lastRange === lastRangeType.none"></mat-slide-toggle>
                         </div>
                     </div>
                 </div>
