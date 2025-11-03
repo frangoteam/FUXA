@@ -456,44 +456,44 @@
                                 </mat-form-field>
                                 
                                 <!-- Date picker for DATE columns -->
-                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'DATE'" class="condition-field">
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATE'" class="condition-field">
                                     <mat-label>{{'odbc.value' | translate}}</mat-label>
-                                    <input matInput 
-                                           [matDatepicker]="datePicker" 
-                                           [(ngModel)]="condition.value" 
+                                    <input matInput
+                                           [matDatepicker]="whereDatePicker"
+                                           [(ngModel)]="condition.value"
                                            (dateChange)="onDatePickerChange(condition, $event)"
                                            placeholder="YYYY-MM-DD">
-                                    <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
-                                    <mat-datepicker #datePicker></mat-datepicker>
+                                    <mat-datepicker-toggle matSuffix [for]="whereDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #whereDatePicker></mat-datepicker>
                                 </mat-form-field>
-                                
+
                                 <!-- Time picker for TIME columns -->
-                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'TIME'" class="condition-field">
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'TIME'" class="condition-field">
                                     <mat-label>{{'odbc.value' | translate}}</mat-label>
-                                    <input matInput 
-                                           type="time" 
+                                    <input matInput
+                                           type="time"
                                            [(ngModel)]="condition.value"
                                            (change)="onTimeChange(condition, $event)"
                                            placeholder="HH:MM:SS">
                                 </mat-form-field>
-                                
+
                                 <!-- DateTime picker for DATETIME/TIMESTAMP columns -->
-                                <div *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'DATETIME'" class="datetime-picker-container">
+                                <div *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATETIME'" class="datetime-picker-container">
                                     <mat-form-field class="condition-field datetime-date">
                                         <mat-label>Date</mat-label>
-                                        <input matInput 
-                                               [matDatepicker]="dateTimePicker" 
-                                               [value]="getDateFromValue(condition.value)"
+                                        <input matInput
+                                               [matDatepicker]="whereDateTimePicker"
+                                               [value]="condition.cachedDateValue || getDateFromValue(condition.value)"
                                                (dateChange)="onDatePickerChange(condition, $event)"
                                                placeholder="YYYY-MM-DD">
-                                        <mat-datepicker-toggle matSuffix [for]="dateTimePicker"></mat-datepicker-toggle>
-                                        <mat-datepicker #dateTimePicker></mat-datepicker>
+                                        <mat-datepicker-toggle matSuffix [for]="whereDateTimePicker"></mat-datepicker-toggle>
+                                        <mat-datepicker #whereDateTimePicker></mat-datepicker>
                                     </mat-form-field>
                                     <mat-form-field class="condition-field datetime-time">
                                         <mat-label>Time</mat-label>
-                                        <input matInput 
-                                               type="time" 
-                                               [value]="getTimeFromValue(condition.value)"
+                                        <input matInput
+                                               type="time"
+                                               [value]="condition.cachedTimeValue || getTimeFromValue(condition.value)"
                                                (change)="onTimeChange(condition, $event)"
                                                placeholder="HH:MM">
                                     </mat-form-field>
@@ -548,34 +548,34 @@
                                 </mat-form-field>
                                 
                                 <!-- Date picker for DATE columns -->
-                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'DATE'" class="condition-field">
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATE'" class="condition-field">
                                     <mat-label>{{'odbc.value' | translate}}</mat-label>
-                                    <input matInput 
-                                           [matDatepicker]="havingDatePicker" 
-                                           [(ngModel)]="condition.value" 
+                                    <input matInput
+                                           [matDatepicker]="havingDatePicker"
+                                           [(ngModel)]="condition.value"
                                            (dateChange)="onDatePickerChange(condition, $event)"
                                            placeholder="YYYY-MM-DD">
                                     <mat-datepicker-toggle matSuffix [for]="havingDatePicker"></mat-datepicker-toggle>
                                     <mat-datepicker #havingDatePicker></mat-datepicker>
                                 </mat-form-field>
-                                
+
                                 <!-- Time picker for TIME columns -->
-                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'TIME'" class="condition-field">
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'TIME'" class="condition-field">
                                     <mat-label>{{'odbc.value' | translate}}</mat-label>
-                                    <input matInput 
-                                           type="time" 
+                                    <input matInput
+                                           type="time"
                                            [(ngModel)]="condition.value"
                                            (change)="onTimeChange(condition, $event)"
                                            placeholder="HH:MM:SS">
                                 </mat-form-field>
-                                
+
                                 <!-- DateTime picker for DATETIME/TIMESTAMP columns -->
-                                <div *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && getDateTimeType(condition) === 'DATETIME'" class="datetime-picker-container">
+                                <div *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATETIME'" class="datetime-picker-container">
                                     <mat-form-field class="condition-field datetime-date">
                                         <mat-label>Date</mat-label>
-                                        <input matInput 
-                                               [matDatepicker]="havingDateTimePicker" 
-                                               [value]="getDateFromValue(condition.value)"
+                                        <input matInput
+                                               [matDatepicker]="havingDateTimePicker"
+                                               [value]="condition.cachedDateValue || getDateFromValue(condition.value)"
                                                (dateChange)="onDatePickerChange(condition, $event)"
                                                placeholder="YYYY-MM-DD">
                                         <mat-datepicker-toggle matSuffix [for]="havingDateTimePicker"></mat-datepicker-toggle>
@@ -583,9 +583,9 @@
                                     </mat-form-field>
                                     <mat-form-field class="condition-field datetime-time">
                                         <mat-label>Time</mat-label>
-                                        <input matInput 
-                                               type="time" 
-                                               [value]="getTimeFromValue(condition.value)"
+                                        <input matInput
+                                               type="time"
+                                               [value]="condition.cachedTimeValue || getTimeFromValue(condition.value)"
                                                (change)="onTimeChange(condition, $event)"
                                                placeholder="HH:MM">
                                     </mat-form-field>

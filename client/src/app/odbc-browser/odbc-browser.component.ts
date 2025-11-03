@@ -1240,6 +1240,8 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     const column = this.availableColumns.find(c => c.name === condition.column);
     if (column) {
       condition.dataType = column.type;
+      // Cache date/time type for performance
+      condition.dateTimeType = this.getDateTimeType(condition);
       const operators = this.queryBuilderService.getOperatorsForType(column.type);
       this.queryBuilderConditionOperators = operators;
     }
@@ -1259,6 +1261,10 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
    * Check if a condition column is a date/time type
    */
   isDateTimeColumn(condition: any): boolean {
+    // Use cached value if available
+    if (condition.dateTimeType !== undefined) {
+      return condition.dateTimeType !== null;
+    }
     if (!condition.column || !this.availableColumns) {
       return false;
     }
@@ -1285,7 +1291,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     const typeUpper = column.type.toUpperCase();
 
     // TIME type (without date)
-    if (typeUpper === 'TIME' || typeUpper.includes('TIME') && !typeUpper.includes('TIMESTAMP')) {
+    if (typeUpper === 'TIME' || (typeUpper.includes('TIME') && !typeUpper.includes('TIMESTAMP'))) {
       return 'TIME';
     }
 
@@ -1300,15 +1306,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     }
 
     return null;
-  }
-
-  /**
-   * Open date picker for a condition
-   */
-  openDatePicker(condition: any, picker: any) {
-    if (picker) {
-      picker.open();
-    }
   }
 
   /**
@@ -1354,13 +1351,16 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
   onDatePickerChange(condition: any, event: any) {
     const date = event.value;
     if (date) {
-      const dateTimeType = this.getDateTimeType(condition);
+      const dateTimeType = condition.dateTimeType || this.getDateTimeType(condition);
       if (dateTimeType === 'DATE') {
         condition.value = this.formatDateForSQL(date);
       } else if (dateTimeType === 'DATETIME') {
         // For datetime, preserve existing time or use current time
         const existingTime = condition.value ? condition.value.split(' ')[1] : null;
         condition.value = this.formatDateTimeForSQL(date, existingTime);
+        // Cache parsed values for performance
+        condition.cachedDateValue = date;
+        condition.cachedTimeValue = this.getTimeFromValue(condition.value);
       }
     }
   }
@@ -1371,7 +1371,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
   onTimeChange(condition: any, event: any) {
     const time = event.target.value;
     if (time) {
-      const dateTimeType = this.getDateTimeType(condition);
+      const dateTimeType = condition.dateTimeType || this.getDateTimeType(condition);
       if (dateTimeType === 'TIME') {
         condition.value = this.formatTimeForSQL(time);
       } else if (dateTimeType === 'DATETIME') {
@@ -1379,6 +1379,9 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
         const existingDate = condition.value ? condition.value.split(' ')[0] : null;
         const dateStr = existingDate || this.formatDateForSQL(new Date());
         condition.value = `${dateStr} ${this.formatTimeForSQL(time)}`;
+        // Cache parsed values for performance
+        condition.cachedDateValue = this.getDateFromValue(condition.value);
+        condition.cachedTimeValue = time;
       }
     }
   }
