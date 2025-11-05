@@ -153,6 +153,27 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: ${err}`);
             }
         });
+        // client execute ODBC query
+        socket.on(Events.IoEventTypes.DEVICE_ODBC_QUERY, (message) => {
+            try {
+                if (message && message.deviceId && message.query) {
+                    devices.executeOdbcQuery(message.deviceId, message.query).then(result => {
+                        message.result = result;
+                        socket.emit(Events.IoEventTypes.DEVICE_ODBC_QUERY, message);
+                    }).catch(function (err) {
+                        logger.error(`${Events.IoEventTypes.DEVICE_ODBC_QUERY}: ${err}`);
+                        message.error = err.toString();
+                        socket.emit(Events.IoEventTypes.DEVICE_ODBC_QUERY, message);
+                    });
+                } else {
+                    logger.error(`${Events.IoEventTypes.DEVICE_ODBC_QUERY}: wrong message`);
+                    message.error = 'wrong message';
+                    socket.emit(Events.IoEventTypes.DEVICE_ODBC_QUERY, message);
+                }
+            } catch (err) {
+                logger.error(`${Events.IoEventTypes.DEVICE_ODBC_QUERY}: ${err}`);
+            }
+        });
         // client ask device values
         socket.on(Events.IoEventTypes.DEVICE_VALUES, (message) => {
             try {

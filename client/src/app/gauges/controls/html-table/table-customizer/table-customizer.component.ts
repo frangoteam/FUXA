@@ -5,6 +5,7 @@ import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/materia
 import { TableType, TableColumn, TableRow, TableCell, TableCellType } from '../../../../_models/hmi';
 
 import { Utils } from '../../../../_helpers/utils';
+import { ProjectService } from '../../../../_services/project.service';
 import { TableCustomizerCellEditComponent, TableCustomizerCellRowType, TableCustomizerCellType } from './table-customizer-cell-edit/table-customizer-cell-edit.component';
 
 @Component({
@@ -21,7 +22,8 @@ export class TableCustomizerComponent implements OnInit {
     constructor(
         private dialog: MatDialog,
         public dialogRef: MatDialogRef<TableCustomizerComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: TableCustomizerType) {
+        @Inject(MAT_DIALOG_DATA) public data: TableCustomizerType,
+        private projectService: ProjectService) {
 
     }
 
@@ -151,6 +153,9 @@ export class TableCustomizerComponent implements OnInit {
                 return (cell.label || '') + ((cell.valueFormat) ? ` (${cell.valueFormat})` : '');
             } else if (cell.type === TableCellType.device) {
                 return (cell.label || '');
+            } else if (cell.type === TableCellType.odbc) {
+                const deviceName = cell['deviceId'] ? this.projectService.getDeviceFromId(cell['deviceId'])?.name : '';
+                return `${cell.variableId || ''}${deviceName ? ` (${deviceName})` : ''}`;
             }
         }
         return '';

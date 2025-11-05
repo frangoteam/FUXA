@@ -396,6 +396,7 @@ export enum GaugeEventActionType {
     onRunScript = 'shapes.event-onrunscript',
     onViewToPanel = 'shapes.event-onViewToPanel',
     onMonitor = 'shapes.event-onmonitor',
+    onSetTag = 'shapes.event-onsettag',
 }
 
 export enum ViewEventType {
@@ -517,6 +518,7 @@ export interface TableOptions {
         show: boolean;
     };
     realtime?: boolean;
+    refreshInterval?: number;
     lastRange?: TableRangeType;
     gridColor?: string;
     header?: {
@@ -525,6 +527,11 @@ export interface TableOptions {
         fontSize?: number;
         color?: string;
         background?: string;
+    };
+    toolbar?: {
+        background?: string;
+        color?: string;
+        buttonColor?: string;
     };
     row?: {
         height: number;
@@ -556,6 +563,7 @@ export enum TableCellType {
     variable = 'variable',
     timestamp = 'timestamp',
     device = 'device',
+    odbc = 'odbc',
 }
 
 export class TableCell {
@@ -565,6 +573,9 @@ export class TableCell {
     valueFormat: string;
     bitmask: number;
     type: TableCellType;
+    odbcTimestampColumn?: string; // ODBC timestamp column for syncing with DAQ
+    odbcTimestampColumns?: Array<{ table: string; column: string; convertUtcToLocal?: boolean }>; // Multiple timestamp sources from different ODBC tables
+    convertUtcToLocal?: boolean; // Convert UTC timestamps to local time for display
 
     constructor(id: string, type?: TableCellType, label?: string) {
         this.id = id;
@@ -596,6 +607,7 @@ export enum TableCellAlignType {
 }
 
 export enum TableRangeType {
+    none = 'table.rangetype-none',
     last1h = 'table.rangetype-last1h',
     last1d = 'table.rangetype-last1d',
     last3d = 'table.rangetype-last3d',

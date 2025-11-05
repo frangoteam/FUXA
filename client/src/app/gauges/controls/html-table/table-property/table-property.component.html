@@ -28,14 +28,20 @@
                         <div class="my-form-field inbk data-range">
                             <span>{{'table.property-date-last-range' | translate}}</span>
                             <mat-select [(value)]="options.lastRange" (selectionChange)="onTableChanged()">
-                                <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key">
-                                    {{ ev.value }}
-                                </mat-option>
+                                <mat-option [value]="lastRangeType.none">{{'table.rangetype-none' | translate}}</mat-option>
+                                <mat-option [value]="lastRangeType.last1h">{{'table.rangetype-last1h' | translate}}</mat-option>
+                                <mat-option [value]="lastRangeType.last1d">{{'table.rangetype-last1d' | translate}}</mat-option>
+                                <mat-option [value]="lastRangeType.last3d">{{'table.rangetype-last3d' | translate}}</mat-option>
                             </mat-select>
                         </div>
                         <div class="my-form-field inbk tac data-realtime">
                             <span>{{'table.property-type-with-realtime' | translate}}</span>
                             <mat-slide-toggle color="primary" [(ngModel)]="options.realtime" (change)="onTableChanged()"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field inbk data-refresh-interval">
+                            <span>{{'table.property-refresh-interval' | translate}}</span>
+                            <input numberOnly [(ngModel)]="options.refreshInterval" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="1000" max="60000" step="1000" [disabled]="!options.realtime">
+                            <span class="unit">ms</span>
                         </div>
                     </ng-container>
                 </div>
@@ -101,6 +107,32 @@
                     </div>
                 </div>
                 <div class="element-property-header">
+                    <span>{{'table.property-toolbar' | translate}}</span>
+                </div>
+                <div class="block mt5">
+                    <div class="my-form-field section-inline-color color-field ml5">
+                        <span>{{'table.property-toolbar-background' | translate}}</span>
+                        <input [(colorPicker)]="options.toolbar.background" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.toolbar.background"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml15">
+                        <span>{{'table.property-toolbar-color' | translate}}</span>
+                        <input [(colorPicker)]="options.toolbar.color" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.toolbar.color"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                    <div class="my-form-field section-inline-color color-field ml15">
+                        <span>{{'table.property-toolbar-button-color' | translate}}</span>
+                        <input [(colorPicker)]="options.toolbar.buttonColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="options.toolbar.buttonColor"
+                            [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                            [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 88px" [cpPosition]="'auto'"
+                            (colorPickerChange)="onTableChanged()" />
+                    </div>
+                </div>
+                <div class="element-property-header">
                     <span>{{'table.property-selection' | translate}}</span>
                 </div>
                 <div class="block mt5">
@@ -146,7 +178,7 @@
                         <div class="section-inline-margin2"></div>
                         <div class="my-form-field section-inline-toggle slider-field">
                             <span>{{'table.property-daterange' | translate}}</span>
-                            <mat-slide-toggle color="primary" [(ngModel)]="options.daterange.show" (change)="onTableChanged()"></mat-slide-toggle>
+                            <mat-slide-toggle color="primary" [(ngModel)]="options.daterange.show" (change)="onTableChanged()" [disabled]="tableTypeCtrl.value === tableType.history && options.lastRange === lastRangeType.none"></mat-slide-toggle>
                         </div>
                     </div>
                 </div>
@@ -270,6 +302,12 @@
                                         </app-flex-device-tag>
                                     </div>
                                 </div>
+                            </div>
+                            <div *ngSwitchCase="actionSetTag" class="block event-tag">
+                                <app-flex-device-tag class="block mt5 item-device-tag"
+                                                    (onchange)="onTagSelected($event, item)"
+                                                    [variableId]="item.actparam">
+                                </app-flex-device-tag>
                             </div>
                         </div>
                     </div>

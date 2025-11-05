@@ -15,6 +15,7 @@ const IoEventTypes = {
     DEVICE_TAGS_SUBSCRIBE: 'device-tags-subscribe',
     DEVICE_TAGS_UNSUBSCRIBE: 'device-tags-unsubscribe',
     DEVICE_ENABLE: 'device-enable',
+    DEVICE_ODBC_QUERY: 'device-odbc-query',
     DAQ_QUERY: 'daq-query',
     DAQ_RESULT: 'daq-result',
     DAQ_ERROR: 'daq-error',

@@ -2,45 +2,123 @@
     <h1 *ngIf="data.type === cellType.column" mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.column-dialog-title' | translate}}</h1>
     <h1 *ngIf="data.type === cellType.row" mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.row-dialog-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    
     <div mat-dialog-content>
-        <div *ngIf="data.type === cellType.column" class="my-form-field" style="display: block;">
+        <!-- Column Name -->
+        <div *ngIf="data.type === cellType.column" class="my-form-field" style="display: block; margin-bottom: 15px;">
             <span>{{'table.cell-column-name' | translate}}</span>
-            <input [(ngModel)]="data.cell.label" type="text" style="width: 260px">
+            <input [(ngModel)]="data.cell.label" type="text">
         </div>
-        <div style="display: block; margin-top: 10px;">
-            <div class="my-form-field" style="display: inline-block">
-                <span *ngIf="data.type === cellType.column">{{'table.cell-column-type' | translate}}</span>
-                <span *ngIf="data.type === cellType.row">{{'table.cell-row-type' | translate}}</span>
-                <mat-select [(value)]="data.cell.type" style="width: 260px">
-                    <mat-option *ngIf="data.table === tableType.data" [value]="columnType.label">
-                        {{'table.property-column-label' | translate}}</mat-option>
-                    <mat-option *ngIf="!(data.table === tableType.data && data.type === cellType.column)" [value]="columnType.variable">
-                        {{'table.property-column-variable' | translate}}</mat-option>
-                    <mat-option *ngIf="!(data.table === tableType.data && data.type === cellType.column)" [value]="columnType.device">
-                        {{'table.property-column-device' | translate}}</mat-option>
-                    <mat-option [value]="columnType.timestamp">
-                        {{'table.property-column-timestamp' | translate}}</mat-option>
-                </mat-select>
-            </div>
-            <div *ngIf="data.cell.type === columnType.timestamp" class="my-form-field" style="display: inline-block; margin-left: 16px;">
-                <span>{{'table.cell-ts-format' | translate}}</span>
-                <input [(ngModel)]="data.cell.valueFormat" type="text" style="width: 265px">
-            </div>
-            <div *ngIf="data.type === cellType.row && data.cell.type === columnType.label" class="my-form-field" style="display: inline-block; margin-left: 16px;">
-                <span>{{'table.cell-text' | translate}}</span>
-                <input [(ngModel)]="data.cell.label" type="text" style="width: 265px">
-            </div>
-            <div *ngIf="data.cell.type === columnType.variable" class="my-form-field" style="display: inline-block; margin-left: 16px;">
-                <span>{{'table.cell-value-format' | translate}}</span>
-                <input [(ngModel)]="data.cell.valueFormat" type="text" style="width: 265px">
-            </div>
+
+        <!-- Cell Type Selection -->
+        <div class="my-form-field" style="display: block; margin-bottom: 15px;">
+            <span *ngIf="data.type === cellType.column">{{'table.cell-column-type' | translate}}</span>
+            <span *ngIf="data.type === cellType.row">{{'table.cell-row-type' | translate}}</span>
+            <mat-select [(value)]="data.cell.type" style="width: 100%;">
+                <mat-option *ngIf="data.table === tableType.data" [value]="columnType.label">
+                    {{'table.property-column-label' | translate}}</mat-option>
+                <mat-option *ngIf="!(data.table === tableType.data && data.type === cellType.column)" [value]="columnType.variable">
+                    {{'table.property-column-variable' | translate}}</mat-option>
+                <mat-option *ngIf="!(data.table === tableType.data && data.type === cellType.column)" [value]="columnType.device">
+                    {{'table.property-column-device' | translate}}</mat-option>
+                <mat-option *ngIf="!(data.table === tableType.data && data.type === cellType.column)" [value]="columnType.odbc">
+                    {{'table.property-column-odbc' | translate}}</mat-option>
+                <mat-option [value]="columnType.timestamp">
+                    {{'table.property-column-timestamp' | translate}}</mat-option>
+            </mat-select>
         </div>
+
+        <!-- Timestamp Format (shown when type is timestamp) -->
+        <div *ngIf="data.cell.type === columnType.timestamp" class="my-form-field" style="display: block; margin-bottom: 15px;">
+            <span>{{'table.cell-ts-format' | translate}}</span>
+            <input [(ngModel)]="data.cell.valueFormat" type="text">
+        </div>
+
+        <!-- ODBC Timestamp Sources Section -->
+        <div *ngIf="data.cell.type === columnType.timestamp" style="display: block; margin-bottom: 15px;">
+            <!-- Header with Add Button -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                <span style="font-weight: 500;">{{'table.cell-odbc-ts-sources' | translate}}</span>
+                <button mat-icon-button color="primary" (click)="onAddTimestampSource()" 
+                        matTooltip="{{'table.cell-add-ts-source' | translate}}" class="toolbox-btn">
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+            </div>
+
+            <!-- List of Timestamp Sources -->
+            <div *ngIf="data.cell.odbcTimestampColumns && data.cell.odbcTimestampColumns.length > 0; else noSources">
+                <div *ngFor="let source of data.cell.odbcTimestampColumns; let i = index" class="item">
+                    <!-- Remove Button (floated right like FUXA pattern) -->
+                    <div class="item-remove">
+                        <button mat-icon-button (click)="onRemoveTimestampSource(i)" 
+                                class="remove" matTooltip="{{'table.cell-remove-ts-source' | translate}}">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                    </div>
+
+                    <!-- Source Info -->
+                    <div style="display: block; overflow: hidden; padding-right: 40px;">
+                        <!-- Table and Column Display -->
+                        <div class="my-form-field" style="display: inline-block; width: 45%;">
+                            <span>{{'table.cell-odbc-ts-source-name' | translate}}</span>
+                            <input type="text" 
+                                   [value]="source.table + ' → ' + source.column" 
+                                   style="width: 100%;" 
+                                   readonly 
+                                   [disabled]="true">
+                        </div>
+
+                        <!-- UTC to Local Toggle -->
+                        <div class="my-form-field" style="display: inline-block; width: 50%; margin-left: 3%;">
+                            <span>{{'table.cell-convert-utc-local' | translate}}</span>
+                            <mat-slide-toggle color="primary" 
+                                            [(ngModel)]="source.convertUtcToLocal">
+                            </mat-slide-toggle>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State Message -->
+            <ng-template #noSources>
+                <div style="padding: 15px; text-align: center; color: #999; font-size: 13px; border: 1px dashed #ddd; border-radius: 4px;">
+                    {{'table.cell-no-ts-sources' | translate}}
+                </div>
+            </ng-template>
+        </div>
+
+        <!-- Text field for row type with label -->
+        <div *ngIf="data.type === cellType.row && data.cell.type === columnType.label" class="my-form-field" style="display: block; margin-bottom: 15px;">
+            <span>{{'table.cell-text' | translate}}</span>
+            <input [(ngModel)]="data.cell.label" type="text">
+        </div>
+
+        <!-- Format for variable type -->
+        <div *ngIf="data.cell.type === columnType.variable" class="my-form-field" style="display: block; margin-bottom: 15px;">
+            <span>{{'table.cell-value-format' | translate}}</span>
+            <input [(ngModel)]="data.cell.valueFormat" type="text">
+        </div>
+
+        <!-- Variable/Device selector -->
         <div *ngIf="data.cell.type === columnType.variable || data.cell.type === columnType.device" class="my-form-field variable-input">
             <flex-variable [data]="devicesValues" (onchange)="onSetVariable($event)" [variableId]="data.cell.variableId" [bitmask]="data.cell.bitmask" [withStaticValue]="false"
                 [withBitmask]="true">
             </flex-variable>
         </div>
+
+        <!-- ODBC Query selector -->
+        <div *ngIf="data.cell.type === columnType.odbc" class="my-form-field variable-input" style="margin-bottom: 15px;">
+            <span>{{'table.cell-odbc-query' | translate}}</span>
+            <div style="display: flex; gap: 8px; align-items: center; margin-top: 8px;">
+                <input [(ngModel)]="data.cell.variableId" type="text" style="flex: 1; width: 100%;" readonly>
+                <button mat-icon-button color="primary" (click)="openOdbcBrowser()" 
+                        matTooltip="{{'odbc.browse' | translate}}">
+                    <mat-icon>folder_open</mat-icon>
+                </button>
+            </div>
+        </div>
     </div>
+
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
         <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>

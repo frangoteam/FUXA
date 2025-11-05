@@ -448,6 +448,12 @@
 
                         </mat-expansion-panel>
                     </div>
+                    <div class="my-form-field block mt5">
+                        <button mat-raised-button color="accent" (click)="onOpenOdbcBrowser()" [disabled]="!data.device.property.address">
+                            <mat-icon>storage</mat-icon>
+                            {{'device.open-odbc-browser' | translate}}
+                        </button>
+                    </div>
                 </div>
                 <div *ngSwitchCase="deviceType.ADSclient">
                     <div class="my-form-field block mb10">

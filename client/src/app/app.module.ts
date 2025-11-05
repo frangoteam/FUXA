@@ -197,6 +197,7 @@ import { FlexWidgetPropertyComponent } from './gauges/gauge-property/flex-widget
 import { GraphSourceEditComponent } from './editor/graph-config/graph-source-edit/graph-source-edit.component';
 import { LibWidgetsComponent } from './resources/lib-widgets/lib-widgets.component';
 import { TableCustomizerCellEditComponent } from './gauges/controls/html-table/table-customizer/table-customizer-cell-edit/table-customizer-cell-edit.component';
+import { OdbcBrowserComponent } from './odbc-browser/odbc-browser.component';
 import { TableAlarmsComponent } from './gauges/controls/html-table/table-alarms/table-alarms.component';
 import { TableReportsComponent } from './gauges/controls/html-table/table-reports/table-reports.component';
 import { ReportsService } from './_services/reports.service';
@@ -377,6 +378,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TablePropertyComponent,
         TableCustomizerComponent,
         TableCustomizerCellEditComponent,
+        OdbcBrowserComponent,
         TableAlarmsComponent,
         TableReportsComponent,
         DataTableComponent,
