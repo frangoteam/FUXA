@@ -1381,6 +1381,9 @@
     "notification.property-priority": "Priority",
     "notification.type-alarm": "Alarms",
     "notification.type-trigger": "Trigger",
+    "notification.property-mode": "Mode",
+    "notification.property-mode-alarm-all": "notify all new active alarms",
+    "notification.property-mode-alarm-single": "notify one for priority",
 
     "scripts.list-title": "Scripts settings",
     "scripts.list-name": "Name",
