@@ -169,6 +169,7 @@ function NotificatorManager(_runtime) {
                                     temp.text = notification.text;
                                     temp.subscriptions = notification.subscriptions;
                                     temp.options = notification.options;
+                                    temp.mode = notification.mode;
                                     notificationsSubsctiption[sub].push(temp);
                                     notificationsFound++;
                                 }
@@ -243,13 +244,15 @@ function NotificatorManager(_runtime) {
                     var wasActive = subscriptionStatus[stkey];
                     var statusChanged = !wasActive && isActive || (wasActive && isActive && subscriptionStatus[stkey] < alarmsStatus[stkey]);
                     if (isActive) {
-                        if ((notificationsSubsctiption[stkey] && notificationsSubsctiption[stkey].length)) {
+                        if (notificationsSubsctiption[stkey]?.length ) {
                             if (statusChanged) {
-                                // Reset timing for all notifications in this category
+                                // Check to reset timing for all notifications in this category
                                 for (var i = 0; i < notificationsSubsctiption[stkey].length; i++) {
                                     var notification = notificationsSubsctiption[stkey][i];
-                                    notification.ontime = time;
-                                    notification.notifytime = 0;
+                                    if (notification.mode !== NotificationModeEnum.single) {
+                                        notification.ontime = time;
+                                        notification.notifytime = 0;
+                                    }
                                 }
                             }
                             for (var i = 0; i < notificationsSubsctiption[stkey].length; i++) {
@@ -361,6 +364,11 @@ module.exports = {
     createMessage: function(from, to, subj, text, html, attachments) {
         return new MailMessage(from, to, subj, text, html, attachments);
     }
+}
+
+var NotificationModeEnum = {
+    all: 0,
+    single: 1
 }
 
 /**
