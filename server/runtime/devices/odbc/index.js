@@ -6,6 +6,7 @@
 var odbc;
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
+const dateFormatter = require('./date-formatter');
 
 function ODBCclient(_data, _logger, _events) {
     var data = JSON.parse(JSON.stringify(_data)); // Current Device data { id, name, tags, enabled, ... }
@@ -1145,7 +1146,23 @@ function ODBCclient(_data, _logger, _events) {
                     // Detect database type and normalize query
                     const dbType = self._getDBType();
                     logger.info(`'${data.name}' executing query on ${dbType}: ${query}`);
-                    const normalizedQuery = self._normalizeSqlQuery(query, dbType);
+                    let normalizedQuery = self._normalizeSqlQuery(query, dbType);
+                    
+                    // CRITICAL: Use date-formatter to normalize all date/time values in the query
+                    // This handles:
+                    // - JavaScript Date object toString() format (e.g., "Fri Nov 07 2025 14:31:22 GMT+1300 (New Zealand Daylight Time)")
+                    // - ISO format (e.g., "2025-01-15", "2025-01-15T14:30:45")
+                    // - US format (e.g., "01/15/2025", "01/15/2025 14:30:45")
+                    // - EU format (e.g., "15/01/2025", "15/01/2025 14:30:45")
+                    // Auto-detection ensures consistent formatting across all database types
+                    try {
+                        const formattedQuery = self._formatDateObjectsInQuery(normalizedQuery);
+                        logger.info(`'${data.name}' formatted date/time values in query`);
+                        normalizedQuery = formattedQuery;
+                    } catch (err) {
+                        logger.warn(`'${data.name}' date/time formatting warning: ${err}`);
+                        // Continue with original query if formatting fails
+                    }
                     
                     // Check if query contains multiple statements (separated by semicolons)
                     // This happens with PostgreSQL ALTER TABLE normalizations
@@ -1254,6 +1271,35 @@ function ODBCclient(_data, _logger, _events) {
     }
 
     /**
+     * Convert unquoted Date object string representations to ISO format strings
+     * Material datepickers output Date objects which JavaScript converts to strings like:
+     * "Sat Nov 01 2025 00:00:00 GMT+1300"
+     * These need to be converted to ISO format: "2025-11-01 00:00:00"
+     * before being processed by the date formatter
+     */
+    this._formatDateObjectsInQuery = function(query) {
+        if (!query || typeof query !== 'string') return query;
+        
+        // Use the date-formatter module to normalize all date/time values in the query
+        // This handles automatic detection and conversion of:
+        // - JavaScript Date object toString() format (e.g., "Fri Nov 07 2025 14:31:22 GMT+1300 (New Zealand Daylight Time)")
+        // - ISO format (e.g., "2025-01-15", "2025-01-15T14:30:45")
+        // - US format (e.g., "01/15/2025", "01/15/2025 14:30:45")
+        // - EU format (e.g., "15/01/2025", "15/01/2025 14:30:45")
+        
+        try {
+            const normalized = dateFormatter.normalizeQuery(query);
+            if (normalized !== query) {
+                logger.info(`'${data.name}' normalized query with date/time formatting`);
+            }
+            return normalized;
+        } catch (err) {
+            logger.warn(`'${data.name}' date formatting error: ${err.message}, returning original query`);
+            return query;
+        }
+    }
+
+    /**
      * Extract table names from SQL query
      */
     this._extractTableNames = function(query) {
@@ -1275,6 +1321,109 @@ function ODBCclient(_data, _logger, _events) {
         }
         
         return [...new Set(tableNames)]; // Remove duplicates
+    }
+
+    /**
+     * Extract column types from the query
+     * For now, attempts to identify date/time columns from common naming patterns
+     * Can be enhanced to use actual schema metadata if available
+     * Searches in WHERE, UPDATE SET, and INSERT column lists
+     * 
+     * @param {string} query - SQL query string
+     * @returns {object} - Map of column names to detected types
+     */
+    this._extractColumnTypesFromQuery = function(query) {
+        const columnTypes = {};
+        
+        // Common date/time column name patterns
+        const datePatterns = [
+            /\b(date|created_date|updated_date|birth_date|start_date|end_date|effective_date)\b/gi,
+            /\b([\w]*_date|[\w]*date[\w]*)\b/gi
+        ];
+        
+        const timePatterns = [
+            /\b(time|created_time|updated_time|start_time|end_time|effective_time)\b/gi,
+            /\b([\w]*_time|[\w]*time[\w]*)\b/gi
+        ];
+        
+        const timestampPatterns = [
+            /\b(timestamp|created_at|updated_at|ts|created_timestamp|updated_timestamp)\b/gi,
+            /\b([\w]*_ts|[\w]*_timestamp)\b/gi
+        ];
+        
+        const datetimePatterns = [
+            /\b(datetime|modified_datetime|updated_datetime)\b/gi,
+            /\b([\w]*_datetime)\b/gi
+        ];
+        
+        // Helper function to check column name against patterns
+        const checkColumnName = (columnName) => {
+            // DATETIME/TIMESTAMP patterns are more specific, check these first
+            for (const pattern of datetimePatterns) {
+                if (pattern.test(columnName)) return 'DATETIME';
+            }
+            for (const pattern of timestampPatterns) {
+                if (pattern.test(columnName)) return 'TIMESTAMP';
+            }
+            // DATE patterns
+            for (const pattern of datePatterns) {
+                if (pattern.test(columnName)) return 'DATE';
+            }
+            // TIME patterns - but if it has any date-like suffix, it's likely TIMESTAMP not pure TIME
+            // Examples: "time" alone = could be TIMESTAMP, "insert_time" = likely TIMESTAMP, "created_time" = likely TIMESTAMP
+            for (const pattern of timePatterns) {
+                if (pattern.test(columnName)) {
+                    // If it contains phrases like 'created', 'updated', 'insert', 'modified' it's likely a timestamp
+                    if (/\b(created|updated|insert|modified|start|end)\b/i.test(columnName)) {
+                        return 'TIMESTAMP';
+                    }
+                    // Generic "time" column or other time patterns - default to TIMESTAMP for safety
+                    return 'TIMESTAMP';
+                }
+            }
+            return null;
+        };
+        
+        // Extract from WHERE clause
+        const whereMatch = query.match(/WHERE\s+(.+?)(?:GROUP BY|ORDER BY|LIMIT|$)/i);
+        if (whereMatch) {
+            const whereClause = whereMatch[1];
+            const columnMatches = whereClause.match(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*[=<>]/g);
+            if (columnMatches) {
+                columnMatches.forEach(match => {
+                    const columnName = match.replace(/\s*[=<>].*/, '').trim();
+                    const type = checkColumnName(columnName);
+                    if (type) columnTypes[columnName] = type;
+                });
+            }
+        }
+        
+        // Extract from UPDATE SET clause
+        const updateMatch = query.match(/UPDATE\s+[\w.]+\s+SET\s+(.+?)(?:WHERE|$)/i);
+        if (updateMatch) {
+            const setClause = updateMatch[1];
+            const columnMatches = setClause.match(/\b([a-zA-Z_][a-zA-Z0-9_]*)\s*=/g);
+            if (columnMatches) {
+                columnMatches.forEach(match => {
+                    const columnName = match.replace(/\s*=.*/, '').trim();
+                    const type = checkColumnName(columnName);
+                    if (type) columnTypes[columnName] = type;
+                });
+            }
+        }
+        
+        // Extract from INSERT column list
+        const insertMatch = query.match(/INSERT\s+INTO\s+[\w.]+\s*\(([^)]+)\)/i);
+        if (insertMatch) {
+            const columnList = insertMatch[1];
+            const columns = columnList.split(',').map(c => c.trim());
+            columns.forEach(columnName => {
+                const type = checkColumnName(columnName);
+                if (type) columnTypes[columnName] = type;
+            });
+        }
+        
+        return columnTypes;
     }
 
     /**
