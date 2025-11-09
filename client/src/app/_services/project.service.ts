@@ -586,6 +586,7 @@ export class ProjectService {
                 exist.subscriptions = notification.subscriptions;
                 exist.text = notification.text;
                 exist.type = notification.type;
+                exist.mode = notification.mode;
             } else {
                 this.projectData.notifications.push(notification);
             }
