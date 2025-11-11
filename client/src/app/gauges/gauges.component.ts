@@ -396,7 +396,10 @@ export class GaugesManager {
     }
 
     getGaugeFromName(gaugeName: string) {
-        const gauge = Object.values(this.mapGauges).find((gauge: any) => gauge?.name === gaugeName);
+        let gauge = Object.values(this.mapGauges).find((g: any) => g?.name === gaugeName);
+        if (!gauge && this.mapGaugeView) {
+          gauge = Object.values(this.mapGaugeView).find((g: any) => g?.name === gaugeName);
+        }
         return gauge;
     }
 

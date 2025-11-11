@@ -93,20 +93,18 @@ export class ScriptService {
                     }
                     parameterToAdd += `\n`;
                 });
-                (async () => {
-                    try {
-                        const code = `${parameterToAdd}${script.code}`;
-                        const asyncText = script.sync ? 'function' : 'async function';
-                        const callText = `${asyncText} ${script.name}() {\n${this.addSysFunctions(code)} \n }\n${script.name}.call(this);\n`;
-                        const result = await eval(callText);
-                        observer.next(result);
-                    } catch (err) {
-                        console.error(err);
-                        observer.error(err);
-                    } finally {
-                        observer.complete();
-                    }
-                })();
+                try {
+                    const code = `${parameterToAdd}${script.code}`;
+                    const asyncText = script.sync ? 'function' : 'async function';
+                    const callText = `${asyncText} ${script.name}() {\n${this.addSysFunctions(code)} \n }\n${script.name}.call(this);\n`;
+                    const result = eval(callText);
+                    observer.next(result);
+                } catch (err) {
+                    console.error(err);
+                    observer.error(err);
+                } finally {
+                    observer.complete();
+                }
             }
         });
     }
@@ -138,6 +136,7 @@ export class ScriptService {
         code = code.replace(/\$setAdapterToDevice\(/g, 'this.$setAdapterToDevice(');
         code = code.replace(/\$resolveAdapterTagId\(/g, 'this.$resolveAdapterTagId(');
         code = code.replace(/\$invokeObject\(/g, 'this.$invokeObject(');
+        code = code.replace(/\$getObject\(/g, 'this.$getObject(');
         code = code.replace(/\$runServerScript\(/g, 'this.$runServerScript(');
         code = code.replace(/\$getHistoricalTags\(/g, 'this.$getHistoricalTags(');
         code = code.replace(/\$sendMessage\(/g, 'this.$sendMessage(');
@@ -221,6 +220,11 @@ export class ScriptService {
             return gauge[fncName](...params);
         }
         return null;
+    }
+
+    public $getObject(gaugeName: string) {
+        const gauge = this.hmiService.getGaugeMapped(gaugeName);
+        return gauge;
     }
 
     public async $runServerScript(scriptName: string, ...params: any[]) {
