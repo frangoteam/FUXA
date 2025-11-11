@@ -59,7 +59,7 @@ class ReportsApiService {
                             });
                         }
                         catch (err) {
-                            console.log(`Parsing ${file} Error ${err}`);
+                            this.runtime.logger.error(`Parsing ${file} Error ${err}`);
                         }
                     }
                     if (filter.count) {
