@@ -1,6 +1,6 @@
 // the start/root module that tells Angular how to assemble the application.
 
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -163,6 +163,7 @@ import { ScriptModeComponent } from './scripts/script-mode/script-mode.component
 import { DeviceWebapiPropertyDialogComponent } from './device/device-map/device-webapi-property-dialog/device-webapi-property-dialog.component';
 import { SvgSelectorComponent } from './editor/svg-selector/svg-selector.component';
 import { FrameworkModule } from './framework/framework.module';
+import { Ui5Module } from './ui5/ui5.module';
 import { StopInputPropagationDirective } from './_directives/stop-input-propagation.directive';
 import { HeartbeatService } from './_services/heartbeat.service';
 import { RcgiService } from './_services/rcgi/rcgi.service';
@@ -439,8 +440,9 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         GridsterModule,
         NgChartsModule,
         CodemirrorModule,
-        NgxDaterangepickerMd.forRoot(),
-        FrameworkModule
+    NgxDaterangepickerMd.forRoot(),
+    FrameworkModule,
+    Ui5Module
     ],
     providers: [
         // providersResourceService,
@@ -485,6 +487,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DeviceAdapterService,
         {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
     ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
     bootstrap: [AppComponent]
 })
 export class AppModule {

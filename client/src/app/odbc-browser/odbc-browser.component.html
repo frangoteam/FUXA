@@ -456,34 +456,34 @@
                                 </mat-form-field>
                                 
                                 <!-- Date picker for DATE columns -->
-                                <app-datetime-picker 
+                                <app-ui5-datetime-picker 
                                     *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATE'"
                                     [columnType]="'DATE'"
                                     [value]="condition.value"
                                     [placeholder]="'YYYY-MM-DD'"
                                     (valueChange)="condition.value = $event"
                                     class="condition-field">
-                                </app-datetime-picker>
+                                </app-ui5-datetime-picker>
 
                                 <!-- Time picker for TIME columns -->
-                                <app-datetime-picker 
+                                <app-ui5-datetime-picker 
                                     *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'TIME'"
                                     [columnType]="'TIME'"
                                     [value]="condition.value"
                                     [placeholder]="'HH:mm:ss'"
                                     (valueChange)="condition.value = $event"
                                     class="condition-field">
-                                </app-datetime-picker>
+                                </app-ui5-datetime-picker>
 
                                 <!-- DateTime picker for DATETIME/TIMESTAMP columns -->
-                                <app-datetime-picker 
+                                <app-ui5-datetime-picker 
                                     *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATETIME'"
                                     [columnType]="'DATETIME'"
                                     [value]="condition.value"
                                     [placeholder]="'YYYY-MM-DD HH:mm:ss'"
                                     (valueChange)="condition.value = $event"
                                     class="condition-field">
-                                </app-datetime-picker>
+                                </app-ui5-datetime-picker>
                                 
                                 <button mat-icon-button (click)="removeCondition(i)" [matTooltip]="'odbc.remove-condition' | translate">
                                     <mat-icon>delete</mat-icon>
@@ -534,34 +534,34 @@
                                 </mat-form-field>
                                 
                                 <!-- Date picker for DATE columns -->
-                                <app-datetime-picker 
+                                <app-ui5-datetime-picker 
                                     *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATE'"
                                     [columnType]="'DATE'"
                                     [value]="condition.value"
                                     [placeholder]="'YYYY-MM-DD'"
                                     (valueChange)="condition.value = $event"
                                     class="condition-field">
-                                </app-datetime-picker>
+                                </app-ui5-datetime-picker>
 
                                 <!-- Time picker for TIME columns -->
-                                <app-datetime-picker 
+                                <app-ui5-datetime-picker 
                                     *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'TIME'"
                                     [columnType]="'TIME'"
                                     [value]="condition.value"
                                     [placeholder]="'HH:mm:ss'"
                                     (valueChange)="condition.value = $event"
                                     class="condition-field">
-                                </app-datetime-picker>
+                                </app-ui5-datetime-picker>
 
                                 <!-- DateTime picker for DATETIME/TIMESTAMP columns -->
-                                <app-datetime-picker 
+                                <app-ui5-datetime-picker 
                                     *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATETIME'"
                                     [columnType]="'DATETIME'"
                                     [value]="condition.value"
                                     [placeholder]="'YYYY-MM-DD HH:mm:ss'"
                                     (valueChange)="condition.value = $event"
                                     class="condition-field">
-                                </app-datetime-picker>
+                                </app-ui5-datetime-picker>
                                 
                                 <button mat-icon-button (click)="removeHavingCondition(i)" [matTooltip]="'odbc.remove-condition' | translate">
                                     <mat-icon>delete</mat-icon>
