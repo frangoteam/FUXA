@@ -1578,6 +1578,38 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.winRef.nativeWindow.svgEditor.clearSelection();
     }
 
+    /**
+     * End any active pointer or mouse interaction so dragging an element stops
+     * when overlays appear over the cursor (like the svg-tools-fly class).
+     */
+    private endActivePointerInteraction() {
+        try {
+            const w = this.winRef.nativeWindow;
+            const doc = w?.document;
+            const canvas = doc?.getElementById('svgcanvas');
+            const active = doc?.activeElement as HTMLElement;
+            const mouseEvtInit: MouseEventInit = { bubbles: true, cancelable: true, view: w };
+            // Dispatch on both document and window to reach handlers registered at different levels.
+            doc?.dispatchEvent(new MouseEvent('mouseup', mouseEvtInit));
+            w?.dispatchEvent(new MouseEvent('mouseup', mouseEvtInit));
+            canvas?.dispatchEvent(new MouseEvent('mouseup', mouseEvtInit));
+            active?.dispatchEvent(new MouseEvent('mouseup', mouseEvtInit));
+            // Attempt pointer & touch as well.
+            try {
+                const ptrEvt = new PointerEvent('pointerup', { bubbles: true, cancelable: true });
+                doc?.dispatchEvent(ptrEvt); canvas?.dispatchEvent(ptrEvt); active?.dispatchEvent(ptrEvt);
+            } catch {}
+            try {
+                const tEvt = new TouchEvent('touchend', { bubbles: true, cancelable: true } as any);
+                doc?.dispatchEvent(tEvt); canvas?.dispatchEvent(tEvt); active?.dispatchEvent(tEvt);
+            } catch {}
+        } catch {}
+    }
+
+    onFlyEnter() {
+        this.endActivePointerInteraction();
+    }
+
     cloneElement() {
         this.winRef.nativeWindow.svgEditor.clickExtension('view_grid');
     }

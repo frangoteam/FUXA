@@ -956,28 +956,17 @@ export class ProjectService {
     }
 
     private notifyError(msgCode: string) {
-        const msg = this.translateService.instant(msgCode);
-        if (msgCode) {
-            console.error(`FUXA Error: ${msg}`);
-            this.toastr.error(msg, '', {
-                timeOut: 3000,
-                closeButton: true,
-                disableTimeOut: true
-            });
-        }
+        this.translateService.get(msgCode).subscribe((msg: string) => {
+            if (msg) {
+                console.error(`FUXA Error: ${msg}`);
+                this.toastr.error(msg, '', {
+                    timeOut: 3000,
+                    closeButton: true,
+                    disableTimeOut: true
+                });
+            }
+        });
     }
-    // private notifyError(msgCode: string) {
-    //     this.translateService.get(msgCode).subscribe((msg: string) => {
-    //         if (msg) {
-    //             console.error(`FUXA Error: ${msg}`);
-    //             this.toastr.error(msg, '', {
-    //                 timeOut: 3000,
-    //                 closeButton: true,
-    //                 disableTimeOut: true
-    //             });
-    //         }
-    //     });
-    // }
     //#endregion
 
     //#region Upload resource to server

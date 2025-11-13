@@ -262,7 +262,7 @@
             <!-- SVG-EDITOR -->
             <div [style.display]="(editorMode === editorModeType.SVG)?'block':'none' ">
                 <!-- RIGHT BAR -->
-                <div class="svg-tools-fly" [style.display]="(isAnySelected)?'block':'none' ">
+                <div class="svg-tools-fly" [style.display]="(isAnySelected)?'block':'none' " (mouseenter)="onFlyEnter()" (touchstart)="onFlyEnter()">
                     <mat-expansion-panel class="svg-workarea-fly-p" (opened)="panelPropertyIdOpenState = true" (closed)="panelPropertyIdOpenState = false" hideToggle="true"
                         expanded="true" style="display:none">
                         <mat-expansion-panel-header class="svg-workarea-flybar-h">
