@@ -302,7 +302,7 @@ async function selectProject(parentWin, errorMessage = null) {
 async function openSettingsWindow(parentWin) {
     const settingsWin = new BrowserWindow({
         width: 500,
-        height: 300,
+        height: 400,
         minWidth: 400,
         minHeight: 250,
         parent: parentWin,
