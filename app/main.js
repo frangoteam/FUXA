@@ -39,9 +39,17 @@ async function loadConfig() {
         if (validProjects.length !== (config.recentProjects?.length || 0)) {
             await saveConfig(config);
         }
+        // Initialize auto-start settings if not present
+        if (!config.autoStart) {
+            config.autoStart = { enabled: false, projectPath: null };
+        }
+        // Initialize fullscreen settings if not present
+        if (!config.fullscreen) {
+            config.fullscreen = { enabled: false };
+        }
         return config;
     } catch (error) {
-        return { recentProjects: [] };
+        return { recentProjects: [], autoStart: { enabled: false, projectPath: null }, fullscreen: { enabled: false } };
     }
 }
 
@@ -120,19 +128,23 @@ async function openProject(parentWin) {
 }
 
 // Create project selection window
-function createProjectSelectionWindow(parentWin) {
+function createProjectSelectionWindow(parentWin, errorMessage = null, recentProjects = []) {
     const win = new BrowserWindow({
         width: 600,
-        height: 400,
+        height: 500,
+        minWidth: 400,
+        minHeight: 350,
         parent: parentWin,
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            sandbox: false // Disable renderer sandbox
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js')
         },
-        resizable: false
+        resizable: true
     });
     win.setMenu(null);
+
+    const errorHtml = errorMessage ? `<div style="color: #ff6b6b; margin-bottom: 15px; padding: 10px; background-color: #2d2d2d; border: 1px solid #ff9999; border-radius: 5px; text-align: center;">${errorMessage}</div>` : '';
 
     const htmlContent = `
         <!DOCTYPE html>
@@ -142,101 +154,143 @@ function createProjectSelectionWindow(parentWin) {
             <style>
                 body {
                     font-family: Arial, sans-serif;
-                    margin: 20px;
-                    background-color: #f4f4f4;
-                    color: #333;
+                    margin: 0;
+                    padding: 15px;
+                    background-color: #424242;
+                    color: #FFFFFF;
+                    height: 100vh;
+                    box-sizing: border-box;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
                 }
                 h2 {
                     text-align: center;
-                    color: #444;
+                    color: #FFFFFF;
+                    margin-bottom: 15px;
+                    flex-shrink: 0;
+                }
+                .table-container {
+                    flex: 1;
+                    overflow-y: auto;
+                    margin-bottom: 15px;
+                    border: 1px solid rgba(39,39,39,0.42);
+                    border-radius: 5px;
+                    min-height: 200px;
                 }
                 table {
                     width: 100%;
                     border-collapse: collapse;
-                    margin-bottom: 20px;
-                    background-color: white;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-                }
-                th, td {
-                    padding: 10px;
-                    text-align: left;
-                    border-bottom: 1px solid #ddd;
-                    cursor: pointer;
+                    background-color: #37373D;
+                    table-layout: fixed;
                 }
                 th {
-                    background-color: #007bff;
-                    color: white;
+                    background-color: #333333;
+                    color: #FFFFFF;
+                    padding: 12px 8px;
+                    text-align: left;
+                    position: sticky;
+                    top: 0;
+                    z-index: 1;
+                    font-size: 14px;
+                }
+                th:nth-child(1) { width: 25%; }
+                th:nth-child(2) { width: 50%; }
+                th:nth-child(3) { width: 25%; }
+                td {
+                    padding: 10px 8px;
+                    border-bottom: 1px solid rgba(39,39,39,0.42);
+                    cursor: pointer;
+                    font-size: 13px;
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                }
+                tr:nth-child(even) {
+                    background-color: #424242;
                 }
                 tr:hover {
-                    background-color: #e9ecef;
+                    background-color: rgba(255, 255, 255, 0.1);
                 }
                 .button-container {
+                    flex-shrink: 0;
                     text-align: center;
+                    padding-top: 10px;
+                    display: flex;
+                    justify-content: center;
+                    gap: 10px;
+                    border-top: 1px solid rgba(39,39,39,0.42);
+                    margin-top: auto;
+                    padding-bottom: 10px;
                 }
                 button {
-                    padding: 10px 20px;
-                    margin: 0 10px;
+                    padding: 8px 12px;
                     border: none;
-                    border-radius: 5px;
+                    border-radius: 4px;
                     cursor: pointer;
-                    font-size: 16px;
+                    font-size: 13px;
+                    width: auto;
+                    min-width: 80px;
+                    max-width: 120px;
                 }
-                button.new {
-                    background-color: #28a745;
-                    color: white;
+                button.new, button.cancel {
+                    background-color: #757575;
+                    color: #FFFFFF;
                 }
                 button.open {
-                    background-color: #007bff;
-                    color: white;
-                }
-                button.cancel {
-                    background-color: #dc3545;
-                    color: white;
+                    background-color: #448AFF;
+                    color: #FFFFFF;
                 }
                 button:hover {
                     opacity: 0.9;
+                }
+                @media (max-width: 500px) {
+                    body {
+                        padding: 10px;
+                    }
+                    h2 {
+                        font-size: 16px;
+                        margin-bottom: 10px;
+                    }
+                    th, td {
+                        padding: 8px 4px;
+                        font-size: 12px;
+                    }
+                    button {
+                        padding: 6px 8px;
+                        font-size: 12px;
+                        min-width: 70px;
+                    }
                 }
             </style>
         </head>
         <body>
             <h2>Select a FUXA Project</h2>
-            <table id="projectsTable">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Path</th>
-                        <th>Created</th>
-                    </tr>
-                </thead>
-                <tbody id="projectsBody"></tbody>
-            </table>
+            ${errorHtml}
+            <div class="table-container">
+                <table id="projectsTable">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Path</th>
+                            <th>Created</th>
+                        </tr>
+                    </thead>
+                    <tbody id="projectsBody">
+                        ${recentProjects.map(project => `
+                            <tr onclick="window.electronAPI.selectProject('${project.path.replace(/'/g, '\\\'')}')">
+                                <td>${project.name}</td>
+                                <td>${project.path}</td>
+                                <td>${new Date(project.createdAt).toLocaleDateString()}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
             <div class="button-container">
                 <button class="new" onclick="window.electronAPI.selectAction('new')">New Project</button>
                 <button class="open" onclick="window.electronAPI.selectAction('open')">Open Project</button>
                 <button class="cancel" onclick="window.electronAPI.cancel()">Cancel</button>
             </div>
-            <script>
-                const { ipcRenderer } = require('electron');
-                window.electronAPI = {
-                    selectAction: (action) => ipcRenderer.send('project-action', action),
-                    selectProject: (path) => ipcRenderer.send('project-selected', path),
-                    cancel: () => ipcRenderer.send('project-action', 'cancel')
-                };
-                ipcRenderer.on('load-projects', (event, projects) => {
-                    const tbody = document.getElementById('projectsBody');
-                    tbody.innerHTML = '';
-                    projects.forEach(project => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = \`
-                            <td>\${project.name}</td>
-                            <td>\${project.path}</td>
-                            <td>\${new Date(project.createdAt).toLocaleDateString()}</td>
-                        \`;
-                        row.onclick = () => window.electronAPI.selectProject(project.path);
-                        tbody.appendChild(row);
-                    });
-                });
-            </script>
         </body>
         </html>
     `;
@@ -246,17 +300,18 @@ function createProjectSelectionWindow(parentWin) {
 }
 
 // Handle project selection
-async function selectProject(parentWin) {
-    return new Promise((resolve) => {
-        const selectionWin = createProjectSelectionWindow(parentWin);
-
-        loadConfig().then(config => {
-            selectionWin.webContents.send('load-projects', config.recentProjects || []);
-        }).catch(error => {
+async function selectProject(parentWin, errorMessage = null) {
+    return new Promise(async (resolve) => {
+        // Load config first
+        let recentProjects = [];
+        try {
+            const config = await loadConfig();
+            recentProjects = config.recentProjects || [];
+        } catch (error) {
             console.error('Failed to load projects:', error.message);
-            selectionWin.close();
-            resolve(null);
-        });
+        }
+
+        const selectionWin = createProjectSelectionWindow(parentWin, errorMessage, recentProjects);
 
         ipcMain.once('project-action', async (event, action) => {
             let dataDir = null;
@@ -289,6 +344,221 @@ async function selectProject(parentWin) {
     });
 }
 
+// Create settings window
+async function openSettingsWindow(parentWin) {
+    const settingsWin = new BrowserWindow({
+        width: 500,
+        height: 300,
+        minWidth: 400,
+        minHeight: 250,
+        parent: parentWin,
+        modal: true,
+        resizable: true,
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js')
+        },
+        show: false
+    });
+
+    settingsWin.setMenu(null);
+
+    const config = await loadConfig();
+    const recentProjects = config.recentProjects || [];
+    const autoStart = config.autoStart;
+    const fullscreen = config.fullscreen;
+
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>FUXA Settings</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 15px;
+                    background-color: #424242;
+                    color: #FFFFFF;
+                    height: 100vh;
+                    box-sizing: border-box;
+                    display: flex;
+                    flex-direction: column;
+                    overflow: hidden;
+                }
+                h2 {
+                    text-align: center;
+                    color: #FFFFFF;
+                    margin-top: 0;
+                    margin-bottom: 15px;
+                    flex-shrink: 0;
+                }
+                .setting-group {
+                    flex: 1;
+                    margin-bottom: 15px;
+                    padding: 15px;
+                    background-color: #37373D;
+                    border-radius: 5px;
+                    border: 1px solid rgba(39,39,39,0.42);
+                    overflow-y: auto;
+                }
+                .setting-item {
+                    margin-bottom: 10px;
+                }
+                label {
+                    display: block;
+                    margin-bottom: 5px;
+                    font-weight: bold;
+                    color: #FFFFFF;
+                }
+                select, button {
+                    width: 100%;
+                    padding: 8px;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    border-radius: 4px;
+                    font-size: 14px;
+                    background-color: #424242;
+                    color: #FFFFFF;
+                    max-width: none;
+                }
+                select:focus, button:focus {
+                    outline: none;
+                    border-color: rgba(255, 255, 255, 0.5);
+                }
+                .checkbox-container {
+                    display: flex;
+                    align-items: center;
+                }
+                .checkbox-container input[type="checkbox"] {
+                    margin-right: 10px;
+                    width: auto;
+                    accent-color: #FFFFFF;
+                }
+                .button-container {
+                    flex-shrink: 0;
+                    text-align: center;
+                    margin-top: auto;
+                    padding-top: 10px;
+                    display: flex;
+                    justify-content: center;
+                    gap: 10px;
+                    border-top: 1px solid rgba(39,39,39,0.42);
+                    padding-bottom: 10px;
+                }
+                button {
+                    padding: 8px 12px;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 13px;
+                    width: auto;
+                    min-width: 70px;
+                    max-width: 100px;
+                }
+                button.save {
+                    background-color: #448AFF;
+                    color: #FFFFFF;
+                }
+                button.cancel {
+                    background-color: #757575;
+                    color: #FFFFFF;
+                }
+                button:hover {
+                    opacity: 0.9;
+                }
+                .disabled {
+                    opacity: 0.5;
+                    pointer-events: none;
+                }
+                @media (max-width: 450px) {
+                    body {
+                        padding: 10px;
+                    }
+                    h2 {
+                        font-size: 16px;
+                        margin-bottom: 10px;
+                    }
+                    .setting-group {
+                        padding: 10px;
+                    }
+                    .setting-item {
+                        margin-bottom: 12px;
+                    }
+                    select, button {
+                        font-size: 12px;
+                    }
+                    button {
+                        padding: 6px 8px;
+                        min-width: 60px;
+                    }
+                }
+            </style>
+        </head>
+        <body>
+            <h2>FUXA Settings</h2>
+            <div class="setting-group">
+                <div class="setting-item">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="autoStartEnabled" ${autoStart.enabled ? 'checked' : ''}>
+                        Enable Auto Start
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="fullscreenEnabled" ${fullscreen.enabled ? 'checked' : ''}>
+                        Start in Fullscreen Mode
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label for="autoStartProject">Auto Start Project:</label>
+                    <select id="autoStartProject" ${!autoStart.enabled ? 'disabled' : ''}>
+                        <option value="">Select a project...</option>
+                        ${recentProjects.map(project => 
+                            `<option value="${project.path}" ${autoStart.projectPath === project.path ? 'selected' : ''}>${project.name}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+            </div>
+            <div class="button-container">
+                <button class="save" onclick="saveSettings()">Save</button>
+                <button class="cancel" onclick="window.close()">Cancel</button>
+            </div>
+            <script>
+                // Enable/disable project dropdown based on checkbox
+                document.getElementById('autoStartEnabled').addEventListener('change', function() {
+                    const select = document.getElementById('autoStartProject');
+                    select.disabled = !this.checked;
+                    if (!this.checked) {
+                        select.classList.add('disabled');
+                    } else {
+                        select.classList.remove('disabled');
+                    }
+                });
+
+                async function saveSettings() {
+                    const enabled = document.getElementById('autoStartEnabled').checked;
+                    const projectPath = enabled ? document.getElementById('autoStartProject').value : null;
+                    const fullscreenEnabled = document.getElementById('fullscreenEnabled').checked;
+                    
+                    try {
+                        await window.electronAPI.setAutoStartSettings({ enabled, projectPath });
+                        await window.electronAPI.setFullscreenSettings({ enabled: fullscreenEnabled });
+                        alert('Settings saved successfully!');
+                        window.close();
+                    } catch (error) {
+                        alert('Failed to save settings: ' + error.message);
+                    }
+                }
+            </script>
+        </body>
+        </html>
+    `;
+
+    settingsWin.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
+    settingsWin.show();
+}
+
 // Create main window
 function createWindow() {
     console.log('Creating new window');
@@ -296,13 +566,81 @@ function createWindow() {
         width: 1024,
         height: 768,
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false,
-            sandbox: false // Disable renderer sandbox
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js')
         }
     });
 
-    win.maximize(); // Start window maximized
+    // Load initial loading screen
+    const loadingHtml = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>FUXA - Loading...</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 0;
+                    padding: 0;
+                    background-color: #424242;
+                    color: #FFFFFF;
+                    height: 100vh;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                }
+                .loading-container {
+                    text-align: center;
+                }
+                .spinner {
+                    width: 60px;
+                    height: 60px;
+                    border: 4px solid rgba(255, 255, 255, 0.3);
+                    border-top: 4px solid #448AFF;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    margin: 0 auto 20px;
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                h1 {
+                    color: #FFFFFF;
+                    margin-bottom: 10px;
+                    font-size: 24px;
+                }
+                p {
+                    color: rgba(255, 255, 255, 0.8);
+                    font-size: 16px;
+                    margin: 0;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="loading-container">
+                <div class="spinner"></div>
+                <h1>FUXA</h1>
+                <p>Starting server...</p>
+            </div>
+        </body>
+        </html>
+    `;
+    win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(loadingHtml)}`);
+
+    // Check fullscreen settings
+    loadConfig().then(config => {
+        if (config.fullscreen && config.fullscreen.enabled) {
+            win.setFullScreen(true);
+        } else {
+            win.maximize(); // Start window maximized only if not in fullscreen
+        }
+    }).catch(() => {
+        win.maximize(); // Fallback to maximized if config loading fails
+    });
 
     const menu = Menu.buildFromTemplate([
         {
@@ -338,6 +676,13 @@ function createWindow() {
                             console.error('Open project failed:', error.message);
                             await dialog.showErrorBox('FUXA Error', `Open project failed: ${error.message}`);
                         }
+                    }
+                },
+                {
+                    label: 'Settings',
+                    click: async () => {
+                        console.log('File > Settings clicked');
+                        await openSettingsWindow(win);
                     }
                 },
                 { type: 'separator' },
@@ -395,7 +740,7 @@ async function restartApp(dataDir, win) {
 
     // Start new server process
     try {
-        const serverEntry = path.join(__dirname, 'server/main.js');
+        const serverEntry = path.join(__dirname, '../server/main.js');
         if (!require('fs').existsSync(serverEntry)) {
             throw new Error(`Server file not found: ${serverEntry}`);
         }
@@ -415,7 +760,66 @@ async function restartApp(dataDir, win) {
 
     // Reload UI
     try {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds for server
+        // Update loading screen to show FUXA is loading
+        const loadingFuxaHtml = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>FUXA - Loading...</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        margin: 0;
+                        padding: 0;
+                        background-color: #424242;
+                        color: #FFFFFF;
+                        height: 100vh;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        overflow: hidden;
+                    }
+                    .loading-container {
+                        text-align: center;
+                    }
+                    .spinner {
+                        width: 60px;
+                        height: 60px;
+                        border: 4px solid rgba(255, 255, 255, 0.3);
+                        border-top: 4px solid #448AFF;
+                        border-radius: 50%;
+                        animation: spin 1s linear infinite;
+                        margin: 0 auto 20px;
+                    }
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                    h1 {
+                        color: #FFFFFF;
+                        margin-bottom: 10px;
+                        font-size: 24px;
+                    }
+                    p {
+                        color: rgba(255, 255, 255, 0.8);
+                        font-size: 16px;
+                        margin: 0;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <h1>FUXA</h1>
+                    <p>Loading application...</p>
+                </div>
+            </body>
+            </html>
+        `;
+        await win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(loadingFuxaHtml)}`);
+        
+        await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds for server
         await win.loadURL('http://localhost:1881');
         console.log('UI loaded: http://localhost:1881');
     } catch (error) {
@@ -429,6 +833,36 @@ async function startApp(dataDir, win) {
     await restartApp(dataDir, win);
 }
 
+// IPC handlers for auto-start settings
+ipcMain.handle('get-auto-start-settings', async () => {
+    const config = await loadConfig();
+    return config.autoStart;
+});
+
+ipcMain.handle('set-auto-start-settings', async (event, settings) => {
+    const config = await loadConfig();
+    config.autoStart = settings;
+    await saveConfig(config);
+    return true;
+});
+
+ipcMain.handle('get-fullscreen-settings', async () => {
+    const config = await loadConfig();
+    return config.fullscreen;
+});
+
+ipcMain.handle('set-fullscreen-settings', async (event, settings) => {
+    const config = await loadConfig();
+    config.fullscreen = settings;
+    await saveConfig(config);
+    return true;
+});
+
+ipcMain.handle('get-recent-projects', async () => {
+    const config = await loadConfig();
+    return config.recentProjects || [];
+});
+
 // App startup
 app.whenReady().then(async () => {
     console.log('App starting');
@@ -439,8 +873,25 @@ app.whenReady().then(async () => {
     let dataDir = dataDirArg ? dataDirArg.split('=')[1] : null;
 
     const win = createWindow();
+    
     if (!dataDir) {
-        dataDir = await selectProject(win);
+        // Check auto-start settings
+        const config = await loadConfig();
+        if (config.autoStart && config.autoStart.enabled && config.autoStart.projectPath) {
+            try {
+                // Check if the auto-start project exists
+                const projectDataDir = path.join(config.autoStart.projectPath, 'data');
+                await fs.access(projectDataDir);
+                console.log(`Auto-starting with project: ${config.autoStart.projectPath}`);
+                dataDir = projectDataDir;
+            } catch (error) {
+                console.log(`Auto-start project not found: ${config.autoStart.projectPath}`);
+                // Show project selector with error
+                dataDir = await selectProject(win, `Auto-start project not found: ${config.autoStart.projectPath}`);
+            }
+        } else {
+            dataDir = await selectProject(win);
+        }
     }
 
     if (dataDir) {
