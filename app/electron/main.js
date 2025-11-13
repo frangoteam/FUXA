@@ -332,13 +332,13 @@ function getHtmlPath(filename) {
 }
 
 function getServerPath() {
-    // Try same directory first (production), then parent directory (development)
+    // Try same directory first (production), then parent directories (development)
     const prodPath = require('path').join(__dirname, 'server/main.js');
     if (require('fs').existsSync(prodPath)) {
         return prodPath;
     }
-    // Fall back to development path
-    return require('path').join(__dirname, '../server/main.js');
+    // Fall back to development path (one directory up to app, then to server)
+    return require('path').join(__dirname, '../../server/main.js');
 }
 
 // Create main window

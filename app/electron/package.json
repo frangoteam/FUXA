@@ -21,13 +21,13 @@
         "files": [
             "main.js",
             "*.html",
-            "server/**/*",
-            "client/dist/**/*",
+            "../server/**/*",
+            "../client/dist/**/*",
             "icons/**/*"
         ],
         "extraResources": [
             {
-                "from": "server/node_modules",
+                "from": "../server/node_modules",
                 "to": "app/server/node_modules"
             }
         ],
