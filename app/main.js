@@ -7,6 +7,8 @@ const { pathToFileURL } = require('url');
 
 // Global server process
 let serverProcess = null;
+// Global main window reference
+let mainWindow = null;
 
 // Helper function to get recent projects menu items
 function getRecentProjectsMenuItems(win) {
@@ -66,7 +68,7 @@ function loadConfigSync() {
         const config = JSON.parse(data);
         return config;
     } catch (error) {
-        return { recentProjects: [], autoStart: { enabled: false, projectPath: null }, fullscreen: { enabled: false } };
+        return { recentProjects: [], autoStart: { enabled: false, projectPath: null }, fullscreen: { enabled: false }, rightClick: { enabled: false }, textSelection: { enabled: false } };
     }
 }
 
@@ -96,9 +98,16 @@ async function loadConfig() {
         if (!config.fullscreen) {
             config.fullscreen = { enabled: false };
         }
+        // Initialize right-click and text selection settings if not present
+        if (!config.rightClick) {
+            config.rightClick = { enabled: false };
+        }
+        if (!config.textSelection) {
+            config.textSelection = { enabled: false };
+        }
         return config;
     } catch (error) {
-        return { recentProjects: [], autoStart: { enabled: false, projectPath: null }, fullscreen: { enabled: false } };
+        return { recentProjects: [], autoStart: { enabled: false, projectPath: null }, fullscreen: { enabled: false }, rightClick: { enabled: false }, textSelection: { enabled: false } };
     }
 }
 
@@ -355,6 +364,14 @@ function createWindow() {
         } else {
             win.maximize(); // Start window maximized only if not in fullscreen
         }
+        
+        // Apply right-click and text selection settings
+        if (config.rightClick && !config.rightClick.enabled) {
+            applyRightClickSettings(win, false);
+        }
+        if (config.textSelection && !config.textSelection.enabled) {
+            applyTextSelectionSettings(win, false);
+        }
     }).catch(() => {
         win.maximize(); // Fallback to maximized if config loading fails
     });
@@ -491,6 +508,19 @@ async function restartApp(dataDir, win) {
         await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds for server
         await win.loadURL('http://localhost:1881');
         console.log('UI loaded: http://localhost:1881');
+        
+        // Store reference to main window for settings
+        mainWindow = win;
+        
+        // Apply settings after page loads
+        const config = await loadConfig();
+        
+        if (config.rightClick && !config.rightClick.enabled) {
+            applyRightClickSettings(win, false);
+        }
+        if (config.textSelection && !config.textSelection.enabled) {
+            applyTextSelectionSettings(win, false);
+        }
     } catch (error) {
         console.error('Failed to load UI:', error.message);
         await dialog.showErrorBox('FUXA Error', `Failed to load UI: ${error.message}`);
@@ -527,10 +557,97 @@ ipcMain.handle('set-fullscreen-settings', async (event, settings) => {
     return true;
 });
 
+ipcMain.handle('get-right-click-settings', async () => {
+    const config = await loadConfig();
+    return config.rightClick;
+});
+
+ipcMain.handle('set-right-click-settings', async (event, settings) => {
+    const config = await loadConfig();
+    config.rightClick = settings;
+    await saveConfig(config);
+    
+    // Apply to main window if it exists
+    if (mainWindow) {
+        applyRightClickSettings(mainWindow, settings.enabled);
+    }
+    
+    return true;
+});
+
+ipcMain.handle('get-text-selection-settings', async () => {
+    const config = await loadConfig();
+    return config.textSelection;
+});
+
+ipcMain.handle('set-text-selection-settings', async (event, settings) => {
+    const config = await loadConfig();
+    config.textSelection = settings;
+    await saveConfig(config);
+    
+    // Apply to main window if it exists
+    if (mainWindow) {
+        applyTextSelectionSettings(mainWindow, settings.enabled);
+    }
+    
+    return true;
+});
+
 ipcMain.handle('get-recent-projects', async () => {
     const config = await loadConfig();
     return config.recentProjects || [];
 });
+
+// Apply right-click settings to a window
+function applyRightClickSettings(win, enabled) {
+    if (!enabled) {
+        // Disable right-click context menu by preventing default
+        if (!win._rightClickDisabled) {
+            win._rightClickDisabledHandler = (event) => {
+                event.preventDefault();
+            };
+            win.webContents.on('context-menu', win._rightClickDisabledHandler);
+            win._rightClickDisabled = true;
+        }
+    } else {
+        // Re-enable right-click
+        if (win._rightClickDisabled && win._rightClickDisabledHandler) {
+            win.webContents.removeListener('context-menu', win._rightClickDisabledHandler);
+            win._rightClickDisabled = false;
+        }
+    }
+}
+
+// Apply text selection settings to a window
+function applyTextSelectionSettings(win, enabled) {
+    if (!enabled) {
+        // Disable text selection using CSS injection
+        const css = `
+            * {
+                user-select: none !important;
+                -webkit-user-select: none !important;
+                -moz-user-select: none !important;
+                -ms-user-select: none !important;
+            }
+        `;
+        win.webContents.insertCSS(css).catch(err => {
+            console.error('Failed to inject text selection CSS:', err);
+        });
+    } else {
+        // Re-enable text selection
+        const css = `
+            * {
+                user-select: auto !important;
+                -webkit-user-select: auto !important;
+                -moz-user-select: auto !important;
+                -ms-user-select: auto !important;
+            }
+        `;
+        win.webContents.insertCSS(css).catch(err => {
+            console.error('Failed to re-enable text selection CSS:', err);
+        });
+    }
+}
 
 // App startup
 app.whenReady().then(async () => {
