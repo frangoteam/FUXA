@@ -20,6 +20,7 @@
         "asar": false,
         "files": [
             "main.js",
+            "*.html",
             "server/**/*",
             "client/dist/**/*",
             "icons/**/*"
