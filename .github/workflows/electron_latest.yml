@@ -44,14 +44,12 @@ jobs:
       run: npm install
       working-directory: ./app/electron
 
-    - name: Copy server and client build to app/electron
+    - name: Copy server and client build to app directory
       run: |
-        mkdir -p app/electron/server
-        mkdir -p app/electron/client/dist
-        cp -r server/. app/electron/server/
-        cp -r client/dist/. app/electron/client/dist
-      #ls -R app/electron/server
-      #ls -R app/electron/client/dist
+        mkdir -p app/server
+        mkdir -p app/client/dist
+        cp -r server/. app/server/
+        cp -r client/dist/. app/client/dist
       shell: bash
 
     - name: Package for Windows
