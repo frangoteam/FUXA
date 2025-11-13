@@ -3,6 +3,7 @@ const path = require('node:path');
 const fs = require('fs').promises;
 const os = require('os');
 const { fork } = require('child_process');
+const { pathToFileURL } = require('url');
 
 // Global server process
 let serverProcess = null;
@@ -193,204 +194,40 @@ async function openProject(parentWin) {
 }
 
 // Create project selection window
-function createProjectSelectionWindow(parentWin, errorMessage = null, recentProjects = []) {
+async function createProjectSelectionWindow(parentWin, errorMessage = null, recentProjects = []) {
     const win = new BrowserWindow({
         width: 600,
         height: 500,
         minWidth: 400,
         minHeight: 350,
         parent: parentWin,
+        modal: true,
+        resizable: true,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
             sandbox: false // Disable renderer sandbox
         },
-        resizable: true
+        show: false
     });
     win.setMenu(null);
 
-    const errorHtml = errorMessage ? `<div style="color: #ff6b6b; margin-bottom: 15px; padding: 10px; background-color: #2d2d2d; border: 1px solid #ff9999; border-radius: 5px; text-align: center;">${errorMessage}</div>` : '';
+    // Load the HTML file
+    const htmlPath = path.join(__dirname, 'project-selection.html');
+    win.loadURL(pathToFileURL(htmlPath).href);
 
-    const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>FUXA Project Selection</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 15px;
-                    background-color: #424242;
-                    color: #FFFFFF;
-                    height: 100vh;
-                    box-sizing: border-box;
-                    display: flex;
-                    flex-direction: column;
-                    overflow: hidden;
-                }
-                h2 {
-                    text-align: center;
-                    color: #FFFFFF;
-                    margin-bottom: 15px;
-                    flex-shrink: 0;
-                }
-                .table-container {
-                    flex: 1;
-                    overflow-y: auto;
-                    margin-bottom: 15px;
-                    border: 1px solid rgba(39,39,39,0.42);
-                    border-radius: 5px;
-                    min-height: 200px;
-                }
-                table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    background-color: #37373D;
-                    table-layout: fixed;
-                }
-                th {
-                    background-color: #333333;
-                    color: #FFFFFF;
-                    padding: 12px 8px;
-                    text-align: left;
-                    position: sticky;
-                    top: 0;
-                    z-index: 1;
-                    font-size: 14px;
-                }
-                th:nth-child(1) { width: 25%; }
-                th:nth-child(2) { width: 50%; }
-                th:nth-child(3) { width: 25%; }
-                td {
-                    padding: 10px 8px;
-                    border-bottom: 1px solid rgba(39,39,39,0.42);
-                    cursor: pointer;
-                    font-size: 13px;
-                    word-wrap: break-word;
-                    overflow-wrap: break-word;
-                }
-                tr:nth-child(even) {
-                    background-color: #424242;
-                }
-                tr:hover {
-                    background-color: rgba(255, 255, 255, 0.1);
-                }
-                .button-container {
-                    flex-shrink: 0;
-                    text-align: center;
-                    padding-top: 10px;
-                    display: flex;
-                    justify-content: center;
-                    gap: 10px;
-                    border-top: 1px solid rgba(39,39,39,0.42);
-                    margin-top: auto;
-                    padding-bottom: 10px;
-                }
-                button {
-                    padding: 8px 12px;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    font-size: 13px;
-                    width: auto;
-                    min-width: 80px;
-                    max-width: 120px;
-                }
-                button.new, button.cancel {
-                    background-color: #757575;
-                    color: #FFFFFF;
-                }
-                button.open {
-                    background-color: #448AFF;
-                    color: #FFFFFF;
-                }
-                button:hover {
-                    opacity: 0.9;
-                }
-                @media (max-width: 500px) {
-                    body {
-                        padding: 10px;
-                    }
-                    h2 {
-                        font-size: 16px;
-                        margin-bottom: 10px;
-                    }
-                    th, td {
-                        padding: 8px 4px;
-                        font-size: 12px;
-                    }
-                    button {
-                        padding: 6px 8px;
-                        font-size: 12px;
-                        min-width: 70px;
-                    }
-                }
-            </style>
-        </head>
-        <body>
-            <h2>Select a FUXA Project</h2>
-            ${errorHtml}
-            <div class="table-container">
-                <table id="projectsTable">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Path</th>
-                            <th>Created</th>
-                        </tr>
-                    </thead>
-                    <tbody id="projectsBody">
-                        ${recentProjects.map(project => `
-                            <tr onclick="window.electronAPI.selectProject('${project.path.replace(/'/g, '\\\'')}')">
-                                <td>${project.name}</td>
-                                <td>${project.path}</td>
-                                <td>${new Date(project.createdAt).toLocaleDateString()}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-            <div class="button-container">
-                <button class="new" onclick="window.electronAPI.selectAction('new')">New Project</button>
-                <button class="open" onclick="window.electronAPI.selectAction('open')">Open Project</button>
-                <button class="cancel" onclick="window.electronAPI.cancel()">Cancel</button>
-            </div>
-            <script>
-                const { ipcRenderer } = require('electron');
-                window.electronAPI = {
-                    // Auto-start settings
-                    getAutoStartSettings: () => ipcRenderer.invoke('get-auto-start-settings'),
-                    setAutoStartSettings: (settings) => ipcRenderer.invoke('set-auto-start-settings', settings),
-                    // Fullscreen settings
-                    getFullscreenSettings: () => ipcRenderer.invoke('get-fullscreen-settings'),
-                    setFullscreenSettings: (settings) => ipcRenderer.invoke('set-fullscreen-settings', settings),
-                    getRecentProjects: () => ipcRenderer.invoke('get-recent-projects'),
-                    // Project selection (for backward compatibility)
-                    selectAction: (action) => ipcRenderer.send('project-action', action),
-                    selectProject: (path) => ipcRenderer.send('project-selected', path),
-                    cancel: () => ipcRenderer.send('project-action', 'cancel')
-                };
-                ipcRenderer.on('load-projects', (event, projects) => {
-                    const tbody = document.getElementById('projectsBody');
-                    tbody.innerHTML = '';
-                    projects.forEach(project => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = \`
-                            <td>\${project.name}</td>
-                            <td>\${project.path}</td>
-                            <td>\${new Date(project.createdAt).toLocaleDateString()}</td>
-                        \`;
-                        row.onclick = () => window.electronAPI.selectProject(project.path);
-                        tbody.appendChild(row);
-                    });
-                });
-            </script>
-        </body>
-        </html>
-    `;
+    win.once('ready-to-show', () => {
+        win.show();
 
-    win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
+        // Send projects data to the window
+        win.webContents.send('load-projects', recentProjects);
+
+        // Send error message if provided
+        if (errorMessage) {
+            win.webContents.send('show-error', errorMessage);
+        }
+    });
+
     return win;
 }
 
@@ -406,7 +243,7 @@ async function selectProject(parentWin, errorMessage = null) {
             console.error('Failed to load projects:', error.message);
         }
 
-        const selectionWin = createProjectSelectionWindow(parentWin, errorMessage, recentProjects);
+        const selectionWin = await createProjectSelectionWindow(parentWin, errorMessage, recentProjects);
 
         const actionHandler = async (event, action) => {
             let dataDir = null;
@@ -472,213 +309,10 @@ async function openSettingsWindow(parentWin) {
 
     settingsWin.setMenu(null);
 
-    const config = await loadConfig();
-    const recentProjects = config.recentProjects || [];
-    const autoStart = config.autoStart;
-    const fullscreen = config.fullscreen;
+    // Load the HTML file
+    const htmlPath = path.join(__dirname, 'settings.html');
+    settingsWin.loadURL(pathToFileURL(htmlPath).href);
 
-    const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>FUXA Settings</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 15px;
-                    background-color: #424242;
-                    color: #FFFFFF;
-                    height: 100vh;
-                    box-sizing: border-box;
-                    display: flex;
-                    flex-direction: column;
-                    overflow: hidden;
-                }
-                h2 {
-                    text-align: center;
-                    color: #FFFFFF;
-                    margin-top: 0;
-                    margin-bottom: 15px;
-                    flex-shrink: 0;
-                }
-                .setting-group {
-                    flex: 1;
-                    margin-bottom: 15px;
-                    padding: 15px;
-                    background-color: #37373D;
-                    border-radius: 5px;
-                    border: 1px solid rgba(39,39,39,0.42);
-                    overflow-y: auto;
-                }
-                .setting-item {
-                    margin-bottom: 10px;
-                }
-                label {
-                    display: block;
-                    margin-bottom: 5px;
-                    font-weight: bold;
-                    color: #FFFFFF;
-                }
-                select, button {
-                    width: 100%;
-                    padding: 8px;
-                    border: 1px solid rgba(255, 255, 255, 0.3);
-                    border-radius: 4px;
-                    font-size: 14px;
-                    background-color: #424242;
-                    color: #FFFFFF;
-                    max-width: none;
-                }
-                select:focus, button:focus {
-                    outline: none;
-                    border-color: rgba(255, 255, 255, 0.5);
-                }
-                .checkbox-container {
-                    display: flex;
-                    align-items: center;
-                }
-                .checkbox-container input[type="checkbox"] {
-                    margin-right: 10px;
-                    width: auto;
-                    accent-color: #FFFFFF;
-                }
-                .button-container {
-                    flex-shrink: 0;
-                    text-align: center;
-                    margin-top: auto;
-                    padding-top: 10px;
-                    display: flex;
-                    justify-content: center;
-                    gap: 10px;
-                    border-top: 1px solid rgba(39,39,39,0.42);
-                    padding-bottom: 10px;
-                }
-                button {
-                    padding: 8px 12px;
-                    border: none;
-                    border-radius: 4px;
-                    cursor: pointer;
-                    font-size: 13px;
-                    width: auto;
-                    min-width: 70px;
-                    max-width: 100px;
-                }
-                button.save {
-                    background-color: #448AFF;
-                    color: #FFFFFF;
-                }
-                button.cancel {
-                    background-color: #757575;
-                    color: #FFFFFF;
-                }
-                button:hover {
-                    opacity: 0.9;
-                }
-                .disabled {
-                    opacity: 0.5;
-                    pointer-events: none;
-                }
-                @media (max-width: 450px) {
-                    body {
-                        padding: 10px;
-                    }
-                    h2 {
-                        font-size: 16px;
-                        margin-bottom: 10px;
-                    }
-                    .setting-group {
-                        padding: 10px;
-                    }
-                    .setting-item {
-                        margin-bottom: 12px;
-                    }
-                    select, button {
-                        font-size: 12px;
-                    }
-                    button {
-                        padding: 6px 8px;
-                        min-width: 60px;
-                    }
-                }
-            </style>
-        </head>
-        <body>
-            <h2>FUXA Settings</h2>
-            <div class="setting-group">
-                <div class="setting-item">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="autoStartEnabled" ${autoStart.enabled ? 'checked' : ''}>
-                        Enable Auto Start
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <label class="checkbox-container">
-                        <input type="checkbox" id="fullscreenEnabled" ${fullscreen.enabled ? 'checked' : ''}>
-                        Start in Fullscreen Mode
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <label for="autoStartProject">Auto Start Project:</label>
-                    <select id="autoStartProject" ${!autoStart.enabled ? 'disabled' : ''}>
-                        <option value="">Select a project...</option>
-                        ${recentProjects.map(project => 
-                            `<option value="${project.path}" ${autoStart.projectPath === project.path ? 'selected' : ''}>${project.name}</option>`
-                        ).join('')}
-                    </select>
-                </div>
-            </div>
-            <div class="button-container">
-                <button class="save" onclick="saveSettings()">Save</button>
-                <button class="cancel" onclick="window.close()">Cancel</button>
-            </div>
-            <script>
-                const { ipcRenderer } = require('electron');
-                window.electronAPI = {
-                    // Auto-start settings
-                    getAutoStartSettings: () => ipcRenderer.invoke('get-auto-start-settings'),
-                    setAutoStartSettings: (settings) => ipcRenderer.invoke('set-auto-start-settings', settings),
-                    // Fullscreen settings
-                    getFullscreenSettings: () => ipcRenderer.invoke('get-fullscreen-settings'),
-                    setFullscreenSettings: (settings) => ipcRenderer.invoke('set-fullscreen-settings', settings),
-                    getRecentProjects: () => ipcRenderer.invoke('get-recent-projects'),
-                    // Project selection (for backward compatibility)
-                    selectAction: (action) => ipcRenderer.send('project-action', action),
-                    selectProject: (path) => ipcRenderer.send('project-selected', path),
-                    cancel: () => ipcRenderer.send('project-action', 'cancel')
-                };
-                
-                // Enable/disable project dropdown based on checkbox
-                document.getElementById('autoStartEnabled').addEventListener('change', function() {
-                    const select = document.getElementById('autoStartProject');
-                    select.disabled = !this.checked;
-                    if (!this.checked) {
-                        select.classList.add('disabled');
-                    } else {
-                        select.classList.remove('disabled');
-                    }
-                });
-
-                async function saveSettings() {
-                    const enabled = document.getElementById('autoStartEnabled').checked;
-                    const projectPath = enabled ? document.getElementById('autoStartProject').value : null;
-                    const fullscreenEnabled = document.getElementById('fullscreenEnabled').checked;
-                    
-                    try {
-                        await window.electronAPI.setAutoStartSettings({ enabled, projectPath });
-                        await window.electronAPI.setFullscreenSettings({ enabled: fullscreenEnabled });
-                        alert('Settings saved successfully!');
-                        window.close();
-                    } catch (error) {
-                        alert('Failed to save settings: ' + error.message);
-                    }
-                }
-            </script>
-        </body>
-        </html>
-    `;
-
-    settingsWin.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(htmlContent)}`);
     settingsWin.show();
 }
 
@@ -695,63 +329,8 @@ function createWindow() {
     });
 
     // Load initial loading screen
-    const loadingHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>FUXA - Loading...</title>
-            <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    margin: 0;
-                    padding: 0;
-                    background-color: #424242;
-                    color: #FFFFFF;
-                    height: 100vh;
-                    display: flex;
-                    flex-direction: column;
-                    justify-content: center;
-                    align-items: center;
-                    overflow: hidden;
-                }
-                .loading-container {
-                    text-align: center;
-                }
-                .spinner {
-                    width: 60px;
-                    height: 60px;
-                    border: 4px solid rgba(255, 255, 255, 0.3);
-                    border-top: 4px solid #448AFF;
-                    border-radius: 50%;
-                    animation: spin 1s linear infinite;
-                    margin: 0 auto 20px;
-                }
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-                h1 {
-                    color: #FFFFFF;
-                    margin-bottom: 10px;
-                    font-size: 24px;
-                }
-                p {
-                    color: rgba(255, 255, 255, 0.8);
-                    font-size: 16px;
-                    margin: 0;
-                }
-            </style>
-        </head>
-        <body>
-            <div class="loading-container">
-                <div class="spinner"></div>
-                <h1>FUXA</h1>
-                <p>Starting server...</p>
-            </div>
-        </body>
-        </html>
-    `;
-    win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(loadingHtml)}`);
+    const htmlPath = path.join(__dirname, 'loading.html');
+    win.loadURL(pathToFileURL(htmlPath).href);
 
     // Check fullscreen settings
     loadConfig().then(config => {
@@ -885,63 +464,13 @@ async function restartApp(dataDir, win) {
     // Reload UI
     try {
         // Update loading screen to show FUXA is loading
-        const loadingFuxaHtml = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>FUXA - Loading...</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        margin: 0;
-                        padding: 0;
-                        background-color: #424242;
-                        color: #FFFFFF;
-                        height: 100vh;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                        align-items: center;
-                        overflow: hidden;
-                    }
-                    .loading-container {
-                        text-align: center;
-                    }
-                    .spinner {
-                        width: 60px;
-                        height: 60px;
-                        border: 4px solid rgba(255, 255, 255, 0.3);
-                        border-top: 4px solid #448AFF;
-                        border-radius: 50%;
-                        animation: spin 1s linear infinite;
-                        margin: 0 auto 20px;
-                    }
-                    @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                    }
-                    h1 {
-                        color: #FFFFFF;
-                        margin-bottom: 10px;
-                        font-size: 24px;
-                    }
-                    p {
-                        color: rgba(255, 255, 255, 0.8);
-                        font-size: 16px;
-                        margin: 0;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="loading-container">
-                    <div class="spinner"></div>
-                    <h1>FUXA</h1>
-                    <p>Loading application...</p>
-                </div>
-            </body>
-            </html>
-        `;
-        await win.loadURL(`data:text/html;charset=utf-8,${encodeURIComponent(loadingFuxaHtml)}`);
+        const htmlPath = path.join(__dirname, 'loading.html');
+        await win.loadURL(pathToFileURL(htmlPath).href);
+        
+        // Update loading text
+        await win.webContents.executeJavaScript(`
+            document.getElementById('loadingText').textContent = 'Loading application...';
+        `);
         
         await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds for server
         await win.loadURL('http://localhost:1881');
