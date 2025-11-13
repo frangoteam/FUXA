@@ -332,13 +332,13 @@ function getHtmlPath(filename) {
 }
 
 function getServerPath() {
-    // In packaged app, server is at ../server/ relative to main.js location
+    // In packaged app, server files are at same level as main.js due to files: ["../server/**/*"]
     const fs = require('fs');
-    const prodPath = require('path').join(__dirname, '../server/main.js');
+    const prodPath = require('path').join(__dirname, 'server/main.js');
     if (fs.existsSync(prodPath)) {
         return prodPath;
     }
-    // Fall back to development path (app/electron is at app/electron, server is at server)
+    // Fall back to development path (app/electron is at app/electron, server is at project root)
     return require('path').join(__dirname, '../../server/main.js');
 }
 
