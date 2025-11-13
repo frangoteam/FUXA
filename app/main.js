@@ -320,7 +320,7 @@ async function openSettingsWindow(parentWin) {
 function getHtmlPath(filename) {
     // In development, files are in the same directory as main.js
     // In production, files are in the resources directory
-    if (process.env.NODE_ENV === 'production' || !require('fs').existsSync(require('path').join(__dirname, 'package.json'))) {
+    if (__dirname.includes('resources')) {
         // Production: files are relative to the executable
         return require('path').join(process.resourcesPath, filename);
     } else {
@@ -332,7 +332,7 @@ function getHtmlPath(filename) {
 function getServerPath() {
     // In development, server is in parent directory
     // In production, server is in the same directory as main.js (resources/app/)
-    if (process.env.NODE_ENV === 'production' || !require('fs').existsSync(require('path').join(__dirname, 'package.json'))) {
+    if (__dirname.includes('resources')) {
         // Production: server is in the same directory as main.js
         return require('path').join(__dirname, 'server/main.js');
     } else {
