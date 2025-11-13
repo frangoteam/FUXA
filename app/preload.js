@@ -1,7 +1,5 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-console.log('Preload script loaded');
-
 contextBridge.exposeInMainWorld('electronAPI', {
     // Auto-start settings
     getAutoStartSettings: () => ipcRenderer.invoke('get-auto-start-settings'),
