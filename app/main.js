@@ -4,6 +4,16 @@ const fs = require('fs').promises;
 const os = require('os');
 const { fork } = require('child_process');
 
+// Helper function to get correct preload script path for dev and production
+function getPreloadPath() {
+    if (!app.isPackaged) {
+        return path.join(__dirname, 'preload.js');
+    } else {
+        // Production build - preload script is in resources directory
+        return path.join(process.resourcesPath, 'preload.js');
+    }
+}
+
 // Global server process
 let serverProcess = null;
 
@@ -138,7 +148,7 @@ function createProjectSelectionWindow(parentWin, errorMessage = null, recentProj
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js')
+            preload: getPreloadPath()
         },
         resizable: true
     });
@@ -357,7 +367,7 @@ async function openSettingsWindow(parentWin) {
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js')
+            preload: getPreloadPath()
         },
         show: false
     });
@@ -561,14 +571,13 @@ async function openSettingsWindow(parentWin) {
 
 // Create main window
 function createWindow() {
-    console.log('Creating new window');
     const win = new BrowserWindow({
         width: 1024,
         height: 768,
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js')
+            preload: getPreloadPath()
         }
     });
 
@@ -649,11 +658,9 @@ function createWindow() {
                 {
                     label: 'New Project',
                     click: async () => {
-                        console.log('File > New Project clicked');
                         try {
                             const dataDir = await createNewProject(win);
                             if (dataDir) {
-                                console.log(`New project selected: ${dataDir}`);
                                 await restartApp(dataDir, win);
                             }
                         } catch (error) {
@@ -665,11 +672,9 @@ function createWindow() {
                 {
                     label: 'Open Project',
                     click: async () => {
-                        console.log('File > Open Project clicked');
                         try {
                             const dataDir = await openProject(win);
                             if (dataDir) {
-                                console.log(`Open project selected: ${dataDir}`);
                                 await restartApp(dataDir, win);
                             }
                         } catch (error) {
@@ -681,7 +686,6 @@ function createWindow() {
                 {
                     label: 'Settings',
                     click: async () => {
-                        console.log('File > Settings clicked');
                         await openSettingsWindow(win);
                     }
                 },
@@ -740,7 +744,16 @@ async function restartApp(dataDir, win) {
 
     // Start new server process
     try {
-        const serverEntry = path.join(__dirname, '../server/main.js');
+        // In development, server is at ../server/main.js
+        // In production, it's in the resources directory
+        let serverEntry;
+        if (!app.isPackaged) {
+            serverEntry = path.join(__dirname, '../server/main.js');
+        } else {
+            // Production build - server files are in resources directory
+            serverEntry = path.join(process.resourcesPath, 'server', 'main.js');
+        }
+        
         if (!require('fs').existsSync(serverEntry)) {
             throw new Error(`Server file not found: ${serverEntry}`);
         }
