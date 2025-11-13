@@ -213,7 +213,7 @@ async function createProjectSelectionWindow(parentWin, errorMessage = null, rece
     win.setMenu(null);
 
     // Load the HTML file
-    const htmlPath = path.join(__dirname, 'project-selection.html');
+    const htmlPath = getHtmlPath('project-selection.html');
     win.loadURL(pathToFileURL(htmlPath).href);
 
     win.once('ready-to-show', () => {
@@ -310,10 +310,35 @@ async function openSettingsWindow(parentWin) {
     settingsWin.setMenu(null);
 
     // Load the HTML file
-    const htmlPath = path.join(__dirname, 'settings.html');
+    const htmlPath = getHtmlPath('settings.html');
     settingsWin.loadURL(pathToFileURL(htmlPath).href);
 
     settingsWin.show();
+}
+
+// Helper function to get HTML file path (works in both dev and production)
+function getHtmlPath(filename) {
+    // In development, files are in the same directory as main.js
+    // In production, files are in the resources directory
+    if (process.env.NODE_ENV === 'production' || !require('fs').existsSync(require('path').join(__dirname, 'package.json'))) {
+        // Production: files are relative to the executable
+        return require('path').join(process.resourcesPath, filename);
+    } else {
+        // Development: files are in the same directory
+        return require('path').join(__dirname, filename);
+    }
+}
+
+function getServerPath() {
+    // In development, server is in parent directory
+    // In production, server is in the same directory as main.js (resources/app/)
+    if (process.env.NODE_ENV === 'production' || !require('fs').existsSync(require('path').join(__dirname, 'package.json'))) {
+        // Production: server is in the same directory as main.js
+        return require('path').join(__dirname, 'server/main.js');
+    } else {
+        // Development: server is in parent directory
+        return require('path').join(__dirname, '../server/main.js');
+    }
 }
 
 // Create main window
@@ -329,7 +354,7 @@ function createWindow() {
     });
 
     // Load initial loading screen
-    const htmlPath = path.join(__dirname, 'loading.html');
+    const htmlPath = getHtmlPath('loading.html');
     win.loadURL(pathToFileURL(htmlPath).href);
 
     // Check fullscreen settings
@@ -443,7 +468,7 @@ async function restartApp(dataDir, win) {
 
     // Start new server process
     try {
-        const serverEntry = path.join(__dirname, 'server/main.js');
+        const serverEntry = getServerPath();
         if (!require('fs').existsSync(serverEntry)) {
             throw new Error(`Server file not found: ${serverEntry}`);
         }
@@ -464,7 +489,7 @@ async function restartApp(dataDir, win) {
     // Reload UI
     try {
         // Update loading screen to show FUXA is loading
-        const htmlPath = path.join(__dirname, 'loading.html');
+        const htmlPath = getHtmlPath('loading.html');
         await win.loadURL(pathToFileURL(htmlPath).href);
         
         // Update loading text
