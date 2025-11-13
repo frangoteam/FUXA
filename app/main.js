@@ -318,27 +318,18 @@ async function openSettingsWindow(parentWin) {
 
 // Helper function to get HTML file path (works in both dev and production)
 function getHtmlPath(filename) {
-    // In development, files are in the same directory as main.js
-    // In production, files are in the resources directory
-    if (__dirname.includes('resources')) {
-        // Production: files are relative to the executable
-        return require('path').join(process.resourcesPath, filename);
-    } else {
-        // Development: files are in the same directory
-        return require('path').join(__dirname, filename);
-    }
+    // HTML files are always in the same directory as main.js (app/)
+    return require('path').join(__dirname, filename);
 }
 
 function getServerPath() {
-    // In development, server is in parent directory
-    // In production, server is in the same directory as main.js (resources/app/)
-    if (__dirname.includes('resources')) {
-        // Production: server is in the same directory as main.js
-        return require('path').join(__dirname, 'server/main.js');
-    } else {
-        // Development: server is in parent directory
-        return require('path').join(__dirname, '../server/main.js');
+    // Try same directory first (production), then parent directory (development)
+    const prodPath = require('path').join(__dirname, 'server/main.js');
+    if (require('fs').existsSync(prodPath)) {
+        return prodPath;
     }
+    // Fall back to development path
+    return require('path').join(__dirname, '../server/main.js');
 }
 
 // Create main window
