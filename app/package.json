@@ -20,7 +20,6 @@
         "asar": false,
         "files": [
             "main.js",
-            "preload.js",
             "server/**/*",
             "client/dist/**/*",
             "icons/**/*"

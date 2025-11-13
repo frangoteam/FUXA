@@ -4,18 +4,45 @@ const fs = require('fs').promises;
 const os = require('os');
 const { fork } = require('child_process');
 
-// Helper function to get correct preload script path for dev and production
-function getPreloadPath() {
-    if (!app.isPackaged) {
-        return path.join(__dirname, 'preload.js');
-    } else {
-        // Production build - preload script is in resources directory
-        return path.join(process.resourcesPath, 'preload.js');
-    }
-}
-
 // Global server process
 let serverProcess = null;
+
+// Helper function to get recent projects menu items
+function getRecentProjectsMenuItems(win) {
+    try {
+        const config = loadConfigSync();
+        const recentProjects = config.recentProjects || [];
+        
+        if (recentProjects.length === 0) {
+            return [{ label: 'No recent projects', enabled: false }];
+        }
+        
+        return recentProjects.map(project => ({
+            label: `${project.name} (${project.path})`,
+            click: async () => {
+                try {
+                    const dataDir = path.join(project.path, 'data');
+                    const appDataDir = path.join(dataDir, '_appdata');
+                    
+                    // Validate the project still exists and is valid
+                    await fs.access(dataDir);
+                    await fs.access(appDataDir);
+                    
+                    await restartApp(dataDir, win);
+                } catch (error) {
+                    console.error('Failed to open recent project:', error.message);
+                    await dialog.showErrorBox('FUXA Error', `Failed to open project: ${error.message}`);
+                    
+                    // Remove invalid project from recent list
+                    removeRecentProject(project.path);
+                }
+            }
+        }));
+    } catch (error) {
+        console.error('Failed to load recent projects for menu:', error.message);
+        return [{ label: 'Error loading recent projects', enabled: false }];
+    }
+}
 
 // App configuration directory (stores config.json for recent projects)
 const appData = process.env.APPDATA || (process.platform === 'darwin' ? os.homedir() + '/Library/Application Support' : os.homedir() + '/.local/share');
@@ -28,6 +55,17 @@ async function ensureConfigDir() {
         await fs.mkdir(configDir, { recursive: true });
     } catch (error) {
         console.error('Failed to create config directory:', error.message);
+    }
+}
+
+// Load or initialize config synchronously (for menu building)
+function loadConfigSync() {
+    try {
+        const data = require('fs').readFileSync(configPath, 'utf8');
+        const config = JSON.parse(data);
+        return config;
+    } catch (error) {
+        return { recentProjects: [], autoStart: { enabled: false, projectPath: null }, fullscreen: { enabled: false } };
     }
 }
 
@@ -116,23 +154,40 @@ async function createNewProject(parentWin) {
     }
 }
 
+// Remove a project from recent projects list
+async function removeRecentProject(projectPath) {
+    try {
+        const config = await loadConfig();
+        config.recentProjects = (config.recentProjects || []).filter(p => p.path !== projectPath);
+        await saveConfig(config);
+    } catch (error) {
+        console.error('Failed to remove recent project:', error.message);
+    }
+}
+
 // Open existing project
 async function openProject(parentWin) {
     try {
         const { canceled, filePaths } = await dialog.showOpenDialog(parentWin, {
             properties: ['openDirectory'],
-            title: 'Open Project Folder'
+            title: 'Open Project Folder',
+            defaultPath: os.homedir()
         });
         if (canceled || !filePaths[0]) return null;
 
         const projectDir = filePaths[0];
         const dataDir = path.join(projectDir, 'data');
+        const appDataDir = path.join(dataDir, '_appdata');
+        
+        // Check if this is a valid FUXA project
         await fs.access(dataDir);
+        await fs.access(appDataDir);
+        
         await addRecentProject(projectDir, path.basename(projectDir));
         return dataDir;
     } catch (error) {
         console.error('Failed to open project:', error.message);
-        await dialog.showErrorBox('FUXA Error', `Invalid project: ${error.message}`);
+        await dialog.showErrorBox('FUXA Error', `Invalid project: The selected folder is not a valid FUXA project. Please select a folder containing a 'data/_appdata' directory.`);
         return null;
     }
 }
@@ -146,9 +201,9 @@ function createProjectSelectionWindow(parentWin, errorMessage = null, recentProj
         minHeight: 350,
         parent: parentWin,
         webPreferences: {
-            nodeIntegration: false,
-            contextIsolation: true,
-            preload: getPreloadPath()
+            nodeIntegration: true,
+            contextIsolation: false,
+            sandbox: false // Disable renderer sandbox
         },
         resizable: true
     });
@@ -301,6 +356,36 @@ function createProjectSelectionWindow(parentWin, errorMessage = null, recentProj
                 <button class="open" onclick="window.electronAPI.selectAction('open')">Open Project</button>
                 <button class="cancel" onclick="window.electronAPI.cancel()">Cancel</button>
             </div>
+            <script>
+                const { ipcRenderer } = require('electron');
+                window.electronAPI = {
+                    // Auto-start settings
+                    getAutoStartSettings: () => ipcRenderer.invoke('get-auto-start-settings'),
+                    setAutoStartSettings: (settings) => ipcRenderer.invoke('set-auto-start-settings', settings),
+                    // Fullscreen settings
+                    getFullscreenSettings: () => ipcRenderer.invoke('get-fullscreen-settings'),
+                    setFullscreenSettings: (settings) => ipcRenderer.invoke('set-fullscreen-settings', settings),
+                    getRecentProjects: () => ipcRenderer.invoke('get-recent-projects'),
+                    // Project selection (for backward compatibility)
+                    selectAction: (action) => ipcRenderer.send('project-action', action),
+                    selectProject: (path) => ipcRenderer.send('project-selected', path),
+                    cancel: () => ipcRenderer.send('project-action', 'cancel')
+                };
+                ipcRenderer.on('load-projects', (event, projects) => {
+                    const tbody = document.getElementById('projectsBody');
+                    tbody.innerHTML = '';
+                    projects.forEach(project => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = \`
+                            <td>\${project.name}</td>
+                            <td>\${project.path}</td>
+                            <td>\${new Date(project.createdAt).toLocaleDateString()}</td>
+                        \`;
+                        row.onclick = () => window.electronAPI.selectProject(project.path);
+                        tbody.appendChild(row);
+                    });
+                });
+            </script>
         </body>
         </html>
     `;
@@ -323,7 +408,7 @@ async function selectProject(parentWin, errorMessage = null) {
 
         const selectionWin = createProjectSelectionWindow(parentWin, errorMessage, recentProjects);
 
-        ipcMain.once('project-action', async (event, action) => {
+        const actionHandler = async (event, action) => {
             let dataDir = null;
             if (action === 'new' || action === 'open') {
                 selectionWin.hide();
@@ -332,22 +417,35 @@ async function selectProject(parentWin, errorMessage = null) {
                 } else {
                     dataDir = await openProject(parentWin);
                 }
-                if (!dataDir) {
+                if (dataDir) {
+                    // Valid project selected
+                    ipcMain.removeListener('project-action', actionHandler);
+                    selectionWin.close();
+                    resolve(dataDir);
+                } else {
+                    // User canceled, show window again
                     selectionWin.show();
+                    // Keep listening for more actions
                 }
+            } else if (action === 'cancel') {
+                // User explicitly canceled
+                ipcMain.removeListener('project-action', actionHandler);
+                selectionWin.close();
+                resolve(null);
             }
-            selectionWin.close();
-            resolve(dataDir);
-        });
+        };
+
+        ipcMain.on('project-action', actionHandler);
 
         ipcMain.once('project-selected', (event, projectPath) => {
             const dataDir = path.join(projectPath, 'data');
+            ipcMain.removeListener('project-action', actionHandler);
             selectionWin.close();
             resolve(dataDir);
         });
 
         selectionWin.on('closed', () => {
-            ipcMain.removeAllListeners('project-action');
+            ipcMain.removeListener('project-action', actionHandler);
             ipcMain.removeAllListeners('project-selected');
             resolve(null);
         });
@@ -365,9 +463,9 @@ async function openSettingsWindow(parentWin) {
         modal: true,
         resizable: true,
         webPreferences: {
-            nodeIntegration: false,
-            contextIsolation: true,
-            preload: getPreloadPath()
+            nodeIntegration: true,
+            contextIsolation: false,
+            sandbox: false // Disable renderer sandbox
         },
         show: false
     });
@@ -535,6 +633,21 @@ async function openSettingsWindow(parentWin) {
                 <button class="cancel" onclick="window.close()">Cancel</button>
             </div>
             <script>
+                const { ipcRenderer } = require('electron');
+                window.electronAPI = {
+                    // Auto-start settings
+                    getAutoStartSettings: () => ipcRenderer.invoke('get-auto-start-settings'),
+                    setAutoStartSettings: (settings) => ipcRenderer.invoke('set-auto-start-settings', settings),
+                    // Fullscreen settings
+                    getFullscreenSettings: () => ipcRenderer.invoke('get-fullscreen-settings'),
+                    setFullscreenSettings: (settings) => ipcRenderer.invoke('set-fullscreen-settings', settings),
+                    getRecentProjects: () => ipcRenderer.invoke('get-recent-projects'),
+                    // Project selection (for backward compatibility)
+                    selectAction: (action) => ipcRenderer.send('project-action', action),
+                    selectProject: (path) => ipcRenderer.send('project-selected', path),
+                    cancel: () => ipcRenderer.send('project-action', 'cancel')
+                };
+                
                 // Enable/disable project dropdown based on checkbox
                 document.getElementById('autoStartEnabled').addEventListener('change', function() {
                     const select = document.getElementById('autoStartProject');
@@ -575,9 +688,9 @@ function createWindow() {
         width: 1024,
         height: 768,
         webPreferences: {
-            nodeIntegration: false,
-            contextIsolation: true,
-            preload: getPreloadPath()
+            nodeIntegration: true,
+            contextIsolation: false,
+            sandbox: false // Disable renderer sandbox
         }
     });
 
@@ -671,17 +784,24 @@ function createWindow() {
                 },
                 {
                     label: 'Open Project',
-                    click: async () => {
-                        try {
-                            const dataDir = await openProject(win);
-                            if (dataDir) {
-                                await restartApp(dataDir, win);
+                    submenu: [
+                        {
+                            label: 'Browse...',
+                            click: async () => {
+                                try {
+                                    const dataDir = await openProject(win);
+                                    if (dataDir) {
+                                        await restartApp(dataDir, win);
+                                    }
+                                } catch (error) {
+                                    console.error('Open project failed:', error.message);
+                                    await dialog.showErrorBox('FUXA Error', `Open project failed: ${error.message}`);
+                                }
                             }
-                        } catch (error) {
-                            console.error('Open project failed:', error.message);
-                            await dialog.showErrorBox('FUXA Error', `Open project failed: ${error.message}`);
-                        }
-                    }
+                        },
+                        { type: 'separator' },
+                        ...getRecentProjectsMenuItems(win)
+                    ]
                 },
                 {
                     label: 'Settings',
@@ -744,16 +864,7 @@ async function restartApp(dataDir, win) {
 
     // Start new server process
     try {
-        // In development, server is at ../server/main.js
-        // In production, it's in the resources directory
-        let serverEntry;
-        if (!app.isPackaged) {
-            serverEntry = path.join(__dirname, '../server/main.js');
-        } else {
-            // Production build - server files are in resources directory
-            serverEntry = path.join(process.resourcesPath, 'server', 'main.js');
-        }
-        
+        const serverEntry = path.join(__dirname, 'server/main.js');
         if (!require('fs').existsSync(serverEntry)) {
             throw new Error(`Server file not found: ${serverEntry}`);
         }
