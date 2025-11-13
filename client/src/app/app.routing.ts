@@ -15,7 +15,6 @@ import { NotificationListComponent } from './notifications/notification-list/not
 import { ScriptListComponent } from './scripts/script-list/script-list.component';
 import { DEVICE_READONLY } from './_models/hmi';
 import { ReportListComponent } from './reports/report-list/report-list.component';
-import { AdvancedReportEditorComponent } from './reports/advanced-report-editor/advanced-report-editor.component';
 import { UsersRolesComponent } from './users/users-roles/users-roles.component';
 import { MapsLocationListComponent } from './maps/maps-location-list/maps-location-list.component';
 import { LanguageTextListComponent } from './language/language-text-list/language-text-list.component';
@@ -36,8 +35,6 @@ const appRoutes: Routes = [
     { path: 'notifications', component: NotificationListComponent, canActivate: [AuthGuard] },
     { path: 'scripts', component: ScriptListComponent, canActivate: [AuthGuard] },
     { path: 'reports', component: ReportListComponent, canActivate: [AuthGuard] },
-    { path: 'reports/advanced/:id', component: AdvancedReportEditorComponent, canActivate: [AuthGuard] },
-    { path: 'reports/advanced', component: AdvancedReportEditorComponent, canActivate: [AuthGuard] },
     { path: 'language', component: LanguageTextListComponent, canActivate: [AuthGuard] },
     { path: 'logs', component: LogsViewComponent, canActivate: [AuthGuard] },
     { path: 'events', component: LogsViewComponent, canActivate: [AuthGuard] },

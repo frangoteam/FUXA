@@ -2,22 +2,16 @@ FROM node:18-bookworm
 
 ARG NODE_SNAP=false
 
-# Increase Node.js memory limit for all builds
-ENV NODE_OPTIONS=--max-old-space-size=8192
-
 RUN apt-get update && apt-get install -y dos2unix
 
 # Change working directory
 WORKDIR /usr/src/app
 
-# Clone FUXA repository from the current repository and branch
-ARG REPO_URL
-ARG BRANCH_NAME
-ARG NODE_OPTIONS_ARG
-RUN git clone -b ${BRANCH_NAME:-master} ${REPO_URL:-https://github.com/frangoteam/FUXA.git}
+# Clone FUXA repository
+RUN git clone https://github.com/frangoteam/FUXA.git
 
-# Install build dependencies for node-odbc and graphics libraries
-RUN apt-get update && apt-get install -y build-essential unixodbc unixodbc-dev libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev pkg-config
+# Install build dependencies for node-odbc
+RUN apt-get update && apt-get install -y build-essential unixodbc unixodbc-dev
 
 # Convert the script to Unix format and make it executable
 RUN dos2unix FUXA/odbc/install_odbc_drivers.sh && chmod +x FUXA/odbc/install_odbc_drivers.sh
@@ -48,12 +42,13 @@ RUN npm config set registry https://registry.npmjs.org/ \
 RUN bash -lc '\
   for i in 1 2 3 4 5 6 7 8; do \
     echo "npm install - attempt $i/8"; \
-    NODE_OPTIONS="--max-old-space-size=8192" npm install --registry=https://registry.npmjs.org/ --fetch-retries=8 --fetch-retry-factor=2 --fetch-retry-mintimeout=30000 --fetch-retry-maxtimeout=300000 --no-audit --no-fund --prefer-offline --network-timeout=600000 && exit 0; \
+    npm install --no-audit --no-fund --prefer-offline --network-timeout=600000 && exit 0; \
     echo "Failed, wait $((10*i))s and try again..."; \
     sleep $((10*i)); \
   done; \
   echo "npm install failed after 8 attempts"; \
   exit 1'
+
 
 # Install options snap7
 RUN if [ "$NODE_SNAP" = "true" ]; then \
@@ -65,19 +60,13 @@ RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && \
     apt-get autoremove -yqq --purge && \
     apt-get clean  && \
     rm -rf /var/lib/apt/lists/*  && \
-    NODE_OPTIONS="--max-old-space-size=8192" npm install --build-from-source --sqlite=/usr/bin sqlite3
+    npm install --build-from-source --sqlite=/usr/bin sqlite3
 
-# Add project files 
+# Add project files
 ADD . /usr/src/app/FUXA
 
 # Set working directory
 WORKDIR /usr/src/app/FUXA/server
-
-# Build the pdfme React app
-RUN NODE_OPTIONS="--max-old-space-size=8192" npm run build:all
-
-# Clean up react node_modules
-RUN rm -rf react/pdfme/node_modules
 
 # Expose port
 EXPOSE 1881

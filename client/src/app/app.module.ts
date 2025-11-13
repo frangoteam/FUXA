@@ -155,11 +155,6 @@ import { SchedulerComponent } from './gauges/controls/html-scheduler/scheduler/s
 import { SchedulerPropertyComponent } from './gauges/controls/html-scheduler/scheduler-property/scheduler-property.component';
 import { ReportListComponent } from './reports/report-list/report-list.component';
 import { ReportEditorComponent } from './reports/report-editor/report-editor.component';
-import { ReportTypeSelectorComponent } from './reports/report-type-selector/report-type-selector.component';
-import { AdvancedReportEditorComponent } from './reports/advanced-report-editor/advanced-report-editor.component';
-import { ReportSettingsDialogComponent } from './reports/advanced-report-editor/report-settings-dialog.component';
-import { TemplateManagerDialogComponent } from './reports/advanced-report-editor/template-manager-dialog.component';
-import { TableConfigDialogComponent } from './reports/advanced-report-editor/table-config-dialog.component';
 import { FileExplorerDialogComponent } from './file-explorer/file-explorer-dialog.component';
 import { FileViewerPropertyComponent } from './gauges/controls/html-file-viewer/file-viewer-property/file-viewer-property.component';
 import { DataConverterService } from './_services/data-converter.service';
@@ -362,11 +357,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ScriptModeComponent,
         ReportListComponent,
         ReportEditorComponent,
-        ReportTypeSelectorComponent,
-        AdvancedReportEditorComponent,
-        ReportSettingsDialogComponent,
-        TemplateManagerDialogComponent,
-        TableConfigDialogComponent,
         FileExplorerDialogComponent,
         ScriptEditorParamComponent,
         LanguageTextListComponent,

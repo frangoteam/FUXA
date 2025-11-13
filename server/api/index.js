@@ -22,9 +22,6 @@ var schedulerApi = require('./scheduler');
 var commandApi = require('./command');
 const reports = require('../dist/reports.service');
 const reportsApi = new reports.ReportsApiService();
-const advancedReports = require('../dist/advanced-reports/advanced-reports.service');
-const advancedReportsApi = new advancedReports.AdvancedReportsApiService();
-var pdfmeApi = require('./pdfme');
 
 var apiApp;
 var server;
@@ -67,10 +64,6 @@ function init(_server, _runtime) {
             apiApp.use(commandApi.app());
             reportsApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(reportsApi.app());
-            advancedReportsApi.init(runtime, authJwt.verifyToken, verifyGroups);
-            apiApp.use(advancedReportsApi.app());
-            pdfmeApi.init(runtime);
-            apiApp.use(pdfmeApi.app());
 
             const limiter = rateLimit({
                 windowMs: 5 * 60 * 1000, // 5 minutes

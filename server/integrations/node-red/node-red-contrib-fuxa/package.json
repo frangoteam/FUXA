@@ -35,10 +35,7 @@
       "get device property": "nodes/fuxa-get-device-property.js",
       "set device property": "nodes/fuxa-set-device-property.js",
       "get device": "nodes/fuxa-get-device.js",
-      "emit event": "nodes/fuxa-emit-event.js",
-      "report-data": "nodes/fuxa-report-data.js",
-      "report-generate": "nodes/fuxa-report-generate.js",
-      "report-table-data": "nodes/fuxa-report-table-data.js"
+      "emit event": "nodes/fuxa-emit-event.js"
     }
   }
 }
