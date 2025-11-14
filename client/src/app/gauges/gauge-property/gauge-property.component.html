@@ -39,7 +39,6 @@
 					<flex-widget-property *ngIf="isWidget()"
 										  [property]="property">
 					</flex-widget-property>
-					<app-file-viewer-property *ngIf="dialogType === 19" [data]="data" (onPropChanged)="onPropertyChanged($event)"></app-file-viewer-property>
 					<flex-head *ngIf="!isWidget() && dialogType !== 18" [data]="data" [property]="property" #flexhead [withBitmask]="withBitmask"></flex-head>
 				</div>
 			</div>

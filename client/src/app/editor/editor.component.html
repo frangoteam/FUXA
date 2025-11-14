@@ -25,9 +25,6 @@
         <div *ngSwitchCase="gaugeDialogType.Iframe">
             <app-iframe-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-iframe-property>
         </div>
-        <div *ngSwitchCase="gaugeDialogType.FileViewer">
-            <app-file-viewer-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-file-viewer-property>
-        </div>
         <div *ngSwitchCase="gaugeDialogType.Table">
             <app-table-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-table-property>
         </div>
@@ -188,10 +185,6 @@
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-iframe' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-iframe')}"
                                 (click)="setMode('own_ctrl-iframe')">
                                 <span class="icon-tool icon-iframe"></span>
-                            </div>
-                            <div class="svg-tool-button" matTooltip="{{'editor.controls-file-viewer' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-file-viewer')}"
-                                (click)="setMode('own_ctrl-file-viewer')">
-                                <span class="material-icon-tool material-icons">insert_drive_file</span>
                             </div>
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-graphpie' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('html_graph-pie')}"
                                 (click)="setMode('html_graph-pie')">

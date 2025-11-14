@@ -45,7 +45,6 @@
     "mqtt": "4.3.7",
     "node-bacnet": "0.2.4",
     "node-opcua": "2.149.0",
-    "node-red": "^4.1.0",
     "node-schedule": "2.1.1",
     "node-red": "^4.1.0",
     "nodemailer": "7.0.7",
