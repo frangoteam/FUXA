@@ -235,7 +235,7 @@ export class WidgetProperty extends GaugeProperty {
     type: string;
     scriptContent?: { moduleId: string, content: string };
     svgContent?: string;
-    varsToBind?: { [key: string]: WidgetPropertyVariable } = {};
+    varsToBind?: WidgetPropertyVariable[] = [];
 }
 
 export interface InputOptionsProperty {
