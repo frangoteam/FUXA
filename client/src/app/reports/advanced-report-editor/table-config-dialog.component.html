@@ -1,0 +1,137 @@
+<div class="table-config-dialog">
+    <div mat-dialog-title class="dialog-header">
+        <h2>Configure Table: {{ data.tableField.name }}</h2>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <div class="config-sections">
+            <!-- Alarm Table Checkbox -->
+            <div class="config-section">
+                <h3>Table Type</h3>
+                <p class="section-description">Select the type of data to display in this table.</p>
+
+                <div class="form-row">
+                    <mat-checkbox [(ngModel)]="tableConfig.isAlarmTable" (change)="onAlarmTableChange()" class="alarm-table-checkbox" color="primary">
+                        Alarm Table
+                    </mat-checkbox>
+                </div>
+
+                <div *ngIf="tableConfig.isAlarmTable" class="alarm-table-info">
+                    <mat-icon>info</mat-icon>
+                    <span>Select which alarm columns to include in this table.</span>
+                </div>
+            </div>
+
+            <!-- Alarm Table Column Selection -->
+            <div class="config-section" *ngIf="tableConfig.isAlarmTable">
+                <h3>Alarm Columns</h3>
+                <p class="section-description">Choose which alarm data columns to display. Uncheck columns you don't need.</p>
+
+                <div class="alarm-columns-list">
+                    <div class="alarm-column-item" *ngFor="let column of availableAlarmColumns; let i = index">
+                        <mat-checkbox [(ngModel)]="selectedAlarmColumns[i]"
+                                      (change)="onAlarmColumnSelectionChange(i)"
+                                      color="primary">
+                            {{ column.label }}
+                        </mat-checkbox>
+                        <button mat-icon-button
+                                (click)="removeAlarmColumn(i)"
+                                *ngIf="selectedAlarmColumns[i]"
+                                matTooltip="Remove this column">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div *ngIf="tableConfig.columns.length === 0" class="no-columns-warning">
+                    <mat-icon color="warn">warning</mat-icon>
+                    <span>No columns selected. Please select at least one column.</span>
+                </div>
+            </div>
+
+            <!-- Columns Configuration -->
+            <div class="config-section" *ngIf="!tableConfig.isAlarmTable">
+                <h3>Column Data Sources</h3>
+                <p class="section-description">Configure data sources for each table column. Enter @tagname for DAQ data or check "Timestamp" for formatted timestamps.</p>
+
+                <div class="columns-list" *ngIf="tableConfig.columns && tableConfig.columns.length > 0; else noColumns">
+                    <div class="column-item" *ngFor="let column of tableConfig.columns; let i = index">
+                        <div class="form-row">
+                            <div class="column-name">
+                                <strong>{{ column.label }}</strong>
+                            </div>
+                            <div class="column-config">
+                                <mat-form-field appearance="outline" class="tag-input">
+                                    <mat-label>Data Source</mat-label>
+                                    <input matInput [(ngModel)]="column.isTimestamp ? column.timestampFormat : column.tagName"
+                                           [placeholder]="column.isTimestamp ? 'Timestamp format (e.g., YYYY-MM-DD HH:mm:ss)' : '@tagname or timestamp format'">
+                                    <mat-hint *ngIf="!column.isTimestamp">@tagname for DAQ data, or timestamp format if checked below</mat-hint>
+                                    <mat-hint *ngIf="column.isTimestamp">Timestamp format (moment.js style)</mat-hint>
+                                </mat-form-field>
+
+                                <mat-form-field *ngIf="!column.isTimestamp" appearance="outline" class="format-input">
+                                    <mat-label>Value Format</mat-label>
+                                    <input matInput [(ngModel)]="column.valueFormat"
+                                           placeholder="0.00, 0.000, etc. (numeral.js format)">
+                                    <mat-hint>Number format for DAQ values (optional)</mat-hint>
+                                </mat-form-field>
+
+                                <mat-checkbox [(ngModel)]="column.isTimestamp" (change)="onTimestampChange(column)" class="timestamp-checkbox" color="primary">
+                                    Timestamp Column
+                                </mat-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <ng-template #noColumns>
+                    <div class="no-columns-message">
+                        <mat-icon>info</mat-icon>
+                        <p>No columns found in table. Make sure the table has a "head" array defined in the template.</p>
+                        <p>Detected columns: {{ columnNames.length > 0 ? columnNames.join(', ') : 'None' }}</p>
+                    </div>
+                </ng-template>
+            </div>
+
+            <!-- Time Range Configuration -->
+            <div class="config-section">
+                <h3>Time Range</h3>
+                <p class="section-description">Configure the time range for historical data retrieval.</p>
+
+                <div class="form-row">
+                    <mat-checkbox [(ngModel)]="tableConfig.useReportTimeRange" (change)="onTimeRangeChange()" class="use-report-range" color="primary">
+                        Use report settings time range
+                    </mat-checkbox>
+                </div>
+
+                <div *ngIf="!tableConfig.useReportTimeRange" class="custom-time-range">
+                    <div class="form-row">
+                        <mat-form-field appearance="outline">
+                            <mat-label>From</mat-label>
+                            <input matInput [(ngModel)]="tableConfig.timeRange.from"
+                                   placeholder="now, now - 30 minutes, or 2024-01-01T00:00:00Z">
+                            <mat-hint>Dynamic expressions like 'now' or 'now - 30 minutes', or ISO format</mat-hint>
+                        </mat-form-field>
+
+                        <mat-form-field appearance="outline">
+                            <mat-label>To</mat-label>
+                            <input matInput [(ngModel)]="tableConfig.timeRange.to"
+                                   placeholder="now + 10 minutes, now, or 2024-01-01T23:59:59Z">
+                            <mat-hint>Dynamic expressions like 'now + 10 minutes' or ISO format</mat-hint>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div *ngIf="tableConfig.useReportTimeRange" class="report-range-info">
+                    <mat-icon>info</mat-icon>
+                    <span>Will use the time range configured in the main report settings</span>
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="dialog-actions">
+        <button mat-button (click)="onCancel()">Cancel</button>
+        <button mat-raised-button color="primary" (click)="onSave()">Save Configuration</button>
+    </mat-dialog-actions>
+</div>

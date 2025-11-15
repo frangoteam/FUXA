@@ -6,7 +6,10 @@
   "scripts": {
     "test": "mocha --recursive --timeout 10000",
     "start": "node main.js",
-    "build": "tsc"
+    "build": "tsc",
+    "install:pdfme": "cd react/pdfme && npm install",
+    "build:pdfme": "cd react/pdfme && npm run build",
+    "build:all": "npm run install:pdfme && npm run build:pdfme && npm run build"
   },
   "author": "frangoteam <info@frangoteam.org>",
   "license": "MIT",
@@ -16,6 +19,8 @@
   },
   "dependencies": {
     "@influxdata/influxdb-client": "1.25.0",
+    "@pdfme/generator": "^5.4.6",
+    "@pdfme/schemas": "^5.4.6",
     "@tdengine/rest": "3.0.2",
     "ads-client": "2.1.0",
     "app-root-path": "2.2.1",
@@ -40,6 +45,7 @@
     "mqtt": "4.3.7",
     "node-bacnet": "0.2.4",
     "node-opcua": "2.149.0",
+    "node-red": "^4.1.0",
     "node-schedule": "2.1.1",
     "node-red": "^4.1.0",
     "nodemailer": "7.0.7",

@@ -51,6 +51,7 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
                 setTag: require(path.join(settings.appDir, 'runtime/devices')).setTagValue,
                 getDaq: require(path.join(settings.appDir, 'runtime/storage/daqstorage')).getNodeValues,
                 getTagId: require(path.join(settings.appDir, 'runtime/devices')).getTagId,
+                getHistoricalTags: require(path.join(settings.appDir, 'runtime/devices')).getHistoricalTags,
                 emit: events.emit.bind(events),
                 on: events.on.bind(events),
                 removeListener: events.removeListener.bind(events),
@@ -127,7 +128,10 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
 
     // Mount Node-RED routes under /nodered
     app.use('/nodered', allowDashboard, RED.httpAdmin);
-    app.use('/nodered', allowDashboard, RED.httpNode);
+    app.use('/nodered/api', allowDashboard, RED.httpNode);
+
+    // Public dashboard alias
+    app.use('/dashboard', RED.httpNode);
 
     await RED.start();
 

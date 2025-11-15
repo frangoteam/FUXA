@@ -1,0 +1,214 @@
+.table-config-dialog {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .dialog-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 24px;
+    }
+
+    .config-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        /* Remove min/max width constraints - let parent handle sizing */
+    }
+
+    .form-row {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        margin-bottom: 16px;
+
+        mat-form-field {
+            flex: 1;
+        }
+    }
+
+    .form-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .config-section {
+        margin-top: 0;
+
+        h3 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .section-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+    }
+
+    .columns-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .column-item {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 8px;
+        padding: 16px;
+        background-color: rgba(255, 255, 255, 0.05);
+
+        .form-row {
+            margin-bottom: 0;
+        }
+    }
+
+    .column-name {
+        min-width: 120px;
+        font-size: 14px;
+        color: white;
+        padding-top: 8px;
+        font-weight: 500;
+    }
+
+    .column-config {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .tag-input {
+        width: 100%;
+    }
+
+    .timestamp-checkbox {
+        margin-top: 8px;
+    }
+
+    .no-columns-message {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 24px;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.7);
+
+        mat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            opacity: 0.5;
+        }
+    }
+
+    .use-report-range {
+        margin-bottom: 0;
+    }
+
+    .custom-time-range {
+        margin-top: 16px;
+    }
+
+    .report-range-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 14px;
+        margin-top: 8px;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    .dialog-header {
+        padding: 16px 24px 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+
+        h2 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 500;
+            color: white;
+        }
+    }
+
+    .dialog-content {
+        padding: 16px 24px !important;
+        /* Remove max-height and overflow - handled by ::ng-deep above */
+    }
+
+    .dialog-actions {
+        padding: 8px 24px 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    /* Form field styling */
+    mat-form-field {
+        width: 100%;
+    }
+}
+
+mat-form-field.mat-form-field {
+    font-size: 14px;
+}
+
+/* Checkbox styling */
+mat-checkbox {
+    font-size: 14px;
+}
+
+/* Alarm columns list */
+.alarm-columns-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.alarm-column-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+
+    mat-checkbox {
+        flex: 1;
+    }
+
+    button {
+        margin-left: 8px;
+        color: rgba(255, 255, 255, 0.7);
+
+        &:hover {
+            color: #f44336;
+        }
+    }
+}
+
+.no-columns-warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 12px;
+    background: rgba(255, 152, 0, 0.1);
+    border: 1px solid rgba(255, 152, 0, 0.3);
+    border-radius: 4px;
+    color: #ff9800;
+
+    mat-icon {
+        font-size: 18px;
+    }
+}

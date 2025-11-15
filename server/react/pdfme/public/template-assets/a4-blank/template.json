@@ -1,0 +1,16 @@
+{
+  "author": "hand-dot",
+  "schemas": [
+    []
+  ],
+  "basePdf": {
+    "width": 210,
+    "height": 297,
+    "padding": [
+      20,
+      10,
+      20,
+      10
+    ]
+  }
+}
