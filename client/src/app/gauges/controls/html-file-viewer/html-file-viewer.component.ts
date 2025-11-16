@@ -1,13 +1,18 @@
-import { Injectable, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
+import { ViewContainerRef, ComponentFactoryResolver, Input, Component } from '@angular/core';
 
 import { GaugeSettings, Variable } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
-import { HtmlFileViewerRuntimeComponent } from './html-file-viewer-runtime.component';
+import { FileViewerComponent } from './file-viewer/file-viewer.component';
 import { GaugeFileViewerProperty } from '../../../_models/hmi';
+import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
 
-@Injectable()
-export class HtmlFileViewerComponent {
+@Component({
+    selector: 'file-viewer',
+    templateUrl: './html-file-viewer.component.html',
+    styleUrls: ['./html-file-viewer.component.css']
+})
+export class HtmlFileViewerComponent extends GaugeBaseComponent {
     static TypeTag = 'svg-ext-own_ctrl-file-viewer';
     static LabelTag = 'HtmlFileViewer';
     static prefixD = 'D-OXC_';
@@ -50,9 +55,9 @@ export class HtmlFileViewerComponent {
                         console.error('Missing resolver or viewContainerRef for runtime component creation');
                         return null;
                     }
-                    let factory = resolver.resolveComponentFactory(HtmlFileViewerRuntimeComponent);
+                    let factory = resolver.resolveComponentFactory(FileViewerComponent);
                     const componentRef = viewContainerRef.createComponent(factory);
-                    
+
                     if (!gab.property) {
                         gab.property = <GaugeFileViewerProperty>{
                             directory: '/_reports/generated',
@@ -73,12 +78,12 @@ export class HtmlFileViewerComponent {
                             }
                         };
                     }
-                    
+
                     htmlFileViewer.innerHTML = '';
-                    (<HtmlFileViewerRuntimeComponent>componentRef.instance).settings = gab;
+                    (<FileViewerComponent>componentRef.instance).settings = gab;
                     componentRef.changeDetectorRef.detectChanges();
                     htmlFileViewer.appendChild(componentRef.location.nativeElement);
-                    
+
                     componentRef.instance['myComRef'] = componentRef;
                     componentRef.instance['name'] = gab.name;
                     return componentRef.instance;
@@ -88,9 +93,9 @@ export class HtmlFileViewerComponent {
                     return null;
                 }
                 try {
-                    let factory = resolver.resolveComponentFactory(HtmlFileViewerRuntimeComponent);
+                    let factory = resolver.resolveComponentFactory(FileViewerComponent);
                     const componentRef = viewContainerRef.createComponent(factory);
-                    
+
                     if (!gab.property) {
                         gab.property = <GaugeFileViewerProperty>{
                             directory: '/_reports/generated',
@@ -111,12 +116,12 @@ export class HtmlFileViewerComponent {
                             }
                         };
                     }
-                    
+
                     htmlFileViewer.innerHTML = '';
-                    (<HtmlFileViewerRuntimeComponent>componentRef.instance).settings = gab;
+                    (<FileViewerComponent>componentRef.instance).settings = gab;
                     componentRef.changeDetectorRef.detectChanges();
                     htmlFileViewer.appendChild(componentRef.location.nativeElement);
-                    
+
                     componentRef.instance['myComRef'] = componentRef;
                     componentRef.instance['name'] = gab.name;
                     return componentRef.instance;
@@ -131,7 +136,7 @@ export class HtmlFileViewerComponent {
         return null;
     }
 
-    static detectChange(gab: GaugeSettings, res: any, ref: any): HtmlFileViewerRuntimeComponent {
+    static detectChange(gab: GaugeSettings, res: any, ref: any): FileViewerComponent {
         return HtmlFileViewerComponent.initElement(gab, res, ref, false);
     }
 }

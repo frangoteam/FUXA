@@ -22,4 +22,18 @@ export class ToastNotifierService {
             });
         });
     }
+
+    notifySuccess(msgKey: string, closeButton = false, disableTimeOut = false) {
+        this.translateService.get(msgKey).subscribe((txt: string) => {
+            this.toastr.success(`${txt}`, '', {
+                timeOut: 3000,
+                closeButton: closeButton,
+                disableTimeOut: disableTimeOut
+            });
+        });
+    }
+
+    toastrRef(): ToastrService {
+        return this.toastr;
+    }
 }

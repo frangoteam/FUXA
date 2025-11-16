@@ -113,7 +113,7 @@ import { HtmlChartComponent } from './gauges/controls/html-chart/html-chart.comp
 import { HtmlGraphComponent } from './gauges/controls/html-graph/html-graph.component';
 import { HtmlIframeComponent } from './gauges/controls/html-iframe/html-iframe.component';
 import { HtmlFileViewerComponent } from './gauges/controls/html-file-viewer/html-file-viewer.component';
-import { HtmlFileViewerRuntimeComponent } from './gauges/controls/html-file-viewer/html-file-viewer-runtime.component';
+import { FileViewerComponent } from './gauges/controls/html-file-viewer/file-viewer/file-viewer.component';
 import { HtmlBagComponent } from './gauges/controls/html-bag/html-bag.component';
 import { HtmlTableComponent } from './gauges/controls/html-table/html-table.component';
 import { HtmlSwitchComponent } from './gauges/controls/html-switch/html-switch.component';
@@ -155,7 +155,7 @@ import { SchedulerComponent } from './gauges/controls/html-scheduler/scheduler/s
 import { SchedulerPropertyComponent } from './gauges/controls/html-scheduler/scheduler-property/scheduler-property.component';
 import { ReportListComponent } from './reports/report-list/report-list.component';
 import { ReportEditorComponent } from './reports/report-editor/report-editor.component';
-import { FileExplorerDialogComponent } from './file-explorer/file-explorer-dialog.component';
+import { FileExplorerDialogComponent } from './gui-helpers/file-explorer/file-explorer-dialog.component';
 import { FileViewerPropertyComponent } from './gauges/controls/html-file-viewer/file-viewer-property/file-viewer-property.component';
 import { DataConverterService } from './_services/data-converter.service';
 import { ReportItemTextComponent } from './reports/report-editor/report-item-text/report-item-text.component';
@@ -297,7 +297,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         HtmlChartComponent,
         HtmlGraphComponent,
         HtmlIframeComponent,
-        HtmlFileViewerRuntimeComponent,
+        FileViewerComponent,
         HtmlImageComponent,
         HtmlBagComponent,
         GaugeProgressComponent,

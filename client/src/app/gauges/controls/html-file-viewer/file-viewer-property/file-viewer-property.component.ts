@@ -3,7 +3,7 @@ import { Component, EventEmitter, OnInit, Input, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { GaugeFileViewerProperty } from '../../../../_models/hmi';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { FileExplorerDialogComponent, FileExplorerDialogData } from '../../../../file-explorer/file-explorer-dialog.component';
+import { FileExplorerDialogComponent, FileExplorerDialogData } from '../../../../gui-helpers/file-explorer/file-explorer-dialog.component';
 import { PermissionData, PermissionDialogComponent } from '../../../gauge-property/permission-dialog/permission-dialog.component';
 
 @Component({
@@ -41,7 +41,9 @@ export class FileViewerPropertyComponent implements OnInit {
         };
 
         const dialogRef = this.dialog.open(FileExplorerDialogComponent, {
+            disableClose: true,
             data: dialogData,
+            position: { top: '60px' },
             panelClass: 'file-explorer-dialog-panel'
         });
 

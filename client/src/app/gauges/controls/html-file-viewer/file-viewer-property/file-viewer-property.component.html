@@ -1,109 +1,94 @@
-<div class="element-property">
+<div stopInputPropagation class="element-property">
     <div class="element-property-title">
         {{'editor.controls-file-viewer-settings' | translate}}
     </div>
-    <div class="file-viewer-selection">
-        <div class="properties-container">
-            <div class="my-form-field section-item section-item-block">
-                <span>{{'file-viewer.property-name' | translate}}</span>
-                <input [(ngModel)]="data.settings.name" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
-            </div>
-            <div class="my-form-field section-item section-item-block mt5">
-                <span>Header Text</span>
-                <input [(ngModel)]="property.headerText" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text" placeholder="File Viewer">
-            </div>
-            <div class="my-form-field section-item section-item-block mt5">
+    <div class="properties-container">
+        <div class="element-property-header">
+            <span>{{'file-viewer.property-data' | translate}}</span>
+        </div>
+        <div class="my-form-field field-block lbk mt5">
+            <span>{{'file-viewer.property-name' | translate}}</span>
+            <input [(ngModel)]="data.settings.name" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
+        </div>
+        <div class="my-form-field field-block mt5">
+            <span>{{'file-viewer.property-header-text' | translate}}</span>
+            <input [(ngModel)]="property.headerText" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text" placeholder="{{'file-viewer.placeholder-name' | translate}}">
+        </div>
+        <div class="block mt5">
+            <div class="my-form-field folder-selection mt5 mr10">
                 <span>{{'file-viewer.property-directory' | translate}}</span>
                 <input [(ngModel)]="property.directory" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text" readonly>
-                <button mat-icon-button (click)="onBrowseDirectory()" matTooltip="{{'file-viewer.browse-directory' | translate}}">
-                    <mat-icon>folder</mat-icon>
-                </button>
             </div>
-            <div class="element-property-header mt10">
-                <span>{{'file-viewer.permissions' | translate}}</span>
-            </div>
-            <div class="permissions-section">
-                <div class="permission-item">
-                    <span>{{'file-viewer.view-permission' | translate}}</span>
-                </div>
-                <div class="permission-item">
+            <button mat-icon-button (click)="onBrowseDirectory()" matTooltip="{{'file-viewer.browse-directory' | translate}}">
+                <mat-icon>folder</mat-icon>
+            </button>
+        </div>
+        <div class="element-property-header mt10">
+            <span>{{'file-viewer.permissions' | translate}}</span>
+        </div>
+        <div class="permissions-section">
+            <div class="my-form-field permission-item mt5 inbk">
+                <span>{{'file-viewer.view-permission' | translate}}</span>
+                <div class="ml10">
                     <mat-checkbox [(ngModel)]="property.viewEnabled" (change)="onPropertyChanged()"></mat-checkbox>
                     <button mat-icon-button (click)="onEditPermission()" matTooltip="{{'file-viewer.edit-permission' | translate}}">
                         <mat-icon>{{property.viewEnabled ? 'lock' : 'lock_open'}}</mat-icon>
                     </button>
                 </div>
-                <div class="permission-item">
-                    <span>{{'file-viewer.delete-permission' | translate}}</span>
-                </div>
-                <div class="permission-item">
+            </div>
+            <div class="my-form-field permission-item mt5 inbk">
+                <span>{{'file-viewer.delete-permission' | translate}}</span>
+                <div class="ml10">
                     <mat-checkbox [(ngModel)]="property.deleteEnabled" (change)="onPropertyChanged()"></mat-checkbox>
                     <button mat-icon-button (click)="onEditPermission()" matTooltip="{{'file-viewer.edit-permission' | translate}}">
                         <mat-icon>{{property.deleteEnabled ? 'lock' : 'lock_open'}}</mat-icon>
                     </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Date Filter Section -->
-            <div class="element-property-header mt10">
-                <span>{{'file-viewer.date-filter' | translate}}</span>
+        <!-- Date Filter Section -->
+        <div class="element-property-header mt15">
+            <span>{{'file-viewer.date-filter' | translate}}</span>
+        </div>
+        <div class="my-form-field mt5">
+            <span>{{'file-viewer.enable-date-filter' | translate}}</span>
+            <div class="ml20">
+                <mat-slide-toggle color="primary" [(ngModel)]="property.dateFilter.enabled" (change)="onPropertyChanged()"></mat-slide-toggle>
             </div>
-            <div class="date-filter-section">
-                <div class="my-form-field">
-                    <span>{{'file-viewer.enable-date-filter' | translate}}</span>
-                    <mat-slide-toggle color="primary" [(ngModel)]="property.dateFilter.enabled" (change)="onPropertyChanged()"></mat-slide-toggle>
-                </div>
-            </div>
+        </div>
 
-            <!-- Theme Colors -->
-            <div class="element-property-header mt10">
+        <!-- Theme Colors -->
+        <div class="element-property-header mt20">
+            <span>{{'file-viewer.theme' | translate}}</span>
+        </div>
+            <!-- Color pickers in responsive grid layout -->
+        <div class="flex mt5"  style="flex-wrap: wrap; gap: 15px; justify-content: flex-start;">
+            <div class="my-form-field">
                 <span>{{'file-viewer.theme' | translate}}</span>
+                <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                    [(ngModel)]="property.accentColor" (change)="onPropertyChanged()">
             </div>
-            <div class="theme-colors-section">
-                <!-- Color pickers in responsive grid layout -->
-                <div class="color-picker-grid">
-                    <div class="my-form-field">
-                        <span>{{'file-viewer.theme' | translate}}</span>
-                        <input class="input-color"
-                               style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;"
-                               type="color"
-                               [(ngModel)]="property.accentColor"
-                               (change)="onPropertyChanged()">
-                    </div>
-                    <div class="my-form-field">
-                        <span>{{'file-viewer.background' | translate}}</span>
-                        <input class="input-color"
-                               style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;"
-                               type="color"
-                               [(ngModel)]="property.backgroundColor"
-                               (change)="onPropertyChanged()">
-                    </div>
-                    <div class="my-form-field">
-                        <span>{{'file-viewer.border' | translate}}</span>
-                        <input class="input-color"
-                               style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;"
-                               type="color"
-                               [(ngModel)]="property.borderColor"
-                               (change)="onPropertyChanged()">
-                    </div>
-                    <div class="my-form-field">
-                        <span>{{'file-viewer.primary-text' | translate}}</span>
-                        <input class="input-color"
-                               style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;"
-                               type="color"
-                               [(ngModel)]="property.textColor"
-                               (change)="onPropertyChanged()">
-                    </div>
-                    <div class="my-form-field">
-                        <span>{{'file-viewer.secondary-text' | translate}}</span>
-                        <input class="input-color"
-                               style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;"
-                               type="color"
-                               [(ngModel)]="property.secondaryTextColor"
-                               (change)="onPropertyChanged()">
-                    </div>
-                </div>
+            <div class="my-form-field">
+                <span>{{'file-viewer.background' | translate}}</span>
+                <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                    [(ngModel)]="property.backgroundColor" (change)="onPropertyChanged()">
             </div>
-            <div class="section-newline"></div>
+            <div class="my-form-field">
+                <span>{{'file-viewer.border' | translate}}</span>
+                <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                    [(ngModel)]="property.borderColor" (change)="onPropertyChanged()">
+            </div>
+            <div class="my-form-field">
+                <span>{{'file-viewer.primary-text' | translate}}</span>
+                <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                    [(ngModel)]="property.textColor" (change)="onPropertyChanged()">
+            </div>
+            <div class="my-form-field">
+                <span>{{'file-viewer.secondary-text' | translate}}</span>
+                <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                    [(ngModel)]="property.secondaryTextColor" (change)="onPropertyChanged()">
+            </div>
         </div>
     </div>
 </div>
