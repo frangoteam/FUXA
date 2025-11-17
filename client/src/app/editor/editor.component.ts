@@ -41,6 +41,7 @@ import { MapsViewComponent } from '../maps/maps-view/maps-view.component';
 import { KioskWidgetsComponent } from '../resources/kiosk-widgets/kiosk-widgets.component';
 import { ResourcesService } from '../_services/resources.service';
 import { InputPropertyComponent } from '../gauges/controls/html-input/input-property/input-property.component';
+import { SchedulerPropertyComponent } from '../gauges/controls/html-scheduler/scheduler-property/scheduler-property.component';
 
 declare var Gauge: any;
 
@@ -1290,6 +1291,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             this.reloadGaugeDialog = !this.reloadGaugeDialog;
             return;
         } else if (dlgType === GaugeDialogType.Iframe) {
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings, dlgType: dlgType, names: names
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
+        } else if (dlgType === GaugeDialogType.FileViewer) {
             this.gaugeDialog.type = dlgType;
             this.gaugeDialog.data = {
                 settings: tempsettings, dlgType: dlgType, names: names

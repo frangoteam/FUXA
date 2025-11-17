@@ -324,7 +324,9 @@ app.use('/view', express.static(settings.httpStatic));
 app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
 app.use('/_images', express.static(settings.imagesFileDir));
 app.use('/_widgets', express.static(settings.widgetsFileDir));
+app.use('/_reports', express.static(settings.reportsDir));
 app.use('/snapshots', express.static(settings.webcamSnapShotsDir))
+app.use('/api/pdfme-static', express.static(path.join(__dirname, 'react', 'pdfme', 'dist')));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', { flags: 'a' });
 app.use(morgan('combined', {

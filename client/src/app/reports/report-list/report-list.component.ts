@@ -1,4 +1,5 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Router } from '@angular/router';
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatSort } from '@angular/material/sort';
@@ -10,8 +11,11 @@ import { Report, ReportSchedulingType, REPORT_PREFIX } from '../../_models/repor
 import { CommandService } from '../../_services/command.service';
 import { ProjectService } from '../../_services/project.service';
 import { ReportEditorComponent, ReportEditorData } from '../report-editor/report-editor.component';
+import { ReportTypeSelectorComponent } from '../report-type-selector/report-type-selector.component';
+import { AdvancedReportEditorComponent, AdvancedReportEditorData } from '../advanced-report-editor/advanced-report-editor.component';
 import * as FileSaver from 'file-saver';
 import { ReportsService } from '../../_services/reports.service';
+import { AdvancedReportsService } from '../../_services/advanced-reports.service';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 
 @Component({
@@ -29,7 +33,7 @@ import { ConfirmDialogComponent, ConfirmDialogData } from '../../gui-helpers/con
 export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     displayedColumns = ['select', 'name', 'receiver', 'scheduling', 'type', 'expand', 'create', 'remove'];
-    dataSource = new MatTableDataSource([]);
+    dataSource = new MatTableDataSource<any>([]);
 
     private subscriptionLoad: Subscription;
     private schedulingType = ReportSchedulingType;
@@ -43,7 +47,9 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
         private translateService: TranslateService,
         private projectService: ProjectService,
         private commandService: CommandService,
-        private reportsService: ReportsService) { }
+        private reportsService: ReportsService,
+        private advancedReportsService: AdvancedReportsService,
+        private router: Router) { }
 
     ngOnInit() {
         this.loadReports();
@@ -74,23 +80,52 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onAddReport() {
-        this.editReport(new Report(Utils.getGUID(REPORT_PREFIX)), 1);
-    }
-
-    onEditReport(report: Report) {
-        this.editReport(report, 0);
-    }
-
-    onStartReport(report: Report) {
-        this.reportsService.buildReport(report).pipe(
-            concatMap(() => timer(5000))
-        ).subscribe(() => {
-            this.loadDetails(report);
+        const dialogRef = this.dialog.open(ReportTypeSelectorComponent, {
+            width: '500px',
+            position: { top: '100px' }
+        });
+        dialogRef.afterClosed().subscribe(type => {
+            if (type) {
+                if (type === 'basic') {
+                    this.editReport(new Report(Utils.getGUID(REPORT_PREFIX)), 1);
+                } else if (type === 'advanced') {
+                    this.editAdvancedReport(null, 1);
+                }
+            }
         });
     }
 
-    onRemoveReport(report: Report) {
-        this.editReport(report, -1);
+    onEditReport(report: any) {
+        if (report.type === 'advanced') {
+            this.editAdvancedReport(report, 0);
+        } else {
+            this.editReport(report, 0);
+        }
+    }
+
+    onStartReport(report: any) {
+        if (report.type === 'advanced') {
+            // Instead of calling the generate endpoint, call the test-generate endpoint
+            // with the report config loaded from the server
+            this.advancedReportsService.testGenerateReport(report).subscribe(() => {
+                // Optionally reload details or show success message
+                this.loadDetails(report);
+            });
+        } else {
+            this.reportsService.buildReport(report).pipe(
+                concatMap(() => timer(5000))
+            ).subscribe(() => {
+                this.loadDetails(report);
+            });
+        }
+    }
+
+    onRemoveReport(report: any) {
+        if (report.type === 'advanced') {
+            this.removeAdvancedReport(report);
+        } else {
+            this.editReport(report, -1);
+        }
     }
 
     editReport(report: Report, toAdd: number) {
@@ -120,7 +155,16 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private loadReports() {
-        this.dataSource.data = this.projectService.getReports().sort((a: Report, b: Report) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+        const basicReports = this.projectService.getReports().sort((a: Report, b: Report) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+        
+        this.advancedReportsService.getAdvancedReports().subscribe(advancedReports => {
+            // Add type to basic reports for consistency
+            const basicReportsWithType = basicReports.map(report => ({ ...report, type: 'basic' }));
+            
+            // Combine and sort all reports
+            const allReports = [...basicReportsWithType, ...advancedReports].sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0);
+            this.dataSource.data = allReports;
+        });
     }
 
     toogleDetails(element: Report) {
@@ -145,6 +189,31 @@ export class ReportListComponent implements OnInit, AfterViewInit, OnDestroy {
             FileSaver.saveAs(blob, file);
         }, err => {
             console.error('Download Report File err:', err);
+        });
+    }
+
+    editAdvancedReport(report: any, toAdd: number) {
+        if (toAdd === 1) {
+            // Create new report
+            this.router.navigate(['/reports/advanced']);
+        } else {
+            // Edit existing report
+            this.router.navigate(['/reports/advanced', report.id]);
+        }
+    }
+
+    removeAdvancedReport(report: any) {
+        let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            position: { top: '60px' },
+            data: <ConfirmDialogData> { msg: this.translateService.instant('msg.report-remove', { value: report.name }) }
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.advancedReportsService.deleteAdvancedReport(report.id).subscribe(() => {
+                    this.loadReports();
+                });
+            }
         });
     }
 

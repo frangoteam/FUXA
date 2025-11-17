@@ -1,0 +1,213 @@
+<div class="settings-dialog">
+    <h2 mat-dialog-title>Report Settings</h2>
+
+    <mat-dialog-content>
+        <div class="settings-form">
+            <mat-form-field>
+                <mat-label>Report Name</mat-label>
+                <input matInput [(ngModel)]="report.name" required>
+            </mat-form-field>
+
+            <div class="pdfme-settings-section">
+                <h3>PDFme Settings</h3>
+                <div class="form-row">
+                    <mat-form-field>
+                        <mat-label>Language</mat-label>
+                        <mat-select [(ngModel)]="pdfmeSettings.language">
+                            <mat-option value="en">English</mat-option>
+                            <mat-option value="es">Spanish</mat-option>
+                            <!-- Add more languages as needed -->
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Base PDF Template</mat-label>
+                        <input matInput [(ngModel)]="pdfmeSettings.basePdfFile" placeholder="No PDF selected" readonly>
+                        <button matSuffix mat-icon-button (click)="selectBasePdf()" *ngIf="!pdfmeSettings.basePdfFile">
+                            <mat-icon>attach_file</mat-icon>
+                        </button>
+                        <button matSuffix mat-icon-button (click)="clearBasePdf()" *ngIf="pdfmeSettings.basePdfFile" matTooltip="Remove base PDF">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                        <mat-hint>Upload a PDF file to use as base template (optional)</mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="form-row">
+                    <mat-form-field>
+                        <mat-label>Load Template</mat-label>
+                        <input matInput [(ngModel)]="pdfmeSettings.templateFile" placeholder="No file chosen">
+                        <button matSuffix mat-icon-button (click)="loadTemplate()">
+                            <mat-icon>folder_open</mat-icon>
+                        </button>
+                        <button matSuffix mat-icon-button (click)="saveAsTemplate()" matTooltip="Save current template">
+                            <mat-icon>save</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+                <div class="form-row">
+                    <mat-form-field>
+                        <mat-label>Page Size</mat-label>
+                        <mat-select [(ngModel)]="pdfmeSettings.pageSize" (selectionChange)="onPageSizeChange()">
+                            <mat-option value="A4">A4 (210x297mm)</mat-option>
+                            <mat-option value="A3">A3 (297x420mm)</mat-option>
+                            <mat-option value="Letter">Letter (8.5x11in)</mat-option>
+                            <mat-option value="Legal">Legal (8.5x14in)</mat-option>
+                            <mat-option value="custom">Custom</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-form-field *ngIf="pdfmeSettings.pageSize === 'custom'">
+                        <mat-label>Custom Width (mm)</mat-label>
+                        <input matInput type="number" [(ngModel)]="pdfmeSettings.customWidth" (input)="onCustomSizeChange()">
+                    </mat-form-field>
+                </div>
+                <div *ngIf="pdfmeSettings.pageSize === 'custom'" class="form-row">
+                    <mat-form-field>
+                        <mat-label>Custom Height (mm)</mat-label>
+                        <input matInput type="number" [(ngModel)]="pdfmeSettings.customHeight" (input)="onCustomSizeChange()">
+                    </mat-form-field>
+                </div>
+                <div class="form-row">
+                    <mat-form-field>
+                        <mat-label>Page Margins (mm)</mat-label>
+                        <input matInput placeholder="top,right,bottom,left (e.g. 10,10,10,10)" [(ngModel)]="pdfmeSettings.padding" (input)="onPaddingChange()">
+                        <mat-hint>The red boundary margins around the page content</mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="form-row">
+                    <mat-form-field>
+                        <mat-label>Report Save Path</mat-label>
+                        <input matInput [(ngModel)]="pdfmeSettings.savePath" placeholder="_reports/generated">
+                        <button matSuffix mat-icon-button (click)="selectSavePath()" matTooltip="Browse folders">
+                            <mat-icon>folder_open</mat-icon>
+                        </button>
+                        <button matSuffix mat-icon-button (click)="resetSavePath()" matTooltip="Reset to default">
+                            <mat-icon>refresh</mat-icon>
+                        </button>
+                        <mat-hint>Path where generated reports will be saved (relative to app directory or absolute path)</mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="form-row">
+                    <mat-form-field>
+                        <mat-label>Scheduling</mat-label>
+                        <mat-select [(ngModel)]="selectedScheduling">
+                            <mat-option *ngFor="let option of schedulingOptions" [value]="option.value">{{ option.label }}</mat-option>
+                        </mat-select>
+                        <mat-hint>Automatically generate this report on a schedule</mat-hint>
+                    </mat-form-field>
+                </div>
+                <div class="form-row">
+                    <div class="trigger-tag-section">
+                        <label class="trigger-tag-label">Report Trigger Tag (Optional)</label>
+                        <app-flex-device-tag
+                            [variableId]="report.triggerTag"
+                            (onchange)="onTriggerTagChange($event)"
+                            [readonly]="false"
+                            tagTitle="Select tag to trigger report generation">
+                        </app-flex-device-tag>
+                        <mat-hint>Rising edge on this tag will automatically generate the report. Leave true to generate once.</mat-hint>
+                    </div>
+                </div>
+                <div class="emails-section">
+                    <h4>Email Settings</h4>
+                    <div class="email-checkbox">
+                        <mat-checkbox [(ngModel)]="emailSettings.enabled">Enable emails</mat-checkbox>
+                    </div>
+                    <div *ngIf="emailSettings.enabled" class="email-settings">
+                        <mat-form-field>
+                            <mat-label>Email Subject</mat-label>
+                            <input matInput [(ngModel)]="emailSettings.subject">
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-label>Email Message</mat-label>
+                            <textarea matInput [(ngModel)]="emailSettings.message" rows="3"></textarea>
+                        </mat-form-field>
+                        <div class="email-addresses">
+                            <label>Email Addresses</label>
+                            <div *ngFor="let email of emailSettings.emails; let i = index; trackBy: trackByIndex" class="email-input">
+                                <mat-form-field>
+                                    <input matInput [(ngModel)]="emailSettings.emails[i]" placeholder="email@example.com">
+                                    <button mat-icon-button matSuffix (click)="removeEmail(i)" *ngIf="emailSettings.emails.length > 1" matTooltip="Remove email">
+                                        <mat-icon>remove</mat-icon>
+                                    </button>
+                                </mat-form-field>
+                            </div>
+                            <button mat-stroked-button (click)="addEmail()" matTooltip="Add another email address">
+                                <mat-icon>add</mat-icon>
+                                Add Email
+                            </button>
+                        </div>
+                    </div>
+                    <div class="save-disk-checkbox">
+                        <mat-checkbox [(ngModel)]="saveToDisk">Save Report to Disk</mat-checkbox>
+                        <mat-hint>Reports will be saved to the specified path. Uncheck to only send via email.</mat-hint>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button mat-stroked-button (click)="openTemplateManager()" matTooltip="Manage saved templates">
+                        <mat-icon>library_books</mat-icon>
+                        Template Manager
+                    </button>
+                    <button mat-stroked-button (click)="saveAsTemplate()" matTooltip="Save current configuration as template">
+                        <mat-icon>save</mat-icon>
+                        Save as Template
+                    </button>
+                    <button mat-raised-button color="primary" (click)="generatePdf()" matTooltip="Generate PDF report">
+                        <mat-icon>picture_as_pdf</mat-icon>
+                        Generate PDF
+                    </button>
+                    <button mat-raised-button color="accent" (click)="generateTestReport()" matTooltip="Generate test report with sample data">
+                        <mat-icon>science</mat-icon>
+                        Test Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Global Time Range Section -->
+            <div class="global-time-range-section">
+                <h3>Global Time Range for Tables</h3>
+                <p class="section-description">Default time range used by tables when "Use report settings time range" is enabled.</p>
+                <div class="form-row">
+                    <mat-form-field appearance="outline">
+                        <mat-label>From</mat-label>
+                        <input matInput [(ngModel)]="globalTimeRange.from" placeholder="now-24h">
+                        <mat-hint>Start time (e.g., now-24h, 2023-01-01T00:00:00Z)</mat-hint>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>To</mat-label>
+                        <input matInput [(ngModel)]="globalTimeRange.to" placeholder="now">
+                        <mat-hint>End time (e.g., now, 2023-01-02T00:00:00Z)</mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Table Configurations Section -->
+            <div class="table-configs-section" *ngIf="tableFields.length > 0">
+                <h3>Table Configurations</h3>
+                <p class="section-description">Configure data sources for table fields in your PDF template.</p>
+
+                <div class="table-field" *ngFor="let tableField of tableFields">
+                    <div class="table-field-header">
+                        <span class="table-field-name">{{ tableField.name }}</span>
+                        <button mat-icon-button (click)="configureTable(tableField)" matTooltip="Configure table data source">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </div>
+                    <div class="table-field-status" *ngIf="!getTableConfig(tableField.name)">
+                        <mat-icon class="warning-icon">warning</mat-icon>
+                        <span>Not configured</span>
+                    </div>
+                    <div class="table-field-status configured" *ngIf="getTableConfig(tableField.name)">
+                        <mat-icon class="success-icon">check_circle</mat-icon>
+                        <span>Configured ({{ getTableConfig(tableField.name).columns.length }} columns)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button (click)="onCancel()">Cancel</button>
+        <button mat-raised-button color="primary" (click)="onSave()">
+            {{ isEditingTemplate ? 'Save Template' : 'Apply' }}
+        </button>
+    </mat-dialog-actions>
+</div>

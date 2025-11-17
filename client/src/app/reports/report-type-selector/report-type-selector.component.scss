@@ -1,0 +1,44 @@
+.report-type-selector {
+    .type-options {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        margin: 20px 0;
+
+        .type-button {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            text-align: left;
+            height: auto;
+            min-height: 80px;
+
+            mat-icon {
+                font-size: 48px;
+                height: 48px;
+                width: 48px;
+                margin-right: 16px;
+                color: #1976d2;
+            }
+
+            .type-info {
+                h3 {
+                    margin: 0 0 8px 0;
+                    font-size: 18px;
+                }
+
+                p {
+                    margin: 0;
+                    color: #888;
+                    font-size: 14px;
+                }
+            }
+
+            &.advanced {
+                mat-icon {
+                    color: #1976d2;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,55 @@
+.iframe-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 48px;
+    background-color: #333333; 
+    color: rgba(255, 255, 255, 1); 
+    border-bottom: 1px solid #252526; 
+    padding: 0 16px;
+    box-sizing: border-box;
+}
+
+.iframe-header-left,
+.iframe-header-right {
+    display: flex;
+    align-items: center;
+}
+
+.iframe-header-center {
+    flex: 1;
+    text-align: center;
+}
+
+.iframe-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 1); 
+}
+
+.header-btn {
+    min-width: 40px !important;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 4px !important;
+    margin: 0 4px;
+    color: rgba(255, 255, 255, 1) !important; 
+    padding: unset !important;
+    line-height: 40px;
+}
+
+.header-btn mat-icon {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 1); 
+    height: unset;
+    width: unset;
+}
+
+.iframe-container {
+    height: calc(100% - 48px);
+    width: 100%;
+}
+
+.iframe-container iframe {
+    border: none;
+}

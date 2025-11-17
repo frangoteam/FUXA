@@ -11,6 +11,7 @@ module.exports = function(RED) {
                 if (tagId) {
                     var value = fuxa.getTag(tagId);
                     msg.payload = value;
+                    msg.topic = config.tag;  // Set topic to tag name for join operations
                     node.send(msg);
                 } else {
                     node.error('Tag not found: ' + config.tag, msg);
