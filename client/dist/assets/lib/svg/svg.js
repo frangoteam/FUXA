@@ -313,7 +313,7 @@ SVG.defaults = {
   }
 
 }
-// Module for color convertions
+// Module for color conversions
 SVG.Color = function(color) {
   var match
 
@@ -906,7 +906,7 @@ SVG.extend(SVG.PathArray, {
 
 })
 
-// Module for unit convertions
+// Module for unit conversions
 SVG.Number = SVG.invent({
   // Initialize
   create: function(value, unit) {
@@ -1194,7 +1194,7 @@ SVG.Element = SVG.invent({
 
       if(!type) return parent
 
-      // loop trough ancestors if type is given
+      // loop through ancestors if type is given
       while(parent && parent.node instanceof window.SVGElement){
         if(typeof type === 'string' ? parent.matches(type) : parent instanceof type) return parent
         if(parent.node.parentNode.nodeName == '#document') return null // #720
@@ -1749,7 +1749,7 @@ SVG.FX = SVG.invent({
     }
 
     // calls after ALL animations in the queue are finished
-  , afterAll: function(fn){
+  , after all: function(fn){
       var wrapper = function wrapper(e){
             fn.call(this)
             this.off('allfinished.fx', wrapper)
@@ -1769,7 +1769,7 @@ SVG.FX = SVG.invent({
 
       this.target().off('during.fx', wrapper).on('during.fx', wrapper)
 
-      this.afterAll(function(){
+      this.after all(function(){
         this.off('during.fx', wrapper)
       })
 
@@ -1816,7 +1816,7 @@ SVG.FX = SVG.invent({
         }
 
         if(this.situation.reversing) {
-          // Toggle reversed if an odd number of loops as occured since the last call of step
+          // Toggle reversed if an odd number of loops as occurred since the last call of step
           this.situation.reversed = this.situation.reversed != Boolean((this.situation.loop - lastLoop) % 2)
         }
 
@@ -1867,9 +1867,9 @@ SVG.FX = SVG.invent({
         if(!this.situations.length){
           this.target().fire('allfinished')
 
-          // Recheck the length since the user may call animate in the afterAll callback
+          // Recheck the length since the user may call animate in the after all callback
           if(!this.situations.length){
-            this.target().off('.fx') // there shouldnt be any binding left, but to make sure...
+            this.target().off('.fx') // there shouldn't be any binding left, but to make sure...
             this.active = false
           }
         }
@@ -1893,7 +1893,7 @@ SVG.FX = SVG.invent({
   , eachAt: function(){
       var i, len, at, self = this, target = this.target(), s = this.situation
 
-      // apply animations which can be called trough a method
+      // apply animations which can be called through a method
       for(i in s.animations){
 
         at = [].concat(s.animations[i]).map(function(el){
@@ -3605,7 +3605,7 @@ SVG.extend(SVG.Element, {
   siblings: function() {
     return this.parent().children()
   }
-  // Get the curent position siblings
+  // Get the current position siblings
 , position: function() {
     return this.parent().index(this)
   }
@@ -3670,7 +3670,7 @@ SVG.extend(SVG.Element, {
 
     return this
   }
-  // Insters a given element after the targeted element
+  // Inserts a given element after the targeted element
 , after: function(element) {
     element.remove()
 
@@ -3832,7 +3832,7 @@ SVG.Gradient = SVG.invent({
   , fill: function() {
       return 'url(#' + this.id() + ')'
     }
-    // Alias string convertion to fill
+    // Alias string conversion to fill
   , toString: function() {
       return this.fill()
     }
@@ -3931,7 +3931,7 @@ SVG.Pattern = SVG.invent({
 
       return this
     }
-    // Alias string convertion to fill
+    // Alias string conversion to fill
   , toString: function() {
       return this.fill()
     }
@@ -5161,7 +5161,7 @@ SVG.Set = SVG.invent({
   , has: function(element) {
       return this.index(element) >= 0
     }
-    // retuns index of given element in set
+    // returns index of given element in set
   , index: function(element) {
       return this.members.indexOf(element)
     }
@@ -5227,7 +5227,7 @@ SVG.Set.inherit = function() {
     if (typeof SVG.Shape.prototype[m] == 'function' && typeof SVG.Set.prototype[m] != 'function')
       methods.push(m)
 
-  // apply shape aliasses
+  // apply shape aliases
   methods.forEach(function(method) {
     SVG.Set.prototype[method] = function() {
       for (var i = 0, il = this.members.length; i < il; i++)
@@ -5246,7 +5246,7 @@ SVG.Set.inherit = function() {
     if (typeof SVG.FX.prototype[m] == 'function' && typeof SVG.FX.Set.prototype[m] != 'function')
       methods.push(m)
 
-  // apply fx aliasses
+  // apply fx aliases
   methods.forEach(function(method) {
     SVG.FX.Set.prototype[method] = function() {
       for (var i = 0, il = this.set.members.length; i < il; i++)
