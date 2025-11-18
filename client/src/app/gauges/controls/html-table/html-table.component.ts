@@ -92,9 +92,10 @@ export class HtmlTableComponent {
                 }
                 componentRef.changeDetectorRef.detectChanges();
                 htmlTable.appendChild(componentRef.location.nativeElement);
-                // let opt = <GraphOptions>{ panel: { height: htmlGraph.clientHeight, width: htmlGraph.clientWidth } };
-                let opt = DataTableComponent.DefaultOptions();
-                // componentRef.instance.setOptions(opt);
+                // Pass table options to component
+                if (gab.property.options) {
+                    componentRef.instance.setOptions(gab.property.options);
+                }
 
                 componentRef.instance['myComRef'] = componentRef;
                 componentRef.instance['name'] = gab.name;

@@ -93,6 +93,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     tagsMap = {};
     timestampMap = {};
     odbcMap = {};
+    private isAutoRefreshRunning = false;
     executedQueries = new Set<string>();
     private pendingOdbcQueries = new Map<string, { deviceId: string, cells: TableCellData[] }>();
     private odbcQueryTimeout: any;
@@ -348,8 +349,19 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         const timestampColumns: string[] = [];
         if (this.tableOptions.columns) {
             this.tableOptions.columns.forEach(col => {
-                if (col.type === TableCellType.timestamp && col.odbcTimestampColumn) {
-                    timestampColumns.push(col.odbcTimestampColumn);
+                if (col.type === TableCellType.timestamp) {
+                    // Check for array of timestamp sources (new format)
+                    if (col.odbcTimestampColumns && col.odbcTimestampColumns.length > 0) {
+                        col.odbcTimestampColumns.forEach(ts => {
+                            if (ts.column) {
+                                timestampColumns.push(ts.column);
+                            }
+                        });
+                    }
+                    // Fallback to single timestamp column (old format)
+                    else if (col.odbcTimestampColumn) {
+                        timestampColumns.push(col.odbcTimestampColumn);
+                    }
                 }
             });
         }
@@ -669,7 +681,11 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         this.currentTableDataHash = newHash;
-        this.dataSource.data = [...this.tableData];
+        
+        // Assign data directly - MatTableDataSource + Paginator handles rendering efficiently
+        // Only the current page is rendered in DOM (e.g., 25 rows out of 25k)
+        // Paginator internally slices the data array without creating copies
+        this.dataSource.data = this.tableData;
         this.bindTableControls();
         return true;
     }
@@ -872,6 +888,12 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private startPollingOdbc() {
+        // Stop any existing polling
+        if (this.pollingSubscription) {
+            this.pollingSubscription.unsubscribe();
+            this.pollingSubscription = null;
+        }
+
         // Use configurable interval, default to 5 seconds if not specified
         // refreshInterval is now in seconds, convert to milliseconds
         let refreshInterval = this.tableOptions.refreshInterval || 5;
@@ -908,7 +930,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private executeOdbcQueriesImmediately() {
         // Execute ALL ODBC queries immediately (used when date range changes)
-        const odbcQueries = Object.keys(this.odbcMap);
+        const odbcQueries = Object.keys(this.odbcMap).slice();
         if (odbcQueries.length > 0) {
             // Get the device ID (use the same logic as executeOdbcQuery)
             const odbcDevices = (<Device[]>Object.values(this.projectService.getDevices())).filter(d => d.type === DeviceType.ODBC);
@@ -923,7 +945,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     const timestampColumns = this.collectTimestampColumns();
                     const combinedQuery = this.combineOdbcQueries(cells, timestampColumns);
                     if (combinedQuery) {
-                        this.prepareAndExecuteQuery(combinedQuery, cells, deviceId);
+                        // Snapshot cells to prevent modification during iteration
+                        const snapshotCells = [...cells];
+                        this.prepareAndExecuteQuery(combinedQuery, snapshotCells, deviceId);
                     }
                 });
             }
@@ -1108,8 +1132,22 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private executeOdbcQueriesForAutoRefresh() {
+        // Don't execute if realtime is not enabled or if already running
+        if (!this.tableOptions?.realtime) {
+            return;
+        }
+        
+        if (this.isAutoRefreshRunning) {
+            console.log('executeOdbcQueriesForAutoRefresh: already running, skipping');
+            return;
+        }
+        
+        this.isAutoRefreshRunning = true;
+        
         // Execute ODBC queries for auto refresh - combine queries per table
-        const odbcQueries = Object.keys(this.odbcMap);
+        // Create a snapshot to avoid mutation during iteration
+        const odbcQueries = Object.keys(this.odbcMap).slice();
+        console.log('executeOdbcQueriesForAutoRefresh: sliced odbcQueries', odbcQueries.length, odbcQueries);
         if (odbcQueries.length > 0) {
             // Get the device ID (use the same logic as executeOdbcQuery)
             const odbcDevices = (<Device[]>Object.values(this.projectService.getDevices())).filter(d => d.type === DeviceType.ODBC);
@@ -1124,11 +1162,22 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     const timestampColumns = this.collectTimestampColumns();
                     const combinedQuery = this.combineOdbcQueries(cells, timestampColumns);
                     if (combinedQuery) {
-                        this.prepareAndExecuteQuery(combinedQuery, cells, deviceId);
+                        // Snapshot cells to prevent modification during iteration
+                        const snapshotCells = [...cells];
+                        this.prepareAndExecuteQuery(combinedQuery, snapshotCells, deviceId);
                     }
                 });
             }
         }
+        
+        this.isAutoRefreshRunning = false;
+
+        // Clear timestamped queries to prevent accumulation
+        Object.keys(this.odbcMap).forEach(query => {
+            if (query.toUpperCase().includes(' WHERE ')) {
+                delete this.odbcMap[query];
+            }
+        });
     }
 
     setOptions(options: TableOptions): void {
@@ -1165,13 +1214,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
         } else if (this.type === TableType.history) {
-            if (this.tableOptions.realtime) {
-                if (this.addValueInterval && this.pauseMemoryValue[variableId] && Utils.getTimeDifferenceInSeconds(this.pauseMemoryValue[variableId]) < this.addValueInterval) {
-                    return;
-                }
-                this.pauseMemoryValue[variableId] = dt * 1e3;
-            }
-            this.addRowDataToTable(dt * 1e3, variableId, variableValue);
+            // For history tables, realtime updates are handled by periodic refresh (onRefresh)
+            // Do NOT process individual value updates client-side - too expensive with large datasets
+            // The server handles data filtering/comparison and sends only new data
+            return;
         }
     }
 
@@ -1490,8 +1536,18 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             columnIds.push(cn.id);
             this.columnsStyle[cn.id] = cn;
             if (this.type === TableType.history) {
-                if (cn.variableId) {
+                // Add DAQ variable columns to tagsColumnMap (for DAQ queries)
+                if (cn.type === TableCellType.variable && cn.variableId) {
                     this.addColumnToMap(cn);
+                }
+                // Process ODBC columns - these define queries that populate table data
+                if (cn.type === TableCellType.odbc && cn.variableId) {
+                    // ODBC columns in history tables define the data query
+                    const cellData = <TableCellData>{ stringValue: '', ...cn };
+                    if (!this.isEditor) {
+                        this.executeOdbcQuery(cellData);
+                        this.addOdbcToMap(cellData);
+                    }
                 }
                 if (cn.type === TableCellType.timestamp) {
                     this.historyDateformat = cn.valueFormat;

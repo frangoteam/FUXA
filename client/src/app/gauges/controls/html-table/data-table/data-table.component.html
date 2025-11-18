@@ -63,7 +63,7 @@
         </div>
     </div>
     <div *ngIf="tableOptions.paginator.show" class="toolbar-right">
-        <mat-paginator [pageSizeOptions]="[]" [pageSize]="selectedPageSize" class="data-table-paginator" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color">
+        <mat-paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="selectedPageSize" class="data-table-paginator" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color">
         </mat-paginator>
         <div class="page-size">
             <div class="custom-select" [class.open]="isPageSizeDropdownOpen">
