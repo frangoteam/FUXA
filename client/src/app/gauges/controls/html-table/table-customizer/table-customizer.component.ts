@@ -108,7 +108,7 @@ export class TableCustomizerComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result: TableCustomizerCellType) => {
             if (result) {
                 this.data.rows[rowIndex].cells[colIndex] = <TableCell>result.cell;
-                const currentData = this.dataSource.data.slice(); // Create a shallow copy
+                const currentData = this.dataSource.data.slice(); // Create a shallow copy.
                 currentData[rowIndex][columnId] = result.cell;
                 this.dataSource.data = currentData;
             }
@@ -189,7 +189,11 @@ export class TableCustomizerComponent implements OnInit {
             const temp = this.data.rows[index];
             this.data.rows[index] = this.data.rows[index - 1];
             this.data.rows[index - 1] = temp;
-            this.loadData();
+            const currentData = this.dataSource.data.slice();
+            const tempRow = currentData[index];
+            currentData[index] = currentData[index - 1];
+            currentData[index - 1] = tempRow;
+            this.dataSource.data = currentData;
         }
     }
 
@@ -199,7 +203,11 @@ export class TableCustomizerComponent implements OnInit {
             const temp = this.data.rows[index];
             this.data.rows[index] = this.data.rows[index + 1];
             this.data.rows[index + 1] = temp;
-            this.loadData();
+            const currentData = this.dataSource.data.slice();
+            const tempRow = currentData[index];
+            currentData[index] = currentData[index + 1];
+            currentData[index + 1] = tempRow;
+            this.dataSource.data = currentData;
         }
     }
 

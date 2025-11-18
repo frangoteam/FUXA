@@ -42,32 +42,30 @@ jobs:
 
     - name: Install app dependencies
       run: npm install
-      working-directory: ./app
+      working-directory: ./app/electron
 
-    - name: Copy server and client build to app
+    - name: Copy server and client build to app/electron
       run: |
-        mkdir -p app/server
-        mkdir -p app/client/dist
-        cp -r server/. app/server/
-        cp -r client/dist/. app/client/dist
-      #ls -R app/server
-      #ls -R app/client/dist
+        mkdir -p app/electron/server
+        mkdir -p app/electron/client/dist
+        cp -r server/. app/electron/server/
+        cp -r client/dist/. app/electron/client/dist
       shell: bash
 
     - name: Package for Windows
       if: matrix.os == 'windows-latest' && matrix.arch == 'x64'
       run: npx electron-builder --win nsis --x64
-      working-directory: ./app
+      working-directory: ./app/electron
 
     - name: Package for Linux
       if: matrix.os == 'ubuntu-latest'
       run: npx electron-builder --linux appimage --${{ matrix.arch }}
-      working-directory: ./app
+      working-directory: ./app/electron
 
     - name: Package for macOS
       if: matrix.os == 'macos-latest'
       run: npx electron-builder --mac dmg --${{ matrix.arch }}
-      working-directory: ./app
+      working-directory: ./app/electron
 
     - name: Prepare artifacts
       run: |
@@ -83,11 +81,11 @@ jobs:
         elif [ "${{ matrix.os }}" = "macos-latest" ]; then
           mv dist/*.dmg artifacts/FUXA-macos-arm64.dmg
         fi
-      working-directory: ./app
+      working-directory: ./app/electron
       shell: bash
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: FUXA-${{ matrix.os }}-${{ matrix.arch }}
-        path: app/artifacts/*
+        path: app/electron/artifacts/*
