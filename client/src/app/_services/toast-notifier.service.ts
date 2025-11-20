@@ -15,7 +15,7 @@ export class ToastNotifierService {
 
     notifyError(msgKey: string, err = '', closeButton = true, disableTimeOut = true) {
         this.translateService.get(msgKey).subscribe((txt: string) => {
-            this.toastr.error(`${txt} ${err}`, '', {
+            this.toastr.error(`${txt} ${err || ''}`, '', {
                 timeOut: 3000,
                 closeButton: closeButton,
                 disableTimeOut: disableTimeOut

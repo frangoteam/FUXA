@@ -1,0 +1,248 @@
+// /* File Explorer Dialog - Specific targeting to avoid affecting other dialogs */
+// ::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-container {
+//     width: 900px !important;
+//     height: 750px !important;
+//     max-width: 900px !important;
+//     max-height: 750px !important;
+//     min-width: 900px !important;
+//     min-height: 750px !important;
+//     box-sizing: border-box !important;
+//     transition: none !important;
+//     animation: none !important;
+//     /* Prevent inline style overrides */
+//     position: relative !important;
+//     display: flex !important;
+//     align-items: center !important;
+//     justify-content: center !important;
+// }
+
+// ::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-container * {
+//     transition: none !important;
+//     animation: none !important;
+// }
+
+// ::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-surface {
+//     width: 100% !important;
+//     height: 100% !important;
+//     max-width: 100% !important;
+//     max-height: 100% !important;
+//     min-width: 100% !important;
+//     min-height: 100% !important;
+//     box-sizing: border-box !important;
+//     transition: none !important;
+//     animation: none !important;
+//     /* Force the surface to fill the container exactly */
+//     flex: 1 !important;
+//     display: flex !important;
+//     flex-direction: column !important;
+// }
+
+// ::ng-deep .file-explorer-dialog-panel .cdk-overlay-pane {
+//     width: 900px !important;
+//     height: 750px !important;
+//     max-width: 900px !important;
+//     max-height: 750px !important;
+//     min-width: 900px !important;
+//     min-height: 750px !important;
+//     transition: none !important;
+//     animation: none !important;
+//     /* Prevent any dynamic positioning */
+//     position: fixed !important;
+//     top: 50% !important;
+//     left: 50% !important;
+//     transform: translate(-50%, -50%) !important;
+// }
+
+// /* Additional aggressive overrides to prevent any Angular Material sizing logic */
+// ::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-container,
+// ::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-surface,
+// ::ng-deep .file-explorer-dialog-panel .cdk-overlay-pane {
+//     /* Disable all CSS transitions and animations that might cause size changes */
+//     transition-property: none !important;
+//     animation-name: none !important;
+//     /* Force exact dimensions */
+//     flex-basis: auto !important;
+//     /* Prevent any margin/padding from affecting size */
+//     margin: 0 !important;
+//     padding: 0 !important;
+// }
+
+// /* ABSOLUTE LAST RESORT - Override any inline styles set by JavaScript */
+// ::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-container[style],
+// ::ng-deep .file-explorer-dialog-panel .mat-mdc-dialog-surface[style],
+// ::ng-deep .file-explorer-dialog-panel .cdk-overlay-pane[style] {
+//     width: 900px !important;
+//     height: 750px !important;
+//     max-width: 900px !important;
+//     max-height: 750px !important;
+//     min-width: 900px !important;
+//     min-height: 750px !important;
+// }
+
+// /* Main dialog container - responsive flexbox layout */
+:host {
+    .file-explorer-dialog {
+        width: 900px;
+        flex-direction: column;
+        box-sizing: border-box;
+        border-radius: 4px;
+    }
+    .toolbar {
+        align-items: center;
+        gap: 8px;
+
+        .path {
+            color: darkgray;
+            display: block;
+            width: 100%;
+            line-height: 20px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .file-list-container {
+        height: calc(100% - 76px);
+        background-color: var(--formExtBackground);
+        overflow: auto;
+        margin-top: 5px;
+
+        .list-item {
+            height: 30px;
+        }
+
+        .loading, .empty {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
+// /* Header - fixed height, no overflow */
+// .dialog-header {
+//     display: flex;
+//     align-items: center;
+//     justify-content: space-between;
+//     padding: 16px 24px;
+//     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+//     flex-shrink: 0;
+//     background: inherit;
+//     min-height: 64px;
+//     box-sizing: border-box;
+// }
+
+// .dialog-header h2 {
+//     margin: 0;
+//     font-size: 20px;
+//     font-weight: 500;
+//     color: white;
+//     flex: 1;
+//     overflow: hidden;
+//     text-overflow: ellipsis;
+//     white-space: nowrap;
+// }
+
+// /* Body - flexible container */
+// .dialog-body {
+//     flex: 1;
+//     display: flex;
+//     flex-direction: column;
+//     overflow: hidden;
+//     min-height: 0;
+//     box-sizing: border-box;
+// }
+
+
+// /* File list container - takes remaining space, scrolls internally */
+// .file-list-container {
+//     flex: 1;
+//     overflow-y: auto;
+//     overflow-x: hidden;
+//     min-height: 0;
+//     box-sizing: border-box;
+// }
+
+// /* Material selection list styling */
+// mat-selection-list {
+//     padding: 0;
+//     width: 100%;
+//     box-sizing: border-box;
+// }
+
+// /* Individual list items */
+// mat-list-option {
+//     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+//     user-select: none;
+//     -webkit-user-select: none;
+//     -moz-user-select: none;
+//     -ms-user-select: none;
+//     min-height: 48px;
+//     padding: 8px 16px;
+//     box-sizing: border-box;
+//     width: 100%;
+// }
+
+// mat-list-option:last-child {
+//     border-bottom: none;
+// }
+
+// /* Item name styling */
+// .item-name {
+//     font-weight: 500;
+//     user-select: none;
+//     -webkit-user-select: none;
+//     -moz-user-select: none;
+//     -ms-user-select: none;
+//     white-space: nowrap;
+//     overflow: hidden;
+//     text-overflow: ellipsis;
+//     flex: 1;
+//     min-width: 0;
+// }
+
+// /* Loading state */
+// .loading {
+//     flex: 1;
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     justify-content: center;
+//     padding: 40px;
+//     user-select: none;
+//     box-sizing: border-box;
+// }
+
+// /* Empty state */
+// .empty {
+//     flex: 1;
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     justify-content: center;
+//     padding: 40px;
+//     user-select: none;
+//     box-sizing: border-box;
+// }
+
+// .empty mat-icon {
+//     font-size: 48px;
+//     width: 48px;
+//     height: 48px;
+//     margin-bottom: 16px;
+//     color: rgba(0, 0, 0, 0.3);
+// }
+
+// /* Selection info - shown when items are selected */
+// .selection-info {
+//     padding: 12px 16px;
+//     border-top: 1px solid rgba(0, 0, 0, 0.12);
+//     font-size: 13px;
+//     text-align: center;
+//     font-weight: 500;
+//     user-select: none;
+//     flex-shrink: 0;
+//     box-sizing: border-box;
+// }

@@ -9,6 +9,7 @@ const authJwt = require('../jwt-helper');
 const Report = require('../../runtime/jobs/report');
 const fontkit = require('fontkit');
 const os = require('os');
+const { normalizePosix, toNative, isSafe } = require('../api-utils');
 
 var runtime;
 var secureFnc;
@@ -350,40 +351,39 @@ module.exports = {
                 runtime.logger.error("api get resources/browse: Unauthorized!");
             } else {
                 try {
-                    let dirPath = req.query.path || path.join(runtime.settings.appDir, '_appdata');
-                    
-                    // Handle server-relative paths (starting with /_)
-                    if (dirPath && dirPath.startsWith('/_')) {
-                        // Map server paths to actual filesystem paths
-                        if (dirPath.startsWith('/_reports')) {
-                            dirPath = path.join(runtime.settings.reportsDir, dirPath.substring('/_reports'.length));
-                        } else if (dirPath.startsWith('/_images')) {
-                            dirPath = path.join(runtime.settings.imagesFileDir, dirPath.substring('/_images'.length));
-                        } else if (dirPath.startsWith('/_widgets')) {
-                            dirPath = path.join(runtime.settings.widgetsFileDir, dirPath.substring('/_widgets'.length));
-                        } else {
-                            // For other /_ paths, resolve relative to app directory
-                            dirPath = path.join(runtime.settings.appDir, dirPath.substring(1));
-                        }
-                    } else if (dirPath && !path.isAbsolute(dirPath)) {
-                        // If path is relative (doesn't start with /), resolve it relative to app directory
-                        dirPath = path.resolve(runtime.settings.appDir, dirPath);
+                    let dirPath = req.query.path || path.join(runtime.settings.appDir, '_resources');
+                    dirPath = normalizePosix(dirPath);
+
+                    if (!isSafe(dirPath)) {
+                        return res.status(403).json({ error: "access_denied", message: "Invalid path" });
                     }
-                    
-                    // Basic security: prevent directory traversal attacks
-                    if (dirPath.includes('..') || dirPath.includes('\0')) {
-                        res.status(403).json({ error: "access_denied", message: "Invalid path" });
-                        return;
+
+                    dirPath = toNative(dirPath);
+
+                    var validPaths = ['_reports', '_images', '_resources', '_widgets'];
+                    const allowedRoots = validPaths.map(p => path.join(runtime.settings.appDir, p));
+                    const allowed = isInsideAllowedRoots(dirPath, allowedRoots);
+                    if (!allowed) {
+                        // Return ONLY the root folders
+                        const rootItems = validPaths.map(v => ({
+                            name: v,
+                            type: 'directory',
+                            path: '/' + v   // always POSIX for frontend
+                        }));
+
+                        return res.json({
+                            currentPath: '/',
+                            items: rootItems
+                        });
                     }
-                    
+
                     // Allow browsing any directory the server has access to
                     // (we'll rely on OS permissions for security)
-                    
                     if (!fs.existsSync(dirPath)) {
                         res.status(404).json({ error: "not_found", message: "Directory not found" });
                         return;
                     }
-                    
+
                     const items = fs.readdirSync(dirPath, { withFileTypes: true })
                         .map(item => {
                             const itemPath = path.join(dirPath, item.name);
@@ -403,12 +403,13 @@ module.exports = {
                             }
                             return a.name.localeCompare(b.name);
                         });
-                    
+
                     res.json({
                         currentPath: dirPath,
-                        items: items
+                        items: items,
+                        rootPath: runtime.settings.appDir
                     });
-                    
+
                 } catch (err) {
                     runtime.logger.error("api get resources/browse: " + err.message);
                     res.status(500).json({ error: "server_error", message: err.message });
@@ -428,28 +429,26 @@ module.exports = {
                 runtime.logger.error("api post resources/browse/create: Unauthorized!");
             } else {
                 try {
-                    const dirPath = req.body.path;
-                    
+                    var dirPath = normalizePosix(req.body.path);
                     if (!dirPath || typeof dirPath !== 'string') {
                         res.status(400).json({ error: "invalid_path", message: "Path is required" });
                         return;
                     }
-                    
-                    // Basic security: prevent directory traversal attacks
-                    if (dirPath.includes('..') || dirPath.includes('\0')) {
-                        res.status(403).json({ error: "access_denied", message: "Invalid path" });
-                        return;
+
+                    if (!isSafe(dirPath)) {
+                        return res.status(403).json({ error: "access_denied", message: "Invalid path" });
                     }
-                    
+                    dirPath = toNative(dirPath);
+
                     if (fs.existsSync(dirPath)) {
                         res.status(409).json({ error: "already_exists", message: "Directory already exists" });
                         return;
                     }
-                    
+
                     fs.mkdirSync(dirPath, { recursive: true });
                     runtime.logger.info(`Directory created: ${dirPath}`, true);
                     res.json({ success: true, path: dirPath });
-                    
+
                 } catch (err) {
                     runtime.logger.error("api post resources/browse/create: " + err.message);
                     res.status(500).json({ error: "server_error", message: err.message });
@@ -469,37 +468,36 @@ module.exports = {
                 runtime.logger.error("api post resources/browse/create-file: Unauthorized!");
             } else {
                 try {
-                    const filePath = req.body.path;
-                    
+                    var filePath = normalizePosix(req.body.path);
+
                     if (!filePath || typeof filePath !== 'string') {
                         res.status(400).json({ error: "invalid_path", message: "Path is required" });
                         return;
                     }
-                    
-                    // Basic security: prevent directory traversal attacks
-                    if (filePath.includes('..') || filePath.includes('\0')) {
-                        res.status(403).json({ error: "access_denied", message: "Invalid path" });
-                        return;
+
+                    if (!isSafe(filePath)) {
+                        return res.status(403).json({ error: "access_denied", message: "Invalid path" });
                     }
-                    
+                    filePath = toNative(filePath);
+
                     // Check if parent directory exists
                     const parentDir = path.dirname(filePath);
                     if (!fs.existsSync(parentDir)) {
                         res.status(404).json({ error: "parent_not_found", message: "Parent directory not found" });
                         return;
                     }
-                    
+
                     // Check if file already exists
                     if (fs.existsSync(filePath)) {
                         res.status(409).json({ error: "already_exists", message: "File already exists" });
                         return;
                     }
-                    
+
                     // Create empty file
                     fs.writeFileSync(filePath, '');
-                    
+
                     res.json({ success: true, path: filePath });
-                    
+
                 } catch (err) {
                     runtime.logger.error("api post resources/browse/create-file: " + err.message);
                     res.status(500).json({ error: "server_error", message: err.message });
@@ -519,24 +517,23 @@ module.exports = {
                 runtime.logger.error("api delete resources/browse: Unauthorized!");
             } else {
                 try {
-                    const itemPath = req.query.path;
-                    
+                    var itemPath = normalizePosix(req.query.path);
+
                     if (!itemPath || typeof itemPath !== 'string') {
                         res.status(400).json({ error: "invalid_path", message: "Path is required" });
                         return;
                     }
-                    
-                    // Basic security: prevent directory traversal attacks
-                    if (itemPath.includes('..') || itemPath.includes('\0')) {
-                        res.status(403).json({ error: "access_denied", message: "Invalid path" });
-                        return;
+
+                    if (!isSafe(itemPath)) {
+                        return res.status(403).json({ error: "access_denied", message: "Invalid path" });
                     }
-                    
+                    itemPath = toNative(itemPath);
+
                     if (!fs.existsSync(itemPath)) {
                         res.status(404).json({ error: "not_found", message: "Item not found" });
                         return;
                     }
-                    
+
                     const stats = fs.statSync(itemPath);
                     if (stats.isDirectory()) {
                         // Check if directory is empty
@@ -551,10 +548,10 @@ module.exports = {
                         // Remove file
                         fs.unlinkSync(itemPath);
                     }
-                    
+
                     runtime.logger.info(`Item deleted: ${itemPath}`, true);
                     res.json({ success: true, path: itemPath });
-                    
+
                 } catch (err) {
                     runtime.logger.error("api delete resources/browse: " + err.message);
                     res.status(500).json({ error: "server_error", message: err.message });
@@ -577,4 +574,8 @@ function getFiles(pathDir, extensions) {
     const filesInDIrectory = fs.readdirSync(pathDir)
         .filter((item) => extensions.indexOf(path.extname(item).toLowerCase()) !== -1);
     return filesInDIrectory;
+}
+
+function isInsideAllowedRoots(fullPath, allowedRoots) {
+    return allowedRoots.some(root => fullPath.startsWith(root));
 }

@@ -9,7 +9,11 @@ import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALO
 export class EditNameComponent {
     error = '';
     constructor(public dialogRef: MatDialogRef<EditNameComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: EditNameData) { }
+        @Inject(MAT_DIALOG_DATA) public data: EditNameData) {
+            if (!this.data.label) {
+                this.data.label = 'Name';
+            }
+        }
 
     onNoClick(): void {
         this.dialogRef.close();

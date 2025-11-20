@@ -1,4 +1,4 @@
-import { ViewContainerRef, ComponentFactoryResolver, Input, Component } from '@angular/core';
+import { ViewContainerRef, ComponentFactoryResolver, Component } from '@angular/core';
 
 import { GaugeSettings, Variable } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
@@ -46,10 +46,10 @@ export class HtmlFileViewerComponent extends GaugeBaseComponent {
                 console.log('Created element:', htmlFileViewer);
             }
             if (htmlFileViewer) {
-                if (!isview) {
-                    // In editor, just show placeholder
-                    htmlFileViewer.innerHTML = 'File Viewer';
-                } else {
+                // if (!isview) {
+                //     // In editor, just show placeholder
+                //     htmlFileViewer.innerHTML = 'File Viewer';
+                // } else {
                     // In runtime, create Angular component
                     if (!resolver || !viewContainerRef) {
                         console.error('Missing resolver or viewContainerRef for runtime component creation');
@@ -84,10 +84,11 @@ export class HtmlFileViewerComponent extends GaugeBaseComponent {
                     componentRef.changeDetectorRef.detectChanges();
                     htmlFileViewer.appendChild(componentRef.location.nativeElement);
 
+                    componentRef.instance.isEditor = !isview;
                     componentRef.instance['myComRef'] = componentRef;
                     componentRef.instance['name'] = gab.name;
                     return componentRef.instance;
-                }
+                // }
                 // For editor mode, create a basic component for property editing
                 if (!resolver || !viewContainerRef) {
                     return null;

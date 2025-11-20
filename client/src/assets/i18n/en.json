@@ -139,6 +139,7 @@
     "dlg.cancel": "CANCEL",
     "dlg.close": "CLOSE",
     "dlg.apply": "APPLY",
+    "dlg.select": "Select",
 
     "dlg.userproperty-title": "User",
     "dlg.userproperty-groups": "Authorization Groups",
@@ -431,6 +432,7 @@
 
     "file-viewer.property-data": "Data",
     "file-viewer.property-name": "Name",
+    "file-viewer.property-header-text": "Header Text",
     "file-viewer.property-directory": "Directory",
     "file-viewer.browse-directory": "Browse",
     "file-viewer.permissions": "Permissions",
@@ -457,6 +459,19 @@
     "file-viewer.enable-date-filter": "Enable Date Filter",
     "file-viewer.edit-permission": "Edit Permission",
     "file-viewer.insufficient-view-permission": "Insufficient permissions to view files",
+
+    "file-explorer.select-directory-title": "Select Directory",
+    "file-explorer.loading-directory-error": "Error loading directory",
+    "file-explorer.loading-directory-empty": "This directory is empty",
+    "file-explorer.directory-name-title": "Directory Name",
+    "file-explorer.directory-created": "Directory {{folderName}} created",
+    "file-explorer.create-directory-error": "Error creating directory",
+    "file-explorer.file-name-title": "File Name",
+    "file-explorer.file-created": "File {{fileName}} created",
+    "file-explorer.create-file-error": "Error creating file",
+    "file-explorer.file-to-delete": "Are you sure to delete {{itemNames}} ?",
+    "file-explorer.delete-element": "{{successCount}} item(s) deleted successfully",
+    "file-explorer.delete-element-error": "Failed to delete {{errorCount}} item(s), {{successCount}} item(s) deleted successfully",
 
     "video.property-title": "Video settings",
     "video.property-data": "Data",

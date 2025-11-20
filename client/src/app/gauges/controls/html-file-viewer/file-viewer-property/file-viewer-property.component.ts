@@ -3,7 +3,7 @@ import { Component, EventEmitter, OnInit, Input, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { GaugeFileViewerProperty } from '../../../../_models/hmi';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { FileExplorerDialogComponent, FileExplorerDialogData } from '../../../../gui-helpers/file-explorer/file-explorer-dialog.component';
+import { FileExplorerDialogComponent, FileExplorerDialogData, FileSystemItem } from '../../../../gui-helpers/file-explorer/file-explorer-dialog.component';
 import { PermissionData, PermissionDialogComponent } from '../../../gauge-property/permission-dialog/permission-dialog.component';
 
 @Component({
@@ -21,7 +21,9 @@ export class FileViewerPropertyComponent implements OnInit {
 
     property: GaugeFileViewerProperty;
 
-    constructor(private translateService: TranslateService, private dialog: MatDialog) {
+    constructor(
+        private translateService: TranslateService,
+        private dialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -34,7 +36,7 @@ export class FileViewerPropertyComponent implements OnInit {
 
     onBrowseDirectory() {
         const dialogData: FileExplorerDialogData = {
-            title: 'Select Directory',
+            title: this.translateService.instant('file-explorer.select-directory-title'),
             selectDirectories: true,
             selectFiles: false,
             initialPath: this.property.directory || '/_reports/generated'
@@ -47,9 +49,9 @@ export class FileViewerPropertyComponent implements OnInit {
             panelClass: 'file-explorer-dialog-panel'
         });
 
-        dialogRef.afterClosed().subscribe(result => {
-            if (result && result.length > 0) {
-                this.property.directory = result[0].path;
+        dialogRef.afterClosed().subscribe((result: FileSystemItem) => {
+            if (result?.path) {
+                this.property.directory = result.path;
                 this.onPropertyChanged();
             }
         });
