@@ -167,8 +167,7 @@ export class FileExplorerDialogComponent {
     }
 
     goUp() {
-        this.currentPath = getParentPath(this.currentPath);
-        this.loadDirectory(this.currentPath);
+        this.loadDirectory(getParentPath(this.getPath()));
     }
 
     canGoUp(): boolean {
@@ -184,7 +183,7 @@ export class FileExplorerDialogComponent {
     }
 
     refresh() {
-        this.loadDirectory(this.currentPath);
+        this.loadDirectory(this.getPath());
     }
 
     getPath() {
@@ -201,7 +200,7 @@ export class FileExplorerDialogComponent {
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.name.trim()) {
                 const folderName = result.name.trim();
-                const newPath = joinPath(this.currentPath, folderName);
+                const newPath = joinPath(this.getPath(), folderName);
                 this.resourcesService.create(newPath, ResourcesBrowseItemType.directory).subscribe(
                     () => {
                         let msg = this.translateService.instant('file-explorer.directory-created', { folderName });
@@ -226,7 +225,7 @@ export class FileExplorerDialogComponent {
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.name.trim()) {
                 const fileName = result.name.trim();
-                const newPath = joinPath(this.currentPath, fileName);
+                const newPath = joinPath(this.getPath(), fileName);
                 this.resourcesService.create(newPath, ResourcesBrowseItemType.file).subscribe(
                     () => {
                         let msg = this.translateService.instant('file-explorer.file-created', { fileName });

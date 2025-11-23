@@ -15,11 +15,18 @@ export function joinPath(...parts: string[]): string {
  * @returns The normalized path.
  */
 export function normalizePath(path: string): string {
-    return path
-        .replace(/\\/g, '/')   // Windows -> POSIX
-        .replace(/\/+/g, '/')  // no duplicate slashes
-        .replace(/(^[^/])/, '/$1'); // ensure leading slash
+    if (!path || typeof path !== 'string') {
+        return '/';
+    }
+
+    let out = path
+        .replace(/\\/g, '/')      // Windows → POSIX
+        .replace(/\/+/g, '/')     // compress "//"
+        .replace(/\/$/, '');      // remove trailing slash
+
+    return out || '/';
 }
+
 
 /**
  * Gets the parent directory of a given path.

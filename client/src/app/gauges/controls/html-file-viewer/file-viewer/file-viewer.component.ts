@@ -15,7 +15,6 @@ interface FileItem {
     path: string;
     size?: number;
     modified: Date;
-    relativePath?: string;
 }
 
 @Component({
@@ -232,7 +231,7 @@ export class FileViewerComponent implements OnInit, OnDestroy, AfterViewInit {
     selectFile(file: FileItem) {
         this.selectedFile = file;
         this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
-          `/api/resources/stream?path=${encodeURIComponent(file.relativePath || file.path)}`
+          `/api/resources/stream?path=${encodeURIComponent(file.path)}`
         );
         this.showFileList = false;
         this.loadFiles();

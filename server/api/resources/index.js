@@ -9,7 +9,7 @@ const authJwt = require('../jwt-helper');
 const Report = require('../../runtime/jobs/report');
 const fontkit = require('fontkit');
 const os = require('os');
-const { normalizePosix, toNative, isSafe } = require('../api-utils');
+const { isSafe } = require('../api-utils');
 
 var runtime;
 var secureFnc;
@@ -351,16 +351,13 @@ module.exports = {
                 runtime.logger.error("api get resources/browse: Unauthorized!");
             } else {
                 try {
-                    let dirPath = req.query.path || path.join(runtime.settings.appDir, '_resources');
-                    dirPath = normalizePosix(dirPath);
+                    let dirPath = req.query.path || '';
+                    dirPath = path.join(runtime.settings.appDir, req.query.path);
 
                     if (!isSafe(dirPath)) {
                         return res.status(403).json({ error: "access_denied", message: "Invalid path" });
                     }
-
-                    dirPath = toNative(dirPath);
-
-                    var validPaths = ['_reports', '_images', '_resources', '_widgets'];
+                    var validPaths = ['_reports', '_resources'];
                     const allowedRoots = validPaths.map(p => path.join(runtime.settings.appDir, p));
                     const allowed = isInsideAllowedRoots(dirPath, allowedRoots);
                     if (!allowed) {
@@ -368,11 +365,11 @@ module.exports = {
                         const rootItems = validPaths.map(v => ({
                             name: v,
                             type: 'directory',
-                            path: '/' + v   // always POSIX for frontend
+                            path: '' + v
                         }));
 
                         return res.json({
-                            currentPath: '/',
+                            currentPath: '',
                             items: rootItems
                         });
                     }
@@ -391,8 +388,7 @@ module.exports = {
                             return {
                                 name: item.name,
                                 type: item.isDirectory() ? 'directory' : 'file',
-                                path: itemPath,
-                                relativePath: itemPath.replace(runtime.settings.appDir, ''),
+                                path: itemPath.replace(runtime.settings.appDir, ''),
                                 size: item.isFile() ? stats.size : undefined,
                                 modified: stats.mtime
                             };
@@ -430,7 +426,8 @@ module.exports = {
                 runtime.logger.error("api post resources/browse/create: Unauthorized!");
             } else {
                 try {
-                    var itemPath = normalizePosix(req.body.path);
+                    let itemPath = path.join(runtime.settings.appDir, req.body?.path);
+
                     if (!itemPath || typeof itemPath !== 'string') {
                         res.status(400).json({ error: "invalid_path", message: "Path is required" });
                         return;
@@ -439,8 +436,6 @@ module.exports = {
                     if (!isSafe(itemPath)) {
                         return res.status(403).json({ error: "access_denied", message: "Invalid path" });
                     }
-
-                    itemPath = toNative(itemPath);
 
                     if (fs.existsSync(itemPath)) {
                         res.status(409).json({ error: "already_exists", message: "Item already exists" });
@@ -475,8 +470,7 @@ module.exports = {
                 runtime.logger.error("api delete resources/browse: Unauthorized!");
             } else {
                 try {
-                    var itemPath = normalizePosix(req.query.path);
-
+                    var itemPath = path.join(runtime.settings.appDir, req.query.path);
                     if (!itemPath || typeof itemPath !== 'string') {
                         res.status(400).json({ error: "invalid_path", message: "Path is required" });
                         return;
@@ -485,7 +479,6 @@ module.exports = {
                     if (!isSafe(itemPath)) {
                         return res.status(403).json({ error: "access_denied", message: "Invalid path" });
                     }
-                    itemPath = toNative(itemPath);
 
                     if (!fs.existsSync(itemPath)) {
                         res.status(404).json({ error: "not_found", message: "Item not found" });
@@ -518,7 +511,7 @@ module.exports = {
         });
 
         /**
- * GET Stream a file from _reports / _images / _resources / _widgets
+ * GET Stream a file from _reports / _resources
  */
         resourcesApp.get('/api/resources/stream', secureFnc, function (req, res) {
             const permission = checkGroupsFnc(req);
@@ -532,20 +525,18 @@ module.exports = {
             }
 
             try {
-                let relPath = req.query.path;
-                if (!relPath || typeof relPath !== 'string') {
+                var fullPath = path.join(runtime.settings.appDir, req.query.path);
+
+                if (!fullPath || typeof fullPath !== 'string') {
                     return res.status(400).json({ error: "invalid_path", message: "Missing path" });
                 }
 
-                relPath = normalizePosix(relPath);
 
-                if (!isSafe(relPath)) {
+                if (!isSafe(fullPath)) {
                     return res.status(403).json({ error: "access_denied", message: "Invalid path" });
                 }
 
-                let fullPath = toNative(path.join(runtime.settings.appDir, relPath));
-
-                const validPaths = ['_reports', '_images', '_resources', '_widgets'];
+                const validPaths = ['_reports', '_resources'];
                 const allowedRoots = validPaths.map(p => path.join(runtime.settings.appDir, p));
 
                 if (!isInsideAllowedRoots(fullPath, allowedRoots)) {

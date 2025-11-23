@@ -78,7 +78,7 @@ export class FileViewerPropertyComponent implements OnInit {
     private _reload() {
         if (!this.data.settings.property) {
             this.data.settings.property = <GaugeFileViewerProperty>{
-                directory: '/_reports/generated',
+                directory: '',
                 headerText: 'File Viewer',
                 viewEnabled: false,
                 deleteEnabled: false,
