@@ -60,7 +60,7 @@ export class HtmlFileViewerComponent extends GaugeBaseComponent {
 
                     if (!gab.property) {
                         gab.property = <GaugeFileViewerProperty>{
-                            directory: '/_reports/generated',
+                            directory: '',
                             headerText: 'File Viewer',
                             viewEnabled: false,
                             deleteEnabled: false,
@@ -88,48 +88,7 @@ export class HtmlFileViewerComponent extends GaugeBaseComponent {
                     componentRef.instance['myComRef'] = componentRef;
                     componentRef.instance['name'] = gab.name;
                     return componentRef.instance;
-                // }
-                // For editor mode, create a basic component for property editing
-                if (!resolver || !viewContainerRef) {
-                    return null;
-                }
-                try {
-                    let factory = resolver.resolveComponentFactory(FileViewerComponent);
-                    const componentRef = viewContainerRef.createComponent(factory);
 
-                    if (!gab.property) {
-                        gab.property = <GaugeFileViewerProperty>{
-                            directory: '/_reports/generated',
-                            headerText: 'File Viewer',
-                            viewEnabled: false,
-                            deleteEnabled: false,
-                            permission: 0,
-                            accentColor: '#556e82',
-                            backgroundColor: '#f0f0f0',
-                            borderColor: '#cccccc',
-                            textColor: '#505050',
-                            secondaryTextColor: '#ffffff',
-                            fileTypeFilter: 'all',
-                            dateFilter: {
-                                enabled: false,
-                                startDate: '',
-                                endDate: ''
-                            }
-                        };
-                    }
-
-                    htmlFileViewer.innerHTML = '';
-                    (<FileViewerComponent>componentRef.instance).settings = gab;
-                    componentRef.changeDetectorRef.detectChanges();
-                    htmlFileViewer.appendChild(componentRef.location.nativeElement);
-
-                    componentRef.instance['myComRef'] = componentRef;
-                    componentRef.instance['name'] = gab.name;
-                    return componentRef.instance;
-                } catch (error) {
-                    console.error('Error creating editor component:', error);
-                    return null;
-                }
             }
         } else {
             console.error('Element not found:', gab.id);

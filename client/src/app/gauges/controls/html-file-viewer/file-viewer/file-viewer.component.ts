@@ -15,6 +15,7 @@ interface FileItem {
     path: string;
     size?: number;
     modified: Date;
+    relativePath?: string;
 }
 
 @Component({
@@ -53,13 +54,12 @@ export class FileViewerComponent implements OnInit, OnDestroy, AfterViewInit {
     ) {}
 
     ngOnInit() {
-        console.log('File Viewer Runtime Component initialized');
         this.property = this.settings.property as GaugeFileViewerProperty;
 
         // Ensure property has the correct structure
         if (!this.property) {
             this.property = {
-                directory: '/_reports/generated',
+                directory: '',
                 headerText: 'File Viewer',
                 viewEnabled: true,
                 deleteEnabled: false,
@@ -116,9 +116,6 @@ export class FileViewerComponent implements OnInit, OnDestroy, AfterViewInit {
                 };
             }
         }
-
-        console.log('Settings:', this.settings);
-        console.log('Property after migration:', this.property);
         this.loadFiles();
     }
 
@@ -234,10 +231,10 @@ export class FileViewerComponent implements OnInit, OnDestroy, AfterViewInit {
 
     selectFile(file: FileItem) {
         this.selectedFile = file;
-        // Assuming files are served from /_reports or similar
-        this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(`/_reports/generated/${file.name}`);
+        this.fileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(
+          `/api/resources/stream?path=${encodeURIComponent(file.relativePath || file.path)}`
+        );
         this.showFileList = false;
-        // Refresh the file list after selecting a file
         this.loadFiles();
     }
 

@@ -39,7 +39,7 @@ export class FileViewerPropertyComponent implements OnInit {
             title: this.translateService.instant('file-explorer.select-directory-title'),
             selectDirectories: true,
             selectFiles: false,
-            initialPath: this.property.directory || '/_reports/generated'
+            initialPath: this.property.directory || ''
         };
 
         const dialogRef = this.dialog.open(FileExplorerDialogComponent, {

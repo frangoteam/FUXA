@@ -50,7 +50,7 @@ export class FileExplorerDialogComponent {
         private resourcesService: ResourcesService,
         private dialog: MatDialog
     ) {
-        this.currentPath = data.initialPath || '/tmp';
+        this.currentPath = data.initialPath;
         this.loadDirectory(this.currentPath);
     }
 

@@ -897,9 +897,7 @@ export class GaugesManager {
             let gauge = HtmlIframeComponent.initElement(ga, isview);
             return gauge || true;
         } else if (ga.type.startsWith(HtmlFileViewerComponent.TypeTag)) {
-            console.log('Creating File Viewer runtime component for:', ga.id);
             let gauge = HtmlFileViewerComponent.initElement(ga, res, ref, isview);
-            console.log('File Viewer runtime component created:', gauge);
             if (gauge) {
                 this.mapGauges[ga.id] = gauge;
             }

@@ -392,6 +392,7 @@ module.exports = {
                                 name: item.name,
                                 type: item.isDirectory() ? 'directory' : 'file',
                                 path: itemPath,
+                                relativePath: itemPath.replace(runtime.settings.appDir, ''),
                                 size: item.isFile() ? stats.size : undefined,
                                 modified: stats.mtime
                             };
@@ -429,77 +430,34 @@ module.exports = {
                 runtime.logger.error("api post resources/browse/create: Unauthorized!");
             } else {
                 try {
-                    var dirPath = normalizePosix(req.body.path);
-                    if (!dirPath || typeof dirPath !== 'string') {
+                    var itemPath = normalizePosix(req.body.path);
+                    if (!itemPath || typeof itemPath !== 'string') {
                         res.status(400).json({ error: "invalid_path", message: "Path is required" });
                         return;
                     }
 
-                    if (!isSafe(dirPath)) {
+                    if (!isSafe(itemPath)) {
                         return res.status(403).json({ error: "access_denied", message: "Invalid path" });
                     }
-                    dirPath = toNative(dirPath);
 
-                    if (fs.existsSync(dirPath)) {
-                        res.status(409).json({ error: "already_exists", message: "Directory already exists" });
+                    itemPath = toNative(itemPath);
+
+                    if (fs.existsSync(itemPath)) {
+                        res.status(409).json({ error: "already_exists", message: "Item already exists" });
                         return;
                     }
 
-                    fs.mkdirSync(dirPath, { recursive: true });
-                    runtime.logger.info(`Directory created: ${dirPath}`, true);
-                    res.json({ success: true, path: dirPath });
-
+                    if (req.body.type === 'directory') {
+                        fs.mkdirSync(itemPath, { recursive: true });
+                        runtime.logger.info(`Item created: ${itemPath}`, true);
+                        res.json({ success: true, path: itemPath });
+                    } else if (req.body.type === 'file') {
+                        // Create empty file
+                        fs.writeFileSync(itemPath, '');
+                        res.json({ success: true, path: itemPath });
+                    }
                 } catch (err) {
                     runtime.logger.error("api post resources/browse/create: " + err.message);
-                    res.status(500).json({ error: "server_error", message: err.message });
-                }
-            }
-        });
-
-        /**
-         * POST Create file
-         */
-        resourcesApp.post('/api/resources/browse/create-file', secureFnc, function (req, res) {
-            const permission = checkGroupsFnc(req);
-            if (res.statusCode === 403) {
-                runtime.logger.error("api post resources/browse/create-file: Token Expired");
-            } else if (!authJwt.haveAdminPermission(permission)) {
-                res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
-                runtime.logger.error("api post resources/browse/create-file: Unauthorized!");
-            } else {
-                try {
-                    var filePath = normalizePosix(req.body.path);
-
-                    if (!filePath || typeof filePath !== 'string') {
-                        res.status(400).json({ error: "invalid_path", message: "Path is required" });
-                        return;
-                    }
-
-                    if (!isSafe(filePath)) {
-                        return res.status(403).json({ error: "access_denied", message: "Invalid path" });
-                    }
-                    filePath = toNative(filePath);
-
-                    // Check if parent directory exists
-                    const parentDir = path.dirname(filePath);
-                    if (!fs.existsSync(parentDir)) {
-                        res.status(404).json({ error: "parent_not_found", message: "Parent directory not found" });
-                        return;
-                    }
-
-                    // Check if file already exists
-                    if (fs.existsSync(filePath)) {
-                        res.status(409).json({ error: "already_exists", message: "File already exists" });
-                        return;
-                    }
-
-                    // Create empty file
-                    fs.writeFileSync(filePath, '');
-
-                    res.json({ success: true, path: filePath });
-
-                } catch (err) {
-                    runtime.logger.error("api post resources/browse/create-file: " + err.message);
                     res.status(500).json({ error: "server_error", message: err.message });
                 }
             }
@@ -559,6 +517,53 @@ module.exports = {
             }
         });
 
+        /**
+ * GET Stream a file from _reports / _images / _resources / _widgets
+ */
+        resourcesApp.get('/api/resources/stream', secureFnc, function (req, res) {
+            const permission = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api get resources/stream: Token Expired");
+                return;
+            }
+            if (!authJwt.haveAdminPermission(permission)) {
+                runtime.logger.error("api get resources/stream: Unauthorized!");
+                return res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+            }
+
+            try {
+                let relPath = req.query.path;
+                if (!relPath || typeof relPath !== 'string') {
+                    return res.status(400).json({ error: "invalid_path", message: "Missing path" });
+                }
+
+                relPath = normalizePosix(relPath);
+
+                if (!isSafe(relPath)) {
+                    return res.status(403).json({ error: "access_denied", message: "Invalid path" });
+                }
+
+                let fullPath = toNative(path.join(runtime.settings.appDir, relPath));
+
+                const validPaths = ['_reports', '_images', '_resources', '_widgets'];
+                const allowedRoots = validPaths.map(p => path.join(runtime.settings.appDir, p));
+
+                if (!isInsideAllowedRoots(fullPath, allowedRoots)) {
+                    runtime.logger.error("api resources/stream: security_violation " + fullPath);
+                    return res.status(403).json({ error: "security_violation", message: "Invalid path" });
+                }
+
+                if (!fs.existsSync(fullPath)) {
+                    return res.status(404).json({ error: "not_found", message: "File not found" });
+                }
+
+                return res.sendFile(fullPath);
+
+            } catch (err) {
+                runtime.logger.error("api resources/stream: " + err.message);
+                return res.status(500).json({ error: "server_error", message: err.message });
+            }
+        });
         return resourcesApp;
     }
 }
