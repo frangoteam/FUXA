@@ -62,8 +62,15 @@
                     </button>
                 </div>
                 <div class="my-form-field" style="margin-top:10px;width: 100%;overflow-x: hidden;">
-                    <span style="display:inline-block; width:230px">{{'device.topic-subscription-name' | translate}}</span>
-                    <span style="display:inline-block">{{'device.topic-subscription-address' | translate}}</span>
+                    <div  class="topic-subscription-header">
+                        <span style="display:inline-block; width:230px">{{'device.topic-subscription-name' | translate}}</span>
+                        <span style="display:inline-block">{{'device.topic-subscription-address' | translate}}</span>
+                        <span style="float:right;">
+                            <mat-checkbox [(ngModel)]="allChecked" (change)="toggleAllChecked()" [disabled]="editSubscription">
+                                {{'device.topic-select-all' | translate}}
+                            </mat-checkbox>
+                        </span>
+                    </div>
                     <div class="topic-subscription-result">
                         <div *ngFor="let tcontent of topicContent">
                             <div class="topic">

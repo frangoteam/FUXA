@@ -1,0 +1,23 @@
+:host {
+    .sidenav-submenu-btn {
+        position: relative;
+    }
+
+    .sidenav-submenu-item {
+        width: unset;
+        min-height: unset;
+        height: unset;
+    }
+
+    .sidenav-submenu-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .submenu-list {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+}

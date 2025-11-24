@@ -169,6 +169,7 @@ function NotificatorManager(_runtime) {
                                     temp.text = notification.text;
                                     temp.subscriptions = notification.subscriptions;
                                     temp.options = notification.options;
+                                    temp.mode = notification.mode;
                                     notificationsSubsctiption[sub].push(temp);
                                     notificationsFound++;
                                 }
@@ -230,42 +231,64 @@ function NotificatorManager(_runtime) {
         return new Promise(function (resolve, reject) {
             var time = new Date().getTime();
             // check alarms categorie subscriptions
-            runtime.alarmsMgr.getAlarmsStatus().then(alarmsStatus => {
-                Object.keys(alarmsStatus).forEach(stkey => {
-                    if (alarmsStatus[stkey]) {
-                        if ((notificationsSubsctiption[stkey] && notificationsSubsctiption[stkey].length)) {
-                            var statusChanged = !subscriptionStatus[stkey] || subscriptionStatus[stkey] < alarmsStatus[stkey];
+            try {
+                var alarms = runtime.alarmsMgr.getAlarmsValues();
+                var alarmsStatus = { highhigh: 0, high: 0, low: 0, info: 0 };
+                alarms.forEach(alr => {
+                    if (alr.status === 'N') {
+                        alarmsStatus[alr.type]++;
+                    }
+                });
+                Object.keys(alarmsStatus).forEach(async stkey => {
+                    var isActive = alarmsStatus[stkey];
+                    var wasActive = subscriptionStatus[stkey];
+                    var statusChanged = !wasActive && isActive || (wasActive && isActive && subscriptionStatus[stkey] < alarmsStatus[stkey]);
+                    if (isActive) {
+                        if (notificationsSubsctiption[stkey]?.length ) {
+                            if (statusChanged) {
+                                // Check to reset timing for all notifications in this category
+                                for (var i = 0; i < notificationsSubsctiption[stkey].length; i++) {
+                                    var notification = notificationsSubsctiption[stkey][i];
+                                    if (notification.mode !== NotificationModeEnum.single) {
+                                        notification.ontime = time;
+                                        notification.notifytime = 0;
+                                    }
+                                }
+                            }
                             for (var i = 0; i < notificationsSubsctiption[stkey].length; i++) {
                                 var notification = notificationsSubsctiption[stkey][i];
                                 if (notification.checkToNotify(time, statusChanged)) {
                                     try {
                                         // get alarms summary in text format
                                         var alarmsSummary = runtime.alarmsMgr.getAlarmsString(stkey) || 'FUXA Alarms Error!';
+
+                                        const onSuccess = () => {
+                                            notification.setNotify(time, stkey);
+                                            logger.info(`notificator.notify.successful (mail): ${new Date()} ${notification.name} ${stkey} ${alarmsSummary}`);
+                                        }
+
                                         if (!_isValidEmail(notification.receiver)) {
-                                            // send via webapi
                                             const url = notification.receiver.replace(/\$\{content\}/g, alarmsSummary);
-                                            runtime.notificatorMgr.postMessage(url).then(function () {
-                                                notification.setNotify(time, stkey);
-                                                logger.info(`notificator.notify.successful (url): ${new Date()} ${notification.name} ${stkey} ${alarmsSummary}`);
+                                            await runtime.notificatorMgr.postMessage(url).then(function () {
+                                                onSuccess();
                                             }).catch(function (senderr) {
                                                 logger.error(`notificator.notify.send.failed: ${senderr}`);
                                             });
                                         } else {
-                                            var mail = new MailMessage(null, notification.receiver, notification.name, alarmsSummary);
-                                            runtime.notificatorMgr.sendMail(mail, null).then(function () {
-                                                notification.setNotify(time, stkey);
-                                                logger.info(`notificator.notify.successful (mail): ${new Date()} ${notification.name} ${stkey} ${alarmsSummary}`);
+                                            const mail = new MailMessage(null, notification.receiver, notification.name, alarmsSummary);
+                                            await runtime.notificatorMgr.sendMail(mail, null).then(function () {
+                                                onSuccess();
                                             }).catch(function (senderr) {
                                                 logger.error(`notificator.notify.send.failed: ${senderr}`);
                                             });
                                         }
                                     } catch (e) {
-                                        logger.error(`notificator.notify.failed: ${err}`);
+                                        logger.error(`notificator.notify.failed: ${e}`);
                                     }
                                 }
                             }
                         }
-                    } else if (subscriptionStatus[stkey]) {
+                    } else if (wasActive) {
                         // to reset
                         for (var i = 0; i < notificationsSubsctiption[stkey].length; i++) {
                             var notification = notificationsSubsctiption[stkey][i];
@@ -273,12 +296,12 @@ function NotificatorManager(_runtime) {
                             logger.info(`notificator.notify.toreset: ${notification.name} ${stkey}`);
                         }
                     }
-                    subscriptionStatus[stkey] = alarmsStatus[stkey];
+                    subscriptionStatus[stkey] = isActive;
                 });
                 resolve(true);
-            }).catch(function (err) {
+            } catch (err) {
                 reject(err);
-            });
+            }
         });
     }
 
@@ -341,6 +364,11 @@ module.exports = {
     createMessage: function(from, to, subj, text, html, attachments) {
         return new MailMessage(from, to, subj, text, html, attachments);
     }
+}
+
+var NotificationModeEnum = {
+    all: 0,
+    single: 1
 }
 
 /**

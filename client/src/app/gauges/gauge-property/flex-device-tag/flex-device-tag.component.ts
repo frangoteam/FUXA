@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { Observable, map, startWith } from 'rxjs';
@@ -17,7 +17,7 @@ export const _filter = (opt: DeviceTagOption[], value: string): DeviceTagOption[
     templateUrl: './flex-device-tag.component.html',
     styleUrls: ['./flex-device-tag.component.scss']
 })
-export class FlexDeviceTagComponent implements OnInit {
+export class FlexDeviceTagComponent implements OnInit, OnChanges {
 
     @Input() tagTitle = '';
     @Input() readonly = false;
@@ -32,7 +32,7 @@ export class FlexDeviceTagComponent implements OnInit {
     devices: Device[] = [];
 
     constructor(private projectService: ProjectService,
-                public dialog: MatDialog) {
+        public dialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -46,6 +46,15 @@ export class FlexDeviceTagComponent implements OnInit {
         this.loadDevicesTags();
     }
 
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['variableId'] && !changes['variableId'].isFirstChange()) {
+            this.deviceTagValue = {
+                variableId: this.variableId
+            };
+            this.loadDevicesTags();
+        }
+    }
+
     private _tagToVariableName(tag: Tag) {
         let result = tag.label || tag.name;
         if (result && tag.address && result !== tag.address) {
@@ -56,14 +65,14 @@ export class FlexDeviceTagComponent implements OnInit {
 
     private _filterGroup(value: any): DeviceGroup[] {
         if (value) {
-          return this.devicesGroups
-            .map(device => ({name: device.name, tags: _filter(device.tags, value?.name || value)}))
-            .filter(device => device.tags.length > 0);
+            return this.devicesGroups
+                .map(device => ({ name: device.name, tags: _filter(device.tags, value?.name || value) }))
+                .filter(device => device.tags.length > 0);
         }
         return this.devicesGroups;
     }
 
-    private _getDeviceTag(tagId: string): DeviceTagOption  {
+    private _getDeviceTag(tagId: string): DeviceTagOption {
         for (let i = 0; i < this.devicesGroups.length; i++) {
             const tag = this.devicesGroups[i].tags.find(tag => tag.id === tagId);
             if (tag) {
@@ -119,7 +128,7 @@ export class FlexDeviceTagComponent implements OnInit {
         let dialogRef = this.dialog.open(DeviceTagSelectionComponent, {
             disableClose: true,
             position: { top: '60px' },
-            data: <DeviceTagSelectionData> {
+            data: <DeviceTagSelectionData>{
                 variableId: this.variableId
             }
         });
@@ -141,12 +150,12 @@ export class FlexDeviceTagComponent implements OnInit {
         this.devicesGroups.push(Utils.clone(PlaceholderDevice));
         this.devices = Object.values(this.projectService.getDevices());
         this.devices.forEach((device: Device) => {
-            let deviceGroup = <DeviceGroup> {
+            let deviceGroup = <DeviceGroup>{
                 name: device.name,
                 tags: [],
             };
             Object.values(device.tags).forEach((tag: Tag) => {
-                const deviceTag = <DeviceTagOption> {
+                const deviceTag = <DeviceTagOption>{
                     id: tag.id,
                     name: this._tagToVariableName(tag),
                     device: device.name

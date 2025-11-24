@@ -280,7 +280,7 @@
     "chart.viewtype-custom": "自定义",
     "chart.property-general": "常规",
     "chart.property-font": "字体",
-    "chart.property-font.titleize": "标题大小",
+    "chart.property-font.titlesize": "标题大小",
     "chart.property-font.axissize": "轴的大小",
     "chart.property-font.legendsize": "图例大小",
     "chart.property-theme": "主题",
@@ -359,7 +359,7 @@
     "graph.property-date-last-range": "日期范围",
     "graph.property-date-group": "组",
     "graph.property-offline": "在线",
-    "graph.property-graph-oriantation": "方向",
+    "graph.property-graph-orientation": "方向",
     "graph.property-ori-vartical": "垂直",
     "graph.property-ori-horizontal": "水平",
     "graph.property-decimals": "小数",
@@ -735,6 +735,8 @@
     "shapes.action-anticlockwise": "逆时针转弯",
     "shapes.action-downup": "向上和向下",
     "shapes.action-rotate": "旋转",
+    "shapes.action-refreshImage": "更新图像",
+
     "shapes.action-move": "移动",
     "shapes.event-click": "点击",
     "shapes.event-dblclick": "双击",
@@ -1048,6 +1050,8 @@
     "devices.list-polling": "轮询",
     "devices.list-enabled": "已启用",
     "devices.list-status": "状态",
+    "device.list-clipboard": "复制到剪贴板",
+
 
     "users.list-title": "用户设置",
     "users.list-name": "用户名",

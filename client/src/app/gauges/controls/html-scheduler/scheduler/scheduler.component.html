@@ -1,0 +1,828 @@
+<div #schedulerContainer class="scheduler-container">
+    <!-- Header -->
+    <div class="scheduler-header">
+        <!-- Custom Device Selection -->
+        <div class="device-selector" *ngIf="deviceList?.length > 1">
+            <div class="custom-select"
+                 [class.open]="isDropdownOpen"
+                 [class.disabled]="isEditMode">
+                <div class="custom-select-trigger"
+                     (click)="toggleDropdown()"
+                     [style]="getSelectStyles()">
+                    <span class="selected-text">{{getSelectedDeviceLabel()}}</span>
+                    <span class="material-icons arrow">{{isDropdownOpen ? 'arrow_drop_up' : 'arrow_drop_down'}}</span>
+                </div>
+                <div class="custom-select-dropdown" *ngIf="isDropdownOpen">
+                    <ng-container *ngFor="let device of deviceList">
+                        <div class="custom-option"
+                             [class.selected]="device.name === selectedDevice"
+                             [class.hovered]="device.name === hoveredDevice"
+                             (click)="selectDevice(device.name)"
+                             (mouseenter)="hoveredDevice = device.name"
+                             (mouseleave)="hoveredDevice = null">
+                            {{device.label || device.name}}
+                        </div>
+                    </ng-container>
+                    <div class="custom-option"
+                         [class.selected]="'OVERVIEW' === selectedDevice"
+                         [class.hovered]="'OVERVIEW' === hoveredDevice"
+                         (click)="selectDevice('OVERVIEW')"
+                         (mouseenter)="hoveredDevice = 'OVERVIEW'"
+                         (mouseleave)="hoveredDevice = null">
+                         {{'scheduler.device-selector-overview' | translate}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="device-name" *ngIf="deviceList?.length === 1">
+            {{deviceList[0]?.name || deviceList[0]?.label}}
+        </div>
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+            <!-- Device Status -->
+            <button class="status-btn"
+                    *ngIf="selectedDevice !== 'OVERVIEW' && !isEditMode"
+                    [class.active]="isDeviceActive(selectedDevice)"
+                    [disabled]="true">
+                <span class="material-icons">
+                    {{isDeviceActive(selectedDevice) ? 'alarm_on' : 'alarm_off'}}
+                </span>
+            </button>
+
+            <!-- Edit Mode Actions: Close and Save buttons -->
+            <div *ngIf="isEditMode" class="edit-mode-actions" style="display: flex; align-items: center; gap: 8px;">
+                <button class="action-btn"
+                        (click)="toggleAddView()"
+                        [disabled]="isEditor">
+                    <span class="material-icons">close</span>
+                </button>
+                <button class="action-btn save-btn"
+                        (click)="addOrUpdateSchedule()"
+                        [disabled]="isEditor">
+                    <span class="material-icons">check</span>
+                </button>
+            </div>
+
+            <!-- Normal Mode Actions -->
+            <div *ngIf="!isEditMode">
+                <!-- Add/Close Button -->
+                <button class="action-btn"
+                        *ngIf="selectedDevice !== 'OVERVIEW' && canModifyDevice(selectedDevice)"
+                        (click)="toggleAddView()"
+                        [disabled]="isEditor">
+                    <span class="material-icons">add</span>
+                </button>
+
+                <!-- Filter and Settings for Overview -->
+                <div class="overview-controls" *ngIf="selectedDevice === 'OVERVIEW'" style="display: flex; align-items: center; gap: 8px;">
+                    <!-- Filter Button and Checkboxes -->
+                    <div class="filter-section" style="display: flex; align-items: center; gap: 8px;">
+                        <button class="filter-btn" (click)="toggleFilter()">
+                            <span class="material-icons">filter_alt</span>
+                        </button>
+                        <div *ngIf="showFilterOptions" class="filter-options">
+                            <label class="custom-checkbox">
+                                <input type="checkbox" [(ngModel)]="filterOptions.showDisabled">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">{{'scheduler.show-disabled' | translate}}</span>
+                            </label>
+                            <label class="custom-checkbox">
+                                <input type="checkbox" [(ngModel)]="filterOptions.showActive">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">{{'scheduler.show-active' | translate}}</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Settings Button and Clear Option -->
+                    <div class="settings-section" style="display: flex; align-items: center; gap: 8px;">
+                        <button class="settings-btn"
+                                *ngIf="canModifyScheduler()"
+                                (click)="toggleSettings()">
+                            <span class="material-icons">settings</span>
+                        </button>
+                        <div *ngIf="showSettingsOptions && canModifyScheduler()" class="settings-dropdown">
+                            <button (click)="clearAllSchedules()" class="settings-option danger" style="margin: 0;">
+                                <span class="material-icons">delete_sweep</span>
+                                {{'scheduler.clear-all-schedules' | translate}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Add Schedule Button -->
+                    <button class="action-btn"
+                            *ngIf="deviceList.length > 0 && canModifyScheduler()"
+                            (click)="startAddFromOverview()"
+                            [disabled]="isEditor">
+                        <span class="material-icons">add</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Display -->
+    <div class="schedule-display" *ngIf="!isEditMode">
+        <!-- Single Device Mode -->
+        <div class="device-mode" *ngIf="selectedDevice !== 'OVERVIEW'">
+            <div class="device-scroll-container"
+                 #deviceScrollContainer
+                 [class.has-scrollbar]="needsScrolling">
+
+                <!-- Timer Mode Table -->
+                <div class="mode-section" *ngIf="hasDeviceTimerModeSchedules()">
+                    <div class="schedule-headers">
+                        <div class="header-row">
+                            <span class="header-cell schedule-num">#</span>
+                            <span class="header-cell start-time">{{ 'scheduler.col-start' | translate }}</span>
+                            <span class="header-cell end-time">{{ 'scheduler.col-mode' | translate }}</span>
+                            <span class="header-cell duration">{{ 'scheduler.col-duration' | translate }}</span>
+                            <span class="header-cell status">{{ 'scheduler.col-status' | translate }}</span>
+                            <span class="header-cell actions"></span>
+                        </div>
+                    </div>
+
+                    <div class="schedule-list">
+                        <div class="schedule-item" *ngFor="let schedule of getDeviceTimerModeSchedules(); let i = index; trackBy: trackBySchedule"
+                             [class.disabled]="schedule.disabled"
+                             [class.read-only]="!canModifyDevice(selectedDevice)"
+                             [style.cursor]="canModifyDevice(selectedDevice) ? 'pointer' : 'default'"
+                             [style.pointer-events]="canModifyDevice(selectedDevice) ? 'auto' : 'none'"
+                             (click)="editSchedule(getDeviceSchedules().indexOf(schedule))">
+                            <!-- Main schedule info row -->
+                            <div class="schedule-main-row">
+                                <span class="schedule-number">{{getDeviceSchedules().indexOf(schedule) + 1}}</span>
+                                <span class="start-time" [innerHTML]="formatTime(schedule.startTime)"></span>
+                                <span class="end-time" [innerHTML]="formatScheduleMode(schedule)"></span>
+                                <span class="duration">{{calculateDuration(schedule)}}</span>
+                                <div class="status-switch" (click)="$event.stopPropagation()">
+                                    <label class="switch">
+                                        <input type="checkbox"
+                                               [checked]="isScheduleActive(schedule)"
+                                               disabled>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="actions" (click)="$event.stopPropagation()">
+                                    <button type="button"
+                                            *ngIf="canModifyDevice(selectedDevice)"
+                                            (click)="deleteSchedule(getDeviceSchedules().indexOf(schedule))"
+                                            class="delete-btn">
+                                        <span class="material-icons">clear</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Days display row -->
+                            <div class="days-display" *ngIf="!schedule.monthMode">
+                                <span *ngFor="let day of dayLabelsShort; let dayIndex = index"
+                                      class="day-circle"
+                                      [class.active]="schedule.days[dayIndex]"
+                                      [title]="dayLabelsLong[dayIndex]">
+                                    {{day.charAt(0)}}
+                                </span>
+                            </div>
+
+                            <!-- Calendar button for month mode -->
+                            <div class="calendar-display" *ngIf="schedule.monthMode">
+                                <button type="button" class="calendar-view-btn" (click)="$event.stopPropagation(); showCalendarPopup(schedule)">
+                                    <span class="material-icons">calendar_month</span>
+                                    <span class="calendar-btn-text">{{ 'scheduler.view-events' | translate }}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Mode Table -->
+                <div class="mode-section" *ngIf="hasDeviceEventModeSchedules()">
+                    <div class="schedule-headers">
+                        <div class="header-row">
+                            <span class="header-cell schedule-num">#</span>
+                            <span class="header-cell start-time">{{ 'scheduler.col-start' | translate }}</span>
+                            <span class="header-cell end-time">{{ 'scheduler.col-duration' | translate }}</span>
+                            <span class="header-cell duration">{{ 'scheduler.col-remaining' | translate }}</span>
+                            <span class="header-cell status">{{ 'scheduler.col-status' | translate }}</span>
+                            <span class="header-cell actions"></span>
+                        </div>
+                    </div>
+
+                    <div class="schedule-list">
+                        <div class="schedule-item" *ngFor="let schedule of getDeviceEventModeSchedules(); let i = index; trackBy: trackBySchedule"
+                             [class.disabled]="schedule.disabled"
+                             [class.read-only]="!canModifyDevice(selectedDevice)"
+                             [style.cursor]="canModifyDevice(selectedDevice) ? 'pointer' : 'default'"
+                             [style.pointer-events]="canModifyDevice(selectedDevice) ? 'auto' : 'none'"
+                             (click)="editSchedule(getDeviceSchedules().indexOf(schedule))">
+                            <!-- Main schedule info row -->
+                            <div class="schedule-main-row">
+                                <span class="schedule-number">{{getDeviceSchedules().indexOf(schedule) + 1}}</span>
+                                <span class="start-time" [innerHTML]="formatTime(schedule.startTime)"></span>
+                                <span class="end-time" [innerHTML]="formatScheduleMode(schedule)"></span>
+                                <span class="duration">{{getRemainingTime(schedule.deviceName || selectedDevice, getDeviceSchedules().indexOf(schedule))}}</span>
+
+                                <div class="status-switch" (click)="$event.stopPropagation()">
+                                    <label class="switch">
+                                        <input type="checkbox"
+                                               [checked]="isScheduleActive(schedule)"
+                                               disabled>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div class="actions" (click)="$event.stopPropagation()">
+                                    <button type="button"
+                                            *ngIf="canModifyDevice(selectedDevice)"
+                                            (click)="deleteSchedule(getDeviceSchedules().indexOf(schedule))"
+                                            class="delete-btn">
+                                    <span class="material-symbols-outlined">
+                                        delete
+                                    </span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Days display row -->
+                            <div class="days-display" *ngIf="!schedule.monthMode">
+                                <span *ngFor="let day of dayLabelsShort; let dayIndex = index"
+                                      class="day-circle"
+                                      [class.active]="schedule.days[dayIndex]"
+                                      [title]="dayLabelsLong[dayIndex]">
+                                    {{day.charAt(0)}}
+                                </span>
+                            </div>
+
+                            <!-- Calendar button for month mode -->
+                            <div class="calendar-display" *ngIf="schedule.monthMode">
+                                <button type="button" class="calendar-view-btn" (click)="$event.stopPropagation(); showCalendarPopup(schedule)">
+                                    <span class="material-icons">calendar_month</span>
+                                    <span class="calendar-btn-text">{{ 'scheduler.view-events' | translate }}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="empty-schedule" *ngIf="getDeviceSchedules().length === 0">
+                <p>{{ 'scheduler.empty-device' | translate }}</p>
+            </div>
+        </div>
+
+        <!-- Overview Mode -->
+        <div class="overview-mode" *ngIf="selectedDevice === 'OVERVIEW'">
+            <div class="overview-message" *ngIf="deviceList.length === 0">
+                <p>{{ 'scheduler.no-devices' | translate }}</p>
+            </div>
+
+            <div class="overview-message" *ngIf="deviceList.length > 0 && getFilteredOverviewSchedules().length === 0">
+                <p>{{ 'scheduler.no-schedules' | translate }}</p>
+            </div>
+
+            <div class="overview-scroll-container"
+                 #overviewScrollContainer
+                 [class.has-scrollbar]="overviewNeedsScrolling">
+                <ng-container *ngFor="let deviceGroup of getFilteredOverviewSchedules(); trackBy: trackByDeviceGroup">
+                    <div class="device-group">
+                        <h4 class="device-header">{{deviceGroup.deviceName}}</h4>
+
+                        <!-- Timer Mode Table -->
+                        <div class="mode-section" *ngIf="deviceGroup.timerModeSchedules.length > 0">
+                            <div class="schedule-headers">
+                                <div class="header-row">
+                                    <span class="header-cell schedule-num">#</span>
+                                    <span class="header-cell start-time">{{ 'scheduler.col-start' | translate }}</span>
+                                    <span class="header-cell end-time">{{ 'scheduler.end' | translate }}</span>
+                                    <span class="header-cell duration">{{ 'scheduler.col-duration' | translate }}</span>
+                                    <span class="header-cell status">{{ 'scheduler.col-status' | translate }}</span>
+                                    <span class="header-cell actions"></span>
+                                </div>
+                            </div>
+
+                            <div class="schedule-list">
+                                <div class="schedule-item" *ngFor="let schedule of deviceGroup.timerModeSchedules; let i = index; trackBy: trackBySchedule"
+                                     [class.disabled]="schedule.disabled"
+                                     [class.read-only]="!canModifyDevice(schedule.deviceName)"
+                                     [style.cursor]="canModifyDevice(schedule.deviceName) ? 'pointer' : 'default'"
+                                     [style.pointer-events]="canModifyDevice(schedule.deviceName) ? 'auto' : 'none'"
+                                     (click)="editScheduleFromOverview(schedule, deviceGroup.allSchedules.indexOf(schedule))">
+
+                                    <!-- Main schedule info row -->
+                                    <div class="schedule-main-row">
+                                        <span class="schedule-number">{{deviceGroup.allSchedules.indexOf(schedule) + 1}}</span>
+                                        <span class="start-time" [innerHTML]="formatTime(schedule.startTime)"></span>
+                                        <span class="end-time" [innerHTML]="formatScheduleMode(schedule)"></span>
+                                        <span class="duration">{{calculateDuration(schedule)}}</span>
+
+                                        <div class="status-switch" (click)="$event.stopPropagation()">
+                                            <label class="switch">
+                                                <input type="checkbox"
+                                                       [checked]="isScheduleActive(schedule)"
+                                                       disabled>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+
+                                        <div class="actions" (click)="$event.stopPropagation()">
+                                            <button type="button"
+                                                    *ngIf="canModifyDevice(schedule.deviceName)"
+                                                    (click)="confirmDeleteFromOverview(schedule, deviceGroup.allSchedules.indexOf(schedule))"
+                                                    class="delete-btn">
+                                                <span class="material-icons">clear</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Days display row -->
+                                    <div class="days-display" *ngIf="!schedule.monthMode">
+                                        <span *ngFor="let day of dayLabelsShort; let dayIndex = index"
+                                              class="day-circle"
+                                              [class.active]="schedule.days[dayIndex]"
+                                              [title]="dayLabelsLong[dayIndex]">
+                                            {{day.charAt(0)}}
+                                        </span>
+                                    </div>
+
+                                    <!-- Calendar button for month mode -->
+                                    <div class="calendar-display" *ngIf="schedule.monthMode">
+                                        <button type="button" class="calendar-view-btn" (click)="$event.stopPropagation(); showCalendarPopup(schedule)">
+                                            <span class="material-icons">calendar_month</span>
+                                            <span class="calendar-btn-text">{{ 'scheduler.view-events' | translate }}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Event Mode Table -->
+                        <div class="mode-section" *ngIf="deviceGroup.eventModeSchedules.length > 0">
+                            <div class="schedule-headers">
+                                <div class="header-row">
+                                    <span class="header-cell schedule-num">#</span>
+                                    <span class="header-cell start-time">{{ 'scheduler.col-start' | translate }}</span>
+                                    <span class="header-cell end-time">{{ 'scheduler.col-duration' | translate }}</span>
+                                    <span class="header-cell duration">{{ 'scheduler.col-remaining' | translate }}</span>
+                                    <span class="header-cell status">{{ 'scheduler.col-status' | translate }}</span>
+                                    <span class="header-cell actions"></span>
+                                </div>
+                            </div>
+
+                            <div class="schedule-list">
+                                <div class="schedule-item" *ngFor="let schedule of deviceGroup.eventModeSchedules; let i = index; trackBy: trackBySchedule"
+                                     [class.disabled]="schedule.disabled"
+                                     [class.read-only]="!canModifyDevice(schedule.deviceName)"
+                                     [style.cursor]="canModifyDevice(schedule.deviceName) ? 'pointer' : 'default'"
+                                     [style.pointer-events]="canModifyDevice(schedule.deviceName) ? 'auto' : 'none'"
+                                     (click)="editScheduleFromOverview(schedule, deviceGroup.allSchedules.indexOf(schedule))">
+
+                                    <!-- Main schedule info row -->
+                                    <div class="schedule-main-row">
+                                        <span class="schedule-number">{{deviceGroup.allSchedules.indexOf(schedule) + 1}}</span>
+                                        <span class="start-time" [innerHTML]="formatTime(schedule.startTime)"></span>
+                                        <span class="end-time" [innerHTML]="formatScheduleMode(schedule)"></span>
+                                        <span class="duration">{{getRemainingTime(schedule.deviceName, deviceGroup.allSchedules.indexOf(schedule))}}</span>
+
+                                        <div class="status-switch" (click)="$event.stopPropagation()">
+                                            <label class="switch">
+                                                <input type="checkbox"
+                                                       [checked]="isScheduleActive(schedule)"
+                                                       disabled>
+                                                <span class="slider"></span>
+                                            </label>
+                                        </div>
+
+                                        <div class="actions" (click)="$event.stopPropagation()">
+                                            <button type="button"
+                                                    *ngIf="canModifyDevice(schedule.deviceName)"
+                                                    (click)="confirmDeleteFromOverview(schedule, deviceGroup.allSchedules.indexOf(schedule))"
+                                                    class="delete-btn">
+                                                <span class="material-icons">clear</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Days display row -->
+                                    <div class="days-display" *ngIf="!schedule.monthMode">
+                                        <span *ngFor="let day of dayLabelsShort; let dayIndex = index"
+                                              class="day-circle"
+                                              [class.active]="schedule.days[dayIndex]"
+                                              [title]="dayLabelsLong[dayIndex]">
+                                            {{day.charAt(0)}}
+                                        </span>
+                                    </div>
+
+                                    <!-- Calendar button for month mode -->
+                                    <div class="calendar-display" *ngIf="schedule.monthMode">
+                                        <button type="button" class="calendar-view-btn" (click)="$event.stopPropagation(); showCalendarPopup(schedule)">
+                                            <span class="material-icons">calendar_month</span>
+                                            <span class="calendar-btn-text">{{ 'scheduler.view-events' | translate }}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Schedule Form -->
+    <div class="schedule-form" *ngIf="showAddForm">
+        <h3>{{ editingIndex >= 0 ? ('scheduler.edit-title' | translate) : ('scheduler.add-title' | translate) }}</h3>
+        <form (ngSubmit)="addOrUpdateSchedule()">
+            <div class="device-assignment">
+                <label for="deviceSelect">{{ 'scheduler.assign-device' | translate }}</label>
+                <div class="form-custom-select"
+                     [class.open]="isFormDropdownOpen"
+                     [class.error]="!formTimer.deviceName">
+                    <div class="form-custom-select-trigger"
+                         (click)="toggleFormDropdown()">
+                        <span class="selected-text">{{getFormSelectedDeviceLabel()}}</span>
+                        <span class="material-icons arrow">{{isFormDropdownOpen ? 'arrow_drop_up' : 'arrow_drop_down'}}</span>
+                    </div>
+                    <div class="form-custom-select-dropdown" *ngIf="isFormDropdownOpen">
+                        <ng-container *ngFor="let device of deviceList">
+                            <div class="form-custom-option"
+                                 *ngIf="canModifyDevice(device.name)"
+                                 [class.selected]="device.name === formTimer.deviceName"
+                                 [class.hovered]="device.name === formHoveredDevice"
+                                 (click)="selectFormDevice(device.name)"
+                                 (mouseenter)="formHoveredDevice = device.name"
+                                 (mouseleave)="formHoveredDevice = null">
+                                {{device.label || device.name}}
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <label for="startTime">{{ 'scheduler.start-time' | translate }}</label>
+                <div class="custom-time-picker">
+                    <div class="time-input-wrapper">
+                        <input type="text"
+                               class="time-input"
+                               [class.active]="activeTimePicker === 'start'"
+                               [value]="getFormattedInputTime('start')"
+                               (input)="updateTimeFromInput('start', $any($event.target).value)"
+                               name="startTime"
+                               placeholder="{{ 'scheduler.hhmm' | translate }}"
+                               (click)="openTimePicker('start')"
+                               (focus)="openTimePicker('start')"
+                               (blur)="validateTimeInput('start', $event)"
+                               required>
+                        <span class="material-icons time-icon">schedule</span>
+                    </div>
+                    <div class="time-picker-dropdown" *ngIf="activeTimePicker === 'start'">
+                        <div class="time-controls">
+                            <div class="time-part">
+                                <label>{{ 'scheduler.time.hour' | translate }}</label>
+                                <div class="time-options">
+                                    <div class="time-option"
+                                         *ngFor="let hour of getHourOptions()"
+                                         [class.selected]="hour === getTimeHour('start')"
+                                         (click)="setTimeHour('start', hour)">
+                                        {{hour}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="time-part">
+                                <label>{{ 'scheduler.time.minute' | translate }}</label>
+                                <div class="time-options">
+                                    <div class="time-option"
+                                         *ngFor="let minute of getMinuteOptions()"
+                                         [class.selected]="minute === getTimeMinute('start')"
+                                         (click)="setTimeMinute('start', minute)">
+                                        {{minute}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="time-part">
+                                <label>{{ 'scheduler.time.period' | translate }}</label>
+                                <div class="time-options">
+                                    <div class="time-option"
+                                         *ngFor="let period of periods"
+                                         [class.selected]="period === getTimePeriod('start')"
+                                         (click)="setTimePeriod('start', period)">
+                                        {{ ('scheduler.time.' + period) | translate }}
+                                    </div>
+                                </div>
+                                <div class="minute-interval-selector">
+                                    <label>{{ 'scheduler.time.interval' | translate }}</label>
+                                    <div class="interval-buttons">
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 1"
+                                                (click)="setMinuteInterval(1)">×1</button>
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 5"
+                                                (click)="setMinuteInterval(5)">×5</button>
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 10"
+                                                (click)="setMinuteInterval(10)">×10</button>
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 15"
+                                                (click)="setMinuteInterval(15)">×15</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timer Mode: End Time -->
+            <div class="form-row" *ngIf="!formTimer.eventMode">
+                <label for="endTime">{{ 'scheduler.end-time' | translate }}</label>
+                <div class="custom-time-picker">
+                    <div class="time-input-wrapper">
+                        <input type="text"
+                               class="time-input"
+                               [class.active]="activeTimePicker === 'end'"
+                               [value]="getFormattedInputTime('end')"
+                               (input)="updateTimeFromInput('end', $any($event.target).value)"
+                               name="endTime"
+                               placeholder="{{ 'scheduler.hhmm' | translate }}"
+                               (click)="openTimePicker('end')"
+                               (focus)="openTimePicker('end')"
+                               (blur)="validateTimeInput('end', $event)"
+                               required>
+                        <span class="material-icons time-icon">schedule</span>
+                    </div>
+                    <div class="time-picker-dropdown" *ngIf="activeTimePicker === 'end'">
+                        <div class="time-controls">
+                            <div class="time-part">
+                                <label>{{ 'scheduler.time.hour' | translate }}</label>
+                                <div class="time-options">
+                                    <div class="time-option"
+                                         *ngFor="let hour of getHourOptions()"
+                                         [class.selected]="hour === getTimeHour('end')"
+                                         (click)="setTimeHour('end', hour)">
+                                        {{hour}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="time-part">
+                                <label>{{ 'scheduler.time.minute' | translate }}</label>
+                                <div class="time-options">
+                                    <div class="time-option"
+                                         *ngFor="let minute of getMinuteOptions()"
+                                         [class.selected]="minute === getTimeMinute('end')"
+                                         (click)="setTimeMinute('end', minute)">
+                                        {{minute}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="time-part">
+                                <label>{{ 'scheduler.time.period' | translate }}</label>
+                                <div class="time-options">
+                                    <div class="time-option"
+                                         *ngFor="let period of periods"
+                                         [class.selected]="period === getTimePeriod('end')"
+                                         (click)="setTimePeriod('end', period)">
+                                        {{ ('scheduler.time.' + period) | translate }}
+                                    </div>
+                                </div>
+                                <div class="minute-interval-selector">
+                                    <label>{{ 'scheduler.time.interval' | translate }}</label>
+                                    <div class="interval-buttons">
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 1"
+                                                (click)="setMinuteInterval(1)">×1</button>
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 5"
+                                                (click)="setMinuteInterval(5)">×5</button>
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 10"
+                                                (click)="setMinuteInterval(10)">×10</button>
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 15"
+                                                (click)="setMinuteInterval(15)">×15</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Mode: Duration Selector -->
+            <div class="form-row" *ngIf="formTimer.eventMode">
+                <label for="duration">{{ 'scheduler.col-duration' | translate }}</label>
+                <div class="custom-time-picker">
+                    <div class="time-input-wrapper">
+                        <input type="text"
+                               class="time-input"
+                               [class.active]="activeTimePicker === 'duration'"
+                               [value]="formTimer.durationHours + 'h ' + formTimer.durationMinutes + 'm ' + formTimer.durationSeconds + 's'"
+                               (click)="openTimePicker('duration')"
+                               (focus)="openTimePicker('duration')"
+                               readonly
+                               placeholder="HH:MM:SS">
+                        <span class="material-icons time-icon">timer</span>
+                    </div>
+                    <div class="time-picker-dropdown" *ngIf="activeTimePicker === 'duration'">
+                        <div class="time-controls">
+                            <!-- Hours -->
+                            <div class="time-part">
+                                <label>Hours</label>
+                                <div class="time-options">
+                                    <div class="time-option"
+                                         *ngFor="let hour of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]"
+                                         [class.selected]="hour === formTimer.durationHours"
+                                         (click)="setDurationValue('hours', hour)">
+                                        {{hour}}h
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Minutes -->
+                            <div class="time-part">
+                                <label>Minutes</label>
+                                <div class="time-options">
+                                    <div class="time-option"
+                                         *ngFor="let minute of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59]"
+                                         [class.selected]="minute === formTimer.durationMinutes"
+                                         (click)="setDurationValue('minutes', minute)">
+                                        {{minute.toString().padStart(2, '0')}}m
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Seconds -->
+                            <div class="time-part">
+                                <label>Seconds</label>
+                                <div class="time-options">
+                                    <div class="time-option"
+                                         *ngFor="let second of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59]"
+                                         [class.selected]="second === formTimer.durationSeconds"
+                                         (click)="setDurationValue('seconds', second)">
+                                        {{second.toString().padStart(2, '0')}}s
+                                    </div>
+                                </div>
+                                <div class="minute-interval-selector">
+                                    <label>{{ 'scheduler.time.interval' | translate }}</label>
+                                    <div class="interval-buttons">
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 1"
+                                                (click)="setMinuteInterval(1)">×1</button>
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 5"
+                                                (click)="setMinuteInterval(5)">×5</button>
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 10"
+                                                (click)="setMinuteInterval(10)">×10</button>
+                                        <button type="button"
+                                                class="interval-btn"
+                                                [class.active]="minuteInterval === 15"
+                                                (click)="setMinuteInterval(15)">×15</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Mode and Recurring Toggles - Horizontal Layout -->
+            <div class="form-row toggle-row-horizontal">
+                <!-- Responsive toggles row -->
+                <div class="toggle-row-responsive">
+                    <div class="toggle-item">
+                        <label class="toggle-label">
+                            <span class="toggle-text">{{ 'scheduler.recurring' | translate }}</span>
+                            <div class="toggle-switch-container">
+                                <label class="switch">
+                                    <input type="checkbox"
+                                           [(ngModel)]="formTimer.recurring"
+                                           name="recurring">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-label">
+                            <span class="toggle-text">{{ 'scheduler.event-mode' | translate }}</span>
+                            <div class="toggle-switch-container">
+                                <label class="switch">
+                                    <input type="checkbox"
+                                           [(ngModel)]="formTimer.eventMode"
+                                           name="eventMode">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-label">
+                            <span class="toggle-text">{{ 'scheduler.month-mode' | translate }}</span>
+                            <div class="toggle-switch-container">
+                                <label class="switch">
+                                    <input type="checkbox" [(ngModel)]="formTimer.monthMode" name="monthMode">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="days-selection">
+                <div *ngIf="formTimer.monthMode">
+                    <label>{{ 'scheduler.months-active' | translate }}</label>
+                    <div class="months-row">
+                        <ng-container *ngFor="let month of monthLabelsShort; let i = index">
+                            <button type="button"
+                                    class="day-btn month-btn"
+                                    [class.active]="formTimer.months && formTimer.months[i]"
+                                    (click)="toggleMonth(i)">
+                                {{ month }}
+                            </button>
+                        </ng-container>
+                    </div>
+                    <label>{{ 'scheduler.days-of-month' | translate }}</label>
+                    <div class="days-of-month-calendar">
+                        <ng-container *ngFor="let day of daysOfMonth; let i = index">
+                            <button type="button"
+                                    class="day-btn day-of-month-btn"
+                                    [class.active]="formTimer.daysOfMonth && formTimer.daysOfMonth[i]"
+                                    (click)="toggleDayOfMonth(i)">
+                                {{ day }}
+                            </button>
+                        </ng-container>
+                    </div>
+                </div>
+                <div *ngIf="!formTimer.monthMode">
+                    <label>{{ 'scheduler.days-active' | translate }}</label>
+                    <div class="days-grid">
+                        <div class="days-row">
+                            <ng-container *ngFor="let day of dayLabelsShort.slice(0,7); let i = index">
+                                <button type="button"
+                                        class="day-btn round-btn"
+                                        [class.active]="formTimer.days && formTimer.days[i]"
+                                        (click)="toggleDay(i)">
+                                    {{ day }}
+                                </button>
+                            </ng-container>
+                        </div>
+                        <div class="days-row">
+                            <ng-container *ngFor="let _ of dayLabelsShort.slice(7,14); let i = index">
+                                <button *ngIf="dayLabelsShort[i+7]" type="button"
+                                        class="day-btn round-btn"
+                                        [class.active]="formTimer.days && formTimer.days[i+7]"
+                                        (click)="toggleDay(i+7)">
+                                    {{ dayLabelsShort[i+7] }}
+                                </button>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <button type="button" class="select-all-btn" (click)="onSelectAllDays()">
+                        {{ getSelectAllText() }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" (click)="cancelForm()" class="cancel-btn">{{ 'scheduler.cancel' | translate }}</button>
+                <button type="submit" class="save-btn">{{ 'scheduler.save' | translate }}</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Editor Placeholder -->
+    <div class="editor-placeholder" *ngIf="isEditor">
+        <span class="material-icons">schedule</span>
+        <p>{{ 'scheduler.editor-placeholder.title' | translate }}</p>
+        <small>{{ 'scheduler.editor-placeholder.hint' | translate }}</small>
+    </div>
+
+    <!-- Confirmation Dialog -->
+        <!-- Confirmation Dialog -->
+    <div class="confirmation-overlay" *ngIf="showConfirmDialog" (click)="closeConfirmDialog()">
+        <div class="confirmation-dialog" (click)="$event.stopPropagation()">
+            <div class="dialog-header">
+                <span class="material-icons warning-icon">{{confirmDialogData?.icon || 'event'}}</span>
+                <h3>{{confirmDialogData?.title}}</h3>
+            </div>
+            <div class="dialog-content">
+                <div [innerHTML]="confirmDialogData?.message"></div>
+            </div>
+            <div class="dialog-actions">
+                <button type="button" class="cancel-btn" (click)="closeConfirmDialog()" *ngIf="confirmDialogData?.showCancel !== false">{{ 'scheduler.cancel' | translate }}</button>
+                <button type="button" class="confirm-btn" (click)="confirmAction()">{{confirmDialogData?.confirmText || 'Confirm'}}</button>
+            </div>
+        </div>
+    </div>
+</div>

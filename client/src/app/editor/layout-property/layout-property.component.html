@@ -95,44 +95,80 @@
                                         <span *ngIf="!data.layout.navigation.logo; else hasLogo">{{'sidenav.title' | translate}}</span>
                                         <ng-template #hasLogo><img src="{{data.layout.navigation.logo}}" style="max-width: 100%; max-height: 100%;"></ng-template>
                                     </mat-list-item>
-                                    <mat-list-item *ngFor="let item of draggableListLeft; let i = index"
-                                                   [ngClass]="'menu-item-' + data.layout.navigation.type"
-                                                   style="width: unset">
-                                        <button type="button" mat-button class="sidenav-btn" [style.color]="data.layout.navigation.fgcolor" [ngSwitch]="data.layout.navigation.type">
-                                            <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
-                                                <img *ngIf="item.image" src="{{item.image}}">
-                                                <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-                                            </div>
-                                            <div *ngSwitchCase="'text'" class="menu-item-content-text">
-                                                <span>{{item.text}}</span>
-                                            </div>
-                                            <div *ngSwitchCase="'block'" class="menu-item-content-block">
-                                                <img *ngIf="item.image" src="{{item.image}}">
-                                                <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-                                                <span>{{item.text}}</span>
-                                            </div>
-                                            <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
-                                                <img *ngIf="item.image" src="{{item.image}}">
-                                                <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-                                                <span style="display: inline-block">{{item.text}}</span>
-                                            </div>
-                                        </button>
-                                        <div class="nav-item">
-                                            <div class="position">
-                                                <mat-icon (click)="onMoveMenuItem(i, 'top')" class="layout-menu-item-icon" style="display: block;">arrow_upward</mat-icon>
-                                                <mat-icon (click)="onMoveMenuItem(i, 'bottom')" class="layout-menu-item-icon" style="display: block;">arrow_downward</mat-icon>
-                                            </div>
-                                            <div class="edit">
-                                                <mat-icon (click)="onAddMenuItem(item)" class="layout-menu-item-icon layout-menu-item-edit">edit</mat-icon>
-                                                <div class="type">
-                                                    {{ getViewName(item) }}
+                                    <ng-container *ngFor="let item of draggableListLeft; let i = index">
+                                        <mat-list-item [ngClass]="'menu-item-' + data.layout.navigation.type"
+                                                    (click)="toggleSubMenu(item)"
+                                                    style="width: unset">
+                                            <button type="button"
+                                                    [ngSwitch]="data.layout.navigation.type"
+                                                    mat-button class="sidenav-btn sidenav-submenu-btn"
+                                                    [style.color]="data.layout.navigation.fgcolor">
+                                                <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
+                                                    <img *ngIf="item.image" src="{{item.image}}">
+                                                    <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+                                                </div>
+                                                <div *ngSwitchCase="'text'" class="menu-item-content-text">
+                                                    <span>{{item.text}}</span>
+                                                </div>
+                                                <div *ngSwitchCase="'block'" class="menu-item-content-block">
+                                                    <img *ngIf="item.image" src="{{item.image}}">
+                                                    <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+                                                    <span>{{item.text}}</span>
+                                                </div>
+                                                <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
+                                                    <img *ngIf="item.image" src="{{item.image}}">
+                                                    <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+                                                    <span style="display: inline-block">{{item.text}}</span>
+                                                </div>
+                                                <mat-icon *ngIf="isExpandable(item)" class="sidenav-submenu-icon">
+                                                    {{ isExpanded(item) ? 'expand_less' : 'expand_more' }}
+                                                </mat-icon>
+                                            </button>
+                                            <div class="nav-item">
+                                                <div class="position">
+                                                    <mat-icon (click)="$event.stopPropagation();onMoveMenuItem(i, 'top')" class="layout-menu-item-icon" style="display: block;">arrow_upward</mat-icon>
+                                                    <mat-icon (click)="$event.stopPropagation();onMoveMenuItem(i, 'bottom')" class="layout-menu-item-icon" style="display: block;">arrow_downward</mat-icon>
+                                                </div>
+                                                <div class="edit">
+                                                    <mat-icon (click)="$event.stopPropagation();onAddMenuItem(item)" class="layout-menu-item-icon layout-menu-item-edit">edit</mat-icon>
+                                                    <div class="type">
+                                                        {{ getViewName(item) }}
+                                                    </div>
+                                                </div>
+                                                <div class="remove">
+                                                    <mat-icon (click)="$event.stopPropagation();onRemoveMenuItem(i, item)" class="layout-menu-item-icon layout-menu-item-delete">clear</mat-icon>
                                                 </div>
                                             </div>
-                                            <div class="remove">
-                                                <mat-icon (click)="onRemoveMenuItem(i, item)" class="layout-menu-item-icon layout-menu-item-delete">clear</mat-icon>
-                                            </div>
-                                        </div>
-                                    </mat-list-item>
+                                        </mat-list-item>
+                                        <!-- Submenu -->
+                                        <mat-list *ngIf="isExpandable(item) && isExpanded(item)" class="submenu-list">
+                                            <mat-list-item *ngFor="let child of item.children" [ngClass]="'menu-item-' + data.layout.navigation.type"
+                                                           class="sidenav-submenu-item"
+                                                           [style.color]="data.layout.navigation.fgcolor">
+                                                <button type="button" mat-button class="sidenav-btn"
+                                                        style="padding-left: 20px !important;"
+                                                        [ngSwitch]="data.layout.navigation.type">
+                                                    <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
+                                                        <img *ngIf="child.image" src="{{child.image}}">
+                                                        <mat-icon *ngIf="child.icon">{{child.icon}}</mat-icon>
+                                                    </div>
+                                                    <div *ngSwitchCase="'text'" class="menu-item-content-text">
+                                                        <span>{{child.text}}</span>
+                                                    </div>
+                                                    <div *ngSwitchCase="'block'" class="menu-item-content-block">
+                                                        <img *ngIf="child.image" src="{{child.image}}">
+                                                        <mat-icon *ngIf="child.icon">{{child.icon}}</mat-icon>
+                                                        <span>{{child.text}}</span>
+                                                    </div>
+                                                    <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
+                                                        <img *ngIf="child.image" src="{{child.image}}">
+                                                        <mat-icon *ngIf="child.icon">{{child.icon}}</mat-icon>
+                                                        <span style="display: inline-block">{{child.text}}</span>
+                                                    </div>
+                                                </button>
+                                            </mat-list-item>
+                                        </mat-list>
+                                    </ng-container>
                                 </mat-list>
                             </div>
                         </div>

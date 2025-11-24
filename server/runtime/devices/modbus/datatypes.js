@@ -18,11 +18,36 @@ function _gen(bytes, bFn, WordLen, swapType, toCast = false) {
 }
 
 function _swap(buffer, swapType, offset = 0) {
-    if (swapType == 2) {
-        var temp = buffer[offset + 0];
-        buffer[offset + 0] = buffer[offset + 2]; buffer[offset + 2] = temp;
-        temp = buffer[offset + 1];
-        buffer[offset + 1] = buffer[offset + 3]; buffer[offset + 3] = temp;
+    if (swapType !== 2) return;
+
+    const len = buffer.length - offset;
+
+    if (len >= 8) {
+        // 64-bit: swap 2-word pairs (16-bit words)
+        // es: [w0 w1 w2 w3] → [w1 w0 w3 w2]
+        for (let i = 0; i < 4; i += 2) {
+            const i1 = offset + i;
+            const i2 = offset + i + 4;
+
+            // swap 2 bytes (16-bit word)
+            const t0 = buffer[i1];
+            const t1 = buffer[i1 + 1];
+            buffer[i1] = buffer[i2];
+            buffer[i1 + 1] = buffer[i2 + 1];
+            buffer[i2] = t0;
+            buffer[i2 + 1] = t1;
+        }
+    } else if (len >= 4) {
+        // 32-bit: swap the two 16-bit words
+        const i1 = offset;
+        const i2 = offset + 2;
+
+        const t0 = buffer[i1];
+        const t1 = buffer[i1 + 1];
+        buffer[i1] = buffer[i2];
+        buffer[i1 + 1] = buffer[i2 + 1];
+        buffer[i2] = t0;
+        buffer[i2 + 1] = t1;
     }
 }
 
@@ -61,6 +86,11 @@ const Datatypes = {
      * Float64
      */
     Float64: _gen(8, 'DoubleBE', 4),
+    /**
+     * Float64MLE
+    */
+    Float64MLE: _gen(8, 'DoubleBE', 4, 2),
+
     /**
      * Int64
      */

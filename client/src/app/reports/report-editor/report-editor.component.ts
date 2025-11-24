@@ -128,9 +128,11 @@ export class ReportEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             const pdfDocGenerator = pdfMake.createPdf(content);
             pdfDocGenerator.getDataUrl((dataUrl) => {
                 const targetIframe = document.querySelector('iframe');
-                targetIframe.src = dataUrl;
-                targetIframe.style.width = '100%';
-                targetIframe.style.height = '100%';
+                if (targetIframe) {
+                    targetIframe.src = dataUrl;
+                    targetIframe.style.width = '100%';
+                    targetIframe.style.height = '100%';
+                }
             });
         });
     }

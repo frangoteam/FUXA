@@ -4,11 +4,12 @@ import { SelOptionType, SelOptionsComponent } from '../../../gui-helpers/sel-opt
 import { BehaviorSubject, Observable, Subject, combineLatest, map, of, takeUntil } from 'rxjs';
 import { Define } from '../../../_helpers/define';
 import { Role, UserGroups } from '../../../_models/user';
-import { LinkType } from '../../../_models/hmi';
+import { LinkType, NaviItem } from '../../../_models/hmi';
 import { ProjectService } from '../../../_services/project.service';
 import { UploadFile } from '../../../_models/project';
 import { UserService } from '../../../_services/user.service';
 import { SettingsService } from '../../../_services/settings.service';
+import { Utils } from '../../../_helpers/utils';
 
 @Component({
     selector: 'app-layout-menu-item-property',
@@ -16,7 +17,7 @@ import { SettingsService } from '../../../_services/settings.service';
     styleUrls: ['./layout-menu-item-property.component.scss']
 })
 export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy {
-	selected = [];
+    selected = [];
     options = [];
     icons$: Observable<string[]>;
     filteredIcons$: Observable<string[]>;
@@ -26,7 +27,7 @@ export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy
     linkAlarms = LinkType.alarms;
     private destroy$ = new Subject<void>();
 
-    @ViewChild(SelOptionsComponent, {static: false}) seloptions: SelOptionsComponent;
+    @ViewChild(SelOptionsComponent, { static: false }) seloptions: SelOptionsComponent;
 
     constructor(public projectService: ProjectService,
                 private userService: UserService,
@@ -34,6 +35,7 @@ export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy
                 private settingsService: SettingsService,
                 public dialogRef: MatDialogRef<LayoutMenuItemPropertyComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
+                this.data.item.children = this.data.item.children || [];
 
         this.icons$ = of(Define.MaterialIconsRegular).pipe(
             map((data: string) => data.split('\n')),
@@ -70,9 +72,9 @@ export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy
     }
 
     ngOnDestroy() {
-		this.destroy$.next(null);
+        this.destroy$.next(null);
         this.destroy$.complete();
-	}
+    }
 
     isRolePermission() {
         return this.settingsService.getSettings()?.userRole;
@@ -93,6 +95,8 @@ export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy
             this.data.permission = UserGroups.GroupsToValue(this.seloptions.selected);
         }
         this.dialogRef.close(this.data);
+        //Need to check this!
+        this.data.item.children = this.data.item.children || [];
     }
 
     /**
@@ -110,6 +114,7 @@ export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy
                     this.projectService.uploadFile(fileToUpload).subscribe((result: UploadFile) => {
                         this.data.item.image = result.location;
                         this.data.item.icon = null;
+                        this.cdr.detectChanges();
                     });
                 } catch (err) {
                     console.error(err);
@@ -125,5 +130,21 @@ export class LayoutMenuItemPropertyComponent implements AfterViewInit, OnDestroy
 
     onFilterChange() {
         this.filterTextSubject.next(this.filterText);
+    }
+
+
+    onAddChild() {
+        const child = new NaviItem();
+        child.id = Utils.getShortGUID();
+        child.text = 'New Submenu Item';
+        this.data.item.children = this.data.item.children || [];
+        this.data.item.children.push(child);
+        console.log('Added child:', child, 'Total children:', this.data.item.children);
+        this.cdr.detectChanges();
+   }
+
+    onDeleteChild(index: number) {
+        this.data.item.children.splice(index, 1);
+        this.cdr.detectChanges();
     }
 }

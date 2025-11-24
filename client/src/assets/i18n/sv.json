@@ -77,6 +77,11 @@
     "dlg.menuitem-alarms": "Larm vid klick",
     "dlg.menuitem-address": "Länkadress",
     "dlg.menuitem-icons-filter": "Ikonfilter",
+	
+    "dlg.menuitem-submenu": "Undermeny",
+    "dlg.menuitem-add-submenu": "Lägg till undermenyobjekt",
+    "dlg.menuitem-submenu-items": "Undermenyobjekt",
+    "sidenav.new_item": "Nytt undermenyobjekt",
 
     "dlg.headeritem-title": "Headerobjekt",
     "dlg.headeritem-icon": "Ikon",
@@ -357,7 +362,7 @@
     "graph.property-date-last-range": "Datumintervall",
     "graph.property-date-group": "Grupp",
     "graph.property-offline": "Online",
-    "graph.property-graph-oriantation": "Orientering",
+    "graph.property-graph-orientation": "Orientering",
     "graph.property-ori-vartical": "Vertikal",
     "graph.property-ori-horizontal": "Horisontell",
     "graph.property-decimals": "Decimaler",

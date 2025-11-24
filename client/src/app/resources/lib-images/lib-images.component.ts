@@ -53,4 +53,8 @@ export class LibImagesComponent implements AfterViewInit, OnDestroy {
     onNoClick(): void {
         this.dialogRef.close();
     }
+
+    isVideo(path: string): boolean {
+        return this.resourcesService.isVideo(path);
+    }
 }

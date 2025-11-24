@@ -1,6 +1,8 @@
 <div  [ngStyle]="{ visibility: viewLoaded ? 'visible' : 'hidden' }" #dataContainer class="view-container" id="content">
 </div>
 <div *ngFor="let card of cards; let i = index"
+     (pointerdown)="bringCardToFront(card)"
+     [style.zIndex]="card.zIndex ?? 1"
      [style.height]="getCardHeight(card.height) + 'px'"
      [style.left]="card.x + 'px'"
      [style.top]="card.y +'px'"

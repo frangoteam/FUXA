@@ -1,0 +1,187 @@
+<div class="container">
+    <h1 mat-dialog-title
+        style="display:inline-block;cursor:move;"
+        mat-dialog-draggable>{{data.title}}</h1>
+    <mat-icon (click)="onNoClick()"
+              style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
+    <mat-tab-group style="width: 100%;">
+        <mat-tab label="{{'gauges.property-props' | translate}}">
+            <div class="mat-tab-container">
+                <div class="my-form-field">
+                    <span>{{'gauges.property-name' | translate}}</span>
+                    <input [(ngModel)]="data.settings.name"
+                            style="width: 220px"
+                            type="text">
+                </div>
+                <div class="my-form-field ml10"
+                        style="vertical-align: bottom;">
+                    <span>{{'gauges.property-permission' | translate}}</span>
+                    <div style="text-align:center;"
+                            class="my-form-field-permission pointer"
+                            (click)="onEditPermission()">
+                        <mat-icon *ngIf="havePermission(); else unlock"
+                                    class="header-icon"
+                                    style="line-height: 28px;">lock</mat-icon>
+                        <ng-template #unlock>
+                            <mat-icon class="header-icon"
+                                        style="line-height: 28px;">lock_open</mat-icon>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="my-form-field ml10"
+                        *ngIf="isTextToShow()">
+                    <span>{{'gauges.property-text' | translate}}</span>
+                    <input [(ngModel)]="property.text"
+                            style="width: 270px"
+                            type="text"
+                            placeholder="{{'gauges.property-language-text' | translate}}">
+                </div>
+                <div mat-dialog-content
+                     style="overflow: visible; width:100%;">
+                    <div class="mt10">
+                        <flex-variable [data]="data"
+                                       (onchange)="setVariable($event)"
+                                       [variableId]="property.variableId"
+                                       [variableValue]="property.variableValue"
+                                       [bitmask]="property.bitmask"
+                                       [withBitmask]="withBitmask">
+                        </flex-variable>
+                    </div>
+                    <div class="mt15">
+                        <div class="my-form-field" style="width: 140px;">
+                            <span>{{'gauges.property-input-type' | translate}}</span>
+                            <mat-select [(ngModel)]="property.options.type" (selectionChange)="onTypeChange($event)">
+                                <mat-option *ngFor="let ev of inputOptionType | enumToArray" [value]="ev.key">
+                                    {{ 'gauges.property-input-type-' + ev.value | translate }}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                        <ng-container *ngIf="property.options.type === inputOptionType.number">
+                            <div class="my-form-field ml20">
+                                <span>{{'gauges.property-input-min' | translate}}</span>
+                                <input numberOnly [(ngModel)]="property.options.min" type="number" style="width: 80px">
+                            </div>
+                            <div class="my-form-field ml20">
+                                <span>{{'gauges.property-input-max' | translate}}</span>
+                                <input numberOnly [(ngModel)]="property.options.max" type="number" style="width: 80px">
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="property.options.type === inputOptionType.time || property.options.type === inputOptionType.datetime">
+                            <div class="my-form-field ml20" style="width: 160px;">
+                                <span>{{'gauges.property-input-time-format' | translate}}</span>
+                                <mat-select [(ngModel)]="property.options.timeformat">
+                                    <mat-option *ngFor="let ev of inputTimeFormatType | enumToArray" [value]="ev.key">
+                                        {{ 'gauges.property-input-time-format-' + ev.value | translate }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="property.options.type === inputOptionType.time || property.options.type === inputOptionType.date || property.options.type === inputOptionType.datetime">
+                            <div class="my-form-field ml20" style="width: 120px;">
+                                <span>{{'gauges.property-input-convertion' | translate}}</span>
+                                <mat-select [(ngModel)]="property.options.convertion">
+                                    <mat-option *ngFor="let ev of inputConvertionType | enumToArray" [value]="ev.key">
+                                        {{ 'gauges.property-input-convertion-' + ev.value | translate }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </ng-container>
+                        <div class="mt15">
+                            <div class="my-form-field">
+                                <span>{{'gauges.property-update-enabled' | translate}}</span>
+                                <mat-slide-toggle color="primary" [(ngModel)]="property.options.updated" class="ml20"></mat-slide-toggle>
+                            </div>
+                            <!-- integrated in actionOnEsc -->
+                            <!-- <div class="my-form-field ml20">
+                                <span>{{'gauges.property-update-esc' | translate}}</span>
+                                <mat-slide-toggle color="primary" [(ngModel)]="property.options.updatedEsc" [disabled]="!property.options.updated" class="ml20"></mat-slide-toggle>
+                            </div> -->
+                            <div class="my-form-field ml20">
+                                <span>{{'gauges.property-select-content-on-click' | translate}}</span>
+                                <mat-slide-toggle color="primary" [(ngModel)]="property.options.selectOnClick" class="ml20"></mat-slide-toggle>
+                            </div>
+                            <div class="my-form-field ml20" style="width: 140px;">
+                                <span>{{'gauges.property-input-esc-action' | translate}}</span>
+                                <mat-select [(ngModel)]="property.options.actionOnEsc">
+                                    <mat-option [value]="null"></mat-option>
+                                    <mat-option *ngFor="let ev of inputActionEscType | enumToArray" [value]="ev.key">
+                                        {{ 'gauges.property-action-esc-' + ev.value | translate }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="my-form-field ml20" style="width: 100px;"
+                                 *ngIf="property.options.type === inputOptionType.text
+                                    || property.options.type === inputOptionType.textarea">
+                                <span>{{'gauges.property-input-maxlength' | translate}}</span>
+                                <input numberOnly [(ngModel)]="property.options.maxlength" type="number" style="width: 80px">
+                            </div>
+                            <div class="my-form-field ml20"
+                                 *ngIf="property.options.type === inputOptionType.textarea">
+                                <span>{{'gauges.property-input-readonly' | translate}}</span>
+                                <mat-slide-toggle color="primary" [(ngModel)]="property.options.readonly" class="ml20"></mat-slide-toggle>
+                            </div>
+                        </div>
+                        <ng-container *ngIf="property.options.type === inputOptionType.textarea">
+                            <div class="my-form-field mt10">
+                                <span>{{'gauges.property-input-startText' | translate}}</span>
+                                <textarea [(ngModel)]="property.options.startText" style="width: 320px; height: 200px; font-family: inherit;"></textarea>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="{{'gauges.property-events' | translate}}"
+                 *ngIf="eventsSupported">
+            <div class="mat-tab-container">
+                <div class="toolbox">
+                    <button mat-icon-button
+                            (click)="onAddEvent()"
+                            matTooltip="{{'gauges.property-tooltip-add-event' | translate}}">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                </div>
+                <div mat-dialog-content
+                     style="overflow: visible; width:100%;">
+                    <flex-event [property]="property"
+                                [views]="views"
+                                [data]="data"
+                                [inputs]="data.inputs"
+                                [scripts]="scripts"
+                                #flexevent
+                                style="padding-bottom: 5px"></flex-event>
+                </div>
+            </div>
+        </mat-tab>
+        <mat-tab label="{{'gauges.property-actions' | translate}}"
+                 *ngIf="actionsSupported">
+            <div class="mat-tab-container">
+                <div class="toolbox">
+                    <button mat-icon-button
+                            (click)="onAddAction()">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                </div>
+                <div mat-dialog-content
+                     style="overflow: visible; width:100%">
+                    <flex-action [data]="data"
+                                 [property]="property"
+                                 [withBitmask]="withBitmask"
+                                 #flexaction
+                                 style="padding-bottom: 5px">
+                    </flex-action>
+                </div>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+    <div mat-dialog-actions
+         class="dialog-action">
+        <button mat-raised-button
+                (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button
+                color="primary"
+                (click)="onOkClick()"
+                [mat-dialog-close]="data"
+                cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 
 import { AlarmsType } from '../../_models/alarm';
-import { Notification, NotificationsType, NOTIFY_PREFIX } from '../../_models/notification';
+import { Notification, NotificationMode, NotificationsType, NOTIFY_PREFIX } from '../../_models/notification';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
@@ -22,6 +22,8 @@ export class NotificationPropertyComponent implements OnInit {
     formGroup: UntypedFormGroup;
 
     alarmsType = [AlarmsType.HIGH_HIGH, AlarmsType.HIGH, AlarmsType.LOW, AlarmsType.INFO];
+    notificationModeAll = NotificationMode.all;
+    notificationModeSingle = NotificationMode.single;
 
     constructor(public dialogRef: MatDialogRef<NotificationPropertyComponent>,
         private fb: UntypedFormBuilder,
@@ -39,6 +41,7 @@ export class NotificationPropertyComponent implements OnInit {
             delay: [this.notification.delay],
             interval: [this.notification.interval],
             enabled: [this.notification.enabled],
+            mode: [this.notification.mode]
         });
         this.formGroup.controls.name.addValidators(this.isValidName());
 

@@ -79,8 +79,12 @@ module.exports = {
         if (type === 'number') {
             return parseFloat(value);
         } else if (type === 'boolean') {
+            if (value === null || value === undefined || value === '') {
+                return false;
+            }
             if (typeof value === 'string') {
-                return value.toLowerCase() !== 'false';
+                const lowerValue = value.toLowerCase().trim();
+                return lowerValue === 'true' || lowerValue === '1';
             }
             return Boolean(value);
         } else if (type === 'string') {
@@ -90,7 +94,7 @@ module.exports = {
             if (Number.isNaN(val)) {
                 // maybe boolean
                 val = Number(value);
-                // maybe string
+
                 if (Number.isNaN(val)) {
                     val = value;
                 }

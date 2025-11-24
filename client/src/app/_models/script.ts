@@ -196,6 +196,14 @@ export class SystemFunctions {
         paramsText: 'script.sys-fnc-invokeObject-params'
     },
     {
+        name: '$getObject',
+        mode: ScriptMode.CLIENT,
+        text: 'script.sys-fnc-getObject-text',
+        tooltip: 'script.sys-fnc-getObject-tooltip',
+        params: [false],
+        paramsText: 'script.sys-fnc-getObject-params'
+    },
+    {
         name: '$runServerScript',
         mode: ScriptMode.CLIENT,
         text: 'script.sys-fnc-runServerScript-text',
@@ -254,7 +262,7 @@ export class TemplatesCode {
         this.functions = this.allFunctions.filter(sf => !sf.mode || !mode || sf.mode === mode);
     }
     allFunctions = <SystemFunction[]>[{
-        name: 'chart-data', mode: ScriptMode.CLIENT, text: 'script.template-chart-data-text', tooltip: 'script.template-chart-data-tooltip',
+        name: 'chart-data', mode: null, text: 'script.template-chart-data-text', tooltip: 'script.template-chart-data-tooltip',
         code: `// Add script parameter 'paramLines' as Chart lines (array)
 if (paramLines && Array.isArray(paramLines)) {
     const count = 10;
@@ -266,6 +274,31 @@ if (paramLines && Array.isArray(paramLines)) {
             y.push(randomNumber);
             x.push(i);
         }
+        line['y'] = y;
+        line['x'] = x;
+    });
+    return paramLines;
+} else {
+    return 'Missing chart lines';
+}`
+    },
+    {
+        name: 'chart-data-touch', mode: null, text: 'script.template-chart-data-touch-text', tooltip: 'script.template-chart-data-touch-tooltip',
+        code: `// Add script parameters 'paramLines' as Chart lines (array), 'xVal' as X axis touch point, 'yVal' as Y axis touch point
+if (paramLines && Array.isArray(paramLines)) {
+    const count = 10;
+    paramLines.forEach(line => {
+        var y = [];
+        var x = [];
+        for (var i = 0; i < count; i++) {
+            const randomNumber = Math.floor(Math.random() * 21);
+            y.push(randomNumber);
+            x.push(i);
+        }
+      	if (typeof xVal === 'number' && typeof yVal === 'number') {
+       		x.push(Math.round(xVal));
+       		y.push(Math.round(yVal));
+      	}
         line['y'] = y;
         line['x'] = x;
     });

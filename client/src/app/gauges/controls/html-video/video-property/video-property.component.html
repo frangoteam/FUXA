@@ -1,0 +1,78 @@
+<div class="element-property">
+    <div class="element-property-title">
+        {{'video.property-title' | translate}}
+    </div>
+    <div class="video-selection">
+        <mat-tab-group style="height: 100%;">
+            <mat-tab label="{{'editor.settings-general' | translate}}">
+                <div class="element-property-header">
+                    <span>{{'video.property-data' | translate}}</span>
+                </div>
+                <div class="block mt5">
+                    <flex-auth [name]="name" [permission]="property.permission" (onChanged)="onFlexAuthChanged($event)" [permissionMode]="'onlyShow'" #flexauth>
+                    </flex-auth>
+                </div>
+                <div class="my-form-field section-item section-item-block mt5">
+                    <span>{{'video.property-address' | translate}}</span>
+                    <input [(ngModel)]="property.options.address" (change)="onVideoChanged()" (keyup.enter)="onVideoChanged()" type="text">
+                </div>
+                <app-flex-device-tag class="block mt5 item-device-tag" (onchange)="onTagChanged($event)" [variableId]="property.variableId">
+                </app-flex-device-tag>
+                <div class="my-form-field block mt5 static-image">
+                    <span>{{'video.property-image' | translate}}</span>
+                    <ng-container *ngIf="property.options.initImage; else imageVoid">
+                        <img src="{{property.options.initImage}}">
+                        <button mat-icon-button (click)="onClearImage()">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                    </ng-container>
+                    <ng-template #imageVoid>
+                        <mat-select placeholder="{{'video.property-image-placeholder' | translate}}" (click)="imagefile.click();">
+                        </mat-select>
+                        <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/*" />
+                    </ng-template>
+                </div>
+                <div class="my-form-field block tac mt5 item-slider">
+                    <span>{{'video.property-controls' | translate}}</span>
+                    <mat-slide-toggle color="primary" [(ngModel)]="property.options.showControls" (change)="onVideoChanged()"></mat-slide-toggle>
+                </div>
+            </mat-tab>
+            <!-- <mat-tab label="{{'editor.settings-events' | translate}}">
+              <div class="events-toolbox">
+                  <button mat-icon-button (click)="onAddEvent()">
+                      <mat-icon>add_circle_outline</mat-icon>
+                  </button>
+              </div>
+            </mat-tab> -->
+            <mat-tab label="{{'editor.settings-actions' | translate}}">
+                <div class="toolbox">
+                    <button mat-icon-button (click)="onEditActions()" matTooltip="{{'table.property-edit-actions-tooltip' | translate}}">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </div>
+                <div class="mt30">
+                    <div *ngFor="let action of property?.actions; index as i" class="action-readonly-item">
+                        <div class="my-form-field tag">
+                            <span>{{'action-settings-readonly-tag' | translate}}</span>
+                            <input [value]="getActionTag(action)" type="text" readonly [disabled]="true">
+                        </div>
+                        <div class="flex value mt5">
+                            <div class="my-form-field number inbk">
+                                <span>{{'gui.range-number-min' | translate}}</span>
+                                <input [value]="action?.range?.min" type="text" readonly [disabled]="true">
+                            </div>
+                            <div class="my-form-field number inbk ml5">
+                                <span>{{'gui.range-number-max' | translate}}</span>
+                                <input [value]="action?.range?.max" type="text" readonly [disabled]="true">
+                            </div>
+                            <div class="my-form-field type inbk ml5">
+                                <span>{{'gauges.property-action-type' | translate}}</span>
+                                <input [value]="getActionType(action)" type="text" readonly [disabled]="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

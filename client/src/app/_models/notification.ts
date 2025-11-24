@@ -10,10 +10,16 @@ export class Notification {
     type: string;
     subscriptions = {};
     options: any;
+    mode: NotificationMode = NotificationMode.all;
 
     constructor(_id: string) {
         this.id = _id;
     }
+}
+
+export enum NotificationMode {
+    all = 0,
+    single = 1
 }
 
 export enum NotificationsType {

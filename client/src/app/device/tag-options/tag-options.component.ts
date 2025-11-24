@@ -272,19 +272,13 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
         return this.formGroup.invalid || this.paramsInValid();
     }
     paramsInValid() {
-        if (this.formGroup.value.scaleReadFunction) {
-            for (const p of this.configedReadParams[this.formGroup.value.scaleReadFunction]) {
-                if (!p.value) {
-                    return true;
-                }
-            }
+        if (this.formGroup.value.scaleReadFunction &&
+            (this.configedReadParams[this.formGroup.value.scaleReadFunction] ?? []).some(p => !p.value)) {
+          return true;
         }
-        if (this.formGroup.value.scaleWriteFunction) {
-            for (const p of this.configedWriteParams[this.formGroup.value.scaleWriteFunction]) {
-                if (!p.value) {
-                    return true;
-                }
-            }
+        if (this.formGroup.value.scaleWriteFunction &&
+            (this.configedWriteParams[this.formGroup.value.scaleWriteFunction] ?? []).some(p => !p.value)) {
+          return true;
         }
         return false;
     }

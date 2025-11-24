@@ -33,6 +33,13 @@
             </div>
         </div>
         <div class="my-form-field block mt10" *ngIf="formGroup.value.type === notificationAlarm">
+            <span>{{'notification.property-mode' | translate}}</span>
+            <mat-select formControlName="mode" style="width: 207px">
+                <mat-option [value]="notificationModeAll">{{'notification.property-mode-alarm-all' | translate}}</mat-option>
+                <mat-option [value]="notificationModeSingle">{{'notification.property-mode-alarm-single' | translate}}</mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field block mt10" *ngIf="formGroup.value.type === notificationAlarm">
             <span>{{'notification.property-priority' | translate}}</span>
             <mat-checkbox *ngFor="let item of alarmsType" (change)="onSubscriptionChanged(item, $event.checked)" [checked]="getTypeValue(item)" style="margin: 7px 10px 7px 10px;">
                 {{'alarm.property-' + item | translate}}

@@ -52,7 +52,9 @@ export class AuthService {
 	}
 
 	signOut() {
-		this.removeUser();
+		if (this.removeUser()) {
+			window.location.reload();
+		}
 	}
 
 	getUser(): User {
@@ -84,10 +86,12 @@ export class AuthService {
 		localStorage.setItem('currentUser', JSON.stringify(user));
 	}
 
-	private removeUser() {
+	private removeUser(): boolean {
+		const result = !!this.currentUser;
 		this.currentUser = null;
 		localStorage.removeItem('currentUser');
 		this.currentUser$.next(this.currentUser);
+		return result;
 	}
 
 	/**

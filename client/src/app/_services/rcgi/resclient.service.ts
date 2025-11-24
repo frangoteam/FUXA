@@ -165,6 +165,24 @@ export class ResClientService implements ResourceStorageService {
         });
     }
 
+    getSchedulerData(id: string): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
+    }
+
+    setSchedulerData(id: string, data: any): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported in client mode!');
+        });
+    }
+
+    deleteSchedulerData(id: string): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported in client mode!');
+        });
+    }
+
     getTagsValues(query: string[], sourceScriptName?: string): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');

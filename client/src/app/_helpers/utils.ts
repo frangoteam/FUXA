@@ -663,9 +663,14 @@ export class Utils {
 
     static isValidUrl(url: string): boolean {
         try {
+            // Check if it's an absolute URL
             new URL(url);
             return true;
         } catch (error) {
+            // Check if it's a relative URL (starts with / or is a valid relative path)
+            if (url.startsWith('/') || (!url.includes('://') && url.length > 0)) {
+                return true;
+            }
             return false;
         }
     }

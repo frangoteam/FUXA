@@ -117,7 +117,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.onGoToPage(this.projectService.getViewId(viewToGo.viewName), viewToGo.force);
             });
             this.subscriptionOpen = this.hmiService.onOpen.subscribe((viewToOpen: ScriptOpenCard) => {
-                this.fuxaview.onOpenCard(null, null, this.projectService.getViewId(viewToOpen.viewName), viewToOpen.options);
+                const viewId = this.projectService.getViewId(viewToOpen.viewName);
+                this.fuxaview.onOpenCard(viewId, null, viewId, viewToOpen.options);
             });
 
             this.serverErrorBanner$ = combineLatest([
@@ -127,7 +128,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 switchMap(([connectionStatus, userProfile]) =>
                     merge(
                         of(false),
-                        timer(20000).pipe(map(() => (this.securityEnabled && !userProfile) ? false : true)),
+                        timer(35000).pipe(map(() => (this.securityEnabled && !userProfile) ? false : true)),
                     ).pipe (
                         startWith(false),
                     )

@@ -1,5 +1,5 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import * as io from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 import { environment } from '../../environments/environment';
 import { Tag, DeviceType } from '../_models/device';
@@ -30,6 +30,10 @@ export class HmiService {
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
     @Output() onOpen: EventEmitter<ScriptOpenCard> = new EventEmitter();
+    @Output() onSchedulerUpdated: EventEmitter<any> = new EventEmitter();
+    @Output() onSchedulerEventActive: EventEmitter<any> = new EventEmitter();
+    @Output() onSchedulerRemainingTime: EventEmitter<any> = new EventEmitter();
+    @Output() onGaugeEvent: EventEmitter<any> = new EventEmitter();
 
     onServerConnection$ = new BehaviorSubject<boolean>(false);
 
@@ -62,7 +66,7 @@ export class HmiService {
         });
 
         this.authService.currentUser$.subscribe((userProfile: UserProfile) => {
-           this.initSocket(userProfile?.token);
+            this.initSocket(userProfile?.token);
         });
     }
 
@@ -129,7 +133,7 @@ export class HmiService {
      */
     private getValueInFunction(current: any, value: string, fnc: string) {
         try {
-            if (!fnc) {return value;}
+            if (!fnc) { return value; }
             if (!current) {
                 current = 0;
             }
@@ -151,7 +155,7 @@ export class HmiService {
      * @returns
      */
     initClient(bridge?: any) {
-        if (!bridge) {return false;}
+        if (!bridge) { return false; }
         this.bridge = bridge;
         if (this.bridge) {
             this.bridge.onDeviceValues = (tags: Variable[]) => this.onDeviceValues(tags);
@@ -200,7 +204,7 @@ export class HmiService {
             if (message.status === 'connect-error' && this.hmi?.layout?.show_connection_error) {
                 let name = message.id;
                 let device = this.projectService.getDeviceFromId(message.id);
-                if (device) {name = device.name;}
+                if (device) { name = device.name; }
                 let msg = '';
                 this.translateService.get('msg.device-connection-error', { value: name }).subscribe((txt: string) => { msg = txt; });
                 this.toastr.error(msg, '', {
@@ -229,7 +233,7 @@ export class HmiService {
                 const originalId = message.values[idx].id;
                 const value = message.values[idx].value;
                 const timestamp = message.values[idx].timestamp;
-                updateVariable(originalId , value, timestamp);
+                updateVariable(originalId, value, timestamp);
                 const adapterIds = this.deviceAdapaterService.resolveDeviceTagIdForAdapter(originalId);
                 if (adapterIds?.length) {
                     adapterIds.forEach(adapterId => {
@@ -241,6 +245,18 @@ export class HmiService {
         // device browse
         this.socket.on(IoEventTypes.DEVICE_BROWSE, (message) => {
             this.onDeviceBrowse.emit(message);
+        });
+        // scheduler updated (one-time events removed, etc.)
+        this.socket.on(IoEventTypes.SCHEDULER_UPDATED, (message) => {
+            this.onSchedulerUpdated.emit(message);
+        });
+        // scheduler event active state changed (START/STOP fired)
+        this.socket.on(IoEventTypes.SCHEDULER_ACTIVE, (message) => {
+            this.onSchedulerEventActive.emit(message);
+        });
+        // scheduler remaining time update
+        this.socket.on(IoEventTypes.SCHEDULER_REMAINING, (message) => {
+            this.onSchedulerRemainingTime.emit(message);
         });
         // device node attribute
         this.socket.on(IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
@@ -512,7 +528,7 @@ export class HmiService {
      * @param fulltext
      */
     getMappedVariable(sigid: string, fulltext: boolean): Variable {
-        if (!this.variables[sigid]) {return null;}
+        if (!this.variables[sigid]) { return null; }
 
         if (this.variables[sigid]) {
             let result = this.variables[sigid];
@@ -589,6 +605,20 @@ export class HmiService {
     //#region DAQ functions served from project service
     getDaqValues(query: DaqQuery) {
         return this.projectService.getDaqValues(query);
+    }
+    //#endregion
+
+    //#region Scheduler functions served from project service
+    askSchedulerData(id: string) {
+        return this.projectService.getSchedulerData(id);
+    }
+
+    setSchedulerData(id: string, data: any) {
+        return this.projectService.setSchedulerData(id, data);
+    }
+
+    deleteSchedulerData(id: string) {
+        return this.projectService.deleteSchedulerData(id);
     }
     //#endregion
 
@@ -677,7 +707,10 @@ export enum IoEventTypes {
     HOST_INTERFACES = 'host-interfaces',
     SCRIPT_CONSOLE = 'script-console',
     SCRIPT_COMMAND = 'script-command',
-    ALIVE = 'heartbeat'
+    ALIVE = 'heartbeat',
+    SCHEDULER_UPDATED = 'scheduler:updated',
+    SCHEDULER_ACTIVE = 'scheduler:event-active',
+    SCHEDULER_REMAINING = 'scheduler:remaining-time'
 }
 
 export const ScriptCommandEnum = {

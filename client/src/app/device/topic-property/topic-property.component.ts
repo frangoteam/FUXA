@@ -16,9 +16,9 @@ import { JsonUtils } from '../../_helpers/json-utils';
 })
 export class TopicPropertyComponent implements OnInit, OnDestroy {
 
-    @ViewChild('grptabs', {static: true}) grptabs: MatTabGroup;
-    @ViewChild('tabsub', {static: true}) tabsub: MatTab;
-    @ViewChild('tabpub', {static: true}) tabpub: MatTab;
+    @ViewChild('grptabs', { static: true }) grptabs: MatTabGroup;
+    @ViewChild('tabsub', { static: true }) tabsub: MatTab;
+    @ViewChild('tabpub', { static: true }) tabpub: MatTab;
 
     private subscriptionBrowse: Subscription;
 
@@ -46,6 +46,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
     itemValue = Utils.getEnumKey(MqttItemType, MqttItemType.value);
     itemStatic = Utils.getEnumKey(MqttItemType, MqttItemType.static);
     editSubscription = false;
+    allChecked: boolean = false;
 
     constructor(
         private hmiService: HmiService,
@@ -138,7 +139,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
         if (this.discoveryTimer) {
             clearInterval(this.discoveryTimer);
         }
-		this.discoveryTimer = null;
+        this.discoveryTimer = null;
     }
 
     //#region Subscription
@@ -149,9 +150,9 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
     onDiscoveryTopics(source) {
         this.discoveryError = '';
         this.discoveryWait = true;
-		this.discoveryTimer = setTimeout(() => {
+        this.discoveryTimer = setTimeout(() => {
             this.discoveryWait = false;
-		}, 10000);
+        }, 10000);
         this.hmiService.askDeviceBrowse(this.data.device.id, source);
     }
 
@@ -161,9 +162,9 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
         this.discoveryWait = false;
         try {
             if (this.discoveryTimer) {
-			    clearInterval(this.discoveryTimer);
+                clearInterval(this.discoveryTimer);
             }
-		} catch { }
+        } catch { }
     }
 
     selectTopic(topic) {
@@ -172,7 +173,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
     }
 
     private loadSelectedSubTopic() {
-        this.topicContent =  [];
+        this.topicContent = [];
         if (this.selectedTopic.value) {
             if (this.topicSelectedSubType === 'json') {
                 let content = JsonUtils.tryToParse(this.selectedTopic.value?.content, {});
@@ -252,7 +253,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
                     topic.type = this.topicSelectedSubType;
                     topic.address = this.selectedTopic.key;
                     topic.memaddress = this.topicContent[i].key;
-                    topic.options = { subs: this.topicContent.map((tcnt) => tcnt.key) };
+                    topic.options = { subs: [topic.memaddress] };
                     if (this.topicContent[i].name) {
                         topic.name = this.topicContent[i].name;
                     } else {
@@ -261,9 +262,10 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
                             topic.name += '[' + topic.memaddress + ']';
                         }
                     }
-                    this.invokeSubscribe(this.topicContent[i]?.tag || this.data.topic, [topic]);
+                    this.invokeSubscribe(this.topicContent[i]?.tag || this.data.topic, [topic], false);
                 }
             }
+            this.invokeSubscribe(null, null, true);
         } else if (this.selectedTopic.key?.length) {
             let topic = new Tag(Utils.getGUID(TAG_PREFIX));
             topic.name = this.selectedTopic.key;
@@ -350,7 +352,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
                 } else if (item.type === this.itemValue) {
                     item.value = this.publishTopicPath;
                     ivalue = `$(${item.value})`;
-                } else{
+                } else {
                     ivalue = `${item.value}`;
                 }
                 if (this.topicSelectedPubType === 'json') {
@@ -386,6 +388,21 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
 
     isPublishValid() {
         return (this.publishTopicPath && this.publishTopicPath.length) ? true : false;
+    }
+
+    toggleAllChecked() {
+        if (this.topicContent) {
+            this.topicContent.forEach(t => {
+                if (!this.editSubscription) {
+                    t.checked = this.allChecked;
+                }
+            });
+        }
+        this.isSubscriptionValid();
+    }
+
+    updateAllChecked() {
+        this.allChecked = this.topicContent?.every(t => t.checked) ?? false;
     }
     //#endregion
 }
