@@ -563,6 +563,7 @@ export class TableCell {
     label: string;
     variableId: string;
     valueFormat: string;
+    timeInterval?: number;
     bitmask: number;
     type: TableCellType;
 

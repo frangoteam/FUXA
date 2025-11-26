@@ -499,6 +499,7 @@
     "table.cell-column-type": "Column type",
     "table.cell-row-type": "Row type",
     "table.cell-ts-format": "Format (DD/MM/YYYY - HH:mm:ss)",
+    "table.cell-ts-interval": " and rounding interval",
     "table.cell-value-format": "Format (0.000)",
     "table.cell-format": "Format",
     "table.cell-text": "Text",
