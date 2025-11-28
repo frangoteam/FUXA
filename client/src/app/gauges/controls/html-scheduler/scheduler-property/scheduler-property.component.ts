@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { PermissionData, PermissionDialogComponent } from '../../../gauge-property/permission-dialog/permission-dialog.component';
 import { GaugeEventActionType, GaugeSchedulerProperty, SchedulerDevice, SchedulerDeviceAction, View } from '../../../../_models/hmi';
 import { Script } from '../../../../_models/script';
