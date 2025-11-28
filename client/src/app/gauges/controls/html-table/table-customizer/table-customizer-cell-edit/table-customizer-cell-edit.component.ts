@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { TableCell, TableCellType, TableType } from '../../../../../_models/hmi';
 import { ProjectService } from '../../../../../_services/project.service';
 import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-table-customizer-cell-edit',
@@ -14,11 +15,19 @@ export class TableCustomizerCellEditComponent {
     cellType = TableCustomizerCellRowType;
     columnType = TableCellType;
     devicesValues = { devices: null };
+    dateTimeFormatsLabel = '';
+
     constructor(
         private projectService: ProjectService,
+        private translateService: TranslateService,
         public dialogRef: MatDialogRef<TableCustomizerCellEditComponent>,
         @Inject(MAT_DIALOG_DATA) public data: TableCustomizerCellType) {
+
         this.devicesValues.devices = Object.values(this.projectService.getDevices());
+        this.dateTimeFormatsLabel = this.translateService.instant('table.cell-ts-format');
+        if (this.isHistory()) {
+            this.dateTimeFormatsLabel += this.translateService.instant('table.cell-ts-interval');
+        }
     }
 
     onNoClick(): void {
@@ -51,6 +60,10 @@ export class TableCustomizerCellEditComponent {
                 }
             }
         }
+    }
+
+    isHistory(): boolean {
+        return this.data.table === TableType.history;
     }
 }
 

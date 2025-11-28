@@ -128,7 +128,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 switchMap(([connectionStatus, userProfile]) =>
                     merge(
                         of(false),
-                        timer(20000).pipe(map(() => (this.securityEnabled && !userProfile) ? false : true)),
+                        timer(35000).pipe(map(() => (this.securityEnabled && !userProfile) ? false : true)),
                     ).pipe (
                         startWith(false),
                     )

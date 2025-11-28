@@ -11,6 +11,8 @@ import { ILayoutPropertyData, LayoutPropertyComponent } from '../../editor/layou
 import { PluginsComponent } from '../../editor/plugins/plugins.component';
 import { AppSettingsComponent } from '../../editor/app-settings/app-settings.component';
 import { ClientScriptAccessComponent } from '../client-script-access/client-script-access.component';
+import { PluginService } from '../../_services/plugin.service';
+import { catchError, Observable, of, shareReplay } from 'rxjs';
 
 const clientOnlyToDisable = ['messages', 'users', 'userRoles', 'plugins', 'notifications', 'scripts', 'reports', 'materials', 'logs', 'events', 'language'];
 
@@ -21,13 +23,21 @@ const clientOnlyToDisable = ['messages', 'users', 'userRoles', 'plugins', 'notif
 })
 export class SetupComponent {
 
+    nodeRedExists$: Observable<boolean>;
+
     constructor(private router: Router,
                 private appService: AppService,
                 public dialog: MatDialog,
                 private projectService: ProjectService,
+                private plugins: PluginService,
                 public dialogRef: MatDialogRef<SetupComponent>) {
 
         this.router.routeReuseStrategy.shouldReuseRoute = function() { return false; };
+
+        this.nodeRedExists$ = this.plugins.hasNodeRed$(true).pipe(
+            catchError(() => of(false)),
+            shareReplay({ bufferSize: 1, refCount: false })
+        );
     }
 
     onNoClick() {

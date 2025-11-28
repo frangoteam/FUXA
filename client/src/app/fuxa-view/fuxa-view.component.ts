@@ -129,6 +129,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.subscriptionOnChange) {
                 this.subscriptionOnChange.unsubscribe();
             }
+            if (this['subscriptionOnGaugeEvent']) {
+                this['subscriptionOnGaugeEvent'].unsubscribe();
+            }
             if (this.inputDialogRef) {
                 this.inputDialogRef.nativeElement.style.display = 'none';
             }
@@ -205,7 +208,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (view?.id) {
                 this.id = view.id;
                 this.view = view;
-                if (view.type === this.cardViewType) {
+                if (view.type === this.cardViewType || view.type === ViewType.maps) {
                     this.ongoto.emit(view.id);
                     return;
                 } else {
@@ -341,6 +344,17 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             if (!this.subscriptionOnChange) {
                 this.subscriptionOnChange = this.gaugesManager.onchange.subscribe(this.handleSignal.bind(this));
+            }
+            // Subscribe to gauge events from scheduler (or other components)
+            if (!this['subscriptionOnGaugeEvent']) {
+                this['subscriptionOnGaugeEvent'] = this.hmiService.onGaugeEvent.subscribe((event: any) => {
+                    if (event && event.action) {
+                        const gaugeSettings: any = { id: 'scheduler-trigger', property: {} };
+                        this.runEvents(this, gaugeSettings, null, [event]);
+                    } else {
+
+                    }
+                });
             }
             for (let variableId in this.staticValues) {
                 if (!this.staticValues.hasOwnProperty(variableId)) {
@@ -643,7 +657,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     htmlevent.dom.blur();
                 }
             };
-            if (this.hmi.layout.inputdialog === 'true') {
+            if (this.hmi?.layout?.inputdialog === 'true') {
                 htmlevent.dom.onfocus = function(ev) {
                     if (ev.currentTarget) {
                         var inputRect = ev.currentTarget.getBoundingClientRect();

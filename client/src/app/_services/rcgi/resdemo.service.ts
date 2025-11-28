@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
@@ -107,6 +107,20 @@ export class ResDemoService implements ResourceStorageService {
         return new Observable((observer) => {
             observer.error('Not supported!');
         });
+    }
+
+    getSchedulerData(id: string): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
+    }
+
+    setSchedulerData(id: string, data: any): Observable<any> {
+        return of(data);
+    }
+
+    deleteSchedulerData(id: string): Observable<any> {
+        return of({ success: true });
     }
 
     getTagsValues(query: string[], sourceScriptName?: string): Observable<any> {

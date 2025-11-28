@@ -29,6 +29,7 @@ export class AppSettingsComponent implements OnInit {
 		{ text: 'dlg.app-language-ua', value: 'ua' },
 		{ text: 'dlg.app-language-zh-cn', value: 'zh-cn' },
 		{ text: 'dlg.app-language-ja', value: 'ja' },
+		{ text: 'dlg.app-language-zh-tw', value: 'zh-tw' },
 	];
 
     authType = [

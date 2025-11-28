@@ -3,8 +3,6 @@ import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ViewCon
 import { ChangeDetectorRef } from '@angular/core';
 import { MatDialog as MatDialog, MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { MatDrawer } from '@angular/material/sidenav';
-import { DomSanitizer } from '@angular/platform-browser';
-import { MatIconRegistry } from '@angular/material/icon';
 import { Subject, Subscription, switchMap, takeUntil } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -133,12 +131,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         private viewContainerRef: ViewContainerRef,
         private resolver: ComponentFactoryResolver,
         private resourcesService: ResourcesService,
-        private libWidgetsService: LibWidgetsService,
-        private mdIconRegistry: MatIconRegistry,
-        private sanitizer: DomSanitizer) {
-        mdIconRegistry.addSvgIcon('group', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/group.svg'));
-        mdIconRegistry.addSvgIcon('to_bottom', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/to-bottom.svg'));
-        mdIconRegistry.addSvgIcon('to_top', sanitizer.bypassSecurityTrustResourceUrl('/assets/images/to-top.svg'));
+        private libWidgetsService: LibWidgetsService) {
     }
 
     //#region Implemented onInit / onAfterInit event
@@ -326,7 +319,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.currentView = null;
         this.hmi = this.projectService.getHmi();
         // check new hmi
-        if (this.hmi.views?.length <= 0 && !firstTime) {
+        if (this.hmi.views?.length <= 0) {
             this.hmi.views = [];
             this.addView(ProjectService.MainViewName);
         } else {
@@ -1387,6 +1380,20 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
                 }
             });
+        } else if (dlgType === GaugeDialogType.Scheduler) {
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings,
+                devices: Object.values(this.projectService.getDevices()),
+                withEvents: eventsSupported,
+                withActions: actionsSupported,
+                languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
         } else {
             //!TODO to be refactored (GaugePropertyComponent)
             elementWithLanguageText = this.isSelectedElementToEnableLanguageTextSettings();
@@ -1569,6 +1576,38 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private clearSelection() {
         this.winRef.nativeWindow.svgEditor.clearSelection();
+    }
+
+    /**
+     * End any active pointer or mouse interaction so dragging an element stops
+     * when overlays appear over the cursor (like the svg-tools-fly class).
+     */
+    private endActivePointerInteraction() {
+        try {
+            const w = this.winRef.nativeWindow;
+            const doc = w?.document;
+            const canvas = doc?.getElementById('svgcanvas');
+            const active = doc?.activeElement as HTMLElement;
+            const mouseEvtInit: MouseEventInit = { bubbles: true, cancelable: true, view: w };
+            // Dispatch on both document and window to reach handlers registered at different levels.
+            doc?.dispatchEvent(new MouseEvent('mouseup', mouseEvtInit));
+            w?.dispatchEvent(new MouseEvent('mouseup', mouseEvtInit));
+            canvas?.dispatchEvent(new MouseEvent('mouseup', mouseEvtInit));
+            active?.dispatchEvent(new MouseEvent('mouseup', mouseEvtInit));
+            // Attempt pointer & touch as well.
+            try {
+                const ptrEvt = new PointerEvent('pointerup', { bubbles: true, cancelable: true });
+                doc?.dispatchEvent(ptrEvt); canvas?.dispatchEvent(ptrEvt); active?.dispatchEvent(ptrEvt);
+            } catch {}
+            try {
+                const tEvt = new TouchEvent('touchend', { bubbles: true, cancelable: true } as any);
+                doc?.dispatchEvent(tEvt); canvas?.dispatchEvent(tEvt); active?.dispatchEvent(tEvt);
+            } catch {}
+        } catch {}
+    }
+
+    onFlyEnter() {
+        this.endActivePointerInteraction();
     }
 
     cloneElement() {

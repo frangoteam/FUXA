@@ -126,6 +126,23 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.get<any>(this.endPointConfig + '/api/daq', { headers: header, params });
     }
 
+    getSchedulerData(id: string): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { id: id };
+        return this.http.get<any>(this.endPointConfig + '/api/scheduler', { headers: header, params });
+    }
+
+    setSchedulerData(id: string, data: any): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.post<any>(this.endPointConfig + '/api/scheduler', { id: id, data: data }, { headers: header });
+    }
+
+    deleteSchedulerData(id: string): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        let params = { id: id };
+        return this.http.delete<any>(this.endPointConfig + '/api/scheduler', { headers: header, params });
+    }
+
     getTagsValues(tagsIds: string[], sourceScriptName?: string): Observable<any> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         let params = { ids: JSON.stringify(tagsIds), sourceScriptName: sourceScriptName };

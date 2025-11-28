@@ -36,9 +36,10 @@
 
     .column-options {
         margin-left: 10px;
+        margin-right: 20px;
     }
 
-    .data-table-remove-row {
+    .data-table-edit-row {
         max-width: 40px;
         min-width: 40px;
         width: 40px;
@@ -50,7 +51,6 @@
 
     .data-table-cell {
         white-space: nowrap;
-        max-width: 60px;
         overflow: hidden;
     }
 

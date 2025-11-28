@@ -37,6 +37,9 @@
         <div *ngSwitchCase="gaugeDialogType.Video">
             <app-video-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-video-property>
         </div>
+        <div *ngSwitchCase="gaugeDialogType.Scheduler">
+            <app-scheduler-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-scheduler-property>
+        </div>
     </div>
 </mat-drawer>
 <div id="svg_editor_container">
@@ -200,6 +203,10 @@
                                 (click)="setMode('own_ctrl-video')">
                                 <span class="material-icon-tool material-icons" style="font-size: 23px;">ondemand_video</span>
                             </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-scheduler' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-scheduler')}"
+                                (click)="setMode('own_ctrl-scheduler')">
+                                <span class="material-icon-tool material-icons" style="font-size: 23px;">schedule</span>
+                            </div>
                         </div>
                     </mat-expansion-panel>
                     <!-- SHAPES -->
@@ -255,7 +262,7 @@
             <!-- SVG-EDITOR -->
             <div [style.display]="(editorMode === editorModeType.SVG)?'block':'none' ">
                 <!-- RIGHT BAR -->
-                <div class="svg-tools-fly" [style.display]="(isAnySelected)?'block':'none' ">
+                <div class="svg-tools-fly" [style.display]="(isAnySelected)?'block':'none' " (mouseenter)="onFlyEnter()" (touchstart)="onFlyEnter()">
                     <mat-expansion-panel class="svg-workarea-fly-p" (opened)="panelPropertyIdOpenState = true" (closed)="panelPropertyIdOpenState = false" hideToggle="true"
                         expanded="true" style="display:none">
                         <mat-expansion-panel-header class="svg-workarea-flybar-h">

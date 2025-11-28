@@ -586,6 +586,7 @@ export class ProjectService {
                 exist.subscriptions = notification.subscriptions;
                 exist.text = notification.text;
                 exist.type = notification.type;
+                exist.mode = notification.mode;
             } else {
                 this.projectData.notifications.push(notification);
             }
@@ -956,15 +957,16 @@ export class ProjectService {
     }
 
     private notifyError(msgCode: string) {
-        const msg = this.translateService.instant(msgCode);
-        if (msgCode) {
-            console.error(`FUXA Error: ${msg}`);
-            this.toastr.error(msg, '', {
-                timeOut: 3000,
-                closeButton: true,
-                disableTimeOut: true
-            });
-        }
+        this.translateService.get(msgCode).subscribe((msg: string) => {
+            if (msg) {
+                console.error(`FUXA Error: ${msg}`);
+                this.toastr.error(msg, '', {
+                    timeOut: 3000,
+                    closeButton: true,
+                    disableTimeOut: true
+                });
+            }
+        });
     }
     //#endregion
 
@@ -977,6 +979,20 @@ export class ProjectService {
     //#region DAQ query
     getDaqValues(query: DaqQuery): Observable<any> {
         return this.storage.getDaqValues(query);
+    }
+    //#endregion
+
+    //#region Scheduler query
+    getSchedulerData(id: string): Observable<any> {
+        return this.storage.getSchedulerData(id);
+    }
+
+    setSchedulerData(id: string, data: any): Observable<any> {
+        return this.storage.setSchedulerData(id, data);
+    }
+
+    deleteSchedulerData(id: string): Observable<any> {
+        return this.storage.deleteSchedulerData(id);
     }
     //#endregion
 

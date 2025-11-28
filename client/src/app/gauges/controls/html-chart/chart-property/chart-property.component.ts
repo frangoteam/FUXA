@@ -49,7 +49,7 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
     autoScala = { enabled: true, min: 0, max: 10 };
     scripts$: Observable<Script[]>;
     property: GaugeChartProperty;
-    eventType = [Utils.getEnumKey(GaugeEventType, GaugeEventType.onLoad)];
+    eventType = [Utils.getEnumKey(GaugeEventType, GaugeEventType.click), Utils.getEnumKey(GaugeEventType, GaugeEventType.onLoad)];
     actionRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
     selectActionType = {};
 

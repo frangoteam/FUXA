@@ -2,9 +2,9 @@
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.customize-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
-        <mat-table #table [dataSource]="dataSource" matSort class="customer-table" style="min-width: 900px; height: 500px; display: block;">
+        <mat-table #table [dataSource]="dataSource" matSort class="customer-table" style="min-width: 900px; height: 500px; display: block; overflow: auto;">
             <ng-container *ngFor="let column of displayedColumns; index as i" [matColumnDef]="column">
-                <mat-header-cell *matHeaderCellDef >
+                <mat-header-cell *matHeaderCellDef>
                     <div class="data-table-cell">
                         <span style="display: block; font-size: 12px;">{{getColumnType(i)}} </span>
                         <span style="display: block;">{{getColumnSetting(i)}} </span>
@@ -32,7 +32,7 @@
                     </mat-menu>
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" >
-                    <mat-cell *ngIf="i === 0" class="data-table-remove-row">
+                    <mat-cell *ngIf="i === 0" class="data-table-edit-row">
                         <button mat-icon-button [matMenuTriggerFor]="rowMenu" (click)="$event.stopPropagation()" class="row-options">
                             <mat-icon>more_vert</mat-icon>
                         </button>
@@ -60,7 +60,7 @@
                     </button>
                 </mat-cell>
             </ng-container>
-            <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header"></mat-header-row>
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="data-table-header"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;">
             </mat-row>
         </mat-table>

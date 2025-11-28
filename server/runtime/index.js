@@ -15,6 +15,8 @@ var scripts = require('./scripts');
 var plugins = require('./plugins');
 var utils = require('./utils');
 const daqstorage = require('./storage/daqstorage');
+const schedulerStorage = require('./scheduler/scheduler-storage');
+const schedulerService = require('./scheduler/scheduler-service');
 var jobs = require('./jobs');
 
 var api;
@@ -46,6 +48,15 @@ function init(_io, _api, _settings, _log, eventsMain) {
 
 
     daqstorage.init(settings, logger, runtime);
+
+    // Initialize scheduler services
+    schedulerStorage.init(settings, logger, runtime).then(() => {
+        return schedulerService.init(settings, logger, runtime);
+    }).then(() => {
+        logger.info('runtime init scheduler services successful!', true);
+    }).catch(err => {
+        logger.error('runtime.failed-to-init scheduler services: ' + err);
+    });
 
     plugins.init(settings, logger).then(result => {
         logger.info('runtime init plugins successful!', true);
@@ -332,7 +343,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
 
     setInterval(() => {
         io.emit(Events.IoEventTypes.ALIVE, { message: 'FUXA server is alive!' });
-    }, 10000);
+    }, (settings.heartbeatIntervalSec || 10) * 1000);
 }
 
 function start() {
@@ -505,6 +516,7 @@ function updateDeviceValues(event) {
             }
         });
     } catch (err) {
+        logger.error('Error updating device values: ' + err.message);
     }
 }
 
@@ -671,6 +683,8 @@ var runtime = module.exports = {
     get settings() { return settings },
     get devices() { return devices },
     get daqStorage() { return daqstorage },
+    get schedulerStorage() { return schedulerStorage },
+    get schedulerService() { return schedulerService },
     get alarmsMgr() { return alarmsMgr },
     get notificatorMgr() { return notificatorMgr },
     get scriptsMgr() { return scriptsMgr },

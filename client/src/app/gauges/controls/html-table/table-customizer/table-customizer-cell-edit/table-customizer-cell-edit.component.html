@@ -5,13 +5,13 @@
     <div mat-dialog-content>
         <div *ngIf="data.type === cellType.column" class="my-form-field" style="display: block;">
             <span>{{'table.cell-column-name' | translate}}</span>
-            <input [(ngModel)]="data.cell.label" type="text" style="width: 260px">
+            <input [(ngModel)]="data.cell.label" type="text" style="width: 200px">
         </div>
         <div style="display: block; margin-top: 10px;">
             <div class="my-form-field" style="display: inline-block">
                 <span *ngIf="data.type === cellType.column">{{'table.cell-column-type' | translate}}</span>
                 <span *ngIf="data.type === cellType.row">{{'table.cell-row-type' | translate}}</span>
-                <mat-select [(value)]="data.cell.type" style="width: 260px">
+                <mat-select [(value)]="data.cell.type" style="width: 200px">
                     <mat-option *ngIf="data.table === tableType.data" [value]="columnType.label">
                         {{'table.property-column-label' | translate}}</mat-option>
                     <mat-option *ngIf="!(data.table === tableType.data && data.type === cellType.column)" [value]="columnType.variable">
@@ -22,17 +22,23 @@
                         {{'table.property-column-timestamp' | translate}}</mat-option>
                 </mat-select>
             </div>
-            <div *ngIf="data.cell.type === columnType.timestamp" class="my-form-field" style="display: inline-block; margin-left: 16px;">
-                <span>{{'table.cell-ts-format' | translate}}</span>
-                <input [(ngModel)]="data.cell.valueFormat" type="text" style="width: 265px">
-            </div>
+            <ng-container *ngIf="data.cell.type === columnType.timestamp">
+                <div class="my-form-field lbk ml15">
+                    <span>{{ dateTimeFormatsLabel }}</span>
+                    <input [(ngModel)]="data.cell.valueFormat" type="text" style="width: 205px">
+                    <ng-container *ngIf="isHistory()">
+                        <div class="lbk ml5">*</div>
+                        <input numberOnly class="lbk ml5" [(ngModel)]="data.cell.timeInterval" type="number" style="width: 70px">
+                    </ng-container>
+                </div>
+            </ng-container>
             <div *ngIf="data.type === cellType.row && data.cell.type === columnType.label" class="my-form-field" style="display: inline-block; margin-left: 16px;">
                 <span>{{'table.cell-text' | translate}}</span>
-                <input [(ngModel)]="data.cell.label" type="text" style="width: 265px">
+                <input [(ngModel)]="data.cell.label" type="text" style="width: 205px">
             </div>
             <div *ngIf="data.cell.type === columnType.variable" class="my-form-field" style="display: inline-block; margin-left: 16px;">
                 <span>{{'table.cell-value-format' | translate}}</span>
-                <input [(ngModel)]="data.cell.valueFormat" type="text" style="width: 265px">
+                <input [(ngModel)]="data.cell.valueFormat" type="text" style="width: 205px">
             </div>
         </div>
         <div *ngIf="data.cell.type === columnType.variable || data.cell.type === columnType.device" class="my-form-field variable-input">

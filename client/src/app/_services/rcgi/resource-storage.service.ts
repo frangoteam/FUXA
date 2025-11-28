@@ -44,6 +44,12 @@ export abstract class ResourceStorageService {
 
     public abstract getDaqValues(query: DaqQuery): Observable<any>;
 
+    public abstract getSchedulerData(id: string): Observable<any>;
+
+    public abstract setSchedulerData(id: string, data: any): Observable<any>;
+
+    public abstract deleteSchedulerData(id: string): Observable<any>;
+
     public abstract heartbeat(activity: boolean): Observable<any>;
 
     public abstract downloadFile(fileName: string, type: CommanType): Observable<Blob>;

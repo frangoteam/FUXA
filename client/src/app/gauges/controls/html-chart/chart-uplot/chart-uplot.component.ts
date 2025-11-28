@@ -1,15 +1,15 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 
-import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType, ChartLineZone } from '../../../../_models/chart';
+import { ChartLegendMode, ChartRangeType, ChartRangeConverter, ChartLine, ChartViewType, ChartLineZone, Chart } from '../../../../_models/chart';
 import { NgxUplotComponent, NgxSeries, ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
-import { DaqQuery, DateFormatType, TimeFormatType, IDateRange, GaugeChartProperty, DaqChunkType } from '../../../../_models/hmi';
+import { DaqQuery, DateFormatType, TimeFormatType, IDateRange, GaugeChartProperty, DaqChunkType, GaugeEventType } from '../../../../_models/hmi';
 import { Utils } from '../../../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
 import { MatDialog as MatDialog } from '@angular/material/dialog';
-import { Subject, interval, timer } from 'rxjs';
-import { delay, takeUntil } from 'rxjs/operators';
+import { Subject, from, interval, merge, of, timer } from 'rxjs';
+import { catchError, concatMap, delay, finalize, takeUntil, tap } from 'rxjs/operators';
 import { ScriptService } from '../../../../_services/script.service';
 import { ProjectService } from '../../../../_services/project.service';
 import { ScriptParam, ScriptParamType } from '../../../../_models/script';
@@ -22,8 +22,8 @@ import { HmiService } from '../../../../_services/hmi.service';
 })
 export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('chartPanel', {static: false}) public chartPanel: ElementRef;
-    @ViewChild('nguplot', {static: false}) public nguplot: NgxUplotComponent;
+    @ViewChild('chartPanel', { static: false }) public chartPanel: ElementRef;
+    @ViewChild('nguplot', { static: false }) public nguplot: NgxUplotComponent;
 
     @Input() options: ChartOptions;
     @Output() onTimeRange: EventEmitter<DaqQuery> = new EventEmitter();
@@ -39,11 +39,17 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     range: ZoomRangeType = { from: Date.now(), to: Date.now(), zoomStep: 0 };
     mapData: MapDataDictionary = {};
     pauseMemoryValue: ValueDictionary = {};
-    private destroy$ = new Subject<void>();
     property: GaugeChartProperty;
     chartName: string;
     addValueInterval = 0;
     zoomSize = 0;
+    eventChartClick = Utils.getEnumKey(GaugeEventType, GaugeEventType.click);
+
+    private destroy$ = new Subject<void>();
+    private daqCancel$ = new Subject<void>();
+    private cancel$() {
+        return merge(this.daqCancel$, this.destroy$);
+    }
 
     constructor(
         private projectService: ProjectService,
@@ -143,14 +149,49 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onDaqQuery(daqQuery?: DaqQuery) {
+        this.daqCancel$.next();
         if (daqQuery) {
             this.lastDaqQuery = <DaqQuery>Utils.mergeDeep(this.lastDaqQuery, daqQuery);
         }
-        this.lastDaqQuery.chunked = true;
-        this.onTimeRange.emit(this.lastDaqQuery);
-        if (this.withToolbar) {
-            this.setLoading(true);
+        const TIME_CHUNK_SIZE = 60 * 60 * 1000 * 12;    // 12 hours in ms
+        const chunks = ChartUplotComponent.splitRangeIntoChunks(this.lastDaqQuery.from, this.lastDaqQuery.to, TIME_CHUNK_SIZE);
+        if (!chunks.length) {
+            return;
         }
+        this.setLoading(true);
+
+        from(chunks).pipe(
+            concatMap(c =>
+                this.hmiService.getDaqValues({ sids: this.lastDaqQuery.sids, from: c.from, to: c.to }).pipe(
+                    takeUntil(this.cancel$()),
+                    tap(values => {
+                        this.setValues(values, { index: c.idx + 1, of: c.total });
+                    }),
+                    catchError(err => {
+                        console.error('DAQ chunk error', err);
+                        return of(null as any);
+                    })
+                )
+            ),
+            takeUntil(this.daqCancel$),
+            finalize(() => {
+                this.setLoading(false);
+            })
+        ).subscribe();
+    }
+
+    private static splitRangeIntoChunks(fromMs: number, toMs: number, chunkMs: number) {
+        const chunks: { from: number; to: number; idx: number; total: number }[] = [];
+        if (toMs <= fromMs) return chunks;
+
+        const total = Math.ceil((toMs - fromMs) / chunkMs);
+        let end = toMs;
+        for (let i = 0; i < total; i++) {
+            const start = Math.max(fromMs, end - chunkMs);
+            chunks.push({ from: start, to: end, idx: i, total });
+            end = start;
+        }
+        return chunks;
     }
 
     onRefresh(fromRefresh?: boolean) {
@@ -201,7 +242,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             this.options.height -= size;    // title
 
             size = Utils.getDomTextHeight(this.options.axisLabelFontSize, this.options.fontFamily);
-            if (size < 10) {size = 10;}
+            if (size < 10) {
+                size = 10;
+            }
             this.options.height -= size;    // axis
             this.nguplot.resize(this.options.height, this.options.width);
         }
@@ -228,6 +271,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.nguplot.init(this.options, (this.property?.type === ChartViewType.custom) ? true : false);
         this.updateDomOptions(this.nguplot);
+        if (!this.isEditor && this.property?.events?.find(ev => ev.type === this.eventChartClick)) {
+            this.nguplot.onChartClick = this.handleChartClick.bind(this);
+        }
     }
 
     public setInitRange(startRange?: string) {
@@ -276,8 +322,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     public addLine(id: string, name: string, line: ChartLine, addYaxisToLabel: boolean) {
         if (!this.mapData[id]) {
             let linelabel = line.label || name;
-            if (addYaxisToLabel)
-                {linelabel = `Y${line.yaxis} - ${linelabel}`;}
+            if (addYaxisToLabel) {
+                linelabel = `Y${line.yaxis} - ${linelabel}`;
+            }
             let serie = <NgxSeries>{ label: linelabel, stroke: line.color, spanGaps: true };
             if (line.yaxis > 1) {
                 serie.scale = line.yaxis.toString();
@@ -341,10 +388,10 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
 
             const nextMin = sorted[i + 1]?.min;
             if (nextMin !== undefined && r.max < nextMin) {
-            result.push([r.max, color]);
+                result.push([r.max, color]);
             } else if (nextMin === undefined) {
-            // last zone – we’ll add +∞ after the loop
-            result.push([r.max, color]);
+                // last zone – we’ll add +∞ after the loop
+                result.push([r.max, color]);
             }
         });
 
@@ -353,7 +400,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         result.push([Infinity, lastColor]);
 
         return result;
-        }
+    }
 
     /**
      * add value to a realtime chart
@@ -435,18 +482,17 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.chunkBuffer.set(chunk.index, values);
         this.processedChunks.add(chunk.index);
 
-        // If all expected chunks have been received
-        if (this.chunkBuffer.size === this.totalChunks) {
-            const sortedChunks = Array.from(this.chunkBuffer.entries())
-                .sort((a, b) => a[0] - b[0])
-                .map(entry => entry[1]);
+        const partialSorted = Array.from(this.chunkBuffer.entries())
+            .sort((a, b) => a[0] - b[0])
+            .map(entry => entry[1]);
 
-            const mergedData = this.buildUnifiedData(sortedChunks);
+        const mergedData = this.buildUnifiedData(partialSorted);
+        this.nguplot.setData(mergedData);
+        this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
 
-            this.nguplot.setData(mergedData);
-            this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
-
-            setTimeout(() => this.setLoading(false), 300);
+        const done = this.chunkBuffer.size === this.totalChunks;
+        if (done) {
+            setTimeout(() => this.setLoading(false), 200);
         }
     }
 
@@ -534,6 +580,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private setLoading(load: boolean) {
+        if (!this.withToolbar) { return; }
+
         if (load) {
             timer(10000).pipe(
                 takeUntil(this.destroy$)
@@ -557,7 +605,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this.options.axisLabelFontSize) {
                 font = this.options.axisLabelFontSize + 'px';
             }
-            if (this.options.fontFamily) {font += ' ' + this.options.fontFamily;}
+            if (this.options.fontFamily) { font += ' ' + this.options.fontFamily; }
             this.options.axes[i].font = font;
             this.options.axes[i].labelFont = font;
             this.options.axes[i].ticks = { width: 1 / devicePixelRatio };
@@ -565,7 +613,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.options.axes[i].grid.stroke = this.options.gridLineColor;
                 this.options.axes[i].ticks.stroke = this.options.gridLineColor;
             }
-            if (this.options.axisLabelColor) {this.options.axes[i].stroke = this.options.axisLabelColor;}
+            if (this.options.axisLabelColor) { this.options.axes[i].stroke = this.options.axisLabelColor; }
         }
 
         let always = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.always);
@@ -574,11 +622,11 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.options.legend = { show: (this.options.legendMode === always || this.options.legendMode === bottom), width: 1 };
         this.options.tooltip = { show: (this.options.legendMode === always || this.options.legendMode === follow) };
         // Axes label
-        if (this.options.axisLabelX) {this.options.axes[0].label = this.options.axisLabelX;}
-        if (this.options.axisLabelY1) {this.options.axes[1].label = this.options.axisLabelY1;}
-        if (this.options.axisLabelY2) {this.options.axes[2].label = this.options.axisLabelY2;}
-        if (this.options.axisLabelY3) {this.options.axes[3].label = this.options.axisLabelY3;}
-        if (this.options.axisLabelY4) {this.options.axes[4].label = this.options.axisLabelY4;}
+        if (this.options.axisLabelX) { this.options.axes[0].label = this.options.axisLabelX; }
+        if (this.options.axisLabelY1) { this.options.axes[1].label = this.options.axisLabelY1; }
+        if (this.options.axisLabelY2) { this.options.axes[2].label = this.options.axisLabelY2; }
+        if (this.options.axisLabelY3) { this.options.axes[3].label = this.options.axisLabelY3; }
+        if (this.options.axisLabelY4) { this.options.axes[4].label = this.options.axisLabelY4; }
     }
 
     private updateDomOptions(ngup: NgxUplotComponent) {
@@ -586,16 +634,18 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         if (ele) {
             let title = ele[0];
             if (this.options.titleHeight) {
-                if (this.options.axisLabelColor) {title.style.color = this.options.axisLabelColor;}
-                if (this.options.titleHeight) {title.style.fontSize = this.options.titleHeight + 'px';}
-                if (this.options.fontFamily) {title.style.fontFamily = this.options.fontFamily;}
+                if (this.options.axisLabelColor) { title.style.color = this.options.axisLabelColor; }
+                if (this.options.titleHeight) { title.style.fontSize = this.options.titleHeight + 'px'; }
+                if (this.options.fontFamily) { title.style.fontFamily = this.options.fontFamily; }
             } else {
                 title.style.display = 'none';
             }
         }
         let legend = this.chartPanel.nativeElement.querySelector('.u-legend');
         if (legend) {
-            if (this.options.axisLabelColor) {legend.style.color = this.options.axisLabelColor;}
+            if (this.options.axisLabelColor) {
+                legend.style.color = this.options.axisLabelColor;
+            }
             legend.style.lineHeight = 0;
         }
         this.chartPanel.nativeElement.style.backgroundColor = this.options.colorBackground;
@@ -607,11 +657,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             let scriptToRun = Utils.clone(script);
             let chart = this.hmiService.getChart(this.property.id);
             this.reloadActive = true;
-            scriptToRun.parameters = [<ScriptParam>{
-                type: ScriptParamType.chart,
-                value: chart?.lines,
-                name: script.parameters[0]?.name
-            }];
+            scriptToRun.parameters = this.getCustomParameters(script.parameters, chart);
             this.scriptService.runScript(scriptToRun).pipe(
                 delay(200)
             ).subscribe(customData => {
@@ -661,6 +707,54 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => {
             this.setLoading(false);
         }, 500);
+    }
+
+    handleChartClick(x: number, y: number) {
+        const eventClick = this.property?.events?.find(ev => ev.type === this.eventChartClick);
+        const script = this.projectService.getScripts()?.find(script => script.id === eventClick?.actparam);
+        if (eventClick && script) {
+            let scriptToRun = Utils.clone(script);
+            let chart = this.hmiService.getChart(this.property.id);
+            this.reloadActive = true;
+            scriptToRun.parameters = this.getCustomParameters(script.parameters, chart, x, y);
+            this.scriptService.runScript(scriptToRun).pipe(
+                delay(200)
+            ).subscribe(customData => {
+                this.setCustomValues(customData);
+            }, err => {
+                console.error(err);
+            }, () => {
+                this.reloadActive = false;
+            });
+        }
+    }
+
+    getCustomParameters(params: ScriptParam[], chart: Chart, x: number = null, y: number = null): ScriptParam[] {
+        let result = [];
+        for (let param of params) {
+            if (param.type === ScriptParamType.chart) {
+                result.push(<ScriptParam>{
+                    type: ScriptParamType.chart,
+                    value: chart?.lines,
+                    name: param?.name
+                });
+            } else if (param.type === ScriptParamType.value) {
+                let scriptParam = <ScriptParam>{
+                    type: param.type,
+                    value: param.value,
+                    name: param.name
+                };
+                if (param.name.toLocaleLowerCase().indexOf('x') !== -1) {
+                    scriptParam.value = x;
+                } else if (param.name.toLocaleLowerCase().indexOf('y') !== -1) {
+                    scriptParam.value = y;
+                }
+                result.push(scriptParam);
+            } else {
+                result.push(param);
+            }
+        }
+        return result;
     }
 }
 
