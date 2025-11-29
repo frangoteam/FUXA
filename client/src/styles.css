@@ -663,6 +663,12 @@ mat-toolbar-row {
     align-items: unset !important;
 }
 
+.dark-theme .mat-mdc-icon-button.mat-mdc-button-base {
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0px !important;
+}
+
 .mat-dialog-title {
     margin: 0 0 12px !important;
     width: calc(100% - 50px);
@@ -1004,6 +1010,10 @@ mat-toolbar-row {
 }
 
 /* standard */
+.hidden {
+    display: none !important;
+}
+
 .inbk {
     display: inline-block;
 }

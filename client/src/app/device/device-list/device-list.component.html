@@ -5,8 +5,7 @@
         </button>
         <div class="my-form-field" style="padding-right: 10px;">
             <span>{{'device.list-device' | translate}}</span>
-            <mat-select [(value)]="deviceSelected" style="width: 300px"
-                (selectionChange)="onDeviceChange($event.source)">
+            <mat-select [(value)]="deviceSelected" style="width: 300px" (selectionChange)="onDeviceChange($event.source)">
                 <mat-option *ngFor="let device of devicesValue()" [value]="device">
                     {{ device.name }}
                 </mat-option>
@@ -17,148 +16,147 @@
             <input (keyup)="applyFilter($event.target.value)" style="width: 450px" type="text">
         </div>
     </div>
-    <mat-table #table [dataSource]="dataSource" matSort>
-        <!-- Checkbox Column -->
-        <ng-container matColumnDef="select">
-            <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
-                <button *ngIf="!readonly && isDeviceToEdit" mat-icon-button (click)="onAddTag()" class="remove" matTooltip="{{'device.list-add' | translate}}">
-                    <mat-icon>add</mat-icon>
-                </button>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
-                <button mat-icon-button (click)="onEditRow(element)" class="remove" matTooltip="{{'device.list-edit' | translate}}"
-                    *ngIf="!readonly && isToEdit(deviceSelected.type, element)">
-                    <mat-icon>edit</mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
+    <div class="table-container">
+        <div class="table-scroll">
+            <mat-table #table [dataSource]="dataSource" matSort>
+                <!-- Checkbox Column -->
+                <ng-container matColumnDef="select">
+                    <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
+                        <button *ngIf="!readonly && isDeviceToEdit" mat-icon-button (click)="onAddTag()" class="remove" matTooltip="{{'device.list-add' | translate}}">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
+                        <button mat-icon-button (click)="onEditRow(element)" class="remove" matTooltip="{{'device.list-edit' | translate}}"
+                            *ngIf="!readonly && isToEdit(deviceSelected.type, element)">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
 
-        <!-- Name Column -->
-        <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-name' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{getTagLabel(element)}} </mat-cell>
-        </ng-container>
+                <!-- Name Column -->
+                <ng-container matColumnDef="name">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-name' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{getTagLabel(element)}} </mat-cell>
+                </ng-container>
 
-        <!-- Address Column -->
-        <ng-container matColumnDef="address">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-address' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{getAddress(element)}} </mat-cell>
-        </ng-container>
+                <!-- Address Column -->
+                <ng-container matColumnDef="address">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-address' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{getAddress(element)}} </mat-cell>
+                </ng-container>
 
-        <!-- Device Column -->
-        <ng-container matColumnDef="device">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-device' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{deviceSelected.name}} </mat-cell>
-        </ng-container>
+                <!-- Device Column -->
+                <ng-container matColumnDef="device">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-device' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{deviceSelected.name}} </mat-cell>
+                </ng-container>
 
-        <!-- Device Column -->
-        <ng-container matColumnDef="type">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-type' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
-        </ng-container>
+                <!-- Device Column -->
+                <ng-container matColumnDef="type">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-type' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
+                </ng-container>
 
-        <!-- Min Column -->
-        <ng-container matColumnDef="min">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-min' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.min}} </mat-cell>
-        </ng-container>
+                <!-- Min Column -->
+                <ng-container matColumnDef="min">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-min' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.min}} </mat-cell>
+                </ng-container>
 
-        <!-- Max Column -->
-        <ng-container matColumnDef="max">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-max' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.max}} </mat-cell>
-        </ng-container>
+                <!-- Max Column -->
+                <ng-container matColumnDef="max">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-max' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.max}} </mat-cell>
+                </ng-container>
 
-        <!-- Value Column -->
-        <ng-container matColumnDef="value">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-value' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" matTooltip="{{element.value}}"> {{element.value}} </mat-cell>
-        </ng-container>
+                <!-- Value Column -->
+                <ng-container matColumnDef="value">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-value' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.value}}"> {{element.value}} </mat-cell>
+                </ng-container>
 
-        <!-- Timestamp Column -->
-        <ng-container matColumnDef="timestamp">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-timestamp' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element"> {{element.timestamp | date : 'dd-MM-yyyy HH:mm:ss' }} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="description">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-description' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" matTooltip="{{element.description}}">{{ element.description }}</mat-cell>
-        </ng-container>
+                <!-- Timestamp Column -->
+                <ng-container matColumnDef="timestamp">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-timestamp' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.timestamp | date : 'dd-MM-yyyy HH:mm:ss' }} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="description">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-description' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.description}}">{{ element.description }}</mat-cell>
+                </ng-container>
 
-        <!-- Logger Column -->
-        <ng-container matColumnDef="logger">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <div *ngIf="element.daq">
-                    <ng-container *ngIf="element.daq.restored">
-                        <mat-icon>settings_backup_restore</mat-icon>
-                    </ng-container>
-                    <ng-container *ngIf="element.daq.enabled">
-                        <mat-icon>storage</mat-icon>
-                        <span *ngIf="element.daq.interval" style="display: inline-block;vertical-align: super;">
-                            {{element.daq.interval}} s
-                        </span>
-                    </ng-container>
-                </div>
-            </mat-cell>
-        </ng-container>
+                <!-- Logger Column -->
+                <ng-container matColumnDef="logger">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <div *ngIf="element.daq">
+                            <ng-container *ngIf="element.daq.restored">
+                                <mat-icon>settings_backup_restore</mat-icon>
+                            </ng-container>
+                            <ng-container *ngIf="element.daq.enabled">
+                                <mat-icon>storage</mat-icon>
+                                <span *ngIf="element.daq.interval" style="display: inline-block;vertical-align: super;">
+                                    {{element.daq.interval}} s
+                                </span>
+                            </ng-container>
+                        </div>
+                    </mat-cell>
+                </ng-container>
 
-        <!-- Warning Column -->
-        <ng-container matColumnDef="warning">
-            <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
-            <mat-cell *matCellDef="let element" [matTooltip]="element.error ? element.error : null" matTooltipPosition="left">
-                <button mat-icon-button *ngIf="element.error" class="warning">
-                    <mat-icon>warning_amber</mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
+                <!-- Warning Column -->
+                <ng-container matColumnDef="warning">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header></mat-header-cell>
+                    <mat-cell *matCellDef="let element" [matTooltip]="element.error ? element.error : null" matTooltipPosition="left">
+                        <button mat-icon-button *ngIf="element.error" class="warning">
+                            <mat-icon>warning_amber</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
 
-        <!-- Button edit options row -->
-        <ng-container matColumnDef="options">
-            <mat-header-cell *matHeaderCellDef></mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <button mat-icon-button
-                        [matMenuTriggerFor]="options">
-                    <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #options="matMenu" xPosition="before">
-                    <button *ngIf="!readonly && isWithOptions"
-                            mat-menu-item
-                            class="context-menu"
-                            (click)="onEditOptions(element)">
-                        {{'device.list-options' | translate}}
-                    </button>
-                    <button mat-menu-item
-                            class="context-menu"
-                            (click)="onCopyTagToClipboard(element)">
-                        {{'device.list-clipboard' | translate}}
-                    </button>
-                </mat-menu>
-            </mat-cell>
-        </ng-container>
+                <!-- Button edit options row -->
+                <ng-container matColumnDef="options">
+                    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button mat-icon-button [matMenuTriggerFor]="options">
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
+                        <mat-menu #options="matMenu" xPosition="before">
+                            <button *ngIf="!readonly && isWithOptions" mat-menu-item class="context-menu" (click)="onEditOptions(element)">
+                                {{'device.list-options' | translate}}
+                            </button>
+                            <button mat-menu-item class="context-menu" (click)="onCopyTagToClipboard(element)">
+                                {{'device.list-clipboard' | translate}}
+                            </button>
+                        </mat-menu>
+                    </mat-cell>
+                </ng-container>
 
-        <!-- Button remove Column -->
-        <ng-container matColumnDef="remove">
-            <mat-header-cell *matHeaderCellDef>
-                <button *ngIf="!readonly" mat-icon-button (click)="onRemoveAll()" class="remove" matTooltip="{{'device.list-remove-all' | translate}}">
-                    <mat-icon>clear</mat-icon>
-                </button>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element">
-                <button *ngIf="!readonly" mat-icon-button (click)="$event.stopPropagation();onRemoveRow(element)" class="remove" matTooltip="{{'device.list-remove' | translate}}">
-                    <mat-icon>clear</mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
+                <!-- Button remove Column -->
+                <ng-container matColumnDef="remove">
+                    <mat-header-cell *matHeaderCellDef>
+                        <button *ngIf="!readonly" mat-icon-button (click)="onRemoveAll()" class="remove" matTooltip="{{'device.list-remove-all' | translate}}">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <button *ngIf="!readonly" mat-icon-button (click)="$event.stopPropagation();onRemoveRow(element)" class="remove"
+                            matTooltip="{{'device.list-remove' | translate}}">
+                            <mat-icon>clear</mat-icon>
+                        </button>
+                    </mat-cell>
+                </ng-container>
 
-        <!-- Direction Column -->
-        <ng-container matColumnDef="direction">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-direction' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" matTooltip="{{element.direction}}"> {{element.direction}} </mat-cell>
-        </ng-container>
+                <!-- Direction Column -->
+                <ng-container matColumnDef="direction">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-direction' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element" matTooltip="{{element.direction}}"> {{element.direction}} </mat-cell>
+                </ng-container>
 
-        <mat-header-row *matHeaderRowDef="displayedColumns" [ngStyle]="{'min-width.px': tableWidth}"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row" [ngStyle]="{'min-width.px': tableWidth}"></mat-row>
-    </mat-table>
-    <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" style="position: relative; right: 100px;"></mat-paginator>
+                <mat-header-row *matHeaderRowDef="displayedColumns" [ngStyle]="{'min-width.px': tableWidth}" sticky></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row" [ngStyle]="{'min-width.px': tableWidth}"></mat-row>
+            </mat-table>
+        </div>
+        <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="paginator"></mat-paginator>
+    </div>
 </div>
