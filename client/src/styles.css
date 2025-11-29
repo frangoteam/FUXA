@@ -1014,6 +1014,10 @@ mat-toolbar-row {
     display: none !important;
 }
 
+.mdc-checkbox .mdc-checkbox__native-control {
+    display: none !important;
+}
+
 .inbk {
     display: inline-block;
 }

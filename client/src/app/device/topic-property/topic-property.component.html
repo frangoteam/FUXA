@@ -1,167 +1,162 @@
 <div style="width: 100%;position: relative;">
-    <div style="width: 840px;">
-        <h1 mat-dialog-title style="display:inline-block; cursor:move; padding-top: 15px" mat-dialog-draggable>
-            {{'device.browsetopics-property-title' | translate}}
-        </h1>
-        <mat-icon (click)="onNoClick()" style="float:right;cursor:pointer;color:gray;position: relative; top: 10px; right: 0px">clear</mat-icon>
-        <mat-tab-group style="width: 100%; height: 100%" #grptabs>
-            <mat-tab label="{{'device.browsetopics-property-sub' | translate}}" #tabsub>
-                <div style="display: block; margin-bottom: 5px;margin-top: 10px">
-                    <div class="my-form-field" style="display:inline-block; margin-right: 10px;">
-                        <span>{{'device.discovery-topics' | translate}}</span>
-                        <input [(ngModel)]="topicSource" style="width: 400px" type="text" [disabled]="isSubscriptionEdit()">
-                    </div>
-                    <button mat-icon-button (click)="onDiscoveryTopics(topicSource)" style="display:inline-block;" *ngIf="!discoveryWait" [disabled]="isSubscriptionEdit()">
-                        <mat-icon>search</mat-icon>
-                    </button>
-                    <div style="display:inline-block; margin-left: 10px;width: 30px; vertical-align: middle;" *ngIf="discoveryWait">
-                        <mat-spinner diameter="20"></mat-spinner>
-                    </div>
-                    <button mat-icon-button (click)="onClearDiscovery()" style="display:inline-block;" [disabled]="isSubscriptionEdit()">
-                        <mat-icon>delete_outline</mat-icon>
-                    </button>
-                    <div *ngIf="discoveryError" style="display: block; color: red;">
-                        {{discoveryError}}
-                    </div>
-                </div>
-                <div class="browser-result">
-                    <div *ngFor="let topic of topicsList | keyvalue" class="browser-item">
-                        <div class="topic" (click)="selectTopic(topic);" [ngClass]="{'topic-active': isTopicSelected(topic)}">
-                            <div class="topic-text">
-                                {{topic.key}}
-                            </div>
-                            <div class="topic-value">
-                                {{topic.value.content}}
-                            </div>
+    <div style="width: 890px;">
+        <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'device.browsetopics-property-title' | translate}}</h1>
+        <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+        <div mat-dialog-content>
+            <mat-tab-group style="width: 100%; height: 100%" #grptabs>
+                <mat-tab label="{{'device.browsetopics-property-sub' | translate}}" #tabsub>
+                    <div style="display: block; margin-top: 10px">
+                        <div class="my-form-field" style="display:inline-block; margin-right: 10px;">
+                            <span>{{'device.discovery-topics' | translate}}</span>
+                            <input [(ngModel)]="topicSource" style="width: 400px" type="text" [disabled]="isSubscriptionEdit()">
+                        </div>
+                        <button mat-icon-button (click)="onDiscoveryTopics(topicSource)" style="display:inline-block;vertical-align: middle;" *ngIf="!discoveryWait" [disabled]="isSubscriptionEdit()">
+                            <mat-icon>search</mat-icon>
+                        </button>
+                        <div style="display:inline-block; margin-left: 10px;width: 30px; vertical-align: middle;" *ngIf="discoveryWait">
+                            <mat-spinner diameter="20"></mat-spinner>
+                        </div>
+                        <button mat-icon-button (click)="onClearDiscovery()" style="display:inline-block;vertical-align: middle;" [disabled]="isSubscriptionEdit()">
+                            <mat-icon>delete_outline</mat-icon>
+                        </button>
+                        <div *ngIf="discoveryError" style="display: block; color: red;">
+                            {{discoveryError}}
                         </div>
                     </div>
-                </div>
-                <div class="select-tool">
-                    <div class="my-form-field select-item">
-                        <span>{{'device.topic-selected' | translate}}</span>
-                        <input [(ngModel)]="selectedTopic.key"
-                               (keyup)="onSelectedChanged()"
-                               class="my-form-readonly-input"
-                               type="text">
-                    </div>
-                    <div class="my-form-field add-payload">
-                        <button mat-icon-button (click)="onAddSubscribeAttribute()" [disabled]="!this.selectedTopic.key || editSubscription">
-                            <mat-icon>add_circle_outline</mat-icon>
-                        </button>
-                        {{'device.topic-publish-add-item' | translate}}
-                    </div>
-                    <mat-button-toggle-group class="toggle-group"
-                                             [(ngModel)]="topicSelectedSubType"
-                                             (change)="onSubTopicValChange($event.value)"
-                                             [disabled]="editSubscription">
-                        <mat-button-toggle value="raw">{{'device.topic-raw' | translate}}</mat-button-toggle>
-                        <mat-button-toggle value="json">{{'device.topic-json' | translate}}</mat-button-toggle>
-                    </mat-button-toggle-group>
-                    <button style="margin-left: 20px" mat-raised-button (click)="onAddToSubscribe()" color="primary" [disabled]="!selectedTopic.key || !topicContent?.length">
-                        {{'device.topic-subscribe' | translate}}
-                    </button>
-                </div>
-                <div class="my-form-field" style="margin-top:10px;width: 100%;overflow-x: hidden;">
-                    <div  class="topic-subscription-header">
-                        <span style="display:inline-block; width:230px">{{'device.topic-subscription-name' | translate}}</span>
-                        <span style="display:inline-block">{{'device.topic-subscription-address' | translate}}</span>
-                        <span style="float:right;">
-                            <mat-checkbox [(ngModel)]="allChecked" (change)="toggleAllChecked()" [disabled]="editSubscription">
-                                {{'device.topic-select-all' | translate}}
-                            </mat-checkbox>
-                        </span>
-                    </div>
-                    <div class="topic-subscription-result">
-                        <div *ngFor="let tcontent of topicContent">
-                            <div class="topic">
-                                <div class="topic-name">
-                                    <input [(ngModel)]="tcontent.name" type="text">
-                                </div>
-                                <div class="topic-name">
-                                    <input [(ngModel)]="tcontent.key" type="text" [disabled]="topicSelectedSubType === 'raw'">
+                    <div class="browser-result">
+                        <div *ngFor="let topic of topicsList | keyvalue" class="browser-item">
+                            <div class="topic" (click)="selectTopic(topic);" [ngClass]="{'topic-active': isTopicSelected(topic)}">
+                                <div class="topic-text">
+                                    {{topic.key}}
                                 </div>
                                 <div class="topic-value">
-                                    {{tcontent.value}}
-                                </div>
-                                <div class="topic-check">
-                                    <mat-checkbox [(ngModel)]="tcontent.checked" (change)="isSubscriptionValid()" value="true" [disabled]="editSubscription"></mat-checkbox>
+                                    {{topic.value.content}}
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </mat-tab>
-            <mat-tab label="{{'device.browsetopics-property-pub' | translate}}" #tabpub>
-                <div style="display: block;margin-top: 10px">
-                    <div class="my-form-field" style="display:block; margin-right: 10px;margin-bottom: 10px;">
-                        <span>{{'device.topic-publish-name' | translate}}</span>
-                        <input [(ngModel)]="publishTopicName" style="width: 400px;" type="text">
-                    </div>
-                    <div class="my-form-field" style="display:inline-block; margin-right: 10px;margin-bottom: 10px;">
-                        <span>{{'device.topic-publish-path' | translate}}</span>
-                        <input [(ngModel)]="publishTopicPath" (keyup)="stringifyPublishItem()" style="width: 400px;" type="text">
-                    </div>
-                    <mat-button-toggle-group class="toggle-group" [(ngModel)]="topicSelectedPubType" (change)="onPubTopicValChange($event.value)">
-                        <mat-button-toggle value="raw" [disabled]="!isPublishTypeToEnable('raw')">{{'device.topic-raw' | translate}}</mat-button-toggle>
-                        <mat-button-toggle value="json" [disabled]="!isPublishTypeToEnable('json')">{{'device.topic-json' | translate}}</mat-button-toggle>
-                    </mat-button-toggle-group>
-                    <button style="margin-left: 20px" mat-raised-button (click)="onAddToPuplish()" [disabled]="!isPublishValid()" color="primary">{{'device.topic-publish' |
-                        translate}}</button>
-                    <div class="my-form-field" style="display: block;">
-                        <button mat-icon-button (click)="onAddPublishItem()">
-                            <mat-icon>add_circle_outline</mat-icon>
+                    <div class="select-tool">
+                        <div class="my-form-field select-item">
+                            <span>{{'device.topic-selected' | translate}}</span>
+                            <input [(ngModel)]="selectedTopic.key" (keyup)="onSelectedChanged()" class="my-form-readonly-input" type="text">
+                        </div>
+                        <div class="my-form-field add-payload">
+                            <button mat-icon-button (click)="onAddSubscribeAttribute()" style="vertical-align: middle;" [disabled]="!this.selectedTopic.key || editSubscription">
+                                <mat-icon>add_circle_outline</mat-icon>
+                            </button>
                             {{'device.topic-publish-add-item' | translate}}
-                        </button>
-                        <div style="height: 200px; border: 1px solid var(--formBorder); padding: 5px 5px 3px 8px; overflow: auto;margin-bottom: 10px;">
-                            <div *ngFor="let item of pubPayload.items; index as i" class="item">
-                                <div class="my-form-field" style="margin-right: 10px;">
-                                    <span>{{'device.topic-publish-key' | translate}}</span>
-                                    <input [(ngModel)]="item.key" (keyup)="stringifyPublishItem()" style="width: 140px;" type="text" [disabled]="topicSelectedPubType === 'raw'">
-                                </div>
-                                <div class="my-form-field" style="width: 120px;margin-right: 16px;">
-                                    <span>{{'device.topic-publish-type' | translate}}</span>
-                                    <mat-select [(value)]="item.type" (selectionChange)="stringifyPublishItem();onItemTypeChanged(item);">
-                                        <mat-option *ngFor="let type of itemType | enumToArray" [value]="type.key">
-                                            {{ type.value }}
-                                        </mat-option>
-                                    </mat-select>
-                                </div>
-                                <div [ngSwitch]="item.type" style="display: inline-block;">
-                                    <div *ngSwitchCase="itemTag">
-                                        <flex-variable style="display: block" [data]="data" (onchange)="onSetPublishItemTag(item, $event)" [variableId]="item.value"
-                                                [withStaticValue]="false"></flex-variable>
-                                    </div>
-                                    <div *ngSwitchCase="itemTimestamp" class="my-form-field" style="margin-bottom: 5px;">
-                                        <span>{{'device.topic-publish-timestamp' | translate}}</span>
-                                        <input [(ngModel)]="item.value" style="width: 478px;" type="text" [disabled]="true">
-                                    </div>
-                                    <div *ngSwitchCase="itemValue" class="my-form-field" style="margin-bottom: 5px;">
-                                        <span>{{'device.topic-publish-value' | translate}}</span>
-                                        <input [(ngModel)]="item.value" style="width: 478px;" type="text" [disabled]="true">
-                                    </div>
-                                    <div *ngSwitchCase="itemStatic" class="my-form-field" style="margin-bottom: 5px;">
-                                        <span>{{'device.topic-publish-static' | translate}}</span>
-                                        <input [(ngModel)]="item.value" (keyup)="stringifyPublishItem()" style="width: 478px;" type="text">
-                                    </div>
-                                </div>
-                                <div style="float: right;padding-top: 5px;">
-                                    <button mat-icon-button (click)="onRemovePublishItem(i)" class="remove">
-                                        <mat-icon>clear</mat-icon>
-                                    </button>
-                                </div>
-                            </div>
                         </div>
-                        <div class="my-form-field" style="display:inline-block; width: 826px">
-                            <span>{{'device.topic-publish-content' | translate}}</span>
-                            <div class="topic-publish-result" [innerHTML]="pubPayloadResult">
+                        <mat-button-toggle-group class="toggle-group" [(ngModel)]="topicSelectedSubType" (change)="onSubTopicValChange($event.value)" [disabled]="editSubscription">
+                            <mat-button-toggle value="raw">{{'device.topic-raw' | translate}}</mat-button-toggle>
+                            <mat-button-toggle value="json">{{'device.topic-json' | translate}}</mat-button-toggle>
+                        </mat-button-toggle-group>
+                        <button style="margin-left: 20px;vertical-align: baseline;height: 30px;" mat-raised-button (click)="onAddToSubscribe()" color="primary" [disabled]="!selectedTopic.key || !topicContent?.length">
+                            {{'device.topic-subscribe' | translate}}
+                        </button>
+                    </div>
+                    <div class="my-form-field" style="margin-top:10px;width: 100%;overflow-x: hidden;">
+                        <div class="topic-subscription-header">
+                            <span style="display:inline-block; width:230px">{{'device.topic-subscription-name' | translate}}</span>
+                            <span style="display:inline-block">{{'device.topic-subscription-address' | translate}}</span>
+                            <span style="float:right;">
+                                <mat-checkbox [(ngModel)]="allChecked" (change)="toggleAllChecked()" [disabled]="editSubscription">
+                                    {{'device.topic-select-all' | translate}}
+                                </mat-checkbox>
+                            </span>
+                        </div>
+                        <div class="topic-subscription-result">
+                            <div *ngFor="let tcontent of topicContent">
+                                <div class="topic">
+                                    <div class="topic-name">
+                                        <input [(ngModel)]="tcontent.name" type="text">
+                                    </div>
+                                    <div class="topic-name">
+                                        <input [(ngModel)]="tcontent.key" type="text" [disabled]="topicSelectedSubType === 'raw'">
+                                    </div>
+                                    <div class="topic-value">
+                                        {{tcontent.value}}
+                                    </div>
+                                    <div class="topic-check">
+                                        <mat-checkbox [(ngModel)]="tcontent.checked" style="height: 18px; width: 18px;" (change)="isSubscriptionValid()" value="true" [disabled]="editSubscription"></mat-checkbox>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </mat-tab>
-        </mat-tab-group>
-    </div>
-    <div mat-dialog-actions class="dialog-action">
-        <button mat-raised-button (click)="onNoClick()">{{'dlg.close' | translate}}</button>
+                </mat-tab>
+                <mat-tab label="{{'device.browsetopics-property-pub' | translate}}" #tabpub>
+                    <div style="display: block;margin-top: 10px">
+                        <div class="my-form-field" style="display:block; margin-right: 10px;margin-bottom: 10px;">
+                            <span>{{'device.topic-publish-name' | translate}}</span>
+                            <input [(ngModel)]="publishTopicName" style="width: 400px;" type="text">
+                        </div>
+                        <div class="my-form-field" style="display:inline-block; margin-right: 10px;margin-bottom: 10px;">
+                            <span>{{'device.topic-publish-path' | translate}}</span>
+                            <input [(ngModel)]="publishTopicPath" (keyup)="stringifyPublishItem()" style="width: 400px;" type="text">
+                        </div>
+                        <mat-button-toggle-group class="toggle-group" [(ngModel)]="topicSelectedPubType" (change)="onPubTopicValChange($event.value)">
+                            <mat-button-toggle value="raw" [disabled]="!isPublishTypeToEnable('raw')">{{'device.topic-raw' | translate}}</mat-button-toggle>
+                            <mat-button-toggle value="json" [disabled]="!isPublishTypeToEnable('json')">{{'device.topic-json' | translate}}</mat-button-toggle>
+                        </mat-button-toggle-group>
+                        <button style="margin-left: 20px;vertical-align: baseline;height: 30px;" mat-raised-button (click)="onAddToPuplish()" [disabled]="!isPublishValid()" color="primary">{{'device.topic-publish' |
+                            translate}}</button>
+                        <div class="my-form-field" style="display: block;">
+                            <button mat-icon-button (click)="onAddPublishItem()" style="vertical-align: middle;">
+                                <mat-icon>add_circle_outline</mat-icon>
+                            </button>
+                            {{'device.topic-publish-add-item' | translate}}
+                            <div style="height: 200px; border: 1px solid var(--formBorder); padding: 5px 5px 3px 8px; overflow: auto;margin-bottom: 10px;">
+                                <div *ngFor="let item of pubPayload.items; index as i" class="item">
+                                    <div class="my-form-field" style="margin-right: 10px;">
+                                        <span>{{'device.topic-publish-key' | translate}}</span>
+                                        <input [(ngModel)]="item.key" (keyup)="stringifyPublishItem()" style="width: 140px;" type="text"
+                                            [disabled]="topicSelectedPubType === 'raw'">
+                                    </div>
+                                    <div class="my-form-field" style="width: 120px;margin-right: 16px;">
+                                        <span>{{'device.topic-publish-type' | translate}}</span>
+                                        <mat-select [(value)]="item.type" (selectionChange)="stringifyPublishItem();onItemTypeChanged(item);">
+                                            <mat-option *ngFor="let type of itemType | enumToArray" [value]="type.key">
+                                                {{ type.value }}
+                                            </mat-option>
+                                        </mat-select>
+                                    </div>
+                                    <div [ngSwitch]="item.type" style="display: inline-block;">
+                                        <div *ngSwitchCase="itemTag">
+                                            <flex-variable style="display: block" [data]="data" (onchange)="onSetPublishItemTag(item, $event)" [variableId]="item.value"
+                                                [withStaticValue]="false"></flex-variable>
+                                        </div>
+                                        <div *ngSwitchCase="itemTimestamp" class="my-form-field" style="margin-bottom: 5px;">
+                                            <span>{{'device.topic-publish-timestamp' | translate}}</span>
+                                            <input [(ngModel)]="item.value" style="width: 478px;" type="text" [disabled]="true">
+                                        </div>
+                                        <div *ngSwitchCase="itemValue" class="my-form-field" style="margin-bottom: 5px;">
+                                            <span>{{'device.topic-publish-value' | translate}}</span>
+                                            <input [(ngModel)]="item.value" style="width: 478px;" type="text" [disabled]="true">
+                                        </div>
+                                        <div *ngSwitchCase="itemStatic" class="my-form-field" style="margin-bottom: 5px;">
+                                            <span>{{'device.topic-publish-static' | translate}}</span>
+                                            <input [(ngModel)]="item.value" (keyup)="stringifyPublishItem()" style="width: 478px;" type="text">
+                                        </div>
+                                    </div>
+                                    <div style="float: right;padding-top: 5px;">
+                                        <button mat-icon-button (click)="onRemovePublishItem(i)" class="remove">
+                                            <mat-icon>clear</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="_my-form-field" style="display:block;">
+                                <span>{{'device.topic-publish-content' | translate}}</span>
+                                <div class="topic-publish-result" [innerHTML]="pubPayloadResult">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+        <div mat-dialog-actions class="dialog-action">
+            <button mat-raised-button (click)="onNoClick()">{{'dlg.close' | translate}}</button>
+        </div>
     </div>
 </div>
