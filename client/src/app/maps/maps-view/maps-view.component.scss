@@ -17,27 +17,6 @@
             bottom: 0px;
         }
 
-        ::ng-deep .leaflet-popup-content-wrapper {
-            padding: unset;
-            border-radius: unset;
-            background-color: transparent;
-        }
-
-        ::ng-deep .leaflet-popup-content {
-            width: auto !important;
-            border-radius: unset;
-            margin: unset;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        ::ng-deep .leaflet-popup-close-button {
-            font-size: 24px;
-        }
-
-        ::ng-deep .leaflet-popup-tip-container {
-            display: none !important;
-        }
-
         .hidden-trigger {
             position: absolute;
             opacity: 0;
@@ -45,4 +24,85 @@
             z-index: -1;
         }
     }
+}
+:host ::ng-deep .leaflet-popup-content-wrapper {
+    padding: unset;
+    border-radius: unset;
+    background-color: transparent;
+}
+
+:host ::ng-deep .leaflet-popup-content {
+    width: auto !important;
+    border-radius: unset;
+    margin: unset;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+:host ::ng-deep .leaflet-popup-close-button {
+    font-size: 24px;
+}
+
+:host ::ng-deep .leaflet-popup-tip-container {
+    display: none !important;
+}
+
+:host ::ng-deep .fuxa-bubble-marker {
+    position: relative;
+    display: inline-block;
+    transform: translate(-50%, -100%);
+}
+
+/* Rettangolo arrotondato */
+:host ::ng-deep .bubble-content {
+    background: var(--bubble-bg);      /* ✔ colore dinamico */
+    border-radius: 12px;
+    padding: 4px 8px;
+    border: 2px solid var(--bubble-color);  /* ✔ bordo dinamico */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+/* Icona */
+:host ::ng-deep .bubble-icon {
+    font-size: 18px;
+    line-height: 18px;
+    color: var(--bubble-fg);           /* ✔ colore dinamico */
+}
+
+/* Testo */
+:host ::ng-deep .bubble-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--bubble-fg);           /* ✔ colore dinamico */
+}
+
+:host ::ng-deep .bubble-value {
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 4px;
+    color: var(--bubble-fg);
+}
+
+:host ::ng-deep .bubble-column {
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+/* Puntatore */
+:host ::ng-deep .fuxa-bubble-marker::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -7px;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 7px solid var(--bubble-color);   /* ✔ colore dinamico */
 }

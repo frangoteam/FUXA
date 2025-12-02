@@ -6,6 +6,9 @@ import { ProjectService } from '../../_services/project.service';
 import { MapsLocation, MAPSLOCATION_PREFIX } from '../../_models/maps';
 import { Utils } from '../../_helpers/utils';
 import { View, ViewType } from '../../_models/hmi';
+import { BehaviorSubject, combineLatest, map, Observable, of } from 'rxjs';
+import { Define } from '../../_helpers/define';
+import { FlexDeviceTagValueType } from '../../gauges/gauge-property/flex-device-tag/flex-device-tag.component';
 
 @Component({
     selector: 'app-maps-location-property',
@@ -17,6 +20,11 @@ export class MapsLocationPropertyComponent implements OnInit {
     location: MapsLocation;
     formGroup: UntypedFormGroup;
     views: View[] = [];
+    filteredIcons$: Observable<string[]>;
+    filterText = '';
+    private filterTextSubject = new BehaviorSubject<string>('');
+    icons$: Observable<string[]>;
+    defaultColor = Utils.defaultColor;
 
     constructor(
         public dialogRef: MatDialogRef<MapsLocationPropertyComponent>,
@@ -25,6 +33,21 @@ export class MapsLocationPropertyComponent implements OnInit {
         private projectService: ProjectService,
         @Inject(MAT_DIALOG_DATA) public data: MapsLocation) {
             this.location = this.data ?? new MapsLocation(Utils.getGUID(MAPSLOCATION_PREFIX));
+
+        this.icons$ = of(Define.MaterialIconsRegular).pipe(
+            map((data: string) => data.split('\n')),
+            map(lines => lines.map(line => line.split(' ')[0])),
+            map(names => names.filter(name => !!name))
+        );
+
+        this.filteredIcons$ = combineLatest([
+            this.icons$,
+            this.filterTextSubject.asObservable()
+        ]).pipe(
+            map(([icons, filterText]) =>
+                icons.filter(icon => icon.toLowerCase().includes(filterText.toLowerCase()))
+            )
+        );
     }
 
     ngOnInit() {
@@ -37,6 +60,13 @@ export class MapsLocationPropertyComponent implements OnInit {
             pageId: [this.location.pageId],
             url: [this.location.url],
             description: [this.location.description],
+            showMarkerName: [this.location.showMarkerName],
+            showMarkerIcon: [this.location.showMarkerIcon],
+            showMarkerValue: [this.location.showMarkerValue],
+            markerIcon: [this.location.markerIcon],
+            markerBackground: [this.location.markerBackground ?? '#ffffff'],
+            markerColor: [this.location.markerColor ?? '#000000'],
+            markerTagValueId: [this.location.markerTagValueId]
         });
         this.formGroup.controls.name.addValidators(this.isValidName());
     }
@@ -61,5 +91,13 @@ export class MapsLocationPropertyComponent implements OnInit {
             }
             return null;
         };
+    }
+
+    onFilterChange() {
+        this.filterTextSubject.next(this.filterText);
+    }
+
+    onTagChanged(tag: FlexDeviceTagValueType) {
+        this.formGroup.get('markerTagValueId')?.setValue(tag.variableId);
     }
 }

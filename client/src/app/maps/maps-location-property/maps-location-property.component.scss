@@ -2,7 +2,7 @@
     .container {
         .mat-dialog-content
         {
-            width: 400px;
+            // width: 400px;
             min-height: 220px;
             overflow: hidden;
             padding-bottom: 7px;
@@ -30,5 +30,42 @@
                 }
             }
         }
+    }
+
+    .tab-content {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+        margin-top: 10px;
+    }
+
+    /* Evita che input e select espandano oltre il contenitore */
+    .tab-content input,
+    .tab-content mat-select,
+    .tab-content .my-form-field {
+        max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Per allineare i campi duali senza creare overflow */
+    .form-input-dual {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .form-input-dual .my-form-field {
+        flex: 1 1 150px; /* si adatta e non forza scroll */
+        min-width: 0;   /* fondamentale per evitare overflow su flex */
+    }
+
+    mat-tab-group {
+        width: 100%;
+    }
+
+    ::ng-deep .mat-tab-label {
+        height: 34px !important;
     }
 }

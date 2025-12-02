@@ -4,7 +4,7 @@ import { GaugesManager } from '../../gauges/gauges.component';
 import { FuxaViewComponent } from '../../fuxa-view/fuxa-view.component';
 import { ProjectService } from '../../_services/project.service';
 import { Hmi, View, ViewProperty } from '../../_models/hmi';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MapsLocation, MAPSLOCATION_PREFIX } from '../../_models/maps';
@@ -41,6 +41,7 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
     menuPosition = { x: '0px', y: '0px' };
     private locations: MapsLocation[] = [];
     lastClickMapLocation?: MapsLocation;
+    private markerItemsMap = new Map<string, { nodeIds: string[], domNodes: HTMLElement[] }>();
 
     private openPopups = [];
     private currentPopup: L.Popup | null = null;
@@ -77,6 +78,13 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
 
             this.initMapEvents();
             this.map.invalidateSize();
+
+            this.initWatch();
+            try {
+                this.gaugesManager.emitBindedSignals(this.view.id);
+            } catch (err) {
+                console.error(err);
+            }
         }, 200);
     }
 
@@ -110,15 +118,51 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             popupAnchor: [0, -34]
         });
         this.locations.forEach(loc => {
-            const marker = L.marker([loc.latitude, loc.longitude])
-                .addTo(this.map);
+            const valueHtmlId = Utils.getShortGUID('m_');
+            const color = loc.markerColor ?? '#000000';
+            const background = loc.markerBackground ?? '#ffffff';
+            const icon = loc.markerIcon ? loc.markerIcon : '';
+            const nameHtml = loc.showMarkerName
+                                ? `<div class="bubble-text"
+                                        style="color: var(--bubble-fg);">${loc.name}</div>`
+                                : '';
+            const iconHtml = loc.showMarkerIcon
+                                ? `<span class="material-icons bubble-icon"
+                                        style="color: var(--bubble-fg);">${icon}</span>`
+                                : '';
+            const valueHtml = loc.markerTagValueId
+                                ? `<div class="bubble-value" id="${valueHtmlId}">##.##</div>`
+                                : '';
+            const markerHtml = `
+            <div class="fuxa-bubble-marker"
+                 style="--bubble-color:${color};
+                        --bubble-bg:${background};
+                        --bubble-fg:${color};">
+
+                <div class="bubble-content bubble-column">
+                    ${iconHtml}
+                    ${nameHtml}
+                    ${valueHtml}
+                </div>
+            </div>`;
+            const marker = L.marker([loc.latitude, loc.longitude], {
+                icon: L.divIcon({
+                    className: 'fuxa-bubble-icon',
+                    html: markerHtml,
+                    iconSize: undefined,  // lasciamo che si adatti
+                    iconAnchor: [0, 0]    // correggiamo via CSS con transform
+                })
+            }).addTo(this.map);
             marker['locationId'] = loc.id;
-            this.openMarkerTooltip(marker, loc);
-            marker.setIcon(newIcon);
+            if (!iconHtml && !valueHtml && !nameHtml) {
+                this.openMarkerTooltip(marker, loc);
+                marker.setIcon(newIcon);
+            } else if (valueHtmlId) {
+                this.addMarkerItemId(loc.markerTagValueId!, valueHtmlId);
+            }
             marker.on('click', () => {
                 this.onClickMarker(loc, marker);
             });
-
             marker.on('contextmenu', (event) => {
                 this.showContextMenu(event, marker);
             });
@@ -133,6 +177,43 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             }
             e.popup = null;
         });
+    }
+
+    initWatch() {
+        this.gaugesManager.onchange.pipe(
+            takeUntil(this.destroy$),
+            filter(varTag => this.markerItemsMap.has(varTag.id))
+        ).subscribe(varTag => {
+            this.processValueInMarkerItem(varTag.id, varTag.value);
+        });
+    }
+
+    private processValueInMarkerItem(tagId: string, newValue: any) {
+
+        const entry = this.markerItemsMap.get(tagId);
+        if (!entry) return;
+
+        // 1) Primo update → cerca i DOM
+        if (entry.domNodes.length === 0) {
+            entry.domNodes = entry.nodeIds
+                .map(id => document.getElementById(id) as HTMLElement)
+                .filter(el => !!el); // escludi null
+        }
+
+        // 2) Se ancora vuoto → non ancora renderizzato → skip finché non compare
+        if (entry.domNodes.length === 0) return;
+
+        // 3) Aggiorna tutti
+        for (const el of entry.domNodes) {
+            el.innerText = newValue;
+        }
+    }
+
+    private addMarkerItemId(variableId: string, nodeId: string) {
+        if (!this.markerItemsMap.has(variableId)) {
+            this.markerItemsMap.set(variableId, { nodeIds: [], domNodes: [] });
+        }
+        this.markerItemsMap.get(variableId)!.nodeIds.push(nodeId);
     }
 
     private openMarkerTooltip(marker: L.Marker, location: MapsLocation) {
@@ -331,6 +412,7 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
     }
 
     private clearMarker() {
+        this.markerItemsMap.clear();
         this.map.eachLayer(layer => {
             if (layer instanceof L.Marker) {
                 this.map.removeLayer(layer);

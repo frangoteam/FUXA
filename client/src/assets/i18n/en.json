@@ -1619,6 +1619,10 @@
     "maps.close-popups": "Close all popups",
     "maps.location-to-import": "Location to import",
     "maps.location-to-import-input-title": "Select Location to import",
+    "maps.location-property-general": "General",
+    "maps.location-property-actions": "Marker",
+    "maps.location-property-showName": "Show Name",
+    "maps.location-property-showIcon": "Show Icon",
 
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",
