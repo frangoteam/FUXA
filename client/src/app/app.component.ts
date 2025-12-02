@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorR
 import { DOCUMENT, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription, fromEvent, interval, merge, switchMap, tap } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, fromEvent, interval, map, merge, of, startWith, switchMap, takeUntil, tap, timer } from 'rxjs';
 
 import { environment } from '../environments/environment';
 
@@ -11,11 +11,13 @@ import { SettingsService } from './_services/settings.service';
 import { UserGroups } from './_models/user';
 import { AppService } from './_services/app.service';
 import { HeartbeatService } from './_services/heartbeat.service';
+import { AuthService } from './_services/auth.service';
+import { HmiService } from './_services/hmi.service';
 
 @Component({
 	selector: 'app-root',
 	templateUrl: './app.component.html',
-	styleUrls: ['./app.component.css']
+	styleUrls: ['./app.component.scss']
 })
 
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -23,11 +25,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 	location: Location;
 	showdev = false;
 	isLoading = false;
+	serverErrorBanner$: Observable<boolean>;
 
 	@ViewChild('fabmenu', {static: false}) fabmenu: any;
 
 	private subscriptionLoad: Subscription;
 	private subscriptionShowLoading: Subscription;
+	private destroy$ = new Subject<void>();
+    private securityEnabled = false;
 
 	constructor(@Inject(DOCUMENT) private document: Document,
 		private router: Router,
@@ -37,6 +42,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		private translateService: TranslateService,
 		private heartbeatService: HeartbeatService,
 		private cdr: ChangeDetectorRef,
+		private hmiService: HmiService,
+		private authService: AuthService,
 		location: Location
 	) {
 		this.location = location;
@@ -58,6 +65,22 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		).subscribe(() => {
 			this.heartbeatService.setActivity(false);
 		});
+
+
+		this.serverErrorBanner$ = combineLatest([
+			this.hmiService.onServerConnection$,
+			this.authService.currentUser$
+		]).pipe(
+			switchMap(([connectionStatus, userProfile]) =>
+				merge(
+					of(false),
+					timer(35000).pipe(map(() => (this.securityEnabled && !userProfile) ? false : true)),
+				).pipe (
+					startWith(false),
+				)
+			),
+			takeUntil(this.destroy$)
+		);
 	}
 
 	ngAfterViewInit() {
@@ -106,6 +129,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 			}
 		} catch (e) {
 		}
+		this.destroy$.next(null);
+		this.destroy$.complete();
 	}
 
 	applyCustomCss() {
@@ -124,6 +149,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		} else {
 			this.showdev = true;
 		}
+		this.securityEnabled = this.projectService.isSecurityEnabled();
 	}
 
 	isHidden() {
