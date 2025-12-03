@@ -576,38 +576,36 @@ export class TableCell {
     timeInterval?: number;
     bitmask: number;
     type: TableCellType;
-    deviceId?: string; // Device ID for the tag, used for filtering
-    isEditable?: boolean; // Whether this cell can be edited at runtime
-    enableWrite?: boolean; // Whether this variable cell can write to the device/tag
-    autoSave?: boolean; // Whether to auto-save to DB when editing is done (only for editable variable cells)
-    autoWrite?: boolean; // Whether to auto-write to device when editing is done (only for editable variable cells)
-    inputType?: InputOptionType; // Input type for editable cells (number, text)
-    inputMin?: number; // Minimum value for number input type
-    inputMax?: number; // Maximum value for number input type
-    odbcTimestampColumn?: string; // ODBC timestamp column for syncing with DAQ
-    odbcTimestampColumns?: Array<{ table: string; column: string; convertUtcToLocal?: boolean }>; // Multiple timestamp sources from different ODBC tables
-    convertUtcToLocal?: boolean; // Convert UTC timestamps to local time for display
+    deviceId?: string; 
+    isEditable?: boolean; 
+    enableWrite?: boolean; 
+    autoSave?: boolean; 
+    autoWrite?: boolean; 
+    inputType?: InputOptionType; 
+    inputMin?: number; 
+    inputMax?: number; 
+    odbcTimestampColumn?: string; 
+    odbcTimestampColumns?: Array<{ table: string; column: string; convertUtcToLocal?: boolean }>; 
+    convertUtcToLocal?: boolean;
 
     constructor(id: string, type?: TableCellType, label?: string) {
         this.id = id;
         this.type = type || TableCellType.label;
         this.label = label;
-        this.isEditable = false; // Default to not editable
-        this.enableWrite = false; // Default to not writable
-        this.autoSave = false; // Default to not auto-save
-        this.autoWrite = false; // Default to not auto-write
-        this.inputType = InputOptionType.text; // Default to text input
+        this.isEditable = false; 
+        this.enableWrite = false; 
+        this.autoSave = false; 
+        this.autoWrite = false; 
+        this.inputType = InputOptionType.text; 
     }
 }
 
 export class TableColumn extends TableCell {
     align: TableCellAlignType = TableCellAlignType.left;
     width = 100;
-    // Keep width numeric (px) only; remove autoWidth for simplicity
     exname: string;
     constructor(name: string, type?: TableCellType, label?: string) {
         super(name, type, label);
-        // For parameter table columns, only allow simple types
         if (type && ![TableCellType.label, TableCellType.timestamp].includes(type)) {
             this.type = TableCellType.label;
         }
@@ -794,7 +792,6 @@ export interface VideoOptions {
     showControls?: boolean;
 }
 
-// ===== PARAMETER TABLE MODELS =====
 export enum TableRowType {
     column = 'column',
     text = 'text',
@@ -806,15 +803,14 @@ export class ParameterType {
     description: string;
     userId: string;
     rows: ParameterRow[];
-    columns: TableColumn[]; // Independent column definitions
-    columnLabels: { [columnId: string]: string }; // Column headers independent of cell labels (deprecated, migrate to columns)
-    // Column styles: width (px numeric) and align per column id
+    columns: TableColumn[]; 
+    columnLabels: { [columnId: string]: string }; 
     columnStyles?: { [columnId: string]: { width?: number | string; align?: TableCellAlignType } };
-    deviceId?: string; // Optional device ID to filter tags by device
+    deviceId?: string; 
     created: Date;
     modified: Date;
-    lastWrittenSetId?: string; // The set that was last written to the device for this type
-    autoWriteOnStartup?: boolean; // Whether to auto-write the last set when FUXA server starts
+    lastWrittenSetId?: string; 
+    autoWriteOnStartup?: boolean; 
 
     constructor(id?: string, name?: string) {
         this.id = id || '';
@@ -834,7 +830,7 @@ export class ParameterRow {
     id: string;
     type: TableRowType;
     cells: TableCell[];
-    label?: string; // Row label independent of cell labels
+    label?: string; 
     textContent?: string;
     textAlign?: TableCellAlignType;
     textSize?: number;
@@ -855,11 +851,11 @@ export class ParameterSet {
     name: string;
     description: string;
     userId: string;
-    typeId: string; // Reference to ParameterType
-    values: { [cellId: string]: any }; // Cell ID to value mapping
-    labels: { [cellId: string]: string }; // Cell ID to label mapping
-    columnLabels: { [cellId: string]: string }; // Cell ID to column label mapping
-    tagBindings: { [cellId: string]: string }; // Cell ID to tag ID mapping
+    typeId: string; 
+    values: { [cellId: string]: any }; 
+    labels: { [cellId: string]: string }; 
+    columnLabels: { [cellId: string]: string }; 
+    tagBindings: { [cellId: string]: string }; 
     created: Date;
     modified: Date;
     isDefault: boolean;
@@ -878,7 +874,6 @@ export class ParameterSet {
         this.modified = new Date();
         this.isDefault = false;
 
-        // Initialize values, labels, and tagBindings for all cells in the parameter type rows
         if (parameterType && parameterType.rows) {
             parameterType.rows.forEach(row => {
                 if (row && row.cells) {
@@ -898,7 +893,7 @@ export class ParameterSet {
 export interface ParameterTableOptions extends TableOptions {
     parameterTypeId?: string;
     parameterTypeIds?: string[];
-    lastSelectedSetsByType?: { [typeId: string]: string }; // Last selected set per type
+    lastSelectedSetsByType?: { [typeId: string]: string }; 
     storageType?: 'sqlite' | 'odbc';
     odbcDeviceId?: string;
     showEnableEditInFooter?: boolean;
