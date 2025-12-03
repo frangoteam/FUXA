@@ -54,10 +54,16 @@
         </div>
 
         <!-- Timestamp Format (shown when type is timestamp) -->
-        <div *ngIf="data.cell.type === columnType.timestamp" class="my-form-field" style="display: block; margin-bottom: 15px;">
-            <span>{{'table.cell-ts-format' | translate}}</span>
-            <input [(ngModel)]="data.cell.valueFormat" type="text">
-        </div>
+        <ng-container *ngIf="data.cell.type === columnType.timestamp">
+            <div class="my-form-field" style="display: block; margin-bottom: 15px;">
+                <span>{{ dateTimeFormatsLabel }}</span>
+                <input [(ngModel)]="data.cell.valueFormat" type="text" style="width: 205px">
+                <ng-container *ngIf="isHistory()">
+                    <div class="lbk ml5">*</div>
+                    <input numberOnly class="lbk ml5" [(ngModel)]="data.cell.timeInterval" type="number" style="width: 70px">
+                </ng-container>
+            </div>
+        </ng-container>
 
         <!-- ODBC Timestamp Sources Section -->
         <div *ngIf="data.cell.type === columnType.timestamp" style="display: block; margin-bottom: 15px;">

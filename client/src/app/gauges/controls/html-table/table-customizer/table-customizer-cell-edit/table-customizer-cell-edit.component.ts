@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { TableCell, TableCellType, TableType, InputOptionType } from '../../../../../_models/hmi';
 import { ProjectService } from '../../../../../_services/project.service';
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { OdbcBrowserComponent } from '../../../../../odbc-browser/odbc-browser.component';
 
 @Component({
@@ -16,6 +17,7 @@ export class TableCustomizerCellEditComponent {
     columnType = TableCellType;
     inputOptionType = InputOptionType;
     devicesValues = { devices: null };
+    dateTimeFormatsLabel = '';
 
     constructor(
         private projectService: ProjectService,
@@ -27,6 +29,11 @@ export class TableCustomizerCellEditComponent {
 
         if (this.data.deviceId) {
             this.devicesValues.devices = this.devicesValues.devices.filter(device => device.id === this.data.deviceId);
+        }
+
+        this.dateTimeFormatsLabel = this.translateService.instant('table.cell-ts-format');
+        if (this.isHistory()) {
+            this.dateTimeFormatsLabel += this.translateService.instant('table.cell-ts-interval');
         }
 
         if (!this.data.cell.odbcTimestampColumns) {
@@ -182,6 +189,10 @@ export class TableCustomizerCellEditComponent {
         }
     }
 
+
+    isHistory(): boolean {
+        return this.data.table === TableType.history;
+    }
 
 }
 

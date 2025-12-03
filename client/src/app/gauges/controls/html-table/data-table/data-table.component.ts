@@ -445,7 +445,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private createDaqTableRows(daqData: { dt: number; value: string }[][]): TableRow[] {
         const rounder = { H: 3600000, m: 60000, s: 1000 };
-        const roundIndex = rounder[this.historyDateformat?.[this.historyDateformat?.length - 1]] ?? 1000;
+        const roundFormatIndex = rounder[this.historyDateformat?.[this.historyDateformat?.length - 1]] ?? 1;
+        const roundIndex = roundFormatIndex * this.historyTimeInterval;
 
         const timestampsSet = new Set<number>();
         const mergedMap = new Map<number, Record<string, string>>();
