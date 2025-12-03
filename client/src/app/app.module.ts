@@ -386,7 +386,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
     TableCustomizerTypeEditComponent,
         TableCustomizerCellEditComponent,
     TableCustomizerTextRowEditComponent,
-        ParameterSetDialogComponent,
         ParameterDeleteConfirmDialogComponent,
         ParameterTableComponent,
         OdbcBrowserComponent,
@@ -452,7 +451,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         CodemirrorModule,
     NgxDaterangepickerMd.forRoot(),
     FrameworkModule,
-    Ui5Module
+    Ui5Module,
+    ParameterSetDialogComponent
     ],
     providers: [
         // providersResourceService,

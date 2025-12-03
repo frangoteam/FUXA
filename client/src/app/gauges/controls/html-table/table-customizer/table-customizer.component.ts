@@ -41,7 +41,7 @@ export class TableCustomizerComponent implements OnInit {
         return this.data.type === TableType.parameter;
     }
 
-    private isSavingType: boolean = false;
+    isSavingType: boolean = false;
     private pendingSaveNeeded: boolean = false;
 
     private async saveSelectedType(showToast: boolean = false) {

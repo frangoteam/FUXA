@@ -552,6 +552,9 @@ export interface TableOptions {
     reportsColumns?: TableColumn[];
     reportFilter: TableFilter;
     rows?: TableRow[];
+    storageType?: string;
+    odbcDeviceId?: string;
+    showEnableEditInFooter?: boolean;
 }
 
 export interface TableFilter {
@@ -614,6 +617,11 @@ export class TableColumn extends TableCell {
 
 export class TableRow {
     cells: TableCell[];
+    type?: string;
+    textAlign?: string;
+    textSize?: number;
+    textBold?: boolean;
+    textContent?: string;
     constructor(cls: TableCell[]) {
         this.cells = cls;
     }

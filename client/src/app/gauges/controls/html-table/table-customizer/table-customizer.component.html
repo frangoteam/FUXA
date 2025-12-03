@@ -68,8 +68,7 @@
                         </button>
                     </mat-menu>
                 </mat-header-cell>
-                <ng-container *ngIf="!isTextRow(element) || colIndex === 0">
-                    <mat-cell *matCellDef="let element; let rowIndex = index" [attr.colspan]="(colIndex === 0 && isTextRow(element)) ? displayedColumns.length : null" [class.text-row-hidden]="isTextRow(element) && colIndex > 0">
+                <mat-cell *matCellDef="let element; let rowIndex = index" [attr.colspan]="(colIndex === 0 && isTextRow(element)) ? displayedColumns.length : null" [class.text-row-hidden]="isTextRow(element) && colIndex > 0">
                     <div *ngIf="colIndex === 0" class="data-table-edit-row">
                         <!-- Always show row menu (three dots) so move/copy/delete remain available for text rows -->
                         <button mat-icon-button [matMenuTriggerFor]="rowMenu" (click)="$event.stopPropagation()" class="row-options">
@@ -128,7 +127,6 @@
                     </div>
                     <!-- The delete button for non-text column rows was moved up next to the edit button (above) to keep order: edit -> delete -> text -->
                     </mat-cell>
-                </ng-container>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="data-table-header"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;">

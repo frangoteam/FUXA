@@ -953,7 +953,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataSourceState.daq.expectedChunks = 0;
 
         // Reconslidate table data (preserves ODBC data while resetting DAQ)
-        this.updateTableData();
+        if (this.type !== TableType.data) {
+            this.updateTableData();
+        }
 
         this.onTimeRange$.next(this.lastDaqQuery);
         if (this.type === TableType.history && showLoading) {
@@ -1200,13 +1202,13 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataSource.data = rows;
     }
 
-    isSelectable(row: any): boolean {
+    isSelectable(): boolean {
     const selectable = this.events && this.events.length > 0 && this.events.some(event => event.type === 'select' && event.action === 'onSetTag');
     return selectable;
   }
 
     selectRow(row: MatRow) {
-        if (this.isSelectable(row)) {
+        if (this.isSelectable()) {
             if (this.selectedRow === row) {
                 this.selectedRow = null;
             } else {

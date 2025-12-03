@@ -41,8 +41,8 @@
                         </div>
                         <div class="my-form-field inbk data-refresh-interval">
                             <span>{{'table.property-refresh-interval' | translate}}</span>
-                            <input numberOnly [(ngModel)]="options.refreshInterval" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="1000" max="60000" step="1000" [disabled]="!options.realtime">
-                            <span class="unit">ms</span>
+                            <input numberOnly [(ngModel)]="options.refreshInterval" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="1" max="600" step="1" [disabled]="!options.realtime">
+                            <span class="unit">sec</span>
                         </div>
                     </ng-container>
                     <ng-container *ngIf="tableTypeCtrl.value === tableType.parameter">

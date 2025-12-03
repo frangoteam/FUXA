@@ -12,6 +12,7 @@ export interface ParameterSetDialogData {
 
 @Component({
     selector: 'app-parameter-set-dialog',
+    standalone: true,
     template: `
         <div class="modal-backdrop" (click)="onCancel()">
             <div class="modal-content" (click)="$event.stopPropagation()">
