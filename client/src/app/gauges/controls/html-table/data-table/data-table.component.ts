@@ -29,7 +29,6 @@ import { GaugeBaseComponent } from '../../../gauge-base/gauge-base.component';
 
 declare const numeral: any;
 
-// ===== DATA SOURCE INTERFACES =====
 interface OdbcDataSource {
     query: string;
     result: any[];
@@ -46,7 +45,6 @@ interface SimpleCellData {
     rowIndex?: number;
 }
 
-// ===== UNIFIED DATA MANAGEMENT =====
 interface DataSourceState {
     odbc: {
         loaded: boolean;
@@ -99,7 +97,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     private odbcQueryTimeout: any;
     tagsColumnMap = {};
     range = { from: Date.now(), to: Date.now() };
-    private pendingOdbcRequestIds = new Set<string>(); // Track ODBC requests THIS component made
+    private pendingOdbcRequestIds = new Set<string>(); 
     tableType = TableType;
     tableHistoryType = TableType.history;
     lastRangeType = TableRangeType;
@@ -122,7 +120,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     selectedPageSize = 25;
     pageSizeOptions = [10, 25, 100];
 
-    // ===== UNIFIED DATA SOURCE MANAGEMENT =====
     private dataSourceState: DataSourceState = {
         odbc: {
             loaded: false,
@@ -138,7 +135,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     };
 
-    // Final processed table data (single source of truth)
     private tableData: TableRow[] = [];
     private currentTableDataHash = '';
 
@@ -155,12 +151,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         private cdr: ChangeDetectorRef) { }
 
     ngOnInit() {
-        // For data tables, initialize with empty data
         if (this.type === TableType.data) {
             this.tableData = this.data;
             this.updateTableIfChanged();
         } else if (this.type === TableType.history) {
-            // For history tables, initialize empty until data sources load
             this.dataSource.data = [];
 
             // Initialize default date range for DAQ queries (last 1 hour)
@@ -200,21 +194,17 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // Subscribe to ODBC query results
         this.hmiService.onDeviceOdbcQuery.subscribe(message => {
             if (message && message.result) {
-                // CRITICAL: Only process responses for requests THIS component made
-                // This prevents tables with auto-refresh OFF from updating when other tables refresh
+
                 if (message.requestId && !this.pendingOdbcRequestIds.has(message.requestId)) {
                     return;
                 }
 
-                // Remove from pending set so we don't process it again
                 if (message.requestId) {
                     this.pendingOdbcRequestIds.delete(message.requestId);
                 }
 
-                // Check if we have cells for this query or its base query (without WHERE clause)
                 let hasCells = !!this.odbcMap[message.query];
                 if (!hasCells) {
-                    // Try to find the base query by removing WHERE clauses
                     const baseQuery = message.query.split(' WHERE ')[0];
                     hasCells = !!this.odbcMap[baseQuery];
                 }
@@ -224,8 +214,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         });
     }
-
-    // ===== CORE HELPER METHODS (SINGLE IMPLEMENTATION FOR EACH OPERATION) =====
 
     /**
      * Normalize timestamp to seconds granularity (for matching rows within ~1 second)
@@ -242,7 +230,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     private getRowTimestampForMerge(row: TableRow): number {
         if (!row) return 0;
 
-        // First, check if row has rowIndex (ODBC or DAQ with parsed timestamp)
         for (const colId of this.displayedColumns) {
             const cell = row[colId];
             if (cell && typeof cell.rowIndex === 'number' && cell.rowIndex > 0) {
@@ -259,25 +246,20 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     private createDataHash(data: TableRow[]): string {
         if (!data || data.length === 0) return 'empty';
 
-        // For large datasets, always include first and last rows to catch updates
-        // This ensures incremental refreshes (which append to end) are detected
         const hash: string[] = [];
 
         if (data.length === 1) {
             hash.push(this.hashRow(data[0]));
         } else if (data.length <= 100) {
-            // Small dataset - hash all rows
             hash.push(...data.map(row => this.hashRow(row)));
         } else {
-            // Large dataset - hash first row, last 10 rows, and sample middle rows
-            hash.push(this.hashRow(data[0])); // First row
+            hash.push(this.hashRow(data[0])); 
 
-            const sampleRate = Math.ceil((data.length - 11) / 1000); // Sample middle
+            const sampleRate = Math.ceil((data.length - 11) / 1000);
             for (let i = 1; i < data.length - 10; i += sampleRate) {
                 hash.push(this.hashRow(data[i]));
             }
 
-            // Always include last 10 rows (where incremental data gets appended)
             for (let i = Math.max(1, data.length - 10); i < data.length; i++) {
                 hash.push(this.hashRow(data[i]));
             }
@@ -294,13 +276,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
-     * UNIFIED CONSOLIDATION - SINGLE SOURCE OF TRUTH
      * Combines ODBC and DAQ data into final table dataset
-     *
-     * Rules:
-     * - ODBC-only: Returns ODBC rows sorted by timestamp descending
-     * - DAQ-only: Returns DAQ rows sorted by timestamp descending
-     * - BOTH: Merges rows with timestamps within 1 second, combines columns, sorts descending
      */
     private consolidateAllData(): TableRow[] {
         const hasOdbc = this.dataSourceState.odbc.loaded && this.dataSourceState.odbc.data.length > 0;
@@ -350,7 +326,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.tableOptions.columns) {
             this.tableOptions.columns.forEach(col => {
                 if (col.type === TableCellType.timestamp) {
-                    // Check for array of timestamp sources (new format)
                     if (col.odbcTimestampColumns && col.odbcTimestampColumns.length > 0) {
                         col.odbcTimestampColumns.forEach(ts => {
                             if (ts.column) {
@@ -358,7 +333,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                             }
                         });
                     }
-                    // Fallback to single timestamp column (old format)
                     else if (col.odbcTimestampColumn) {
                         timestampColumns.push(col.odbcTimestampColumn);
                     }
@@ -369,9 +343,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private shouldApplyDateFilter(): boolean {
-        // Only apply date filter for history tables with date range picker shown
-        // Do NOT apply for real-time data tables, even if they have UTC conversion
-        // UTC conversion is just for display and doesn't require a time-based WHERE clause
         const hasHistory = this.type === this.tableHistoryType && this.tableOptions.daterange?.show;
         return hasHistory;
     }
@@ -380,19 +351,15 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         let query = baseQuery;
         if (this.shouldApplyDateFilter()) {
             query = this.addDateFilterToOdbcQuery(baseQuery);
-            // DO NOT add to odbcMap during polling! Only register if it doesn't exist (first time)
             if (!this.odbcMap[query]) {
                 this.odbcMap[query] = cells;
             }
-            // But DO NOT push during auto-refresh - use the existing cells reference
         } else {
-            // For data tables, just use base query without modification
             if (!this.odbcMap[query]) {
                 this.odbcMap[query] = cells;
             }
         }
 
-        // Generate unique requestId for this query so we can track which responses belong to THIS table
         const requestId = `${this.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         this.pendingOdbcRequestIds.add(requestId);
         this.hmiService.executeOdbcQuery(deviceId, query, requestId);
@@ -402,7 +369,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         let timestampValue = null;
         let shouldConvertUtc = false;
 
-        // PRIORITY: Check multi-source timestamps first (odbcTimestampColumns has the convertUtcToLocal flag)
         if (column.odbcTimestampColumns && column.odbcTimestampColumns.length > 0) {
             for (const tsSource of column.odbcTimestampColumns) {
                 if (dbRow[tsSource.column] !== undefined) {
@@ -412,30 +378,21 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         }
-        // FALLBACK: Use single source if available
         else if (column.odbcTimestampColumn && dbRow[column.odbcTimestampColumn] !== undefined) {
             timestampValue = dbRow[column.odbcTimestampColumn];
             shouldConvertUtc = column.convertUtcToLocal || false;
         }
 
         if (timestampValue !== null && shouldConvertUtc) {
-            // Database stores UTC timestamps as ISO strings like "2025-11-02 00:26:24.921845"
-            // These need to be parsed as UTC and converted to local timezone
             if (typeof timestampValue === 'string' && /^\d{4}-\d{2}-\d{2}/.test(timestampValue)) {
-                // Replace space with 'T' and add 'Z' to make it valid ISO 8601 UTC format
-                // "2025-11-02 00:26:24.921845" -> "2025-11-02T00:26:24.921845Z"
                 const isoUtcString = timestampValue.replace(' ', 'T') + 'Z';
                 const utcDate = new Date(isoUtcString);
 
                 if (!isNaN(utcDate.getTime())) {
-                    // Convert from UTC to local by applying timezone offset
                     const localDate = this.convertUtcToLocal(utcDate);
-                    // Return as ISO string WITHOUT 'Z' so it's interpreted as local time, not UTC
-                    // This prevents double-conversion in formatTimestampValue
                     timestampValue = localDate.toISOString().replace('Z', '');
                 }
             } else {
-                // Regular number or other ISO string conversion
                 timestampValue = this.convertUtcToLocalTimestamp(timestampValue);
             }
         }
@@ -453,19 +410,16 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             source.result.forEach((dbRow: any) => {
                 const tableRow: TableRow = {};
 
-                // Create cells for all displayed columns
                 this.displayedColumns.forEach(colId => {
                     const column = this.columnsStyle[colId];
                     const cellData: SimpleCellData = { stringValue: '' };
 
                     if (column.type === TableCellType.odbc) {
-                        // Extract database column name from query
                         const dbColumnName = this.extractColumnNameFromOdbcQuery(column.variableId);
                         if (dbColumnName && dbRow[dbColumnName] !== undefined) {
                             cellData.stringValue = this.formatOdbcValue(dbRow[dbColumnName]);
                         }
                     } else if (column.type === TableCellType.timestamp) {
-                        // Extract and format timestamp - check for UTC to local conversion
                         const timestampValue = this.extractTimestampValue(column, dbRow);
 
                         if (timestampValue !== null) {
@@ -481,7 +435,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         });
 
-        // Sort by timestamp descending (newest first)
         rows.sort((a, b) => this.getRowTimestampForMerge(b) - this.getRowTimestampForMerge(a));
         return rows;
     }
@@ -496,12 +449,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         const timestampsSet = new Set<number>();
         const mergedMap = new Map<number, Record<string, string>>();
 
-        // Find columns of type variable in order
         const variableColumns = this.displayedColumns
             .map(colId => this.columnsStyle[colId])
             .filter(col => col.type === TableCellType.variable);
 
-        // Build timestamp and value maps
         daqData.forEach((variableValues, varIndex) => {
             const column = variableColumns[varIndex];
             if (!column) return;
@@ -519,7 +470,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         const sortedTimestamps = Array.from(timestampsSet).sort((a, b) => b - a);
         const filledRows: TableRow[] = [];
 
-        // Create table rows
         sortedTimestamps.forEach(t => {
             const row: TableRow = {};
             this.displayedColumns.forEach(colId => {
@@ -544,7 +494,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             filledRows.push(row);
         });
 
-        // Forward fill missing values
         for (const col of variableColumns) {
             let lastValue: string = '';
             for (let i = filledRows.length - 1; i >= 0; i--) {
@@ -567,7 +516,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     private mergeOdbcAndDaqRows(odbcRows: TableRow[], daqRows: TableRow[]): TableRow[] {
         const mergedMap = new Map<number, TableRow>();
 
-        // Add ODBC rows first
         odbcRows.forEach(row => {
             const ts = this.normalizeToSecond(this.getRowTimestampForMerge(row));
             if (!mergedMap.has(ts)) {
@@ -575,25 +523,20 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         });
 
-        // Merge DAQ rows
         daqRows.forEach(row => {
             const ts = this.normalizeToSecond(this.getRowTimestampForMerge(row));
             if (mergedMap.has(ts)) {
-                // Merge into existing ODBC row
                 const existing = mergedMap.get(ts);
                 Object.keys(row).forEach(colId => {
-                    // Fill empty cells from ODBC row with DAQ data
                     if (!existing[colId] || !existing[colId].stringValue) {
                         existing[colId] = row[colId];
                     }
                 });
             } else {
-                // No ODBC row at this timestamp, add DAQ row standalone
                 mergedMap.set(ts, row);
             }
         });
 
-        // Convert to sorted array (newest first)
         const merged = Array.from(mergedMap.values());
         merged.sort((a, b) => this.getRowTimestampForMerge(b) - this.getRowTimestampForMerge(a));
         return merged;
@@ -604,7 +547,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private parseTimestampMs(value: any): number {
         if (typeof value === 'number') {
-            // If it's a small number (seconds), convert to milliseconds
             return value < 1e11 ? value * 1000 : value;
         } else if (typeof value === 'string') {
             const date = new Date(value);
@@ -620,14 +562,11 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private convertUtcToLocalTimestamp(value: any): any {
         const localDate = this.convertUtcToLocal(value);
-        if (!localDate) return value; // Return original if conversion fails
+        if (!localDate) return value; 
 
-        // Preserve input format
         if (typeof value === 'number') {
-            // Return as milliseconds (same format as input if it was milliseconds)
             return value < 1e11 ? Math.floor(localDate.getTime() / 1000) : localDate.getTime();
         } else if (typeof value === 'string') {
-            // Return as ISO string
             return localDate.toISOString();
         }
         return value;
@@ -643,7 +582,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if (typeof value === 'number') {
             utcDate = new Date(value < 1e11 ? value * 1000 : value);
         } else if (typeof value === 'string') {
-            // Parse UTC string (ISO format)
             utcDate = new Date(value);
         } else {
             utcDate = new Date(value);
@@ -653,10 +591,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             return null;
         }
 
-        // JavaScript's Date object stores times in local timezone,
-        // so when we create a Date from a UTC string like "2025-11-02T12:00:00Z",
-        // we need to convert it to local time for display
-        // The offset is the difference between UTC and local time in milliseconds
         const localDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
         return localDate;
     }
@@ -680,9 +614,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             return false; // No change
         }
 
-        this.currentTableDataHash = newHash;        // Assign data directly - MatTableDataSource + Paginator handles rendering efficiently
-        // Only the current page is rendered in DOM (e.g., 25 rows out of 25k)
-        // Paginator internally slices the data array without creating copies
+        this.currentTableDataHash = newHash;        
+
         this.dataSource.data = this.tableData;
         this.bindTableControls();
         return true;
@@ -733,7 +666,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         this.sort.disabled = this.type === TableType.data;
 
-        // Set default sort for history tables - newest first
         if (this.type === TableType.history && !this.sort.disabled) {
             const timestampColumn = this.displayedColumns.find(colId =>
                 this.columnsStyle[colId]?.type === TableCellType.timestamp
@@ -747,7 +679,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.paginator) {
             this.selectedPageSize = this.paginator.pageSize;
         }
-        // Reset tags for unselected state on initialization
         if (this.events) {
             this.events.forEach(event => {
                 if (event.type === 'select' && event.action === 'onSetTag') {
@@ -758,7 +689,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        // Unsubscribe from polling
         if (this.pollingSubscription) {
             this.pollingSubscription.unsubscribe();
             this.pollingSubscription = null;
@@ -886,17 +816,13 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private startPollingOdbc() {
-        // Stop any existing polling
         if (this.pollingSubscription) {
             this.pollingSubscription.unsubscribe();
             this.pollingSubscription = null;
         }
 
-        // Use configurable interval, default to 5 seconds if not specified
-        // refreshInterval is now in seconds, convert to milliseconds
         let refreshInterval = this.tableOptions.refreshInterval || 5;
 
-        // Safety check: if interval is too long (> 300 seconds = 5 minutes), cap it
         if (refreshInterval > 300) {
             console.warn('refreshInterval is very long:', refreshInterval, 'seconds, capping at 300 seconds');
             refreshInterval = 300;
@@ -908,42 +834,34 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             takeUntil(this.destroy$),
             switchMap(() => {
                 try {
-                    // Call the auto refresh logic that doesn't show loading
                     this.onAutoRefresh();
                     return of(null);
                 } catch (error) {
                     console.error('Error in auto-refresh polling:', error);
-                    // Return a caught observable to prevent the entire polling chain from breaking
                     return of(null);
                 }
             })
         ).subscribe({
             error: (err) => {
                 console.error('Fatal error in ODBC polling:', err);
-                // Reset the timer to stop polling on fatal error
                 this.pollingSubscription = null;
             }
         });
     }
 
     private executeOdbcQueriesImmediately() {
-        // Execute ALL ODBC queries immediately (used when date range changes)
         const odbcQueries = Object.keys(this.odbcMap).slice();
         if (odbcQueries.length > 0) {
-            // Get the device ID (use the same logic as executeOdbcQuery)
             const odbcDevices = (<Device[]>Object.values(this.projectService.getDevices())).filter(d => d.type === DeviceType.ODBC);
             if (odbcDevices.length > 0) {
                 const deviceId = odbcDevices[0].id;
 
-                // Group queries by table for combining
                 const tableQueries = this.groupQueryByCellsByTable(odbcQueries);
 
-                // Execute combined queries per table
                 tableQueries.forEach((cells, tableName) => {
                     const timestampColumns = this.collectTimestampColumns();
                     const combinedQuery = this.combineOdbcQueries(cells, timestampColumns);
                     if (combinedQuery) {
-                        // Snapshot cells to prevent modification during iteration
                         const snapshotCells = [...cells];
                         this.prepareAndExecuteQuery(combinedQuery, snapshotCells, deviceId);
                     }
@@ -980,8 +898,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             // Reset ODBC data for fresh query with new date range
             this.dataSourceState.odbc.data = [];
             this.dataSourceState.odbc.loaded = false;
-            this.dataSourceState.odbc.lastHash = ''; // Reset hash to force update on next data
-            this.currentTableDataHash = ''; // Reset table hash to ensure re-render
+            this.dataSourceState.odbc.lastHash = ''; 
+            this.currentTableDataHash = ''; 
 
             this.lastDaqQuery.event = ev;
             this.lastDaqQuery.gid = this.id;
@@ -1007,8 +925,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 // Reset ODBC data for fresh query with new date range
                 this.dataSourceState.odbc.data = [];
                 this.dataSourceState.odbc.loaded = false;
-                this.dataSourceState.odbc.lastHash = ''; // Reset hash to force update on next data
-                this.currentTableDataHash = ''; // Reset table hash to ensure re-render
+                this.dataSourceState.odbc.lastHash = ''; 
+                this.currentTableDataHash = ''; 
 
                 this.lastDaqQuery.gid = this.id;
                 this.lastDaqQuery.sids = this.getVariableIdsForQuery();
@@ -1035,7 +953,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // Reconslidate table data (preserves ODBC data while resetting DAQ)
         this.updateTableData();
 
-        // this.lastDaqQuery.chunked = true;
         this.onTimeRange$.next(this.lastDaqQuery);
         if (this.type === TableType.history && showLoading) {
             this.setLoading(true);
@@ -1045,20 +962,13 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     onRefresh() {
         try {
             this.reloadActive = true;
-            // Handle different table types with incremental refresh
             if (this.type === TableType.history) {
-                // For history tables, always update to sliding window for incremental refresh
-                // This ensures we capture new data added since the last refresh
                 const now = Date.now();
                 const rangeDuration = this.lastDaqQuery.to - this.lastDaqQuery.from;
                 this.lastDaqQuery.from = now - rangeDuration;
                 this.lastDaqQuery.to = now;
-
-                // CRITICAL: Sync this.range with lastDaqQuery so the ODBC date filter uses the new time window
                 this.range.from = this.lastDaqQuery.from;
                 this.range.to = this.lastDaqQuery.to;
-
-                // Reset ODBC hash so even if data is identical, it will trigger update
                 this.dataSourceState.odbc.lastHash = '';
 
                 // Execute incremental DAQ and ODBC queries
@@ -1074,69 +984,51 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private onAutoRefresh() {
-        // Auto refresh should not show loading spinner or reload animation
-        // For history tables, refresh with updated time range (sliding window)
+        // For history tables, refresh with updated time range
         if (this.type === TableType.history) {
-            // Always update date range to current sliding window for incremental refresh
-            // This ensures new data since last refresh is captured
             const now = Date.now();
             const rangeDuration = this.lastDaqQuery.to - this.lastDaqQuery.from;
             this.lastDaqQuery.from = now - rangeDuration;
             this.lastDaqQuery.to = now;
-
-            // CRITICAL: Also sync this.range with the new time window for ODBC queries
             this.range.from = this.lastDaqQuery.from;
             this.range.to = this.lastDaqQuery.to;
-
-            // For auto-refresh with history tables, query for both ODBC and DAQ
-            // Both methods are safe to call even if no data exists - they handle empty cases
             this.executeDaqQueryForAutoRefresh();
             this.executeOdbcQueriesForAutoRefresh();
         } else {
-            // For data tables, just re-execute ODBC queries
             this.executeOdbcQueriesForAutoRefresh();
         }
     }
 
     private executeDaqQueryForAutoRefresh() {
         // For auto-refresh, query for new data since the last timestamp in DAQ data
-        // NOTE: Use DAQ data directly, NOT consolidated tableData, to avoid mixing timestamps from ODBC
-
         if (this.dataSourceState.daq.data && this.dataSourceState.daq.data.length > 0) {
             // Find the most recent timestamp from the LAST VARIABLE's data
-            // (all variables should have similar timestamps, but get the latest to be safe)
             let lastTimestamp = 0;
             for (const varData of this.dataSourceState.daq.data) {
                 if (varData && varData.length > 0) {
-                    // For each variable, get the newest timestamp
                     const varTimestamp = Math.max(...varData.map(entry => entry.dt));
                     lastTimestamp = Math.max(lastTimestamp, varTimestamp);
                 }
             }
 
-            // Create a query for data from the last timestamp onwards
-            // NOTE: timestamps are in MILLISECONDS (from Date.now() or DAQ timestamps)
             const autoRefreshQuery = {
                 ...this.lastDaqQuery,
-                from: lastTimestamp, // Keep in milliseconds
-                to: Date.now() // Current time in milliseconds
+                from: lastTimestamp, 
+                to: Date.now() 
             };
 
             this.onTimeRange$.next(autoRefreshQuery);
         } else {
-            // No existing DAQ data, do full refresh with original query
             this.onTimeRange$.next(this.lastDaqQuery);
         }
     }
 
     private executeOdbcQueriesForAutoRefresh() {
-        // Don't execute if realtime is not enabled or if already running
         if (!this.tableOptions?.realtime) {
             return;
         }
 
         if (this.isAutoRefreshRunning) {
-            console.log('executeOdbcQueriesForAutoRefresh: already running, skipping');
             return;
         }
 
@@ -1144,14 +1036,11 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         // Execute ODBC queries for auto refresh - combine queries per table
         // Create a snapshot to avoid mutation during iteration
         const odbcQueries = Object.keys(this.odbcMap).slice();
-        console.log('executeOdbcQueriesForAutoRefresh: sliced odbcQueries', odbcQueries.length, odbcQueries);
         if (odbcQueries.length > 0) {
-            // Get the device ID (use the same logic as executeOdbcQuery)
             const odbcDevices = (<Device[]>Object.values(this.projectService.getDevices())).filter(d => d.type === DeviceType.ODBC);
             if (odbcDevices.length > 0) {
                 const deviceId = odbcDevices[0].id;
 
-                // Group queries by table for combining
                 const tableQueries = this.groupQueryByCellsByTable(odbcQueries);
 
                 // Execute combined queries per table
@@ -1168,7 +1057,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         this.isAutoRefreshRunning = false;
-        // Clear timestamped queries to prevent accumulation
         Object.keys(this.odbcMap).forEach(query => {
             if (query.toUpperCase().includes(' WHERE ')) {
                 delete this.odbcMap[query];
@@ -1210,9 +1098,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
         } else if (this.type === TableType.history) {
-            // For history tables, realtime updates are handled by periodic refresh (onRefresh)
-            // Do NOT process individual value updates client-side - too expensive with large datasets
-            // The server handles data filtering/comparison and sends only new data
+
             return;
         }
     }
@@ -1246,13 +1132,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // Check if new DAQ data is different from previous
         if (!this.hasDaqDataChanged(values)) {
-            return;// No new data, skip update
+            return;
         }
 
         // IMPORTANT: For incremental refresh (auto-refresh), APPEND new data instead of replacing
-        // This preserves existing DAQ data while adding new rows
-        // For full range queries (range changes), replace all data
-        // Detect full query vs incremental by checking if current data is empty or if we're doing range query
         const isIncrementalRefresh = this.dataSourceState.daq.data && this.dataSourceState.daq.data.length > 0;
 
         if (isIncrementalRefresh) {
@@ -1270,7 +1153,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.dataSourceState.daq.loaded = true;
 
-        // Update table with all available data sources (properly merges with ODBC if available)
         this.updateTableData();
     }
 
@@ -1328,7 +1210,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             } else {
                 this.selectedRow = row;
             }
-            // Fire events only if they exist (guards against undefined events)
             if (this.events && this.events.length > 0) {
                 this.events.forEach(event => {
                     if (event.action === Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onSetTag)) {
@@ -1380,7 +1261,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                             if (cell && cell.stringValue !== undefined) {
                                 const columnName = this.columnsStyle[col] && this.columnsStyle[col].label && this.columnsStyle[col].label !== 'undefined' ? this.columnsStyle[col].label : col;
                                 let value: any = cell.stringValue;
-                                // Try to parse as number if it looks like one
                                 if (!isNaN(Number(value)) && value.trim() !== '' && !isNaN(parseFloat(value))) {
                                     value = Number(value);
                                 }
@@ -1436,7 +1316,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 const rangeDiff = this.lastDaqQuery.to - this.lastDaqQuery.from;
                 this.lastDaqQuery.to = row[timestapColumnId].timestamp;
                 this.lastDaqQuery.from = this.lastDaqQuery.to - rangeDiff;
-                // remove out of range values
                 let count = 0;
                 for (let i = this.dataSource.data.length - 1; i >= 0; i--) {
                     if (this.dataSource.data[i][timestapColumnId].timestamp < this.lastDaqQuery.from) {
@@ -1484,8 +1363,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     applyFilter(filterValue: string) {
-        filterValue = filterValue.trim(); // Remove whitespace
-        filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
+        filterValue = filterValue.trim(); 
+        filterValue = filterValue.toLowerCase(); 
         this.dataSource.filter = filterValue;
     }
 
@@ -1524,7 +1403,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private loadData() {
-        // columns
         let columnIds = [];
         this.columnsStyle = {};
         const columns = this.isAlarmsType() ? this.tableOptions.alarmsColumns : this.isReportsType() ? this.tableOptions.reportsColumns : this.tableOptions.columns;
@@ -1532,13 +1410,10 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             columnIds.push(cn.id);
             this.columnsStyle[cn.id] = cn;
             if (this.type === TableType.history) {
-                // Add DAQ variable columns to tagsColumnMap (for DAQ queries)
                 if (cn.type === TableCellType.variable && cn.variableId) {
                     this.addColumnToMap(cn);
                 }
-                // Process ODBC columns - these define queries that populate table data
                 if (cn.type === TableCellType.odbc && cn.variableId) {
-                    // ODBC columns in history tables define the data query
                     const cellData = <TableCellData>{ stringValue: '', ...cn };
                     if (!this.isEditor) {
                         this.executeOdbcQuery(cellData);
@@ -1552,16 +1427,13 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         });
         this.displayedColumns = columnIds;
 
-        // For history tables, execute ODBC queries from template rows
         if (this.type === TableType.history && this.tableOptions.rows) {
             this.tableOptions.rows.forEach((row, rowIndex) => {
                 if (row.cells) {
                     row.cells.forEach(cell => {
                         if (cell && cell.type === TableCellType.odbc && cell.variableId) {
                             if (this.isEditor) {
-                                // In editor, just set placeholder text
                             } else {
-                                // Execute ODBC query
                                 const cellData = <TableCellData>{ stringValue: '', rowIndex: rowIndex, ...cell };
                                 this.executeOdbcQuery(cellData);
                                 this.addOdbcToMap(cellData);
@@ -1573,7 +1445,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if (this.type === TableType.data) {
-            // rows
             this.data = [];
             for (let i = 0; i < this.tableOptions.rows.length; i++) {
                 let r = this.tableOptions.rows[i];
@@ -1588,8 +1459,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         }
 
-        // For data tables, update display with static data
-        // For history tables, display empty - will be populated by ODBC/DAQ
         if (this.type === TableType.data) {
             this.tableData = this.data;
             this.updateTableIfChanged();
@@ -1623,7 +1492,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (this.isEditor) {
                     cell.stringValue = 'ODBC Query Result';
                 } else {
-                    // Execute query if not already executed
                     this.executeOdbcQuery(cell);
                 }
                 this.addOdbcToMap(cell);
@@ -1654,23 +1522,18 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private updateOdbcCells(query: string, result: any) {
-        // Check both the exact query and the base query (in case of modified queries)
         let cells = this.odbcMap[query];
 
         if (!cells) {
-            // Try to find the base query by removing WHERE clauses
             const baseQuery = query.split(' WHERE ')[0];
             cells = this.odbcMap[baseQuery];
         }
 
         if (cells) {
             if (result && result.length > 0) {
-                // Parse the query to extract column names
                 const columnNames = this.extractColumnNamesFromQuery(query);
 
                 if (columnNames.length > 0) {
-                    // Process ALL ODBC queries (both single-column and multi-column)
-                    // ACCUMULATE results from all queries, don't replace
                     const odbcData: OdbcDataSource = {
                         query,
                         result,
@@ -1678,7 +1541,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                         cells
                     };
 
-                    // Check if data has changed before storing
                     const hasChanged = this.hasOdbcDataChanged([odbcData]);
 
                     if (hasChanged) {
@@ -1686,28 +1548,21 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                         // First, check if this query result already exists
                         const existingIndex = this.dataSourceState.odbc.data.findIndex(d => d.query === query);
                         if (existingIndex >= 0) {
-                            // Replace existing query result
                             this.dataSourceState.odbc.data[existingIndex] = odbcData;
                         } else {
-                            // Add new query result
                             this.dataSourceState.odbc.data.push(odbcData);
                         }
                         this.dataSourceState.odbc.loaded = true;
 
-                        // Update table with all available data sources (consolidates with DAQ if present)
                         this.updateTableData();
                     }
                 }
             } else {
-                // Empty result from ODBC query - still need to handle this
-                // Mark that we've received a response (even if empty) for this query
                 const existingIndex = this.dataSourceState.odbc.data.findIndex(d => d.query === query);
                 if (existingIndex >= 0) {
-                    // Remove this query's previous results since we got empty results now
                     this.dataSourceState.odbc.data.splice(existingIndex, 1);
                 }
 
-                // Always mark as loaded and update table when we get empty results
                 this.dataSourceState.odbc.loaded = true;
                 this.updateTableData();
             }
@@ -1721,19 +1576,14 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             let date: Date;
 
             if (typeof value === 'number') {
-                // Detect if timestamp is in seconds or milliseconds
-                // Timestamps before year 2001 in ms would be < 1e11
-                // So if value > 1e11, it's already in milliseconds
                 if (value > 1e11) {
                     date = new Date(value);
                 } else {
-                    // Assume Unix timestamp in seconds, convert to milliseconds
                     date = new Date(value * 1000);
                 }
             } else if (typeof value === 'string') {
                 date = new Date(value);
             } else {
-                // Try to convert to date
                 date = new Date(value);
             }
 
@@ -1741,7 +1591,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 return value.toString();
             }
 
-            // If UTC to local conversion is requested, adjust the date
             if (convertUtcToLocal) {
                 const localDate = this.convertUtcToLocal(value);
                 if (localDate) {
@@ -1760,17 +1609,13 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
         const stringValue = value.toString();
 
-        // Try to detect if this is a timestamp/date
-        // Check for ISO date strings, Unix timestamps, or common date formats
         if (this.isTimestampValue(stringValue)) {
             try {
                 const date = this.parseTimestampValue(stringValue);
                 if (date) {
-                    // Use the same format as other timestamp cells in FUXA
                     return format(date, 'YYYY-MM-DD HH:mm:ss');
                 }
             } catch (e) {
-                // If parsing fails, return the original value
                 console.warn('Failed to parse timestamp from ODBC result:', stringValue);
             }
         }
@@ -1834,7 +1679,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!this.executedQueries.has(baseQuery)) {
             this.executedQueries.add(baseQuery);
 
-            // Use device ID from cell if available, otherwise use first ODBC device
             let deviceId = cell['deviceId'];
             if (!deviceId) {
                 const odbcDevices = (<Device[]>Object.values(this.projectService.getDevices())).filter(d => d.type === DeviceType.ODBC);
@@ -1855,7 +1699,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     clearTimeout(this.odbcQueryTimeout);
                 }
 
-                // Schedule execution after a short delay to allow other queries to be collected
                 this.odbcQueryTimeout = setTimeout(() => {
                     this.executePendingOdbcQueries();
                 }, 100);
@@ -1865,7 +1708,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private executePendingOdbcQueries() {
         this.pendingOdbcQueries.forEach(({ deviceId, cells }) => {
-            // Group cells by table and get all queries for this table
             const queries = cells.map(cell => cell.variableId);
             const tableQueries = this.groupQueryByCellsByTable(queries);
 
@@ -1873,7 +1715,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 const timestampColumns = this.collectTimestampColumns();
                 const combinedQuery = this.combineOdbcQueries(tableCells, timestampColumns);
                 if (combinedQuery) {
-                    // Update all cells to use the combined query
                     tableCells.forEach(cell => {
                         if (!this.odbcMap[combinedQuery]) {
                             this.odbcMap[combinedQuery] = [];
@@ -1881,7 +1722,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                         this.odbcMap[combinedQuery].push(cell);
                     });
 
-                    // Execute query with date filtering if needed
                     this.prepareAndExecuteQuery(combinedQuery, tableCells, deviceId);
                 }
             });
@@ -1901,25 +1741,19 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private extractColumnNamesFromQuery(query: string): string[] {
-        // Parse SELECT clause to extract column names
-        // Handles: SELECT col1, col2, col3 FROM table
-        // Also handles: SELECT * FROM table (returns empty array, will need different approach)
+
         const selectMatch = query.match(/SELECT\s+(.+?)\s+FROM/i);
         if (!selectMatch) return [];
 
         const selectClause = selectMatch[1].trim();
 
-        // If it's SELECT *, we can't determine column names from the query alone
         if (selectClause === '*') return [];
 
-        // Split by commas and clean up column names
         const columns = selectClause.split(',').map(col => {
             col = col.trim();
-            // Remove table prefix if present (e.g., "table.col" -> "col")
             if (col.includes('.')) {
                 col = col.split('.').pop();
             }
-            // Remove AS aliases (e.g., "col AS alias" -> "col")
             if (col.toUpperCase().includes(' AS ')) {
                 col = col.split(/\s+AS\s+/i)[0].trim();
             }
@@ -1951,40 +1785,32 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             const columnMatch = cell.variableId.match(/SELECT\s+(.+?)\s+FROM/i);
             if (columnMatch) {
                 const selectClause = columnMatch[1].trim();
-                // For single columns, just add them
                 if (!selectClause.includes(',')) {
                     odbcColumns.push(selectClause);
                 } else {
-                    // For multi-column, split and add
                     selectClause.split(',').forEach(col => odbcColumns.push(col.trim()));
                 }
             }
         });
 
-        // Combine ODBC columns with timestamp columns
         const allColumns = [...odbcColumns, ...timestampColumns];
 
         if (allColumns.length === 0) return null;
 
-        // Remove duplicates
         const uniqueColumns = [...new Set(allColumns)];
 
         return `SELECT ${uniqueColumns.join(', ')} ${tablePart}`;
     }
 
     private addDateFilterToOdbcQuery(baseQuery: string): string {
-        // Parse the base query to see if it has a FROM clause and potential timestamp columns
         const upperQuery = baseQuery.toUpperCase();
         const fromIndex = upperQuery.indexOf(' FROM ');
         if (fromIndex === -1) return baseQuery;
 
-        // Extract table name (simplified - assumes single table)
         const afterFrom = baseQuery.substring(fromIndex + 6).trim();
         const tableNameMatch = afterFrom.match(/^([`\w\[\]]+)/);
         if (!tableNameMatch) return baseQuery;
 
-        // For now, we'll assume common timestamp column names
-        // In a more advanced implementation, we could query the database schema
         const timestampColumns = ['timestamp', 'created_at', 'created_date', 'date_created', 'time', 'datetime', 'dt'];
 
         // Check if any timestamp columns have UTC to Local conversion enabled
@@ -2006,16 +1832,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         }
 
-        // Use the pre-calculated range from this.range (set in onRangeChanged or onDateRange)
-        // this.range is already in milliseconds and represents LOCAL times
         let startDate = new Date(this.range.from);
         let endDate = new Date(this.range.to);
 
-        // If UTC to Local conversion is enabled, we need to convert these LOCAL times to UTC
-        // for the database query. The database stores UTC times, but the user sees LOCAL times.
-        // To get the right records, we need to shift the query range by the timezone offset.
-        // Timezone offset is positive for west of GMT, negative for east
-        // We ADD the offset to convert LOCAL → UTC
         if (shouldConvertToUtc) {
             const tzOffsetMs = new Date().getTimezoneOffset() * 60 * 1000;
             startDate = new Date(this.range.from + tzOffsetMs);
@@ -2036,23 +1855,17 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         const startTimestamp = formatSqlTimestamp(startDate);
         const endTimestamp = formatSqlTimestamp(endDate);
 
-        // Try to add WHERE clause with common timestamp column names
-        // Use proper quoting based on database type - PostgreSQL uses double quotes
         for (const col of timestampColumns) {
-            // Check if column appears in SELECT clause (with various separators)
             const columnRegex = new RegExp(`(?:^|,|\\s)${col}(?:$|,|\\s)`, 'i');
             if (columnRegex.test(baseQuery) || upperQuery.includes(`"${col}"`) || upperQuery.includes(`\`${col}\``) || upperQuery.includes(`[${col}]`)) {
                 const whereClause = ` WHERE "${col}" >= '${startTimestamp}' AND "${col}" <= '${endTimestamp}'`;
                 if (!upperQuery.includes(' WHERE ')) {
                     return baseQuery + whereClause;
                 } else {
-                    // If WHERE already exists, add with AND
                     return baseQuery + ` AND "${col}" >= '${startTimestamp}' AND "${col}" <= '${endTimestamp}'`;
                 }
             }
         }
-
-        // No timestamp column found, return original query (show all data)
         return baseQuery;
     }
 
@@ -2064,8 +1877,6 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private getVariableIdsForQuery(): string[] {
-        // Get all variable IDs from columns, even if tagsColumnMap isn't populated yet
-        // (tagsColumnMap is populated in loadData(), which might not have run yet at ngOnInit time)
         return this.tableOptions.columns
             .filter(col => col.type === TableCellType.variable && col.variableId)
             .map(col => col.variableId);
@@ -2218,13 +2029,13 @@ interface ITagMap {
 export class TableRangeConverter {
     static TableRangeToHours(crt: TableRangeType) {
         let types = Object.keys(TableRangeType);
-        if (crt === types[0]) {         // TableRangeType.none
-            return 0; // No filtering
-        } else if (crt === types[1]) {  // TableRangeType.last1h
+        if (crt === types[0]) {         
+            return 0; 
+        } else if (crt === types[1]) { 
             return 1;
-        } else if (crt === types[2]) {  // TableRangeType.last1d
+        } else if (crt === types[2]) {  
             return 24;
-        } else if (crt === types[3]) {  // TableRangeType.last3d
+        } else if (crt === types[3]) {  
             return 24 * 3;
         }
         return 0;

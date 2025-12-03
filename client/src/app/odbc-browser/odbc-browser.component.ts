@@ -10,7 +10,7 @@ export interface OdbcBrowserData {
   deviceId?: string;
   query?: string;
   selectColumn?: boolean;
-  preselectedTable?: string; // Pre-select a specific table for column selection
+  preselectedTable?: string; 
 }
 
 export interface QueryResult {
@@ -25,7 +25,7 @@ export interface ColumnDefinition {
   nullable?: boolean;
   defaultValue?: string;
   autoIncrement?: boolean;
-  autoTimestamp?: boolean; // DEFAULT CURRENT_TIMESTAMP
+  autoTimestamp?: boolean;
   isPrimaryKey?: boolean;
   foreignKey?: {
     tableName: string;
@@ -46,10 +46,8 @@ export interface SqlSyntaxItem {
 })
 export class OdbcBrowserComponent implements OnInit, OnDestroy {
 
-  // Tab management
   selectedTabIndex = 0;
 
-  // Device & Table Selection
   devices: Device[] = [];
   selectedDevice: Device = null;
   tables: string[] = [];
@@ -58,26 +56,23 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
   selectedColumns: string[] = [];
   selectedColumn: string = '';
 
-  // Data Viewer
   tableData: QueryResult = { columns: [], rows: [], rowCount: 0 };
   rowLimit = 10;
   rowLimitOptions = [10, 50, 100, 500];
   displayedColumns: string[] = [];
 
-  // SQL Query Editor
   sqlQuery: string = '';
   customSqlQuery: string = '';
   sqlExecutionResult: QueryResult = { columns: [], rows: [], rowCount: 0 };
   sqlExecutionError: string = '';
 
-  // Table Creator
   newTableName: string = '';
   newTableColumns: ColumnDefinition[] = [];
   primaryKeyColumn: string = '';
-  foreignKeyColumn: string = '';  // Column that has the FK
-  foreignKeyReferencedTable: string = '';  // Table being referenced
-  foreignKeyReferencedColumn: string = '';  // Column being referenced
-  foreignKeyReferencedTableColumns: string[] = [];  // Columns of selected FK table
+  foreignKeyColumn: string = '';  
+  foreignKeyReferencedTable: string = '';  
+  foreignKeyReferencedColumn: string = '';  
+  foreignKeyReferencedTableColumns: string[] = [];  
   selectedDataType: string = 'VARCHAR(255)';
   dataTypeOptions = [
     // String types
@@ -112,7 +107,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     'BYTEA'
   ];
 
-  // Table Management
   isEditingTable: boolean = false;
   editingTableName: string = '';
   originalTableName: string = '';
@@ -122,14 +116,12 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
   showQueryPreview: boolean = false;
   deleteConfirmation: { show: boolean; tableName: string } = { show: false, tableName: '' };
 
-  // Query Builder
   queryBuilderConfig: QueryBuilderConfig;
   queryBuilderResults: QueryResult = null;
   availableColumns: Array<{ name: string; type: string; selected: boolean; aggregate?: string }> = [];
   queryBuilderSelectAll: boolean = false;
   queryBuilderConditionOperators: string[] = [];
 
-  // State flags
   loading = false;
   error = '';
   success = '';
@@ -137,7 +129,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
   tableCreationMode = false;
   showHelpDialog = false;
 
-  // SQL Syntax Reference
   sqlSyntaxReference: SqlSyntaxItem[] = [
     {
       name: 'SELECT',
@@ -372,7 +363,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     // Use the existing askDeviceProperty to get tables
     this.hmiService.askDeviceProperty({
       address: this.selectedDevice.property?.address,
-      uid: null, // Will be filled from security if needed
+      uid: null, 
       pwd: null
     }, DeviceType.ODBC);
 
@@ -403,7 +394,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
   }
 
   onTableSelect(table: string) {
-    console.log('ODBC Browser: Table selected:', table);
     this.selectedTable = table;
     this.selectedColumns = [];
     this.sqlQuery = '';
@@ -412,7 +402,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
   }
 
   loadColumns() {
-    console.log('ODBC Browser: loadColumns called. Device:', this.selectedDevice?.id, 'Table:', this.selectedTable);
     if (!this.selectedDevice || !this.selectedTable) {
       console.warn('ODBC Browser: Missing device or table, returning');
       return;
@@ -430,22 +419,16 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
 
     this.browseSubscription = this.hmiService.onDeviceBrowse.subscribe(result => {
       if (result && Array.isArray(result)) {
-        // Direct array response (from callback)
-        console.log('ODBC Browser: Columns received (direct):', result);
         this.columns = result.map(col => ({
           name: col.id || col.name,
           type: col.type || 'string'
         }));
-        console.log('ODBC Browser: Mapped columns:', this.columns);
         this.loading = false;
       } else if (result && result.result && Array.isArray(result.result)) {
-        // Object with result property containing array
-        console.log('ODBC Browser: Columns received (wrapped):', result.result);
         this.columns = result.result.map(col => ({
           name: col.id || col.name,
           type: col.type || 'string'
         }));
-        console.log('ODBC Browser: Mapped columns:', this.columns);
         this.loading = false;
       } else if (result && result.error) {
         console.error('ODBC Browser: Error loading columns:', result.error);
@@ -453,17 +436,13 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
         this.loading = false;
       }
     });
-
-    console.log('ODBC Browser: Requesting columns for table:', this.selectedTable);
     this.hmiService.askDeviceBrowse(this.selectedDevice.id, this.selectedTable);
   }
 
   onColumnToggle(column: string, checked: boolean) {
     if (this.selectColumnMode) {
-      // Single selection mode for timestamp column
       this.selectedColumn = checked ? column : '';
     } else {
-      // Multiple selection mode for query building
       if (checked) {
         if (!this.selectedColumns.includes(column)) {
           this.selectedColumns.push(column);
@@ -506,20 +485,16 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = '';
     const query = `SELECT ${this.selectedColumns.join(', ')} FROM ${this.selectedTable} LIMIT ${this.rowLimit}`;
-    console.log('ODBC Browser: Loading table data with query:', query);
 
     // Create a subscription to listen for ODBC query results
     const querySubscription = this.hmiService.onDeviceOdbcQuery.subscribe(result => {
-      console.log('ODBC Browser: Query result received:', result);
       if (result && result.result && Array.isArray(result.result)) {
-        console.log('ODBC Browser: Found result array:', result.result);
         this.tableData = {
           columns: this.selectedColumns,
           rows: result.result || [],
           rowCount: result.result?.length || 0
         };
         this.displayedColumns = this.selectedColumns;
-        console.log('ODBC Browser: Table data set:', this.tableData);
       } else if (result && result.error) {
         console.error('ODBC Browser: Query error:', result.error);
         this.error = result.error;
@@ -555,7 +530,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     // Create a subscription to listen for ODBC query results
     const querySubscription = this.hmiService.onDeviceOdbcQuery.subscribe(result => {
       if (result && Array.isArray(result)) {
-        // Direct array response
         const rows = result;
         const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
         this.sqlExecutionResult = {
@@ -566,7 +540,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
         this.success = 'Query executed successfully!';
         setTimeout(() => this.success = '', 4000);
       } else if (result && result.result && Array.isArray(result.result)) {
-        // Wrapped array response
         const rows = result.result;
         const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
         this.sqlExecutionResult = {
@@ -577,7 +550,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
         this.success = 'Query executed successfully!';
         setTimeout(() => this.success = '', 4000);
       } else if (result && result.result && result.result.columns) {
-        // Response with explicit columns property
         this.sqlExecutionResult = {
           columns: result.result.columns || [],
           rows: result.result.rows || [],
@@ -595,7 +567,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     });
     this.subscriptions.push(querySubscription);
 
-    // Execute the custom query
     this.hmiService.executeOdbcQuery(this.selectedDevice.id, this.customSqlQuery);
   }
 
@@ -732,15 +703,12 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
         }
         alterQueries.push(`ALTER TABLE ${tableName} ADD COLUMN ${columnDef};`);
       } else if (originalCol.type !== newCol.type || originalCol.nullable !== newCol.nullable || originalCol.defaultValue !== newCol.defaultValue || originalCol.autoIncrement !== newCol.autoIncrement || originalCol.autoTimestamp !== newCol.autoTimestamp) {
-        // Column was modified - server normalizes types
         let columnDef = `${colName} ${newCol.type}`;
 
-        // Add AUTO_INCREMENT if enabled
         if (newCol.autoIncrement) {
           columnDef += ' AUTO_INCREMENT';
         }
 
-        // Add DEFAULT CURRENT_TIMESTAMP if enabled (before NOT NULL)
         if (newCol.autoTimestamp) {
           columnDef += ' DEFAULT CURRENT_TIMESTAMP';
         }
@@ -901,7 +869,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     this.browseSubscription = this.hmiService.onDeviceBrowse.subscribe(result => {
       if (result && Array.isArray(result)) {
         // Direct array response
-        console.log('ODBC Browser: Edit mode - Columns received (direct):', result);
         this.newTableColumns = result.map(col => ({
           name: col.id || col.name,
           type: col.type || 'VARCHAR(255)',
@@ -919,7 +886,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
         this.loading = false;
       } else if (result && result.result && Array.isArray(result.result)) {
         // Object with result property containing array
-        console.log('ODBC Browser: Edit mode - Columns received (wrapped):', result.result);
         this.newTableColumns = result.result.map(col => ({
           name: col.id || col.name,
           type: col.type || 'VARCHAR(255)',
@@ -976,7 +942,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
 
     const querySubscription = this.hmiService.onDeviceOdbcQuery.subscribe(result => {
       if (result && result.success !== false && !result.error) {
-        // Reload tables after deletion
         this.loadTables();
       } else if (result && result.error) {
         this.error = `Failed to delete table: ${result.error}`;
@@ -1114,10 +1079,6 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
       this.foreignKeyReferencedColumn = '';
     }
   }
-
-  // ================================
-  // QUERY BUILDER METHODS
-  // ================================
 
   /**
    * Set the query type (SELECT, INSERT, UPDATE, DELETE)
@@ -1585,7 +1546,7 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
    */
   editSyntaxInSqlEditor(syntax: string) {
     this.customSqlQuery = syntax;
-    this.selectedTabIndex = 3; // Switch to SQL Editor tab
+    this.selectedTabIndex = 3; 
     this.showHelpDialog = false;
   }
 }

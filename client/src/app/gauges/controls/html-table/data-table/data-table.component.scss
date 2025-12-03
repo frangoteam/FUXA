@@ -187,14 +187,12 @@
     }
 
     .moka-toolbar-editor.moka-toolbar-button {
-        /* Preserve the inline button color (set via [style.color] on buttons); do not override with CSS variables */
         color: inherit;
     }
 
     .moka-toolbar-editor mat-icon,
     .moka-toolbar-editor .material-icons,
     .moka-toolbar-editor mat-icon svg {
-        /* Use inherited color from the button so icons follow button text color */
         color: inherit;
         fill: currentColor !important;
         font-size: 20px !important;
@@ -256,7 +254,7 @@
 
         .custom-select-dropdown {
             position: absolute;
-            top: calc(100% - 1px); /* overlap trigger border by 1px to remove visual gap */
+            top: calc(100% - 1px); 
             left: 0;
             right: 0;
             border: 1px solid #cccccc;

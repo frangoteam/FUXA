@@ -24,25 +24,19 @@ export class TableCustomizerCellEditComponent {
         private dialog: MatDialog) {
         this.devicesValues.devices = Object.values(this.projectService.getDevices());
 
-        // Filter devices if deviceId is specified (for parameter tables with device selection)
         if (this.data.deviceId) {
             this.devicesValues.devices = this.devicesValues.devices.filter(device => device.id === this.data.deviceId);
         }
 
-        // Initialize odbcTimestampColumns array if not present
         if (!this.data.cell.odbcTimestampColumns) {
             this.data.cell.odbcTimestampColumns = [];
         }
-        // Initialize input type if not present
         if (!this.data.cell.inputType) {
             this.data.cell.inputType = InputOptionType.text;
         }
-        // Ensure width/align/defaults exist on the cell for editing dialog:
         if (this.data.type === TableCustomizerCellRowType.column) {
-            // default width handling: a TableColumn has width and align; TableCell may not
             const cellAny = this.data.cell as any;
             if (cellAny.width === undefined || cellAny.width === null) {
-                // Normalize width to numeric only; treat any 'auto' value as 100
                 cellAny.width = Number(cellAny.width) || 100;
             }
             if (cellAny.align === undefined || cellAny.align === null) {
@@ -51,12 +45,10 @@ export class TableCustomizerCellEditComponent {
         }
     }
     
-        // Provide an any-typed helper so template bindings don't need inline typecasts
         get cellAny(): any {
             return (this.data && this.data.cell) ? (this.data.cell as any) : {};
         }
 
-    // We no longer support auto width - width is always numeric.
 
     onNoClick(): void {
         this.dialogRef.close();
@@ -124,10 +116,8 @@ export class TableCustomizerCellEditComponent {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result && result.column && result.tableName) {
-                // For backward compatibility, store in single column as well
                 this.data.cell.odbcTimestampColumn = result.column;
 
-                // Also add to the multi-source array if not already present
                 if (!this.data.cell.odbcTimestampColumns) {
                     this.data.cell.odbcTimestampColumns = [];
                 }
@@ -167,7 +157,6 @@ export class TableCustomizerCellEditComponent {
                     this.data.cell.odbcTimestampColumns = [];
                 }
 
-                // Check if this table/column combo already exists
                 const existing = this.data.cell.odbcTimestampColumns.find(ts =>
                     ts.table === result.tableName && ts.column === result.column
                 );

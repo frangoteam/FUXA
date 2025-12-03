@@ -3,7 +3,7 @@ import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDia
 import { TableCellAlignType } from '../../../../../_models/hmi';
 
 export interface TableCustomizerTextRowEditDialogData {
-    row: any; // TableRow/ParameterRow-ish
+    row: any; 
 }
 
 @Component({
@@ -19,7 +19,6 @@ export class TableCustomizerTextRowEditComponent {
         @Inject(MAT_DIALOG_DATA) public data: TableCustomizerTextRowEditDialogData
     ) {
         this.row = this.data.row;
-        // Provide defaults if not present
         if (!this.row.textContent) this.row.textContent = '';
         if (this.row.textAlign === undefined || this.row.textAlign === null) this.row.textAlign = TableCellAlignType.left;
         if (!this.row.textSize) this.row.textSize = 12;

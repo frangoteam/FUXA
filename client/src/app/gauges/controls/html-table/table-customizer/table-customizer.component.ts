@@ -41,15 +41,12 @@ export class TableCustomizerComponent implements OnInit {
         return this.data.type === TableType.parameter;
     }
 
-    // Save mutex to prevent concurrent saves
     private isSavingType: boolean = false;
     private pendingSaveNeeded: boolean = false;
 
     private async saveSelectedType(showToast: boolean = false) {
-        // Only applicable for parameter tables and when a type is selected
         if (this.data.type !== TableType.parameter || !this.selectedTypeId) return;
         if (this.isSavingType) {
-            // Mark that another save is needed after the current save finishes
             this.pendingSaveNeeded = true;
             return;
         }
@@ -57,10 +54,8 @@ export class TableCustomizerComponent implements OnInit {
         try {
             const found = this.parameterTypes.find(t => t.id === this.selectedTypeId);
             const type = found || this.selectedType || new ParameterType(this.selectedTypeId);
-            // embed rows / columns into the type and use existing name/description/userId if present
             type.rows = JSON.parse(JSON.stringify(this.data.rows || []));
             type.columns = JSON.parse(JSON.stringify(this.data.columns || []));
-            // Preserve column styles and labels that may be stored on the selectedType
             if (this.selectedType && this.selectedType.columnStyles) {
                 (type as any).columnStyles = JSON.parse(JSON.stringify(this.selectedType.columnStyles));
             }
@@ -79,14 +74,12 @@ export class TableCustomizerComponent implements OnInit {
             this.isSavingType = false;
             if (this.pendingSaveNeeded) {
                 this.pendingSaveNeeded = false;
-                // Perform another save to capture any changes that occurred while saving
                 setTimeout(() => this.saveSelectedType(showToast), 50);
             }
         }
     }
 
     ngOnInit() {
-        // Validate ODBC device ID - reset to null if device doesn't exist
         if (this.data.odbcDeviceId) {
             const devices = this.projectService.getDevices();
             if (!devices[this.data.odbcDeviceId] || devices[this.data.odbcDeviceId].type !== DeviceType.ODBC) {
@@ -94,14 +87,12 @@ export class TableCustomizerComponent implements OnInit {
             }
         }
         this.loadData();
-        // Load parameter types and devices if this is a parameter table
         if (this.data.type === this.tableType.parameter) {
             this.loadParameterTypes();
             this.devices = Object.values(this.projectService.getDevices());
         }
     }
 
-    // Parameter types / device selectors
     parameterTypes: ParameterType[] = [];
     devices: any[] = [];
     selectedTypeId: string = null;
@@ -117,7 +108,6 @@ export class TableCustomizerComponent implements OnInit {
     private loadData() {
         try {
             if (this.data.type === this.tableType.parameter) {
-                // For parameter tables, displayedColumns come from columns array
                 this.displayedColumns = (this.data.columns || []).map(c => c.id);
             } else {
                 this.displayedColumns = (this.data && this.data.columns) ? this.data.columns.map(c => c.id) : [];
@@ -143,11 +133,9 @@ export class TableCustomizerComponent implements OnInit {
 
     private async loadParameterTypes() {
         try {
-            // Validate ODBC device before making API call
             if (this.data.storageType === 'odbc' && this.data.odbcDeviceId) {
                 const devices = this.projectService.getDevices();
                 if (!devices[this.data.odbcDeviceId] || devices[this.data.odbcDeviceId].type !== DeviceType.ODBC) {
-                    console.log('Invalid ODBC device, skipping loadParameterTypes');
                     this.parameterTypes = [];
                     return;
                 }
@@ -160,12 +148,9 @@ export class TableCustomizerComponent implements OnInit {
             params.append('storageType', this.data.storageType || 'sqlite');
             params.append('odbcDeviceId', this.data.odbcDeviceId || '');
             const response = await this.http.get<{ types: ParameterType[] }>(`/api/parameters-table/types?${params.toString()}`).toPromise();
-            // console.debug('loadParameterTypes: response types length', response?.types?.length);
-            // If a parameterTypeId is provided by the caller, use that as the selected type
             if (!this.selectedTypeId && (this.data as any)?.parameterTypeId) {
                 this.selectedTypeId = (this.data as any).parameterTypeId;
             }
-            // If nothing selected and the dialog has no local rows/columns, auto-select a type
             if (!this.selectedTypeId && this.parameterTypes.length > 0) {
                 const hasExistingRows = this.data?.rows && this.data.rows.length > 0;
                 const hasExistingColumns = this.data?.columns && this.data.columns.length > 0;
@@ -173,7 +158,6 @@ export class TableCustomizerComponent implements OnInit {
                     this.selectedTypeId = this.parameterTypes[0].id;
                 }
             }
-            // If the dialog data contains types, prefer them (caller-provided list) over server response
             this.parameterTypes = (this.data && (this.data as any).types) ? (this.data as any).types : (response?.types || []);
 
             const incomingAssigned = (this.data as any)?.parameterTypeIds;
@@ -185,10 +169,7 @@ export class TableCustomizerComponent implements OnInit {
                 this.assignedTypeIds = [];
             }
             
-            // Set selected type object for template access
             this.selectedType = this.parameterTypes.find(t => t.id === this.selectedTypeId) || null;
-            // console.debug('loadParameterTypes final parameterTypes length:', this.parameterTypes?.length, 'selectedTypeId:', this.selectedTypeId, 'selectedType?', !!this.selectedType);
-            // Apply the selected type rows/columns into the customizer if a type is selected
             if (this.selectedTypeId) {
                 try {
                     this.onSelectType(this.selectedTypeId);
@@ -196,7 +177,6 @@ export class TableCustomizerComponent implements OnInit {
                     console.error('loadParameterTypes: failed applying selected type', err, this.selectedTypeId);
                 }
             } else {
-                // No type selected, clear the data to show blank
                 this.data.rows = [];
                 this.data.columns = [];
                 this.loadData();
@@ -226,16 +206,12 @@ export class TableCustomizerComponent implements OnInit {
         const t = this.parameterTypes.find(p => p.id === this.selectedTypeId);
         if (!t) return;
     const copy = JSON.parse(JSON.stringify(t));
-        // New id and name for the copied type
-    // generate a new internal ID and clear userId so the user can set a new one if desired
     copy.id = Utils.getShortGUID('pt_');
     copy.userId = '';
         copy.name = `${copy.name} - copy`;
         try {
-            // Save the copied type
             await this.http.post('/api/parameters-table/types', { type: copy, storage: {storageType: this.data.storageType, odbcDeviceId: this.data.odbcDeviceId} }).toPromise();
             this.toastNotifier.notifySuccess('msg.parameter-type-copied');
-            // Reload parameter types and apply the new one
             await this.loadParameterTypes();
             this.selectedTypeId = copy.id;
             this.onSelectType(copy.id);
@@ -246,12 +222,10 @@ export class TableCustomizerComponent implements OnInit {
     }
 
     onSelectType(typeId: string) {
-        console.debug('onSelectType', typeId, 'current rows', (this.data && this.data.rows) ? this.data.rows.length : 0, 'current cols', (this.data && this.data.columns) ? this.data.columns.length : 0);
         this.selectedTypeId = typeId;
         this.selectedType = this.parameterTypes.find(t => t.id === typeId) || null;
         const type = this.parameterTypes.find(p => p.id === typeId);
         if (!type) return;
-        // Apply the type rows to current data by deep cloning
         try {
             this.data.rows = JSON.parse(JSON.stringify(type.rows || []));
             this.data.columns = JSON.parse(JSON.stringify(type.columns || []));
@@ -260,8 +234,6 @@ export class TableCustomizerComponent implements OnInit {
             this.data.rows = [];
             this.data.columns = [];
         }
-        // Clear columns for parameter tables since they use rows (wait, no, now they use columns)
-        // Actually, for parameter tables, columns are now separate
         this.loadData();
     }
 
@@ -299,7 +271,6 @@ export class TableCustomizerComponent implements OnInit {
                 await this.http.delete(`/api/parameters-table/types?${params.toString()}`).toPromise();
                 this.toastNotifier.notifySuccess('msg.parameter-type-deleted');
             } catch (err) {
-                // ignore server errors, continue updating local list
                 console.error('Failed to delete type', err);
                 this.toastNotifier.notifyError('msg.failed-delete-parameter-type', err.message || '');
             }
@@ -319,7 +290,6 @@ export class TableCustomizerComponent implements OnInit {
         const preType = (type ? JSON.parse(JSON.stringify(type)) : new ParameterType());
         const isNew = !type;
         if (isNew) {
-            // For new type, start with blank rows and columns
             preType.rows = [];
             preType.columns = [];
         }
@@ -331,11 +301,8 @@ export class TableCustomizerComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe(async (result: ParameterType) => {
             if (!result) return;
-            // Save result on server
             try {
-                // Ensure the type has an ID before saving
                 if (!result.id) result.id = Utils.getShortGUID('pt_');
-                // Embed the current layout rows/columns into the type so the saved type contains rows
                 if (isNew) {
                     result.rows = [];
                     result.columns = [];
@@ -343,13 +310,10 @@ export class TableCustomizerComponent implements OnInit {
                     try { result.rows = JSON.parse(JSON.stringify(this.data.rows)); } catch {}
                     try { result.columns = JSON.parse(JSON.stringify(this.data.columns)); } catch {}
                 }
-                // Server expects a payload { type: <ParameterType> } for create/update
                 await this.http.post('/api/parameters-table/types', { type: result, storage: {storageType: this.data.storageType, odbcDeviceId: this.data.odbcDeviceId} }).toPromise();
                 this.toastNotifier.notifySuccess('msg.parameter-type-saved');
-                // Reload parameter types from server to ensure we have fresh data
                 await this.loadParameterTypes();
                 this.selectedTypeId = result.id;
-                // Apply the saved type into the customizer immediately
                 this.onSelectType(result.id);
             } catch (err) {
                 console.error('Failed to save parameter type', err);
@@ -362,13 +326,10 @@ export class TableCustomizerComponent implements OnInit {
     }
 
     onAddColumn() {
-        console.debug('onAddColumn called, current columns:', this.data?.columns?.map(c=>c.id));
         this.onEditColumn();
     }
 
     onAddRow() {
-        // Default add a standard column row
-        console.debug('onAddRow called, current rows:', this.data?.rows?.length);
         this.onAddRowOfType(TableRowType.column);
         this.loadData();
         this.saveSelectedType();
@@ -382,11 +343,9 @@ export class TableCustomizerComponent implements OnInit {
         if (typeof type === 'string') {
             type = (type === 'text') ? TableRowType.text : TableRowType.column;
         }
-    console.debug('onAddRowOfType called', type, 'displayedColumns:', this.displayedColumns);
     if (this.data.type === TableType.parameter) {
             const r = new ParameterRow(type as TableRowType);
             if (type === TableRowType.column) {
-                // For column rows, add one cell per displayed column
                 this.displayedColumns.forEach(colId => {
                     const cell = new TableCell(colId, TableCellType.label, `Cell ${r.cells.length + 1}`);
                     r.cells.push(cell);
@@ -397,14 +356,12 @@ export class TableCustomizerComponent implements OnInit {
                 r.textSize = 12;
                 r.textBold = false;
             } else {
-                // For data rows, add cells for each displayed column
                 this.displayedColumns.forEach(colId => {
                     r.cells.push(new TableCell(colId, TableCellType.label, `Cell ${r.cells.length + 1}`));
                 });
             }
             this.data.rows.push(r as unknown as TableRow);
         } else {
-            // fallback for other table types
             let cells = [];
             (this.data.columns || []).forEach(c => {
                 cells.push(new TableCell(c.id, c.type));
@@ -416,19 +373,14 @@ export class TableCustomizerComponent implements OnInit {
     }
 
     onEditColumn(columnId?: string) {
-        console.debug('onEditColumn called for columnId', columnId, 'current displayedColumns:', this.displayedColumns);
         if (this.data.type === this.tableType.parameter) {
-            // For parameter tables, find the column in the columns array
             let column = (this.data.columns || []).find(c => c.id === columnId);
             if (!column) {
-                // Create new column if not found
                 column = new TableColumn(columnId || Utils.getShortGUID('c_'), TableCellType.label, 'New Column');
                 this.data.columns.push(column);
             }
-            // If column style exists on selected type, copy those into the column so the dialog shows the current width/align
             if (this.selectedType && this.selectedType.columnStyles && this.selectedType.columnStyles[column.id]) {
                 const style = (this.selectedType.columnStyles[column.id] as any);
-                // If width is not numeric (legacy), fallback to 100
                 const w = (style && style.width) ? Number(style.width) || 100 : 100;
                 (column as any).width = w;
                 (column as any).align = style && style.align ? style.align : (column as any).align || 'left';
@@ -438,7 +390,6 @@ export class TableCustomizerComponent implements OnInit {
                 data: <TableCustomizerCellType> {
                     table: this.data.type,
                     type: TableCustomizerCellRowType.column,
-                    // pass a deep copy so changes only apply on OK
                     cell: JSON.parse(JSON.stringify(column)),
                     deviceId: this.selectedType.deviceId
                 },
@@ -447,17 +398,14 @@ export class TableCustomizerComponent implements OnInit {
 
             dialogRef.afterClosed().subscribe((result: TableCustomizerCellType) => {
                 if (result) {
-                    // For parameter tables, update the column properties directly
                     const colIndex = (this.data.columns || []).findIndex(c => c.id === result.cell.id);
                     if (colIndex >= 0) {
-                        // Update existing column
                         this.data.columns[colIndex].label = result.cell.label;
                         this.data.columns[colIndex].inputType = result.cell.inputType;
                         this.data.columns[colIndex].inputMin = result.cell.inputMin;
                         this.data.columns[colIndex].inputMax = result.cell.inputMax;
                         this.data.columns[colIndex].valueFormat = result.cell.valueFormat;
                     }
-                    // Save width/align into type columnStyles map if provided
                     if (!this.selectedType.columnStyles) this.selectedType.columnStyles = {};
                     const w: number = Number((result.cell as any).width) || 100;
                     this.selectedType.columnStyles[result.cell.id] = { width: w, align: (result.cell as any).align };
@@ -465,7 +413,6 @@ export class TableCustomizerComponent implements OnInit {
                 }
             });
         } else {
-            // For data tables, edit TableColumn
             let colIndex = (this.data.columns || []).findIndex(c => c.id === columnId);
             let cell = new TableColumn(Utils.getShortGUID('c_'), TableCellType.label);
             if (colIndex >= 0) {
@@ -488,10 +435,8 @@ export class TableCustomizerComponent implements OnInit {
                         this.data.columns[colIndex] = <TableColumn>result.cell;
                     } else {
                         this.data.columns.push(<TableColumn>result.cell);
-                        // Ensure every existing row has a cell for the new column
                         this.data.rows = this.data.rows || [];
                         if (this.data.rows.length === 0) {
-                            // If no rows exist yet, create an initial column row so the new column is visible
                             try {
                                 const initialRow = new ParameterRow(TableRowType.column);
                                 (this.data.columns || []).forEach((col: TableColumn) => {
@@ -519,12 +464,10 @@ export class TableCustomizerComponent implements OnInit {
             });
         }
     }    onEditCell(row, columnId: string) {
-        console.debug('onEditCell called', columnId, 'row originalIndex?', row.originalIndex);
         const rowIndex = row.originalIndex;
         let cell = null;
         let cellIndex = -1;
         if (this.data.type === this.tableType.parameter) {
-            // For parameter tables, find cell by id in the row's cells
             if (this.data.rows[rowIndex] && this.data.rows[rowIndex].cells) {
                 cellIndex = this.data.rows[rowIndex].cells.findIndex(c => c && c.id === columnId);
                 if (cellIndex >= 0) {
@@ -532,14 +475,13 @@ export class TableCustomizerComponent implements OnInit {
                 }
             }
         } else {
-            // For data tables, use column index
             let colIndex = (this.data.columns || []).findIndex(c => c.id === columnId);
             cell = (this.data.rows[rowIndex] && this.data.rows[rowIndex].cells) ? this.data.rows[rowIndex].cells[colIndex] : null;
             cellIndex = colIndex;
         }
         if (!cell) {
             cell = new TableCell(columnId, TableCellType.label);
-            cellIndex = -1; // Will be added
+            cellIndex = -1; 
         }
         let dialogRef = this.dialog.open(TableCustomizerCellEditComponent, {
             data: <TableCustomizerCellType> {
@@ -557,13 +499,12 @@ export class TableCustomizerComponent implements OnInit {
                     if (cellIndex >= 0) {
                         this.data.rows[rowIndex].cells[cellIndex] = <TableCell>result.cell;
                     } else {
-                        // Add new cell
                         this.data.rows[rowIndex].cells.push(<TableCell>result.cell);
                     }
                 } else {
                     this.data.rows[rowIndex].cells[cellIndex] = <TableCell>result.cell;
                 }
-                const currentData = this.dataSource.data.slice(); // Create a shallow copy.
+                const currentData = this.dataSource.data.slice(); 
                 const rowInData = currentData.find(r => r.originalIndex === rowIndex);
                 if (rowInData) {
                     rowInData[columnId] = result.cell;
@@ -575,11 +516,8 @@ export class TableCustomizerComponent implements OnInit {
 
     onCopyRow(row) {
         const originalIndex = row.originalIndex;
-        console.debug('onCopyRow', originalIndex, 'rows before', this.data.rows.length);
         if (originalIndex >= 0) {
-            // Deep copy the underlying row
             const copiedRow = JSON.parse(JSON.stringify(this.data.rows[originalIndex]));
-            // Ensure new ID is blank (if used elsewhere)
             if (copiedRow.id) copiedRow.id = '';
             this.data.rows.splice(originalIndex + 1, 0, copiedRow);
             this.loadData();
@@ -588,26 +526,21 @@ export class TableCustomizerComponent implements OnInit {
     }
 
     onRemoveCell(row, columnId: string) {
-        // find row index and column index and remove the cell for the row only
         const rowIndex = row.originalIndex;
         if (rowIndex < 0) {
-            console.debug('onRemoveCell: row not found', row, columnId);
             return;
         }
         let colIndex = -1;
         if (this.data.type === this.tableType.parameter) {
-            // For parameter tables, find cell index by id
             const cells = this.data.rows[rowIndex].cells || [];
             colIndex = cells.findIndex(c => c && c.id === columnId);
         } else {
             colIndex = (this.data.columns || []).findIndex(c => c.id === columnId);
         }
         if (colIndex < 0) {
-            console.debug('onRemoveCell: colIndex not found', columnId, this.data.type === this.tableType.parameter ? 'parameter table' : this.data.columns.map(c=>c.id));
             return;
         }
         const cells = this.data.rows[rowIndex].cells || [];
-        // Remove the specific cell by index if exists
         if (cells[colIndex]) {
             cells.splice(colIndex, 1);
         }
@@ -628,7 +561,6 @@ export class TableCustomizerComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
-                // copy modified fields back to the original row
                 pRow.textContent = result.textContent;
                 pRow.textAlign = result.textAlign;
                 pRow.textSize = result.textSize;
@@ -642,10 +574,8 @@ export class TableCustomizerComponent implements OnInit {
 
     onRemoveColumn(column: string) {
         if (this.data.type === this.tableType.parameter) {
-            // For parameter tables, find the column index in displayedColumns
             const idx = this.displayedColumns.indexOf(column);
             if (idx >= 0) {
-                // Remove the cell at this index from each row
                 (this.data.rows || []).forEach((row: any) => {
                     if (row && row.cells && row.cells.length > idx) {
                         row.cells.splice(idx, 1);
@@ -656,7 +586,6 @@ export class TableCustomizerComponent implements OnInit {
             const idx = (this.data.columns || []).findIndex(c => c.id === column);
             if (idx >= 0) {
                 this.data.columns.splice(idx, 1);
-                // Remove the cell entries at this column index from each row
                 (this.data.rows || []).forEach((row: any) => {
                     if (row && row.cells && row.cells.length > idx) {
                         row.cells.splice(idx, 1);
@@ -664,14 +593,12 @@ export class TableCustomizerComponent implements OnInit {
                 });
             }
         }
-        // Refresh only the data table view not the whole component lifecycle to avoid reloading parameter types
         this.loadData();
         this.saveSelectedType();
     }
 
     onRemoveRow(row) {
         const originalIndex = row.originalIndex;
-        console.debug('onRemoveRow originalIndex', originalIndex, 'total rows', this.data.rows.length);
         if (originalIndex >= 0 && originalIndex < this.data.rows.length) {
             this.data.rows.splice(originalIndex, 1);
             this.loadData();
@@ -681,7 +608,6 @@ export class TableCustomizerComponent implements OnInit {
 
     getColumnType(colIndex: number) {
         if (this.data.type === this.tableType.parameter) {
-            // For parameter tables, get from columns array
             const column = (this.data.columns || [])[colIndex];
             return this.getCellType(column);
         } else {
@@ -691,7 +617,6 @@ export class TableCustomizerComponent implements OnInit {
 
     getColumnSetting(colIndex: number) {
         if (this.data.type === this.tableType.parameter) {
-            // For parameter tables, get from columns array
             const column = (this.data.columns || [])[colIndex];
             return column ? (column.label || '') : '';
         } else {
@@ -727,7 +652,6 @@ export class TableCustomizerComponent implements OnInit {
 
     onMoveColumnLeft(index: number) {
         if (this.data.type === this.tableType.parameter) {
-            // For parameter tables, move cells in all rows
             this.data.rows.forEach(row => {
                 if (row.cells && row.cells.length > index && index > 0) {
                     [row.cells[index - 1], row.cells[index]] = [row.cells[index], row.cells[index - 1]];
@@ -748,7 +672,6 @@ export class TableCustomizerComponent implements OnInit {
 
     onMoveColumnRight(index: number) {
         if (this.data.type === this.tableType.parameter) {
-            // For parameter tables, move cells in all rows
             this.data.rows.forEach(row => {
                 if (row.cells && row.cells.length > index + 1) {
                     [row.cells[index + 1], row.cells[index]] = [row.cells[index], row.cells[index + 1]];
@@ -802,7 +725,6 @@ export class TableCustomizerComponent implements OnInit {
     }
 
     async onOkClick(): Promise<void> {
-        // copy parameter types back into the return data so callers can persist them
         if (this.data.type === this.tableType.parameter) {
             (this.data as any).types = this.parameterTypes;
             (this.data as any).parameterTypeId = this.selectedTypeId;
@@ -811,11 +733,8 @@ export class TableCustomizerComponent implements OnInit {
             await this.saveSelectedType(true);
         }
         this.data.rows.forEach(row => {
-            // check missing cell, happens if you add a column and do not set it in the rows
-            // or remove cells of deleted columns
-            // If this is a parameter table and the row is a text row, do not attempt to normalize cells
+
             if (this.data.type === TableType.parameter && (row as any).type === TableRowType.text) {
-                // Ensure cells array is empty for text rows
                 row.cells = [];
                 return;
             }

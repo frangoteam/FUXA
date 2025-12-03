@@ -95,8 +95,6 @@ function init(_server, _runtime) {
                     if (tosend.smtp) {
                         delete tosend.smtp.password;
                     }
-                    // res.header("Access-Control-Allow-Origin", "*");
-                    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     res.json(tosend);
                 } else {
                     res.status(404).end();

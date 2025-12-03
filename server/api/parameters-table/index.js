@@ -54,7 +54,6 @@ module.exports = {
                     var parameterType = req.body.type;
 
                     runtime.parametersStorage.saveParameterType(parameterType).then(result => {
-                        runtime.logger.info('[API POST PARAMETER TYPE] Data saved successfully');
                         res.json({ result: 'ok' });
                     }).catch(err => {
                         runtime.logger.error("save parameter type error! " + err);
@@ -154,7 +153,6 @@ module.exports = {
                     var parameterSet = req.body.set;
 
                     runtime.parametersStorage.saveParameterSet(parameterSet).then(result => {
-                        runtime.logger.info('[API POST PARAMETER SET] Data saved successfully');
                         res.json({ result: 'ok' });
                     }).catch(err => {
                         runtime.logger.error("save parameter set error! " + err);
@@ -178,11 +176,9 @@ module.exports = {
                     var parameterSet = req.body.set;
                     var setId = req.params.id;
 
-                    // Ensure the set ID matches the URL parameter
                     parameterSet.id = setId;
 
                     runtime.parametersStorage.saveParameterSet(parameterSet).then(result => {
-                        runtime.logger.info('[API PUT PARAMETER SET] Data updated successfully');
                         res.json({ result: 'ok' });
                     }).catch(err => {
                         runtime.logger.error("update parameter set error! " + err);
@@ -255,7 +251,6 @@ module.exports = {
                     var importData = req.body.data;
 
                     runtime.parametersStorage.importParameterType(importData).then(result => {
-                        runtime.logger.info('[API POST PARAMETER IMPORT] Data imported successfully');
                         res.json({ result: 'ok' });
                     }).catch(err => {
                         runtime.logger.error("import parameter type error! " + err);

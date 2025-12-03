@@ -199,8 +199,6 @@
                                 <mat-slide-toggle color="primary" [(ngModel)]="options.daterange.show" (change)="onTableChanged()" [disabled]="tableTypeCtrl.value === tableType.history && options.lastRange === lastRangeType.none"></mat-slide-toggle>
                             </div>
                     </div>
-
-                        <!-- Expose paginator option for Parameter table type (it's available for History and AlarmsHistory above) -->
                         <ng-container *ngIf="tableTypeCtrl.value === tableType.parameter">
                             <div class="section-inline-margin2"></div>
                             <div class="my-form-field section-inline-toggle slider-field">

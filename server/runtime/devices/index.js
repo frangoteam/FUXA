@@ -26,7 +26,6 @@ function start() {
     wokingStatus = 'starting';
     devices.load();
     return new Promise(function (resolve, reject) {
-        // runtime.logger.info('devices.start-all (' + Object.keys(activeDevices).length + ')', true);
         for (var id in activeDevices) {
             activeDevices[id].start();
         }
@@ -41,7 +40,6 @@ function start() {
 function stop() {
     wokingStatus = 'stopping';
     return new Promise(function (resolve, reject) {
-        // runtime.logger.info('devices.stop-all (' + Object.keys(activeDevices).length + ')');
         var deviceStopfnc = [];
         for (var id in activeDevices) {
             deviceStopfnc.push(activeDevices[id].stop());
@@ -447,24 +445,13 @@ function setDeviceConnectionStatus(deviceId, status) {
  */
 function executeOdbcQuery(deviceid, query) {
     return new Promise(function (resolve, reject) {
-        console.log(`executeOdbcQuery called for device: ${deviceid}`);
-        console.log(`Available devices:`, Object.keys(activeDevices));
-        console.log(`Device names:`, Object.values(activeDevices).map(d => d ? d.getName() : 'null'));
-        
         let device = activeDevices[deviceid];
         
         // If not found by ID, try to find by name
         if (!device) {
             device = Object.values(activeDevices).find(d => d && d.getName() === deviceid);
-            console.log(`Device found by name:`, device ? device.getName() : 'not found');
         }
         
-        console.log(`Device ${deviceid} exists:`, !!device);
-        if (device) {
-            const comm = device.getComm();
-            console.log(`Device ${deviceid} has executeQuery:`, typeof comm.executeQuery);
-            console.log(`Device ${deviceid} name:`, device.getName());
-        }
         if (device && device.getComm && device.getComm().executeQuery) {
             device.getComm().executeQuery(query).then(result => {
                 resolve(result);

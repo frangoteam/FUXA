@@ -115,7 +115,6 @@
     .table-container mat-table {
         flex: 1;
         height: auto !important;
-        /* Use fixed table layout to make column widths stable and consistent between header and cells */
         table-layout: fixed;
     }
 
@@ -254,17 +253,13 @@
         }
     }
 
-    /* Ensure mat-icon inside toolbar buttons inherit the button color so disabled/hover states match visually */
-    /* Ensure toolbar buttons and icons use the toolbar text color explicitly */
     .moka-toolbar-editor.moka-toolbar-button {
-        /* Preserve inline button color (set via [style.color]); do not override with CSS variables */
-        color: inherit; /* text color used by the button */
+        color: inherit; 
     }
 
     .moka-toolbar-editor mat-icon,
     .moka-toolbar-editor .material-icons,
     .moka-toolbar-editor mat-icon svg {
-        /* Ensure icons inherit the button color for hover/disabled behavior */
         color: inherit;
         fill: currentColor !important;
         font-size: 20px !important;
@@ -276,7 +271,6 @@
         transform-origin: center center !important;
     }
 
-    /* Ensure hover works even if button has inline backgroundColor style: force the hover state */
     .moka-toolbar-editor.moka-toolbar-button:hover:not([disabled]) {
         background-color: rgba(0, 0, 0, 0.08) !important;
     }
@@ -284,8 +278,6 @@
     .page-size {
         margin-right: 5px;
     }
-
-    /* keep disabled styling consistent with data-table - visual opacity handled by specific selector */
 
     ::ng-deep .left .mat-sort-header-container {
         text-align: left;
@@ -307,21 +299,18 @@
         box-sizing: border-box;
         padding: 0 !important;
         
-        // For text rows that span multiple columns, allow wrapping and full width
         &[colspan] {
             overflow: visible;
             text-overflow: unset;
             white-space: normal;
         }
         
-        // For regular cells, maintain ellipsis behavior
         &:not([colspan]) {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
         
-        // Ensure child elements inherit text alignment from parent cell
         .cell-input,
         span {
             text-align: inherit;
@@ -404,10 +393,10 @@
 
         .custom-select-dropdown {
             position: absolute;
-            top: calc(100% - 1px); /* overlap trigger border to remove visual gap */
+            top: calc(100% - 1px); 
             left: 0;
             right: 0;
-            border: 1px solid #cccccc; /* match data-table */
+            border: 1px solid #cccccc; 
             border-radius: 4px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             z-index: 1000;
@@ -441,14 +430,12 @@
         }
     }
 
-    /* Footer toolbar dropdowns should open upward to avoid being clipped at viewport bottom */
     .footer-dropdown {
         top: auto !important;
-        bottom: calc(100% - 1px) !important; /* open upward and overlap 1px to remove gap */
-        left: 0; /* align to the trigger and match width */
+        bottom: calc(100% - 1px) !important; 
+        left: 0; 
         right: 0;
         min-width: 100%;
-        /* raise z-index to ensure visibility */
         z-index: 2000 !important;
     }
 
@@ -544,7 +531,7 @@
 ::ng-deep .footer-toolbar .mat-slide-toggle {
     .mat-slide-toggle-thumb {
         background-color: var(--toolbar-color, #757575) !important;
-        border-radius: 4px !important; // More square thumb
+        border-radius: 4px !important; 
         width: 18px !important;
         height: 18px !important;
     }
@@ -553,7 +540,7 @@
     }
     .mat-slide-toggle-bar {
         background-color: var(--row-bg, #757575) !important;
-        border-radius: 3px !important; // More square bar with rounded edges
+        border-radius: 3px !important; 
         height: 14px !important;
         width: 32px !important;
     }
@@ -574,7 +561,6 @@
     text-align: right !important;
 }
 
-// Cell input validation styles
 .cell-input-error {
     border-color: #f44336 !important;
     border-width: 2px !important;

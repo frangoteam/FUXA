@@ -399,8 +399,6 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 		dialogRef.afterClosed().subscribe(result => {
 			if (result && result.query) {
-				// Optional: Handle the returned query if needed
-				console.log('ODBC Browser closed with query:', result.query);
 			}
 		});
 	}

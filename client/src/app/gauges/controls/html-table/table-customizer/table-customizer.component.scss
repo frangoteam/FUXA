@@ -29,7 +29,6 @@
     }
 
     .toolbox-column button {
-        /* margin-right: 8px; */
         margin-left: 10px;
     }
 
@@ -41,13 +40,11 @@
     }
 
     .toolbox-row button {
-        /* margin-right: 8px; */
         margin-left: 10px;
     }
 
     .data-table-header {
         min-height: 0px;
-        /* background-color: darkgray; */
     }
 
     .column-options {
@@ -109,10 +106,9 @@
         min-height: 36px;
         display: block;
         width: 100%;
-        background: transparent; /* Leave styling to theme */
+        background: transparent; 
     }
 
-    /* Hide the extra cells for a text row visually to present as a single spanning cell */
     .text-row-hidden {
         display: none !important;
         padding: 0 !important;

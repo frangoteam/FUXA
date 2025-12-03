@@ -196,12 +196,10 @@ function ODBCclient(_data, _logger, _events) {
     this.browse = function (node) {
         var self = this;
         return new Promise( async function (resolve, reject) {
-                console.log(`'${data.name}' browse called with node: ${node}`);
                 let tempConnection = null;
                 let useTempConnection = false;
 
                 if (!self.connection) {
-                    // Create temporary connection for browsing
                     try {
                         var security = {};
                         await getProperty({query: 'security', name: data.id}).then((result, error) => {
@@ -237,15 +235,12 @@ function ODBCclient(_data, _logger, _events) {
                         const tableName = node || currentTable;
                         let columns = [];
 
-                        logger.info(`'${data.name}' browsing table: ${tableName}`);
-
                         // Extract database name from connection string for catalog parameter
                         let databaseName = null;
                         const address = data.property.address;
                         const dbMatch = address.match(/Database=([^;]+)/i) || address.match(/DB=([^;]+)/i) || address.match(/DATABASE=([^;]+)/i);
                         if (dbMatch) {
                             databaseName = dbMatch[1];
-                            logger.info(`'${data.name}' extracted database name: ${databaseName}`);
                         }
 
                         // Try multiple approaches for different databases
@@ -255,17 +250,14 @@ function ODBCclient(_data, _logger, _events) {
                         let success = false;
                         
                         // FIRST, try SQL query approach to get FULL metadata (nullable, defaults, primary key, identity)
-                        logger.info(`'${data.name}' trying SQL query approach for full column metadata on ${dbType}`);
                         const queries = self._getSchemaDetectionQueries(dbType, tableName);
                         
                         for (const query of queries) {
                             try {
-                                logger.info(`'${data.name}' executing schema query: ${query}`);
                                 const result = await connection.query(query);
                                 
                                 if (Array.isArray(result) && result.length > 0) {
                                     columns = result;
-                                    logger.info(`'${data.name}' found ${columns.length} columns via SQL query`);
                                     success = true;
                                     break;
                                 }
@@ -274,13 +266,10 @@ function ODBCclient(_data, _logger, _events) {
                             }
                         }
 
-                        // FALLBACK to metadata API if SQL queries failed
                         if (!success) {
-                            logger.info(`'${data.name}' falling back to ODBC metadata API for columns on ${dbType}`);
                             for (const attempt of attempts) {
                                 try {
                                     columns = await connection.columns(attempt.catalog, attempt.schema, attempt.table, null);
-                                    logger.info(`'${data.name}' found ${columns.length} columns with ${dbType} approach: catalog=${attempt.catalog}, schema=${attempt.schema}, table=${attempt.table}`);
                                     success = true;
                                     break;
                                 } catch (err) {
@@ -333,7 +322,6 @@ function ODBCclient(_data, _logger, _events) {
                             const fkQueries = self._getForeignKeyQueries(dbType, tableName);
                             for (const query of fkQueries) {
                                 try {
-                                    logger.info(`'${data.name}' executing FK query: ${query}`);
                                     const fkResult = await connection.query(query);
                                     
                                     if (Array.isArray(fkResult) && fkResult.length > 0) {
@@ -348,7 +336,6 @@ function ODBCclient(_data, _logger, _events) {
                                                     tableName: refTable,
                                                     columnName: refCol
                                                 };
-                                                logger.info(`'${data.name}' found FK: ${colName} -> ${refTable}.${refCol}`);
                                             }
                                         });
                                         break;
@@ -401,8 +388,6 @@ function ODBCclient(_data, _logger, _events) {
                             
                             return colResult;
                         });
-                        logger.info(`'${data.name}' returning ${result.length} columns with full metadata: ${result.map(c => c.name).join(', ')}`);
-                        logger.info(`'${data.name}' column details: ${JSON.stringify(result)}`);
                         resolve(result);
                     } catch (err) {
                         if (err) {
@@ -414,7 +399,6 @@ function ODBCclient(_data, _logger, _events) {
                             try {
                                 await tempConnection.close();
                             } catch (e) {
-                                // Ignore close errors
                             }
                         }
                         if (!useTempConnection) {
@@ -426,7 +410,6 @@ function ODBCclient(_data, _logger, _events) {
                         try {
                             await tempConnection.close();
                         } catch (e) {
-                            // Ignore close errors
                         }
                     }
                     reject('Device is busy');
@@ -960,7 +943,6 @@ function ODBCclient(_data, _logger, _events) {
                         normalized = normalized.replace(standardPattern, (match, tableName, colName, colType, constraints) => {
                             let result = `ALTER TABLE ${tableName} ALTER COLUMN ${colName} TYPE ${colType}`;
                             if (constraints && constraints.trim()) {
-                                // Handle NOT NULL and other constraints separately for PostgreSQL
                                 const notNullMatch = constraints.match(/NOT\s+NULL/i);
                                 if (notNullMatch) {
                                     result += `; ALTER TABLE ${tableName} ALTER COLUMN ${colName} SET NOT NULL`;
@@ -1148,7 +1130,7 @@ function ODBCclient(_data, _logger, _events) {
                     logger.info(`'${data.name}' executing query on ${dbType}: ${query}`);
                     let normalizedQuery = self._normalizeSqlQuery(query, dbType);
                     
-                    // CRITICAL: Use date-formatter to normalize all date/time values in the query
+                    // Use date-formatter to normalize all date/time values in the query
                     // This handles:
                     // - JavaScript Date object toString() format (e.g., "Fri Nov 07 2025 14:31:22 GMT+1300 (New Zealand Daylight Time)")
                     // - ISO format (e.g., "2025-01-15", "2025-01-15T14:30:45")

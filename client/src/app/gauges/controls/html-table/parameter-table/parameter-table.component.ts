@@ -56,7 +56,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     executedQueries = new Set<string>();
     tagsColumnMap = {};
 
-    // Parameter-specific properties
     parameterTypes: ParameterType[] = [];
     parameterSets: ParameterSet[] = [];
     selectedParameterType: ParameterType = null;
@@ -67,36 +66,27 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     private tagsFetched = false;
     private editingCellId: string = null;
 
-    // Validation error tracking
     cellErrors: Map<string, string> = new Map();
 
-    // Dropdown state properties
     isTypeDropdownOpen = false;
     isSetDropdownOpen = false;
     isPageSizeDropdownOpen = false;
 
-    // Paginator properties
     selectedPageSize = 25;
     pageSizeOptions = [10, 25, 100];
-    // No JS measurement needed for page size dropdown width; styling handled in CSS
 
-    // Toolbar property
     withToolbar = true;
 
-    // Enable edit mode
     enableEdit = false;
 
-    // Row selection properties
     selectedRow: any = null;
     debugMessage: string = 'No row selected';
     events: GaugeEvent[];
     eventSelectionType = Utils.getEnumKey(GaugeEventType, GaugeEventType.select);
 
-    // Editing state
     editingRowIndex: number = -1;
     editingColumn: string = '';
 
-    // Options
     emptyStateMessage: string = null;
     emptyStateActionLabel = 'Add Parameter Set';
     @Input()
@@ -130,7 +120,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
         private toastNotifier: ToastNotifierService) { }
 
     async ngOnInit() {
-        // Load options from property if available
         if (this.property) {
             this.setOptions(this.property);
         }
@@ -147,7 +136,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             // Property changed, load options from property and initialize
             if (this.property) {
                 this.setOptions(this.property);
-                // Run initialization logic
                 this.initializeFromOptions();
             }
         }
@@ -174,18 +162,14 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     private onVariableChanged(variable: any) {
-        // Check if this variable is used in the current parameter table
         if (this.selectedParameterType && variable && variable.id) {
-            // Update the tableData directly for cells using this variable
             let hasChanges = false;
             this.tableData.forEach(row => {
                 Object.keys(row).forEach(key => {
                     const cell = row[key];
-                    // Match variable change to either the type-level cell variableId or to a per-set binding
                     const uniqueCellId = `${row.id}_${cell?.cell?.id}`;
                     const boundTagId = (this.selectedParameterSet && this.selectedParameterSet.tagBindings) ? this.selectedParameterSet.tagBindings[uniqueCellId] : null;
                     const effectiveTagId = boundTagId || (cell && cell.cell && cell.cell.variableId);
-                    // Avoid overwriting the user input if the cell is currently being edited
                     if (cell && effectiveTagId === variable.id && cell?.cell?.id !== this.editingCellId) {
                         const newValue = variable.value !== undefined ? String(variable.value) : '';
                         if (cell.value !== newValue) {
@@ -204,7 +188,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     private async fetchTagValues(tagIds: string[]) {
         try {
             const values = await this.projectService.getTagsValues(tagIds);
-            // Update HMI service variables with the fetched values
             values.forEach((value, index) => {
                 const tagId = tagIds[index];
                 if (!this.hmiService.variables[tagId]) {
@@ -215,11 +198,9 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                     this.hmiService.setSignalValue(this.hmiService.variables[tagId]);
                 }
             });
-            // Update tableData with the new values
             this.tableData.forEach(row => {
                 Object.keys(row).forEach(key => {
                     const cell = row[key];
-                    // If a cell is bound to a tag via selectedParameterSet.tagBindings, it uses that tagId; otherwise fall back to cell.variableId
                     const uniqueCellId = `${row.id}_${cell?.cell?.id}`;
                     const boundTagId = (this.selectedParameterSet && this.selectedParameterSet.tagBindings) ? this.selectedParameterSet.tagBindings[uniqueCellId] : null;
                     const effectiveTagId = boundTagId || (cell && cell.cell && cell.cell.variableId);
@@ -237,11 +218,9 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
 
     private async loadParameterTypes() {
         try {
-            // Validate ODBC device before making API call
             if (this.tableOptions.storageType === 'odbc' && this.tableOptions.odbcDeviceId) {
                 const devices = this.projectService.getDevices();
                 if (!devices[this.tableOptions.odbcDeviceId] || devices[this.tableOptions.odbcDeviceId].type !== DeviceType.ODBC) {
-                    console.log('Invalid ODBC device, skipping loadParameterTypes');
                     this.parameterTypes = [];
                     return;
                 }
@@ -285,44 +264,36 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     async onParameterTypeChange(type: ParameterType) {
-        // Reload parameter types to get latest data from API (in case customizer modified them)
         await this.loadParameterTypes();
-        // Find the updated type
         const updatedType = this.parameterTypes.find(t => t.id === type.id);
         if (updatedType) {
             this.selectedParameterType = updatedType;
         } else {
-            this.selectedParameterType = type; // Fallback
+            this.selectedParameterType = type; 
         }
 
-        // Ensure rows have stable IDs
         this.selectedParameterType.rows.forEach((row, rowIndex) => {
             if (!row.id) {
                 row.id = `${this.selectedParameterType.id}_row_${rowIndex}`;
             }
         });
 
-        this.tagsFetched = false;  // Reset fetch flag for new type
+        this.tagsFetched = false;  
         
-        // Ensure columnStyles default exists
         if (!this.selectedParameterType.columnStyles) {
             this.selectedParameterType.columnStyles = {};
         }
         
         this.tableOptions.parameterTypeId = type.id;
-        this.syncPropertyOptions();  // Persist the changes
+        this.syncPropertyOptions();  
         await this.loadParameterSetsForType(type.id);
-        // Auto-select the parameter set with priority: last written set > last selected for type > first available
         let setToSelect = null;
-        // First priority: last written set (if it belongs to this type)
         if (this.selectedParameterType.lastWrittenSetId) {
             setToSelect = this.parameterSets.find(s => s.id === this.selectedParameterType.lastWrittenSetId);
         }
-        // Second priority: last selected set for this specific type
         if (!setToSelect && this.tableOptions.lastSelectedSetsByType && this.tableOptions.lastSelectedSetsByType[type.id]) {
             setToSelect = this.parameterSets.find(s => s.id === this.tableOptions.lastSelectedSetsByType[type.id]);
         }
-        // Final fallback: first available set
         if (!setToSelect && this.parameterSets.length > 0) {
             setToSelect = this.parameterSets[0];
         }
@@ -335,12 +306,11 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
 
     onParameterSetChange(set: ParameterSet) {
         this.selectedParameterSet = set;
-        // Track last selected set per type
         if (this.selectedParameterType && this.selectedParameterType.id) {
             this.tableOptions.lastSelectedSetsByType[this.selectedParameterType.id] = set.id;
         }
-        this.syncPropertyOptions();  // Persist the changes
-        this.tagsFetched = false;  // Reset fetch flag for new set
+        this.syncPropertyOptions();  
+        this.tagsFetched = false;  
 
 
         this.buildTableData();
@@ -358,7 +328,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             params.append('odbcDeviceId', this.tableOptions.odbcDeviceId || '');
             const response = await this.http.get<{ sets: ParameterSet[] }>(`/api/parameters-table/sets?${params.toString()}`).toPromise();
             this.parameterSets = (response.sets || []).map(set => {
-                // Initialize missing properties
                 if (!set.values) set.values = {};
                 if (!set.labels) set.labels = {};
                 if (!set.tagBindings) set.tagBindings = {};
@@ -398,10 +367,8 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
         this.displayedColumns = [];
         this.columnsStyle = {};
 
-        // Collect all tag IDs that need values
         const tagIdsToFetch: string[] = [];
 
-        // Collect all columns from the type's columns array
         const allCells = new Map<string, TableCell>();
         this.selectedParameterType.columns.forEach(column => {
             if (column && column.id) {
@@ -409,9 +376,7 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             }
         });
 
-        // Fetch tag values asynchronously if not already fetched (for any variable cells in rows)
         if (!this.tagsFetched) {
-            // For parameter tables, we don't have variable columns, but rows might have variable cells
             this.selectedParameterType.rows.forEach((row, rowIndex) => {
                 if (row.cells) {
                     row.cells.forEach(cell => {
@@ -432,13 +397,10 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             this.tagsFetched = true;
         }
 
-        // Continue with building the table...
 
-        // Create columns from all unique cells
         allCells.forEach(cell => {
                 if (!this.displayedColumns.includes(cell.id)) {
                     this.displayedColumns.push(cell.id);
-                    // Get stored style from parameter type columnStyles if any
                     const typeStyle = (this.selectedParameterType && this.selectedParameterType.columnStyles) ? this.selectedParameterType.columnStyles[cell.id] : null;
                     const widthVal = typeStyle && typeStyle.width ? Number(typeStyle.width) : 100;
                     const alignVal = typeStyle && typeStyle.align ? typeStyle.align : TableCellAlignType.left;
@@ -455,7 +417,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                 }
         });
 
-        // Second pass: create data rows from parameter type rows
         this.selectedParameterType.rows.forEach((row, rowIndex) => {
             const rowData: any = {
                 id: row.id,
@@ -465,12 +426,10 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
 
             if (row.type === TableRowType.text) {
                 rowData.textContent = row.textContent || '';
-                // Default text alignment to 'left' if not set so template behavior is consistent
                 rowData.textAlign = row.textAlign || TableCellAlignType.left;
                 rowData.textSize = row.textSize;
                 rowData.textBold = row.textBold;
             } else {
-                // Column row - add cells for all columns, but only populate cells that exist in this row
                 this.displayedColumns.forEach(columnId => {
                     const cell = row.cells?.find(c => c.id === columnId);
                     if (cell) {
@@ -485,29 +444,24 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                                 this.selectedParameterSet.labels = {};
                             }
                             
-                            // For parameter sets: editable cells get their value from getCellValue() method
-                            // Non-editable variable cells show current tag values
+
                             const uniqueCellId = `${row.id}_${cell.id}`;
                             if (cell.isEditable) {
                                 const storedValue = this.selectedParameterSet.values[uniqueCellId];
                                 value = storedValue !== undefined ? String(storedValue) : '';
                             } else if (cell.type === TableCellType.variable) {
-                                // Non-editable variable cells show current tag values
                                 let boundTagId = this.selectedParameterSet && this.selectedParameterSet.tagBindings && this.selectedParameterSet.tagBindings[uniqueCellId] ? this.selectedParameterSet.tagBindings[uniqueCellId] : cell.variableId;
                                 if (boundTagId && this.hmiService.variables[boundTagId]) {
-                                    // Ensure signal is registered with HMI service
                                     if (!this.hmiService.variables[boundTagId]) {
                                         this.hmiService.addSignal(boundTagId);
                                     }
                                     const tagValue = this.hmiService.variables[boundTagId].value;
                                     value = tagValue !== undefined ? String(tagValue) : '';
                                 } else {
-                                    // Fallback to stored value if no tag available
                                     const storedValue = this.selectedParameterSet.values[uniqueCellId];
                                     value = storedValue !== undefined ? String(storedValue) : '';
                                 }
                             } else {
-                                // Non-editable, non-variable cells show stored values
                                 value = this.selectedParameterSet.values[uniqueCellId];
                                 if (value === undefined || value === '') {
                                     value = cell.label || '';
@@ -515,17 +469,13 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                             }
                             label = this.selectedParameterSet.labels[uniqueCellId] || label;
                         } else {
-                            // No parameter set selected, use cell defaults
                             if (cell.type === TableCellType.variable && cell.variableId) {
-                                // Ensure signal is registered with HMI service
                                 if (!this.hmiService.variables[cell.variableId]) {
                                     this.hmiService.addSignal(cell.variableId);
                                 }
-                                // For variable cells, show current tag value
                                 const tagValue = this.hmiService.variables[cell.variableId]?.value;
                                 value = tagValue !== undefined ? String(tagValue) : '';
                             } else {
-                                // For other cells, use label as default for editable cells
                                 value = cell.isEditable ? (cell.label || '') : '';
                             }
                         }
@@ -543,11 +493,10 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                                 inputMin: cell.inputMin,
                                 inputMax: cell.inputMax,
                                 valueFormat: cell.valueFormat
-                            }, // Store needed properties including validation settings
+                            }, 
                 isEditable: cell.isEditable || false
                         };
                     } else {
-                        // Cell doesn't exist in this row, but column exists - empty cell
                         rowData[columnId] = {
                             value: '',
                             label: '',
@@ -580,7 +529,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             return;
         }
         
-        // Just save the parameter set to backend without writing to tags
         this.saveParameterSet();
     }
 
@@ -596,8 +544,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
         }
 
         try {
-            // Always reload the parameter set from database to get true saved values,
-            // not potentially unsaved values from input fields
             const params = new URLSearchParams();
             params.append('storageType', this.tableOptions.storageType || 'sqlite');
             params.append('odbcDeviceId', this.tableOptions.odbcDeviceId || '');
@@ -610,22 +556,18 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             }
 
             let writeCount = 0;
-            // Ensure rows have stable IDs
             this.selectedParameterType.rows.forEach((row, rowIndex) => {
                 if (!row.id) {
                     row.id = `${this.selectedParameterType.id}_row_${rowIndex}`;
                 }
             });
-            // Write values to tags for cells that are variable type and have enableWrite enabled
             this.selectedParameterType.rows.forEach((row, rowIndex) => {
                 if (row.type === TableRowType.column && row.cells) {
                     row.cells.forEach(cell => {
                         if (cell.type === TableCellType.variable && cell.enableWrite) {
-                            // Filter by device if specified in parameter type
                             const uniqueCellId = `${row.id}_${cell.id}`;
                             const tagId = (savedParameterSet.tagBindings && savedParameterSet.tagBindings[uniqueCellId]) || cell.variableId;
                             if (tagId && (!this.selectedParameterType.deviceId || !this.getDeviceIdFromTag(tagId) || this.getDeviceIdFromTag(tagId) === this.selectedParameterType.deviceId)) {
-                                // Use the saved values from database, not potentially unsaved input field values
                                 const value = savedParameterSet.values[uniqueCellId];
                                 if (value !== undefined && value !== '' && tagId) {
                                     this.hmiService.putSignalValue(tagId, String(value));
@@ -639,9 +581,8 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
 
             if (writeCount > 0) {
                 this.toastNotifier.notifySuccess('msg.write-to-device-success');
-                // Track the last written set
                 this.selectedParameterType.lastWrittenSetId = this.selectedParameterSet.id;
-                this.saveParameterType(this.selectedParameterType);  // Persist the changes to DB
+                this.saveParameterType(this.selectedParameterType);  
             } else {
                 this.toastNotifier.notifyError('msg.write-to-device-failed', 'No writable cells found');
             }
@@ -650,7 +591,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             this.toastNotifier.notifyError('msg.write-to-device-failed', 'Failed to load saved parameter data');
         }
 
-        // Removed saveParameterSet() call to decouple save and write operations
     }
 
     onReadFromTags() {
@@ -660,18 +600,15 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
         }
 
         let readCount = 0;
-        // Ensure rows have stable IDs
         this.selectedParameterType.rows.forEach((row, rowIndex) => {
             if (!row.id) {
                 row.id = `${this.selectedParameterType.id}_row_${rowIndex}`;
             }
         });
-        // Read values from tags for cells that are variable type and have enableWrite enabled
         this.selectedParameterType.rows.forEach((row, rowIndex) => {
             if (row.type === TableRowType.column && row.cells) {
                 row.cells.forEach(cell => {
                     if (cell.type === TableCellType.variable && cell.enableWrite) {
-                        // Filter by device if specified in parameter type
                         if (!this.selectedParameterType.deviceId || !cell.deviceId || cell.deviceId === this.selectedParameterType.deviceId) {
                             const uniqueCellId = `${row.id}_${cell.id}`;
                             const tagId = (this.selectedParameterSet.tagBindings && this.selectedParameterSet.tagBindings[uniqueCellId]) || cell.variableId;
@@ -697,10 +634,8 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             this.toastNotifier.notifyError('msg.read-from-device-failed', 'No readable cells found');
         }
 
-        // Update table display
         this.buildTableData();
 
-        // Save the updated parameter set to backend
         this.saveParameterSet();
     }
 
@@ -714,7 +649,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
         try {
             const body = { set: this.selectedParameterSet, storage: {storageType: this.tableOptions.storageType, odbcDeviceId: this.tableOptions.odbcDeviceId} };
             const response = await this.http.put(`/api/parameters-table/sets/${this.selectedParameterSet.id}`, body).toPromise();
-            console.log('Parameter set saved:', response);
             this.toastNotifier.notifySuccess('msg.save-parameter-set-success');
         } catch (error) {
             console.error('Error saving parameter set:', error);
@@ -761,21 +695,18 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             const importData = JSON.parse(text);
 
             if (importData.parameterType && importData.parameterSets) {
-                // Import parameter type
                 if (!importData.parameterType.id) importData.parameterType.id = Utils.getShortGUID('pt_');
                 const body = { type: importData.parameterType, storage: {storageType: this.tableOptions.storageType, odbcDeviceId: this.tableOptions.odbcDeviceId} };
                 await this.http.post('/api/parameters-table/types', body).toPromise();
                 await this.loadParameterTypes();
                 const newType = this.parameterTypes.find(t => t.id === importData.parameterType.id);
 
-                // Import parameter sets
                 for (const set of importData.parameterSets) {
-                    set.typeId = newType.id; // Update type reference
+                    set.typeId = newType.id; 
                     const setBody = { set: set, storage: {storageType: this.tableOptions.storageType, odbcDeviceId: this.tableOptions.odbcDeviceId} };
                     await this.http.post('/api/parameters-table/sets', setBody).toPromise();
                 }
 
-                // Reload data
                 await this.loadParameterTypes();
                 this.onParameterTypeChange(newType);
                 this.toastNotifier.notifySuccess('msg.parameter-type-imported');
@@ -821,7 +752,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     onCellValueChange(row: any, cellId: string, newValue: any) {
         if (!this.selectedParameterSet) return;
 
-        // Find the cell configuration from the row data
         const cellData = row[cellId];
         const cell = cellData?.cell;
         if (!cell) return;
@@ -831,20 +761,16 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
         let errorMessage = '';
 
         if (cell.inputType === InputOptionType.number) {
-            // For number inputs, validate the value
             const numValue = parseFloat(newValue);
             
             if (newValue !== '' && newValue !== null && newValue !== undefined && isNaN(numValue)) {
-                // Invalid number input
                 errorMessage = 'Invalid number format';
-                validatedValue = newValue; // Keep the invalid value to show error
+                validatedValue = newValue; 
             } else if (!isNaN(numValue)) {
-                // Check min/max constraints - parse as numbers
                 const minValue = cell.inputMin != null ? parseFloat(String(cell.inputMin)) : null;
                 const maxValue = cell.inputMax != null ? parseFloat(String(cell.inputMax)) : null;
                 
                 if (minValue !== null && !isNaN(minValue) && maxValue !== null && !isNaN(maxValue)) {
-                    // Both min and max are set
                     if (numValue < minValue) {
                         errorMessage = `Value must be >= ${minValue} (max: ${maxValue})`;
                         validatedValue = newValue;
@@ -852,7 +778,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                         errorMessage = `Value must be <= ${maxValue} (min: ${minValue})`;
                         validatedValue = newValue;
                     } else {
-                        // Valid value
                         validatedValue = numValue;
                         this.cellErrors.delete(uniqueCellId);
                     }
@@ -863,31 +788,25 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                     errorMessage = `Value must be <= ${maxValue}`;
                     validatedValue = newValue;
                 } else {
-                    // Valid value
                     validatedValue = numValue;
                     this.cellErrors.delete(uniqueCellId);
                 }
             } else {
-                // Empty or null value for number field - allow it
                 this.cellErrors.delete(uniqueCellId);
             }
         } else {
-            // Text input - no validation needed
             this.cellErrors.delete(uniqueCellId);
         }
 
-        // Set or clear error message
         if (errorMessage) {
             this.cellErrors.set(uniqueCellId, errorMessage);
         }
 
-        // Only update the stored value if there are no validation errors
         if (!errorMessage) {
             this.selectedParameterSet.values[uniqueCellId] = validatedValue;
             this.selectedParameterSet.modified = new Date();
         }
         
-        // Removed automatic save - now handled on blur with autoSave/autoWrite checks
     }
 
     onCellEditStart(cellId: string) {
@@ -897,22 +816,18 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     onCellEditEnd(row: any, cellId: string) {
         this.editingCellId = null;
         
-        // Check for validation errors - don't auto-save/write if there are errors
         const error = this.getCellError(row, cellId);
         if (error) {
             return;
         }
         
-        // Find the cell configuration from the parameter type's column row
         const columnRow = this.selectedParameterType?.rows?.find(r => r.type === TableRowType.column);
         const cell = columnRow?.cells?.find(c => c.id === cellId);
         if (cell && cell.isEditable && cell.type === TableCellType.variable) {
-            // Auto-save to DB if enabled
             if (cell.autoSave) {
                 this.saveParameterSet();
             }
             
-            // Auto-write to device if enabled
             if (cell.autoWrite) {
                 const uniqueCellId = `${row.id}_${cellId}`;
                 const value = this.selectedParameterSet.values[uniqueCellId];
@@ -942,7 +857,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             const uniqueCellId = `${row.id}_${cellId}`;
             const storedValue = this.selectedParameterSet.values?.[uniqueCellId];
             if (storedValue !== undefined) {
-                // Apply formatting if specified
                 return this.formatCellValue(storedValue, cellData.cell);
             }
         }
@@ -957,7 +871,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     private formatCellValue(value: any, cell: any): string {
         if (!cell || !cell.valueFormat) return String(value);
         
-        // Use FUXA's formatting utilities
         return Utils.formatValue(String(value), cell.valueFormat);
     }
 
@@ -965,7 +878,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
         const cellData = row[cellId];
         if (!cellData?.cell) return 'text';
         
-        // Return HTML input type based on cell configuration
         if (cellData.cell.inputType === InputOptionType.number) {
             return 'number';
         }
@@ -973,7 +885,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     getCellMin(row: any, cellId: string): number | null {
-        // Find the cell configuration from the row data
         const cellData = row[cellId];
         const cell = cellData?.cell;
         if (!cell?.inputMin) return null;
@@ -983,7 +894,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     getCellMax(row: any, cellId: string): number | null {
-        // Find the cell configuration from the row data
         const cellData = row[cellId];
         const cell = cellData?.cell;
         if (!cell?.inputMax) return null;
@@ -1074,10 +984,8 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
 
     getCellTextAlign(element: any, columnId: string): string {
         if (element.type === 'text') {
-            // For text rows, use the row's textAlign property
             return element.textAlign || 'left';
         } else {
-            // For column data rows, use the column's alignment
             const columnStyle = this.columnsStyle[columnId] || {} as any;
             return columnStyle.align || 'left';
         }
@@ -1098,7 +1006,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     // Paginator methods
     togglePageSizeDropdown() {
         this.isPageSizeDropdownOpen = !this.isPageSizeDropdownOpen;
-        // no additional measurement required; the dropdown styles are handled by CSS
     }
 
     canGoPrevious(): boolean {
@@ -1144,13 +1051,11 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
         event.stopPropagation();
         const target = event.target as HTMLInputElement;
         
-        // Check for validation errors before confirming
         if (this.editingRowIndex >= 0 && this.editingColumn) {
             const row = this.tableData[this.editingRowIndex];
             if (row) {
                 const error = this.getCellError(row, this.editingColumn);
                 if (error) {
-                    // Don't confirm if there are validation errors
                     return;
                 }
             }
@@ -1176,26 +1081,22 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     confirmEdit() {
-        // Check for validation errors before confirming
         if (this.editingRowIndex >= 0 && this.editingColumn) {
             const row = this.tableData[this.editingRowIndex];
             if (row) {
                 const error = this.getCellError(row, this.editingColumn);
                 if (error) {
-                    // Don't confirm if there are validation errors
                     return;
                 }
             }
         }
         
-        // Save the current value (already handled by ngModel)
         this.editingRowIndex = -1;
         this.editingColumn = '';
         this.editingCellId = null;
     }
 
     cancelEdit() {
-        // Revert to original value if needed, but for now, just close
         this.editingRowIndex = -1;
         this.editingColumn = '';
         this.editingCellId = null;
@@ -1261,7 +1162,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
 
     private syncPropertyOptions() {
         if (this.property) {
-            // Update the property with the current tableOptions
             Object.assign(this.property, this.tableOptions);
             this.propertyChange.emit(this.property);
         }
@@ -1270,47 +1170,37 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     private async initializeFromOptions() {
         await this.loadParameterTypes();
         
-        // Restore previously selected parameter type and set
         const assignedTypeIds = this.tableOptions.parameterTypeIds || (this.tableOptions.parameterTypeId ? [this.tableOptions.parameterTypeId] : []);
         if (assignedTypeIds.length > 0) {
             const typeToSelect = this.parameterTypes.find(t => t.id === assignedTypeIds[0]);
             if (typeToSelect) {
-                // Use a timeout to ensure the view is ready
                 setTimeout(() => this.onParameterTypeChange(typeToSelect), 100);
             }
         } else {
-            // No type selected, build empty table with message
             this.buildTableData();
         }
         
-        // Subscribe to variable changes for real-time updates
         this.hmiService.onVariableChanged.subscribe((variable) => {
             this.onVariableChanged(variable);
         });
     }
 
     setOptions(options: ParameterTableOptions) {
-        // Start with defaults
         let defaultOptions = ParameterTableComponent.DefaultOptions();
-        // Merge defaults with passed options
         this.tableOptions = Object.assign({}, defaultOptions, options);
-        // Validate ODBC device ID - reset to null if device doesn't exist
         if (this.tableOptions.odbcDeviceId) {
             const devices = this.projectService.getDevices();
             if (!devices[this.tableOptions.odbcDeviceId] || devices[this.tableOptions.odbcDeviceId].type !== DeviceType.ODBC) {
                 this.tableOptions.odbcDeviceId = null;
             }
         }
-        // Set events from property
         this.events = this.property?.events || [];
         if (!this.tableOptions.parameterTypeIds) {
             this.tableOptions.parameterTypeIds = [];
         }
-        // Update the property so changes are persisted
         if (this.property) {
             Object.assign(this.property, this.tableOptions);
         }
-        // Ensure paginator is always enabled
         if (!this.tableOptions.paginator) {
             this.tableOptions.paginator = { show: true };
         } else if (this.tableOptions.paginator.show === undefined) {
@@ -1318,7 +1208,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
         }
         const assignedTypeIds = this.tableOptions.parameterTypeIds || (this.tableOptions.parameterTypeId ? [this.tableOptions.parameterTypeId] : []);
         if (assignedTypeIds.length > 0) {
-            // Load the selected parameter types
             this.loadParameterTypes().then(() => {
                 const type = this.parameterTypes.find(t => t.id === assignedTypeIds[0]);
                 if (type) {
@@ -1326,12 +1215,10 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                 }
             });
         }
-        // Ensure paginator binding reflects the new options
         if (this.paginator) {
             if (this.tableOptions?.paginator?.show) {
                 this.dataSource.paginator = this.paginator;
             } else {
-                // detach paginator if disabled by options
                 this.dataSource.paginator = null;
             }
         }
@@ -1343,7 +1230,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
     }
 
     isSelectable(): boolean {
-        // For parameter tables, always allow selection for now to match history table behavior
         return true;
     }
 
@@ -1355,7 +1241,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                 this.selectedRow = row;
             }
             
-            // Fire events only if they exist (guards against undefined events)
             if (this.events && this.events.length > 0) {
                 this.events.forEach(event => {
                     if (event.action === Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onSetTag)) {
@@ -1388,7 +1273,7 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
         if (type.includes('bool')) {
             value = selected ? true : false;
         } else if (type.includes('number') || type.includes('int') || type.includes('word') || type.includes('real')) {
-            value = selected ? this.dataSource.data.indexOf(selected) + 1 : 0; // 1-based index
+            value = selected ? this.dataSource.data.indexOf(selected) + 1 : 0; 
         } else if (type.includes('string') || type.includes('char')) {
             if (selected) {
                 const rowData = {};
@@ -1398,7 +1283,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                         const columnName = this.columnsStyle[col] && this.columnsStyle[col].label && this.columnsStyle[col].label !== 'undefined' ? this.columnsStyle[col].label : col;
                         let value: any;
                         
-                        // Use the same logic as getCellDisplayValue to get the current value
                         if (cell.cell?.isEditable && this.selectedParameterSet) {
                             const uniqueCellId = `${selected.id}_${col}`;
                             const storedValue = this.selectedParameterSet.values?.[uniqueCellId];
@@ -1411,7 +1295,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                             value = cell.value || '';
                         }
                         
-                        // Try to parse as number if it looks like one
                         if (typeof value === 'string' && value.trim() !== '' && !isNaN(Number(value)) && !isNaN(parseFloat(value))) {
                             value = Number(value);
                         }
@@ -1448,7 +1331,7 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
 
     // Dialog event handlers
     onParameterSetDialogClose(result: any) {
-        const mode = this.parameterSetDialogData?.mode; // Store mode before clearing
+        const mode = this.parameterSetDialogData?.mode; 
         this.showParameterSetDialog = false;
         this.parameterSetDialogData = null;
         if (result) {
@@ -1480,7 +1363,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             newSet.description = result.description || '';
             newSet.userId = result.userId || '';
             
-            // Initialize the new set with current values from labels and tag values
             if (this.selectedParameterType && this.selectedParameterType.rows) {
                 this.selectedParameterType.rows.forEach((row, rowIndex) => {
                     if (row && row.cells) {
@@ -1488,7 +1370,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                             if (cell && cell.id) {
                                 const uniqueCellId = `${row.id}_${cell.id}`;
                                 
-                                // For variable cells, get current tag value
                                 if (cell.type === TableCellType.variable && cell.variableId) {
                                     if (!this.hmiService.variables[cell.variableId]) {
                                         this.hmiService.addSignal(cell.variableId);
@@ -1499,12 +1380,10 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
                                     }
                                 }
                                 
-                                // For label cells, the constructor already sets labels, but ensure values are set
                                 if (cell.type === TableCellType.label && cell.label) {
                                     newSet.values[uniqueCellId] = cell.label;
                                 }
                                 
-                                // Set up tag bindings for variable cells
                                 if (cell.type === TableCellType.variable && cell.variableId) {
                                     const uniqueCellId = `${row.id}_${cell.id}`;
                                     newSet.tagBindings[uniqueCellId] = cell.variableId;
@@ -1518,12 +1397,10 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
             const body = { set: newSet, storage: {storageType: this.tableOptions.storageType, odbcDeviceId: this.tableOptions.odbcDeviceId} };
             const response = await this.http.post('/api/parameters-table/sets', body).toPromise();
             await this.loadParameterSetsForType(this.selectedParameterType.id);
-            // Find the newly created set in the loaded sets
             const createdSet = this.parameterSets.find(set => set.id === newSet.id);
             if (createdSet) {
                 this.onParameterSetChange(createdSet);
             } else {
-                // Fallback to using the local copy
                 this.onParameterSetChange(newSet);
             }
             this.toastNotifier.notifySuccess('msg.created-parameter-set');
@@ -1536,7 +1413,6 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
 
     private async copyParameterSetWithResult(result: any) {
         try {
-            // Deep clone to avoid shared references between sets
             const copiedSet = JSON.parse(JSON.stringify(this.selectedParameterSet));
             copiedSet.id = Utils.getShortGUID('ps_');
             copiedSet.name = result.name;
@@ -1548,12 +1424,10 @@ export class ParameterTableComponent implements OnInit, AfterViewInit, OnChanges
 
             const response = await this.http.post('/api/parameters-table/sets', { set: copiedSet, storage: {storageType: this.tableOptions.storageType, odbcDeviceId: this.tableOptions.odbcDeviceId} }).toPromise();
             await this.loadParameterSetsForType(this.selectedParameterType.id);
-            // Find the newly copied set in the loaded sets
             const copiedSetFromDB = this.parameterSets.find(set => set.id === copiedSet.id);
             if (copiedSetFromDB) {
                 this.onParameterSetChange(copiedSetFromDB);
             } else {
-                // Fallback to using the local copy
                 this.onParameterSetChange(copiedSet);
             }
         } catch (error) {
