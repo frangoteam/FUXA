@@ -123,7 +123,6 @@ function ODBCclient(_data, _logger, _events) {
             } else if (data.property && data.property.address) {
                 try {
                     if (_checkWorking(true)) {
-                        logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         var security
                         await getProperty({query: 'security', name: data.id}).then((result, error) => {
                             if (result) {
@@ -144,7 +143,6 @@ function ODBCclient(_data, _logger, _events) {
                         }
                         this.connection = await odbc.connect(connectionConfig);
                         this.pool = await odbc.pool(connectionConfig);
-                        logger.info(`'${data.name}' connected!`);
                         _emitStatus('connect-ok');
                         _checkWorking(false);
                         resolve();
@@ -896,7 +894,6 @@ function ODBCclient(_data, _logger, _events) {
             }
         }
         
-        logger.info(`'${data.name}' normalized query for ${dbType}: ${normalized}`);
         return normalized;
     }
 
@@ -975,7 +972,6 @@ function ODBCclient(_data, _logger, _events) {
             }
         }
         
-        logger.info(`'${data.name}' normalized ALTER syntax for ${dbType}: ${normalized}`);
         return normalized;
     }
 
@@ -1036,7 +1032,6 @@ function ODBCclient(_data, _logger, _events) {
                 break;
         }
         
-        logger.info(`'${data.name}' normalized AUTO_INCREMENT for ${dbType}: ${normalized}`);
         return normalized;
     }
 
@@ -1066,13 +1061,11 @@ function ODBCclient(_data, _logger, _events) {
                 break;
         }
         
-        logger.info(`'${data.name}' normalized CURRENT_TIMESTAMP for ${dbType}: ${normalized}`);
         return normalized;
     }
 
     this.executeQuery = function (query) {
         var self = this;
-        console.log(`ODBC executeQuery called with query: ${query}`);
         return new Promise(async function (resolve, reject) {
             // Add query to queue
             queryQueue.push({ query: query, resolve: resolve, reject: reject });
@@ -1127,7 +1120,6 @@ function ODBCclient(_data, _logger, _events) {
                 if (self.connection) {
                     // Detect database type and normalize query
                     const dbType = self._getDBType();
-                    logger.info(`'${data.name}' executing query on ${dbType}: ${query}`);
                     let normalizedQuery = self._normalizeSqlQuery(query, dbType);
                     
                     // Use date-formatter to normalize all date/time values in the query
@@ -1139,7 +1131,6 @@ function ODBCclient(_data, _logger, _events) {
                     // Auto-detection ensures consistent formatting across all database types
                     try {
                         const formattedQuery = self._formatDateObjectsInQuery(normalizedQuery);
-                        logger.info(`'${data.name}' formatted date/time values in query`);
                         normalizedQuery = formattedQuery;
                     } catch (err) {
                         logger.warn(`'${data.name}' date/time formatting warning: ${err}`);
@@ -1151,16 +1142,12 @@ function ODBCclient(_data, _logger, _events) {
                     const statements = normalizedQuery.split(';').map(s => s.trim()).filter(s => s.length > 0);
                     
                     if (statements.length > 1) {
-                        logger.info(`'${data.name}' detected ${statements.length} statements, executing sequentially`);
                         try {
                             let lastResult = null;
                             for (const stmt of statements) {
-                                logger.info(`'${data.name}' executing statement: ${stmt}`);
                                 const result = await self.connection.query(stmt);
                                 lastResult = result;
-                                logger.info(`'${data.name}' statement executed successfully`);
                             }
-                            logger.info(`'${data.name}' all statements executed successfully`);
                             resolve(lastResult);
                             return;
                         } catch (err) {
@@ -1171,7 +1158,6 @@ function ODBCclient(_data, _logger, _events) {
                     // Try single statement as-is first
                     try {
                         const result = await self.connection.query(normalizedQuery);
-                        logger.info(`'${data.name}' query executed successfully`);
                         resolve(result);
                         return;
                     } catch (err) {
@@ -1227,9 +1213,7 @@ function ODBCclient(_data, _logger, _events) {
                                         modifiedQuery = modifiedQuery.replace(regex, quoteFunc(tableName));
                                     }
                                     
-                                    logger.info(`'${data.name}' trying query with quoted tables: ${modifiedQuery}`);
                                     const result = await self.connection.query(modifiedQuery);
-                                    logger.info(`'${data.name}' query executed successfully with quoting`);
                                     resolve(result);
                                     return;
                                 } catch (err) {
@@ -1272,7 +1256,6 @@ function ODBCclient(_data, _logger, _events) {
         try {
             const normalized = dateFormatter.normalizeQuery(query);
             if (normalized !== query) {
-                logger.info(`'${data.name}' normalized query with date/time formatting`);
             }
             return normalized;
         } catch (err) {
@@ -1480,7 +1463,6 @@ function ODBCclient(_data, _logger, _events) {
      */
     this.load = function (_data) {
         data = JSON.parse(JSON.stringify(_data));
-        logger.info(`'${data.name}' data loaded`, true);
     }
 
     /**
@@ -1609,17 +1591,13 @@ function getTables(endpoint, fncGetProperty, packagerManager) {
                 }
                 connection = await odbc.connect(connectionConfig)
                 var tables = await connection.tables(null, 'dbo', null, null);
-                console.log(`'${endpoint.name}' found ${tables.length} tables with dbo schema`);
                 if (tables.length <= 0) {
                     tables = await connection.tables(null, null, null, null);
-                    console.log(`'${endpoint.name}' found ${tables.length} tables with null schema`);
                 }
                 if (tables.length <= 0) {
                     tables = await connection.tables(null, 'public', null, null);
-                    console.log(`'${endpoint.name}' found ${tables.length} tables with public schema`);
                 }
                 const resultEndpoints = tables.map(table => table.TABLE_NAME);
-                console.log(`'${endpoint.name}' returning tables: ${resultEndpoints.join(', ')}`);
                 resolve(resultEndpoints);
             } catch (err) {
                 reject('getendpoints-error: ' + err);
