@@ -19,6 +19,7 @@ export class TableCustomizerCellEditComponent {
 
     constructor(
         private projectService: ProjectService,
+        private translateService: TranslateService,
         public dialogRef: MatDialogRef<TableCustomizerCellEditComponent>,
         @Inject(MAT_DIALOG_DATA) public data: TableCustomizerCellType,
         private dialog: MatDialog) {

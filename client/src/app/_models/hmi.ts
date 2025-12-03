@@ -573,6 +573,7 @@ export class TableCell {
     label: string;
     variableId: string;
     valueFormat: string;
+    timeInterval?: number;
     bitmask: number;
     type: TableCellType;
     deviceId?: string; // Device ID for the tag, used for filtering
