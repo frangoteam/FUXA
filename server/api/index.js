@@ -12,6 +12,7 @@ const rateLimit = require("express-rate-limit");
 var prjApi = require('./projects');
 var authApi = require('./auth');
 var usersApi = require('./users');
+var apiKeysApi = require('./apikeys');
 var alarmsApi = require('./alarms');
 var pluginsApi = require('./plugins');
 var diagnoseApi = require('./diagnose');
@@ -64,6 +65,8 @@ function init(_server, _runtime) {
             apiApp.use(commandApi.app());
             reportsApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(reportsApi.app());
+            apiKeysApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            apiKeysApi.use(apiKeysApi.app());
 
             const limiter = rateLimit({
                 windowMs: 5 * 60 * 1000, // 5 minutes

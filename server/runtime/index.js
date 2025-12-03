@@ -9,6 +9,7 @@ var events = Events.create();
 var devices = require('./devices');
 var project = require('./project');
 var users = require('./users');
+var apiKeys = require('./apikeys');
 var alarms = require('./alarms');
 var notificator = require('./notificator');
 var scripts = require('./scripts');
@@ -65,6 +66,11 @@ function init(_io, _api, _settings, _log, eventsMain) {
         logger.error('runtime.failed-to-init plugins');
     });
 
+    apiKeys.init(settings, logger).then(() => {
+        logger.info('runtime init apiKeys successful!', true);
+    }).catch(err => {
+        logger.error('runtime.failed-to-init apiKeys: ' + err);
+    });
 
     users.init(settings, logger).then(result => {
         logger.info('runtime init users successful!', true);

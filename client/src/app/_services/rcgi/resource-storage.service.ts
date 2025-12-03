@@ -8,6 +8,7 @@ import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { Role } from '../../_models/user';
+import { ApiKey } from '../../_models/apikey';
 
 @Injectable()
 export abstract class ResourceStorageService {
@@ -59,6 +60,12 @@ export abstract class ResourceStorageService {
     public abstract setRoles(roles: Role[]): Observable<any>;
 
     public abstract removeRoles(roles: Role[]): Observable<any>;
+
+    public abstract getApiKeys(): Observable<ApiKey[]>;
+
+    public abstract setApiKeys(roles: ApiKey[]): Observable<any>;
+
+    public abstract removeApiKeys(roles: ApiKey[]): Observable<any>;
 
     public abstract endPointConfig: string;
 

@@ -1707,6 +1707,7 @@
     "dlg.setup-maps-locations": "Locations",
     "dlg.setup-layout": "Layout",
     "dlg.setup-plugins": "Plugins",
+    "dlg.setup-apikeys": "API Keys",
     "dlg.setup-scripts": "Scripts",
     "dlg.setup-node-red-flows": "Node-RED Flows",
     "dlg.setup-reports": "Reports",
