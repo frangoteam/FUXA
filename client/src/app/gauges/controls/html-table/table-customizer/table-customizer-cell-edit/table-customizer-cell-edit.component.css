@@ -20,3 +20,8 @@
 .toolbox-btn {
     margin-right: -8px;
 }
+
+/* Make selector text smaller */
+.my-form-field mat-select {
+    font-size: 12px;
+}

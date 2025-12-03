@@ -680,9 +680,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             return false; // No change
         }
 
-        this.currentTableDataHash = newHash;
-        
-        // Assign data directly - MatTableDataSource + Paginator handles rendering efficiently
+        this.currentTableDataHash = newHash;        // Assign data directly - MatTableDataSource + Paginator handles rendering efficiently
         // Only the current page is rendered in DOM (e.g., 25 rows out of 25k)
         // Paginator internally slices the data array without creating copies
         this.dataSource.data = this.tableData;
@@ -1136,14 +1134,13 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!this.tableOptions?.realtime) {
             return;
         }
-        
+
         if (this.isAutoRefreshRunning) {
             console.log('executeOdbcQueriesForAutoRefresh: already running, skipping');
             return;
         }
-        
+
         this.isAutoRefreshRunning = true;
-        
         // Execute ODBC queries for auto refresh - combine queries per table
         // Create a snapshot to avoid mutation during iteration
         const odbcQueries = Object.keys(this.odbcMap).slice();
@@ -1169,9 +1166,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
             }
         }
-        
-        this.isAutoRefreshRunning = false;
 
+        this.isAutoRefreshRunning = false;
         // Clear timestamped queries to prevent accumulation
         Object.keys(this.odbcMap).forEach(query => {
             if (query.toUpperCase().includes(' WHERE ')) {
@@ -1250,7 +1246,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
         // Check if new DAQ data is different from previous
         if (!this.hasDaqDataChanged(values)) {
-            return; // No new data, skip update
+            return;// No new data, skip update
         }
 
         // IMPORTANT: For incremental refresh (auto-refresh), APPEND new data instead of replacing

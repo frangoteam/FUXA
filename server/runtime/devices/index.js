@@ -372,7 +372,7 @@ function setDeviceProperty(deviceName, property) {
  */
 function getDevice(deviceName, asInterface) {
     try {
-        const device = runtime.project.getDevice(deviceName);
+        const device = runtime.project.getDeviceById(deviceName);
         if (device) {
             return asInterface ? activeDevices[device.id].getComm() : activeDevices[device.id];
         }

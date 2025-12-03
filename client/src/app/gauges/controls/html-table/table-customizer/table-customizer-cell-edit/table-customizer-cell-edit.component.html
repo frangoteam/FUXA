@@ -5,27 +5,52 @@
     
     <div mat-dialog-content>
         <!-- Column Name -->
-        <div *ngIf="data.type === cellType.column" class="my-form-field" style="display: block; margin-bottom: 15px;">
+        <div *ngIf="data.type === cellType.column && data.cell.type !== columnType.timestamp" class="my-form-field" style="display: block; margin-bottom: 15px;">
             <span>{{'table.cell-column-name' | translate}}</span>
             <input [(ngModel)]="data.cell.label" type="text">
+        </div>
+
+        <!-- Column Width -->
+        <div *ngIf="data.type === cellType.column" class="my-form-field" style="display: block; margin-bottom: 15px;">
+            <span>{{'table.cell-column-width' | translate}}</span>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+                <input type="number" [(ngModel)]="cellAny.width" style="width: 100px;" placeholder="px" (keydown)="$event.stopPropagation()">
+            </div>
+        </div>
+
+        <!-- Column Align -->
+        <div *ngIf="data.type === cellType.column" class="my-form-field" style="display: block; margin-bottom: 15px;">
+            <span>{{'table.cell-column-align' | translate}}</span>
+            <mat-select [(value)]="cellAny.align" style="width: 100%; margin-top:6px;">
+                <mat-option [value]="'left'">{{'table.cell-align-left' | translate}}</mat-option>
+                <mat-option [value]="'center'">{{'table.cell-align-center' | translate}}</mat-option>
+                <mat-option [value]="'right'">{{'table.cell-align-right' | translate}}</mat-option>
+            </mat-select>
         </div>
 
         <!-- Cell Type Selection -->
         <div class="my-form-field" style="display: block; margin-bottom: 15px;">
             <span *ngIf="data.type === cellType.column">{{'table.cell-column-type' | translate}}</span>
             <span *ngIf="data.type === cellType.row">{{'table.cell-row-type' | translate}}</span>
-            <mat-select [(value)]="data.cell.type" style="width: 100%;">
-                <mat-option *ngIf="data.table === tableType.data" [value]="columnType.label">
+                <mat-select [(value)]="data.cell.type" style="width: 100%;">
+                <mat-option *ngIf="data.table === tableType.data || data.type === cellType.row" [value]="columnType.label">
                     {{'table.property-column-label' | translate}}</mat-option>
-                <mat-option *ngIf="!(data.table === tableType.data && data.type === cellType.column)" [value]="columnType.variable">
+                <mat-option *ngIf="data.type === cellType.row" [value]="columnType.variable">
                     {{'table.property-column-variable' | translate}}</mat-option>
-                <mat-option *ngIf="!(data.table === tableType.data && data.type === cellType.column)" [value]="columnType.device">
+                <mat-option *ngIf="data.type === cellType.row" [value]="columnType.device">
                     {{'table.property-column-device' | translate}}</mat-option>
-                <mat-option *ngIf="!(data.table === tableType.data && data.type === cellType.column)" [value]="columnType.odbc">
+                <mat-option *ngIf="data.type === cellType.row" [value]="columnType.odbc">
                     {{'table.property-column-odbc' | translate}}</mat-option>
                 <mat-option [value]="columnType.timestamp">
                     {{'table.property-column-timestamp' | translate}}</mat-option>
             </mat-select>
+        </div>
+
+        <!-- Variable/Device selector -->
+        <div *ngIf="(data.cell.type === columnType.variable || data.cell.type === columnType.device) && (data.table !== tableType.parameter || data.type === cellType.row)" class="my-form-field variable-input" style="margin-bottom: 15px;">
+            <flex-variable [data]="devicesValues" (onchange)="onSetVariable($event)" [variableId]="data.cell.variableId" [bitmask]="data.cell.bitmask" [withStaticValue]="false"
+                [withBitmask]="true">
+            </flex-variable>
         </div>
 
         <!-- Timestamp Format (shown when type is timestamp) -->
@@ -99,11 +124,57 @@
             <input [(ngModel)]="data.cell.valueFormat" type="text">
         </div>
 
-        <!-- Variable/Device selector -->
-        <div *ngIf="data.cell.type === columnType.variable || data.cell.type === columnType.device" class="my-form-field variable-input">
-            <flex-variable [data]="devicesValues" (onchange)="onSetVariable($event)" [variableId]="data.cell.variableId" [bitmask]="data.cell.bitmask" [withStaticValue]="false"
-                [withBitmask]="true">
-            </flex-variable>
+        <!-- Input Type for editable variable cells -->
+        <div *ngIf="data.table === tableType.parameter && data.cell.type === columnType.variable && data.cell.isEditable" class="my-form-field" style="display: block; margin-bottom: 15px;">
+            <span>{{'table.cell-input-type' | translate}}</span>
+            <mat-select [(value)]="data.cell.inputType" style="width: 140px;">
+                <mat-option [value]="inputOptionType.text">{{'table.cell-input-type-text' | translate}}</mat-option>
+                <mat-option [value]="inputOptionType.number">{{'table.cell-input-type-number' | translate}}</mat-option>
+            </mat-select>
+        </div>
+
+        <!-- Min/Max for number input type -->
+        <div *ngIf="data.table === tableType.parameter && data.cell.type === columnType.variable && data.cell.isEditable && data.cell.inputType === inputOptionType.number" style="display: block; margin-bottom: 15px;">
+            <div class="my-form-field" style="display: inline-block;">
+                <span>{{'table.cell-input-min' | translate}}</span>
+                <input [(ngModel)]="data.cell.inputMin" type="number" style="width: 80px;" numberOnly (keydown)="$event.stopPropagation()">
+            </div>
+            <div class="my-form-field ml20" style="display: inline-block;">
+                <span>{{'table.cell-input-max' | translate}}</span>
+                <input [(ngModel)]="data.cell.inputMax" type="number" style="width: 80px;" numberOnly (keydown)="$event.stopPropagation()">
+            </div>
+        </div>
+
+        <!-- Is Editable (for parameter table cells only) -->
+        <div *ngIf="data.table === tableType.parameter && data.type === cellType.row" class="my-form-field" style="display: block; margin-bottom: 15px;">
+            <span>{{'table.cell-is-editable' | translate}}</span>
+            <mat-slide-toggle color="primary" [(ngModel)]="data.cell.isEditable">
+                {{'table.cell-editable-description' | translate}}
+            </mat-slide-toggle>
+        </div>
+
+        <!-- Enable Write (for variable cells in parameter tables) -->
+        <div *ngIf="data.table === tableType.parameter && data.cell.type === columnType.variable" class="my-form-field" style="display: block; margin-bottom: 15px;">
+            <span>{{'table.cell-enable-write' | translate}}</span>
+            <mat-slide-toggle color="primary" [(ngModel)]="data.cell.enableWrite">
+                {{'table.cell-enable-write-description' | translate}}
+            </mat-slide-toggle>
+        </div>
+
+        <!-- Auto Save (for editable variable cells in parameter tables) -->
+        <div *ngIf="data.table === tableType.parameter && data.cell.type === columnType.variable && data.cell.isEditable" class="my-form-field" style="display: block; margin-bottom: 15px;">
+            <span>{{'table.cell-auto-save' | translate}}</span>
+            <mat-slide-toggle color="primary" [(ngModel)]="data.cell.autoSave">
+                {{'table.cell-auto-save-description' | translate}}
+            </mat-slide-toggle>
+        </div>
+
+        <!-- Auto Write (for editable variable cells in parameter tables) -->
+        <div *ngIf="data.table === tableType.parameter && data.cell.type === columnType.variable && data.cell.isEditable" class="my-form-field" style="display: block; margin-bottom: 15px;">
+            <span>{{'table.cell-auto-write' | translate}}</span>
+            <mat-slide-toggle color="primary" [(ngModel)]="data.cell.autoWrite">
+                {{'table.cell-auto-write-description' | translate}}
+            </mat-slide-toggle>
         </div>
 
         <!-- ODBC Query selector -->

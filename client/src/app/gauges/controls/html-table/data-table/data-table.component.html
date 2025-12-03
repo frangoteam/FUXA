@@ -1,5 +1,9 @@
 <div *ngIf="withToolbar" class="table-toolbar"
-    [style.backgroundColor]="tableOptions.toolbar?.background || tableOptions.header.background">
+    [style.backgroundColor]="tableOptions.toolbar?.background || tableOptions.header.background"
+    [style.--toolbar-color]="tableOptions.toolbar?.color || tableOptions.header.color"
+    [style.--toolbar-button-bg]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+    [style.height.px]="(tableOptions.header.height >= 42 ? tableOptions.header.height : 42)"
+    [style.--toolbar-height]="(tableOptions.header.height >= 42 ? tableOptions.header.height + 'px' : '42px')">
     <div class="toolbar-left">
         <div *ngIf="tableOptions.filter.show" class="my-form-field" style="float: left; padding-left: 10px;">
             <input (keyup)="applyFilter($event.target.value)" placeholder="{{'table.history-filter' | translate}}" style="width: 250px; box-shadow: 1px 1px 3px -1px #888 !important;" type="text"
@@ -7,7 +11,7 @@
         </div>
         <div *ngIf="tableOptions.daterange.show" class="date-range">
             <div *ngIf="!isEditor" class="date-range-inner">
-                <div class="custom-select" [class.open]="isRangeDropdownOpen">
+                <div class="data-custom-select" [class.open]="isRangeDropdownOpen">
                     <div class="custom-select-trigger" (click)="toggleRangeDropdown()" [style]="getSelectStyles(isRangeDropdownOpen)">
                         <span class="selected-text">{{ selectedRangeLabel }}</span>
                         <span class="material-icons arrow">arrow_drop_down</span>
@@ -34,7 +38,7 @@
                 </button>
             </div>
             <div *ngIf="isEditor" class="date-range-inner">
-                <div class="custom-select" [class.open]="isRangeDropdownOpen">
+                <div class="data-custom-select" [class.open]="isRangeDropdownOpen">
                     <div class="custom-select-trigger" (click)="toggleRangeDropdown()" [style]="getSelectStyles(isRangeDropdownOpen)">
                         <span class="selected-text">{{ selectedRangeLabel }}</span>
                         <span class="material-icons arrow">arrow_drop_down</span>
@@ -66,7 +70,7 @@
         <mat-paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="selectedPageSize" class="data-table-paginator" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color">
         </mat-paginator>
         <div class="page-size">
-            <div class="custom-select" [class.open]="isPageSizeDropdownOpen">
+            <div class="data-custom-select" [class.open]="isPageSizeDropdownOpen">
                 <div class="custom-select-trigger" (click)="togglePageSizeDropdown()" [style]="getSelectStyles(isPageSizeDropdownOpen)">
                     <span class="selected-text">{{ selectedPageSizeLabel }}</span>
                     <span class="material-icons arrow">arrow_drop_down</span>
@@ -92,7 +96,7 @@
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
         <th *matHeaderCellDef
             mat-sort-header
-            [style.width.px]="columnsStyle[column]?.width ? columnsStyle[column].width : 'auto'"
+            [style.width.px]="columnsStyle[column]?.width || null"
             [style.color]="columnsStyle[column]?.color ? columnsStyle[column].color : tableOptions.header?.color"
             [style.textAlign]="columnsStyle[column]?.align ? columnsStyle[column].align : 'left'"
             [style.fontSize.px]="tableOptions.header.fontSize">

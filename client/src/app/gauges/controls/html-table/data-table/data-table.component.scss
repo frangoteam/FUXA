@@ -40,6 +40,7 @@
 
     .table-toolbar {
         min-height: 42px;
+        height: var(--toolbar-height, 42px);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -67,7 +68,7 @@
     }
 
     .data-table-paginator {
-        height: 42px;
+        height: var(--toolbar-height, 42px);
         background-color: transparent;
         margin-right: -10px;
         margin-left: auto;
@@ -184,9 +185,32 @@
             opacity: 0.2;
         }
     }
+
+    .moka-toolbar-editor.moka-toolbar-button {
+        /* Preserve the inline button color (set via [style.color] on buttons); do not override with CSS variables */
+        color: inherit;
+    }
+
+    .moka-toolbar-editor mat-icon,
+    .moka-toolbar-editor .material-icons,
+    .moka-toolbar-editor mat-icon svg {
+        /* Use inherited color from the button so icons follow button text color */
+        color: inherit;
+        fill: currentColor !important;
+        font-size: 20px !important;
+        width: 20px !important;
+        height: 20px !important;
+        line-height: 20px !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+    }
+
+    .moka-toolbar-editor.moka-toolbar-button:hover:not([disabled]) {
+        background-color: rgba(0, 0, 0, 0.08) !important;
+    }
 }
 
-    .custom-select {
+    .data-custom-select {
         position: relative;
         min-width: 120px;
 
@@ -232,7 +256,7 @@
 
         .custom-select-dropdown {
             position: absolute;
-            top: 100%;
+            top: calc(100% - 1px); /* overlap trigger border by 1px to remove visual gap */
             left: 0;
             right: 0;
             border: 1px solid #cccccc;
@@ -278,7 +302,7 @@
     width: 70px;
     flex-shrink: 0;
 
-    .custom-select {
+    .data-custom-select {
         min-width: 60px;
     }
 }

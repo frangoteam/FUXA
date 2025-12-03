@@ -19,6 +19,7 @@ var scriptsApi = require('./scripts');
 var resourcesApi = require('./resources');
 var daqApi = require('./daq');
 var schedulerApi = require('./scheduler');
+var parametersTableApi = require('./parameters-table');
 var commandApi = require('./command');
 const reports = require('../dist/reports.service');
 const reportsApi = new reports.ReportsApiService();
@@ -56,6 +57,8 @@ function init(_server, _runtime) {
             apiApp.use(daqApi.app());
             schedulerApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(schedulerApi.app());
+            parametersTableApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            apiApp.use(parametersTableApi.app());
             scriptsApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(scriptsApi.app());
             resourcesApi.init(runtime, authJwt.verifyToken, verifyGroups);

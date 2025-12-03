@@ -20,6 +20,7 @@
                             <mat-option [value]="tableType.history">{{'table.property-type-history' | translate}}</mat-option>
                             <mat-option [value]="tableType.alarms">{{'table.property-type-alarms' | translate}}</mat-option>
                             <mat-option [value]="tableType.reports">{{'table.property-type-reports' | translate}}</mat-option>
+                            <mat-option [value]="tableType.parameter">{{'table.property-type-parameter' | translate}}</mat-option>
                             <!-- <mat-option [value]="tableType.alarmsHistory">{{'table.property-type-alarms-history' | translate}}</mat-option> -->
                         </mat-select>
                     </div>
@@ -42,6 +43,23 @@
                             <span>{{'table.property-refresh-interval' | translate}}</span>
                             <input numberOnly [(ngModel)]="options.refreshInterval" (change)="onTableChanged()" (keyup.enter)="onTableChanged()" type="number" min="1000" max="60000" step="1000" [disabled]="!options.realtime">
                             <span class="unit">ms</span>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="tableTypeCtrl.value === tableType.parameter">
+                        <div class="my-form-field inbk data-storage-type">
+                            <span>{{'parameter.storage-type' | translate}}</span>
+                            <mat-select [(value)]="options.storageType" (selectionChange)="onTableChanged()">
+                                <mat-option value="sqlite">{{'parameter.storage-sqlite' | translate}}</mat-option>
+                                <mat-option value="odbc">{{'parameter.storage-odbc' | translate}}</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="my-form-field inbk data-odbc-device" *ngIf="options.storageType === 'odbc'">
+                            <span>{{'parameter.odbc-device' | translate}}</span>
+                            <mat-select [(value)]="options.odbcDeviceId" (selectionChange)="onTableChanged()" placeholder="Select ODBC Device">
+                                <mat-option *ngFor="let device of odbcDevices" [value]="device.id">
+                                    {{ device.name }} ({{ device.id }})
+                                </mat-option>
+                            </mat-select>
                         </div>
                     </ng-container>
                 </div>
@@ -177,10 +195,24 @@
                         </div>
                         <div class="section-inline-margin2"></div>
                         <div class="my-form-field section-inline-toggle slider-field">
-                            <span>{{'table.property-daterange' | translate}}</span>
-                            <mat-slide-toggle color="primary" [(ngModel)]="options.daterange.show" (change)="onTableChanged()" [disabled]="tableTypeCtrl.value === tableType.history && options.lastRange === lastRangeType.none"></mat-slide-toggle>
-                        </div>
+                                <span>{{'table.property-daterange' | translate}}</span>
+                                <mat-slide-toggle color="primary" [(ngModel)]="options.daterange.show" (change)="onTableChanged()" [disabled]="tableTypeCtrl.value === tableType.history && options.lastRange === lastRangeType.none"></mat-slide-toggle>
+                            </div>
                     </div>
+
+                        <!-- Expose paginator option for Parameter table type (it's available for History and AlarmsHistory above) -->
+                        <ng-container *ngIf="tableTypeCtrl.value === tableType.parameter">
+                            <div class="section-inline-margin2"></div>
+                            <div class="my-form-field section-inline-toggle slider-field">
+                                <span>{{'table.property-paginator' | translate}}</span>
+                                <mat-slide-toggle color="primary" [(ngModel)]="options.paginator.show" (change)="onTableChanged()"></mat-slide-toggle>
+                            </div>
+                            <div class="section-inline-margin2"></div>
+                            <div class="my-form-field section-inline-toggle slider-field">
+                                <span>Show Enable Edit in Footer</span>
+                                <mat-slide-toggle color="primary" [(ngModel)]="options.showEnableEditInFooter" (change)="onTableChanged()"></mat-slide-toggle>
+                            </div>
+                        </ng-container>
                 </div>
                 <div class="section-newline">&nbsp;</div>
                 <div style="position: relative">

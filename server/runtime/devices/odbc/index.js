@@ -1300,6 +1300,53 @@ function ODBCclient(_data, _logger, _events) {
     }
 
     /**
+     * Execute SQLite-like query by translating to the target database syntax
+     */
+    this.executeSqliteQuery = function (sqliteQuery, params = []) {
+        var self = this;
+        return new Promise(async function (resolve, reject) {
+            const dbType = self._getDBType();
+            const translatedQuery = self._translateSqliteToDb(sqliteQuery, dbType);
+            try {
+                const result = await self.connection.query(translatedQuery, params);
+                resolve(result);
+            } catch (err) {
+                logger.error(`'${data.name}' executeSqliteQuery error: ${err.message}, stack: ${err.stack}`);
+                reject(err);
+            }
+        });
+    }
+
+    /**
+     * Translate SQLite query to target database syntax
+     */
+    this._translateSqliteToDb = function (sqliteQuery, dbType) {
+        let query = sqliteQuery;
+
+        // Replace AUTOINCREMENT
+        if (dbType === 'postgresql') {
+            query = query.replace(/AUTOINCREMENT/g, 'SERIAL');
+            query = query.replace(/DATETIME/g, 'TIMESTAMP');
+            // Handle INSERT OR REPLACE -> INSERT ... ON CONFLICT
+            if (query.trim().startsWith('INSERT OR REPLACE INTO')) {
+                const match = query.match(/INSERT OR REPLACE INTO (\w+) \(([^)]+)\) VALUES \(([^)]+)\)/);
+                if (match) {
+                    const table = match[1];
+                    const columns = match[2];
+                    const values = match[3];
+                    query = `INSERT INTO ${table} (${columns}) VALUES (${values}) ON CONFLICT (id) DO UPDATE SET ${columns.split(',').map(col => col.trim() + ' = EXCLUDED.' + col.trim()).join(', ')}`;
+                }
+            }
+        } else if (dbType === 'mysql' || dbType === 'mariadb') {
+            query = query.replace(/AUTOINCREMENT/g, 'AUTO_INCREMENT');
+        } else if (dbType === 'mssql') {
+            query = query.replace(/AUTOINCREMENT/g, 'IDENTITY(1,1)');
+        }
+
+        return query;
+    }
+
+    /**
      * Extract table names from SQL query
      */
     this._extractTableNames = function(query) {
