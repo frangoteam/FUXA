@@ -661,6 +661,8 @@ export class TagScale {
     scaledLow: number;
     scaledHigh: number;
     dateTimeFormat: string;
+    readExpression: string;
+    writeExpression: string;
 }
 
 export enum TagScaleModeType {
@@ -668,6 +670,7 @@ export enum TagScaleModeType {
     linear = 'device.tag-scale-mode-linear',
     convertDateTime = 'device.tag-convert-datetime',
     convertTickTime = 'device.tag-convert-ticktime',
+    expression = 'device.tag-scale-mode-expression',
 }
 
 export enum TagSystemType {
