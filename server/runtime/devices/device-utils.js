@@ -41,6 +41,8 @@ module.exports = {
                             value = dayjs(value).format(tag.scale.dateTimeFormat);
                         } else if (tag.scale.mode === 'convertTickTime' && tag.scale.dateTimeFormat) {
                             value = durationToTimeFormat(dayjs.duration(value), tag.scale.dateTimeFormat);
+                        } else if (tag.scale.mode === 'expression' && tag.scale.readExpression) {
+                            value = evaluateExpression(tag.scale.readExpression, value);
                         }
                     }
                     if (tag.format) {
@@ -63,6 +65,8 @@ module.exports = {
                     value = obj.value;
                     if (tag.scale && tag.scale.mode === 'linear') {
                         value = tag.scale.rawLow + ((tag.scale.rawHigh - tag.scale.rawLow) * (value - tag.scale.scaledLow)) / (tag.scale.scaledHigh - tag.scale.scaledLow);
+                    } else if (tag.scale && tag.scale.mode === 'expression' && tag.scale.writeExpression) {
+                        value = evaluateExpression(tag.scale.writeExpression, value);
                     }
                 }
                 if (tag.scaleWriteFunction) {
@@ -169,4 +173,15 @@ const callScaleScript = async (scriptId, params, runtime, isRead, value) => {
         return value;
     }
     return value;
+}
+
+const evaluateExpression = (expression, value) => {
+    try {
+        // Create a function with 'this' bound to the value
+        const func = new Function('return ' + expression);
+        return func.call(value);
+    } catch (error) {
+        console.error(`Expression evaluation error: ${error.toString()}`);
+        return value; // Return original value on error
+    }
 }
