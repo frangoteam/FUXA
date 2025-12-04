@@ -182,6 +182,6 @@ const evaluateExpression = (expression, value) => {
         return func.call(value);
     } catch (error) {
         console.error(`Expression evaluation error: ${error.toString()}`);
-        return value; // Return original value on error
+        return null; // Return null to indicate failure, preventing wrong values
     }
 }
