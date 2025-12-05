@@ -33,8 +33,9 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
 
     // Minimal Node-RED settings; extend only what is really needed
     const redSettings = {
-        httpAdminRoot: '/nodered',
-        httpNodeRoot: '/nodered/api',
+        httpAdminRoot: '/nodered/',
+        // Let Node-RED own the HTTP space at root; dashboard will live under /dashboard
+        httpNodeRoot: '/',
         userDir,
         nodesDir: [path.join(__dirname, 'node-red-contrib-fuxa')],
         flowFile: 'flows.json',
@@ -42,7 +43,12 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
             notifications: { enabled: false },
             tours: { enabled: false },
         },
-        ui: { path: '/' },
+        // Dashboard will be exposed at /dashboard/...
+        ui: { path: '/dashboard' },
+        // Values used by FlowFuse dashboard's ui_base.js for layout saves
+        // These mirror the FUXA HTTP bind address so Node-RED can call its own /nodered/flows API
+        uiHost: settings.uiHost,
+        uiPort: settings.uiPort,
         functionGlobalContext: {
             // Expose essential FUXA runtime helpers
             fuxa: {
@@ -51,6 +57,7 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
                 setTag: require(path.join(settings.appDir, 'runtime/devices')).setTagValue,
                 getDaq: require(path.join(settings.appDir, 'runtime/storage/daqstorage')).getNodeValues,
                 getTagId: require(path.join(settings.appDir, 'runtime/devices')).getTagId,
+                getHistoricalTags: require(path.join(settings.appDir, 'runtime/devices')).getHistoricalTags,
                 emit: events.emit.bind(events),
                 on: events.on.bind(events),
                 removeListener: events.removeListener.bind(events),
@@ -113,21 +120,34 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
     // Initialize Node-RED on the existing HTTP server (must be done before server.listen)
     RED.init(server, redSettings);
 
-    // Allow dashboard and socket.io without auth; enforce auth for the rest
+    // Allow dashboard UI, its admin APIs and socket.io without extra JWT; enforce auth for the rest
     const allowDashboard = (req, res, next) => {
-        if (req.path.includes('/dashboard') || req.path.includes('/socket.io')) return next();
-        const referer = req.headers.referer;
-        if (referer) {
-            const ok = ['/editor', '/viewer', '/lab', '/home', '/fuxa', '/flows', '/nodered']
-                .some(p => referer.includes(p));
-            if (ok) return next();
-        }
-        return authJwt.requireAuth(req, res, next);
+            const url = req.originalUrl || req.url || req.path;
+
+            // Public dashboard UI and its HTTP APIs (served from httpNodeRoot/ui.path)
+            if (url.includes('/dashboard') || url.includes('/socket.io')) return next();
+
+            // Node-RED dashboard admin APIs used by the layout editor under /nodered/dashboard/...
+            if (url.startsWith('/nodered/dashboard/')) return next();
+
+            // Internal Node-RED flows APIs used by FlowFuse layout saves and deployments
+            if (url === '/nodered/flows' || url === '/nodered/flows/') return next();
+            if (url === '/nodered/flows/state' || url === '/nodered/flows/state/') return next();
+            if (url === '/nodered/flows/deploy' || url === '/nodered/flows/deploy/') return next();
+
+            const referer = req.headers.referer;
+            if (referer) {
+                const ok = ['/editor', '/viewer', '/lab', '/home', '/fuxa', '/flows', '/nodered']
+                        .some(p => referer.includes(p));
+                if (ok) return next();
+            }
+            return authJwt.requireAuth(req, res, next);
     };
 
-    // Mount Node-RED routes under /nodered
+    // Mount Node-RED admin/editor under /nodered; HTTP nodes (including dashboard)
+    // are served from httpNodeRoot ('/') so they appear at /dashboard/... etc.
     app.use('/nodered', allowDashboard, RED.httpAdmin);
-    app.use('/nodered', allowDashboard, RED.httpNode);
+    app.use('/', allowDashboard, RED.httpNode);
 
     await RED.start();
 
