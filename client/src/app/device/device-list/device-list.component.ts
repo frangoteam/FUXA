@@ -1,25 +1,13 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import {
-    AfterViewInit,
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    EventEmitter,
-    Input,
-    OnInit,
-    Output,
-    ViewChild
-} from '@angular/core';
-import {MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
-import {
-    MatLegacyTable as MatTable,
-    MatLegacyTableDataSource as MatTableDataSource
-} from '@angular/material/legacy-table';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
-import {MatLegacyMenuTrigger as MatMenuTrigger} from '@angular/material/legacy-menu';
-import {MatSort} from '@angular/material/sort';
-import {SelectionModel} from '@angular/cdk/collections';
-import {TranslateService} from '@ngx-translate/core';
+import { Component, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { ChangeDetectorRef } from '@angular/core';
+import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
+import { MatSort } from '@angular/material/sort';
+import { SelectionModel } from '@angular/cdk/collections';
+import { TranslateService } from '@ngx-translate/core';
 
 import { TagOptionType, TagOptionsComponent } from './../tag-options/tag-options.component';
 import { Tag, Device, DeviceType, TAG_PREFIX } from '../../_models/device';
@@ -134,7 +122,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         } else if (this.deviceSelected.type === DeviceType.WebCam){
             this.displayedColumns = this.defWebcamColumns;
             this.tableWidth = this.defAllRowWidth;
-        }else {
+        } else {
             this.displayedColumns = this.defAllColumns;
             this.tableWidth = this.defAllRowWidth;
         }

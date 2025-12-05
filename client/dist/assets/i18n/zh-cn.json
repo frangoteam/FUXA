@@ -735,8 +735,9 @@
     "shapes.action-anticlockwise": "逆时针转弯",
     "shapes.action-downup": "向上和向下",
     "shapes.action-rotate": "旋转",
-    "shapes.action-move": "移动",
     "shapes.action-refreshImage": "更新图像",
+
+    "shapes.action-move": "移动",
     "shapes.event-click": "点击",
     "shapes.event-dblclick": "双击",
     "shapes.event-mouseup": "鼠标松开",
@@ -1034,14 +1035,6 @@
     "device.tag-scale-script-params-tooltip": "传递给脚本的参数值的JSON格式化数组",
 
     "device.edit-placeholder-titel": "编辑占位符",
-    "device.tag-property-webcam-device": "摄像头地址",
-    "device.tag-property-webcam-device-address": "摄像头地址,比如(/dev/video0)",
-    "device.tag-property-webcam-options.width": "宽",
-    "device.tag-property-webcam-options.height": "高",
-    "device.tag-property-webcam-options.frames": "帧数",
-    "device.tag-property-webcam-options.quality": "质量",
-    "device.tag-property-webcam-options.outputType": "截图格式",
-    "device.tag-property-webcam-options.callbackReturn": "截图输出",
 
     "device.connect-ok": "OK",
     "device.connect-error": "错误",
