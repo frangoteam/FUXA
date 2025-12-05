@@ -184,6 +184,18 @@
                     </div>
                 </div>
             </mat-tab>
+            <mat-tab label="{{'dlg.app-settings-logs' | translate}}">
+                <div class="block mt20 tab-logs">
+                    <div class="my-form-field block">
+                        <span>{{'dlg.app-settings-daqstore-retention' | translate}}</span>
+                        <mat-select [(value)]="settings.logs.retention" style="width: 200px">
+                            <mat-option *ngFor="let retation of logsRetationType | enumToArray" [value]="retation.key">
+                                {{'store.retention-' + retation.value | translate}}
+                            </mat-option>
+                        </mat-select>
+                    </div>
+                </div>
+            </mat-tab>
         </mat-tab-group>
     </div>
     <div mat-dialog-actions class="dialog-action">
