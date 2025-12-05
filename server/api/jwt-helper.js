@@ -81,6 +81,11 @@ function requireAuth (req, res, next) {
     // Check for common FUXA referer patterns
     const referer = req.headers.referer;
     if (referer) {
+        // Allow if referer is from the same host (to support IP access without specific paths)
+        const requestHost = req.headers.host;
+        if (referer.startsWith(`http://${requestHost}`) || referer.startsWith(`https://${requestHost}`)) {
+            return next();
+        }
         // Allow if referer contains common FUXA paths or is from the same server
         const fuxaPatterns = [
             '/fuxa', '/editor', '/viewer', '/lab', '/home',
