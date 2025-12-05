@@ -195,8 +195,8 @@
     "general.sunday-short": "Sun",
     "general.save-template": "Save as template",
     "general.import-template": "Import from template",
-    "general.weekdays": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-    "general.weekdays-short": ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+    "general.weekdays": ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
+    "general.weekdays-short": ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
     "general.months": ["January","February","March","April","May","June","July","August","September","October","November","December"],
     "general.months-short": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
 
@@ -651,6 +651,7 @@
     "scheduler.event-mode": "Event Mode",
     "scheduler.time-mode": "Time Mode",
     "scheduler.month-mode": "Month Mode",
+    "scheduler.all-day": "All Day",
     "scheduler.months-active": "Months Active",
     "scheduler.days-of-month": "Days of Month",
     "scheduler.days-active": "Days Active",
