@@ -41,6 +41,11 @@ module.exports = {
     // Default: 24 Hours (1 Day), 0 is disabled only 1 DB file
     daqTokenizer: 24,
 
+    // Logs retention
+    logs: {
+        retention: 'none'
+    },
+
     // Tags value to be broadcast,
     // if false will be send to frontend only the tags bind to current visualized views
     // if true all configured tags will be send to frontend

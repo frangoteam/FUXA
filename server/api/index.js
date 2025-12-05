@@ -193,6 +193,9 @@ function mergeUserSettings(settings) {
     if (settings.alarms) {
         runtime.settings.alarms = settings.alarms;
     }
+    if (settings.logs) {
+        runtime.settings.logs = settings.logs;
+    }
 }
 
 function verifyGroups(req) {

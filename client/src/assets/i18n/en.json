@@ -1722,6 +1722,7 @@
     "dlg.app-settings-server-log-full": "Log full mode",
     "dlg.app-settings-alarms": "Alarms",
     "dlg.app-settings-alarms-clear": "Clear all alarms and history",
+    "dlg.app-settings-logs": "Logs",
     "dlg.app-settings-auth-token": "Authentication with Token",
     "dlg.app-settings-auth-only-editor": "Only for Editor",
     "dlg.app-auth-disabled": "Disabled",
