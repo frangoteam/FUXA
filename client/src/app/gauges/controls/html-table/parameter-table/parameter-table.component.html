@@ -1,0 +1,222 @@
+<div *ngIf="withToolbar" class="table-toolbar"
+    [style.backgroundColor]="tableOptions.toolbar?.background || tableOptions.header.background"
+    [style.--toolbar-color]="tableOptions.toolbar?.color || tableOptions.header.color"
+    [style.--toolbar-button-bg]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+    [style.height.px]="(tableOptions.header.height >= 42 ? tableOptions.header.height : 42)"
+    [style.--toolbar-height]="(tableOptions.header.height >= 42 ? tableOptions.header.height + 'px' : '42px')">
+    <div class="toolbar-left">
+        <div class="header-section">
+            <div class="parameter-custom-select" [class.open]="isTypeDropdownOpen">
+                <div class="custom-select-trigger" (click)="toggleTypeDropdown()" [style]="getSelectStyles(isTypeDropdownOpen)">
+                    <span class="selected-text">{{ selectedTypeLabel }}</span>
+                    <span class="material-icons arrow">arrow_drop_down</span>
+                </div>
+                <div class="custom-select-dropdown" *ngIf="isTypeDropdownOpen" [style]="getDropdownStyles()">
+                    <div class="custom-option" *ngFor="let type of parameterTypes" [class.selected]="type === selectedParameterType" (click)="selectParameterType(type)" [style]="getOptionStyle(type === selectedParameterType)">
+                        {{type.name}}{{type.userId ? (' (' + type.userId + ')') : ''}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-section">
+            <div class="parameter-custom-select" [class.open]="isSetDropdownOpen">
+                <div class="custom-select-trigger" (click)="toggleSetDropdown()" [style]="getSelectStyles(isSetDropdownOpen)">
+                    <span class="selected-text">{{ selectedSetLabel }}</span>
+                    <span class="material-icons arrow">arrow_drop_down</span>
+                </div>
+                <div class="custom-select-dropdown" *ngIf="isSetDropdownOpen" [style]="getDropdownStyles()">
+                    <div class="custom-option" *ngFor="let set of parameterSets" [class.selected]="set === selectedParameterSet" (click)="selectParameterSet(set)" [style]="getOptionStyle(set === selectedParameterSet)">
+                        {{set.name}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toolbar-right">
+        <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+            (click)="onSaveToTags()" matTooltip="{{'parameter.write-to-device' | translate}}">
+            <mat-icon>get_app</mat-icon>
+        </button>
+        <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+            (click)="onReadFromTags()" matTooltip="{{'parameter.read-from-device' | translate}}">
+            <mat-icon style="transform: rotate(180deg);">get_app</mat-icon>
+        </button>
+        <mat-divider [vertical]="true"></mat-divider>
+        <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button custom-disabled-button" [disabled]="!selectedParameterType" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+            (click)="addParameterSet()" matTooltip="{{'parameter.add-set' | translate}}">
+            <mat-icon>add</mat-icon>
+        </button>
+        <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button custom-disabled-button" [disabled]="!selectedParameterSet" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+            (click)="copyParameterSet()" matTooltip="{{'parameter.copy-set' | translate}}">
+            <mat-icon>content_copy</mat-icon>
+        </button>
+        <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+            (click)="onSaveSetToDB()" matTooltip="{{'parameter.save-set-to-db' | translate}}">
+            <mat-icon>save</mat-icon>
+        </button>
+        <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button custom-disabled-button" [disabled]="!selectedParameterSet" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+            (click)="renameParameterSet()" matTooltip="{{'parameter.rename-set' | translate}}">
+            <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button custom-disabled-button" [disabled]="!selectedParameterSet" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+            (click)="deleteParameterSet()" matTooltip="{{'parameter.delete-set' | translate}}">
+            <mat-icon>delete</mat-icon>
+        </button>
+        <mat-divider [vertical]="true"></mat-divider>
+        <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+            (click)="onExportData()" matTooltip="{{'parameter.export' | translate}}">
+            <mat-icon>vertical_align_bottom</mat-icon>
+        </button>
+        <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+            (click)="onImportData()" matTooltip="{{'parameter.import' | translate}}">
+            <mat-icon>vertical_align_top</mat-icon>
+        </button>
+        <mat-divider [vertical]="true"></mat-divider>
+    </div>
+</div>
+
+<div class="table-container">
+    <div class="table-wrapper" [style.backgroundColor]="tableOptions.row.background">
+    <mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background" matSort
+        [style.height]="(tableOptions?.paginator?.show) ? 'calc(100% - 42px)' : '100%'" [class.selectable]="isSelectable()"
+        [ngStyle]="{'--header-bg': tableOptions.header.background, '--header-color': tableOptions.header.color, '--row-bg': tableOptions.row.background, '--toolbar-bg': tableOptions.toolbar?.background || tableOptions.header.background, '--toolbar-color': tableOptions.toolbar?.color || tableOptions.header.color, '--toolbar-button-bg': tableOptions.toolbar?.buttonColor || tableOptions.header.background, '--grid-color': tableOptions.gridColor}"
+        *ngIf="displayedColumns.length > 0">
+    <!-- Column definitions - for ALL rows, we'll filter at the cell level -->
+    <ng-container *ngFor="let column of displayedColumns; index as colIndex" [matColumnDef]="column">
+        <th *matHeaderCellDef
+            mat-sort-header
+            [class]="columnsStyle[column]?.align || 'left'"
+            [style.width.px]="columnsStyle[column]?.width || null"
+            [style.color]="columnsStyle[column]?.color ? columnsStyle[column].color : tableOptions.header?.color"
+            [style.textAlign]="columnsStyle[column]?.align ? columnsStyle[column].align : 'left'"
+            [style.fontSize.px]="tableOptions.header.fontSize">
+            {{ columnsStyle[column]?.label }}
+        </th>
+        <td *matCellDef="let element; index as i"
+            [ngClass]="['parameter-table-cell', 'text-align-' + (element.type === 'text' ? (element.textAlign || 'left') : (columnsStyle[column]?.align || 'left'))]"
+            [attr.colspan]="(element.type === 'text' && column === displayedColumns[0]) ? displayedColumns.length : null"
+            [hidden]="element.type === 'text' && column !== displayedColumns[0]"
+            [ngStyle]="element.type === 'text' ? {
+                'text-align': element.textAlign || 'left',
+                'font-size.px': element.textSize || tableOptions.row.fontSize,
+                'position': 'relative',
+                'width': '100%'
+            } : {
+                'width.px': columnsStyle[column]?.width,
+                'text-align': columnsStyle[column]?.align || 'left',
+                'font-size.px': tableOptions.row.fontSize,
+                'overflow': (enableEdit && element[column]?.isEditable) ? 'visible' : 'hidden'}">
+            <!-- Text rows: span entire table width -->
+            <ng-container *ngIf="element.type === 'text' && column === displayedColumns[0]">
+                <span [style.color]="tableOptions.row.color"
+                      [style.fontWeight]="element.textBold ? 'bold' : 'normal'"
+                      [style.fontSize.px]="element.textSize || tableOptions.row.fontSize"
+                      [style.display]="'block'"
+                      [style.textAlign]="element.textAlign"
+                      [style.position]="'absolute'"
+                      [style.left]="'0'"
+                      [style.right]="'0'"
+                      [style.top]="'50%'"
+                      [style.transform]="'translateY(-50%)'"
+                      [style.pointerEvents]="'none'"
+                      [class]="'text-align-' + element.textAlign">
+                    {{element.textContent}}
+                </span>
+            </ng-container>
+            <!-- Column data rows: show normally -->
+            <ng-container *ngIf="element.type === 'column'">
+                <div *ngIf="enableEdit && element[column]?.isEditable" class="editing-cell" [attr.data-editing-row]="i" [attr.data-editing-column]="column">
+                    <div class="input-container">
+                        <input [type]="getCellInputType(element, column)" inputmode="text" autocomplete="off" autocapitalize="none" [ngModel]="getCellValue(element, column)" (ngModelChange)="onCellValueChange(element, column, $event)" (focus)="onCellEditStart(column)" (blur)="onCellEditEnd(element, column)" (click)="startEditing(i, column)" (keydown.enter)="onCellInputEnter($event)" class="cell-input" [class.cell-input-error]="getCellError(element, column)" [style.backgroundColor]="tableOptions.row.background" [style.color]="tableOptions.row.color" [style.borderColor]="getCellError(element, column) ? '#f44336' : tableOptions.gridColor" numberOnly [min]="getCellMin(element, column)" [max]="getCellMax(element, column)">
+                        <div *ngIf="getCellError(element, column)" class="cell-error-message">{{ getCellError(element, column) }}</div>
+                    </div>
+                    <button *ngIf="isEditingCell(i, column)" mat-icon-button (click)="confirmEdit()" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" matTooltip="Confirm"><mat-icon>check</mat-icon></button>
+                    <button *ngIf="isEditingCell(i, column)" mat-icon-button (click)="cancelEdit()" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" matTooltip="Cancel"><mat-icon>close</mat-icon></button>
+                </div>
+                <span *ngIf="!(enableEdit && element[column]?.isEditable)" [style.color]="tableOptions.row.color">
+                    {{getCellDisplayValue(element, column)}}
+                </span>
+            </ng-container>
+        </td>
+    </ng-container>
+
+    <ng-container *ngIf="tableOptions.header.show">
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="parameter-table-header"
+               [style.height.px]="tableOptions.header.height"
+               [style.backgroundColor]="tableOptions.header.background"
+               [style.display]="(tableOptions.header.show) ? 'flex' : 'none'">
+        </mat-header-row>
+    </ng-container>
+    <!-- All rows: text rows render with colspan in first cell, hidden in others -->
+    <mat-row *matRowDef="let row; columns: displayedColumns;"
+            class="mat-row parameter-table-row"
+            [class.text-row]="row.type === 'text'"
+            [ngStyle]="{
+                'height.px': tableOptions.row.height,
+                'cursor': isSelectable() ? 'pointer': 'unset',
+                'background-color': isSelected(row) ? (tableOptions.selection?.background || '#e3f2fd') : tableOptions.row.background,
+                'color': isSelected(row) ? (tableOptions.selection?.color || '#1976d2') : tableOptions.row.color
+            }"
+            (click)="selectRow(row)">
+    </mat-row>
+    </mat-table>
+    <div *ngIf="displayedColumns.length === 0 && !selectedParameterType" class="table-empty-state" [style.--text-color]="tableOptions.row.color" [style.--border-color]="tableOptions.gridColor">
+        <div class="table-empty-text">Please Select Parameter Type</div>
+    </div>
+    <div *ngIf="emptyStateMessage" class="table-empty-state" [style.--text-color]="tableOptions.row.color" [style.--border-color]="tableOptions.gridColor">
+        <div class="table-empty-text">{{ emptyStateMessage }}</div>
+        <button *ngIf="emptyStateActionLabel" mat-stroked-button type="button" class="empty-state-action" (click)="addParameterSet()">{{ emptyStateActionLabel }}</button>
+    </div>
+    </div>
+</div>
+
+<!-- Footer toolbar (paginator) -->
+<div *ngIf="tableOptions?.paginator?.show || tableOptions?.showEnableEditInFooter" class="footer-toolbar"
+    [style.backgroundColor]="tableOptions.toolbar?.background || tableOptions.header.background"
+        [style.--toolbar-color]="tableOptions.toolbar?.color || tableOptions.header.color"
+        [style.--toolbar-button-bg]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+        [style.--row-bg]="tableOptions.row.background"
+        [style.height.px]="(tableOptions.header.height >= 42 ? tableOptions.header.height : 42)"
+        [style.--toolbar-height]="(tableOptions.header.height >= 42 ? tableOptions.header.height + 'px' : '42px')">
+    <div class="toolbar-left">
+        <mat-slide-toggle *ngIf="tableOptions.showEnableEditInFooter" [(ngModel)]="enableEdit" labelPosition="after" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color">Enable Edit</mat-slide-toggle>
+    </div>
+    <div class="toolbar-right">
+        <mat-paginator *ngIf="tableOptions?.paginator?.show" [pageSizeOptions]="pageSizeOptions" [pageSize]="selectedPageSize" class="data-table-paginator" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color">
+        </mat-paginator>
+        <div *ngIf="tableOptions?.paginator?.show" class="page-size">
+            <div class="parameter-custom-select" [class.open]="isPageSizeDropdownOpen">
+                <div class="custom-select-trigger" (click)="togglePageSizeDropdown()" [style]="getSelectStyles(isPageSizeDropdownOpen)">
+                    <span class="selected-text">{{ selectedPageSizeLabel }}</span>
+                    <span class="material-icons arrow">arrow_drop_down</span>
+                </div>
+                <div class="custom-select-dropdown footer-dropdown" *ngIf="isPageSizeDropdownOpen" [style]="getDropdownStyles()">
+                    <div class="custom-option" *ngFor="let size of pageSizeOptions" [class.selected]="size === selectedPageSize" (click)="selectPageSize(size)" [style]="getOptionStyle(size === selectedPageSize)">
+                        {{ size }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button *ngIf="tableOptions?.paginator?.show" mat-flat-button class="moka-toolbar-editor moka-toolbar-button custom-disabled-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background" [disabled]="!canGoPrevious()" (click)="previousPage()">
+            <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button *ngIf="tableOptions?.paginator?.show" mat-flat-button class="moka-toolbar-editor moka-toolbar-button custom-disabled-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background" [disabled]="!canGoNext()" (click)="nextPage()">
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+    </div>
+</div>
+
+<!-- Dialogs -->
+<app-parameter-set-dialog
+    *ngIf="showParameterSetDialog"
+    [data]="parameterSetDialogData"
+    (close)="onParameterSetDialogClose($event)">
+</app-parameter-set-dialog>
+
+<app-parameter-delete-confirm-dialog
+    *ngIf="showParameterDeleteDialog"
+    [data]="parameterDeleteDialogData"
+    (close)="onParameterDeleteDialogClose($event)">
+</app-parameter-delete-confirm-dialog>

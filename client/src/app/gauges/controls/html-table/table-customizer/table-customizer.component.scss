@@ -1,4 +1,16 @@
 :host {
+    .my-form-field {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .my-form-field mat-form-field {
+        width: 100%;
+    }
+
+    .my-form-field .mat-select-trigger, .my-form-field .mat-select-value {
+        color: inherit !important;
+    }
     /* ::ng-deep .customer-table .mat-table {
         background-color: transparent !important;
         overflow: auto;
@@ -12,8 +24,11 @@
         top: 40px;
     }
 
+    .parameters-table .toolbox-column {
+        top: 120px;
+    }
+
     .toolbox-column button {
-        /* margin-right: 8px; */
         margin-left: 10px;
     }
 
@@ -25,13 +40,11 @@
     }
 
     .toolbox-row button {
-        /* margin-right: 8px; */
         margin-left: 10px;
     }
 
     .data-table-header {
         min-height: 0px;
-        /* background-color: darkgray; */
     }
 
     .column-options {
@@ -52,6 +65,55 @@
     .data-table-cell {
         white-space: nowrap;
         overflow: hidden;
+    }
+
+    .types-section {
+        .types-main {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: nowrap;
+        }
+        .types-assign .align-checkbox {
+            transform: translateY(0px);
+        }
+        .select-wrapper {
+            flex: 1 1 auto;
+            min-width: 180px;
+            max-width: 640px;
+            width: auto;
+        }
+        .types-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            flex: 0 0 auto;
+        }
+        .types-desc {
+            margin-top: 8px;
+        }
+    }
+    .my-form-field mat-select {
+        width: 100%;
+    }
+
+    .data-table-edit-row button {
+        width: 40px;
+    }
+
+    .text-row-blank {
+        min-height: 36px;
+        display: block;
+        width: 100%;
+        background: transparent; 
+    }
+
+    .text-row-hidden {
+        display: none !important;
+        padding: 0 !important;
+        border: 0 !important;
+        height: 0 !important;
     }
 
     .variable-input {

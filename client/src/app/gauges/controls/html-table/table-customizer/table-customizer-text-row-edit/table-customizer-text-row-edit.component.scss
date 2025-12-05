@@ -1,0 +1,24 @@
+
+:host ::ng-deep .mat-dialog-content {
+  overflow: visible !important;
+}
+
+.text-row-controls {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start; 
+  margin-top: 8px;
+}
+
+.text-row-controls .my-form-field span {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.text-row-controls .checkbox-field {
+  text-align: center;
+}
+
+:host ::ng-deep .text-row-controls .checkbox-field .mat-checkbox .mat-checkbox-label {
+  display: none;
+}

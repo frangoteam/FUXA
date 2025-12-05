@@ -1,0 +1,30 @@
+<h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.customize-row-edit' | translate}}</h1>
+<mat-icon (click)="onCancel()" class="dialog-close-btn">clear</mat-icon>
+<mat-dialog-content>
+    <div class="my-form-field" style="display: block; margin-bottom: 8px;">
+        <span>{{'table.cell-text' | translate}}</span>
+        <textarea rows="4" [(ngModel)]="row.textContent" style="width: 100%;"></textarea>
+    </div>
+    <div class="text-row-controls">
+        <div class="my-form-field">
+            <span>{{'table.property-column-align' | translate}}</span>
+            <mat-select [(value)]="row.textAlign">
+                <mat-option [value]="tableCellAlignType.left">{{'table.cell-align-left' | translate}}</mat-option>
+                <mat-option [value]="tableCellAlignType.center">{{'table.cell-align-center' | translate}}</mat-option>
+                <mat-option [value]="tableCellAlignType.right">{{'table.cell-align-right' | translate}}</mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field text-row-size">
+            <span>{{'table.property-text-size' | translate}}</span>
+            <input type="number" [(ngModel)]="row.textSize" (keydown)="$event.stopPropagation()">
+        </div>
+        <div class="my-form-field checkbox-field">
+            <span>{{'table.property-bold' | translate}}</span>
+            <mat-checkbox [(ngModel)]="row.textBold"></mat-checkbox>
+        </div>
+    </div>
+</mat-dialog-content>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onCancel()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onSave()">{{'dlg.ok' | translate}}</button>
+    </div>

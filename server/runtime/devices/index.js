@@ -26,7 +26,6 @@ function start() {
     wokingStatus = 'starting';
     devices.load();
     return new Promise(function (resolve, reject) {
-        // runtime.logger.info('devices.start-all (' + Object.keys(activeDevices).length + ')', true);
         for (var id in activeDevices) {
             activeDevices[id].start();
         }
@@ -41,7 +40,6 @@ function start() {
 function stop() {
     wokingStatus = 'stopping';
     return new Promise(function (resolve, reject) {
-        // runtime.logger.info('devices.stop-all (' + Object.keys(activeDevices).length + ')');
         var deviceStopfnc = [];
         for (var id in activeDevices) {
             deviceStopfnc.push(activeDevices[id].stop());
@@ -372,7 +370,7 @@ function setDeviceProperty(deviceName, property) {
  */
 function getDevice(deviceName, asInterface) {
     try {
-        const device = runtime.project.getDevice(deviceName);
+        const device = runtime.project.getDeviceById(deviceName);
         if (device) {
             return asInterface ? activeDevices[device.id].getComm() : activeDevices[device.id];
         }
@@ -438,6 +436,32 @@ async function setDeviceValue(deviceid, sigid, value, fnc) {
  */
 function setDeviceConnectionStatus(deviceId, status) {
     activeDevices[FuxaServerId].setDeviceConnectionStatus(deviceId, status);
+}
+
+/**
+ * Execute ODBC query
+ * @param {*} deviceid
+ * @param {*} query
+ */
+function executeOdbcQuery(deviceid, query) {
+    return new Promise(function (resolve, reject) {
+        let device = activeDevices[deviceid];
+        
+        // If not found by ID, try to find by name
+        if (!device) {
+            device = Object.values(activeDevices).find(d => d && d.getName() === deviceid);
+        }
+        
+        if (device && device.getComm && device.getComm().executeQuery) {
+            device.getComm().executeQuery(query).then(result => {
+                resolve(result);
+            }).catch(err => {
+                reject(err);
+            });
+        } else {
+            reject('Device not found or does not support queries');
+        }
+    });
 }
 
 /**
@@ -514,6 +538,25 @@ function getRequestResult(property) {
 }
 
 /**
+ * Get all devices values
+ * @returns {Object} Object with device IDs as keys and their values as values
+ */
+function getDevicesValues() {
+    var result = {};
+    for (var id in activeDevices) {
+        try {
+            var values = activeDevices[id].getValues();
+            if (values && values.length > 0) {
+                result[id] = values;
+            }
+        } catch (err) {
+            runtime.logger.error(`devices.getDevicesValues for ${id}: ${err}`);
+        }
+    }
+    return result;
+}
+
+/**
  * Return result of get node values
  * @param {*} tagId
  * @param {*} fromDate
@@ -563,5 +606,6 @@ var devices = module.exports = {
     setTagDaqSettings: setTagDaqSettings,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
+    executeOdbcQuery: executeOdbcQuery,
     getHistoricalTags: getHistoricalTags
 }

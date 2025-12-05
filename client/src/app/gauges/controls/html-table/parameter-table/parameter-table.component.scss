@@ -1,0 +1,567 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    ::ng-deep .mat-table {
+        height: 100%;
+        overflow: auto;
+        padding: 0 !important;
+
+        &::-webkit-scrollbar-track {
+            background: var(--row-bg);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: var(--header-bg);
+        }
+    }
+
+    .mat-header-row {
+        padding-left: 10px;
+        padding-right: 5px;
+    }
+
+    .mat-row:not(.text-row) {
+        padding-left: 10px;
+        padding-right: 5px;
+    }
+
+    .mat-row.text-row {
+        padding: 0;
+        margin: 0;
+    }
+
+    // Ensure absolutely no padding or margin on text-row cells and content
+    .mat-row.text-row .mat-cell {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .mat-row.text-row .parameter-table-cell {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .mat-row.text-row .parameter-table-cell span,
+    .mat-row.text-row .parameter-table-cell .cell-input {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    // Add padding for left and right aligned text in text-only rows
+    .mat-row.text-row .parameter-table-cell span.text-align-left {
+        padding-left: 10px !important;
+    }
+
+    .mat-row.text-row .parameter-table-cell span.text-align-right {
+        padding-right: 10px !important;
+    }
+
+    .mat-header-cell {
+        padding: 0 !important;
+    }
+
+    .mat-cell {
+        padding: 0 !important;
+    }
+
+    .parameter-table-header {
+        min-height: 0px;
+    }
+
+    .parameter-table-row {
+        min-height: 0px;
+        border-bottom: 1px solid var(--grid-color);
+    }
+
+    .mat-table.selectable .mat-row:hover {
+        background-color: rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .table-toolbar {
+        min-height: 32px;
+        height: auto !important;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        line-height: normal;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 5px 10px;
+        justify-content: space-between;
+    }
+
+    .footer-toolbar {
+        min-height: 32px;
+        height: 32px !important;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        line-height: normal;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 5px 10px;
+        justify-content: space-between;
+    }
+
+    .table-container {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        overflow: auto;
+    }
+
+    .table-container mat-table {
+        flex: 1;
+        height: auto !important;
+        table-layout: fixed;
+    }
+
+    .table-wrapper {
+        position: relative;
+        flex: 1;
+        min-height: 120px;
+    }
+
+    .table-empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: var(--text-color, var(--toolbar-color, #757575));
+        background-color: transparent;
+        padding: 20px;
+        font-weight: 600;
+        min-height: 120px;
+    }
+
+    .table-empty-state .empty-state-action {
+        background: transparent;
+        border-color: var(--border-color, rgba(0, 0, 0, 0.3));
+        color: inherit;
+        font-size: 12px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        cursor: pointer;
+    }
+
+    .table-and-footer-container .footer-toolbar {
+        flex: none;
+        height: 32px !important;
+        min-height: 32px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        line-height: normal;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 5px 10px;
+        background-color: var(--toolbar-bg, inherit);
+    }
+
+    .toolbar-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        flex-shrink: 0;
+    }
+
+    .toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        min-width: 0;
+        flex-shrink: 0;
+        justify-content: flex-end;
+        align-self: flex-start;
+    }
+
+    .data-table-paginator {
+        height: 32px;
+        background-color: transparent;
+
+        ::ng-deep .mat-paginator {
+            background-color: transparent !important;
+            color: var(--toolbar-color) !important;
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+
+        ::ng-deep .mat-paginator-container {
+            min-height: unset;
+            height: 32px;
+            justify-content: flex-end;
+            color: var(--toolbar-color) !important;
+            background-color: transparent !important;
+            align-items: center;
+        }
+
+        ::ng-deep .mat-paginator-container .mat-paginator-page-size {
+            height: inherit;
+            margin: unset;
+            display: none;
+        }
+
+        ::ng-deep .mat-paginator-navigation-previous,
+        ::ng-deep .mat-paginator-navigation-next {
+            display: none;
+        }
+
+        ::ng-deep .mat-paginator-container .mat-paginator-page-size-select {
+            margin: unset;
+        }
+
+        ::ng-deep .mat-paginator-range-label {
+            color: var(--toolbar-color) !important;
+            background-color: transparent !important;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        ::ng-deep .mat-icon-button {
+            color: var(--toolbar-color) !important;
+            background-color: transparent !important;
+        }
+    }
+
+    .moka-toolbar-editor {
+        display: inline-block;
+        margin-left:5px;
+        border: 0px;
+        height: 28px;
+        cursor: pointer;
+        vertical-align: middle;
+        line-height: 20px;
+        box-shadow: 1px 1px 3px -1px #888 !important;
+        min-width: 40px;
+    background-color: var(--toolbar-button-bg);
+    }
+
+    .moka-toolbar-button {
+        width: 40px;
+        padding: unset;
+        flex-shrink: 0;
+        flex-grow: 0;
+
+        &:hover:not([disabled]) {
+            background-color: rgba(0, 0, 0, 0.1) !important;
+        }
+    }
+
+    .moka-toolbar-editor.moka-toolbar-button {
+        color: inherit; 
+    }
+
+    .moka-toolbar-editor mat-icon,
+    .moka-toolbar-editor .material-icons,
+    .moka-toolbar-editor mat-icon svg {
+        color: inherit;
+        fill: currentColor !important;
+        font-size: 20px !important;
+        width: 20px !important;
+        height: 20px !important;
+        line-height: 20px !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+        transform-origin: center center !important;
+    }
+
+    .moka-toolbar-editor.moka-toolbar-button:hover:not([disabled]) {
+        background-color: rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .page-size {
+        margin-right: 5px;
+    }
+
+    ::ng-deep .left .mat-sort-header-container {
+        text-align: left;
+        justify-content: left;
+    }
+
+    ::ng-deep .center .mat-sort-header-container {
+        text-align: center;
+        justify-content: center;
+    }
+
+    ::ng-deep .right .mat-sort-header-container {
+        text-align: right;
+        justify-content: right;
+    }
+
+    .parameter-table-cell {
+        vertical-align: middle;
+        box-sizing: border-box;
+        padding: 0 !important;
+        
+        &[colspan] {
+            overflow: visible;
+            text-overflow: unset;
+            white-space: normal;
+        }
+        
+        &:not([colspan]) {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .cell-input,
+        span {
+            text-align: inherit;
+        }
+    }
+
+    .cell-input {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: inherit;
+        color: inherit;
+
+        &:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+    }
+
+    .cell-input {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: inherit;
+        color: inherit;
+
+        &:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+    }
+
+    .parameter-custom-select {
+        position: relative;
+        min-width: 120px;
+
+        .custom-select-trigger {
+            background: var(--toolbar-button-bg);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 6px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.2s ease;
+            color: var(--toolbar-color);
+
+            &:hover:not(.disabled) {
+                background: rgba(0, 0, 0, 0.1) !important;
+            }
+
+            .selected-text {
+                flex: 1;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+                color: var(--toolbar-color);
+            }
+
+            .arrow {
+                margin-left: 8px;
+                font-size: 18px;
+                color: var(--toolbar-color);
+                transition: transform 0.2s ease;
+                color: inherit;
+            }
+        }
+
+        &.open .custom-select-trigger .arrow {
+            transform: rotate(180deg);
+        }
+
+        &.disabled .custom-select-trigger {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .custom-select-dropdown {
+            position: absolute;
+            top: calc(100% - 1px); 
+            left: 0;
+            right: 0;
+            border: 1px solid #cccccc; 
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+
+            .custom-option {
+                padding: 8px 12px;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+                color: var(--toolbar-color);
+
+                &:hover {
+                    background: rgba(0, 0, 0, 0.1);
+                }
+
+                &.selected {
+                    font-weight: bold;
+                    background: var(--toolbar-button-bg);
+                }
+            }
+        }
+    }
+
+    .page-size {
+        width: 70px;
+        flex-shrink: 0;
+
+        .parameter-custom-select {
+            min-width: 60px;
+        }
+    }
+
+    .footer-dropdown {
+        top: auto !important;
+        bottom: calc(100% - 1px) !important; 
+        left: 0; 
+        right: 0;
+        min-width: 100%;
+        z-index: 2000 !important;
+    }
+
+    .custom-disabled-button[disabled] {
+        color: inherit;
+
+        mat-icon {
+            color: inherit;
+            opacity: 0.2;
+        }
+    }
+
+    .paginator-section {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        margin-left: auto;
+    }
+
+    .editable-cell {
+        cursor: pointer;
+    }
+
+    .editing-cell {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        width: 100%;
+        position: relative;
+
+        .input-container {
+            flex: 1;
+            position: relative;
+            margin: 0 8px 0 0;
+            transition: margin 0.12s ease;
+
+            &:focus-within {
+                margin-right: 0;
+            }
+
+            .cell-input {
+                border: 1px solid var(--grid-color);
+                border-radius: 4px;
+                padding: 2px 6px;
+                height: 24px;
+                box-sizing: border-box;
+                width: 100%;
+                transition: none;
+            }
+        }
+
+        .cell-error-message {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #f44336;
+            color: white;
+            font-size: 11px;
+            padding: 2px 4px;
+            border-radius: 2px;
+            z-index: 10000;
+            white-space: normal;
+            word-wrap: break-word;
+            pointer-events: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        button {
+            flex-shrink: 0;
+            width: 20px !important;
+            height: 20px !important;
+            padding: 2px !important;
+            min-width: 20px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button mat-icon {
+            font-size: 16px !important;
+            width: 16px !important;
+            height: 16px !important;
+            line-height: 1 !important;
+        }
+
+        button:last-of-type {
+            margin-right: 8px;
+        }
+    }
+}
+
+::ng-deep .footer-toolbar .mat-slide-toggle {
+    .mat-slide-toggle-thumb {
+        background-color: var(--toolbar-color, #757575) !important;
+        border-radius: 4px !important; 
+        width: 18px !important;
+        height: 18px !important;
+    }
+    &.mat-checked .mat-slide-toggle-thumb {
+        background-color: var(--toolbar-color, #757575) !important;
+    }
+    .mat-slide-toggle-bar {
+        background-color: var(--row-bg, #757575) !important;
+        border-radius: 3px !important; 
+        height: 14px !important;
+        width: 32px !important;
+    }
+    &.mat-checked .mat-slide-toggle-bar {
+        background-color: var(--row-bg, #757575) !important;
+    }
+}
+
+::ng-deep .text-align-left {
+    text-align: left !important;
+}
+
+::ng-deep .text-align-center {
+    text-align: center !important;
+}
+
+::ng-deep .text-align-right {
+    text-align: right !important;
+}
+
+.cell-input-error {
+    border-color: #f44336 !important;
+    border-width: 2px !important;
+}
