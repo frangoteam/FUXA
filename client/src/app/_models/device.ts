@@ -195,6 +195,8 @@ export class DeviceNetProperty {
     /** MELSEC */
     ascii?: boolean;
     octalIO?: boolean;
+    /** Force FC16 for Modbus RTU/TCP write operations */
+    forceFC16?: boolean;
 
     static descriptor = {
         address: 'Device address (IP)',
