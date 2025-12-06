@@ -24,7 +24,16 @@
             </ng-container>
             <ng-container matColumnDef="key">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'apikeys.list-key' | translate}} </mat-header-cell>
-                <mat-cell *matCellDef="let element"> {{ element.key }} </mat-cell>
+                <mat-cell *matCellDef="let element">
+                    <div class="key-cell">
+                        <span class="key-value">{{ element.key }}</span>
+                        <button mat-icon-button
+                                matTooltip="{{'apikeys.copy-key' | translate}}"
+                                (click)="copyApiKey($event, element.key)">
+                            <mat-icon>content_copy</mat-icon>
+                        </button>
+                    </div>
+                </mat-cell>
             </ng-container>
             <ng-container matColumnDef="description">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'apikeys.list-description' | translate}} </mat-header-cell>

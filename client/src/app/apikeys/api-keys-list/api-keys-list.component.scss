@@ -39,7 +39,19 @@
     }
 
     .mat-column-key {
-        flex: 1 1 240px;
+        flex: 1 1 360px;
+    }
+    .key-cell {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+
+        .key-value {
+            flex: 1;
+            word-break: break-all;
+            font-family: 'Roboto Mono', monospace;
+        }
     }
 
     .mat-column-description {

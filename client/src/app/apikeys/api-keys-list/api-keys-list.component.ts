@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
 import { MatSort } from '@angular/material/sort';
 import { Subject, takeUntil } from 'rxjs';
 import { ProjectService } from '../../_services/project.service';
@@ -37,7 +38,8 @@ export class ApiKeysListComponent implements OnInit, AfterViewInit, OnDestroy {
         private dialog: MatDialog,
         private translateService: TranslateService,
         private projectService: ProjectService,
-        private apiKeysService: ApiKeysService
+        private apiKeysService: ApiKeysService,
+        private snackBar: MatSnackBar
     ) { }
 
     ngOnInit() {
@@ -64,6 +66,19 @@ export class ApiKeysListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onEditApiKey(apiKey: ApiKey) {
 		this.editApiKey(apiKey);
+    }
+
+    copyApiKey(event: MouseEvent, key: string) {
+        event?.stopPropagation();
+        if (!key) {
+            return;
+        }
+        const clipboard = typeof navigator !== 'undefined' ? navigator.clipboard : undefined;
+        if (clipboard?.writeText) {
+            clipboard.writeText(key).then(() => this.showCopyMessage()).catch(() => this.fallbackCopy(key));
+        } else {
+            this.fallbackCopy(key);
+        }
     }
 
     onRemoveApiKey(apiKey: ApiKey) {
@@ -109,5 +124,30 @@ export class ApiKeysListComponent implements OnInit, AfterViewInit, OnDestroy {
                 });
             }
         });
+    }
+
+    private fallbackCopy(value: string) {
+        const textarea = document.createElement('textarea');
+        textarea.value = value;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            this.showCopyMessage();
+        } catch (err) {
+            console.error('copy ApiKey err: ', err);
+        } finally {
+            document.body.removeChild(textarea);
+        }
+    }
+
+    private showCopyMessage() {
+        const message = this.translateService.instant('msg.apikeys-copied');
+        if (message) {
+            this.snackBar.open(message, undefined, { duration: 2000 });
+        }
     }
 }
