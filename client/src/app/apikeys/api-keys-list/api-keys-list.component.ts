@@ -100,7 +100,7 @@ export class ApiKeysListComponent implements OnInit, AfterViewInit, OnDestroy {
         let dialogRef = this.dialog.open(ApiKeyPropertyComponent, {
             position: { top: '60px' },
             disableClose: true,
-            data: location,
+            data: apiKey ? { ...apiKey } : null,
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {

@@ -700,5 +700,6 @@ var runtime = module.exports = {
     checkPermissionEnabled: checkPermissionEnabled,
     checkPermission: checkPermission,
     get socketPool() { return socketPool },
-    get socketMutex() {return socketMutex }
+    get socketMutex() {return socketMutex },
+    get apiKeys() { return apiKeys }
 }

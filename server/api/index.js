@@ -66,7 +66,7 @@ function init(_server, _runtime) {
             reportsApi.init(runtime, authJwt.verifyToken, verifyGroups);
             apiApp.use(reportsApi.app());
             apiKeysApi.init(runtime, authJwt.verifyToken, verifyGroups);
-            apiKeysApi.use(apiKeysApi.app());
+            apiApp.use(apiKeysApi.app());
 
             const limiter = rateLimit({
                 windowMs: 5 * 60 * 1000, // 5 minutes

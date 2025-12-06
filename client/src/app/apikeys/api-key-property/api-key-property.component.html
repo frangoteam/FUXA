@@ -1,3 +1,39 @@
-<p>
-    api-key-property works!
-</p>
+<form [formGroup]="formGroup">
+    <h1 mat-dialog-title class="force-lbk pointer-move" mat-dialog-draggable>{{'apikeys.edit-title' | translate}}</h1>
+    <mat-icon (click)="onCancelClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="dialog-content">
+        <div class="my-form-field block mb10">
+            <span>{{'apikeys.edit-name' | translate}}</span>
+            <input matInput formControlName="name" type="text" class="full-input">
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'apikeys.edit-key' | translate}}</span>
+            <div class="key-field">
+                <input matInput formControlName="key" type="text" class="full-input">
+                <button mat-stroked-button type="button" (click)="onGenerateKey()">{{'apikeys.edit-generate' | translate}}</button>
+            </div>
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'apikeys.edit-description' | translate}}</span>
+            <input matInput formControlName="description" type="text" class="full-input">
+        </div>
+        <div class="date-row">
+            <div class="my-form-field block mb10">
+                <span>{{'apikeys.edit-created' | translate}}</span>
+                <input matInput formControlName="created" type="date" class="date full-input" readonly>
+            </div>
+            <div class="my-form-field block mb10">
+                <span>{{'apikeys.edit-expires' | translate}}</span>
+                <input matInput formControlName="expires" type="date" class="date full-input">
+            </div>
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'apikeys.edit-enabled' | translate}}</span>
+            <mat-slide-toggle color="primary" formControlName="enabled"></mat-slide-toggle>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onCancelClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button [disabled]="formGroup.invalid" color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

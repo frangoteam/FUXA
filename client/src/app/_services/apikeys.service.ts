@@ -10,7 +10,9 @@ import { ResourceStorageService } from './rcgi/resource-storage.service';
 import { AppService } from './app.service';
 import { ApiKey } from '../_models/apikey';
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+})
 export class ApiKeysService {
 
     private endPointConfig: string = EndPointApi.getURL();
