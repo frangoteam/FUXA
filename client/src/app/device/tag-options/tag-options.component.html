@@ -34,7 +34,8 @@
                 <span>{{'device.tag-scale' | translate}}</span>
                 <mat-select formControlName="scaleMode">
                     <mat-option *ngFor="let ev of scaleModeType | enumToArray"
-                        matTooltip="{{ev.value + '-tooltip' | translate}}" [value]="ev.key">
+                                [attr.title]="(ev.value + '-tooltip') | translate"
+                                [value]="ev.key">
                         {{ ev.value | translate }}
                     </mat-option>
                 </mat-select>
