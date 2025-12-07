@@ -59,6 +59,12 @@ export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.editAlarm(alarm, 0);
     }
 
+    onCopyAlarm(alarm: Alarm) {
+        let copy = JSON.parse(JSON.stringify(alarm));
+        copy.name = copy.name + ' (copy)';
+        this.editAlarm(copy, 1);
+    }
+
     onRemoveAlarm(alarm: Alarm) {
 		this.editAlarm(alarm, -1);
     }

@@ -74,6 +74,16 @@
                         </div>
                     </div>
                 </ng-container>
+                <ng-container *ngSwitchCase="'expression'">
+                    <div class="my-form-field item-block mt5">
+                        <span>{{'device.tag-scale-read-expression' | translate}}</span>
+                        <input formControlName="scaleReadExpression">
+                    </div>
+                    <div class="my-form-field item-block mt5">
+                        <span>{{'device.tag-scale-write-expression' | translate}}</span>
+                        <input formControlName="scaleWriteExpression">
+                    </div>
+                </ng-container>
             </ng-container>
             <div class="my-form-field item-block mt10">
                 <span>{{'device.tag-scale-read-script' | translate}}</span>
