@@ -27,14 +27,16 @@
             "*.html",
             "server/**/*",
             "client/dist/**/*",
-            "icons/**/*",
-            "libz.so.1",
-            "libfuse.so.2"
+            "icons/**/*"
         ],
         "extraResources": [
             {
                 "from": "server/node_modules",
                 "to": "app/server/node_modules"
+            },
+            {
+                "from": "libs",
+                "to": "libs"
             }
         ],
         "directories": {
