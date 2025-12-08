@@ -60,7 +60,7 @@ jobs:
 
     - name: Install system deps for Linux arm64
       if: matrix.os == 'ubuntu-latest' && matrix.arch == 'arm64'
-      run: sudo apt-get update && sudo apt-get install -y zlib1g:i386 libfuse2
+      run: sudo apt-get update && sudo apt-get install -y zlib1g libfuse2
 
     - name: Package for Windows
       if: matrix.os == 'windows-latest' && matrix.arch == 'x64'
