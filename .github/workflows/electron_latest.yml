@@ -60,7 +60,7 @@ jobs:
 
     - name: Install system deps for Linux arm64
       if: matrix.os == 'ubuntu-latest' && matrix.arch == 'arm64'
-      run: sudo apt-get update && sudo apt-get install -y zlib1g libfuse2
+      run: sudo apt-get update && sudo apt-get install -y zlib1g libfuse2 sqlite3 libsqlite3-dev
 
     - name: Package for Windows
       if: matrix.os == 'windows-latest' && matrix.arch == 'x64'
@@ -71,7 +71,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         if [ "${{ matrix.arch }}" = "arm64" ]; then
-          npx electron-builder --linux appimage --arm64 --config.rpmRebuild=true
+          npx electron-builder --linux appimage --arm64
         else
           npx electron-builder --linux appimage --${{ matrix.arch }}
         fi
