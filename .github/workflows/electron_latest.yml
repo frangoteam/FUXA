@@ -99,7 +99,7 @@ jobs:
           mv dist/*.exe artifacts/FUXA-windows-x64.exe
         elif [ "${{ matrix.os }}" = "ubuntu-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
           mv dist/*.AppImage artifacts/FUXA-linux-x64.AppImage
-        elif [ "${{ matrix.os }}" = "ubuntu-latest" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
+        elif [ "${{ matrix.os }}" = "ubuntu-24.04-arm" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
           mv dist/*.AppImage artifacts/FUXA-linux-arm64.AppImage
         elif [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
           mv dist/*.dmg artifacts/FUXA-macos-x64.dmg
