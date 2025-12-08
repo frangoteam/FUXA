@@ -27,7 +27,9 @@
             "*.html",
             "server/**/*",
             "client/dist/**/*",
-            "icons/**/*"
+            "icons/**/*",
+            "libz.so.1",
+            "libfuse.so.2"
         ],
         "extraResources": [
             {
