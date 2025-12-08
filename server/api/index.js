@@ -8,6 +8,7 @@ var morgan = require('morgan');
 var bodyParser = require('body-parser');
 const authJwt = require('./jwt-helper');
 const rateLimit = require("express-rate-limit");
+var path = require('path');
 
 var prjApi = require('./projects');
 var authApi = require('./auth');
@@ -23,6 +24,8 @@ var commandApi = require('./command');
 const reports = require('../dist/reports.service');
 const reportsApi = new reports.ReportsApiService();
 
+const version = '1.0.0';
+
 var apiApp;
 var server;
 var runtime;
@@ -30,6 +33,7 @@ var runtime;
 function init(_server, _runtime) {
     server = _server;
     runtime = _runtime;
+
     return new Promise(function (resolve, reject) {
         if (runtime.settings.disableServer !== false) {
             apiApp = express();
@@ -80,6 +84,13 @@ function init(_server, _runtime) {
                     });
                 }
                 next(err);
+            });
+
+            /**
+             * GET Server setting data
+             */
+            apiApp.get('/api/version', function (req, res) {
+                res.json(version);
             });
 
             /**
@@ -181,6 +192,9 @@ function mergeUserSettings(settings) {
     }
     if (settings.alarms) {
         runtime.settings.alarms = settings.alarms;
+    }
+    if (settings.logs) {
+        runtime.settings.logs = settings.logs;
     }
 }
 

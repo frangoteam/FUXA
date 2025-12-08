@@ -34,7 +34,8 @@
                 <span>{{'device.tag-scale' | translate}}</span>
                 <mat-select formControlName="scaleMode">
                     <mat-option *ngFor="let ev of scaleModeType | enumToArray"
-                        matTooltip="{{ev.value + '-tooltip' | translate}}" [value]="ev.key">
+                                [attr.title]="(ev.value + '-tooltip') | translate"
+                                [value]="ev.key">
                         {{ ev.value | translate }}
                     </mat-option>
                 </mat-select>
@@ -72,6 +73,16 @@
                             <span>{{'device.tag-scaled-high' | translate}}</span>
                             <input formControlName="scaledHigh" type="number" style="width:140px">
                         </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'expression'">
+                    <div class="my-form-field item-block mt5">
+                        <span>{{'device.tag-scale-read-expression' | translate}}</span>
+                        <input formControlName="scaleReadExpression">
+                    </div>
+                    <div class="my-form-field item-block mt5">
+                        <span>{{'device.tag-scale-write-expression' | translate}}</span>
+                        <input formControlName="scaleWriteExpression">
                     </div>
                 </ng-container>
             </ng-container>
