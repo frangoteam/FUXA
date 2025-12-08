@@ -78,7 +78,7 @@ jobs:
       working-directory: ./app/electron
 
     - name: Package for Linux
-      if: matrix.os == 'ubuntu-latest'
+      if: startsWith(matrix.os, 'ubuntu')
       run: |
         if [ "${{ matrix.arch }}" = "arm64" ]; then
           npx electron-builder --linux appimage --arm64
