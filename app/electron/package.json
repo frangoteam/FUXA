@@ -32,7 +32,10 @@
         "extraResources": [
             {
                 "from": "server/node_modules",
-                "to": "app/server/node_modules"
+                "to": "app/server/node_modules",
+                "filter": [
+                    "!**/.bin/**"
+                ]
             }
         ],
         "directories": {
