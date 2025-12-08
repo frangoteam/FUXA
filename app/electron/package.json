@@ -6,13 +6,17 @@
     "scripts": {
         "start": "electron .",
         "package": "electron-builder --dir",
-        "dist": "electron-builder"
+        "dist": "electron-builder",
+        "postinstall": "electron-builder install-app-deps"
     },
     "author": "frangoteam",
     "license": "MIT",
     "devDependencies": {
         "electron": "^31.0.0",
         "electron-builder": "^24.13.0"
+    },
+    "dependencies": {
+        "sqlite3": "5.1.5"
     },
     "build": {
         "appId": "com.frangoteam.fuxa",

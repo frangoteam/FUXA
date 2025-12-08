@@ -52,6 +52,16 @@ jobs:
         cp -r client/dist/. app/electron/client/dist
       shell: bash
 
+    - name: Install app dependencies for Electron
+      run: npx electron-builder install-app-deps
+      working-directory: ./app/electron
+      env:
+        ELECTRON_ARCH: ${{ matrix.arch }}
+
+    - name: Install system deps for Linux arm64
+      if: matrix.os == 'ubuntu-latest' && matrix.arch == 'arm64'
+      run: sudo apt-get update && sudo apt-get install -y zlib1g:i386 libfuse2
+
     - name: Package for Windows
       if: matrix.os == 'windows-latest' && matrix.arch == 'x64'
       run: npx electron-builder --win nsis --x64
@@ -59,7 +69,12 @@ jobs:
 
     - name: Package for Linux
       if: matrix.os == 'ubuntu-latest'
-      run: npx electron-builder --linux appimage --${{ matrix.arch }}
+      run: |
+        if [ "${{ matrix.arch }}" = "arm64" ]; then
+          npx electron-builder --linux appimage --arm64 --config.rpmRebuild=true
+        else
+          npx electron-builder --linux appimage --${{ matrix.arch }}
+        fi
       working-directory: ./app/electron
 
     - name: Package for macOS
