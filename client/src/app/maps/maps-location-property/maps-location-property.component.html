@@ -47,88 +47,72 @@
                     </div>
                 </div>
             </mat-tab>
-            <mat-tab label="{{'maps.location-property-actions' | translate}}">
+            <mat-tab label="{{'maps.location-property-marker' | translate}}">
                 <div class="tab-content">
-                    <div class="my-form-field w100">
-                        <span>{{'maps.location-property-showName' | translate}}</span>
-                        <mat-slide-toggle color="primary" formControlName="showMarkerName"></mat-slide-toggle>
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="my-form-field mb10">
+                                <span>{{'maps.location-property-showIcon' | translate}}</span>
+                                <mat-slide-toggle color="primary" formControlName="showMarkerIcon"></mat-slide-toggle>
+                            </div>
+                            <div *ngIf="formGroup.controls?.showMarkerIcon?.value" class="my-form-field block">
+                                <span>{{'dlg.menuitem-icon' | translate}}</span>
+                                <mat-select formControlName="markerIcon" style="width: 60px; height: 30px" #iconsel>
+                                    <mat-select-trigger>
+                                        <mat-icon>{{iconsel.value}}</mat-icon>
+                                    </mat-select-trigger>
+                                    <mat-option>
+                                        <div class="my-form-field">
+                                            <input matInput [(ngModel)]="filterText" [ngModelOptions]="{standalone: true}" (input)="onFilterChange()"
+                                                (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" placeholder="{{'dlg.menuitem-icons-filter' | translate}}"
+                                                type="text" autocomplete="off" />
+                                        </div>
+                                    </mat-option>
+                                    <mat-option *ngFor="let icon of filteredIcons$ | async" [value]="icon" style="display: inline-block !important;">
+                                        <mat-icon class="">{{ icon }}</mat-icon>
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="my-form-field">
+                                <span>{{'maps.location-property-showName' | translate}}</span>
+                                <mat-slide-toggle color="primary" formControlName="showMarkerName"></mat-slide-toggle>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="my-form-field mt10">
+                                <span>{{'maps.location-property-marker-background' | translate}}</span>
+                                <input [colorPicker]="formGroup.get('markerBackground')?.value" (colorPickerChange)="formGroup.get('markerBackground')?.setValue($event)"
+                                    [style.background]="formGroup.get('markerBackground')?.value" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true"
+                                    [cpOKButtonClass]="'cpOKButtonClass'" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'"
+                                    [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" class="input-color" formControlName="markerBackground"
+                                    style="padding: 8px 0 0 0; width: 90px">
+                            </div>
+                            <div class="my-form-field mt10">
+                                <span>{{'maps.location-property-marker-color' | translate}}</span>
+                                <input [colorPicker]="formGroup.get('markerColor')?.value" (colorPickerChange)="formGroup.get('markerColor')?.setValue($event)"
+                                    [style.background]="formGroup.get('markerColor')?.value" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true"
+                                    [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
+                                    [cpOKButtonClass]="'cpOKButtonClass'" class="input-color" formControlName="markerColor" style="padding: 8px 0 0 0; width: 90px">
+                            </div>
+                        </div>
                     </div>
-                    <div class="my-form-field w100">
-                        <span>{{'maps.location-property-showIcon' | translate}}</span>
-                        <mat-slide-toggle color="primary" formControlName="showMarkerIcon"></mat-slide-toggle>
+                    <div class="row mt30 w100">
+                        <div class="my-form-field w100">
+                            <span>{{'maps.location-property-showValue' | translate}}</span>
+                            <mat-slide-toggle color="primary" formControlName="showMarkerValue"></mat-slide-toggle>
+                        </div>
+                        <div class="w100" *ngIf="formGroup.controls?.showMarkerValue?.value">
+                            <app-flex-device-tag class="block mt5 item-device-tag" (onchange)="onTagChanged($event)" [variableId]="formGroup.get('markerTagValueId')?.value">
+                            </app-flex-device-tag>
+                        </div>
                     </div>
-                    <div *ngIf="formGroup.controls?.showMarkerIcon?.value" class="my-form-field block mb10">
-                        <span>{{'dlg.menuitem-icon' | translate}}</span>
-                        <mat-select formControlName="markerIcon"
-                                    style="width: 60px; height: 30px"
-                                    #iconsel>
-                            <mat-select-trigger>
-                                <mat-icon>{{iconsel.value}}</mat-icon>
-                            </mat-select-trigger>
-                            <mat-option>
-                                <div class="my-form-field">
-                                    <input
-                                        matInput
-                                        [(ngModel)]="filterText"
-                                        [ngModelOptions]="{standalone: true}"
-                                        (input)="onFilterChange()"
-                                        (click)="$event.stopPropagation()"
-                                        (keydown)="$event.stopPropagation()"
-                                        placeholder="{{'dlg.menuitem-icons-filter' | translate}}"
-                                        type="text"
-                                        autocomplete="off"/>
-                                </div>
-                            </mat-option>
-                            <mat-option *ngFor="let icon of filteredIcons$ | async" [value]="icon" style="display: inline-block !important;">
-                                <mat-icon class="">{{ icon }}</mat-icon>
-                            </mat-option>
-                        </mat-select>
-                    </div>
-                    <div class="my-form-field mt10">
-                        <span>{{'html-switch.property-off-background' | translate}}</span>
-                        <input
-                        [colorPicker]="formGroup.get('markerBackground')?.value"
-                        (colorPickerChange)="formGroup.get('markerBackground')?.setValue($event)"
-                        [style.background]="formGroup.get('markerBackground')?.value"
-                        [cpAlphaChannel]="'always'"
-                        [cpPresetColors]="defaultColor"
-                        [cpOKButton]="true"
-                        [cpOKButtonClass]="'cpOKButtonClass'"
-                        [cpCancelButton]="true"
-                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-                        [cpOKButtonClass]="'cpOKButtonClass'"
-                        class="input-color"
-                        formControlName="markerBackground"
-                        style="padding: 8px 0 0 0; width: 90px">
-                    </div>
-                    <div class="my-form-field mt10">
-                        <span>{{'html-switch.property-off-slider-color' | translate}}</span>
-                        <input
-                        [colorPicker]="formGroup.get('markerColor')?.value"
-                        (colorPickerChange)="formGroup.get('markerColor')?.setValue($event)"
-                        [style.background]="formGroup.get('markerColor')?.value"
-                        [cpAlphaChannel]="'always'"
-                        [cpPresetColors]="defaultColor"
-                        [cpOKButton]="true"
-                        [cpCancelButton]="true"
-                        [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-                        [cpOKButtonClass]="'cpOKButtonClass'"
-                        class="input-color"
-                        formControlName="markerColor"
-                        style="padding: 8px 0 0 0; width: 90px">
-                    </div>
-                    <!-- <div class="my-form-field section-item section-item-block mt5">
-                        <span>{{'video.property-address' | translate}}</span>
-                        <input [(ngModel)]="property.options.address" (change)="onVideoChanged()" (keyup.enter)="onVideoChanged()" type="text">
-                    </div> -->
-                    <div class="my-form-field w100">
-                        <span>{{'maps.location-property-showValue' | translate}}</span>
-                        <mat-slide-toggle color="primary" formControlName="showMarkerValue"></mat-slide-toggle>
-                    </div>
-                    <div *ngIf="formGroup.controls?.showMarkerValue?.value">
-                        <app-flex-device-tag class="block mt5 item-device-tag" (onchange)="onTagChanged($event)" [variableId]="formGroup.get('markerTagValueId')?.value">
-                        </app-flex-device-tag>
-                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab label="{{'maps.location-property-actions' | translate}}">
+                <div mat-dialog-content style="overflow: visible; width:100%">
+
                 </div>
             </mat-tab>
         </mat-tab-group>

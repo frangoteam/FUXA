@@ -2,16 +2,13 @@
     .container {
         .mat-dialog-content
         {
-            // width: 400px;
-            min-height: 220px;
+            min-width: 560px;
             overflow: hidden;
             padding-bottom: 7px;
 
             .item-block {
                 display: block;
 
-                mat-select,
-                input,
                 span {
                     width: calc(100% - 5px);
                 }
@@ -23,12 +20,12 @@
                 }
             }
 
-            .my-form-field {
-                width: 100%;
-                mat-select {
-                    width: calc(100% - 5px);
-                }
-            }
+            // .my-form-field {
+            //     width: 100%;
+            //     mat-select {
+            //         width: calc(100% - 5px);
+            //     }
+            // }
         }
     }
 
@@ -38,6 +35,7 @@
         max-width: 100%;
         overflow-x: hidden;
         margin-top: 10px;
+        height: 380px;
     }
 
     /* Evita che input e select espandano oltre il contenitore */

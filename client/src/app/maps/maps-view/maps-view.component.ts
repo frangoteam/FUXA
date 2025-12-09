@@ -14,6 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { MapsLocationImportComponent } from '../maps-location-import/maps-location-import.component';
 import { MapsFabButtonMenuComponent } from './maps-fab-button-menu/maps-fab-button-menu.component';
+import { HmiService } from '../../_services/hmi.service';
 
 @Component({
     selector: 'app-maps-view',
@@ -48,6 +49,7 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
 
     constructor(
         private resolver: ComponentFactoryResolver,
+        private hmiService: HmiService,
         private injector: Injector,
         private dialog: MatDialog,
         private projectService: ProjectService,
@@ -79,7 +81,9 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             this.initMapEvents();
             this.map.invalidateSize();
 
-            this.initWatch();
+            if (!this.editMode) {
+                this.initWatch();
+            }
             try {
                 this.gaugesManager.emitBindedSignals(this.view.id);
             } catch (err) {
@@ -130,7 +134,7 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
                                 ? `<span class="material-icons bubble-icon"
                                         style="color: var(--bubble-fg);">${icon}</span>`
                                 : '';
-            const valueHtml = loc.markerTagValueId
+            const valueHtml = loc.markerTagValueId && loc.showMarkerValue
                                 ? `<div class="bubble-value" id="${valueHtmlId}">##.##</div>`
                                 : '';
             const markerHtml = `
@@ -157,7 +161,7 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             if (!iconHtml && !valueHtml && !nameHtml) {
                 this.openMarkerTooltip(marker, loc);
                 marker.setIcon(newIcon);
-            } else if (valueHtmlId) {
+            } else if (valueHtml) {
                 this.addMarkerItemId(loc.markerTagValueId!, valueHtmlId);
             }
             marker.on('click', () => {
@@ -177,6 +181,9 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             }
             e.popup = null;
         });
+        if (!this.editMode) {
+            this.subscribeMarkerTags();
+        }
     }
 
     initWatch() {
@@ -193,17 +200,14 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
         const entry = this.markerItemsMap.get(tagId);
         if (!entry) return;
 
-        // 1) Primo update → cerca i DOM
         if (entry.domNodes.length === 0) {
             entry.domNodes = entry.nodeIds
                 .map(id => document.getElementById(id) as HTMLElement)
-                .filter(el => !!el); // escludi null
+                .filter(el => !!el);
         }
 
-        // 2) Se ancora vuoto → non ancora renderizzato → skip finché non compare
         if (entry.domNodes.length === 0) return;
 
-        // 3) Aggiorna tutti
         for (const el of entry.domNodes) {
             el.innerText = newValue;
         }
@@ -445,5 +449,12 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
         this.projectService.setViewAsync(this.view).then(() => {
             this.loadMapsResources();
         });
+    }
+
+    private subscribeMarkerTags() {
+        const tagIds = Array.from(this.markerItemsMap.keys());
+        if (tagIds.length) {
+            this.hmiService.viewsTagsSubscribe(tagIds, true);
+        }
     }
 }
