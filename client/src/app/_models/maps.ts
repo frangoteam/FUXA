@@ -1,3 +1,4 @@
+import { GaugeAction } from './hmi';
 
 export class MapsLocation {
     id: string;
@@ -15,7 +16,7 @@ export class MapsLocation {
     markerBackground?: string;
     markerColor?: string;
     markerTagValueId?: string;
-
+    actions?: GaugeAction[];
     constructor(_id: string) {
         this.id = _id;
     }

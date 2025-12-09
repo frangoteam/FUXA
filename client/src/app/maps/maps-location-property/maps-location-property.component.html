@@ -111,8 +111,16 @@
                 </div>
             </mat-tab>
             <mat-tab label="{{'maps.location-property-actions' | translate}}">
-                <div mat-dialog-content style="overflow: visible; width:100%">
-
+                <div class="tab-content">
+                    <div class="toolbox mb10">
+                        <button mat-icon-button (click)="onAddAction()" matTooltip="{{'gauges.property-tooltip-add-action' | translate}}">
+                            <mat-icon>add_circle_outline</mat-icon>
+                        </button>
+                    </div>
+                    <flex-actions-standalone
+                        #flexActionsStandalone
+                        [actions]="actions">
+                    </flex-actions-standalone>
                 </div>
             </mat-tab>
         </mat-tab-group>

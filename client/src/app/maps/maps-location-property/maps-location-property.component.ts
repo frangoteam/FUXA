@@ -1,14 +1,15 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../../_services/project.service';
 import { MapsLocation, MAPSLOCATION_PREFIX } from '../../_models/maps';
 import { Utils } from '../../_helpers/utils';
-import { View, ViewType } from '../../_models/hmi';
+import { GaugeAction, GaugeRangeProperty, View, ViewType } from '../../_models/hmi';
 import { BehaviorSubject, combineLatest, map, Observable, of } from 'rxjs';
 import { Define } from '../../_helpers/define';
 import { FlexDeviceTagValueType } from '../../gauges/gauge-property/flex-device-tag/flex-device-tag.component';
+import { FlexActionsStandaloneComponent } from '../../gauges/gauge-property/flex-actions-standalone/flex-actions-standalone.component';
 
 @Component({
     selector: 'app-maps-location-property',
@@ -20,11 +21,13 @@ export class MapsLocationPropertyComponent implements OnInit {
     location: MapsLocation;
     formGroup: UntypedFormGroup;
     views: View[] = [];
+    actions: GaugeAction[] = [];
     filteredIcons$: Observable<string[]>;
     filterText = '';
     private filterTextSubject = new BehaviorSubject<string>('');
     icons$: Observable<string[]>;
     defaultColor = Utils.defaultColor;
+    @ViewChild('flexActionsStandalone', { static: false }) flexActionsStandalone: FlexActionsStandaloneComponent;
 
     constructor(
         public dialogRef: MatDialogRef<MapsLocationPropertyComponent>,
@@ -52,6 +55,7 @@ export class MapsLocationPropertyComponent implements OnInit {
 
     ngOnInit() {
         this.views = this.projectService.getViews()?.filter(view => view.type !== ViewType.maps);
+        this.actions = Utils.clone(this.location.actions || []);
         this.formGroup = this.fb.group({
             name: [this.location.name, Validators.required],
             latitude: [this.location.latitude],
@@ -76,7 +80,8 @@ export class MapsLocationPropertyComponent implements OnInit {
     }
 
     onOkClick(): void {
-        this.location = {...this.location, ...this.formGroup.getRawValue()};
+        const actions = this.flexActionsStandalone?.getActions() || [];
+        this.location = {...this.location, ...this.formGroup.getRawValue(), actions };
         this.dialogRef.close(this.location);
     }
 
@@ -99,5 +104,11 @@ export class MapsLocationPropertyComponent implements OnInit {
 
     onTagChanged(tag: FlexDeviceTagValueType) {
         this.formGroup.get('markerTagValueId')?.setValue(tag.variableId);
+    }
+
+    onAddAction() {
+        const ga = new GaugeAction();
+        ga.range = new GaugeRangeProperty();
+        this.actions.push(ga);
     }
 }
