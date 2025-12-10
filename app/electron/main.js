@@ -694,9 +694,7 @@ app.on('window-all-closed', () => {
     if (serverProcess) {
         serverProcess.kill('SIGTERM');
     }
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+    app.quit();
 });
 
 app.on('activate', () => {
@@ -711,5 +709,22 @@ app.on('activate', () => {
                 win.close();
             }
         });
+    }
+});
+
+// Ensure server process is killed when app quits
+app.on('before-quit', async (event) => {
+    console.log('App is quitting, stopping server process');
+    if (serverProcess) {
+        serverProcess.kill('SIGTERM');
+        // Wait a bit for graceful shutdown
+        await new Promise(resolve => {
+            serverProcess.on('close', () => {
+                console.log('Server process stopped');
+                resolve();
+            });
+            setTimeout(resolve, 2000); // 2-second timeout
+        });
+        serverProcess = null;
     }
 });
