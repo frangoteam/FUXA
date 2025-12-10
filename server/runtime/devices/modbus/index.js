@@ -611,8 +611,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 reject();
             } else if (memoryAddress === ModbusMemoryAddress.InputRegisters) {          // Input Registers (Read  300001-365536)
                 reject();
-            } else if (memoryAddress === ModbusMemoryAddress.HoldingRegisters) {        // Holding Registers (Read/Write  400001-465535)
-                if (value.length > 2){
+            } else if (memoryAddress === ModbusMemoryAddress.HoldingRegisters) {
+                // Utiliser forceFC16 depuis la config du device
+                if (value.length > 2 || data.property.forceFC16) {
                     client.writeRegisters(start, value).then(res => {
                         resolve();
                     }, reason => {

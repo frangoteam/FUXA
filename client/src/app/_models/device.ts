@@ -192,6 +192,8 @@ export class DeviceNetProperty {
     delay: number = 10;
     /** Modbus TCP socket reuse flag */
     socketReuse?: string;
+    /** Force FC16 for Modbus RTU/TCP write operations */
+    forceFC16?: boolean;
 
     static descriptor = {
         address: 'Device address (IP)',

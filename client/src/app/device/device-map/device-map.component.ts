@@ -515,6 +515,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                             device.property.connectionOption = tempdevice.property.connectionOption;
                         }
                         device.property.socketReuse = (device.type === DeviceType.ModbusTCP) ? tempdevice.property.socketReuse : null;
+                        device.property.forceFC16 = tempdevice.property.forceFC16;
                     }
                     this.projectService.setDevice(device, olddevice, result.security);
                 }
