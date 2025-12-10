@@ -81,7 +81,7 @@
                             </div>
                         </div>
                         <div class="col-4">
-                            <div class="my-form-field mt10">
+                            <div class="my-form-field">
                                 <span>{{'maps.location-property-marker-background' | translate}}</span>
                                 <input [colorPicker]="formGroup.get('markerBackground')?.value" (colorPickerChange)="formGroup.get('markerBackground')?.setValue($event)"
                                     [style.background]="formGroup.get('markerBackground')?.value" [cpAlphaChannel]="'always'" [cpPresetColors]="defaultColor" [cpOKButton]="true"
