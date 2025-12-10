@@ -3,7 +3,17 @@ import * as L from 'leaflet';
 import { GaugesManager } from '../../gauges/gauges.component';
 import { FuxaViewComponent } from '../../fuxa-view/fuxa-view.component';
 import { ProjectService } from '../../_services/project.service';
-import { Hmi, View, ViewProperty } from '../../_models/hmi';
+import { GaugeAction, GaugeRangeProperty, Hmi, View, ViewProperty } from '../../_models/hmi';
+
+interface MarkerBinding {
+    nodeIds: string[];
+    domNodes: HTMLElement[];
+    actions: {
+        action: GaugeAction;
+        marker: L.Marker;
+        element?: HTMLElement | null;
+    }[];
+};
 import { filter, Subject, takeUntil } from 'rxjs';
 import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
@@ -42,7 +52,7 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
     menuPosition = { x: '0px', y: '0px' };
     private locations: MapsLocation[] = [];
     lastClickMapLocation?: MapsLocation;
-    private markerItemsMap = new Map<string, { nodeIds: string[], domNodes: HTMLElement[] }>();
+    private markerItemsMap = new Map<string, MarkerBinding>();
 
     private openPopups = [];
     private currentPopup: L.Popup | null = null;
@@ -170,6 +180,8 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             marker.on('contextmenu', (event) => {
                 this.showContextMenu(event, marker);
             });
+
+            this.collectActionTags(loc.actions, marker);
         });
         this.map.on('popupopen', (e) => {
             this.openPopups.push(e.popup);
@@ -206,16 +218,17 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
                 .filter(el => !!el);
         }
 
-        if (entry.domNodes.length === 0) return;
-
-        for (const el of entry.domNodes) {
-            el.innerText = newValue;
+        if (entry.domNodes.length !== 0) {
+            for (const el of entry.domNodes) {
+                el.innerText = newValue;
+            }
         }
+        this.processActions(entry, newValue);
     }
 
     private addMarkerItemId(variableId: string, nodeId: string) {
         if (!this.markerItemsMap.has(variableId)) {
-            this.markerItemsMap.set(variableId, { nodeIds: [], domNodes: [] });
+            this.markerItemsMap.set(variableId, { nodeIds: [], domNodes: [], actions: [] });
         }
         this.markerItemsMap.get(variableId)!.nodeIds.push(nodeId);
     }
@@ -456,5 +469,102 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
         if (tagIds.length) {
             this.hmiService.viewsTagsSubscribe(tagIds, true);
         }
+    }
+
+    private collectActionTags(actions: GaugeAction[] | undefined, marker: L.Marker) {
+        if (!actions?.length) {
+            return;
+        }
+        actions.forEach(action => {
+            if (action.variableId) {
+                if (!this.markerItemsMap.has(action.variableId)) {
+                    this.markerItemsMap.set(action.variableId, { nodeIds: [], domNodes: [], actions: [] });
+                }
+                const entry = this.markerItemsMap.get(action.variableId)!;
+                entry.actions.push({
+                    action,
+                    marker,
+                    element: marker.getElement && marker.getElement()
+                });
+            }
+        });
+    }
+
+    private processActions(binding: MarkerBinding, rawValue: any) {
+        if (!binding.actions.length) {
+            return;
+        }
+        const value = this.toNumber(rawValue);
+        binding.actions.forEach(actBinding => {
+            if (!actBinding.element && actBinding.marker?.getElement) {
+                actBinding.element = actBinding.marker.getElement();
+            }
+            if (!actBinding.element) {
+                return;
+            }
+            const inRange = this.isValueInRange(actBinding.action.range, value);
+            switch (actBinding.action.type) {
+                case 'show':
+                    if (inRange) {
+                        this.setMarkerVisibility(actBinding.element, true);
+                    }
+                    break;
+                case 'hide':
+                    if (inRange) {
+                        this.setMarkerVisibility(actBinding.element, false);
+                    }
+                    break;
+                case 'color':
+                    if (inRange) {
+                        this.applyMarkerColor(actBinding.element, actBinding.action.options);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    private setMarkerVisibility(element: HTMLElement, visible: boolean) {
+        element.style.display = visible ? '' : 'none';
+    }
+
+    private applyMarkerColor(element: HTMLElement, options: any) {
+        if (!options) {
+            return;
+        }
+        const markerRoot = (element.querySelector('.fuxa-bubble-marker') as HTMLElement) ?? element;
+        const target = (element.querySelector('.bubble-content') as HTMLElement)
+            ?? markerRoot;
+
+        if (options.fillA) {
+            target.style.setProperty('--bubble-bg', options.fillA);
+            target.style.backgroundColor = options.fillA;
+            target.style.borderRadius = target.style.borderRadius || '12px';
+            target.style.overflow = 'hidden';
+        }
+        if (options.strokeA) {
+            markerRoot.style.setProperty('--bubble-color', options.strokeA);
+            target.style.setProperty('--bubble-color', options.strokeA);
+            target.style.setProperty('--bubble-fg', options.strokeA);
+            target.style.color = options.strokeA;
+        }
+    }
+
+    private isValueInRange(range: GaugeRangeProperty | undefined, value: number | null): boolean {
+        if (!range || (range.min === undefined && range.max === undefined)) {
+            return true;
+        }
+        if (value === null) {
+            return false;
+        }
+        const min = range.min ?? -Infinity;
+        const max = range.max ?? Infinity;
+        return value >= min && value <= max;
+    }
+
+    private toNumber(value: any): number | null {
+        const num = Number(value);
+        return Number.isFinite(num) ? num : null;
     }
 }
