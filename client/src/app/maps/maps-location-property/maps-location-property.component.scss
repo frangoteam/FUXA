@@ -2,7 +2,7 @@
     .container {
         .mat-dialog-content
         {
-            min-width: 560px;
+            min-width: 620px;
             overflow: hidden;
             padding-bottom: 7px;
 
@@ -61,6 +61,11 @@
 
     mat-tab-group {
         width: 100%;
+    }
+
+    .actions-toolbar {
+        display: flex;
+        justify-content: flex-end;
     }
 
     ::ng-deep .mat-tab-label {

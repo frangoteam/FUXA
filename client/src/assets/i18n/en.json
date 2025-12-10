@@ -837,6 +837,7 @@
     "shapes.action-hide": "Hide",
     "shapes.action-show": "Show",
     "shapes.action-blink": "Blink",
+    "shapes.action-color": "Color",
     "shapes.action-stop": "Stop",
     "shapes.action-start": "Start",
     "shapes.action-pause": "Pause",

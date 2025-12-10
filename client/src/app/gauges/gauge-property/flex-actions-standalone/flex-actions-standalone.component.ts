@@ -16,9 +16,11 @@ export class FlexActionsStandaloneComponent implements OnInit {
     actionsSupported: any = {
         show: GaugeActionsType.show,
         hide: GaugeActionsType.hide,
-        blink: GaugeActionsType.blink
+        blink: GaugeActionsType.blink,
+        color: GaugeActionsType.color
     };
     actionBlink = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.blink);
+    actionColor = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.color);
     slideView = true;
     defaultColor = Utils.defaultColor;
     data: any;
@@ -66,6 +68,11 @@ export class FlexActionsStandaloneComponent implements OnInit {
             if (!(ga.options instanceof GaugeActionBlink)) {
                 ga.options = new GaugeActionBlink();
             }
+        } else if (type === this.actionColor) {
+            ga.options = {
+                fillA: ga.options?.fillA ?? null,
+                strokeA: ga.options?.strokeA ?? null,
+            };
         } else {
             ga.options = {};
         }
