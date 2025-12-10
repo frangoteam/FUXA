@@ -12,7 +12,7 @@
     "author": "frangoteam",
     "license": "MIT",
     "devDependencies": {
-        "electron": "^39.2.6",
+        "electron": "^35.7.5",
         "electron-builder": "^26.3.5"
     },
     "dependencies": {
