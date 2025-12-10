@@ -16,7 +16,7 @@ export class FlexActionsStandaloneComponent implements OnInit {
     actionsSupported: any = {
         show: GaugeActionsType.show,
         hide: GaugeActionsType.hide,
-        blink: GaugeActionsType.blink,
+        // blink: GaugeActionsType.blink,
         color: GaugeActionsType.color
     };
     actionBlink = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.blink);
@@ -42,7 +42,7 @@ export class FlexActionsStandaloneComponent implements OnInit {
         if (!this.actions) {
             return null;
         }
-        return this.actions.filter(act => !!act.variableId);
+        return this.actions.filter(act => !!act.variableId && this.isRangeValid(act.range));
     }
 
     onAddAction() {
@@ -83,5 +83,14 @@ export class FlexActionsStandaloneComponent implements OnInit {
             this.actions = [];
         }
         this.actions.push(ga);
+    }
+
+    private isRangeValid(range: GaugeRangeProperty | undefined) {
+        if (!range) {
+            return false;
+        }
+        const min = Number(range.min);
+        const max = Number(range.max);
+        return Number.isFinite(min) && Number.isFinite(max);
     }
 }
