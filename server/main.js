@@ -111,6 +111,7 @@ try {
     settings.reportsDir = path.resolve(rootDir, '_reports');
     settings.webcamSnapShotsDir = path.resolve(rootDir, settings.webcamSnapShotsDir);
     settings.logDir = path.resolve(rootDir, settings.logDir);
+    settings.dbDir = path.resolve(rootDir, settings.dbDir || '_db');
 } catch (err) {
     logger.error('Error loading settings file: ' + settingsFile)
     if (err.code == 'MODULE_NOT_FOUND') {
@@ -189,9 +190,6 @@ if (version.indexOf('beta') > 0) {
 }
 
 // Check storage Database dir
-if (!settings.dbDir) {
-    settings.dbDir = path.resolve(rootDir, '_db');
-}
 if (!fs.existsSync(settings.dbDir)) {
     fs.mkdirSync(settings.dbDir);
 }
