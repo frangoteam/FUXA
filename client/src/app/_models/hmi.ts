@@ -110,6 +110,7 @@ export enum NaviItemType {
 }
 
 export class NaviItem {
+	id?: string;
     text: string;
     link: string;
     view: string;
@@ -117,6 +118,7 @@ export class NaviItem {
     image: string;
     permission: number;
     permissionRoles: PermissionRoles;
+	children?: NaviItem[];
 }
 
 export class HeaderSettings {
@@ -233,7 +235,7 @@ export class WidgetProperty extends GaugeProperty {
     type: string;
     scriptContent?: { moduleId: string, content: string };
     svgContent?: string;
-    varsToBind?: { [key: string]: WidgetPropertyVariable } = {};
+    varsToBind?: WidgetPropertyVariable[] = [];
 }
 
 export interface InputOptionsProperty {
@@ -247,6 +249,8 @@ export interface InputOptionsProperty {
     updatedEsc?: boolean;
     selectOnClick?: boolean;
     actionOnEsc?: InputActionEscType;
+    maxlength?: number;
+    readonly?: boolean;
 }
 
 export enum InputOptionType {
@@ -254,7 +258,9 @@ export enum InputOptionType {
     text = 'text',
     date = 'date',
     time = 'time',
-    datetime = 'datetime'
+    datetime = 'datetime',
+    textarea = 'textarea',
+    password = 'password'
 }
 
 export enum InputTimeFormatType {
@@ -308,6 +314,10 @@ export enum GaugeActionsType {
     rotate = 'shapes.action-rotate',
     move = 'shapes.action-move',
     monitor = 'shapes.action-monitor',
+    refreshImage = 'shapes.action-refreshImage',
+    start = 'shapes.action-start',
+    pause = 'shapes.action-pause',
+    reset = 'shapes.action-reset',
 }
 
 export class GaugeAction {
@@ -455,6 +465,39 @@ export interface GaugeTableProperty {
     events: GaugeEvent[];
 }
 
+export interface GaugeSchedulerProperty {
+    id: string;
+    devices: SchedulerDevice[];
+    deviceActions: SchedulerDeviceAction[];
+    permission: number;
+    permissionRoles: PermissionRoles;
+    accentColor: string;
+    backgroundColor: string;
+    textColor: string;
+    secondaryTextColor: string;
+    borderColor: string;
+    hoverColor: string;
+    timeFormat: string;
+}
+
+export interface SchedulerDeviceAction {
+    deviceName: string;
+    action: string;
+    actparam?: string;
+    actoptions?: any;
+    eventTrigger?: 'on' | 'off';
+}
+
+export interface SchedulerDevice {
+    variableId: string;
+    name: string;
+    permission?: number;
+    permissionRoles?: {
+        show: string[];
+        enabled: string[];
+    };
+}
+
 export enum TableType {
     data = 'data',
     history = 'history',
@@ -520,6 +563,7 @@ export class TableCell {
     label: string;
     variableId: string;
     valueFormat: string;
+    timeInterval?: number;
     bitmask: number;
     type: TableCellType;
 
@@ -704,3 +748,17 @@ export interface ISvgElement {
     id: string;
     name: string;
 }
+
+export class GaugeVideoProperty extends GaugeProperty {
+    constructor() {
+        super();
+        this.options = { address: '' } as VideoOptions;
+    }
+}
+
+export interface VideoOptions {
+    address: string;
+    initImage?: string;
+    showControls?: boolean;
+}
+

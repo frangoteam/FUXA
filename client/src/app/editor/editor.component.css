@@ -222,9 +222,9 @@
 
 .svg-sidenav {
     min-width: 160px;
-    max-width: 200px;
-    width: 200px;
-    background: var(--sidenavBackgroung);
+    max-width: 300px;
+    width: 300px;
+    background: var(--sidenavBackground);
 }
 
 /* tool bar top */
@@ -314,7 +314,7 @@
     margin-top: 4px;
     padding: 0px 0px 0px 0px;
     font-size: 11px;
-    background-color: var(--toolboxPanelBackgroung);
+    background-color: var(--toolboxPanelBackground);
     color: var(--toolboxColor);
     overflow: auto;
 }
@@ -329,7 +329,7 @@
 }
 
 .leftbar-item-active {
-    background-color: var(--toolboxItemActiveBackgroung);
+    background-color: var(--toolboxItemActiveBackground);
     color: var(--toolboxItemActiveColor);
 }
 
@@ -372,7 +372,7 @@
 
 .rightbar-panel {
     margin-top: 4px;
-    background-color: var(--toolboxPanelBackgroung);
+    background-color: var(--toolboxPanelBackground);
     color: var(--toolboxColor);
 }
 
@@ -482,12 +482,12 @@ li {
     margin: 0px 10px 12px 10px;
     background-color: inherit;
     color: inherit;
-    background-color: var(--toolboxPanelBackgroung);
+    background-color: var(--toolboxPanelBackground);
     color: var(--toolboxColor);
 }
 
 .style-stroke option {
-    background-color: var(--toolboxPanelBackgroung);
+    background-color: var(--toolboxPanelBackground);
     color: var(--toolboxColor);
 }
 
@@ -500,7 +500,7 @@ li {
 }
 
 .font-family option {
-    background-color: var(--toolboxPanelBackgroung);
+    background-color: var(--toolboxPanelBackground);
     color: var(--toolboxColor);
 }
 
@@ -513,7 +513,7 @@ li {
 }
 
 .text-align option {
-    background-color: var(--toolboxPanelBackgroung);
+    background-color: var(--toolboxPanelBackground);
     color: var(--toolboxColor);
 }
 

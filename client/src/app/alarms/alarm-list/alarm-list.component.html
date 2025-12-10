@@ -73,6 +73,9 @@
             <ng-container matColumnDef="remove">
                 <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                 <mat-cell *matCellDef="let element">
+                    <button mat-icon-button (click)="$event.stopPropagation();onCopyAlarm(element)" class="remove">
+                        <mat-icon>content_copy</mat-icon>
+                    </button>
                     <button mat-icon-button (click)="$event.stopPropagation();onRemoveAlarm(element)" class="remove">
                         <mat-icon>clear</mat-icon>
                     </button>

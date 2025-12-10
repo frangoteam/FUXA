@@ -215,6 +215,32 @@ export class GaugeBaseComponent {
         return value ^ bitmask;
     }
 
+    /**
+     * maskedShiftedValue(0b11010110, 0b00011100) // → 5
+     * @param rawValue
+     * @param bitmask
+     * @returns
+     */
+    static maskedShiftedValue(rawValue: string, bitmask: number): number | string {
+        if (!bitmask) {
+            return rawValue;
+        }
+        if (rawValue == null) {
+            return null;
+        }
+        const parsed = parseInt(rawValue, 0);
+        if (isNaN(parsed)) {
+            return null;
+        }
+        let shift = 0;
+        let mask = bitmask;
+        while ((mask & 1) === 0) {
+            mask >>= 1;
+            shift++;
+        }
+        return (parsed & bitmask) >> shift;
+    }
+
     static getBlinkActionId(act: GaugeAction) {
         return `${act.variableId}-${act.range.max}-${act.range.min}`;
     }

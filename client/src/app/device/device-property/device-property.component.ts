@@ -55,6 +55,8 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 						 {text: '30 min', value: 60000 * 30},
 						 {text: '60 min', value: 60000 * 60}];
 
+    pollingWebCamType = this.pollingWebApiType.concat([{text: 'Disabled', value: -1}]);
+
 	pollingType = this.pollingPlcType;
 
 	isFuxaServer = false;
@@ -268,9 +270,11 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	onDeviceTypeChanged() {
-		if (this.data.device.type === DeviceType.WebAPI) {
+		if (this.data.device.type === DeviceType.WebAPI ) {
 			this.pollingType = this.pollingWebApiType;
-		} else {
+		} else if (this.data.device.type === DeviceType.WebCam) {
+            this.pollingType = this.pollingWebCamType;
+        } else {
 			this.pollingType = this.pollingPlcType;
 		}
 	}

@@ -4,7 +4,7 @@ import { Observable, Subject, firstValueFrom } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project';
-import { View, LayoutSettings, DaqQuery } from '../_models/hmi';
+import { View, LayoutSettings, DaqQuery, ViewType } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Graph } from '../_models/graph';
 import { Alarm, AlarmBaseType, AlarmQuery, AlarmsFilter } from '../_models/alarm';
@@ -41,6 +41,7 @@ export class ProjectService {
 
     private projectOld = '';
     private ready = false;
+    public static MainViewName = 'MainView';
 
     constructor(private resewbApiService: ResWebApiService,
         private resDemoService: ResDemoService,
@@ -298,7 +299,7 @@ export class ProjectService {
         const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
         if (existingView) {
             Object.assign(existingView, view);
-        } else {
+        } else if (!this.projectData.hmi.views.some(v => v.name === view.name)) {
             this.projectData.hmi.views.push(view);
         }
         this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData).subscribe(result => {
@@ -315,7 +316,7 @@ export class ProjectService {
         const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
         if (existingView) {
             Object.assign(existingView, view);
-        } else {
+        } else if (!this.projectData.hmi.views.some(v => v.name === view.name)) {
             this.projectData.hmi.views.push(view);
         }
         await firstValueFrom(this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData));
@@ -585,6 +586,7 @@ export class ProjectService {
                 exist.subscriptions = notification.subscriptions;
                 exist.text = notification.text;
                 exist.type = notification.type;
+                exist.mode = notification.mode;
             } else {
                 this.projectData.notifications.push(notification);
             }
@@ -955,15 +957,16 @@ export class ProjectService {
     }
 
     private notifyError(msgCode: string) {
-        const msg = this.translateService.instant(msgCode);
-        if (msgCode) {
-            console.error(`FUXA Error: ${msg}`);
-            this.toastr.error(msg, '', {
-                timeOut: 3000,
-                closeButton: true,
-                disableTimeOut: true
-            });
-        }
+        this.translateService.get(msgCode).subscribe((msg: string) => {
+            if (msg) {
+                console.error(`FUXA Error: ${msg}`);
+                this.toastr.error(msg, '', {
+                    timeOut: 3000,
+                    closeButton: true,
+                    disableTimeOut: true
+                });
+            }
+        });
     }
     //#endregion
 
@@ -976,6 +979,20 @@ export class ProjectService {
     //#region DAQ query
     getDaqValues(query: DaqQuery): Observable<any> {
         return this.storage.getDaqValues(query);
+    }
+    //#endregion
+
+    //#region Scheduler query
+    getSchedulerData(id: string): Observable<any> {
+        return this.storage.getSchedulerData(id);
+    }
+
+    setSchedulerData(id: string, data: any): Observable<any> {
+        return this.storage.setSchedulerData(id, data);
+    }
+
+    deleteSchedulerData(id: string): Observable<any> {
+        return this.storage.deleteSchedulerData(id);
     }
     //#endregion
 
@@ -1038,6 +1055,29 @@ export class ProjectService {
         return result;
     }
 
+    cleanView(view: View): boolean {
+        if (!view.svgcontent) {
+            return false;
+        }
+        const idsInSvg = new Set<string>();
+        const re = /id=(?:"|')([^"']+)(?:"|')/g;
+        let m: RegExpExecArray | null;
+        while ((m = re.exec(view.svgcontent)) !== null) {
+            idsInSvg.add(m[1]);
+        }
+
+        let changed = false;
+        for (const key of Object.keys(view.items)) {
+            if (!idsInSvg.has(key)) {
+                console.warn('GUI item deleted: ', key);
+                delete view.items[key];
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
+
     setNewProject() {
         this.projectData = new ProjectData();
         let server = new Device(Utils.getGUID(DEVICE_PREFIX));
@@ -1051,7 +1091,19 @@ export class ProjectService {
         } else {
             delete this.projectData.server;
         }
+        let mainView = this.getNewView(ProjectService.MainViewName);
+        this.projectData.hmi.views.push(mainView);
         this.save(true);
+    }
+
+    getNewView(name: string, type?: ViewType) {
+        let view = new View(Utils.getShortGUID('v_'), type || ViewType.svg);
+        view.name = name;
+        view.profile.bkcolor = '#ffffffff';
+        if (type === ViewType.cards) {
+            view.profile.bkcolor = 'rgba(67, 67, 67, 1)';
+        }
+        return view;
     }
 
     getProject() {

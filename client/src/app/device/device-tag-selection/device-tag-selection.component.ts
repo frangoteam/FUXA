@@ -168,6 +168,14 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
             this.tagPropertyService.editTagPropertyGpio(device, newTag, true).subscribe(result => {
                 this.loadDevicesTags(newTag, device.name);
             });
+        } else if (device.type === DeviceType.WebCam) {
+            this.tagPropertyService.editTagPropertyWebcam(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        } else if (device.type === DeviceType.MELSEC) {
+            this.tagPropertyService.editTagPropertyMelsec(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
         }
     }
 

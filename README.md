@@ -9,7 +9,7 @@ FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With F
 ![fuxa action](/screenshot/feature-action-move.gif)
 
 ## Features
-- Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley)
+- Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley), ADSclient, Gpio (Raspberry), WebCam, MELSEC
 - SCADA/HMI Web-Editor - Engineering and Design completely web-based
 - Cross-Platform Full-Stack - Backend with NodeJs and Frontend with Web technologies (HTML5, CSS, Javascript, Angular, SVG)
 
@@ -24,6 +24,15 @@ See the Wiki for more details about installing and getting started
 [Wiki](https://github.com/frangoteam/FUXA/wiki)
 
 [Wiki Installing/Building](https://github.com/frangoteam/FUXA/wiki/Installing-and-Running)
+
+### Install using prebuilt Electron Packages
+
+You will need to be logged into github to access the download button for Electron Action Builds,
+click on the workflow and scroll down to Artifacts and click the download icon for you system
+
+[Electron Action Builds](https://github.com/frangoteam/FUXA/actions/workflows/electron_latest.yml)
+
+<img width="2082" height="531" alt="image" src="https://github.com/user-attachments/assets/40f01e1d-cf39-4145-99a0-e8fedf791edf" />
 
 
 ### Running from docker
@@ -97,6 +106,15 @@ After following these steps, you will have a standalone Electron application for
 - Look the guide in [wiki](https://github.com/frangoteam/FUXA/wiki) pages
 - Look video from [frangoteam](https://www.youtube.com/@umbertonocelli5301)
 - Look video from [Fusion Automate - Urvish Nakum](https://youtube.com/playlist?list=PLxrSjjYyzaaK8uY3kVaFzfGnwhVXiCEAO&si=aU1OxgkUvLQ3bXHq)
+
+## Community SVG Widgets
+
+Looking for ready-made, reusable SVG widgets?
+Check out the companion repository **FUXA-SVG-Widgets**:
+
+- Repository: https://github.com/frangoteam/FUXA-SVG-Widgets
+- Authoring guide & examples: see the repo README and the Wiki page:
+  https://github.com/frangoteam/FUXA/wiki/HowTo-Widgets
 
 ## To Debug (Full Stack)
 Install and start to serve the frontend

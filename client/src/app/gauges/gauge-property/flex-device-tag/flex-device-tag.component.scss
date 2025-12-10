@@ -15,6 +15,9 @@
         width:28px;
         vertical-align: middle;
     }
+    span {
+        width: calc(100% - 5px);
+    }
 }
 
 ::ng-deep .device-group-label span {

@@ -23,7 +23,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     var client = opcua.OPCUAClient.create(options);
     const attributeKeys = Object.keys(opcua.AttributeIds).filter((x) => x === 'DataType' || x === 'AccessLevel' || x === 'UserAccessLevel');//x !== "INVALID" && x[0].match(/[a-zA-Z]/));
 
-    var varsValue = [];                 // Signale to send to frontend { id, type, value }
+    var varsValue = {};                 // Signals to send to frontend { id, type, value }
     var getProperty = null;             // Function to ask property (security)
     var lastTimestampValue;             // Last Timestamp of asked values
     var tagsIdMap = {};                 // Map of tag id with opc nodeId
@@ -369,16 +369,22 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
      */
     this.setValue = async function (tagId, value) {
         if (the_session && data.tags[tagId]) {
-            let opctype = _toDataType(data.tags[tagId].type);
-            let valueToSend = _toValue(opctype, value);
+            let opcType = _toDataType(data.tags[tagId].type);
+            if (data.tags[tagId].dataType) {
+                opcType = data.tags[tagId].dataType; // use the actual dataType from read
+            }
+            let valueToSend = _toValue(opcType, value);
             valueToSend = await deviceUtils.tagRawCalculator(valueToSend, data.tags[tagId], runtime);
+            if (opcType === opcua.DataType.String || opcType === opcua.DataType.ByteString) {
+                valueToSend = valueToSend?.toString();
+            }
             var nodesToWrite = [
                 {
                     nodeId: data.tags[tagId].address,
                     attributeId: opcua.AttributeIds.Value,
                     value: /*new DataValue(*/{
                         value: {/* Variant */
-                            dataType: opctype,
+                            dataType: opcType,
                             value: valueToSend
                         }
                     }
@@ -534,7 +540,14 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                 // console.log(nodeId.toString(), '\t value : ', dataValue.value.value.toString());
                 let id = tagsIdMap[nodeId];
                 if (data.tags[id]) {
-                    data.tags[id].rawValue = dataValue.value.value;
+                    let rawVal = dataValue.value.value;
+                    let parsed = false;
+                    if (Array.isArray(rawVal) && rawVal.length > 0) {
+                        rawVal = rawVal[rawVal.length - 1];
+                        parsed = true;
+                    }
+                    data.tags[id].rawValue = rawVal;
+                    data.tags[id].dataType = dataValue.value.dataType;
                     data.tags[id].serverTimestamp = dataValue.serverTimestamp.toString();
                     data.tags[id].timestamp = new Date().getTime();
                     data.tags[id].changed = true;
@@ -723,7 +736,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
             case opcua.DataType.Int16:
             case opcua.DataType.UInt16:
             case opcua.DataType.Int32:
-            case opcua.DataType.UInt3:
+            case opcua.DataType.UInt32:
             case opcua.DataType.Int64:
             case opcua.DataType.UInt64:
                 return parseInt(value);

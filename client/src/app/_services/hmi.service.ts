@@ -1,5 +1,5 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import * as io from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 import { environment } from '../../environments/environment';
 import { Tag, DeviceType } from '../_models/device';
@@ -10,9 +10,10 @@ import { EndPointApi } from '../_helpers/endpointapi';
 import { Utils } from '../_helpers/utils';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AuthService, UserProfile } from './auth.service';
 import { DeviceAdapterService } from '../device-adapter/device-adapter.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class HmiService {
@@ -30,6 +31,10 @@ export class HmiService {
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
     @Output() onOpen: EventEmitter<ScriptOpenCard> = new EventEmitter();
+    @Output() onSchedulerUpdated: EventEmitter<any> = new EventEmitter();
+    @Output() onSchedulerEventActive: EventEmitter<any> = new EventEmitter();
+    @Output() onSchedulerRemainingTime: EventEmitter<any> = new EventEmitter();
+    @Output() onGaugeEvent: EventEmitter<any> = new EventEmitter();
 
     onServerConnection$ = new BehaviorSubject<boolean>(false);
 
@@ -39,7 +44,7 @@ export class HmiService {
     variables = {};
     alarms = { highhigh: 0, high: 0, low: 0, info: 0 };
     private socket;
-    private endPointConfig: string = EndPointApi.getURL();//"http://localhost:1881";
+    private endPointConfig: string = EndPointApi.getURL();
     private bridge: any = null;
 
     private addFunctionType = Utils.getEnumKey(GaugeEventSetValueType, GaugeEventSetValueType.add);
@@ -53,6 +58,7 @@ export class HmiService {
         private translateService: TranslateService,
         private authService: AuthService,
         private deviceAdapaterService: DeviceAdapterService,
+        private http: HttpClient,
         private toastr: ToastrService) {
 
         this.initSocket();
@@ -62,7 +68,7 @@ export class HmiService {
         });
 
         this.authService.currentUser$.subscribe((userProfile: UserProfile) => {
-           this.initSocket(userProfile?.token);
+            this.initSocket(userProfile?.token);
         });
     }
 
@@ -129,7 +135,7 @@ export class HmiService {
      */
     private getValueInFunction(current: any, value: string, fnc: string) {
         try {
-            if (!fnc) {return value;}
+            if (!fnc) { return value; }
             if (!current) {
                 current = 0;
             }
@@ -151,7 +157,7 @@ export class HmiService {
      * @returns
      */
     initClient(bridge?: any) {
-        if (!bridge) {return false;}
+        if (!bridge) { return false; }
         this.bridge = bridge;
         if (this.bridge) {
             this.bridge.onDeviceValues = (tags: Variable[]) => this.onDeviceValues(tags);
@@ -194,13 +200,30 @@ export class HmiService {
         this.socket.io.on('reconnect_attempt', () => {
             console.log('socket.io try to reconnect...');
         });
+        this.socket.io.on('reconnect_failed', () => {
+            console.warn('socket.io reconnect failed → forcing page reload');
+            this.safeReloadIfServerAlive();
+        });
+        // If connection fails due to CORS, redirect, VPN change, standby...
+        this.socket.io.on('error', (err) => {
+            console.warn('socket.io error:', err);
+            this.safeReloadIfServerAlive();
+        });
+        this.socket.io.on('connect_error', (err) => {
+            console.warn('socket.io connect_error:', err);
+            // Typical case after long sleep: redirect → CORS blocked
+            if (String(err?.message || '').includes('CORS')) {
+                this.safeReloadIfServerAlive();
+            }
+        });
+
         // devicse status
         this.socket.on(IoEventTypes.DEVICE_STATUS, (message) => {
             this.onDeviceChanged.emit(message);
             if (message.status === 'connect-error' && this.hmi?.layout?.show_connection_error) {
                 let name = message.id;
                 let device = this.projectService.getDeviceFromId(message.id);
-                if (device) {name = device.name;}
+                if (device) { name = device.name; }
                 let msg = '';
                 this.translateService.get('msg.device-connection-error', { value: name }).subscribe((txt: string) => { msg = txt; });
                 this.toastr.error(msg, '', {
@@ -229,7 +252,7 @@ export class HmiService {
                 const originalId = message.values[idx].id;
                 const value = message.values[idx].value;
                 const timestamp = message.values[idx].timestamp;
-                updateVariable(originalId , value, timestamp);
+                updateVariable(originalId, value, timestamp);
                 const adapterIds = this.deviceAdapaterService.resolveDeviceTagIdForAdapter(originalId);
                 if (adapterIds?.length) {
                     adapterIds.forEach(adapterId => {
@@ -241,6 +264,18 @@ export class HmiService {
         // device browse
         this.socket.on(IoEventTypes.DEVICE_BROWSE, (message) => {
             this.onDeviceBrowse.emit(message);
+        });
+        // scheduler updated (one-time events removed, etc.)
+        this.socket.on(IoEventTypes.SCHEDULER_UPDATED, (message) => {
+            this.onSchedulerUpdated.emit(message);
+        });
+        // scheduler event active state changed (START/STOP fired)
+        this.socket.on(IoEventTypes.SCHEDULER_ACTIVE, (message) => {
+            this.onSchedulerEventActive.emit(message);
+        });
+        // scheduler remaining time update
+        this.socket.on(IoEventTypes.SCHEDULER_REMAINING, (message) => {
+            this.onSchedulerRemainingTime.emit(message);
         });
         // device node attribute
         this.socket.on(IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
@@ -512,7 +547,7 @@ export class HmiService {
      * @param fulltext
      */
     getMappedVariable(sigid: string, fulltext: boolean): Variable {
-        if (!this.variables[sigid]) {return null;}
+        if (!this.variables[sigid]) { return null; }
 
         if (this.variables[sigid]) {
             let result = this.variables[sigid];
@@ -592,6 +627,20 @@ export class HmiService {
     }
     //#endregion
 
+    //#region Scheduler functions served from project service
+    askSchedulerData(id: string) {
+        return this.projectService.getSchedulerData(id);
+    }
+
+    setSchedulerData(id: string, data: any) {
+        return this.projectService.setSchedulerData(id, data);
+    }
+
+    deleteSchedulerData(id: string) {
+        return this.projectService.deleteSchedulerData(id);
+    }
+    //#endregion
+
     //#region My Static functions
     public static toVariableId(src: string, name: string) {
         return src + HmiService.separator + name;
@@ -611,6 +660,23 @@ export class HmiService {
                 default:
                     break;
             }
+        }
+    }
+
+    private async safeReloadIfServerAlive() {
+        try {
+            // Small test request to verify if server is reachable
+            const res = await firstValueFrom(
+                this.http.get<string>(this.endPointConfig + '/api/version')
+            );
+            if (res) {
+                console.warn('Server reachable → forcing reload');
+                window.location.reload();
+            } else {
+                console.warn('Server reachable but returned error, skipping reload');
+            }
+        } catch {
+            console.warn('Server NOT reachable → do NOT reload');
         }
     }
 }
@@ -677,7 +743,10 @@ export enum IoEventTypes {
     HOST_INTERFACES = 'host-interfaces',
     SCRIPT_CONSOLE = 'script-console',
     SCRIPT_COMMAND = 'script-command',
-    ALIVE = 'heartbeat'
+    ALIVE = 'heartbeat',
+    SCHEDULER_UPDATED = 'scheduler:updated',
+    SCHEDULER_ACTIVE = 'scheduler:event-active',
+    SCHEDULER_REMAINING = 'scheduler:remaining-time'
 }
 
 export const ScriptCommandEnum = {
