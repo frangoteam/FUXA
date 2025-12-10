@@ -3,8 +3,18 @@ import * as L from 'leaflet';
 import { GaugesManager } from '../../gauges/gauges.component';
 import { FuxaViewComponent } from '../../fuxa-view/fuxa-view.component';
 import { ProjectService } from '../../_services/project.service';
-import { Hmi, View, ViewProperty } from '../../_models/hmi';
-import { Subject, takeUntil } from 'rxjs';
+import { GaugeAction, GaugeRangeProperty, Hmi, View, ViewProperty } from '../../_models/hmi';
+
+interface MarkerBinding {
+    nodeIds: string[];
+    domNodes: HTMLElement[];
+    actions: {
+        action: GaugeAction;
+        marker: L.Marker;
+        element?: HTMLElement | null;
+    }[];
+};
+import { filter, Subject, takeUntil } from 'rxjs';
 import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MapsLocation, MAPSLOCATION_PREFIX } from '../../_models/maps';
@@ -14,6 +24,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 import { MapsLocationImportComponent } from '../maps-location-import/maps-location-import.component';
 import { MapsFabButtonMenuComponent } from './maps-fab-button-menu/maps-fab-button-menu.component';
+import { HmiService } from '../../_services/hmi.service';
 
 @Component({
     selector: 'app-maps-view',
@@ -41,12 +52,14 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
     menuPosition = { x: '0px', y: '0px' };
     private locations: MapsLocation[] = [];
     lastClickMapLocation?: MapsLocation;
+    private markerItemsMap = new Map<string, MarkerBinding>();
 
     private openPopups = [];
     private currentPopup: L.Popup | null = null;
 
     constructor(
         private resolver: ComponentFactoryResolver,
+        private hmiService: HmiService,
         private injector: Injector,
         private dialog: MatDialog,
         private projectService: ProjectService,
@@ -77,6 +90,15 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
 
             this.initMapEvents();
             this.map.invalidateSize();
+
+            if (!this.editMode) {
+                this.initWatch();
+            }
+            try {
+                this.gaugesManager.emitBindedSignals(this.view.id);
+            } catch (err) {
+                console.error(err);
+            }
         }, 200);
     }
 
@@ -110,18 +132,56 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             popupAnchor: [0, -34]
         });
         this.locations.forEach(loc => {
-            const marker = L.marker([loc.latitude, loc.longitude])
-                .addTo(this.map);
+            const valueHtmlId = Utils.getShortGUID('m_');
+            const color = loc.markerColor ?? '#000000';
+            const background = loc.markerBackground ?? '#ffffff';
+            const icon = loc.markerIcon ? loc.markerIcon : '';
+            const nameHtml = loc.showMarkerName
+                                ? `<div class="bubble-text"
+                                        style="color: var(--bubble-fg);">${loc.name}</div>`
+                                : '';
+            const iconHtml = loc.showMarkerIcon
+                                ? `<span class="material-icons bubble-icon"
+                                        style="color: var(--bubble-fg);">${icon}</span>`
+                                : '';
+            const valueHtml = loc.markerTagValueId && loc.showMarkerValue
+                                ? `<div class="bubble-value" id="${valueHtmlId}">##.##</div>`
+                                : '';
+            const markerHtml = `
+            <div class="fuxa-bubble-marker"
+                 style="--bubble-color:${color};
+                        --bubble-bg:${background};
+                        --bubble-fg:${color};">
+
+                <div class="bubble-content bubble-column">
+                    ${iconHtml}
+                    ${nameHtml}
+                    ${valueHtml}
+                </div>
+            </div>`;
+            const marker = L.marker([loc.latitude, loc.longitude], {
+                icon: L.divIcon({
+                    className: 'fuxa-bubble-icon',
+                    html: markerHtml,
+                    iconSize: undefined,  // lasciamo che si adatti
+                    iconAnchor: [0, 0]    // correggiamo via CSS con transform
+                })
+            }).addTo(this.map);
             marker['locationId'] = loc.id;
-            this.openMarkerTooltip(marker, loc);
-            marker.setIcon(newIcon);
+            if (!iconHtml && !valueHtml && !nameHtml) {
+                this.openMarkerTooltip(marker, loc);
+                marker.setIcon(newIcon);
+            } else if (valueHtml) {
+                this.addMarkerItemId(loc.markerTagValueId!, valueHtmlId);
+            }
             marker.on('click', () => {
                 this.onClickMarker(loc, marker);
             });
-
             marker.on('contextmenu', (event) => {
                 this.showContextMenu(event, marker);
             });
+
+            this.collectActionTags(loc.actions, marker);
         });
         this.map.on('popupopen', (e) => {
             this.openPopups.push(e.popup);
@@ -133,6 +193,44 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             }
             e.popup = null;
         });
+        if (!this.editMode) {
+            this.subscribeMarkerTags();
+        }
+    }
+
+    initWatch() {
+        this.gaugesManager.onchange.pipe(
+            takeUntil(this.destroy$),
+            filter(varTag => this.markerItemsMap.has(varTag.id))
+        ).subscribe(varTag => {
+            this.processValueInMarkerItem(varTag.id, varTag.value);
+        });
+    }
+
+    private processValueInMarkerItem(tagId: string, newValue: any) {
+
+        const entry = this.markerItemsMap.get(tagId);
+        if (!entry) return;
+
+        if (entry.domNodes.length === 0) {
+            entry.domNodes = entry.nodeIds
+                .map(id => document.getElementById(id) as HTMLElement)
+                .filter(el => !!el);
+        }
+
+        if (entry.domNodes.length !== 0) {
+            for (const el of entry.domNodes) {
+                el.innerText = newValue;
+            }
+        }
+        this.processActions(entry, newValue);
+    }
+
+    private addMarkerItemId(variableId: string, nodeId: string) {
+        if (!this.markerItemsMap.has(variableId)) {
+            this.markerItemsMap.set(variableId, { nodeIds: [], domNodes: [], actions: [] });
+        }
+        this.markerItemsMap.get(variableId)!.nodeIds.push(nodeId);
     }
 
     private openMarkerTooltip(marker: L.Marker, location: MapsLocation) {
@@ -331,6 +429,7 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
     }
 
     private clearMarker() {
+        this.markerItemsMap.clear();
         this.map.eachLayer(layer => {
             if (layer instanceof L.Marker) {
                 this.map.removeLayer(layer);
@@ -363,5 +462,109 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
         this.projectService.setViewAsync(this.view).then(() => {
             this.loadMapsResources();
         });
+    }
+
+    private subscribeMarkerTags() {
+        const tagIds = Array.from(this.markerItemsMap.keys());
+        if (tagIds.length) {
+            this.hmiService.viewsTagsSubscribe(tagIds, true);
+        }
+    }
+
+    private collectActionTags(actions: GaugeAction[] | undefined, marker: L.Marker) {
+        if (!actions?.length) {
+            return;
+        }
+        actions.forEach(action => {
+            if (action.variableId) {
+                if (!this.markerItemsMap.has(action.variableId)) {
+                    this.markerItemsMap.set(action.variableId, { nodeIds: [], domNodes: [], actions: [] });
+                }
+                const entry = this.markerItemsMap.get(action.variableId)!;
+                entry.actions.push({
+                    action,
+                    marker,
+                    element: marker.getElement && marker.getElement()
+                });
+            }
+        });
+    }
+
+    private processActions(binding: MarkerBinding, rawValue: any) {
+        if (!binding.actions.length) {
+            return;
+        }
+        const value = this.toNumber(rawValue);
+        binding.actions.forEach(actBinding => {
+            if (!actBinding.element && actBinding.marker?.getElement) {
+                actBinding.element = actBinding.marker.getElement();
+            }
+            if (!actBinding.element) {
+                return;
+            }
+            const inRange = this.isValueInRange(actBinding.action.range, value);
+            switch (actBinding.action.type) {
+                case 'show':
+                    if (inRange) {
+                        this.setMarkerVisibility(actBinding.element, true);
+                    }
+                    break;
+                case 'hide':
+                    if (inRange) {
+                        this.setMarkerVisibility(actBinding.element, false);
+                    }
+                    break;
+                case 'color':
+                    if (inRange) {
+                        this.applyMarkerColor(actBinding.element, actBinding.action.options);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+
+    private setMarkerVisibility(element: HTMLElement, visible: boolean) {
+        element.style.display = visible ? '' : 'none';
+    }
+
+    private applyMarkerColor(element: HTMLElement, options: any) {
+        if (!options) {
+            return;
+        }
+        const markerRoot = (element.querySelector('.fuxa-bubble-marker') as HTMLElement) ?? element;
+        const target = (element.querySelector('.bubble-content') as HTMLElement)
+            ?? markerRoot;
+
+        if (options.fillA) {
+            target.style.setProperty('--bubble-bg', options.fillA);
+            target.style.backgroundColor = options.fillA;
+            target.style.borderRadius = target.style.borderRadius || '12px';
+            target.style.overflow = 'hidden';
+        }
+        if (options.strokeA) {
+            markerRoot.style.setProperty('--bubble-color', options.strokeA);
+            target.style.setProperty('--bubble-color', options.strokeA);
+            target.style.setProperty('--bubble-fg', options.strokeA);
+            target.style.color = options.strokeA;
+        }
+    }
+
+    private isValueInRange(range: GaugeRangeProperty | undefined, value: number | null): boolean {
+        if (!range || (range.min === undefined && range.max === undefined)) {
+            return true;
+        }
+        if (value === null) {
+            return false;
+        }
+        const min = range.min ?? -Infinity;
+        const max = range.max ?? Infinity;
+        return value >= min && value <= max;
+    }
+
+    private toNumber(value: any): number | null {
+        const num = Number(value);
+        return Number.isFinite(num) ? num : null;
     }
 }

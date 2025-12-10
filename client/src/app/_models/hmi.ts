@@ -307,6 +307,7 @@ export enum GaugeActionsType {
     hide = 'shapes.action-hide',
     show = 'shapes.action-show',
     blink = 'shapes.action-blink',
+    color = 'shapes.action-color',
     stop = 'shapes.action-stop',
     clockwise = 'shapes.action-clockwise',
     anticlockwise = 'shapes.action-anticlockwise',
