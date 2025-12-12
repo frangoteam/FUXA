@@ -192,6 +192,8 @@ export class DeviceNetProperty {
     delay: number = 10;
     /** Modbus TCP socket reuse flag */
     socketReuse?: string;
+    /** Force FC16 for Modbus RTU/TCP write operations */
+    forceFC16?: boolean;
     /** MELSEC */
     ascii?: boolean;
     octalIO?: boolean;
@@ -690,6 +692,8 @@ export class TagScale {
     scaledLow: number;
     scaledHigh: number;
     dateTimeFormat: string;
+    readExpression: string;
+    writeExpression: string;
 }
 
 export enum TagScaleModeType {
@@ -697,6 +701,7 @@ export enum TagScaleModeType {
     linear = 'device.tag-scale-mode-linear',
     convertDateTime = 'device.tag-convert-datetime',
     convertTickTime = 'device.tag-convert-ticktime',
+    expression = 'device.tag-scale-mode-expression',
 }
 
 export enum TagSystemType {

@@ -10,9 +10,10 @@ import { EndPointApi } from '../_helpers/endpointapi';
 import { Utils } from '../_helpers/utils';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { AuthService, UserProfile } from './auth.service';
 import { DeviceAdapterService } from '../device-adapter/device-adapter.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class HmiService {
@@ -43,7 +44,7 @@ export class HmiService {
     variables = {};
     alarms = { highhigh: 0, high: 0, low: 0, info: 0 };
     private socket;
-    private endPointConfig: string = EndPointApi.getURL();//"http://localhost:1881";
+    private endPointConfig: string = EndPointApi.getURL();
     private bridge: any = null;
 
     private addFunctionType = Utils.getEnumKey(GaugeEventSetValueType, GaugeEventSetValueType.add);
@@ -57,6 +58,7 @@ export class HmiService {
         private translateService: TranslateService,
         private authService: AuthService,
         private deviceAdapaterService: DeviceAdapterService,
+        private http: HttpClient,
         private toastr: ToastrService) {
 
         this.initSocket();
@@ -198,6 +200,23 @@ export class HmiService {
         this.socket.io.on('reconnect_attempt', () => {
             console.log('socket.io try to reconnect...');
         });
+        this.socket.io.on('reconnect_failed', () => {
+            console.warn('socket.io reconnect failed → forcing page reload');
+            this.safeReloadIfServerAlive();
+        });
+        // If connection fails due to CORS, redirect, VPN change, standby...
+        this.socket.io.on('error', (err) => {
+            console.warn('socket.io error:', err);
+            this.safeReloadIfServerAlive();
+        });
+        this.socket.io.on('connect_error', (err) => {
+            console.warn('socket.io connect_error:', err);
+            // Typical case after long sleep: redirect → CORS blocked
+            if (String(err?.message || '').includes('CORS')) {
+                this.safeReloadIfServerAlive();
+            }
+        });
+
         // devicse status
         this.socket.on(IoEventTypes.DEVICE_STATUS, (message) => {
             this.onDeviceChanged.emit(message);
@@ -641,6 +660,23 @@ export class HmiService {
                 default:
                     break;
             }
+        }
+    }
+
+    private async safeReloadIfServerAlive() {
+        try {
+            // Small test request to verify if server is reachable
+            const res = await firstValueFrom(
+                this.http.get<string>(this.endPointConfig + '/api/version')
+            );
+            if (res) {
+                console.warn('Server reachable → forcing reload');
+                window.location.reload();
+            } else {
+                console.warn('Server reachable but returned error, skipping reload');
+            }
+        } catch {
+            console.warn('Server NOT reachable → do NOT reload');
         }
     }
 }

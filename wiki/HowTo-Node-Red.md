@@ -53,11 +53,11 @@ Once installed, view your Node-RED dashboards:
 
 1. Open your FUXA project in the editor
 2. Add an iframe component to your view
-3. Set the URL to: `/nodered/api/dashboard`
+3. Set the URL to: `/dashboard`
 4. Configure the iframe size and properties as needed
-5. If you only want to display a single page you can adjust dashboard settings and use `/nodered/api/dashboard/page1` or the name of your page
+5. If you only want to display a single page you can adjust dashboard settings and use `/dashboard/page1` or the name of your page
 
-**Important**: Dashboard 2 must be installed before attempting to access `/nodered/api/dashboard`
+**Important**: Dashboard 2 must be installed before attempting to access `/dashboard`
 
 ## FUXA Contrib Nodes
 
@@ -557,7 +557,7 @@ All nodes output errors to the debug tab. Common error patterns:
 ## Troubleshooting
 
 ### Dashboard Not Loading
-**Problem**: `/nodered/api/dashboard` shows error or blank page
+**Problem**: `/dashboard` shows error or blank page
 
 **Solution**: Install Dashboard 2
 1. Open Node-RED editor

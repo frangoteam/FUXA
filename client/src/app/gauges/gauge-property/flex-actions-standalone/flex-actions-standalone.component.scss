@@ -1,0 +1,56 @@
+:host {
+    .item {
+        display: block;
+        width: 100%;
+        border-bottom: 1px solid rgba(0,0,0,0.1);
+        padding: 0px 0px 5px 0px;
+        margin-bottom: 3px;
+        position: relative;
+    }
+
+    .item-head {
+        display: block;
+        width: 480px;
+        max-width: 100%;
+    }
+
+    .item-remove {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    .action-content {
+        display: block;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding-top: 4px;
+        margin-left: 30px;
+        margin-right: 40px; /* reserve space for remove button */
+        width: calc(100% - 70px);
+    }
+
+    .item-range {
+        display: inline-block;
+        min-width: 240px;
+        width: 240px;
+    }
+
+    .action-params {
+        display: inline-block;
+        padding-top: 5px;
+    }
+
+    .input-slider {
+        display: inline;
+    }
+    ::ng-deep .input-slider span {
+        font-size: 14px !important;
+    }
+}

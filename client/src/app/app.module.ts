@@ -104,6 +104,7 @@ import { FlexAuthComponent } from './gauges/gauge-property/flex-auth/flex-auth.c
 import { FlexHeadComponent } from './gauges/gauge-property/flex-head/flex-head.component';
 import { FlexEventComponent } from './gauges/gauge-property/flex-event/flex-event.component';
 import { FlexActionComponent } from './gauges/gauge-property/flex-action/flex-action.component';
+import { FlexActionsStandaloneComponent } from './gauges/gauge-property/flex-actions-standalone/flex-actions-standalone.component';
 import { FlexVariableComponent } from './gauges/gauge-property/flex-variable/flex-variable.component';
 import { MatSelectSearchModule } from './gui-helpers/mat-select-search/mat-select-search.module';
 import { HtmlInputComponent } from './gauges/controls/html-input/html-input.component';
@@ -319,6 +320,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         FlexHeadComponent,
         FlexEventComponent,
         FlexActionComponent,
+        FlexActionsStandaloneComponent,
         FlexVariableComponent,
         FlexVariablesMappingComponent,
         FlexVariableMapComponent,
