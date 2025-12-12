@@ -4,10 +4,17 @@
         height: 100%;
         overflow: auto;
         /* display: grid; */
+
+        &::-webkit-scrollbar-track {
+            background: var(--row-bg);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: var(--header-bg);
+        }
     }
 
     .mat-header-row {
-        top: 0;
         position: sticky;
         z-index: 1;
         padding-left: 10px;
@@ -27,19 +34,44 @@
         min-height: 0px;
     }
 
+    .mat-table.selectable .mat-row:hover {
+        background-color: rgba(0, 0, 0, 0.1) !important;
+    }
+
     .table-toolbar {
-        height: 42px;
-        display: block;
-        line-height: 42px;
+        min-height: 42px;
+        height: var(--toolbar-height, 42px);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        line-height: normal;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .toolbar-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        flex-wrap: wrap;
+    }
+
+    .toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding-right: 10px;
+        justify-content: flex-start;
+        min-width: 0;
+        flex-wrap: wrap;
     }
 
     .data-table-paginator {
-        height: 42px;
-        top: 0px;
-        position: absolute;
-        right: 0px;
-        /* float: right; */
+        height: var(--toolbar-height, 42px);
         background-color: transparent;
+        margin-right: -10px;
+        margin-left: auto;
     }
 
     .moka-toolbar-editor {
@@ -62,21 +94,31 @@
     .moka-toolbar-button {
         width: 40px;
         padding: unset;
+
+        &:hover:not([disabled]) {
+            background-color: rgba(0, 0, 0, 0.1) !important;
+        }
     }
 
-    .table-toolbar .date-range {
-        float: left;
-        max-height: 42px;
+    .my-form-field {
+        float: none !important;
     }
 
     ::ng-deep .data-table-paginator .mat-paginator-container {
         min-height: unset;
         height: 42px;
+        justify-content: flex-end;
     }
 
     ::ng-deep .data-table-paginator .mat-paginator-container .mat-paginator-page-size {
         height: inherit;
         margin: unset;
+        display: none;
+    }
+
+    ::ng-deep .data-table-paginator .mat-paginator-navigation-previous,
+    ::ng-deep .data-table-paginator .mat-paginator-navigation-next {
+        display: none;
     }
 
     ::ng-deep .data-table-paginator .mat-paginator-container .mat-paginator-page-size-select {
@@ -143,4 +185,154 @@
             opacity: 0.2;
         }
     }
+
+    .moka-toolbar-editor.moka-toolbar-button {
+        color: inherit;
+    }
+
+    .moka-toolbar-editor mat-icon,
+    .moka-toolbar-editor .material-icons,
+    .moka-toolbar-editor mat-icon svg {
+        color: inherit;
+        fill: currentColor !important;
+        font-size: 20px !important;
+        width: 20px !important;
+        height: 20px !important;
+        line-height: 20px !important;
+        display: inline-block !important;
+        vertical-align: middle !important;
+    }
+
+    .moka-toolbar-editor.moka-toolbar-button:hover:not([disabled]) {
+        background-color: rgba(0, 0, 0, 0.08) !important;
+    }
 }
+
+    .data-custom-select {
+        position: relative;
+        min-width: 120px;
+
+        .custom-select-trigger {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            padding: 6px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color 0.2s ease;
+
+            &:hover:not(.disabled) {
+                background: rgba(0, 0, 0, 0.1) !important;
+            }
+
+            .selected-text {
+                flex: 1;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+
+            .arrow {
+                margin-left: 8px;
+                font-size: 18px;
+                transition: transform 0.2s ease;
+                color: inherit;
+            }
+        }
+
+        &.open .custom-select-trigger .arrow {
+            transform: rotate(180deg);
+        }
+
+        &.disabled .custom-select-trigger {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .custom-select-dropdown {
+            position: absolute;
+            top: calc(100% - 1px); 
+            left: 0;
+            right: 0;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+
+            .custom-option {
+                padding: 8px 12px;
+                cursor: pointer;
+                transition: background-color 0.2s ease;
+
+                &:hover {
+                    background: rgba(0, 0, 0, 0.1);
+                }
+
+                &.selected {
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+
+.my-form-field {
+    padding-left: 20px;
+}
+
+.date-range {
+    width: 160px;
+    flex-shrink: 0;
+    padding-left: 10px;
+}
+
+.date-range-inner {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.page-size {
+    width: 70px;
+    flex-shrink: 0;
+
+    .data-custom-select {
+        min-width: 60px;
+    }
+}
+
+.data-table-paginator {
+    height: 42px;
+    background-color: transparent;
+}
+
+.my-form-field input::placeholder {
+    color: var(--toolbar-color) !important;
+}
+
+.my-form-field input::-webkit-input-placeholder {
+    color: var(--toolbar-color) !important;
+}
+
+.my-form-field input::-moz-placeholder {
+    color: var(--toolbar-color) !important;
+}
+
+.my-form-field input:-ms-input-placeholder {
+    color: var(--toolbar-color) !important;
+}
+
+.my-form-field input:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+    border: 1px solid rgba(0,0,0,0.3) !important;
+}
+
+.my-form-field input:focus {
+    border-color: rgba(0,0,0,0.5) !important;
+}
+
+

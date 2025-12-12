@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { Subscription, delay } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -8,6 +8,7 @@ import { EndPointSettings, HmiService } from '../../_services/hmi.service';
 import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
 import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType, ModbusReuseModeType } from './../../_models/device';
+import { OdbcBrowserComponent } from '../../odbc-browser/odbc-browser.component';
 
 @Component({
 	selector: 'app-device-property',
@@ -88,6 +89,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		private hmiService: HmiService,
         private translateService: TranslateService,
         private appService: AppService,
+		private dialog: MatDialog,
 		public dialogRef: MatDialogRef<DevicePropertyComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any) {
             this.projectService = data.projectService;
@@ -382,6 +384,26 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			this.translateService.get('device.security-signandencrypt').subscribe((txt: string) => { result = txt; });
 		}
 		return result;
+	}
+
+	/**
+	 * Open ODBC Browser dialog for database management
+	 */
+	onOpenOdbcBrowser() {
+		const dialogRef = this.dialog.open(OdbcBrowserComponent, {
+			width: '90vw',
+			height: '90vh',
+			maxWidth: '1400px',
+			data: {
+				deviceId: this.data.device.id,
+				selectColumn: false
+			}
+		});
+
+		dialogRef.afterClosed().subscribe(result => {
+			if (result && result.query) {
+			}
+		});
 	}
 }
 

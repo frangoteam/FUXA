@@ -738,6 +738,18 @@ function getDevice(name) {
 }
 
 /**
+ * Return Device from id
+ */
+function getDeviceById(id) {
+    for (let device of Object.values(data.devices)) {
+        if (device.id === id) {
+            return device;
+        }
+    }
+    return null;
+}
+
+/**
  * Get the device property
  */
 function getDeviceProperty(query) {
@@ -1059,11 +1071,17 @@ const ProjectDataCmdType = {
     DelMapsLocation: 'del-maps-location',
 }
 
+function getData() {
+    return data;
+}
+
 module.exports = {
     init: init,
     load: load,
+    getData: getData,
     getDevices: getDevices,
     getDevice: getDevice,
+    getDeviceById: getDeviceById,
     getAlarms: getAlarms,
     getNotifications: getNotifications,
     getScripts: getScripts,

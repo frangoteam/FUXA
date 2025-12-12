@@ -28,6 +28,7 @@ export class HmiService {
     @Output() onAlarmsStatus: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceWebApiRequest: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceTagsRequest: EventEmitter<any> = new EventEmitter();
+    @Output() onDeviceOdbcQuery: EventEmitter<any> = new EventEmitter();
     @Output() onScriptConsole: EventEmitter<any> = new EventEmitter();
     @Output() onGoTo: EventEmitter<ScriptSetView> = new EventEmitter();
     @Output() onOpen: EventEmitter<ScriptOpenCard> = new EventEmitter();
@@ -298,6 +299,9 @@ export class HmiService {
         this.socket.on(IoEventTypes.DEVICE_TAGS_REQUEST, (message) => {
             this.onDeviceTagsRequest.emit(message);
         });
+        this.socket.on(IoEventTypes.DEVICE_ODBC_QUERY, (message) => {
+            this.onDeviceOdbcQuery.emit(message);
+        });
         // scripts
         this.socket.on(IoEventTypes.SCRIPT_CONSOLE, (message) => {
             this.onScriptConsole.emit(message);
@@ -348,6 +352,19 @@ export class HmiService {
         if (this.socket) {
             let msg = { deviceId: deviceId };
             this.socket.emit(IoEventTypes.DEVICE_TAGS_REQUEST, msg);
+        }
+    }
+
+    /**
+     * Execute ODBC query
+     */
+    public executeOdbcQuery(deviceId: string, query: string, requestId?: string) {
+        if (this.socket) {
+            let msg: any = { deviceId: deviceId, query: query };
+            if (requestId) {
+                msg.requestId = requestId;
+            }
+            this.socket.emit(IoEventTypes.DEVICE_ODBC_QUERY, msg);
         }
     }
 
@@ -736,6 +753,7 @@ export enum IoEventTypes {
     DEVICE_TAGS_SUBSCRIBE = 'device-tags-subscribe',
     DEVICE_TAGS_UNSUBSCRIBE = 'device-tags-unsubscribe',
     DEVICE_ENABLE = 'device-enable',
+    DEVICE_ODBC_QUERY = 'device-odbc-query',
     DAQ_QUERY = 'daq-query',
     DAQ_RESULT = 'daq-result',
     DAQ_ERROR = 'daq-error',

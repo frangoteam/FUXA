@@ -1,0 +1,31 @@
+<div>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{ data.type?.id ? ('table.type-edit-title' | translate) : ('table.type-add-title' | translate) }}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field">
+            <span>{{'table.type-name' | translate}}</span>
+            <input [(ngModel)]="data.type.name" type="text" />
+        </div>
+        <div class="my-form-field">
+            <span>{{'table.type-device' | translate}}</span>
+            <mat-select [(value)]="data.type.deviceId" style="width: 100%;">
+                <mat-option *ngFor="let d of data.devices" [value]="d.id">{{d.name}}</mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field">
+            <span>{{'table.type-description' | translate}}</span>
+            <textarea [(ngModel)]="data.type.description"></textarea>
+        </div>
+        <div class="my-form-field">
+            <span>{{'table.type-id' | translate}}</span>
+            <input [(ngModel)]="data.type.userId" type="text" />
+        </div>
+        <div class="my-form-field">
+            <mat-slide-toggle [(ngModel)]="data.type.autoWriteOnStartup">{{'table.type-auto-write-on-startup' | translate}}</mat-slide-toggle>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

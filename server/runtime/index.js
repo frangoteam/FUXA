@@ -17,6 +17,7 @@ var utils = require('./utils');
 const daqstorage = require('./storage/daqstorage');
 const schedulerStorage = require('./scheduler/scheduler-storage');
 const schedulerService = require('./scheduler/scheduler-service');
+const parametersStorage = require('./parameters/parameters-storage');
 var jobs = require('./jobs');
 
 var api;
@@ -56,6 +57,13 @@ function init(_io, _api, _settings, _log, eventsMain) {
         logger.info('runtime init scheduler services successful!', true);
     }).catch(err => {
         logger.error('runtime.failed-to-init scheduler services: ' + err);
+    });
+
+    // Initialize parameters storage
+    parametersStorage.init(settings, logger, runtime).then(() => {
+        logger.info('runtime init parameters storage successful!', true);
+    }).catch(err => {
+        logger.error('runtime.failed-to-init parameters storage: ' + err);
     });
 
     plugins.init(settings, logger).then(result => {
@@ -151,6 +159,27 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: ${err}`);
+            }
+        });
+        // client execute ODBC query
+        socket.on(Events.IoEventTypes.DEVICE_ODBC_QUERY, (message) => {
+            try {
+                if (message && message.deviceId && message.query) {
+                    devices.executeOdbcQuery(message.deviceId, message.query).then(result => {
+                        message.result = result;
+                        socket.emit(Events.IoEventTypes.DEVICE_ODBC_QUERY, message);
+                    }).catch(function (err) {
+                        logger.error(`${Events.IoEventTypes.DEVICE_ODBC_QUERY}: ${err}`);
+                        message.error = err.toString();
+                        socket.emit(Events.IoEventTypes.DEVICE_ODBC_QUERY, message);
+                    });
+                } else {
+                    logger.error(`${Events.IoEventTypes.DEVICE_ODBC_QUERY}: wrong message`);
+                    message.error = 'wrong message';
+                    socket.emit(Events.IoEventTypes.DEVICE_ODBC_QUERY, message);
+                }
+            } catch (err) {
+                logger.error(`${Events.IoEventTypes.DEVICE_ODBC_QUERY}: ${err}`);
             }
         });
         // client ask device values
@@ -352,6 +381,8 @@ function start() {
         project.load().then(result => {
             // start to comunicate with devices
             devices.start().then(function () {
+                // Auto-write parameter tables after devices are started
+                autoWriteParameterTables();
                 resolve(true);
             }).catch(function (err) {
                 logger.error('runtime.failed-to-start-devices: ' + err);
@@ -668,7 +699,136 @@ function checkPermission(userPermission, context, forceUndefined = false, onlyWi
     return result;
 }
 
-var runtime = module.exports = {
+/**
+ * Auto-write parameter table sets on server startup
+ */
+function autoWriteParameterTables() {
+    // Get all devices to check for ODBC devices with parameter tables
+    const allDevices = runtime.project.getDevices();
+    const odbcDevices = Object.values(allDevices).filter(device => device.type === 'ODBC');
+
+    // Check SQLite storage first
+    parametersStorage.setStorage({ storageType: 'sqlite' });
+    parametersStorage.getParameterTypes().then(sqliteTypes => {
+        processParameterTypes(sqliteTypes, 'sqlite', null);
+
+        // Then check each ODBC device - wait a bit for connections to establish
+        setTimeout(() => {
+            odbcDevices.forEach(device => {
+                parametersStorage.setStorage({ storageType: 'odbc', odbcDeviceId: device.id });
+                parametersStorage.getParameterTypes().then(odbcTypes => {
+                    processParameterTypes(odbcTypes, 'odbc', device.id);
+                }).catch(err => {
+                    logger.error(`Failed to load parameter types from ODBC device ${device.id}: ${err}`);
+                });
+            });
+        }, 1000); // Wait 1 second for ODBC connections to establish
+    }).catch(err => {
+        logger.error('Failed to load parameter types from SQLite: ' + err);
+    });
+}
+
+/**
+ * Process parameter types for auto-write
+ */
+function processParameterTypes(types, storageType, odbcDeviceId) {
+    if (!types) return;
+
+    types.forEach(type => {
+        if (type.autoWriteOnStartup && type.lastWrittenSetId) {
+            // Set the correct storage for this type
+            parametersStorage.setStorage({
+                storageType: storageType,
+                odbcDeviceId: odbcDeviceId
+            });
+
+            // Load parameter sets for this type and find the last written set
+            parametersStorage.getParameterSets(type.id).then(sets => {
+                const set = sets.find(s => s.id === type.lastWrittenSetId);
+                if (set && set.values) {
+                    // Write the set values to devices
+                    writeParameterSetToDevices(type, set);
+                }
+            }).catch(err => {
+                logger.error('Failed to load parameter sets for auto-write: ' + err);
+            });
+        }
+    });
+}
+
+/**
+ * Write parameter set values to devices
+ */
+function writeParameterSetToDevices(type, set) {
+    if (!type.rows) return;
+
+    // Collect all cells that need to be checked
+    const cellsToCheck = [];
+
+    type.rows.forEach((row, rowIndex) => {
+        if (row.type === 'column' && row.cells) {
+            // Use the same row ID format as the frontend: ${typeId}_row_${rowIndex}
+            const rowId = `${type.id}_row_${rowIndex}`;
+            row.cells.forEach(cell => {
+                if (cell.type === 'variable' && cell.enableWrite) {
+                    const uniqueCellId = `${rowId}_${cell.id}`;
+                    const value = set.values[uniqueCellId];
+                    const tagId = (set.tagBindings && set.tagBindings[uniqueCellId]) || cell.variableId;
+
+                    if (value !== undefined && value !== '' && tagId) {
+                        cellsToCheck.push({
+                            tagId,
+                            setValue: value,
+                            uniqueCellId,
+                            cell
+                        });
+                    }
+                }
+            });
+        }
+    });
+
+    if (cellsToCheck.length === 0) return;
+
+    // Process each cell: read current value, compare, and write if different
+    const writePromises = cellsToCheck.map(cellData => {
+        return new Promise((resolve) => {
+            try {
+                // Read current tag value (synchronous)
+                const currentValue = devices.getTagValue(cellData.tagId);
+
+                // Only write if the values are different
+                if (currentValue !== cellData.setValue) {
+                    devices.setTagValue(cellData.tagId, cellData.setValue).then(() => {
+                        logger.info(`Auto-wrote parameter value ${cellData.setValue} to tag ${cellData.tagId}`);
+                        resolve();
+                    }).catch(err => {
+                        logger.error(`Failed to auto-write parameter value to tag ${cellData.tagId}: ${err}`);
+                        resolve();
+                    });
+                } else {
+                    logger.info(`Skipping auto-write for tag ${cellData.tagId}: current value (${currentValue}) matches set value (${cellData.setValue})`);
+                    resolve();
+                }
+            } catch (err) {
+                logger.error(`Failed to read current value for tag ${cellData.tagId}: ${err}`);
+                // If we can't read the current value, still attempt to write
+                devices.setTagValue(cellData.tagId, cellData.setValue).then(() => {
+                    logger.info(`Auto-wrote parameter value ${cellData.setValue} to tag ${cellData.tagId} (could not read current value)`);
+                    resolve();
+                }).catch(writeErr => {
+                    logger.error(`Failed to auto-write parameter value to tag ${cellData.tagId}: ${writeErr}`);
+                    resolve();
+                });
+            }
+        });
+    });
+
+    // Wait for all writes to complete
+    Promise.all(writePromises).then(() => {
+        logger.info(`Completed auto-write check for parameter set ${set.name}`);
+    });
+}var runtime = module.exports = {
     init: init,
     project: project,
     users: users,
@@ -685,6 +845,7 @@ var runtime = module.exports = {
     get daqStorage() { return daqstorage },
     get schedulerStorage() { return schedulerStorage },
     get schedulerService() { return schedulerService },
+    get parametersStorage() { return parametersStorage },
     get alarmsMgr() { return alarmsMgr },
     get notificatorMgr() { return notificatorMgr },
     get scriptsMgr() { return scriptsMgr },

@@ -6,8 +6,10 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 
 import { TranslateService } from '@ngx-translate/core';
 
-import { TableType, TableCellType, TableCellAlignType, TableRangeType, GaugeTableProperty, GaugeEvent, GaugeEventType, GaugeEventActionType, TableColumn } from '../../../../_models/hmi';
+import { TableType, TableCellType, TableCellAlignType, TableRangeType, GaugeTableProperty, GaugeEvent, GaugeEventType, GaugeEventActionType, TableColumn, ParameterTableOptions } from '../../../../_models/hmi';
+import { Device, DeviceType } from '../../../../_models/device';
 import { DataTableComponent } from '../data-table/data-table.component';
+import { FlexDeviceTagValueType } from '../../../gauge-property/flex-device-tag/flex-device-tag.component';
 import { TableCustomizerComponent, TableCustomizerType } from '../table-customizer/table-customizer.component';
 import { Utils } from '../../../../_helpers/utils';
 import { SCRIPT_PARAMS_MAP, Script } from '../../../../_models/script';
@@ -44,7 +46,9 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
     eventType = [Utils.getEnumKey(GaugeEventType, GaugeEventType.select)];
     selectActionType = {};
     actionRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
+    actionSetTag = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onSetTag);
     scripts$: Observable<Script[]>;
+    odbcDevices: Device[] = [];
 
     constructor(private dialog: MatDialog,
                 private projectService: ProjectService,
@@ -52,12 +56,14 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
         // this.selectActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onwindow)] = this.translateService.instant(GaugeEventActionType.onwindow);
         // this.selectActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.ondialog)] = this.translateService.instant(GaugeEventActionType.ondialog);
         this.selectActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript)] = this.translateService.instant(GaugeEventActionType.onRunScript);
+        this.selectActionType[Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onSetTag)] = 'Tag';
     }
 
     ngOnInit() {
         Object.keys(this.lastRangeType).forEach(key => {
             this.translateService.get(this.lastRangeType[key]).subscribe((txt: string) => { this.lastRangeType[key] = txt; });
         });
+        this.loadOdbcDevices();
         this._reload();
         this.scripts$ = of(this.projectService.getScripts()).pipe(takeUntil(this.destroy$));
     }
@@ -67,17 +73,32 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
+    private loadOdbcDevices() {
+        this.odbcDevices = (<Device[]>Object.values(this.projectService.getDevices()))
+            .filter(d => d.type === DeviceType.ODBC);
+    }
+
     private _reload() {
         this.property = this.data.settings.property;
         if (this.property) {
             this.tableTypeCtrl.setValue(this.property.type);
             this.options = Object.assign(this.options, DataTableComponent.DefaultOptions(), this.property.options);
+
+            // If table type is history and date range is set to none, force date range toggle to false
+            if (this.tableTypeCtrl.value === this.tableType.history && this.options.lastRange === this.lastRangeType.none) {
+                this.options.daterange.show = false;
+            }
         } else {
             this.ngOnInit();
         }
     }
 
     onTableChanged() {
+        // If table type is history and date range is set to none, force date range toggle to false
+        if (this.tableTypeCtrl.value === this.tableType.history && this.options.lastRange === this.lastRangeType.none) {
+            this.options.daterange.show = false;
+        }
+
         this.property.options = JSON.parse(JSON.stringify(this.options));
         this.property.type = this.tableTypeCtrl.value;
         this.onPropChanged.emit(this.data.settings);
@@ -88,6 +109,8 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
             this.customizeAlarmsTable();
         } else if (this.isReportsType()) {
             this.customizeReportsTable();
+        } else if (this.property.type === this.tableType.parameter) {
+            this.customizeParameterTable();
         } else {
             this.customizeTable();
         }
@@ -98,7 +121,11 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
             data: <TableCustomizerType> {
                 columns: JSON.parse(JSON.stringify(this.options.columns)),
                 rows: JSON.parse(JSON.stringify(this.options.rows)),
-                type: <TableType>this.property.type
+                type: <TableType>this.property.type,
+                parameterTypeId: (this.options as ParameterTableOptions)?.parameterTypeId,
+                parameterTypeIds: (this.options as ParameterTableOptions)?.parameterTypeIds,
+                storageType: (this.options as ParameterTableOptions)?.storageType,
+                odbcDeviceId: (this.options as ParameterTableOptions)?.odbcDeviceId
             },
             position: { top: '60px' }
         });
@@ -107,6 +134,17 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
             if (result) {
                 this.options.columns = result.columns;
                 this.options.rows = result.rows;
+                if ((result as any).types) {
+                    // Persist types on options if provided
+                    // We don't store types directly in options, but if desired the caller can persist via API
+                    // For now, keep parameterTypeId in options for the selected type
+                    if ((result as any).parameterTypeId) {
+                        ((this.options as unknown) as ParameterTableOptions).parameterTypeId = (result as any).parameterTypeId;
+                    }
+                    if ((result as any).parameterTypeIds) {
+                        ((this.options as unknown) as ParameterTableOptions).parameterTypeIds = (result as any).parameterTypeIds;
+                    }
+                }
                 this.onTableChanged();
             }
         });
@@ -173,6 +211,32 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
         });
     }
 
+    customizeParameterTable() {
+        let dialogRef = this.dialog.open(TableCustomizerComponent, {
+            data: <TableCustomizerType> {
+                columns: JSON.parse(JSON.stringify(this.options.columns)),
+                rows: JSON.parse(JSON.stringify(this.options.rows)),
+                type: <TableType>this.property.type,
+                parameterTypeId: (this.options as ParameterTableOptions)?.parameterTypeId,
+                parameterTypeIds: (this.options as ParameterTableOptions)?.parameterTypeIds,
+                storageType: (this.options as ParameterTableOptions)?.storageType,
+                odbcDeviceId: (this.options as ParameterTableOptions)?.odbcDeviceId
+            },
+            position: { top: '60px' }
+        });
+
+        dialogRef.afterClosed().subscribe((result: TableCustomizerType) => {
+            if (result) {
+                this.options.columns = result.columns;
+                this.options.rows = result.rows;
+                if ((result as any).parameterTypeIds) {
+                    ((this.options as unknown) as ParameterTableOptions).parameterTypeIds = (result as any).parameterTypeIds;
+                }
+                this.onTableChanged();
+            }
+        });
+    }
+
     onAddEvent() {
         const gaugeEvent = new GaugeEvent();
         this.addEvent(gaugeEvent);
@@ -216,6 +280,11 @@ export class TablePropertyComponent implements OnInit, OnDestroy {
                 event.actoptions[SCRIPT_PARAMS_MAP] = Utils.clone(script.parameters);
             }
         }
+        this.onTableChanged();
+    }
+
+    onTagSelected(deviceTag: FlexDeviceTagValueType, event: GaugeEvent) {
+        event.actparam = deviceTag.variableId;
         this.onTableChanged();
     }
 }

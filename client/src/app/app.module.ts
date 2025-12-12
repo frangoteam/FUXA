@@ -1,6 +1,6 @@
 // the start/root module that tells Angular how to assemble the application.
 
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -148,6 +148,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { IframePropertyComponent } from './gauges/controls/html-iframe/iframe-property/iframe-property.component';
 import { TablePropertyComponent } from './gauges/controls/html-table/table-property/table-property.component';
 import { TableCustomizerComponent } from './gauges/controls/html-table/table-customizer/table-customizer.component';
+import { TableCustomizerTypeEditComponent } from './gauges/controls/html-table/table-customizer/table-customizer-type-edit/table-customizer-type-edit.component';
 import { DataTableComponent } from './gauges/controls/html-table/data-table/data-table.component';
 import { HtmlSchedulerComponent } from './gauges/controls/html-scheduler/html-scheduler.component';
 import { SchedulerComponent } from './gauges/controls/html-scheduler/scheduler/scheduler.component';
@@ -164,6 +165,7 @@ import { ScriptModeComponent } from './scripts/script-mode/script-mode.component
 import { DeviceWebapiPropertyDialogComponent } from './device/device-map/device-webapi-property-dialog/device-webapi-property-dialog.component';
 import { SvgSelectorComponent } from './editor/svg-selector/svg-selector.component';
 import { FrameworkModule } from './framework/framework.module';
+import { Ui5Module } from './ui5/ui5.module';
 import { StopInputPropagationDirective } from './_directives/stop-input-propagation.directive';
 import { HeartbeatService } from './_services/heartbeat.service';
 import { RcgiService } from './_services/rcgi/rcgi.service';
@@ -198,6 +200,11 @@ import { FlexWidgetPropertyComponent } from './gauges/gauge-property/flex-widget
 import { GraphSourceEditComponent } from './editor/graph-config/graph-source-edit/graph-source-edit.component';
 import { LibWidgetsComponent } from './resources/lib-widgets/lib-widgets.component';
 import { TableCustomizerCellEditComponent } from './gauges/controls/html-table/table-customizer/table-customizer-cell-edit/table-customizer-cell-edit.component';
+import { TableCustomizerTextRowEditComponent } from './gauges/controls/html-table/table-customizer/table-customizer-text-row-edit/table-customizer-text-row-edit.component';
+import { ParameterSetDialogComponent } from './gauges/controls/html-table/parameter-table/parameter-set-dialog.component';
+import { ParameterDeleteConfirmDialogComponent } from './gauges/controls/html-table/parameter-table/parameter-delete-confirm-dialog.component';
+import { ParameterTableComponent } from './gauges/controls/html-table/parameter-table/parameter-table.component';
+import { OdbcBrowserComponent } from './odbc-browser/odbc-browser.component';
 import { TableAlarmsComponent } from './gauges/controls/html-table/table-alarms/table-alarms.component';
 import { TableReportsComponent } from './gauges/controls/html-table/table-reports/table-reports.component';
 import { ReportsService } from './_services/reports.service';
@@ -237,7 +244,7 @@ export function createTranslateLoader(http: HttpClient) {
 }
 
 export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
-    showDelay: 2000,
+    showDelay: 1000,
     hideDelay: 500,
     touchendHideDelay: 500,
 };
@@ -378,7 +385,12 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         IframePropertyComponent,
         TablePropertyComponent,
         TableCustomizerComponent,
+    TableCustomizerTypeEditComponent,
         TableCustomizerCellEditComponent,
+    TableCustomizerTextRowEditComponent,
+        ParameterDeleteConfirmDialogComponent,
+        ParameterTableComponent,
+        OdbcBrowserComponent,
         TableAlarmsComponent,
         TableReportsComponent,
         DataTableComponent,
@@ -439,8 +451,10 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         GridsterModule,
         NgChartsModule,
         CodemirrorModule,
-        NgxDaterangepickerMd.forRoot(),
-        FrameworkModule
+    NgxDaterangepickerMd.forRoot(),
+    FrameworkModule,
+    Ui5Module,
+    ParameterSetDialogComponent
     ],
     providers: [
         // providersResourceService,
@@ -485,6 +499,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DeviceAdapterService,
         {provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: myCustomTooltipDefaults}
     ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
     bootstrap: [AppComponent]
 })
 export class AppModule {

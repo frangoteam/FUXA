@@ -2,6 +2,7 @@ import { GridType } from 'angular-gridster2';
 import { Device, DeviceType, Tag } from './device';
 import { WidgetPropertyVariable } from '../_helpers/svg-utils';
 import { MapsLocation } from './maps';
+import { Utils } from '../_helpers/utils';
 
 export class Hmi {
     /** Layout for navigation menu, header bar, ...  */
@@ -397,6 +398,7 @@ export enum GaugeEventActionType {
     onRunScript = 'shapes.event-onrunscript',
     onViewToPanel = 'shapes.event-onViewToPanel',
     onMonitor = 'shapes.event-onmonitor',
+    onSetTag = 'shapes.event-onsettag',
 }
 
 export enum ViewEventType {
@@ -505,6 +507,7 @@ export enum TableType {
     alarms = 'alarms',
     alarmsHistory = 'alarmsHistory',
     reports = 'reports',
+    parameter = 'parameter',
 }
 
 export interface TableOptions {
@@ -518,6 +521,7 @@ export interface TableOptions {
         show: boolean;
     };
     realtime?: boolean;
+    refreshInterval?: number;
     lastRange?: TableRangeType;
     gridColor?: string;
     header?: {
@@ -526,6 +530,11 @@ export interface TableOptions {
         fontSize?: number;
         color?: string;
         background?: string;
+    };
+    toolbar?: {
+        background?: string;
+        color?: string;
+        buttonColor?: string;
     };
     row?: {
         height: number;
@@ -544,6 +553,9 @@ export interface TableOptions {
     reportsColumns?: TableColumn[];
     reportFilter: TableFilter;
     rows?: TableRow[];
+    storageType?: string;
+    odbcDeviceId?: string;
+    showEnableEditInFooter?: boolean;
 }
 
 export interface TableFilter {
@@ -557,6 +569,7 @@ export enum TableCellType {
     variable = 'variable',
     timestamp = 'timestamp',
     device = 'device',
+    odbc = 'odbc',
 }
 
 export class TableCell {
@@ -567,11 +580,27 @@ export class TableCell {
     timeInterval?: number;
     bitmask: number;
     type: TableCellType;
+    deviceId?: string; 
+    isEditable?: boolean; 
+    enableWrite?: boolean; 
+    autoSave?: boolean; 
+    autoWrite?: boolean; 
+    inputType?: InputOptionType; 
+    inputMin?: number; 
+    inputMax?: number; 
+    odbcTimestampColumn?: string; 
+    odbcTimestampColumns?: Array<{ table: string; column: string; convertUtcToLocal?: boolean }>; 
+    convertUtcToLocal?: boolean;
 
     constructor(id: string, type?: TableCellType, label?: string) {
         this.id = id;
         this.type = type || TableCellType.label;
         this.label = label;
+        this.isEditable = false; 
+        this.enableWrite = false; 
+        this.autoSave = false; 
+        this.autoWrite = false; 
+        this.inputType = InputOptionType.text; 
     }
 }
 
@@ -581,11 +610,19 @@ export class TableColumn extends TableCell {
     exname: string;
     constructor(name: string, type?: TableCellType, label?: string) {
         super(name, type, label);
+        if (type && ![TableCellType.label, TableCellType.timestamp].includes(type)) {
+            this.type = TableCellType.label;
+        }
     }
 }
 
 export class TableRow {
     cells: TableCell[];
+    type?: string;
+    textAlign?: string;
+    textSize?: number;
+    textBold?: boolean;
+    textContent?: string;
     constructor(cls: TableCell[]) {
         this.cells = cls;
     }
@@ -598,6 +635,7 @@ export enum TableCellAlignType {
 }
 
 export enum TableRangeType {
+    none = 'table.rangetype-none',
     last1h = 'table.rangetype-last1h',
     last1d = 'table.rangetype-last1d',
     last3d = 'table.rangetype-last3d',
@@ -761,5 +799,112 @@ export interface VideoOptions {
     address: string;
     initImage?: string;
     showControls?: boolean;
+}
+
+export enum TableRowType {
+    column = 'column',
+    text = 'text',
+}
+
+export class ParameterType {
+    id: string;
+    name: string;
+    description: string;
+    userId: string;
+    rows: ParameterRow[];
+    columns: TableColumn[]; 
+    columnLabels: { [columnId: string]: string }; 
+    columnStyles?: { [columnId: string]: { width?: number | string; align?: TableCellAlignType } };
+    deviceId?: string; 
+    created: Date;
+    modified: Date;
+    lastWrittenSetId?: string; 
+    autoWriteOnStartup?: boolean; 
+
+    constructor(id?: string, name?: string) {
+        this.id = id || '';
+        this.name = name || '';
+        this.description = '';
+        this.userId = '';
+        this.rows = [];
+        this.columns = [];
+        this.columnLabels = {};
+        this.columnStyles = {};
+        this.created = new Date();
+        this.modified = new Date();
+    }
+}
+
+export class ParameterRow {
+    id: string;
+    type: TableRowType;
+    cells: TableCell[];
+    label?: string; 
+    textContent?: string;
+    textAlign?: TableCellAlignType;
+    textSize?: number;
+    textBold?: boolean;
+
+    constructor(type: TableRowType = TableRowType.column) {
+        this.id = '';
+        this.type = type;
+        this.cells = [];
+        this.textAlign = TableCellAlignType.left;
+        this.textSize = 12;
+        this.textBold = false;
+    }
+}
+
+export class ParameterSet {
+    id: string;
+    name: string;
+    description: string;
+    userId: string;
+    typeId: string; 
+    values: { [cellId: string]: any }; 
+    labels: { [cellId: string]: string }; 
+    columnLabels: { [cellId: string]: string }; 
+    tagBindings: { [cellId: string]: string }; 
+    created: Date;
+    modified: Date;
+    isDefault: boolean;
+
+    constructor(typeId: string, name?: string, parameterType?: ParameterType) {
+        this.id = Utils.getShortGUID('ps_');
+        this.name = name || '';
+        this.description = '';
+        this.userId = '';
+        this.typeId = typeId;
+        this.values = {};
+        this.labels = {};
+        this.columnLabels = {};
+        this.tagBindings = {};
+        this.created = new Date();
+        this.modified = new Date();
+        this.isDefault = false;
+
+        if (parameterType && parameterType.rows) {
+            parameterType.rows.forEach(row => {
+                if (row && row.cells) {
+                    row.cells.forEach(cell => {
+                        if (cell && cell.id) {
+                            this.values[cell.id] = '';
+                            this.labels[cell.id] = cell.label || '';
+                            this.tagBindings[cell.id] = '';
+                        }
+                    });
+                }
+            });
+        }
+    }
+}
+
+export interface ParameterTableOptions extends TableOptions {
+    parameterTypeId?: string;
+    parameterTypeIds?: string[];
+    lastSelectedSetsByType?: { [typeId: string]: string }; 
+    storageType?: 'sqlite' | 'odbc';
+    odbcDeviceId?: string;
+    showEnableEditInFooter?: boolean;
 }
 

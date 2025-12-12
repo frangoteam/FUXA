@@ -1,45 +1,88 @@
-<div style="position: relative;">
+<div style="position: relative;" [class.parameters-table]="isParametersTable">
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.customize-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
-        <mat-table #table [dataSource]="dataSource" matSort class="customer-table" style="min-width: 900px; height: 500px; display: block; overflow: auto;">
-            <ng-container *ngFor="let column of displayedColumns; index as i" [matColumnDef]="column">
+        <!-- Parameter types section (only shown for parameter tables) -->
+        <div *ngIf="data.type === tableType.parameter" class="my-form-field block types-section">
+            <div class="types-main" style="align-items:center;">
+                <div class="my-form-field select-wrapper" style="min-width:240px; max-width:260px;">
+                    <span>{{'parameter.type-select' | translate}}</span>
+                    <mat-select style="width: 100%;" [(value)]="selectedTypeId" (selectionChange)="onSelectType($event.value)">
+                        <mat-option *ngFor="let t of parameterTypes" [value]="t.id">{{t.name}}{{t.userId ? (' (' + t.userId + ')') : ''}}</mat-option>
+                    </mat-select>
+                </div>
+                <div *ngIf="selectedTypeId" class="types-assign" style="margin-left: 12px;">
+                    <mat-checkbox color="primary" [checked]="isTypeAssigned(selectedTypeId)" (change)="onTypeAssignmentChange(selectedTypeId, $event.checked)" class="align-checkbox">
+                        {{'table.type-assign' | translate}}
+                    </mat-checkbox>
+                </div>
+                <div class="types-actions">
+                    <button mat-icon-button (click)="onAddType()" matTooltip="{{'table.type-add' | translate}}">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="onCopyType()" [disabled]="!selectedTypeId" matTooltip="{{'table.type-copy' | translate}}">
+                        <mat-icon>content_copy</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="onEditType()" [disabled]="!selectedTypeId" matTooltip="{{'table.type-edit' | translate}}">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="onDeleteType()" [disabled]="!selectedTypeId" matTooltip="{{'table.type-delete' | translate}}">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    <mat-progress-spinner *ngIf="isSavingType" [diameter]="24" mode="indeterminate"></mat-progress-spinner>
+                </div>
+            </div>
+            <div *ngIf="selectedTypeId" class="my-form-field mt5 types-desc" style="margin-top:8px;">
+                <div style="font-size:13px;color:#666;max-width:680px">{{selectedType?.description}}</div>
+            </div>
+            
+
+            <!-- Buttons for add/edit/delete type now open a dedicated dialog -->
+        </div>
+        <mat-table #table [dataSource]="dataSource" matSort class="table-customizer-table" style="min-width: 900px; height: 500px; display: block; overflow: auto;">
+            <ng-container *ngFor="let column of displayedColumns; index as colIndex" [matColumnDef]="column">
                 <mat-header-cell *matHeaderCellDef>
                     <div class="data-table-cell">
-                        <span style="display: block; font-size: 12px;">{{getColumnType(i)}} </span>
-                        <span style="display: block;">{{getColumnSetting(i)}} </span>
+                        <span style="display: block; font-size: 12px;">{{getColumnType(colIndex)}} </span>
+                        <span style="display: block;">{{getColumnSetting(colIndex)}} </span>
                     </div>
-                    <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="column-options">
+                    <button *ngIf="data.columns?.length > 0 || data.type === tableType.parameter" mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="column-options">
                         <mat-icon>more_vert</mat-icon>
                     </button>
                     <mat-menu #optionsgMenu [overlapTrigger]="false">
-                        <button mat-menu-item (click)="onEditColumn(column)" class="table-menu-item">
+                        <button *ngIf="data.columns?.length > 0 || data.type === tableType.parameter" mat-menu-item (click)="onEditColumn(column)" class="table-menu-item">
                             <mat-icon>edit</mat-icon>
                             {{'table.customize-column-edit' | translate}}
                         </button>
-                        <button mat-menu-item (click)="onMoveColumnLeft(i)" class="table-menu-item" [disabled]="i === 0">
+                        <button *ngIf="data.columns?.length > 0 || data.type === tableType.parameter" mat-menu-item (click)="onMoveColumnLeft(colIndex)" class="table-menu-item" [disabled]="colIndex === 0">
                             <mat-icon>west</mat-icon>
                             {{'table.customize-column-left' | translate}}
                         </button>
-                        <button mat-menu-item (click)="onMoveColumnRight(i)" class="table-menu-item" [disabled]="i === displayedColumns.length - 1">
+                        <button *ngIf="data.columns?.length > 0 || data.type === tableType.parameter" mat-menu-item (click)="onMoveColumnRight(colIndex)" class="table-menu-item" [disabled]="colIndex === displayedColumns.length - 1">
                             <mat-icon>east</mat-icon>
                             {{'table.customize-column-right' | translate}}
                         </button>
-                        <button mat-menu-item (click)="onRemoveColumn(column)" class="table-menu-item">
+                        <button *ngIf="data.columns?.length > 0 || data.type === tableType.parameter" mat-menu-item (click)="onRemoveColumn(column)" class="table-menu-item">
                             <mat-icon>delete</mat-icon>
                             {{'table.customize-column-remove' | translate}}
                         </button>
                     </mat-menu>
                 </mat-header-cell>
-                <mat-cell *matCellDef="let element" >
-                    <mat-cell *ngIf="i === 0" class="data-table-edit-row">
+                <mat-cell *matCellDef="let element; let rowIndex = index" [attr.colspan]="(colIndex === 0 && isTextRow(element)) ? displayedColumns.length : null" [class.text-row-hidden]="isTextRow(element) && colIndex > 0">
+                    <div *ngIf="colIndex === 0" class="data-table-edit-row">
+                        <!-- Always show row menu (three dots) so move/copy/delete remain available for text rows -->
                         <button mat-icon-button [matMenuTriggerFor]="rowMenu" (click)="$event.stopPropagation()" class="row-options">
                             <mat-icon>more_vert</mat-icon>
                         </button>
+                        <!-- edit buttons (pencil) moved out of this narrow container to avoid clipping -->
                         <mat-menu #rowMenu="matMenu">
                             <button mat-menu-item (click)="onMoveRowUp(element)" class="table-menu-item" [disabled]="dataSource.data.indexOf(element) === 0">
                                 <mat-icon>arrow_upward</mat-icon>
                                 {{'table.customize-row-up' | translate}}
+                            </button>
+                            <button mat-menu-item *ngIf="isTextRow(element)" (click)="onEditTextRow(element)" class="table-menu-item">
+                                <mat-icon>edit</mat-icon>
+                                {{'table.customize-row-edit' | translate}}
                             </button>
                             <button mat-menu-item (click)="onMoveRowDown(element)" class="table-menu-item" [disabled]="dataSource.data.indexOf(element) === dataSource.data.length - 1">
                                 <mat-icon>arrow_downward</mat-icon>
@@ -49,16 +92,41 @@
                                 <mat-icon>delete</mat-icon>
                                 {{'table.customize-row-remove' | translate}}
                             </button>
+                            <button mat-menu-item (click)="onCopyRow(element)" class="table-menu-item">
+                                <mat-icon>content_copy</mat-icon>
+                                {{'table.customize-row-copy' | translate}}
+                            </button>
                         </mat-menu>
-                    </mat-cell>
-                    <div class="data-table-cell">
+                    </div>
+                    <!-- Pencil edit button – placed as a sibling to the left area so it's not clipped by CSS -->
+                        <button *ngIf="isTextRow(element)" mat-icon-button (click)="onEditTextRow(element)" class="row-options" matTooltip="{{'table.customize-row-edit' | translate}}">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <button *ngIf="!isTextRow(element)" mat-icon-button (click)="onEditCell(element, column)" class="row-options" matTooltip="{{'table.customize-cell-edit' | translate}}">
+                            <mat-icon>edit</mat-icon>
+                        </button>
+                        <!-- Delete cell for non-text column rows – placed beside the edit button -->
+                        <button mat-icon-button *ngIf="!isTextRow(element) && data.type === tableType.parameter && data.rows[dataSource.data.indexOf(element)]?.type === tableRowType.column" (click)="onRemoveCell(element, column)" class="row-options" matTooltip="Remove cell from row">
+                            <mat-icon>delete_outline</mat-icon>
+                        </button>
+
+                        <div class="data-table-cell">
+                        <ng-container *ngIf="colIndex === 0 && data.type === tableType.parameter && isTextRow(element); else defaultCell">
+                                <!-- Parameter text row display: show text content across the row and an edit icon -->
+                           <div [style.textAlign]="data.rows[dataSource.data.indexOf(element)]?.textAlign"
+                               [style.fontSize.px]="data.rows[dataSource.data.indexOf(element)]?.textSize"
+                               [style.fontWeight]="data.rows[dataSource.data.indexOf(element)]?.textBold ? 'bold' : 'normal'">
+                                    {{ (data.rows[dataSource.data.indexOf(element)]?.textContent) ? data.rows[dataSource.data.indexOf(element)]?.textContent : ('table.customize-row-empty' | translate) }}
+                                </div>
+                           <!-- Edit button moved to the left-side edit area to avoid duplicate edit icons in the text row -->
+                        </ng-container>
+                        <ng-template #defaultCell>
                         <span style="display: block; font-size: 12px;">{{getCellType(element[column])}} </span>
                         <span style="display: block;">{{getCellSetting(element[column])}} </span>
+                        </ng-template>
                     </div>
-                    <button mat-icon-button (click)="onEditCell(element, column)" class="column-options" matTooltip="{{'table.customize-cell-edit' | translate}}">
-                        <mat-icon>edit</mat-icon>
-                    </button>
-                </mat-cell>
+                    <!-- The delete button for non-text column rows was moved up next to the edit button (above) to keep order: edit -> delete -> text -->
+                    </mat-cell>
             </ng-container>
             <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true" class="data-table-header"></mat-header-row>
             <mat-row *matRowDef="let row; columns: displayedColumns;">
@@ -69,10 +137,21 @@
                 <mat-icon>add_circle_outline</mat-icon>
             </button>
         </div>
-        <div *ngIf="data.type === tableType.data" class="toolbox-row">
-            <button mat-icon-button (click)="onAddRow()" matTooltip="{{'table.customize-row-add' | translate}}">
-                <mat-icon>add_circle_outline</mat-icon>
-            </button>
+        <div *ngIf="data.type === tableType.data || data.type === tableType.parameter" class="toolbox-row">
+            <div *ngIf="data.type === tableType.parameter; else simpleAddRow">
+                <mat-menu #addRowMenu="matMenu">
+                    <button mat-menu-item (click)="onAddRowOfType('column')">{{'table.customize-row-add-column' | translate}}</button>
+                    <button mat-menu-item (click)="onAddRowOfType('text')">{{'table.customize-row-add-text' | translate}}</button>
+                </mat-menu>
+                <button mat-icon-button [matMenuTriggerFor]="addRowMenu" matTooltip="{{'table.customize-row-add' | translate}}">
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+            </div>
+            <ng-template #simpleAddRow>
+                <button mat-icon-button (click)="onAddRow()" matTooltip="{{'table.customize-row-add' | translate}}">
+                    <mat-icon>add_circle_outline</mat-icon>
+                </button>
+            </ng-template>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

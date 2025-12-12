@@ -17,6 +17,19 @@
         .data-realtime {
             width: 100px;
         }
+
+        .data-refresh-interval {
+            width: 120px;
+            
+            input {
+                width: 80px;
+                margin-right: 5px;
+            }
+            
+            .unit {
+                font-size: 12px;
+            }
+        }
     }
 
     .section-item {
