@@ -357,6 +357,8 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
                 .setContent(container)
                 .openOn(this.map);
             this.currentPopup.on('remove', () => {
+                this.appRef.detachView(componentRef.hostView);
+                componentRef.destroy();
                 this.currentPopup = null;
             });
         }, 250);
