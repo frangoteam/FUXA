@@ -159,7 +159,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 if (message === 'get') {
                     var adevs = devices.getDevicesValues();
                     for (var id in adevs) {
-                        updateDeviceValues({ id: id, values: adevs[id] });
+                        updateDeviceValues({ id: id, values: adevs[id] || {} });
                     }
                 } else if (message.cmd === 'set' && message.var) {
                     devices.setDeviceValue(message.var.source, message.var.id, message.var.value, message.fnc);
@@ -319,7 +319,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 if (message.sendLastValue) {
                     var adevs = devices.getDevicesValues();
                     for (var id in adevs) {
-                        updateDeviceValues({ id: id, values: adevs[id] });
+                        updateDeviceValues({ id: id, values: adevs[id] || {}});
                     }
                 }
             } catch (err) {
