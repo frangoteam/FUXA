@@ -8,6 +8,7 @@ info:
 
     Auth:
     - When `secureEnabled=true`, send a JWT in the `x-access-token` header.
+    - Alternatively, when enabled on the server, you can send an API key in `x-api-key`.
     - When `secureEnabled=false`, many APIs can be called without a token (admin actions are still protected).
 
 servers:
@@ -17,6 +18,7 @@ servers:
 tags:
   - name: System
   - name: Auth
+  - name: ApiKeys
   - name: Settings
   - name: Project
   - name: Users
@@ -96,6 +98,7 @@ paths:
     post:
       tags: [Settings]
       summary: Update settings (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -114,6 +117,7 @@ paths:
     get:
       tags: [Project]
       summary: Get project
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       responses:
         '200':
           description: OK
@@ -123,6 +127,7 @@ paths:
     post:
       tags: [Project]
       summary: Set full project (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -140,6 +145,7 @@ paths:
     post:
       tags: [Project]
       summary: Patch project (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -157,6 +163,7 @@ paths:
     get:
       tags: [Project]
       summary: Get demo project
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       responses:
         '200':
           description: OK
@@ -168,6 +175,7 @@ paths:
     get:
       tags: [Project]
       summary: Get device property (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: id
@@ -182,6 +190,7 @@ paths:
     post:
       tags: [Project]
       summary: Set device property (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -213,6 +222,7 @@ paths:
     get:
       tags: [Users]
       summary: List users (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       responses:
         '200':
           description: OK
@@ -222,6 +232,7 @@ paths:
     post:
       tags: [Users]
       summary: Upsert users (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -235,6 +246,7 @@ paths:
     delete:
       tags: [Users]
       summary: Delete user (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: param
@@ -247,6 +259,7 @@ paths:
     get:
       tags: [Users]
       summary: List roles (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       responses:
         '200':
           description: OK
@@ -256,6 +269,7 @@ paths:
     post:
       tags: [Users]
       summary: Upsert roles (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -269,6 +283,7 @@ paths:
     delete:
       tags: [Users]
       summary: Delete roles (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: roles
@@ -282,6 +297,7 @@ paths:
     get:
       tags: [Alarms]
       summary: Current alarms
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: filter
@@ -299,6 +315,7 @@ paths:
     get:
       tags: [Alarms]
       summary: Alarms history
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       responses:
         '200':
           description: OK
@@ -310,6 +327,7 @@ paths:
     post:
       tags: [Alarms]
       summary: Ack alarm
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -325,6 +343,7 @@ paths:
     post:
       tags: [Alarms]
       summary: Clear alarms (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: false
         content:
@@ -337,6 +356,7 @@ paths:
     get:
       tags: [Plugins]
       summary: List plugins (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       responses:
         '200':
           description: OK
@@ -346,6 +366,7 @@ paths:
     post:
       tags: [Plugins]
       summary: Install plugin (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -359,6 +380,7 @@ paths:
     delete:
       tags: [Plugins]
       summary: Uninstall plugin (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: param
@@ -371,6 +393,7 @@ paths:
     get:
       tags: [Diagnose]
       summary: List log files (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       responses:
         '200':
           description: OK
@@ -382,6 +405,7 @@ paths:
     get:
       tags: [Diagnose]
       summary: Download a log (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: file
@@ -398,6 +422,7 @@ paths:
     get:
       tags: [Diagnose]
       summary: List report files by prefix (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: name
@@ -414,6 +439,7 @@ paths:
     post:
       tags: [Diagnose]
       summary: Send test mail (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -429,6 +455,7 @@ paths:
     get:
       tags: [Resources]
       summary: List images (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       responses:
         '200':
           description: OK
@@ -440,6 +467,7 @@ paths:
     get:
       tags: [Resources]
       summary: List resources
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       responses:
         '200':
           description: OK
@@ -451,6 +479,7 @@ paths:
     post:
       tags: [Resources]
       summary: Remove a resource file (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -467,6 +496,7 @@ paths:
     get:
       tags: [Resources]
       summary: Generate chart image (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: param
@@ -484,6 +514,7 @@ paths:
     get:
       tags: [Resources]
       summary: List templates (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       responses:
         '200':
           description: OK
@@ -493,6 +524,7 @@ paths:
     delete:
       tags: [Resources]
       summary: Delete templates (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: templates
@@ -505,6 +537,7 @@ paths:
     post:
       tags: [Resources]
       summary: Upsert template (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -521,6 +554,7 @@ paths:
     get:
       tags: [Resources]
       summary: List widgets (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       responses:
         '200':
           description: OK
@@ -532,6 +566,7 @@ paths:
     post:
       tags: [Resources]
       summary: Remove widget file (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -551,6 +586,7 @@ paths:
     get:
       tags: [DAQ]
       summary: Query DAQ values
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: query
@@ -568,6 +604,7 @@ paths:
     get:
       tags: [Scheduler]
       summary: Get scheduler data
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: id
@@ -582,6 +619,7 @@ paths:
     post:
       tags: [Scheduler]
       summary: Set scheduler data
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -596,6 +634,7 @@ paths:
     delete:
       tags: [Scheduler]
       summary: Delete scheduler data
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: id
@@ -612,6 +651,7 @@ paths:
     post:
       tags: [Scripts]
       summary: Run script
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -628,6 +668,7 @@ paths:
     post:
       tags: [Scripts]
       summary: Run server system function (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -644,6 +685,7 @@ paths:
     get:
       tags: [Command]
       summary: Download file (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: cmd
@@ -664,6 +706,7 @@ paths:
     get:
       tags: [Command]
       summary: Get tag values
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: ids
@@ -687,6 +730,7 @@ paths:
     post:
       tags: [Command]
       summary: Set tag values (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -704,6 +748,7 @@ paths:
     get:
       tags: [Reports]
       summary: Query report files
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       parameters:
         - in: query
           name: query
@@ -721,6 +766,7 @@ paths:
     post:
       tags: [Reports]
       summary: Force report build (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
@@ -733,11 +779,59 @@ paths:
     post:
       tags: [Reports]
       summary: Remove report file (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
       requestBody:
         required: true
         content:
           application/json:
             schema: { $ref: '#/components/schemas/AnyObject' }
+      responses:
+        '204': { description: OK }
+
+  /api/apikeys:
+    get:
+      tags: [ApiKeys]
+      summary: List API keys (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ApiKey' }
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+    post:
+      tags: [ApiKeys]
+      summary: Upsert API keys (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params:
+                  type: array
+                  items: { $ref: '#/components/schemas/ApiKey' }
+      responses:
+        '204': { description: OK }
+    delete:
+      tags: [ApiKeys]
+      summary: Delete API keys (admin)
+      security: [{ AccessToken: [] }, { ApiKey: [] }]
+      parameters:
+        - in: query
+          name: apikeys
+          required: true
+          description: JSON string (array of API key identifiers)
+          schema: { type: string }
       responses:
         '204': { description: OK }
 
@@ -747,6 +841,11 @@ components:
       type: apiKey
       in: header
       name: x-access-token
+    ApiKey:
+      type: apiKey
+      in: header
+      name: x-api-key
+      description: Server API key
 
   schemas:
     AnyObject:
@@ -931,3 +1030,16 @@ components:
         fileName: { type: string }
         reportName: { type: string }
         created: { type: string, format: date-time }
+
+    ApiKey:
+      type: object
+      description: |
+        API key entry as stored by the server. Shape can evolve across versions.
+      properties:
+        id: { type: string, description: Key identifier/name }
+        key: { type: string, description: Secret key value }
+        enabled: { type: boolean }
+        expires:
+          type: string
+          description: Expiration date/time (ISO string) or empty for never
+      additionalProperties: true
