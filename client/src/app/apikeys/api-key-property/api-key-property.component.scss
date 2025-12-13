@@ -1,0 +1,47 @@
+:host {
+    display: block;
+
+    form {
+        min-width: 520px;
+        max-width: 720px;
+    }
+
+    .dialog-content {
+        width: 100%;
+    }
+
+    .my-form-field input.full-input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .key-field {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        width: 100%;
+    }
+
+    .key-field input.full-input {
+        flex: 1;
+    }
+
+    .date-row {
+        display: flex;
+        gap: 16px;
+        width: 100%;
+    }
+
+    .date-row .my-form-field {
+        flex: 1;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: var(--inputTime);
+    }
+
+    .date {
+        font-size: 16px;
+        font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif;
+    }
+}
