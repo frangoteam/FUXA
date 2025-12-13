@@ -8,7 +8,6 @@ var morgan = require('morgan');
 var bodyParser = require('body-parser');
 const authJwt = require('./jwt-helper');
 const rateLimit = require("express-rate-limit");
-var path = require('path');
 
 var prjApi = require('./projects');
 var authApi = require('./auth');
@@ -171,6 +170,7 @@ function init(_server, _runtime) {
                     res.end();
                 }
             });
+
             runtime.logger.info('api: init successful!', true);
         } else {
         }

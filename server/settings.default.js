@@ -1,7 +1,7 @@
 
 module.exports = {
     // Version to manage update
-    version: 1.3,
+    version: 1.4,
 
     // Standard language (editor)
     language: 'en',
@@ -107,5 +107,5 @@ module.exports = {
     //snapshots retention in days
     webcamSnapShotsRetain: 7,
 
-
+    swaggerEnabled: false,
 }

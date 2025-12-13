@@ -18,6 +18,8 @@ const authJwt = require('./api/jwt-helper');
 
 const express = require('express');
 const app = express();
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
 
 var server;
 var settingsFile;
@@ -345,6 +347,17 @@ app.use(morgan('dev', {
         return res.statusCode >= 400
     }, stream: process.stdout
 }));
+
+// Swagger API Docs (mounted on main app so it isn't intercepted by optional integrations)
+try {
+    const swaggerEnabled = settings.swagger || settings.swaggerEnabled;
+    if (swaggerEnabled) {
+        const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
+        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    }
+} catch (err) {
+    logger.warn('Swagger UI failed to initialize', err);
+}
 
 // app.get('/', function (req, res) {
 //     res.sendFile('/index.html');
