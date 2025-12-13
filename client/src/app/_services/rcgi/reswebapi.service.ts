@@ -13,6 +13,7 @@ import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Role } from '../../_models/user';
+import { ApiKey } from '../../_models/apikey';
 
 @Injectable()
 export class ResWebApiService implements ResourceStorageService {
@@ -188,6 +189,27 @@ export class ResWebApiService implements ResourceStorageService {
     removeRoles(roles: Role[]): Observable<any> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         return this.http.delete<any>(this.endPointConfig + '/api/roles', { headers: header, params: { roles:  JSON.stringify(roles) } });
+    }
+
+    getApiKeys(): Observable<ApiKey[]> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.get<ApiKey[]>(this.endPointConfig + '/api/apikeys', { headers: header });
+    }
+
+    setApiKeys(apikeys: ApiKey[]): Observable<any> {
+        return new Observable((observer) => {
+            let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+            this.http.post<ApiKey[]>(this.endPointConfig + '/api/apikeys', { headers: header, params: apikeys }).subscribe(result => {
+                observer.next(null);
+            }, err => {
+                observer.error(err);
+            });
+        });
+    }
+
+    removeApiKeys(apikeys: ApiKey[]): Observable<any> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.delete<any>(this.endPointConfig + '/api/apikeys', { headers: header, params: { apikeys:  JSON.stringify(apikeys) } });
     }
 
     getReportsDir(report: Report): Observable<string[]> {

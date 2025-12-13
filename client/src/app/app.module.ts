@@ -231,6 +231,8 @@ import { TagPropertyEditMelsecComponent } from './device/tag-property/tag-proper
 import { SchedulerConfirmDialogComponent } from './gauges/controls/html-scheduler/scheduler-confirm-dialog/scheduler-confirm-dialog.component';
 import { MatIconRegistry } from '@angular/material/icon';
 import { NodeRedFlowsComponent } from './integrations/node-red/node-red-flows/node-red-flows.component';
+import { ApiKeysListComponent } from './apikeys/api-keys-list/api-keys-list.component';
+import { ApiKeyPropertyComponent } from './apikeys/api-key-property/api-key-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -412,6 +414,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         SchedulerPropertyComponent,
         SchedulerConfirmDialogComponent,
         NodeRedFlowsComponent,
+        ApiKeysListComponent,
+        ApiKeyPropertyComponent
     ],
     imports: [
         BrowserModule,
