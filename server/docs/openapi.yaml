@@ -1,0 +1,933 @@
+openapi: 3.0.3
+
+info:
+  title: FUXA API
+  version: 1.0.0
+  description: |
+    REST APIs exposed by the FUXA server under the `/api/*` paths.
+
+    Auth:
+    - When `secureEnabled=true`, send a JWT in the `x-access-token` header.
+    - When `secureEnabled=false`, many APIs can be called without a token (admin actions are still protected).
+
+servers:
+  - url: /
+    description: Same host (default port 1881)
+
+tags:
+  - name: System
+  - name: Auth
+  - name: Settings
+  - name: Project
+  - name: Users
+  - name: Alarms
+  - name: Plugins
+  - name: Resources
+  - name: DAQ
+  - name: Scheduler
+  - name: Scripts
+  - name: Command
+  - name: Diagnose
+  - name: Reports
+
+paths:
+  /api/version:
+    get:
+      tags: [System]
+      summary: API version string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: string }
+
+  /api/signin:
+    post:
+      tags: [Auth]
+      summary: Sign in (returns a JWT)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SignInRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SignInResponse' }
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /api/heartbeat:
+    post:
+      tags: [Auth]
+      summary: Heartbeat (token refresh / guest token)
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HeartbeatResponse' }
+        '204':
+          description: No content
+
+  /api/settings:
+    get:
+      tags: [Settings]
+      summary: Get settings (sanitized)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Settings' }
+        '404':
+          description: Not found
+    post:
+      tags: [Settings]
+      summary: Update settings (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Settings' }
+      responses:
+        '204':
+          description: Updated
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /api/project:
+    get:
+      tags: [Project]
+      summary: Get project
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Project' }
+    post:
+      tags: [Project]
+      summary: Set full project (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Project' }
+      responses:
+        '204': { description: Saved }
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /api/projectData:
+    post:
+      tags: [Project]
+      summary: Patch project (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProjectDataRequest' }
+      responses:
+        '204': { description: Saved }
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /api/projectdemo:
+    get:
+      tags: [Project]
+      summary: Get demo project
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Project' }
+
+  /api/device:
+    get:
+      tags: [Project]
+      summary: Get device property (admin)
+      parameters:
+        - in: query
+          name: id
+          required: false
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnyObject' }
+    post:
+      tags: [Project]
+      summary: Set device property (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params: { $ref: '#/components/schemas/AnyObject' }
+      responses:
+        '204': { description: Saved }
+
+  /api/upload:
+    post:
+      tags: [Resources]
+      summary: Upload resource (base64/data-uri)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UploadRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UploadResponse' }
+
+  /api/users:
+    get:
+      tags: [Users]
+      summary: List users (admin)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/AnyObject' } }
+    post:
+      tags: [Users]
+      summary: Upsert users (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params: { type: array, items: { $ref: '#/components/schemas/AnyObject' } }
+      responses:
+        '204': { description: Saved }
+    delete:
+      tags: [Users]
+      summary: Delete user (admin)
+      parameters:
+        - in: query
+          name: param
+          required: true
+          schema: { type: string }
+      responses:
+        '204': { description: Deleted }
+
+  /api/roles:
+    get:
+      tags: [Users]
+      summary: List roles (admin)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/AnyObject' } }
+    post:
+      tags: [Users]
+      summary: Upsert roles (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params: { type: array, items: { $ref: '#/components/schemas/AnyObject' } }
+      responses:
+        '204': { description: Saved }
+    delete:
+      tags: [Users]
+      summary: Delete roles (admin)
+      parameters:
+        - in: query
+          name: roles
+          required: true
+          description: JSON string (array of role identifiers)
+          schema: { type: string }
+      responses:
+        '204': { description: Deleted }
+
+  /api/alarms:
+    get:
+      tags: [Alarms]
+      summary: Current alarms
+      parameters:
+        - in: query
+          name: filter
+          required: false
+          description: JSON string filter
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/AnyObject' } }
+
+  /api/alarmsHistory:
+    get:
+      tags: [Alarms]
+      summary: Alarms history
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/AnyObject' } }
+
+  /api/alarmack:
+    post:
+      tags: [Alarms]
+      summary: Ack alarm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params: { type: string }
+      responses:
+        '204': { description: OK }
+
+  /api/alarmsClear:
+    post:
+      tags: [Alarms]
+      summary: Clear alarms (admin)
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { type: object, additionalProperties: true }
+      responses:
+        '204': { description: OK }
+
+  /api/plugins:
+    get:
+      tags: [Plugins]
+      summary: List plugins (admin)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/AnyObject' } }
+    post:
+      tags: [Plugins]
+      summary: Install plugin (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params: { $ref: '#/components/schemas/AnyObject' }
+      responses:
+        '204': { description: OK }
+    delete:
+      tags: [Plugins]
+      summary: Uninstall plugin (admin)
+      parameters:
+        - in: query
+          name: param
+          required: true
+          schema: { type: string }
+      responses:
+        '204': { description: OK }
+
+  /api/logsdir:
+    get:
+      tags: [Diagnose]
+      summary: List log files (admin)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { type: string } }
+
+  /api/logs:
+    get:
+      tags: [Diagnose]
+      summary: Download a log (admin)
+      parameters:
+        - in: query
+          name: file
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema: { type: string }
+
+  /api/reportsdir:
+    get:
+      tags: [Diagnose]
+      summary: List report files by prefix (admin)
+      parameters:
+        - in: query
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { type: string } }
+
+  /api/sendmail:
+    post:
+      tags: [Diagnose]
+      summary: Send test mail (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                params: { $ref: '#/components/schemas/AnyObject' }
+      responses:
+        '204': { description: OK }
+
+  /api/resources/images:
+    get:
+      tags: [Resources]
+      summary: List images (admin)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GroupedResources' }
+
+  /api/resources/resources:
+    get:
+      tags: [Resources]
+      summary: List resources
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GroupedResources' }
+
+  /api/resources/remove:
+    post:
+      tags: [Resources]
+      summary: Remove a resource file (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file: { type: string }
+      responses:
+        '204': { description: OK }
+
+  /api/resources/generateImage:
+    get:
+      tags: [Resources]
+      summary: Generate chart image (admin)
+      parameters:
+        - in: query
+          name: param
+          required: true
+          description: JSON string passed to the chart renderer
+          schema: { type: string }
+      responses:
+        '200':
+          description: Base64 string
+          content:
+            text/plain:
+              schema: { type: string }
+
+  /api/resources/templates:
+    get:
+      tags: [Resources]
+      summary: List templates (admin)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/AnyObject' } }
+    delete:
+      tags: [Resources]
+      summary: Delete templates (admin)
+      parameters:
+        - in: query
+          name: templates
+          required: true
+          schema: { type: string }
+      responses:
+        '204': { description: OK }
+
+  /api/resources/template:
+    post:
+      tags: [Resources]
+      summary: Upsert template (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [template]
+              properties:
+                template: { $ref: '#/components/schemas/AnyObject' }
+      responses:
+        '204': { description: OK }
+
+  /api/resources/widgets:
+    get:
+      tags: [Resources]
+      summary: List widgets (admin)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GroupedResources' }
+
+  /api/resources/removeWidget:
+    post:
+      tags: [Resources]
+      summary: Remove widget file (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnyObject' }
+
+  /api/daq:
+    get:
+      tags: [DAQ]
+      summary: Query DAQ values
+      parameters:
+        - in: query
+          name: query
+          required: true
+          description: JSON string `{ from, to, sids: string[] }`
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { type: array, items: { $ref: '#/components/schemas/AnyObject' } } }
+
+  /api/scheduler:
+    get:
+      tags: [Scheduler]
+      summary: Get scheduler data
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnyObject' }
+    post:
+      tags: [Scheduler]
+      summary: Set scheduler data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SchedulerUpsertRequest' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnyObject' }
+    delete:
+      tags: [Scheduler]
+      summary: Delete scheduler data
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnyObject' }
+
+  /api/runscript:
+    post:
+      tags: [Scripts]
+      summary: Run script
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AnyObject' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnyObject' }
+
+  /api/runSysFunction:
+    post:
+      tags: [Scripts]
+      summary: Run server system function (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AnyObject' }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AnyObject' }
+
+  /api/download:
+    get:
+      tags: [Command]
+      summary: Download file (admin)
+      parameters:
+        - in: query
+          name: cmd
+          required: true
+          schema: { type: string, enum: [REPORT-DOWNLOAD] }
+        - in: query
+          name: name
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: File
+          content:
+            application/octet-stream:
+              schema: { type: string, format: binary }
+
+  /api/getTagValue:
+    get:
+      tags: [Command]
+      summary: Get tag values
+      parameters:
+        - in: query
+          name: ids
+          required: true
+          description: JSON string (array of tag ids)
+          schema: { type: string }
+        - in: query
+          name: sourceScriptName
+          required: false
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/TagValue' }
+
+  /api/setTagValue:
+    post:
+      tags: [Command]
+      summary: Set tag values (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SetTagValueRequest' }
+      responses:
+        '204': { description: OK }
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+  /api/reportsQuery:
+    get:
+      tags: [Reports]
+      summary: Query report files
+      parameters:
+        - in: query
+          name: query
+          required: true
+          description: JSON string `{ name?: string, count?: number }`
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { type: array, items: { $ref: '#/components/schemas/ReportFile' } }
+
+  /api/reportBuild:
+    post:
+      tags: [Reports]
+      summary: Force report build (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AnyObject' }
+      responses:
+        '204': { description: OK }
+
+  /api/reportRemoveFile:
+    post:
+      tags: [Reports]
+      summary: Remove report file (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AnyObject' }
+      responses:
+        '204': { description: OK }
+
+components:
+  securitySchemes:
+    AccessToken:
+      type: apiKey
+      in: header
+      name: x-access-token
+
+  schemas:
+    AnyObject:
+      type: object
+      additionalProperties: true
+
+    ErrorResponse:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+
+    SignInRequest:
+      type: object
+      required: [username, password]
+      properties:
+        username: { type: string }
+        password: { type: string }
+
+    SignInResponse:
+      type: object
+      required: [status, message]
+      properties:
+        status: { type: string, example: success }
+        message: { type: string }
+        data:
+          type: object
+          properties:
+            username: { type: string }
+            fullname: { type: string }
+            groups: { type: array, items: { type: string } }
+            info: { $ref: '#/components/schemas/AnyObject' }
+            token: { type: string }
+      additionalProperties: true
+
+    HeartbeatResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: e.g. tokenRefresh | guest
+        token:
+          type: string
+      additionalProperties: true
+
+    Settings:
+      type: object
+      description: Server settings object (shape depends on version/config)
+      additionalProperties: true
+
+    Project:
+      type: object
+      description: Project JSON (HMI, devices, alarms, etc.)
+      additionalProperties: true
+
+    ProjectDataRequest:
+      type: object
+      required: [cmd, data]
+      properties:
+        cmd: {}
+        data: {}
+
+    UploadRequest:
+      type: object
+      required: [resource]
+      properties:
+        destination: { type: string }
+        resource:
+          type: object
+          required: [name, data]
+          properties:
+            name: { type: string }
+            fullPath: { type: string }
+            type: { type: string }
+            data: { type: string }
+
+    UploadResponse:
+      type: object
+      properties:
+        location: { type: string }
+
+    GroupedResources:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            type: object
+            properties:
+              name: { type: string }
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    path: { type: string }
+                    name: { type: string }
+                    label: { type: string }
+                  additionalProperties: true
+
+    SchedulerUpsertRequest:
+      type: object
+      required: [id, data]
+      properties:
+        id: { type: string }
+        data: { $ref: '#/components/schemas/SchedulerData' }
+
+    SchedulerData:
+      type: object
+      required: [schedules, settings]
+      properties:
+        schedules:
+          type: object
+          description: Map of deviceName -> schedules[]
+          additionalProperties:
+            type: array
+            items: { $ref: '#/components/schemas/ScheduleItem' }
+        settings: { $ref: '#/components/schemas/SchedulerSettings' }
+      additionalProperties: true
+
+    SchedulerSettings:
+      type: object
+      required: [devices]
+      properties:
+        devices:
+          type: array
+          items:
+            type: object
+            required: [name, variableId]
+            properties:
+              name: { type: string }
+              variableId: { type: string }
+            additionalProperties: true
+        deviceActions:
+          description: Implementation-defined list of actions
+          type: array
+          items: { $ref: '#/components/schemas/AnyObject' }
+      additionalProperties: true
+
+    ScheduleItem:
+      type: object
+      properties:
+        deviceName: { type: string }
+        startTime: { type: string, description: "HH:mm or implementation-defined" }
+        days:
+          type: array
+          description: 7 booleans (Mon..Sun) as used by the UI
+          minItems: 7
+          maxItems: 7
+          items: { type: boolean }
+      additionalProperties: true
+
+    SetTagValueRequest:
+      type: object
+      required: [tags]
+      properties:
+        tags:
+          type: array
+          items:
+            type: object
+            required: [id, value]
+            properties:
+              id: { type: string }
+              value: {}
+
+    TagValue:
+      type: object
+      properties:
+        id: { type: string }
+        value: {}
+        timestamp:
+          description: Timestamp as emitted by the runtime
+          oneOf:
+            - { type: string, format: date-time }
+            - { type: string }
+            - { type: number }
+      additionalProperties: true
+
+    ReportFile:
+      type: object
+      properties:
+        fileName: { type: string }
+        reportName: { type: string }
+        created: { type: string, format: date-time }
