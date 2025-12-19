@@ -193,6 +193,27 @@ $dark-theme: mat.define-dark-theme((
   opacity: 1;
 }
 
+.dark-theme .mat-mdc-dialog-container {
+  /* Dialog content text (Angular Material v17 / MDC) */
+  --mdc-dialog-supporting-text-color: rgba(255, 255, 255, 0.87);
+  --mdc-dialog-subhead-color: #fff;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.dark-theme .mat-mdc-dialog-container .mat-mdc-icon-button {
+  --mdc-icon-button-icon-color: #fff;
+  --mdc-icon-button-disabled-icon-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+}
+
+.dark-theme .mat-mdc-icon-button[disabled],
+.dark-theme .mat-mdc-icon-button.mat-mdc-button-disabled,
+.dark-theme .mat-mdc-icon-button.mdc-icon-button--disabled {
+  color: rgba(255, 255, 255, 0.28) !important;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .dark-theme .mat-mdc-icon-button {
   // --mdc-icon-button-icon-color: #fff;
   // --mdc-icon-button-disabled-icon-color: rgba(255,255,255,0.38);
