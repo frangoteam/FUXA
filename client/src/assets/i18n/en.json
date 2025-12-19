@@ -1860,7 +1860,7 @@
     "msg.sendmail-success": "Mail send successful!",
     "msg.sendmail-error": "Mail send failed!",
     "msg.users-save-error": "User save failed!",
-    "msg.user-remove": "Would you like to remove User ",
+    "msg.user-remove": "Would you like to remove User '{{value}}'?",
     "msg.project-save-success": "Project save successful!",
     "msg.project-save-error": "Project save failed!",
     "msg.project-format-error": "Project wrong format!",
