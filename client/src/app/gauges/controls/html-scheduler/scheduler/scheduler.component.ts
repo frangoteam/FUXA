@@ -82,10 +82,11 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         startTime: '08:00',
         endTime: '18:00',
         event: true,
-        days: [false, true, true, true, true, true, false],
+        days: [false, true, true, true, true, true, true],
         months: Array(12).fill(false),
         daysOfMonth: Array(31).fill(false),
         monthMode: false,
+        allDay: false,
         disabled: false,
         deviceName: '',
         recurring: true,
@@ -108,6 +109,17 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     toggleDayOfMonth(index: number) {
         if (!this.formTimer.daysOfMonth) this.formTimer.daysOfMonth = Array(31).fill(false);
         this.formTimer.daysOfMonth[index] = !this.formTimer.daysOfMonth[index];
+    }
+    onAllDayChange() {
+        if (this.formTimer.allDay) {
+            // Set to full 24 hours
+            this.formTimer.startTime = '00:00';
+            this.formTimer.endTime = '23:59';
+        } else {
+            // Reset to default working hours
+            this.formTimer.startTime = '08:00';
+            this.formTimer.endTime = '18:00';
+        }
     }
     showCalendarPopup(schedule?: any) {
         if (!schedule) return;
@@ -882,10 +894,11 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             startTime: '08:00',
             endTime: '18:00',
             event: true,
-            days: [false, true, true, true, true, true, false],
+            days: [false, true, true, true, true, true, true],
             months: Array(12).fill(false),
             daysOfMonth: Array(31).fill(false),
             monthMode: false,
+            allDay: false,
             disabled: false,
             deviceName: this.selectedDevice === 'OVERVIEW' ? (this.deviceList[0]?.name || '') : this.selectedDevice,
             recurring: true,
@@ -915,6 +928,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             months: this.formTimer.months,
             daysOfMonth: this.formTimer.daysOfMonth,
             monthMode: this.formTimer.monthMode,
+            allDay: this.formTimer.allDay,
             disabled: this.formTimer.disabled,
             deviceName: deviceName,
             variableId: device.variableId,
@@ -1031,6 +1045,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             months: [...(schedule.months || new Array(12).fill(false))],
             daysOfMonth: [...(schedule.daysOfMonth || new Array(31).fill(false))],
             monthMode: schedule.monthMode || false,
+            allDay: schedule.allDay || (schedule.startTime === '00:00' && schedule.endTime === '23:59'),
             disabled: schedule.disabled || false,
             deviceName: deviceName,
             recurring: schedule.recurring !== undefined ? schedule.recurring : true,
@@ -1944,8 +1959,18 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             if (seconds > 0) parts.push(`${seconds}s`);
             return 'Event: ' + (parts.join(' ') || '0s');
         } else {
+            if (schedule.allDay) {
+                return this.translateService.instant('scheduler.all-day');
+            }
             return this.formatTime(schedule.endTime);
         }
+    }
+
+    formatStartTime(schedule: any): string {
+        if (schedule.allDay) {
+            return this.translateService.instant('scheduler.all-day');
+        }
+        return this.formatTime(schedule.startTime);
     }
 
     hasEventMode(): boolean {

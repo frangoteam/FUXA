@@ -18,6 +18,8 @@ const authJwt = require('./api/jwt-helper');
 
 const express = require('express');
 const app = express();
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
 
 var server;
 var settingsFile;
@@ -110,6 +112,8 @@ try {
     settings.widgetsFileDir = path.resolve(rootDir, '_widgets');
     settings.reportsDir = path.resolve(rootDir, '_reports');
     settings.webcamSnapShotsDir = path.resolve(rootDir, settings.webcamSnapShotsDir);
+    settings.logDir = path.resolve(rootDir, settings.logDir);
+    settings.dbDir = path.resolve(rootDir, settings.dbDir || '_db');
 } catch (err) {
     logger.error('Error loading settings file: ' + settingsFile)
     if (err.code == 'MODULE_NOT_FOUND') {
@@ -154,6 +158,9 @@ try {
         if (mysettings.alarms) {
             settings.alarms = mysettings.alarms;
         }
+        if (mysettings.logs) {
+            settings.logs = mysettings.logs;
+        }
         if (!utils.isNullOrUndefined(mysettings.broadcastAll)) {
             settings.broadcastAll = mysettings.broadcastAll;
         }
@@ -185,9 +192,6 @@ if (version.indexOf('beta') > 0) {
 }
 
 // Check storage Database dir
-if (!settings.dbDir) {
-    settings.dbDir = path.resolve(rootDir, '_db');
-}
 if (!fs.existsSync(settings.dbDir)) {
     fs.mkdirSync(settings.dbDir);
 }
@@ -343,6 +347,17 @@ app.use(morgan('dev', {
         return res.statusCode >= 400
     }, stream: process.stdout
 }));
+
+// Swagger API Docs (mounted on main app so it isn't intercepted by optional integrations)
+try {
+    const swaggerEnabled = settings.swagger || settings.swaggerEnabled;
+    if (swaggerEnabled) {
+        const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
+        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+    }
+} catch (err) {
+    logger.warn('Swagger UI failed to initialize', err);
+}
 
 // app.get('/', function (req, res) {
 //     res.sendFile('/index.html');

@@ -54,6 +54,8 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             scaleRead: null,
             scaleReadFunction: null,
             scaleWriteFunction: null,
+            scaleReadExpression: null,
+            scaleWriteExpression: null,
         });
 
         this.formGroup.controls.enabled.valueChanges.subscribe(enabled => {
@@ -84,6 +86,8 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             //let scaleReadParams = { value: [], valid: true };
             let scaleWriteFunction = { value: null, valid: true };
             //let scaleWriteParams = { value: null, valid: true };
+            let scaleReadExpression = { value: null, valid: true };
+            let scaleWriteExpression = { value: null, valid: true };
             for (let i = 0; i < this.data.tags.length; i++) {
                 if (!this.data.tags[i].daq) {
                     continue;
@@ -126,6 +130,8 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                     scaledLow.value = this.data.tags[i].scale?.scaledLow;
                     scaledHigh.value = this.data.tags[i].scale?.scaledHigh;
                     dateTimeFormat.value = this.data.tags[i].scale?.dateTimeFormat;
+                    scaleReadExpression.value = this.data.tags[i].scale?.readExpression;
+                    scaleWriteExpression.value = this.data.tags[i].scale?.writeExpression;
                 } else if (scaleMode.value !== this.data.tags[i].scale?.mode) {
                     scaleMode.valid = false;
                 }
@@ -174,7 +180,9 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                     rawHigh: rawHigh.value,
                     scaledLow: scaledLow.value,
                     scaledHigh: scaledHigh.value,
-                    dateTimeFormat: dateTimeFormat.value
+                    dateTimeFormat: dateTimeFormat.value,
+                    scaleReadExpression: scaleReadExpression.value,
+                    scaleWriteExpression: scaleWriteExpression.value
                 };
             }
             if (scaleReadFunction.valid && scaleReadFunction.value) {
@@ -259,7 +267,9 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                 rawHigh: this.formGroup.value.rawHigh,
                 scaledLow: this.formGroup.value.scaledLow,
                 scaledHigh: this.formGroup.value.scaledHigh,
-                dateTimeFormat: this.formGroup.value.dateTimeFormat
+                dateTimeFormat: this.formGroup.value.dateTimeFormat,
+                readExpression: this.formGroup.value.scaleReadExpression,
+                writeExpression: this.formGroup.value.scaleWriteExpression
             } : null,
             scaleReadFunction: this.formGroup.value.scaleReadFunction,
             scaleReadParams: readParamsStr,

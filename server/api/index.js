@@ -12,6 +12,7 @@ const rateLimit = require("express-rate-limit");
 var prjApi = require('./projects');
 var authApi = require('./auth');
 var usersApi = require('./users');
+var apiKeysApi = require('./apikeys');
 var alarmsApi = require('./alarms');
 var pluginsApi = require('./plugins');
 var diagnoseApi = require('./diagnose');
@@ -22,6 +23,9 @@ var schedulerApi = require('./scheduler');
 var commandApi = require('./command');
 const reports = require('../dist/reports.service');
 const reportsApi = new reports.ReportsApiService();
+const verifyApiOrToken = require('./apikeys/verify-api-or-token');
+
+const version = '1.0.0';
 
 var apiApp;
 var server;
@@ -30,6 +34,7 @@ var runtime;
 function init(_server, _runtime) {
     server = _server;
     runtime = _runtime;
+
     return new Promise(function (resolve, reject) {
         if (runtime.settings.disableServer !== false) {
             apiApp = express();
@@ -40,30 +45,33 @@ function init(_server, _runtime) {
             apiApp.use(bodyParser.json({limit:maxApiRequestSize}));
             apiApp.use(bodyParser.urlencoded({limit:maxApiRequestSize, extended: true}));
             authJwt.init(runtime.settings.secureEnabled, runtime.settings.secretCode, runtime.settings.tokenExpiresIn);
-            prjApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            const authMiddleware = verifyApiOrToken(runtime);
+            prjApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(prjApi.app());
-            usersApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            usersApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(usersApi.app());
-            alarmsApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            alarmsApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(alarmsApi.app());
             authApi.init(runtime, authJwt.secretCode, authJwt.tokenExpiresIn);
             apiApp.use(authApi.app());
-            pluginsApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            pluginsApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(pluginsApi.app());
-            diagnoseApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            diagnoseApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(diagnoseApi.app());
-            daqApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            daqApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(daqApi.app());
-            schedulerApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            schedulerApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(schedulerApi.app());
-            scriptsApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            scriptsApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(scriptsApi.app());
-            resourcesApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            resourcesApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(resourcesApi.app());
-            commandApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            commandApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(commandApi.app());
-            reportsApi.init(runtime, authJwt.verifyToken, verifyGroups);
+            reportsApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(reportsApi.app());
+            apiKeysApi.init(runtime, authMiddleware, verifyGroups);
+            apiApp.use(apiKeysApi.app());
 
             const limiter = rateLimit({
                 windowMs: 5 * 60 * 1000, // 5 minutes
@@ -80,6 +88,13 @@ function init(_server, _runtime) {
                     });
                 }
                 next(err);
+            });
+
+            /**
+             * GET Server setting data
+             */
+            apiApp.get('/api/version', function (req, res) {
+                res.json(version);
             });
 
             /**
@@ -104,7 +119,7 @@ function init(_server, _runtime) {
             /**
              * POST Server user settings
              */
-            apiApp.post("/api/settings", authJwt.verifyToken, function(req, res, next) {
+            apiApp.post("/api/settings", authMiddleware, function(req, res, next) {
                 const permission = verifyGroups(req);
                 if (res.statusCode === 403) {
                     runtime.logger.error("api post settings: Tocken Expired");
@@ -131,7 +146,7 @@ function init(_server, _runtime) {
             /**
              * GET Heartbeat to check token
              */
-            apiApp.post('/api/heartbeat', authJwt.verifyToken, function (req, res) {
+            apiApp.post('/api/heartbeat', authMiddleware, function (req, res) {
                 if (!runtime.settings.secureEnabled) {
                     res.end();
                 } else if (res.statusCode === 403) {
@@ -155,6 +170,7 @@ function init(_server, _runtime) {
                     res.end();
                 }
             });
+
             runtime.logger.info('api: init successful!', true);
         } else {
         }
@@ -182,10 +198,16 @@ function mergeUserSettings(settings) {
     if (settings.alarms) {
         runtime.settings.alarms = settings.alarms;
     }
+    if (settings.logs) {
+        runtime.settings.logs = settings.logs;
+    }
 }
 
 function verifyGroups(req) {
     if (runtime.settings && runtime.settings.secureEnabled) {
+        if (req.apiKey) {
+            return authJwt.adminGroups[0];
+        }
         if (req.tokenExpired) {
             return (runtime.settings.userRole) ? null : 0;
         }

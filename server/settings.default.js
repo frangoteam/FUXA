@@ -1,7 +1,7 @@
 
 module.exports = {
     // Version to manage update
-    version: 1.3,
+    version: 1.4,
 
     // Standard language (editor)
     language: 'en',
@@ -40,6 +40,11 @@ module.exports = {
     // DAQ DB to Tokenizer the file and save in archive
     // Default: 24 Hours (1 Day), 0 is disabled only 1 DB file
     daqTokenizer: 24,
+
+    // Logs retention
+    logs: {
+        retention: 'none'
+    },
 
     // Tags value to be broadcast,
     // if false will be send to frontend only the tags bind to current visualized views
@@ -102,5 +107,5 @@ module.exports = {
     //snapshots retention in days
     webcamSnapShotsRetain: 7,
 
-
+    swaggerEnabled: false,
 }

@@ -9,6 +9,7 @@ var events = Events.create();
 var devices = require('./devices');
 var project = require('./project');
 var users = require('./users');
+var apiKeys = require('./apikeys');
 var alarms = require('./alarms');
 var notificator = require('./notificator');
 var scripts = require('./scripts');
@@ -65,6 +66,11 @@ function init(_io, _api, _settings, _log, eventsMain) {
         logger.error('runtime.failed-to-init plugins');
     });
 
+    apiKeys.init(settings, logger).then(() => {
+        logger.info('runtime init apiKeys successful!', true);
+    }).catch(err => {
+        logger.error('runtime.failed-to-init apiKeys: ' + err);
+    });
 
     users.init(settings, logger).then(result => {
         logger.info('runtime init users successful!', true);
@@ -159,7 +165,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 if (message === 'get') {
                     var adevs = devices.getDevicesValues();
                     for (var id in adevs) {
-                        updateDeviceValues({ id: id, values: adevs[id] });
+                        updateDeviceValues({ id: id, values: adevs[id] || {} });
                     }
                 } else if (message.cmd === 'set' && message.var) {
                     devices.setDeviceValue(message.var.source, message.var.id, message.var.value, message.fnc);
@@ -319,7 +325,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 if (message.sendLastValue) {
                     var adevs = devices.getDevicesValues();
                     for (var id in adevs) {
-                        updateDeviceValues({ id: id, values: adevs[id] });
+                        updateDeviceValues({ id: id, values: adevs[id] || {}});
                     }
                 }
             } catch (err) {
@@ -694,5 +700,6 @@ var runtime = module.exports = {
     checkPermissionEnabled: checkPermissionEnabled,
     checkPermission: checkPermission,
     get socketPool() { return socketPool },
-    get socketMutex() {return socketMutex }
+    get socketMutex() {return socketMutex },
+    get apiKeys() { return apiKeys }
 }

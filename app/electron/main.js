@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const os = require('os');
 const { fork } = require('child_process');
 const { pathToFileURL } = require('url');
+const http = require('http');
 
 // Global server process
 let serverProcess = null;
@@ -457,6 +458,33 @@ function createWindow() {
     return win;
 }
 
+// Wait for FUXA HTTP server to become reachable
+async function waitForServer(url, timeoutMs = 30000, intervalMs = 1000) {
+    const start = Date.now();
+
+    const checkOnce = () => new Promise((resolve) => {
+        const req = http.get(url, (res) => {
+            // Any HTTP response means server is up
+            res.resume();
+            resolve(true);
+        });
+        req.on('error', () => {
+            resolve(false);
+        });
+        req.setTimeout(2000, () => {
+            req.destroy();
+            resolve(false);
+        });
+    });
+
+    while (Date.now() - start < timeoutMs) {
+        const ok = await checkOnce();
+        if (ok) return true;
+        await new Promise(r => setTimeout(r, intervalMs));
+    }
+    return false;
+}
+
 // Restart FUXA server with new dataDir
 async function restartApp(dataDir, win) {
     console.log(`Restarting app with dataDir: ${dataDir}`);
@@ -503,10 +531,14 @@ async function restartApp(dataDir, win) {
         
         // Update loading text
         await win.webContents.executeJavaScript(`
-            document.getElementById('loadingText').textContent = 'Loading application...';
+            document.getElementById('loadingText').textContent = 'Starting server...';
         `);
-        
-        await new Promise(resolve => setTimeout(resolve, 5000)); // Wait 5 seconds for server
+
+        const serverReady = await waitForServer('http://localhost:1881', 30000, 1000);
+        if (!serverReady) {
+            throw new Error('Server did not become ready on http://localhost:1881 within 30 seconds');
+        }
+
         await win.loadURL('http://localhost:1881');
         console.log('UI loaded: http://localhost:1881');
         
@@ -694,9 +726,7 @@ app.on('window-all-closed', () => {
     if (serverProcess) {
         serverProcess.kill('SIGTERM');
     }
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+    app.quit();
 });
 
 app.on('activate', () => {
@@ -711,5 +741,22 @@ app.on('activate', () => {
                 win.close();
             }
         });
+    }
+});
+
+// Ensure server process is killed when app quits
+app.on('before-quit', async (event) => {
+    console.log('App is quitting, stopping server process');
+    if (serverProcess) {
+        serverProcess.kill('SIGTERM');
+        // Wait a bit for graceful shutdown
+        await new Promise(resolve => {
+            serverProcess.on('close', () => {
+                console.log('Server process stopped');
+                resolve();
+            });
+            setTimeout(resolve, 2000); // 2-second timeout
+        });
+        serverProcess = null;
     }
 });

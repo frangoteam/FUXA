@@ -64,19 +64,25 @@
     <p>Get historical alarms from FUXA between timestamps.</p>
     <p>The alarms array is set to <code>msg.payload</code>.</p>
     <h4>Timestamp Configuration</h4>
-    <p><strong>Static timestamps</strong> can be set in the node configuration.</p>
+    <p><strong>Static timestamps</strong> can be set in the node configuration using datetime picker.</p>
     <p><strong>Dynamic timestamps</strong> can override the configured values:</p>
     <ul>
-        <li><code>msg.start</code> - Start timestamp (Unix timestamp or ISO string)</li>
-        <li><code>msg.end</code> - End timestamp (Unix timestamp or ISO string)</li>
+        <li><code>msg.start</code> - Start timestamp (Unix timestamp in milliseconds, or ISO date string)</li>
+        <li><code>msg.end</code> - End timestamp (Unix timestamp in milliseconds, or ISO date string)</li>
     </ul>
     <p>If no timestamps are provided, defaults to the last 24 hours.</p>
+    <h4>Supported Timestamp Formats</h4>
+    <ul>
+        <li><strong>Unix timestamp:</strong> <code>1693526400000</code> (milliseconds since epoch)</li>
+        <li><strong>ISO string:</strong> <code>"2025-10-26T13:54:21.000Z"</code></li>
+        <li><strong>Date string:</strong> <code>"2025-10-26 13:54:21"</code></li>
+    </ul>
     <h4>Examples</h4>
     <pre>// Get alarms for last week
-msg.start = Date.now() - 604800000;
+msg.start = Date.now() - 604800000; // 7 days ago
 msg.end = Date.now();
 
 // Get alarms for specific date range
-msg.start = "2025-01-01 00:00:00";
-msg.end = "2025-01-07 23:59:59";</pre>
+msg.start = "2025-10-20T00:00:00.000Z";
+msg.end = "2025-10-26T23:59:59.999Z";</pre>
 </script>

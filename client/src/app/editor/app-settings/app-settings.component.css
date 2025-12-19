@@ -25,6 +25,10 @@
     padding-right: 10px;
 }
 
+.tabs-container .tab-logs {
+    padding-right: 10px;
+}
+
 .input-row {
     width: 100%;
 }
