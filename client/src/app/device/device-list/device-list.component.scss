@@ -48,9 +48,11 @@
         margin-right: 100px;
     }
 
-    .mat-row {
-        min-height: 40px;
-        height: 43px;
+    .mat-row,
+    .mat-mdc-row,
+    .my-mat-row {
+        min-height: 44px !important;
+        height: 44px !important;
     }
 
     .mat-cell {

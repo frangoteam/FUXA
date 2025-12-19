@@ -1,0 +1,86 @@
+:host {
+    .container {
+        overflow: auto;
+    }
+
+    .item {
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+    }
+    .item:hover {
+        background-color: rgba(0,0,0,0.1);
+    }
+
+    .item-text {
+        width: 500px;
+        position: relative;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        span {
+            font-size: 16px;
+        }
+
+        button {
+            vertical-align: sub;
+        }
+    }
+
+    .item-text div {
+        display: inline-block;
+        overflow-wrap: break-word;
+        text-overflow: ellipsis;
+        /* word-wrap: break-word; */
+        white-space: nowrap;
+    }
+
+    .item-property {
+        position: relative;
+        /* left: 400px; */
+        width: 400px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 40px;
+    }
+
+    .item-info {
+        position: relative;
+        /* left: 400px; */
+        width: 200px;
+        display: inline-block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 40px;
+    }
+
+    .item-check {
+        float: right;
+        margin-right: 20px;
+        line-height: 32px;
+        /* display: inline-block; */
+    }
+
+    .item-waiting {
+        /* -moz-transition: height .5s;
+        -ms-transition: height .5s;
+        -o-transition: height .5s;
+        -webkit-transition: height .5s;
+        transition: height .5s; */
+        display:inline-block;
+        height: 40;
+        vertical-align: middle;
+        /* width: 80%; */
+        overflow: hidden;
+    }
+
+    .mat-mdc-icon-button.mat-mdc-button-base {
+        height: 30px !important;
+        width: 30px !important;
+    }
+}

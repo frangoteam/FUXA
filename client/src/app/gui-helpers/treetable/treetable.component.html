@@ -14,7 +14,7 @@
 					<button mat-icon-button enabled="false" *ngIf="node.class === nodeType.Variable">
 						<mat-icon>label</mat-icon>
 					</button>
-					{{node.text}}
+					<span>{{node.text}}</span>
 				</div>
 				<div class="item-property" [style.left.px]="node.childPos * 15">
 					{{node.property}}
@@ -34,7 +34,7 @@
 					<button mat-icon-button *ngIf="node.class === nodeType.Variable || node.class === nodeType.Item">
 						<mat-icon>label</mat-icon>
 					</button>
-					{{node.text}}
+					<span>{{node.text}}</span>
 					<div *ngIf="node.class === nodeType.Array">
 						<span style="margin-left: 15px;margin-right: 5px;">{{'device.tag-array-id' | translate}}</span>
 						<mat-select [(value)]="node.todefine.id" style="width: 120px">

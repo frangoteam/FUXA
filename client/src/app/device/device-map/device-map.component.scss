@@ -313,4 +313,10 @@ $internal-backcolor: rgb(114, 120, 125);
     .hideTable {
         display: none;
     }
+    .map-container {
+        .mat-mdc-icon-button.mat-mdc-button-base {
+            height: 30px !important;
+            width: 30px !important;
+        }
+    }
 }
