@@ -4,17 +4,30 @@
         width: 100%;
         min-width: 700px;
         margin: 0 auto;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
 
         .info {
             display: flex;
             margin-bottom: 20px;
         }
 
+        .dialog-content {
+            flex: 1 1 auto;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
         .function-list {
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-bottom: 20px;
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: auto;
+            padding-bottom: 10px;
         }
 
         .function-item {
@@ -26,5 +39,11 @@
             color: gray;
             margin-left: 6px;
         }
+    }
+
+    .dialog-action {
+        float: none;
+        display: flex;
+        justify-content: flex-end;
     }
 }
