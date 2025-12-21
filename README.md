@@ -9,7 +9,7 @@ FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With F
 ![fuxa action](/screenshot/feature-action-move.gif)
 
 ## Features
-- Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley), ADSclient, Gpio (Raspberry), WebCam, MELSEC
+- Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley), ODBC, ADSclient, Gpio (Raspberry), WebCam, MELSEC, Redis
 - SCADA/HMI Web-Editor - Engineering and Design completely web-based
 - Cross-Platform Full-Stack - Backend with NodeJs and Frontend with Web technologies (HTML5, CSS, Javascript, Angular, SVG)
 
@@ -25,17 +25,7 @@ See the Wiki for more details about installing and getting started
 
 [Wiki Installing/Building](https://github.com/frangoteam/FUXA/wiki/Installing-and-Running)
 
-### Install using prebuilt Electron Packages
-
-You will need to be logged into github to access the download button for Electron Action Builds,
-click on the workflow and scroll down to Artifacts and click the download icon for you system
-
-[Electron Action Builds](https://github.com/frangoteam/FUXA/actions/workflows/electron_latest.yml)
-
-<img width="2082" height="531" alt="image" src="https://github.com/user-attachments/assets/40f01e1d-cf39-4145-99a0-e8fedf791edf" />
-
-
-### Running from docker
+### 1° Option - Running from docker
 ```
 docker pull frangoteam/fuxa:latest
 docker run -d -p 1881:1881 frangoteam/fuxa:latest
@@ -49,19 +39,7 @@ wget https://raw.githubusercontent.com/frangoteam/FUXA/master/compose.yml
 docker compose up -d
 ```
 
-### Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa)
-
-You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
-
-**WARNING** In linux with nodejs Version 18 the installation could be a challenge.
-If you don't intend communicate with Siemens PLCs via S7 (node-snap7 library) you can install from [NPM @frangoteam/fuxa-min](https://www.npmjs.com/package/@frangoteam/fuxa-min)
-
-```
-npm install -g --unsafe-perm @frangoteam/fuxa
-fuxa
-```
-
-### Install from source
+### 2° Option - Install from source
 [Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it
 
 You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
@@ -78,6 +56,27 @@ npm start
 Open up a browser (better Chrome) and navigate to http://localhost:1881
 
 **Note** If you intend to use nodejs version 14, please remove odbc from the package.json dependencies. nodejs 14 may have compatibility issues with certain versions of odbc, which could lead to installation errors.
+
+### 3° Option - Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa)
+
+You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
+
+**WARNING** In linux with nodejs Version 18 the installation could be a challenge.
+If you don't intend communicate with Siemens PLCs via S7 (node-snap7 library) you can install from [NPM @frangoteam/fuxa-min](https://www.npmjs.com/package/@frangoteam/fuxa-min)
+
+```
+npm install -g --unsafe-perm @frangoteam/fuxa
+fuxa
+```
+
+### 4° Option - Install using prebuilt Electron Packages
+
+You will need to be logged into github to access the download button for Electron Action Builds,
+click on the workflow and scroll down to Artifacts and click the download icon for you system
+
+[Electron Action Builds](https://github.com/frangoteam/FUXA/actions/workflows/electron_latest.yml)
+
+<img width="2082" height="531" alt="image" src="https://github.com/user-attachments/assets/40f01e1d-cf39-4145-99a0-e8fedf791edf" />
 
 ### Creating the Electron Application
 Electron is a framework for building cross-platform desktop applications using web technologies. An Electron application is standalone, meaning it can be run independently on your desktop without needing a web browser.
