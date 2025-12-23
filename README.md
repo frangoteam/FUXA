@@ -39,13 +39,20 @@ wget https://raw.githubusercontent.com/frangoteam/FUXA/master/compose.yml
 docker compose up -d
 ```
 
+Open up a browser (better Chrome) and navigate to http://localhost:1881
+
 ### 2° Option - Install from source
 [Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it
 
-You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
+You need to have installed [Node.js](https://nodejs.org/en/about/previous-releases)
+- Recommended: Node.js 18 LTS
 
-**WARNING** In linux with nodejs Version 18 the installation could be a challenge.
-If you don't intend to communicate with Siemens PLCs via S7, you can remove the ```node-snap7``` library from the ```server/package.json```. Similarly, if you don't intend to use ODBC to communicate with an external database, you can remove the ```odbc``` library from the ```server/package.json```.
+**Note** Starting from FUXA 1.2.7, Node.js 14 and older versions are not supported due to upstream dependency updates.
+
+**WARNING** On Linux systems (especially Raspberry Pi), installing native dependencies with Node.js 18 may require additional build tools.
+If you do not intend to use specific features, you can safely remove them from ```server/package.json```:
+- Remove ```node-snap7``` if you do not need Siemens S7 communication
+- Remove ```odbc``` if you do not need external database connectivity
 
 ```
 cd ./server
@@ -55,11 +62,10 @@ npm start
 
 Open up a browser (better Chrome) and navigate to http://localhost:1881
 
-**Note** If you intend to use nodejs version 14, please remove odbc from the package.json dependencies. nodejs 14 may have compatibility issues with certain versions of odbc, which could lead to installation errors.
-
 ### 3° Option - Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa)
 
-You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
+You need to have installed [Node.js](https://nodejs.org/en/about/previous-releases)
+- Recommended: Node.js 18 LTS
 
 **WARNING** In linux with nodejs Version 18 the installation could be a challenge.
 If you don't intend communicate with Siemens PLCs via S7 (node-snap7 library) you can install from [NPM @frangoteam/fuxa-min](https://www.npmjs.com/package/@frangoteam/fuxa-min)
@@ -68,6 +74,8 @@ If you don't intend communicate with Siemens PLCs via S7 (node-snap7 library) yo
 npm install -g --unsafe-perm @frangoteam/fuxa
 fuxa
 ```
+
+Open up a browser (better Chrome) and navigate to http://localhost:1881
 
 ### 4° Option - Install using prebuilt Electron Packages
 
