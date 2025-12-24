@@ -170,6 +170,9 @@ try {
         if (!utils.isNullOrUndefined(mysettings.userRole)) {
             settings.userRole = mysettings.userRole;
         }
+        if (!utils.isNullOrUndefined(mysettings.nodeRedEnabled)) {
+            settings.nodeRedEnabled = mysettings.nodeRedEnabled;
+        }
     }
 } catch (err) {
     logger.error('Error loading user settings file: ' + userSettingsFile)
@@ -243,6 +246,10 @@ const io = socketIO(server, {
 
 // Check settings value
 var www = path.resolve(__dirname, '../client/dist');
+if (!fs.existsSync(www)) {      // compatibility with docker/npm/electron
+    www = path.resolve(__dirname, './dist');
+}
+
 settings.httpStatic = settings.httpStatic || www;
 
 if (parsedArgs.port !== undefined) {
@@ -389,7 +396,10 @@ function getListenPath() {
     return listenPath;
 }
 
-const { mountNodeRedIfInstalled } = require('./integrations/node-red');
+let mountNodeRedIfInstalled;
+if (settings.nodeRedEnabled) {
+    ({ mountNodeRedIfInstalled } = require('./integrations/node-red'));
+}
 
 // Start FUXA
 function startFuxa() {
@@ -410,10 +420,14 @@ function startFuxa() {
             });
 
             // Mount Node-RED if present; never block FUXA if it fails
-            try {
-                await mountNodeRedIfInstalled({ app, server, settings, runtime, logger, authJwt, events });
-            } catch (e) {
-                logger.warn('[Node-RED] Failed to initialize, continuing without it.', e);
+            if (settings.nodeRedEnabled && typeof mountNodeRedIfInstalled === 'function') {
+                try {
+                    await mountNodeRedIfInstalled({ app, server, settings, runtime, logger, authJwt, events });
+                } catch (e) {
+                    logger.warn('[Node-RED] Failed to initialize, continuing without it.', e);
+                }
+            } else if (settings.nodeRedEnabled) {
+                logger.warn('[Node-RED] Enabled but integration not available; continuing without it.');
             }
 
             if (settings.disableServer !== false) {

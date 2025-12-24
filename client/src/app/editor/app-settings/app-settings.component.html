@@ -53,6 +53,16 @@
                             <mat-option [value]="true">{{'dlg.app-settings-user-roles' | translate}}</mat-option>
                         </mat-select>
                     </div>
+                    <div class="my-form-field block mt15 system-input">
+                        <span>{{'dlg.app-settings-node-red' | translate}}</span>
+                        <mat-select [(value)]="settings.nodeRedEnabled">
+                            <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>
+                            <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
+                        </mat-select>
+                        <div *ngIf="settings.nodeRedEnabled !== originalNodeRedEnabled" class="node-red-info">
+                            {{ 'dlg.app-settings-node-red-info' | translate }}
+                        </div>
+                    </div>
                 </div>
             </mat-tab>
             <mat-tab label="{{'dlg.app-settings-smtp' | translate}}">
