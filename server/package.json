@@ -32,7 +32,7 @@
     "fontkit": "^2.0.2",
     "fs-extra": "7.0.1",
     "influx": "5.9.3",
-    "ip": "2.0.1",
+    "ip": "~2.0.1",
     "jsonwebtoken": "9.0.0",
     "live-plugin-manager": "0.15.1",
     "modbus-serial": "8.0.19",
