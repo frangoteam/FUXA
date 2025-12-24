@@ -42,7 +42,7 @@
     "node-opcua": "2.149.0",
     "node-red": "^4.1.0",
     "node-schedule": "2.1.1",
-    "nodemailer": "7.0.7",
+    "nodemailer": "7.0.11",
     "nopt": "5.0.0",
     "odbc": "2.4.9",
     "pdfmake": "0.2.5",
