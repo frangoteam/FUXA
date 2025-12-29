@@ -171,6 +171,9 @@ try {
         if (!utils.isNullOrUndefined(mysettings.nodeRedEnabled)) {
             settings.nodeRedEnabled = mysettings.nodeRedEnabled;
         }
+        if (!utils.isNullOrUndefined(mysettings.swaggerEnabled)) {
+            settings.swaggerEnabled = mysettings.swaggerEnabled;
+        }
     }
 } catch (err) {
     logger.error('Error loading user settings file: ' + userSettingsFile)

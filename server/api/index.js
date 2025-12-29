@@ -187,6 +187,7 @@ function mergeUserSettings(settings) {
     runtime.settings.logFull = settings.logFull;
     runtime.settings.userRole = settings.userRole;
     runtime.settings.nodeRedEnabled = settings.nodeRedEnabled;
+    runtime.settings.swaggerEnabled = settings.swaggerEnabled;
     if (settings.secureEnabled) {
         runtime.settings.tokenExpiresIn = settings.tokenExpiresIn;
     }

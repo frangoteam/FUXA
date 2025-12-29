@@ -25,6 +25,8 @@ export class AppSettings {
     userRole = false;
     /** Enable Node-Red */
     nodeRedEnabled = true;
+    /** Enable Swagger */
+    swaggerEnabled = false;
 }
 
 export class SmtpSettings {
