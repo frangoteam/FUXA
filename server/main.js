@@ -18,8 +18,6 @@ const authJwt = require('./api/jwt-helper');
 
 const express = require('express');
 const app = express();
-const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
 
 var server;
 var settingsFile;
@@ -172,6 +170,9 @@ try {
         }
         if (!utils.isNullOrUndefined(mysettings.nodeRedEnabled)) {
             settings.nodeRedEnabled = mysettings.nodeRedEnabled;
+        }
+        if (!utils.isNullOrUndefined(mysettings.swaggerEnabled)) {
+            settings.swaggerEnabled = mysettings.swaggerEnabled;
         }
     }
 } catch (err) {
@@ -355,13 +356,30 @@ app.use(morgan('dev', {
     }, stream: process.stdout
 }));
 
+function mountSwaggerIfEnabled() {
+    const swaggerEnabled = settings.swagger || settings.swaggerEnabled;
+    if (!swaggerEnabled) return;
+
+    let swaggerUi;
+    let YAML;
+    try {
+        swaggerUi = require('swagger-ui-express');
+        YAML = require('yamljs');
+    } catch (err) {
+        if (err && err.code !== 'MODULE_NOT_FOUND') {
+            throw err;
+        }
+        logger.warn('[Swagger] Enabled but optional dependencies are missing; skipping /api-docs. Install swagger-ui-express and yamljs to enable it.');
+        return;
+    }
+
+    const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
+
 // Swagger API Docs (mounted on main app so it isn't intercepted by optional integrations)
 try {
-    const swaggerEnabled = settings.swagger || settings.swaggerEnabled;
-    if (swaggerEnabled) {
-        const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
-        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-    }
+    mountSwaggerIfEnabled();
 } catch (err) {
     logger.warn('Swagger UI failed to initialize', err);
 }

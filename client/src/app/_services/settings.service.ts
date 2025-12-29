@@ -96,6 +96,10 @@ export class SettingsService {
             this.appSettings.nodeRedEnabled = settings.nodeRedEnabled;
             dirty = true;
         }
+        if (settings.swaggerEnabled !== this.appSettings.swaggerEnabled) {
+            this.appSettings.swaggerEnabled = settings.swaggerEnabled;
+            dirty = true;
+        }
         return dirty;
     }
 
