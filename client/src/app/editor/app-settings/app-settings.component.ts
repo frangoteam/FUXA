@@ -12,7 +12,7 @@ import { Utils } from '../../_helpers/utils';
 @Component({
     selector: 'app-app-settings',
     templateUrl: './app-settings.component.html',
-    styleUrls: ['./app-settings.component.css']
+    styleUrls: ['./app-settings.component.scss']
 })
 export class AppSettingsComponent implements OnInit {
 
@@ -41,6 +41,8 @@ export class AppSettingsComponent implements OnInit {
 	];
 
     settings = new AppSettings();
+    originalNodeRedEnabled = false;
+    originalSwaggerEnabled = false;
     authentication = '';
     authenticationTooltip = '';
     smtpTesting = false;
@@ -91,6 +93,15 @@ export class AppSettingsComponent implements OnInit {
         if (!this.settings.logs) {
             this.settings.logs = new LogsSettings();
         }
+        if (Utils.isNullOrUndefined(this.settings.nodeRedEnabled)) {
+            this.settings.nodeRedEnabled = false;
+        }
+        this.originalNodeRedEnabled = this.settings.nodeRedEnabled;
+
+        if (Utils.isNullOrUndefined(this.settings.swaggerEnabled)) {
+            this.settings.swaggerEnabled = false;
+        }
+        this.originalSwaggerEnabled = this.settings.swaggerEnabled;
     }
 
     onNoClick() {

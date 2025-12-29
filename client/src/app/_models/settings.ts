@@ -23,6 +23,10 @@ export class AppSettings {
     logFull = false;
     /** User role enabled (default group) */
     userRole = false;
+    /** Enable Node-Red */
+    nodeRedEnabled = true;
+    /** Enable Swagger */
+    swaggerEnabled = false;
 }
 
 export class SmtpSettings {

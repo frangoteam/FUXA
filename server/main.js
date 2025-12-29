@@ -18,8 +18,6 @@ const authJwt = require('./api/jwt-helper');
 
 const express = require('express');
 const app = express();
-const swaggerUi = require('swagger-ui-express');
-const YAML = require('yamljs');
 
 var server;
 var settingsFile;
@@ -170,6 +168,12 @@ try {
         if (!utils.isNullOrUndefined(mysettings.userRole)) {
             settings.userRole = mysettings.userRole;
         }
+        if (!utils.isNullOrUndefined(mysettings.nodeRedEnabled)) {
+            settings.nodeRedEnabled = mysettings.nodeRedEnabled;
+        }
+        if (!utils.isNullOrUndefined(mysettings.swaggerEnabled)) {
+            settings.swaggerEnabled = mysettings.swaggerEnabled;
+        }
     }
 } catch (err) {
     logger.error('Error loading user settings file: ' + userSettingsFile)
@@ -243,6 +247,10 @@ const io = socketIO(server, {
 
 // Check settings value
 var www = path.resolve(__dirname, '../client/dist');
+if (!fs.existsSync(www)) {      // compatibility with docker/npm/electron
+    www = path.resolve(__dirname, './dist');
+}
+
 settings.httpStatic = settings.httpStatic || www;
 
 if (parsedArgs.port !== undefined) {
@@ -348,13 +356,30 @@ app.use(morgan('dev', {
     }, stream: process.stdout
 }));
 
+function mountSwaggerIfEnabled() {
+    const swaggerEnabled = settings.swagger || settings.swaggerEnabled;
+    if (!swaggerEnabled) return;
+
+    let swaggerUi;
+    let YAML;
+    try {
+        swaggerUi = require('swagger-ui-express');
+        YAML = require('yamljs');
+    } catch (err) {
+        if (err && err.code !== 'MODULE_NOT_FOUND') {
+            throw err;
+        }
+        logger.warn('[Swagger] Enabled but optional dependencies are missing; skipping /api-docs. Install swagger-ui-express and yamljs to enable it.');
+        return;
+    }
+
+    const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
+
 // Swagger API Docs (mounted on main app so it isn't intercepted by optional integrations)
 try {
-    const swaggerEnabled = settings.swagger || settings.swaggerEnabled;
-    if (swaggerEnabled) {
-        const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
-        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-    }
+    mountSwaggerIfEnabled();
 } catch (err) {
     logger.warn('Swagger UI failed to initialize', err);
 }
@@ -389,7 +414,10 @@ function getListenPath() {
     return listenPath;
 }
 
-const { mountNodeRedIfInstalled } = require('./integrations/node-red');
+let mountNodeRedIfInstalled;
+if (settings.nodeRedEnabled) {
+    ({ mountNodeRedIfInstalled } = require('./integrations/node-red'));
+}
 
 // Start FUXA
 function startFuxa() {
@@ -410,10 +438,14 @@ function startFuxa() {
             });
 
             // Mount Node-RED if present; never block FUXA if it fails
-            try {
-                await mountNodeRedIfInstalled({ app, server, settings, runtime, logger, authJwt, events });
-            } catch (e) {
-                logger.warn('[Node-RED] Failed to initialize, continuing without it.', e);
+            if (settings.nodeRedEnabled && typeof mountNodeRedIfInstalled === 'function') {
+                try {
+                    await mountNodeRedIfInstalled({ app, server, settings, runtime, logger, authJwt, events });
+                } catch (e) {
+                    logger.warn('[Node-RED] Failed to initialize, continuing without it.', e);
+                }
+            } else if (settings.nodeRedEnabled) {
+                logger.warn('[Node-RED] Enabled but integration not available; continuing without it.');
             }
 
             if (settings.disableServer !== false) {
