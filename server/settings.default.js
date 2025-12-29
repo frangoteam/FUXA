@@ -108,4 +108,6 @@ module.exports = {
     webcamSnapShotsRetain: 7,
 
     swaggerEnabled: false,
+
+    nodeRedEnabled: false,
 }

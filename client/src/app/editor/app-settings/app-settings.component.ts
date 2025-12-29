@@ -41,6 +41,7 @@ export class AppSettingsComponent implements OnInit {
 	];
 
     settings = new AppSettings();
+    originalNodeRedEnabled = false;
     authentication = '';
     authenticationTooltip = '';
     smtpTesting = false;
@@ -91,6 +92,10 @@ export class AppSettingsComponent implements OnInit {
         if (!this.settings.logs) {
             this.settings.logs = new LogsSettings();
         }
+        if (Utils.isNullOrUndefined(this.settings.nodeRedEnabled)) {
+            this.settings.nodeRedEnabled = false;
+        }
+        this.originalNodeRedEnabled = this.settings.nodeRedEnabled;
     }
 
     onNoClick() {
