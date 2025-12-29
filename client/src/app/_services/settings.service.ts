@@ -92,6 +92,10 @@ export class SettingsService {
             this.appSettings.userRole = settings.userRole;
             dirty = true;
         }
+        if (settings.nodeRedEnabled !== this.appSettings.nodeRedEnabled) {
+            this.appSettings.nodeRedEnabled = settings.nodeRedEnabled;
+            dirty = true;
+        }
         return dirty;
     }
 
