@@ -1,125 +1,128 @@
 
-$panelLeft: 380px;
-$panelRight: 880px;
+:host {
+    $panelLeft: 380px;
+    $panelRight: 880px;
 
-.left-panel {
-    float: left;
-    width: $panelLeft;
-}
-
-.report-row {
-    width: inherit;
-
-    input, mat-select {
-        width: -webkit-fill-available;
-    }
-}
-
-.content-toolbox {
-    line-height: 20px; 
-}
-
-.content-toolbox span {
-    float: left;
-}
-
-.content-toolbox button {
-    float: right;
-}
-
-.content-panel {
-    display: block; 
-    margin-top: 15px;
-    width: 100%;
-    /* position: relative; */
-}
-
-.content-list {
-    /* position: absolute; */
-    /* top: 30px; */
-    /* left: 0px; */
-    /* right: 0px; */
-
-}
-
-.report-item {
-    font-size: 14px;
-    line-height: 24px;
-    padding: 7px 0px 5px 0px;
-    border-bottom: 1px solid var(--toolboxBorder);
-    
-    mat-icon {
-        font-size: 18px;
-        line-height: 24px;
-        margin-left: 4px;
+    .left-panel {
+        float: left;
+        width: $panelLeft;
     }
 
-}
+    .report-row {
+        width: inherit;
 
-.report-item-type {
-    display: inline-block;
-
-}
-
-.report-head-menu {
-    float:right; 
-    padding-top: 5px; 
-    padding-right: 5px;
-    cursor: pointer;
-}
-
-.report-item-edit {
-    cursor: pointer;
-    margin-right: 10px;
-    vertical-align: middle;
-}
-
-.report-item-menu {
-    cursor: pointer;
-    float: right;
-    margin-right: 3px;
-    vertical-align: middle;
-}
-
-.report-item-label {
-    overflow: hidden; 
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.rigth-panel {
-    // float: right;
-    position: absolute;
-    top: 0px;
-    bottom: 10px;
-    left: $panelLeft;
-    right: 20px;
-    margin-left: 40px;
-}
-
-.valid-error {
-    float: left;
-    margin-top: 15px;
-}
-
-::ng-deep .content-panel .mat-tab-label {
-    height: 34px !important;
-    min-width: 120px !important;
-    width: 140px;
-}
-
-.menu-item-select {
-
-    mat-icon {
-        font-size: 18px;
-        margin-right: unset !important;
+        input, mat-select {
+            width: -webkit-fill-available;
+        }
     }
 
-    span {
+    .content-toolbox {
         line-height: 20px;
     }
 
-    .unselect {
-        padding-left: 25px;
+    .content-toolbox span {
+        float: left;
     }
+
+    .content-toolbox button {
+        float: right;
+    }
+
+    .content-panel {
+        display: block;
+        margin-top: 15px;
+        width: 100%;
+        /* position: relative; */
+    }
+
+    .content-list {
+        /* position: absolute; */
+        /* top: 30px; */
+        /* left: 0px; */
+        /* right: 0px; */
+
+    }
+
+    .report-item {
+        font-size: 14px;
+        line-height: 24px;
+        padding: 7px 0px 5px 0px;
+        border-bottom: 1px solid var(--toolboxBorder);
+
+        mat-icon {
+            font-size: 18px;
+            line-height: 24px;
+            margin-left: 4px;
+        }
+
+    }
+
+    .report-item-type {
+        display: inline-block;
+
+    }
+
+    .report-head-menu {
+        float:right;
+        padding-top: 5px;
+        padding-right: 5px;
+        cursor: pointer;
+    }
+
+    .report-item-edit {
+        cursor: pointer;
+        margin-right: 10px;
+        vertical-align: middle;
+    }
+
+    .report-item-menu {
+        cursor: pointer;
+        float: right;
+        margin-right: 3px;
+        vertical-align: middle;
+    }
+
+    .report-item-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .rigth-panel {
+        // float: right;
+        position: absolute;
+        top: 0px;
+        bottom: 10px;
+        left: $panelLeft;
+        right: 20px;
+        margin-left: 40px;
+    }
+
+    .valid-error {
+        float: left;
+        margin-top: 15px;
+        margin-left: 20px;
+    }
+
+    ::ng-deep .content-panel .mat-tab-label {
+        height: 34px !important;
+        min-width: 120px !important;
+        width: 140px;
+    }
+
+    .menu-item-select {
+
+        mat-icon {
+            font-size: 18px;
+            margin-right: unset !important;
+        }
+
+        span {
+            line-height: 20px;
+        }
+
+        .unselect {
+            padding-left: 25px;
+        }
+}
 }
