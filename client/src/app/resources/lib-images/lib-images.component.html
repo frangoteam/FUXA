@@ -1,7 +1,7 @@
-<div>
-    <h1 mat-dialog-title style="display:inline-block; cursor:move;" mat-dialog-draggable>{{'resources.lib-images' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
-    <div mat-dialog-content>
+<div class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'resources.lib-images' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="mat-dialog-content">
         <mat-accordion multi="true">
             <mat-expansion-panel *ngFor="let grpImages of resImages" class="my-expansion-panel lib-image-panel">
                 <mat-expansion-panel-header class="header" [collapsedHeight]="'40px'" [expandedHeight]="'40px'">
