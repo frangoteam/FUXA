@@ -176,6 +176,10 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
             this.tagPropertyService.editTagPropertyMelsec(device, newTag, true).subscribe(result => {
                 this.loadDevicesTags(newTag, device.name);
             });
+        } else if (device.type === DeviceType.REDIS) {
+            this.tagPropertyService.editTagPropertyRedis(device, newTag, true).subscribe(_ => {
+                this.loadDevicesTags(newTag, device.name);
+            });
         }
     }
 

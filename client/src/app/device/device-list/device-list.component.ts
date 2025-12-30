@@ -26,6 +26,7 @@ import { TagPropertyService } from '../tag-property/tag-property.service';
 export class DeviceListComponent implements OnInit, AfterViewInit {
 
     readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'logger', 'options', 'remove'];
+    readonly defAllExtColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'quality', 'description', 'warning', 'logger', 'options', 'remove'];
     readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'description', 'options', 'remove'];
     readonly defGpipColumns = ['select', 'name', 'device', 'address', 'direction', 'value', 'timestamp', 'description', 'logger', 'options', 'remove'];
     readonly defWebcamColumns = ['select', 'name', 'device', 'address', 'value', 'timestamp', 'description', 'logger', 'options', 'remove'];
@@ -121,6 +122,9 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             this.tableWidth = this.defAllRowWidth;
         } else if (this.deviceSelected.type === DeviceType.WebCam){
             this.displayedColumns = this.defWebcamColumns;
+            this.tableWidth = this.defAllRowWidth;
+        } else if (this.deviceSelected.type === DeviceType.REDIS) {
+            this.displayedColumns = this.defAllExtColumns;
             this.tableWidth = this.defAllRowWidth;
         } else {
             this.displayedColumns = this.defAllColumns;
@@ -230,6 +234,14 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         }
     }
 
+    onScanRedisTag() {
+        if (this.deviceSelected.type === DeviceType.REDIS) {
+            this.tagPropertyService.scanTagsRedis(this.deviceSelected).subscribe(result => {
+                this.bindToTable(this.deviceSelected.tags);
+            });
+        }
+    }
+
     getTagLabel(tag: Tag) {
         if (this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
             return tag.label || tag.name;
@@ -264,7 +276,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer ||
             type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.ADSclient ||
-            type === DeviceType.WebCam || type === DeviceType.MELSEC) {
+            type === DeviceType.WebCam || type === DeviceType.MELSEC || type === DeviceType.REDIS) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -345,6 +357,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             });
             return;
         }
+        if (this.deviceSelected.type === DeviceType.REDIS) {
+            this.tagPropertyService.editTagPropertyRedis(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
     }
 
     editTagOptions(tags: Tag[]) {
@@ -374,9 +393,11 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         let sigs = this.hmiService.getAllSignals();
         for (let id in sigs) {
             if (this.tagsMap[id]) {
-                this.tagsMap[id].value = sigs[id].value;
-                this.tagsMap[id].error = sigs[id].error;
-                this.tagsMap[id].timestamp = sigs[id].timestamp;
+                const signal = sigs[id];
+                this.tagsMap[id].value = signal.value;
+                this.tagsMap[id].error = signal.error;
+                this.tagsMap[id].timestamp = signal.timestamp;
+                this.tagsMap[id].quality = signal.quality;
             }
         }
         this.changeDetector.detectChanges();

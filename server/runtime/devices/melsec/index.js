@@ -355,8 +355,12 @@ function MelsecClient(_data, _logger, _events, _runtime) {
 module.exports = {
     init: function () { },
     create: function (data, logger, events, manager, runtime) {
-        if (!McProtocol) McProtocol = tryLoadMcprotocol(manager);
-        if (!McProtocol) return null;
+        if (!McProtocol) {
+            McProtocol = tryLoadMcprotocol(manager);
+        }
+        if (!McProtocol) {
+            return null;
+        }
         return new MelsecClient(data, logger, events, runtime);
     }
 };
