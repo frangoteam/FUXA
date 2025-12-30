@@ -530,7 +530,8 @@ function tagsToSend(tags) {
     return Object.values(tags).map(tag => ({
         id: tag.id,
         value: tag.value,
-        timestamp: tag.timestamp
+        timestamp: tag.timestamp,
+        quality: tag.quality
     }));
 }
 
