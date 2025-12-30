@@ -1,6 +1,7 @@
 <div class="container">
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'editor.controls-input-settings' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="dialog-content">
     <mat-tab-group style="width: 100%;">
         <mat-tab label="{{'gauges.property-props' | translate}}">
             <div class="mat-tab-container">
@@ -33,7 +34,7 @@
                             type="text"
                             placeholder="{{'gauges.property-language-text' | translate}}">
                 </div>
-                <div mat-dialog-content
+                <div class="tab-content"
                      style="overflow: visible; width:100%;">
                     <div class="mt10">
                         <flex-variable [data]="data"
@@ -138,7 +139,7 @@
                         <mat-icon>add_circle_outline</mat-icon>
                     </button>
                 </div>
-                <div mat-dialog-content
+                <div class="tab-content"
                      style="overflow: visible; width:100%;">
                     <flex-event [property]="property"
                                 [views]="views"
@@ -159,7 +160,7 @@
                         <mat-icon>add_circle_outline</mat-icon>
                     </button>
                 </div>
-                <div mat-dialog-content
+                <div class="tab-content"
                      style="overflow: visible; width:100%">
                     <flex-action [data]="data"
                                  [property]="property"
@@ -171,6 +172,7 @@
             </div>
         </mat-tab>
     </mat-tab-group>
+    </div>
     <div mat-dialog-actions
          class="dialog-action">
         <button mat-raised-button
