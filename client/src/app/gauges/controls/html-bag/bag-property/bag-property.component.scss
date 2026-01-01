@@ -93,8 +93,18 @@
         height: 30px;
     }
 
+    .slider-field .number-input {
+        width: 120px;
+        text-align: center;
+        display: inline-block;
+    }
+
     .field-row {
         display: block;
         margin-bottom: 5px;
+    }
+
+    .dialog-action {
+        bottom: 35px;
     }
 }
