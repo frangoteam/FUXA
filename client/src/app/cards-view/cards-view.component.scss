@@ -38,9 +38,21 @@
             padding-left: 10px;
             font-size: 11px;
             left: 50%;
-            transform: translate(-50%, -50%); 
-            width: 194px;
+            transform: translate(-50%, -50%);
+            width: 185px;
             border-radius: 2px;
+
+            .my-form-field {
+                height: 46px;
+            }
+            .zoom-input {
+                width: 80px;
+                margin: 0 6px;
+                height: 12px;
+            }
+            .my-button {
+                vertical-align: sub;
+            }
         }
     }
 }
