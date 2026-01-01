@@ -1,6 +1,11 @@
 :host {
     display: block;
 
+    .dialog-content {
+        width: 810px;
+
+    }
+
     ::ng-deep .mat-tab-label {
         height: 34px !important;
         padding: 0;
@@ -32,6 +37,7 @@
         .tab-alarms,
         .tab-logs {
             padding-right: 10px;
+            overflow: hidden;
         }
     }
 
