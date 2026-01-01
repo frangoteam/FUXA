@@ -12,7 +12,7 @@ import { Alarm, AlarmSubProperty, AlarmSubActions } from '../../_models/alarm';
 @Component({
     selector: 'app-alarm-list',
     templateUrl: './alarm-list.component.html',
-    styleUrls: ['./alarm-list.component.css']
+    styleUrls: ['./alarm-list.component.scss']
 })
 export class AlarmListComponent implements OnInit, AfterViewInit, OnDestroy {
 

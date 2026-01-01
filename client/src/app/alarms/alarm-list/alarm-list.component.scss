@@ -37,6 +37,21 @@
         right:0px;
     }
 
+    .filter {
+        display: inline-block;
+        min-height: 60px;
+        padding: 8px 24px 0;
+    }
+
+    .filter .mat-form-field {
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .table {
+        height: 705px;
+    }
+
     .mat-table {
         overflow: auto;
         border-bottom: 1px solid rgb(81, 81, 81);
@@ -67,35 +82,36 @@
     }
 
     .mat-column-name {
-        flex: 1 1 120px;
+        flex: 1 1 200px;
     }
 
-    .mat-column-receiver {
-        flex: 1 1 460px;
+
+    .mat-column-device {
+        flex: 2 1 350px;
     }
 
-    .mat-column-delay {
-        flex: 0 0 80px;
+    .mat-column-highhigh {
+        flex: 0 0 140px;
     }
 
-    .mat-column-interval {
-        flex: 0 0 80px;
+    .mat-column-high {
+        flex: 0 0 140px;
     }
-
-    .mat-column-type {
-        flex: 0 0 80px;
+    .mat-column-low {
+        flex: 0 0 140px;
     }
-
-    .mat-column-enabled {
-        flex: 0 0 100px;
+    .mat-column-info {
+        flex: 0 0 140px;
     }
-
-    .mat-column-subscriptions {
-        flex: 3 1 200px;
+    .mat-column-actions {
+        flex: 0 0 140px;
+    }
+    .mat-column-value {
+        flex: 0 0 800px;
     }
 
     .mat-column-remove {
-        flex: 0 0 60px;
+        flex: 0 0 120px;
     }
 
     .selectidthClass{
