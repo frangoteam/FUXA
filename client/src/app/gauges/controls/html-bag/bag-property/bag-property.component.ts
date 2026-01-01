@@ -12,7 +12,7 @@ import { PermissionData, PermissionDialogComponent } from '../../../gauge-proper
 @Component({
     selector: 'bag-property',
     templateUrl: './bag-property.component.html',
-    styleUrls: ['./bag-property.component.css']
+    styleUrls: ['./bag-property.component.scss']
 })
 export class BagPropertyComponent implements AfterViewInit {
 

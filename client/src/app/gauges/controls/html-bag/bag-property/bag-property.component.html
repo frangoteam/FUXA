@@ -1,7 +1,7 @@
-<div style="width: 750px;height: 810px; position: relative" class="dialog-mdsd-main">
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'editor.controls-bag-settings' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
-    <div class="dialog-mdsd-content">
+<div style="width: 800px;height: 810px; position: relative" class="dialog-mdsd-main">
+    <h1 mat-dialog-title  class="dialog-title" mat-dialog-draggable>{{'editor.controls-bag-settings' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="dialog-mdsd-content">
         <div style="display: block; width: 660px">
             <div style="display: block;">
                 <div class="my-form-field">
@@ -56,7 +56,7 @@
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-subdivisions' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="20" [min]="0" [step]="1" discrete 
+                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="20" [min]="0" [step]="1" discrete
                                 [(ngModel)]="optcfg.renderTicks.subDivisions" (input)="onChangeOptionsTicks('subDivisions', $event.value)">
                             </mat-slider>
                         </div>
@@ -64,13 +64,13 @@
                     <div class="field-row">
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-divisions-length' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" discrete 
+                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" discrete
                                 [(ngModel)]="optcfg.renderTicks.divLength" (input)="onChangeOptionsTicks('divLength', $event.value)">
                             </mat-slider>
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-subdivisions-length' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" discrete 
+                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" discrete
                                 [(ngModel)]="optcfg.renderTicks.subLength" (input)="onChangeOptionsTicks('subLength', $event.value)">
                             </mat-slider>
                         </div>
@@ -78,13 +78,13 @@
                     <div class="field-row">
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-divisions-width' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" discrete 
+                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" discrete
                                 [(ngModel)]="optcfg.renderTicks.divWidth" (input)="onChangeOptionsTicks('divWidth', $event.value)">
                             </mat-slider>
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-subdivisions-width' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" discrete 
+                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" discrete
                                 [(ngModel)]="optcfg.renderTicks.subWidth" (input)="onChangeOptionsTicks('subWidth', $event.value)">
                             </mat-slider>
                         </div>
@@ -108,7 +108,7 @@
                     <div class="field-row">
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-divisionfont-size' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" discrete 
+                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" discrete
                                 [(ngModel)]="optcfg.staticFontSize" (input)="onChangeOptionsLabels('fontSize', $event.value)">
                             </mat-slider>
                         </div>

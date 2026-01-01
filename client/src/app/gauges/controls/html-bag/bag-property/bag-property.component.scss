@@ -1,0 +1,100 @@
+:host {
+    .slider {
+        display: inline-block;
+        width: 100px;
+    }
+
+    .gauge {
+        display: inline-block;
+        position: absolute;
+        top: 0px;
+        width: 360px;
+        height: 350px;
+        margin: 0 auto;
+        padding-top: 30px;
+        padding-left: 70px;
+    }
+
+    .gauge-select {
+        width: 280px;
+        text-align: center;
+    }
+
+    .gauge-view {
+        border: 1px solid var(--formSeparatorColor);
+        width: 280px;
+        height: 220px;
+        margin-top: -5px;
+        padding-top: 30px;
+    }
+
+    .btn-gauge {
+        z-index: 99;
+        display: inline-block;
+        width: 50px;
+        height: 38px;
+        border: 1px solid var(--formSeparatorColor);
+    }
+
+    .btn-gauge-mat {
+        background: url('/assets/images/gauge-mat.png') no-repeat center center;
+        background-size: 45px 30px;
+    }
+
+    .btn-gauge-donut {
+        background: url('/assets/images/gauge-donut.png') no-repeat center center;
+        background-size: 52px 28px;
+    }
+
+    .btn-gauge-zone {
+        background: url('/assets/images/gauge-zone.png') no-repeat center center;
+        background-size: 45px 30px;
+    }
+
+    .toolbox {
+        position: absolute;
+        width: 100%;
+        height: 310px;
+    }
+
+    .toolbox-left {
+        display: inline-block;
+        width: 460px;
+        padding-top: 20px;
+    }
+
+    .toolbox-right {
+        width: 300px;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        height: 270px;
+    }
+
+    .toolbox-det {
+        display: inline-block;
+        width: 312px;
+        height: 300px;
+        position: absolute;
+        top: 15px;
+        right: 0px;
+    }
+
+    .slider-field span {
+        padding-left: 2px;
+        text-overflow: clip;
+        max-width: 125px;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .slider-field mat-slider {
+        background-color: var(--formSliderBackground);
+        height: 30px;
+    }
+
+    .field-row {
+        display: block;
+        margin-bottom: 5px;
+    }
+}
