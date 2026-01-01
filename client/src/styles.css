@@ -1018,6 +1018,37 @@ mat-toolbar-row {
     display: none !important;
 }
 
+/* Angular Material (MDC): tabs should size to label content (no stretch) */
+.mat-mdc-tab-group .mat-mdc-tab-header .mat-mdc-tab-labels {
+    justify-content: flex-start;
+}
+
+.mat-mdc-tab-group .mat-mdc-tab-header .mat-mdc-tab-labels .mdc-tab,
+.mat-mdc-tab-group .mat-mdc-tab-header .mat-mdc-tab-labels .mat-mdc-tab {
+    flex: 0 0 auto !important;
+}
+
+/* Angular Material sets `flex-grow: 1` when stretchTabs is enabled. Override it globally. */
+.mat-mdc-tab-group.mat-mdc-tab-group-stretch-tabs > .mat-mdc-tab-header .mat-mdc-tab {
+    flex-grow: 0 !important;
+}
+
+/* Reduce horizontal padding for tab labels (Angular Material MDC). */
+.mat-mdc-tab-group .mat-mdc-tab-header .mdc-tab.mat-mdc-tab {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+}
+
+/* Legacy (pre-MDC) tabs */
+.mat-tab-group .mat-tab-label {
+    flex: 0 0 auto;
+}
+
+.mat-tab-group .mat-tab-label {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
 .inbk {
     display: inline-block;
 }
