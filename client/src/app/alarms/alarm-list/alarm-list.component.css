@@ -22,6 +22,7 @@
     left: 0px;
     right: 0px;
     bottom: 0px;
+    background-color: var(--mat-table-background-color);
 }
 
 .container {
@@ -52,7 +53,7 @@
 
 .mat-table {
     overflow: auto;
-    height: 100%;
+    border-bottom: 1px solid rgb(81, 81, 81);
 }
 
 .mat-row {
@@ -109,7 +110,7 @@
 }
 
 .mat-column-remove {
-    flex: 0 0 60px;
+    flex: 0 0 120px;
 }
 
 .selectidthClass{
@@ -133,7 +134,7 @@
 }
 
 .my-header-filter-input {
-    display: block; 
+    display: block;
     margin-top: 4px;
     margin-bottom: 6px;
     padding: 3px 1px 3px 2px;
