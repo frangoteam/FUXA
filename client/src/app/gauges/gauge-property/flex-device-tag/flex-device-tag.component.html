@@ -1,5 +1,8 @@
 <div class="my-form-field device-input">
     <span>{{ 'gauges.property-tag-label' | translate }} {{ getDeviceName() }}</span>
+    <button mat-icon-button (click)="onBindTag()" class="tag-link">
+        <mat-icon>link</mat-icon>
+    </button>
     <input matInput
            class="device-variable-input"
            title="{{ tagTitle | translate }}"
@@ -16,7 +19,4 @@
             </mat-option>
         </mat-optgroup>
     </mat-autocomplete>
-    <button mat-icon-button (click)="onBindTag()">
-        <mat-icon>link</mat-icon>
-    </button>
 </div>
