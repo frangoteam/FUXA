@@ -1,31 +1,32 @@
 <div class="sidenav-menu" *ngIf="showSidenav" style="height: 100%" [ngClass]="'sidenav-menu-' + layout.navigation.type"
                         [style.background-color]="layoutNavigation.bkcolor" [style.color]="layoutNavigation.fgcolor">
     <mat-list style="background-color: inherit;">
-        <mat-list-item style="display: flex; justify-content: center; height: 35px; font-weight: bold; padding-bottom: 10px; margin-bottom: 10px; width: unset"
+        <mat-list-item class="sidenav-header" style="display: flex; justify-content: center; height: 45px; font-weight: bold; padding-bottom: 10px; width: unset"
                        [style.color]="layoutNavigation.fgcolor">
-            <span *ngIf="!logo; else hasLogo">{{'sidenav.title' | translate}}</span>
+            <span *ngIf="!logo; else hasLogo" class="sidenav-title" [style.color]="layoutNavigation.fgcolor">{{'sidenav.title' | translate}}</span>
             <ng-template #hasLogo><img src="{{logo}}" style="max-width: 100%; max-height: 100%;"></ng-template>
         </mat-list-item>
         <ng-container *ngFor="let item of layout.navigation.items; let i = index">
             <mat-list-item [ngClass]="'menu-item-' + layout.navigation.type" style="width: unset" [style.color]="layoutNavigation.fgcolor">
-                <button type="button" mat-button class="sidenav-btn" (click)="isExpandable(item) ? toggleSubMenu(item) : onGoTo(item)"
+                <button type="button" mat-button class="sidenav-btn sidenav-submenu-btn" (click)="isExpandable(item) ? toggleSubMenu(item) : onGoTo(item)"
+                        [style.color]="layoutNavigation.fgcolor"
                         [ngSwitch]="layout.navigation.type">
                     <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
                         <img *ngIf="item.image" src="{{item.image}}">
-                        <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+                        <mat-icon *ngIf="item.icon" [style.color]="layoutNavigation.fgcolor">{{item.icon}}</mat-icon>
                     </div>
                     <div *ngSwitchCase="'text'" class="menu-item-content-text">
-                        <span>{{item.text}}</span>
+                        <span [style.color]="layoutNavigation.fgcolor">{{item.text}}</span>
                     </div>
                     <div *ngSwitchCase="'block'" class="menu-item-content-block">
                         <img *ngIf="item.image" src="{{item.image}}">
-                        <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-                        <span>{{item.text}}</span>
+                        <mat-icon *ngIf="item.icon" [style.color]="layoutNavigation.fgcolor">{{item.icon}}</mat-icon>
+                        <span [style.color]="layoutNavigation.fgcolor">{{item.text}}</span>
                     </div>
                     <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
                         <img *ngIf="item.image" src="{{item.image}}">
-                        <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-                        <span style="display: inline-block">{{item.text}}</span>
+                        <mat-icon *ngIf="item.icon" [style.color]="layoutNavigation.fgcolor">{{item.icon}}</mat-icon>
+                        <span style="display: inline-block" [style.color]="layoutNavigation.fgcolor">{{item.text}}</span>
                     </div>
                     <mat-icon *ngIf="isExpandable(item)" class="sidenav-submenu-icon">
                         {{ isExpanded(item) ? 'expand_less' : 'expand_more' }}
@@ -37,25 +38,25 @@
                 <mat-list-item *ngFor="let child of item.children" [ngClass]="'menu-item-' + layout.navigation.type"
                                class="sidenav-submenu-item"
                                [style.color]="layoutNavigation.fgcolor">
-                    <button type="button" mat-button class="sidenav-btn" (click)="onGoTo(child)"
-                            style="padding-left: 20px !important;"
+                <button type="button" mat-button class="sidenav-btn" (click)="onGoTo(child)"
+                            [style.color]="layoutNavigation.fgcolor"
                             [ngSwitch]="layout.navigation.type">
                         <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
                             <img *ngIf="child.image" src="{{child.image}}">
-                            <mat-icon *ngIf="child.icon">{{child.icon}}</mat-icon>
+                            <mat-icon *ngIf="child.icon" [style.color]="layoutNavigation.fgcolor">{{child.icon}}</mat-icon>
                         </div>
                         <div *ngSwitchCase="'text'" class="menu-item-content-text">
-                            <span>{{child.text}}</span>
+                            <span [style.color]="layoutNavigation.fgcolor">{{child.text}}</span>
                         </div>
                         <div *ngSwitchCase="'block'" class="menu-item-content-block">
                             <img *ngIf="child.image" src="{{child.image}}">
-                            <mat-icon *ngIf="child.icon">{{child.icon}}</mat-icon>
-                            <span>{{child.text}}</span>
+                            <mat-icon *ngIf="child.icon" [style.color]="layoutNavigation.fgcolor">{{child.icon}}</mat-icon>
+                            <span [style.color]="layoutNavigation.fgcolor">{{child.text}}</span>
                         </div>
                         <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
                             <img *ngIf="child.image" src="{{child.image}}">
-                            <mat-icon *ngIf="child.icon">{{child.icon}}</mat-icon>
-                            <span style="display: inline-block">{{child.text}}</span>
+                            <mat-icon *ngIf="child.icon" [style.color]="layoutNavigation.fgcolor">{{child.icon}}</mat-icon>
+                            <span style="display: inline-block" [style.color]="layoutNavigation.fgcolor">{{child.text}}</span>
                         </div>
                     </button>
                 </mat-list-item>
