@@ -224,7 +224,9 @@
                 <div class="tab-container">
                     <div class="header-layout" [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
                         <div class="header-menu">
-                            <button mat-icon-button>
+                            <button mat-icon-button
+                                    [style.background-color]="data.layout.header.bkcolor"
+                                    [style.color]="data.layout.header.fgcolor">
                                 <mat-icon aria-label="Menu">menu</mat-icon>
                             </button>
                         </div>
@@ -266,24 +268,39 @@
                         </div>
                         <div class="header-notify-button"
                              [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
-                            <button mat-icon-button class="alarm-button">
+                            <button mat-icon-button class="alarm-button"
+                                    [style.background-color]="data.layout.header.bkcolor"
+                                    [style.color]="data.layout.header.fgcolor">
                                 <mat-icon aria-label="Alarms">notifications_none</mat-icon>
                             </button>
-                            <button mat-icon-button class="info-button">
+                            <button mat-icon-button class="info-button"
+                                    [style.background-color]="data.layout.header.bkcolor"
+                                    [style.color]="data.layout.header.fgcolor">
                                 <mat-icon aria-label="Info">error_outline</mat-icon>
                             </button>
-                            <div class="header-date-time" *ngIf="data.layout.header.dateTimeDisplay">
+                            <div class="header-date-time"
+                                 *ngIf="data.layout.header.dateTimeDisplay"
+                                 [style.fontFamily]="data.layout.header.fontFamily"
+                                 [style.fontSize]="data.layout.header.fontSize + 'px !important'">
                                 {{ currentDateTime | date: data.layout.header.dateTimeDisplay }}
                             </div>
                             <div *ngIf="data.layout.header.language && data.layout.header.language !== 'nothing'" class="header-language">
-                                <button mat-icon-button class="inbk">
+                                <button mat-icon-button class="inbk"
+                                        [style.background-color]="data.layout.header.bkcolor"
+                                        [style.color]="data.layout.header.fgcolor">
                                     <mat-icon aria-label="Language">language</mat-icon>
                                 </button>
-                                <div *ngIf="data.layout.header.language === 'key'" class="inbk">EN</div>
-                                <div *ngIf="data.layout.header.language === 'fullname'" class="inbk">English</div>
+                                <div class="inbk"
+                                     [style.fontFamily]="data.layout.header.fontFamily"
+                                     [style.fontSize]="data.layout.header.fontSize + 'px !important'">
+                                    <span *ngIf="data.layout.header.language === 'key'" class="inbk">EN</span>
+                                    <span *ngIf="data.layout.header.language === 'fullname'" class="inbk">English</span>
+                                </div>
                             </div>
-                            <div *ngIf="data.securityEnabled" class="header-login">
-                                <button mat-icon-button>
+                            <div *ngIf="!data.securityEnabled" class="header-login">
+                                <button mat-icon-button
+                                        [style.background-color]="data.layout.header.bkcolor"
+                                        [style.color]="data.layout.header.fgcolor">
                                     <mat-icon aria-label="Login">account_circle</mat-icon>
                                 </button>
                                 <div class="info">

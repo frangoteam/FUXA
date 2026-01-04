@@ -101,7 +101,13 @@
         background-color: rgba(255, 255, 255, 1);
 
         .header-menu {
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            height: 46px;
+
+            mat-icon {
+                line-height: 24px;
+            }
         }
 
         .header-title {
@@ -113,15 +119,18 @@
         }
 
         .header-login {
+            display: flex;
             line-height: 46px;
+            align-items: center;
             border-left-width: 1px;
             border-left-style: solid;
             padding-left: 10px;
 
             .info {
-                display: inline-block;
-                line-height: 46px;
-                vertical-align: middle;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                height: 46px;
             }
 
             .primary {
@@ -133,6 +142,7 @@
                 white-space: nowrap;
                 max-width: fit-content;
                 line-height: 16px;
+                opacity: 0.5;
             }
 
             .secondary {
@@ -159,7 +169,17 @@
         .header-language {
             padding-left: 10px;
             padding-right: 10px;
-            display: inline-block;
+            display: flex;
+            line-height: 46px;
+            align-items: center;
+            gap: 4px;
+
+            mat-icon {
+                font-size: 28px;
+                width: 28px;
+                height: 28px;
+                line-height: 28px;
+            }
         }
 
         .header-notify-button {

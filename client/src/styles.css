@@ -296,12 +296,6 @@ app-root {
 }
 
 /* Menu */
-.sidenav-toogle {
-    top: 0px;
-    left: 10px;
-    line-height: 46px;
-}
-
 .backdrop-white {
     background-color: rgb(255, 255, 255);
 }
