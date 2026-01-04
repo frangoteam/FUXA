@@ -53,7 +53,7 @@
             <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.userack}}</mat-cell>
         </ng-container>
         <ng-container matColumnDef="history">
-            <mat-header-cell *matHeaderCellDef [style.flex]="(showInContainer) ? '0 0 10px' : '0 0 90px'">
+            <mat-header-cell *matHeaderCellDef [style.flex]="(showInContainer) ? '0 0 10px' : '0 0 120px'">
                 <div class="header-tools" *ngIf="!fullview || showInContainer">
                     <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="header-tools-options">
                         <mat-icon>more_vert</mat-icon>
@@ -75,16 +75,16 @@
                     </div>
                 </div>
             </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color" [style.flex]="(showInContainer) ? '0 0 10px' : '0 0 90px'"></mat-cell>
+            <mat-cell *matCellDef="let element" [style.color]="element.color" [style.flex]="(showInContainer) ? '0 0 10px' : '0 0 120px'"></mat-cell>
         </ng-container>
-        <mat-header-row *matHeaderRowDef="displayColumns; sticky: true"></mat-header-row>
+        <mat-header-row *matHeaderRowDef="displayColumns; sticky: true" class="my-header-row"></mat-header-row>
         <mat-row *matRowDef="let element; columns: displayColumns;" class="my-mat-row" [style.background-color]="element.bkcolor"></mat-row>
     </mat-table>
     <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="table-pagination"></mat-paginator>
     <div *ngIf="alarmsLoading" class="spinner-overlay">
         <mat-spinner style="margin: auto" diameter="40"  class="spinner"></mat-spinner>
     </div>
-    <mat-date-range-input [formGroup]="dateRange" [rangePicker]="picker">
+    <mat-date-range-input [formGroup]="dateRange" [rangePicker]="picker" style="display: none;">
         <input matStartDate formControlName="startDate">
         <input matEndDate formControlName="endDate">
     </mat-date-range-input>
@@ -93,5 +93,5 @@
             <button mat-button matDateRangePickerCancel>{{'dlg.cancel' | translate}}</button>
             <button mat-raised-button color="primary" matDateRangePickerApply (click)="onShowAlarmsHistory()">{{'dlg.apply' | translate}}</button>
           </mat-date-range-picker-actions>
-    </mat-date-range-picker>   
+    </mat-date-range-picker>
 </div>
