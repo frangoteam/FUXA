@@ -1,9 +1,6 @@
 <div class="container">
-    <h1 mat-dialog-title
-        style="display:inline-block;cursor:move;"
-        mat-dialog-draggable>{{data.title}}</h1>
-    <mat-icon (click)="onNoClick()"
-              style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'editor.controls-input-settings' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <mat-tab-group style="width: 100%;">
         <mat-tab label="{{'gauges.property-props' | translate}}">
             <div class="mat-tab-container">

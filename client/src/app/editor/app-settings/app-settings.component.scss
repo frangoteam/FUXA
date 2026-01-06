@@ -1,0 +1,57 @@
+:host {
+    display: block;
+
+    ::ng-deep .mat-tab-label {
+        height: 34px !important;
+        padding: 0;
+    }
+
+    .tabs-container {
+        min-height: 500px;
+        min-width: 700px;
+
+        .tab-system {
+            min-width: 320px;
+
+            .tab-system-columns {
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .tab-system-col-right {
+                width: 340px;
+                margin-left: auto;
+            }
+        }
+
+        .tab-smtp,
+        .tab-daq,
+        .tab-alarms,
+        .tab-logs {
+            padding-right: 10px;
+        }
+    }
+
+    .input-row {
+        width: 100%;
+    }
+
+    .system-input {
+        width: 320px;
+    }
+
+    .node-red-info {
+        margin-top: 6px;
+        padding: 6px 8px;
+        border-left: 3px solid var(--formInputBorderFocus);
+        border-radius: 2px;
+        background-color: var(--formInputBackground);
+        color: var(--formInputColor);
+        font-size: 11px;
+        line-height: 14px;
+        opacity: 0.85;
+    }
+}

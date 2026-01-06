@@ -235,7 +235,7 @@ export class WidgetProperty extends GaugeProperty {
     type: string;
     scriptContent?: { moduleId: string, content: string };
     svgContent?: string;
-    varsToBind?: { [key: string]: WidgetPropertyVariable } = {};
+    varsToBind?: WidgetPropertyVariable[] = [];
 }
 
 export interface InputOptionsProperty {
@@ -307,6 +307,7 @@ export enum GaugeActionsType {
     hide = 'shapes.action-hide',
     show = 'shapes.action-show',
     blink = 'shapes.action-blink',
+    color = 'shapes.action-color',
     stop = 'shapes.action-stop',
     clockwise = 'shapes.action-clockwise',
     anticlockwise = 'shapes.action-anticlockwise',
@@ -563,6 +564,7 @@ export class TableCell {
     label: string;
     variableId: string;
     valueFormat: string;
+    timeInterval?: number;
     bitmask: number;
     type: TableCellType;
 
@@ -609,6 +611,7 @@ export class Variable {
     error: number;
     timestamp: number;
     device?: Device;
+    quality?: string;
     constructor(id: string, name: string, device?: Device) {
         this.id = id;
         this.name = name;

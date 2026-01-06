@@ -10,6 +10,7 @@ import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { Role } from '../../_models/user';
+import { ApiKey } from '../../_models/apikey';
 
 @Injectable()
 export class ResDemoService implements ResourceStorageService {
@@ -184,6 +185,24 @@ export class ResDemoService implements ResourceStorageService {
     }
 
     removeReportFile(fileName: string): Observable<void> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    getApiKeys(): Observable<ApiKey[]> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    setApiKeys(roles: ApiKey[]): Observable<any> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    removeApiKeys(roles: ApiKey[]): Observable<any> {
         return new Observable(observer => {
             observer.error('Not supported!');
         });

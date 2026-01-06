@@ -41,7 +41,7 @@ function Influx(_settings, _log, _currentStorate) {
             }
             try {
                 client = new InfluxDB(clientOptions);
-                writeApi = client.getWriteApi(settings.daqstore.organization, settings.daqstore.bucket, 's');
+                writeApi = client.getWriteApi(settings.daqstore.organization, settings.daqstore.bucket, 'ms');
                 queryApi = client.getQueryApi(settings.daqstore.organization);
                 status = InfluxDBStatusEnum.OPEN;
             } catch (error) {

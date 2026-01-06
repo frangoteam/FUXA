@@ -71,51 +71,43 @@ module.exports = {
          * GET Server resources folder content
          */
         resourcesApp.get('/api/resources/resources', secureFnc, function (req, res) {
-            const permission = checkGroupsFnc(req);
-            if (res.statusCode === 403) {
-                runtime.logger.error("api get resources/resources: Tocken Expired");
-            } else if (!authJwt.haveAdminPermission(permission)) {
-                res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
-                runtime.logger.error("api get resources/resources: Unauthorized!");
-            } else {
-                try {
-                    const resourcesFilter = { fonts: ['ttf'] };
-                    const wwwSubDir = '_resources';
-                    const result = { ...req.query, ...{ groups: [] } };
-                    const group = { name: wwwSubDir, items: [] };
-                    var files = getFiles(runtime.settings.resourcesFileDir, ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.pdf', '.ttf', '.mp4', '.webm', '.ogg', '.ogv']);
-                    for (var x = 0; x < files.length; x++) {
-                        const fileName = files[x];
-                        const filePath = path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep);
-                        var fileLabel;
-                        if (resourcesFilter.fonts.some(suffix => fileName.endsWith(suffix))) {
-                            const font = fontkit.openSync(filePath);
-                            fileLabel = font.fullName;
-                        }
+            try {
+                const resourcesFilter = { fonts: ['ttf'] };
+                const wwwSubDir = '_resources';
+                const result = { ...req.query, ...{ groups: [] } };
+                const group = { name: wwwSubDir, items: [] };
+                var files = getFiles(runtime.settings.resourcesFileDir, ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.pdf', '.ttf', '.mp4', '.webm', '.ogg', '.ogv']);
+                for (var x = 0; x < files.length; x++) {
+                    const fileName = files[x];
+                    const filePath = path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep);
+                    var fileLabel;
+                    if (resourcesFilter.fonts.some(suffix => fileName.endsWith(suffix))) {
+                        const font = fontkit.openSync(filePath);
+                        fileLabel = font.fullName;
+                    }
 
-                        group.items.push({
-                            path: filePath,
-                            name: fileName,
-                            label: fileLabel
-                        });
-                    }
-                    result.groups.push(group);
-                    res.json(result);
-                } catch (err) {
-                    if (err.code) {
-                        res.status(400).json({ error: err.code, message: err.message });
-                    } else {
-                        res.status(400).json({ error: "unexpected_error", message: err.toString() });
-                    }
-                    runtime.logger.error("api get resources/resources: " + err.message);
+                    group.items.push({
+                        path: filePath,
+                        name: fileName,
+                        label: fileLabel
+                    });
                 }
+                result.groups.push(group);
+                res.json(result);
+            } catch (err) {
+                if (err.code) {
+                    res.status(400).json({ error: err.code, message: err.message });
+                } else {
+                    res.status(400).json({ error: "unexpected_error", message: err.toString() });
+                }
+                runtime.logger.error("api get resources/resources: " + err.message);
             }
         });
 
         /**
          * POST remove resource file
          */
-        resourcesApp.post('/api/resources/remove', function (req, res) {
+        resourcesApp.post('/api/resources/remove', secureFnc, function (req, res) {
             const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post device: Tocken Expired");
@@ -215,7 +207,7 @@ module.exports = {
         /**
          * POST template
          */
-        resourcesApp.post('/api/resources/template', function (req, res) {
+        resourcesApp.post('/api/resources/template', secureFnc, function (req, res) {
             const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
                 runtime.logger.error("api post device: Tocken Expired");

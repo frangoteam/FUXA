@@ -17,10 +17,16 @@ export class AppSettings {
     daqstore = new DaqStore();
     /** Alarms store settings */
     alarms = new AlarmsSettings();
+    /** Logs settings */
+    logs = new LogsSettings();
     /** Log Full enabled to log all setValue */
     logFull = false;
     /** User role enabled (default group) */
     userRole = false;
+    /** Enable Node-Red */
+    nodeRedEnabled = true;
+    /** Enable Swagger */
+    swaggerEnabled = false;
 }
 
 export class SmtpSettings {
@@ -80,6 +86,10 @@ export class DaqStore {
 
 export class AlarmsSettings {
     retention = AlarmsRetentionType.year1;
+}
+
+export class LogsSettings {
+    retention = DaqStoreRetentionType.none;
 }
 
 export class StoreCredentials {

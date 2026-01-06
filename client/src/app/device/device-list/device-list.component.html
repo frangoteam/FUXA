@@ -21,9 +21,20 @@
         <!-- Checkbox Column -->
         <ng-container matColumnDef="select">
             <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
-                <button *ngIf="!readonly && isDeviceToEdit" mat-icon-button (click)="onAddTag()" class="remove" matTooltip="{{'device.list-add' | translate}}">
-                    <mat-icon>add</mat-icon>
-                </button>
+                <ng-container *ngIf="deviceSelected?.type === deviceType.REDIS; else simpleAdd">
+                    <button mat-icon-button [matMenuTriggerFor]="addMenu" class="remove" matTooltip="{{'device.list-add' | translate}}">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                    <mat-menu #addMenu [overlapTrigger]="false">
+                        <button mat-menu-item (click)="onAddTag()">{{'device.list-add' | translate}}</button>
+                        <button mat-menu-item (click)="onScanRedisTag()">{{'device.list-scan' | translate}}</button>
+                    </mat-menu>
+                </ng-container>
+                <ng-template #simpleAdd>
+                    <button *ngIf="!readonly && isDeviceToEdit" mat-icon-button (click)="onAddTag()" class="remove" matTooltip="{{'device.list-add' | translate}}">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </ng-template>
             </mat-header-cell>
             <mat-cell *matCellDef="let element" [ngClass]="'selectidthClass'">
                 <button mat-icon-button (click)="onEditRow(element)" class="remove" matTooltip="{{'device.list-edit' | translate}}"
@@ -79,6 +90,11 @@
         <ng-container matColumnDef="timestamp">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-timestamp' | translate}} </mat-header-cell>
             <mat-cell *matCellDef="let element"> {{element.timestamp | date : 'dd-MM-yyyy HH:mm:ss' }} </mat-cell>
+        </ng-container>
+        <!-- Quality Column -->
+        <ng-container matColumnDef="quality">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-quality' | translate}} </mat-header-cell>
+            <mat-cell *matCellDef="let element"> {{element.quality}} </mat-cell>
         </ng-container>
         <ng-container matColumnDef="description">
             <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-description' | translate}} </mat-header-cell>

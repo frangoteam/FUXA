@@ -66,6 +66,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     private lastDaqQuery = new DaqQuery();
     private destroy$ = new Subject<void>();
     private historyDateformat = '';
+    private historyTimeInterval = 1;
     addValueInterval = 0;
     private pauseMemoryValue: TableMapValueDictionary = {};
     setOfSourceTableData = false;
@@ -231,7 +232,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setValues(values: { dt: number; value: string }[][]) {
         const rounder = { H: 3600000, m: 60000, s: 1000 };
-        const roundIndex = rounder[this.historyDateformat?.[this.historyDateformat?.length - 1]] ?? 1;
+        const roundFormatIndex = rounder[this.historyDateformat?.[this.historyDateformat?.length - 1]] ?? 1;
+        const roundIndex = roundFormatIndex * this.historyTimeInterval;
 
         const timestampsSet = new Set<number>();
         const mergedMap = new Map<number, Record<string, string>>(); // timestamp -> { columnId: value }
@@ -517,6 +519,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
                 if (cn.type === TableCellType.timestamp) {
                     this.historyDateformat = cn.valueFormat;
+                    this.historyTimeInterval = cn.timeInterval || 1;
                 }
             }
         });

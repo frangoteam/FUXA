@@ -110,6 +110,8 @@ try {
     settings.widgetsFileDir = path.resolve(rootDir, '_widgets');
     settings.reportsDir = path.resolve(rootDir, '_reports');
     settings.webcamSnapShotsDir = path.resolve(rootDir, settings.webcamSnapShotsDir);
+    settings.logDir = path.resolve(rootDir, settings.logDir);
+    settings.dbDir = path.resolve(rootDir, settings.dbDir || '_db');
 } catch (err) {
     logger.error('Error loading settings file: ' + settingsFile)
     if (err.code == 'MODULE_NOT_FOUND') {
@@ -154,6 +156,9 @@ try {
         if (mysettings.alarms) {
             settings.alarms = mysettings.alarms;
         }
+        if (mysettings.logs) {
+            settings.logs = mysettings.logs;
+        }
         if (!utils.isNullOrUndefined(mysettings.broadcastAll)) {
             settings.broadcastAll = mysettings.broadcastAll;
         }
@@ -162,6 +167,12 @@ try {
         }
         if (!utils.isNullOrUndefined(mysettings.userRole)) {
             settings.userRole = mysettings.userRole;
+        }
+        if (!utils.isNullOrUndefined(mysettings.nodeRedEnabled)) {
+            settings.nodeRedEnabled = mysettings.nodeRedEnabled;
+        }
+        if (!utils.isNullOrUndefined(mysettings.swaggerEnabled)) {
+            settings.swaggerEnabled = mysettings.swaggerEnabled;
         }
     }
 } catch (err) {
@@ -185,9 +196,6 @@ if (version.indexOf('beta') > 0) {
 }
 
 // Check storage Database dir
-if (!settings.dbDir) {
-    settings.dbDir = path.resolve(rootDir, '_db');
-}
 if (!fs.existsSync(settings.dbDir)) {
     fs.mkdirSync(settings.dbDir);
 }
@@ -239,6 +247,10 @@ const io = socketIO(server, {
 
 // Check settings value
 var www = path.resolve(__dirname, '../client/dist');
+if (!fs.existsSync(www)) {      // compatibility with docker/npm/electron
+    www = path.resolve(__dirname, './dist');
+}
+
 settings.httpStatic = settings.httpStatic || www;
 
 if (parsedArgs.port !== undefined) {
@@ -344,6 +356,34 @@ app.use(morgan('dev', {
     }, stream: process.stdout
 }));
 
+function mountSwaggerIfEnabled() {
+    const swaggerEnabled = settings.swagger || settings.swaggerEnabled;
+    if (!swaggerEnabled) return;
+
+    let swaggerUi;
+    let YAML;
+    try {
+        swaggerUi = require('swagger-ui-express');
+        YAML = require('yamljs');
+    } catch (err) {
+        if (err && err.code !== 'MODULE_NOT_FOUND') {
+            throw err;
+        }
+        logger.warn('[Swagger] Enabled but optional dependencies are missing; skipping /api-docs. Install swagger-ui-express and yamljs to enable it.');
+        return;
+    }
+
+    const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
+
+// Swagger API Docs (mounted on main app so it isn't intercepted by optional integrations)
+try {
+    mountSwaggerIfEnabled();
+} catch (err) {
+    logger.warn('Swagger UI failed to initialize', err);
+}
+
 // app.get('/', function (req, res) {
 //     res.sendFile('/index.html');
 //     try {
@@ -374,7 +414,10 @@ function getListenPath() {
     return listenPath;
 }
 
-const { mountNodeRedIfInstalled } = require('./integrations/node-red');
+let mountNodeRedIfInstalled;
+if (settings.nodeRedEnabled) {
+    ({ mountNodeRedIfInstalled } = require('./integrations/node-red'));
+}
 
 // Start FUXA
 function startFuxa() {
@@ -395,10 +438,14 @@ function startFuxa() {
             });
 
             // Mount Node-RED if present; never block FUXA if it fails
-            try {
-                await mountNodeRedIfInstalled({ app, server, settings, runtime, logger, authJwt, events });
-            } catch (e) {
-                logger.warn('[Node-RED] Failed to initialize, continuing without it.', e);
+            if (settings.nodeRedEnabled && typeof mountNodeRedIfInstalled === 'function') {
+                try {
+                    await mountNodeRedIfInstalled({ app, server, settings, runtime, logger, authJwt, events });
+                } catch (e) {
+                    logger.warn('[Node-RED] Failed to initialize, continuing without it.', e);
+                }
+            } else if (settings.nodeRedEnabled) {
+                logger.warn('[Node-RED] Enabled but integration not available; continuing without it.');
             }
 
             if (settings.disableServer !== false) {

@@ -39,7 +39,7 @@ export class Device {
         id: 'Device id, GUID',
         name: 'Device name',
         enabled: 'Enabled',
-        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | ADSclient | Gpio | WebCam | MELSEC',
+        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | ADSclient | Gpio | WebCam | MELSEC | REDIS',
         polling: 'Polling interval in millisec., check changed value after ask value, by OPCUA there is a monitor',
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
@@ -180,18 +180,20 @@ export class DeviceNetProperty {
     stopbits: string;
     /** Serial parity used for Modbus RTU connection */
     parity: string;
-    /** Options settings used for Modbus tockenized frame */
+    /** Options settings used for Modbus tockenized frame, redis for field */
     options: string;
     /** Method flag used for WebAPI (GET/POST) */
     method: string;
     /** Data format flag used for WebAPI (CSV/JSON) */
     format: string;
-    /** Connection option used for Modbus RTU/TCP */
+    /** Connection option used for Modbus RTU/TCP, Redis for readMode */
     connectionOption: string;
     /** Delay used for Modbus RTU/TCP delay between frame*/
     delay: number = 10;
     /** Modbus TCP socket reuse flag */
     socketReuse?: string;
+    /** Force FC16 for Modbus RTU/TCP write operations */
+    forceFC16?: boolean;
     /** MELSEC */
     ascii?: boolean;
     octalIO?: boolean;
@@ -245,7 +247,8 @@ export enum DeviceType {
     ADSclient = 'ADSclient',
     GPIO = 'GPIO',
     WebCam = 'WebCam',
-    MELSEC = 'MELSEC'
+    MELSEC = 'MELSEC',
+    REDIS = 'REDIS'
     // Template: 'template'
 }
 
@@ -316,6 +319,39 @@ export enum MelsecTagType {
     UDINT = 'UDINT',
     REAL = 'REAL',
     STRING = 'STRING'
+}
+
+export enum RedisReadModeType {
+    simple = 'simple',
+    hash = 'hash',
+    // custom = 'custom',
+}
+
+export enum RedisTagType {
+    number = 'number',
+    boolean = 'boolean',
+    string = 'string'
+}
+
+export class RedisOptions {
+    redisTimeoutMs: number = 3000;
+    maxKeysPerPoll = 500;
+    readFields = {
+        value: '',
+        quality: '',
+        timestamp: ''
+      };
+    customCommand = {
+        read: {
+            name: '',
+            batchPerKey: true,
+            args: ['{{key}}','{{fields...}}']
+          },
+        write: {
+            name: '',
+            args: []
+          }
+    };
 }
 
 export enum ModbusOptionType {
@@ -690,6 +726,8 @@ export class TagScale {
     scaledLow: number;
     scaledHigh: number;
     dateTimeFormat: string;
+    readExpression: string;
+    writeExpression: string;
 }
 
 export enum TagScaleModeType {
@@ -697,6 +735,7 @@ export enum TagScaleModeType {
     linear = 'device.tag-scale-mode-linear',
     convertDateTime = 'device.tag-convert-datetime',
     convertTickTime = 'device.tag-convert-ticktime',
+    expression = 'device.tag-scale-mode-expression',
 }
 
 export enum TagSystemType {

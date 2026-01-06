@@ -1024,7 +1024,9 @@ mat-toolbar-row {
 .table {
     display: table;
 }
-
+.mt3 {
+    margin-top: 3px;
+}
 .mt5 {
     margin-top: 5px;
 }
@@ -1096,7 +1098,9 @@ mat-toolbar-row {
 .mr5 {
     margin-right: 5px;
 }
-
+.mb3 {
+    margin-bottom: 3px;
+}
 .mb5 {
     margin-bottom: 5px;
 }
@@ -1182,3 +1186,39 @@ mat-toolbar-row {
 .fs-14 {
     font-size: 14px;
 }
+
+/* ROW */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  /* COLUMN BASE */
+  .col {
+    flex: 1 0 0;
+  }
+
+  /* COLUMN SIZES (12-grid style) */
+  .col-1  { flex: 0 0 8.33%; }
+  .col-2  { flex: 0 0 16.66%; }
+  .col-3  { flex: 0 0 25%; }
+  .col-4  { flex: 0 0 33.33%; }
+  .col-5  { flex: 0 0 41.66%; }
+  .col-6  { flex: 0 0 50%; }
+  .col-7  { flex: 0 0 58.33%; }
+  .col-8  { flex: 0 0 66.66%; }
+  .col-9  { flex: 0 0 75%; }
+  .col-10 { flex: 0 0 83.33%; }
+  .col-11 { flex: 0 0 91.66%; }
+  .col-12 { flex: 0 0 100%; }
+
+  /* OPTIONAL: spacing */
+  .gap-8  { gap: 8px; }
+  .gap-16 { gap: 16px; }
+
+  .center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }

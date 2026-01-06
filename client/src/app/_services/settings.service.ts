@@ -84,8 +84,20 @@ export class SettingsService {
             this.appSettings.alarms.retention = settings.alarms.retention ?? this.appSettings.alarms?.retention;
             dirty = true;
         }
+        if (settings.logs && settings.logs.retention !== this.appSettings.logs?.retention) {
+            this.appSettings.logs.retention = settings.logs.retention ?? this.appSettings.logs?.retention;
+            dirty = true;
+        }
         if (settings.userRole !== this.appSettings.userRole) {
             this.appSettings.userRole = settings.userRole;
+            dirty = true;
+        }
+        if (settings.nodeRedEnabled !== this.appSettings.nodeRedEnabled) {
+            this.appSettings.nodeRedEnabled = settings.nodeRedEnabled;
+            dirty = true;
+        }
+        if (settings.swaggerEnabled !== this.appSettings.swaggerEnabled) {
+            this.appSettings.swaggerEnabled = settings.swaggerEnabled;
             dirty = true;
         }
         return dirty;

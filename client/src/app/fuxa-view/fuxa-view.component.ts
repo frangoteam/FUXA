@@ -208,7 +208,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (view?.id) {
                 this.id = view.id;
                 this.view = view;
-                if (view.type === this.cardViewType) {
+                if (view.type === this.cardViewType || view.type === ViewType.maps) {
                     this.ongoto.emit(view.id);
                     return;
                 } else {

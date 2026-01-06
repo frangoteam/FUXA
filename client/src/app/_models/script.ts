@@ -196,6 +196,14 @@ export class SystemFunctions {
         paramsText: 'script.sys-fnc-invokeObject-params'
     },
     {
+        name: '$getObject',
+        mode: ScriptMode.CLIENT,
+        text: 'script.sys-fnc-getObject-text',
+        tooltip: 'script.sys-fnc-getObject-tooltip',
+        params: [false],
+        paramsText: 'script.sys-fnc-getObject-params'
+    },
+    {
         name: '$runServerScript',
         mode: ScriptMode.CLIENT,
         text: 'script.sys-fnc-runServerScript-text',

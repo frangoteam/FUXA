@@ -130,6 +130,8 @@ export class SetupComponent {
     isToDisable(section: string) {
         if (clientOnlyToDisable.indexOf(section) !== -1) {
             return this.appService.isClientApp;
+        } else if (section === 'node-red') {
+            return !(this.appService.nodeRedEnabled() && !this.appService.isClientApp);
         }
         return false;
     }

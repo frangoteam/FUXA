@@ -154,7 +154,7 @@
                             <!-- Main schedule info row -->
                             <div class="schedule-main-row">
                                 <span class="schedule-number">{{getDeviceSchedules().indexOf(schedule) + 1}}</span>
-                                <span class="start-time" [innerHTML]="formatTime(schedule.startTime)"></span>
+                                <span class="start-time" [innerHTML]="formatStartTime(schedule)"></span>
                                 <span class="end-time" [innerHTML]="formatScheduleMode(schedule)"></span>
                                 <span class="duration">{{calculateDuration(schedule)}}</span>
                                 <div class="status-switch" (click)="$event.stopPropagation()">
@@ -219,7 +219,7 @@
                             <!-- Main schedule info row -->
                             <div class="schedule-main-row">
                                 <span class="schedule-number">{{getDeviceSchedules().indexOf(schedule) + 1}}</span>
-                                <span class="start-time" [innerHTML]="formatTime(schedule.startTime)"></span>
+                                <span class="start-time" [innerHTML]="formatStartTime(schedule)"></span>
                                 <span class="end-time" [innerHTML]="formatScheduleMode(schedule)"></span>
                                 <span class="duration">{{getRemainingTime(schedule.deviceName || selectedDevice, getDeviceSchedules().indexOf(schedule))}}</span>
 
@@ -312,7 +312,7 @@
                                     <!-- Main schedule info row -->
                                     <div class="schedule-main-row">
                                         <span class="schedule-number">{{deviceGroup.allSchedules.indexOf(schedule) + 1}}</span>
-                                        <span class="start-time" [innerHTML]="formatTime(schedule.startTime)"></span>
+                                        <span class="start-time" [innerHTML]="formatStartTime(schedule)"></span>
                                         <span class="end-time" [innerHTML]="formatScheduleMode(schedule)"></span>
                                         <span class="duration">{{calculateDuration(schedule)}}</span>
 
@@ -380,7 +380,7 @@
                                     <!-- Main schedule info row -->
                                     <div class="schedule-main-row">
                                         <span class="schedule-number">{{deviceGroup.allSchedules.indexOf(schedule) + 1}}</span>
-                                        <span class="start-time" [innerHTML]="formatTime(schedule.startTime)"></span>
+                                        <span class="start-time" [innerHTML]="formatStartTime(schedule)"></span>
                                         <span class="end-time" [innerHTML]="formatScheduleMode(schedule)"></span>
                                         <span class="duration">{{getRemainingTime(schedule.deviceName, deviceGroup.allSchedules.indexOf(schedule))}}</span>
 
@@ -473,6 +473,9 @@
                                (click)="openTimePicker('start')"
                                (focus)="openTimePicker('start')"
                                (blur)="validateTimeInput('start', $event)"
+                               [disabled]="formTimer.allDay"
+                               [style.cursor]="formTimer.allDay ? 'not-allowed' : 'auto'"
+                               [style.pointer-events]="formTimer.allDay ? 'none' : 'auto'"
                                required>
                         <span class="material-icons time-icon">schedule</span>
                     </div>
@@ -552,6 +555,9 @@
                                (click)="openTimePicker('end')"
                                (focus)="openTimePicker('end')"
                                (blur)="validateTimeInput('end', $event)"
+                               [disabled]="formTimer.allDay"
+                               [style.cursor]="formTimer.allDay ? 'not-allowed' : 'auto'"
+                               [style.pointer-events]="formTimer.allDay ? 'none' : 'auto'"
                                required>
                         <span class="material-icons time-icon">schedule</span>
                     </div>
@@ -731,6 +737,17 @@
                             <div class="toggle-switch-container">
                                 <label class="switch">
                                     <input type="checkbox" [(ngModel)]="formTimer.monthMode" name="monthMode">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="toggle-item">
+                        <label class="toggle-label">
+                            <span class="toggle-text">{{ 'scheduler.all-day' | translate }}</span>
+                            <div class="toggle-switch-container">
+                                <label class="switch">
+                                    <input type="checkbox" [(ngModel)]="formTimer.allDay" name="allDay" (change)="onAllDayChange()">
                                     <span class="slider"></span>
                                 </label>
                             </div>

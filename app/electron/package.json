@@ -1,0 +1,73 @@
+{
+    "name": "fuxa",
+    "version": "0.0.1",
+    "description": "FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With FUXA you can create modern process visualizations with individual designs for your machines and real-time data display.",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "package": "electron-builder --dir",
+        "dist": "electron-builder",
+        "postinstall": "electron-builder install-app-deps"
+    },
+    "author": "frangoteam",
+    "license": "MIT",
+    "devDependencies": {
+        "electron": "^39.2.6",
+        "electron-builder": "^26.3.5"
+    },
+    "dependencies": {
+        "sqlite3": "5.1.5"
+    },
+    "build": {
+        "appId": "com.frangoteam.fuxa",
+        "productName": "FUXA",
+        "asar": false,
+        "files": [
+            "main.js",
+            "*.html",
+            "server/**/*",
+            "client/dist/**/*",
+            "icons/**/*"
+        ],
+        "extraResources": [
+            {
+                "from": "server/node_modules",
+                "to": "app/server/node_modules",
+                "filter": [
+                    "!**/.bin/**"
+                ]
+            }
+        ],
+        "directories": {
+            "output": "dist"
+        },
+        "win": {
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": ["x64"]
+                }
+            ],
+            "icon": "icons/fuxa-logo.ico"
+        },
+        "linux": {
+            "target": [
+                {
+                    "target": "appimage",
+                    "arch": ["x64", "arm64"]
+                }
+            ],
+            "executableName": "fuxa",
+            "icon": "icons/fuxa-logo.png"
+        },
+        "mac": {
+            "target": [
+                {
+                    "target": "dmg",
+                    "arch": ["x64", "arm64"]
+                }
+            ],
+            "icon": "icons/fuxa-logo.icns"
+        }
+    }
+}

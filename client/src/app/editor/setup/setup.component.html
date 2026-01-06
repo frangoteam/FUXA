@@ -92,6 +92,14 @@
                 </button>
             </div>
             <div class="btn-card">
+                <button mat-button (click)="goTo('/apikeys')" class="card-btn">
+                    <div class="card-btn-content">
+                        <mat-icon>vpn_key</mat-icon>
+                        <span>{{'dlg.setup-apikeys' | translate}}</span>
+                    </div>
+                </button>
+            </div>
+            <div class="btn-card">
                 <button mat-button (click)="onWidgets()" class="card-btn">
                     <div class="card-btn-content">
                         <mat-icon>lock_open</mat-icon>
@@ -159,7 +167,7 @@
                 </button>
             </div>
             <div class="btn-card">
-                <button mat-button (click)="goTo('/flows')" class="card-btn" [disabled]="isToDisable('scripts') || (nodeRedExists$ | async) === false" >
+                <button mat-button (click)="goTo('/flows')" class="card-btn" [disabled]="isToDisable('node-red') || (nodeRedExists$ | async) === false" >
                     <div class="card-btn-content">
                         <mat-icon svgIcon="nodered-flows" style="width: 50px;"></mat-icon>
                         <span>{{'dlg.setup-node-red-flows' | translate}}</span>

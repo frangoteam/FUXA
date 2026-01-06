@@ -364,7 +364,7 @@
     "graph.property-date-last-range": "日付範囲",
     "graph.property-date-group": "グループ",
     "graph.property-offline": "オンライン",
-    "graph.property-graph-oriantation": "向き",
+    "graph.property-graph-orientation": "向き",
     "graph.property-ori-vartical": "縦",
     "graph.property-ori-horizontal": "横",
     "graph.property-decimals": "小数点以下桁数",

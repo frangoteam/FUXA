@@ -6,13 +6,13 @@ import { DiagnoseService } from '../../_services/diagnose.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
-import { AlarmsRetentionType, AppSettings, DaqStore, DaqStoreRetentionType, DaqStoreType, MailMessage, SmtpSettings, StoreCredentials } from '../../_models/settings';
+import { AlarmsRetentionType, AppSettings, DaqStore, DaqStoreRetentionType, DaqStoreType, MailMessage, SmtpSettings, StoreCredentials, LogsSettings, AlarmsSettings } from '../../_models/settings';
 import { Utils } from '../../_helpers/utils';
 
 @Component({
     selector: 'app-app-settings',
     templateUrl: './app-settings.component.html',
-    styleUrls: ['./app-settings.component.css']
+    styleUrls: ['./app-settings.component.scss']
 })
 export class AppSettingsComponent implements OnInit {
 
@@ -29,6 +29,7 @@ export class AppSettingsComponent implements OnInit {
 		{ text: 'dlg.app-language-ua', value: 'ua' },
 		{ text: 'dlg.app-language-zh-cn', value: 'zh-cn' },
 		{ text: 'dlg.app-language-ja', value: 'ja' },
+		{ text: 'dlg.app-language-zh-tw', value: 'zh-tw' },
 	];
 
     authType = [
@@ -40,6 +41,8 @@ export class AppSettingsComponent implements OnInit {
 	];
 
     settings = new AppSettings();
+    originalNodeRedEnabled = false;
+    originalSwaggerEnabled = false;
     authentication = '';
     authenticationTooltip = '';
     smtpTesting = false;
@@ -49,6 +52,7 @@ export class AppSettingsComponent implements OnInit {
     daqstoreType = DaqStoreType;
     retationType = DaqStoreRetentionType;
     alarmsRetationType = AlarmsRetentionType;
+    logsRetationType = DaqStoreRetentionType;
     influxDB18 = Utils.getEnumKey(DaqStoreType, DaqStoreType.influxDB18);
 
     constructor(private settingsService: SettingsService,
@@ -83,6 +87,21 @@ export class AppSettingsComponent implements OnInit {
         if (!this.settings.daqstore.credentials) {
             this.settings.daqstore.credentials = new StoreCredentials();
         }
+        if (!this.settings.alarms) {
+            this.settings.alarms = new AlarmsSettings();
+        }
+        if (!this.settings.logs) {
+            this.settings.logs = new LogsSettings();
+        }
+        if (Utils.isNullOrUndefined(this.settings.nodeRedEnabled)) {
+            this.settings.nodeRedEnabled = false;
+        }
+        this.originalNodeRedEnabled = this.settings.nodeRedEnabled;
+
+        if (Utils.isNullOrUndefined(this.settings.swaggerEnabled)) {
+            this.settings.swaggerEnabled = false;
+        }
+        this.originalSwaggerEnabled = this.settings.swaggerEnabled;
     }
 
     onNoClick() {
