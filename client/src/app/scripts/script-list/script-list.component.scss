@@ -1,0 +1,109 @@
+:host {
+    .header-panel {
+        background-color: var(--headerBackground);
+        color: var(--headerColor);
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: 36px;
+        width: 100%;
+        text-align: center;
+        line-height: 36px;
+        border-bottom: 1px solid var(--headerBorder);
+    }
+
+    .header-panel mat-icon {
+        display: inline-block;
+        vertical-align: text-top;
+    }
+
+    .work-panel {
+        position: absolute;
+        top: 37px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        background-color: var(--mat-table-background-color);
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        min-width: 300px;
+        position: absolute;
+        bottom: 0px;
+        top: 0px;
+        left:0px;
+        right:0px;
+    }
+
+    .mat-table {
+        overflow: auto;
+        border-bottom: 1px solid rgb(81, 81, 81);
+    }
+
+    .mat-row {
+        min-height: 40px;
+        height: 43px;
+    }
+
+    .mat-cell {
+        font-size: 13px;
+    }
+
+    .mat-header-row {
+        top: 0;
+        position: sticky;
+        z-index: 1;
+    }
+
+    .mat-header-cell {
+        font-size: 15px;
+    }
+
+    .mat-column-select {
+        overflow: visible;
+        flex: 0 0 80px;
+    }
+
+    .mat-column-name {
+        flex: 1 1 120px;
+    }
+
+    .mat-column-params {
+        flex: 3 1 180px;
+    }
+    .mat-column-scheduling {
+        flex: 3 1 280px;
+    }
+    .mat-column-options {
+        flex: 0 0 60px;
+    }
+
+    .mat-column-remove {
+        flex: 0 0 60px;
+    }
+
+    .selectidthClass{
+        flex: 0 0 50px;
+    }
+
+    .my-header-filter ::ng-deep .mat-sort-header-button {
+        display: block;
+        text-align: left;
+        margin-top: 5px;
+    }
+
+    .my-header-filter ::ng-deep .mat-sort-header-arrow {
+        top: -12px;
+        right: 20px;
+    }
+
+    .my-header-filter-input {
+        display: block;
+        margin-top: 4px;
+        margin-bottom: 6px;
+        padding: 3px 1px 3px 2px;
+        border-radius: 2px;
+    }
+}

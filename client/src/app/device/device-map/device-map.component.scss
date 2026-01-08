@@ -8,6 +8,19 @@ $flowline-color: var(--mapBorderColor); //rgb(117, 117, 117);
 $internal-backcolor: rgb(114, 120, 125);
 
 :host {
+    .page-container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+    }
+    .container {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: auto;  /* scroll solo interno */
+        position: relative;
+    }
     .main-device {
         position: absolute;
         text-align: center;
@@ -81,12 +94,23 @@ $internal-backcolor: rgb(114, 120, 125);
         background-color: $line-color;
     }
 
-    // .main-device mat-icon {
-    //     font-size: 0px;
+    .table-wrapper {
+        position: relative;
+    }
+
+    // mat-header-row {
+    //     position: sticky;
+    //     top: 0;
+    //     z-index: 10;
     // }
-    // .main-device:hover mat-icon {
-    //     font-size: 17px;
-    // }
+
+    .paginator-wrapper {
+        position: sticky;
+        bottom: 0;
+        z-index: 11;
+        background: white;
+        padding-top: 4px;
+    }
 
     .device-header {
         display: block;
@@ -118,6 +142,10 @@ $internal-backcolor: rgb(114, 120, 125);
     .device-icon {
         position: absolute;
         cursor: pointer;
+
+        mat-icon {
+            overflow: visible;
+        }
     }
 
     .device-edit {
@@ -125,6 +153,10 @@ $internal-backcolor: rgb(114, 120, 125);
         bottom: 0px;
         right: 0px;
         font-size: 17px;
+
+        mat-icon {
+            overflow: visible;
+        }
     }
 
     .device-edit-disabled {
@@ -137,6 +169,10 @@ $internal-backcolor: rgb(114, 120, 125);
         top: 0px;
         right: 0px;
         font-size: 17px;
+
+        mat-icon {
+            overflow: visible;
+        }
     }
 
     .device-list {
@@ -144,6 +180,10 @@ $internal-backcolor: rgb(114, 120, 125);
         right: 30px;
         font-size: 24px;
         bottom: 0px;
+
+        mat-icon {
+            overflow: visible;
+        }
     }
 
     .device-status {
@@ -155,8 +195,7 @@ $internal-backcolor: rgb(114, 120, 125);
         border-radius: 4px;
     }
 
-    // Table View Mode
-    .container {
+    .map-container {
         display: flex;
         flex-direction: column;
         min-width: 300px;
@@ -167,15 +206,43 @@ $internal-backcolor: rgb(114, 120, 125);
         right: 0px;
     }
 
+    .table-wrapper {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .table-wrapper mat-table {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: block;
+        overflow-y: auto;
+    }
+
+    .table-wrapper mat-header-row,
+    .table-wrapper .mat-mdc-header-row {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+
+    .table-wrapper mat-paginator {
+        flex: 0 0 auto;
+    }
+
     .mat-table {
         overflow: auto;
         /* min-width: 1500px; */
         height: 100%;
     }
 
-    .mat-row {
-        min-height: 40px;
-        height: 43px;
+    .mat-row,
+    .mat-mdc-row,
+    .my-mat-row {
+        min-height: 44px !important;
+        height: 44px !important;
     }
 
     .mat-cell {
@@ -194,7 +261,7 @@ $internal-backcolor: rgb(114, 120, 125);
 
     .mat-column-select {
         // overflow: visible;
-        flex: 0 0 100px;
+        flex: 0 0 120px;
     }
 
     .mat-column-name {
@@ -222,11 +289,11 @@ $internal-backcolor: rgb(114, 120, 125);
     }
 
     .mat-column-remove {
-        flex: 0 0 60px;
+        flex: 0 0 80px;
     }
 
     .selectWidthClass {
-        flex: 0 0 100px;
+        flex: 0 0 110px;
     }
 
     .selectHideClass {
@@ -247,5 +314,11 @@ $internal-backcolor: rgb(114, 120, 125);
 
     .hideTable {
         display: none;
+    }
+    .map-container {
+        .mat-mdc-icon-button.mat-mdc-button-base {
+            height: 30px !important;
+            width: 30px !important;
+        }
     }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
+import { MatTable as MatTable, MatTableDataSource as MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { Subscription } from 'rxjs';
 
@@ -16,7 +16,7 @@ import { ScriptModeComponent, ScriptModeType } from '../script-mode/script-mode.
 @Component({
     selector: 'app-script-list',
     templateUrl: './script-list.component.html',
-    styleUrls: ['./script-list.component.css']
+    styleUrls: ['./script-list.component.scss']
 })
 export class ScriptListComponent implements OnInit, AfterViewInit, OnDestroy {
 

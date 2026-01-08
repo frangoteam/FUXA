@@ -1,6 +1,6 @@
 <div style="position: relative;">
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'alarm.property-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;color:gray;cursor:pointer;">clear</mat-icon>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'alarm.property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content *ngIf="data.editmode < 0">
         {{'msg.alarm-remove' | translate}} '{{data.alarm.name}}' ?
     </div>

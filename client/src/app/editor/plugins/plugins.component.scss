@@ -1,63 +1,75 @@
 
 :host {
     .info {
-        margin-bottom: 20px;;
+        margin-bottom: 20px;
+        color: rgba(255, 255, 255, 0.87);
     }
+
     .list {
         min-width: 600px;
         height: 600px;
         font-size: 16px !important;
-        padding-top: 0px !important;
         overflow: auto;
+        color: rgba(255, 255, 255, 0.87);
+    }
+
+    .list-row {
+        display: grid;
+        grid-template-columns:
+            120px
+            minmax(160px, 1.4fr)
+            90px
+            90px
+            minmax(220px, 2fr)
+            minmax(160px, 1fr)
+            120px;
+        column-gap: 8px;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .cell {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        min-width: 0;
     }
 
     .list-header {
-        display: block;
-        height: 20px !important;
+        height: 24px;
 
-        span {
-            text-overflow: ellipsis;
-            overflow: hidden;
-            color: gray;
+        .cell {
+            color: rgba(255, 255, 255, 0.7);
             font-size: 12px;
         }
     }
 
     .list-item {
-        display: block;
+        height: 44px;
         font-size: 14px;
-        height: 40px !important;
-        /* cursor: pointer; */
-        overflow: hidden;
 
         .list-type {
-            width:160px;
-        }
-        .list-name {
-            width:200px;
-        }
-        .list-version {
-            width:100px;
-        }
-        .list-description {
-            width:260px;
-        }
-        .list-status {
-            width:200px;
-        }
-        .list-tool {
-            display: flex;
-            min-width:120px;
-        }
-        span {
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
+            font-weight: 700;
         }
     }
 
-    .list-item-text {
-        text-overflow: ellipsis;
-        overflow: hidden;
+    .list-tool {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px;
+    }
+
+    .tool-spinner {
+        width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .tool-actions {
+        margin-right: 10px;
+        display: inline-flex;
+        align-items: center;
     }
 }

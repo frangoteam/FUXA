@@ -2,7 +2,7 @@
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{data.title}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
-        <div class="my-form-field" style="display: block;margin-bottom: 10px;margin-top: 10px;">
+        <div class="my-form-field block">
             <span>{{data.label || 'dlg.item-name' | translate }}</span>
             <input [(ngModel)]="data.name" type="text" style="width:300px" (input)="onCheckValue($event)">
         </div>

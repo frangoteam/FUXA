@@ -24,20 +24,30 @@
     .input {
         margin-left: 0px;
     }
+
+    .mat-mdc-icon-button.mat-mdc-button-base {
+        width: 28px !important;
+        height: 28px !important;
+        padding: 0px !important;
+    }
 }
 
 ::ng-deep .group-label span {
     line-height: 28px;
     height: 28px;
+    font-size: 15px;
+    opacity: 0.7;
+    min-height: unset !important;
 }
 
 ::ng-deep .option-label  {
 
     line-height: 28px !important;
     height: 28px !important;
-
+    min-height: unset !important;
     span {
         font-size: 13px;
+        opacity: 1;
     }
 }
 ::ng-deep .variable-input {

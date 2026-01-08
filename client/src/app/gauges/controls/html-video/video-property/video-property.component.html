@@ -3,7 +3,7 @@
         {{'video.property-title' | translate}}
     </div>
     <div class="video-selection">
-        <mat-tab-group style="height: 100%;">
+        <mat-tab-group>
             <mat-tab label="{{'editor.settings-general' | translate}}">
                 <div class="element-property-header">
                     <span>{{'video.property-data' | translate}}</span>
@@ -32,7 +32,7 @@
                         <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/*" />
                     </ng-template>
                 </div>
-                <div class="my-form-field block tac mt5 item-slider">
+                <div class="my-form-field block tac mt5 item-slider mb20">
                     <span>{{'video.property-controls' | translate}}</span>
                     <mat-slide-toggle color="primary" [(ngModel)]="property.options.showControls" (change)="onVideoChanged()"></mat-slide-toggle>
                 </div>

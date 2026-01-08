@@ -23,6 +23,7 @@
         left: 0px;
         right: 0px;
         bottom: 0px;
+        background-color: var(--mat-table-background-color);
     }
 
     .container {
@@ -35,19 +36,15 @@
         left:0px;
         right:0px;
     }
-    /*
-    .table {
-        height: 705px;
-    } */
 
     .mat-table {
         overflow: auto;
-        height: 100%;
+        border-bottom: 1px solid rgb(81, 81, 81);
     }
 
     .mat-row {
         min-height: 40px;
-        height: 43px;
+        height: 43px !important;
     }
 
     .mat-cell {
@@ -78,7 +75,7 @@
     }
 
     .mat-column-delay {
-        flex: 0 0 60px;
+        flex: 0 0 80px;
     }
 
     .mat-column-interval {

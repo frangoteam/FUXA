@@ -1,17 +1,10 @@
 :host {
     .container {
-        width: 700px;
+        width: 760px;
     }
 
     .property-container {
         width: 300px;
-    }
-
-    .item-block {
-        display: block;
-        mat-select, input, span {
-            width: calc(100% - 7px);
-        }
     }
 
     .slider-field span {
@@ -35,10 +28,6 @@
     .toolbox button {
         /* margin-right: 8px; */
         margin-left: 10px;
-    }
-
-    ::ng-deep .mat-tab-label {
-        height: 34px !important;
     }
 
     .mat-tab-container {

@@ -1,7 +1,9 @@
 <div class="container">
-    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'client.script-access-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div mat-dialog-content>
+    <div>
+        <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'client.script-access-title' | translate}}</h1>
+        <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    </div>
+    <div mat-dialog-content class="dialog-content">
         <div class="info">{{'client.script-access-info' | translate}}</div>
         <div class="function-list">
             <div class="function-item" *ngFor="let fn of scriptFunctions">

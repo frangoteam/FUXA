@@ -1,12 +1,12 @@
 :host {
 
     .container {
-        width: 740px;
+        width: 830px;
         position: relative;
-    
+
         .input-radius {
             // margin-left: 60px;
-    
+
             input {
                 width: 80px;
             }
@@ -14,17 +14,17 @@
         .input-font-size input {
             width: 80px;
         }
-    
+
         .input-font mat-select {
             width: 160px;
         }
     }
-    
+
     .field-row {
         display: block;
         margin-bottom: 5px;
     }
-    
+
     .slider-field span {
         padding-left: 2px;
         text-overflow: clip;
@@ -32,20 +32,20 @@
         white-space: nowrap;
         overflow: hidden;
     }
-    
+
     .slider-field mat-slider {
         background-color: var(--formSliderBackground);
         height: 29px;
     }
-    
+
     .slider-small > .mat-slider-horizontal {
         min-width: 80px;
     }
-    
+
     ::ng-deep .mat-tab-label {
         height: 34px !important;
     }
-    
+
     .mat-tab-container {
         min-height:300px;
         height:60vmin;
@@ -53,7 +53,7 @@
         overflow-x: hidden;
         padding-top: 15px;
     }
-    
+
     .mat-tab-container > div {
         display: block;
     }

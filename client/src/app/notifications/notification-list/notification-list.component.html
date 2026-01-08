@@ -4,7 +4,7 @@
 </div>
 <div class="work-panel">
     <div class="container">
-        <mat-table #table [dataSource]="dataSource" matSort>
+        <mat-table #table [dataSource]="dataSource" matSort class="mat-table">
             <!-- Checkbox Column -->
             <ng-container matColumnDef="select">
                 <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
@@ -38,7 +38,7 @@
             <ng-container matColumnDef="interval">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-interval' | translate}} </mat-header-cell>
                 <mat-cell *matCellDef="let element"> {{element.interval}} </mat-cell>
-            </ng-container>            
+            </ng-container>
             <!-- Type Column -->
             <ng-container matColumnDef="type">
                 <mat-header-cell *matHeaderCellDef mat-sort-header> {{'notifications.list-type' | translate}} </mat-header-cell>
@@ -66,7 +66,7 @@
             </ng-container>
 
             <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-            <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="mat-row"></mat-row>
         </mat-table>
     </div>
 </div>

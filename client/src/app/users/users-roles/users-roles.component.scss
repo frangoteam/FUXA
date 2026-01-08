@@ -39,41 +39,43 @@
         overflow: auto;
         /* min-width: 1560px; */
     }
-      
-    .mat-row {
-        min-height: 40px;
-        height: 43px;
+
+    .mat-row,
+    .mat-mdc-row,
+    .my-mat-row {
+        min-height: 44px !important;
+        height: 44px !important;
     }
-    
+
     .mat-cell {
         font-size: 13px;
     }
-    
+
     .mat-header-row {
         top: 0;
         position: sticky;
         z-index: 1;
     }
-    
-    
+
+
     .mat-header-cell {
         font-size: 15px;
     }
-    
+
     .mat-column-select {
         overflow: visible;
         flex: 0 0 100px;
     }
-    
+
     .mat-column-index {
         overflow: visible;
         flex: 0 0 100px;
     }
-    
+
     .mat-column-name {
         flex: 0 0 200px;
     }
-    
+
     .mat-column-description {
         flex: 2 1 250px;
     }

@@ -8,6 +8,8 @@
 
     .dialog-content {
         width: 100%;
+        overflow: visible;
+        max-height: none;
     }
 
     .my-form-field input.full-input {
@@ -41,7 +43,12 @@
     }
 
     .date {
-        font-size: 16px;
+        font-size: 13px;
         font-family: "Segoe UI Symbol", "Roboto-Regular", "Helvetica Neue", sans-serif;
+    }
+
+    .date-row input[type="date"] {
+        height: 28px;
+        line-height: 28px;
     }
 }

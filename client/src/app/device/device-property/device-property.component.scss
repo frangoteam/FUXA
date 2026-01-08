@@ -1,9 +1,22 @@
-::ng-deep .mat-expansion-panel-body {
-    padding-left: 5px !important;
-    padding-right: 5px !important;
-}
-
 :host {
+    .cotainer {
+        position: relative;
+        width: 100%;
+    }
+
+    .content {
+        overflow-y: hidden;
+        overflow-x: hidden;
+        padding-top: 5px;
+    }
+
+    .content-remove {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        font-size: 16px;
+        line-height: 20px;
+    }
+
     .my-expansion-panel {
         width: 356px;
         display: block;
@@ -56,14 +69,9 @@
             margin-top: 5px;
         }
     }
-
-    .container {
-        border: 1px solid #37373D;
-        border-radius: 4px;
-        padding: 8px;
-    }
 }
 
-:host ::ng-deep .multiline-tooltip {
-    white-space: pre-line;
+:host ::ng-deep .mat-expansion-panel-body {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
 }

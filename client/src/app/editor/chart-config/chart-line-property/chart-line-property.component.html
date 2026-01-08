@@ -51,11 +51,11 @@
                     [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
                     [cpOKButtonClass]="'cpOKButtonClass'" style="padding: 8px 0 0 0; width: 88px" [cpPosition]="'right'" />
             </div>
-            <div class="my-form-field ml20">
-                <button mat-icon-button (click)="onAddZone()">
-                    {{'chart.config-line-add-zone' | translate}}
+            <div class="my-form-field ml20 icon-button-text">
+                <button mat-icon-button (click)="onAddZone()" class="inbk">
                     <mat-icon>add_circle_outline</mat-icon>
                 </button>
+                <span>{{'chart.config-line-add-zone' | translate}}</span>
             </div>
         </div>
         <div class="my-form-field block-zones mt10">

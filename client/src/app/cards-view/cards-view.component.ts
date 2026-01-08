@@ -133,7 +133,12 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     }
 
     onZoomChanged(item: GridsterItem, $event) {
-        item.card.zoom = $event.value;
+        const rawValue = $event?.value ?? $event;
+        const zoom = typeof rawValue === 'string' ? Number.parseFloat(rawValue) : rawValue;
+        if (typeof zoom !== 'number' || Number.isNaN(zoom)) {
+            return;
+        }
+        item.card.zoom = Math.max(0.1, Math.min(2, zoom));
     }
 
     getFuxaView(index: number) {

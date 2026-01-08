@@ -246,12 +246,14 @@
     font-size: 24px;
     height: unset;
     width: unset;
+    margin: unset;
+    line-height: 34px;
 }
 
 .main-btn .to-top {
     display: inline-block;    ;
     height: 34px;
-    width: 34px;    
+    width: 34px;
 }
 
 .main-btn .to-bottom  {

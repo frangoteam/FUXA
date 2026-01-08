@@ -1,13 +1,13 @@
 import { Component, Inject } from '@angular/core';
 import { ScriptParamType } from '../../../_models/script';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA as MAT_DIALOG_DATA, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../../_helpers/utils';
 
 @Component({
     selector: 'app-script-editor-param',
     templateUrl: './script-editor-param.component.html',
-    styleUrls: ['./script-editor-param.component.css']
+    styleUrls: ['./script-editor-param.component.scss']
 })
 export class ScriptEditorParamComponent {
     error = '';

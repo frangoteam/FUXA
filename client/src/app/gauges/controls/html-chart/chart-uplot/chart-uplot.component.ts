@@ -7,7 +7,7 @@ import { Utils } from '../../../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
 
 import { DaterangeDialogComponent } from '../../../../gui-helpers/daterange-dialog/daterange-dialog.component';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { Subject, from, interval, merge, of, timer } from 'rxjs';
 import { catchError, concatMap, delay, finalize, takeUntil, tap } from 'rxjs/operators';
 import { ScriptService } from '../../../../_services/script.service';

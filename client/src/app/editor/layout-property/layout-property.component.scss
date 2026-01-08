@@ -40,7 +40,11 @@
                 display: flex;
                 line-height: 35px;
                 min-width: max-content;
-
+                position: absolute;
+                right: -300px;
+                width: 300px;
+                top: 50%;
+                transform: translateY(-50%);
                 .position {
                     display: inline-block;
                     line-height: 35px;
@@ -97,7 +101,13 @@
         background-color: rgba(255, 255, 255, 1);
 
         .header-menu {
-            display: inline-block;
+            display: flex;
+            align-items: center;
+            height: 46px;
+
+            mat-icon {
+                line-height: 24px;
+            }
         }
 
         .header-title {
@@ -109,15 +119,18 @@
         }
 
         .header-login {
+            display: flex;
             line-height: 46px;
+            align-items: center;
             border-left-width: 1px;
             border-left-style: solid;
             padding-left: 10px;
 
             .info {
-                display: inline-block;
-                line-height: 46px;
-                vertical-align: middle;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                height: 46px;
             }
 
             .primary {
@@ -129,6 +142,7 @@
                 white-space: nowrap;
                 max-width: fit-content;
                 line-height: 16px;
+                opacity: 0.5;
             }
 
             .secondary {
@@ -155,7 +169,17 @@
         .header-language {
             padding-left: 10px;
             padding-right: 10px;
-            display: inline-block;
+            display: flex;
+            line-height: 46px;
+            align-items: center;
+            gap: 4px;
+
+            mat-icon {
+                font-size: 28px;
+                width: 28px;
+                height: 28px;
+                line-height: 28px;
+            }
         }
 
         .header-notify-button {
@@ -178,9 +202,11 @@
             }
         }
 
-        .items {
+        .header-items-button {
             flex: 1;
             align-items: center;
+            display: flex;
+            line-height: 46px;
         }
     }
 
@@ -281,6 +307,10 @@
         vertical-align: middle;
     }
 
+    .sidenav-title {
+        font-size: 17px;
+        font-weight: 600;
+    }
     .dndList {
         transition: all 600ms ease;
     }
@@ -294,13 +324,22 @@
     }
 
     .sidenav-submenu-btn {
+        padding-right: 44px;
+    }
+
+    .sidenav-submenu-item .sidenav-btn {
+        justify-content: center;
+        padding-left: 0;
+    }
+
+    .sidenav-submenu-btn {
         position: relative;
     }
 
     .sidenav-submenu-item {
         width: unset;
         min-height: unset;
-        height: unset;
+        height: 40px !important;
     }
 
     .sidenav-submenu-icon {
@@ -314,4 +353,104 @@
         margin: 0;
         list-style: none;
     }
+}
+
+:host ::ng-deep .dndList {
+  --mdc-list-list-item-leading-padding: 0px;
+  --mdc-list-list-item-trailing-padding: 0px;
+}
+
+:host ::ng-deep .dndList .mat-mdc-list-item.mdc-list-item {
+  position: relative;
+  overflow: visible;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+:host ::ng-deep .dndList .mat-mdc-list-item .mdc-list-item__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+:host ::ng-deep .dndList .mat-mdc-list-item .mat-mdc-list-item-unscoped-content {
+  flex: 1 1 auto;
+  display: flex;
+  min-width: 0;
+  width: 100%;
+}
+
+:host ::ng-deep .dndList .sidenav-header.mat-mdc-list-item .mdc-list-item__content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+:host ::ng-deep .dndList .sidenav-header.mat-mdc-list-item .mat-mdc-list-item-unscoped-content {
+  justify-content: center;
+}
+
+:host ::ng-deep .dndList .mat-mdc-list-item .sidenav-btn {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 12px;
+  padding-right: 12px;
+  box-sizing: border-box;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+:host ::ng-deep .dndList .sidenav-submenu-btn {
+  position: relative;
+  width: 100%;
+}
+
+:host ::ng-deep .dndList .sidenav-submenu-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Match sidenav: only text + inline align left and reserve space for expand icon. */
+:host ::ng-deep .dndList .menu-item-text.mat-mdc-list-item .sidenav-submenu-btn,
+:host ::ng-deep .dndList .menu-item-inline.mat-mdc-list-item .sidenav-submenu-btn {
+  justify-content: flex-start;
+  padding-left: 12px;
+  padding-right: 44px;
+}
+
+:host ::ng-deep .dndList .menu-item-text.mat-mdc-list-item .sidenav-submenu-btn .mdc-button__label,
+:host ::ng-deep .dndList .menu-item-inline.mat-mdc-list-item .sidenav-submenu-btn .mdc-button__label {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+:host ::ng-deep .dndList .menu-item-text.mat-mdc-list-item .sidenav-submenu-btn .menu-item-content-text {
+  width: 100%;
+  text-align: left;
+}
+
+:host ::ng-deep .dndList .menu-item-inline.mat-mdc-list-item .sidenav-submenu-btn .menu-item-content-inline {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+:host ::ng-deep .dndList .menu-item-text.mat-mdc-list-item .sidenav-submenu-icon,
+:host ::ng-deep .dndList .menu-item-inline.mat-mdc-list-item .sidenav-submenu-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
 }

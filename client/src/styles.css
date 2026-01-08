@@ -296,12 +296,6 @@ app-root {
 }
 
 /* Menu */
-.sidenav-toogle {
-    top: 0px;
-    left: 10px;
-    line-height: 46px;
-}
-
 .backdrop-white {
     background-color: rgb(255, 255, 255);
 }
@@ -493,20 +487,20 @@ app-root {
     text-overflow:ellipsis;
 }
 
-.my-form-field input, mat-select, textarea {
-    font-size: 13px;
-    border: unset;
-    /* border: 0.5px solid rgba(0,0,0,0.1); */
-    border-radius: 2px;
-    opacity: 1;
-    font-size: 13px;
+.my-form-field input,
+.my-form-field mat-select,
+.my-form-field textarea {
+  font-size: 13px;
+  border: none;
+  border-radius: 2px;
+  opacity: 1;
 }
 
-.my-form-field input, textarea {
-    padding: 6px 3px 7px 4px;
-    background-color: var(--formInputBackground);
-    color: var(--formInputColor);
-    /* background-color: rgba(68,138,255,0.01) */
+.my-form-field input,
+.my-form-field textarea {
+  padding: 6px 3px 7px 4px;
+  background-color: var(--formInputBackground);
+  color: var(--formInputColor);
 }
 
 .my-form-field input:focus {
@@ -515,11 +509,25 @@ app-root {
     background-color: var(--formInputBackgroundFocus);
 }
 
-.my-form-field mat-select {
-    padding: 6px 3px 7px 4px;
-    background-color: var(--formInputBackground);
+.my-form-field .mat-mdc-select {
+  display: inline-flex;
 }
 
+.my-form-field .mat-mdc-select-trigger {
+  min-height: 28px;
+  line-height: 28px;
+  padding: 0 4px;
+  background-color: var(--formInputBackground);
+}
+
+.my-form-field .mat-mdc-select-arrow {
+  align-self: center;
+}
+
+.my-form-field .mat-mdc-form-field-infix {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
 
 .my-form-field-info {
     color:rgba(210, 210, 210, 0.5);
@@ -576,6 +584,23 @@ app-root {
     color: var(--formInputColor);
 }
 
+.icon-button-text span  {
+    display: inline-block;
+    font-size: 14px;
+    text-align: left;
+    line-height: 26px;
+}
+
+.fill-box {
+    width: 100%;                    /* fallback base */
+    width: -webkit-fill-available;  /* Chrome/Safari/Edge */
+    width: -moz-available;          /* old Firefox */
+}
+
+@supports (width: stretch) {
+    .fill-box { width: stretch; }
+}
+
 /*
 .my-form-field mat-select:focus {
   padding: 4px 1px 5px 2px;
@@ -630,6 +655,12 @@ mat-toolbar-row {
     font-size: 22px !important;
     padding-left: 2px !important;
     align-items: unset !important;
+}
+
+.dark-theme .mat-mdc-icon-button.mat-mdc-button-base {
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0px !important;
 }
 
 .mat-dialog-title {
@@ -838,30 +869,6 @@ mat-toolbar-row {
     }
 }
 
-/* Dialog */
-.dialog-action {
-    float: right;
-    /* padding-bottom: 20px !important; */
-}
-
-.dialog-property .mat-dialog-container {
-    padding-top: 0px;
-}
-
-.dialog-title {
-    display: inline-block !important;
-    cursor: move;
-    width: calc(100% - 50px);
-}
-
-.dialog-close-btn {
-    float: right !important;
-    margin-right: -10px;
-    margin-top: -10px;
-    color: gray;
-    cursor: pointer;
-}
-
 .fab-add {
     position: fixed !important;
     right: 20px !important;
@@ -997,6 +1004,45 @@ mat-toolbar-row {
 }
 
 /* standard */
+.hidden {
+    display: none !important;
+}
+
+.mdc-checkbox .mdc-checkbox__native-control {
+    display: none !important;
+}
+
+/* Angular Material (MDC): tabs should size to label content (no stretch) */
+.mat-mdc-tab-group .mat-mdc-tab-header .mat-mdc-tab-labels {
+    justify-content: flex-start;
+}
+
+.mat-mdc-tab-group .mat-mdc-tab-header .mat-mdc-tab-labels .mdc-tab,
+.mat-mdc-tab-group .mat-mdc-tab-header .mat-mdc-tab-labels .mat-mdc-tab {
+    flex: 0 0 auto !important;
+}
+
+/* Angular Material sets `flex-grow: 1` when stretchTabs is enabled. Override it globally. */
+.mat-mdc-tab-group.mat-mdc-tab-group-stretch-tabs > .mat-mdc-tab-header .mat-mdc-tab {
+    flex-grow: 0 !important;
+}
+
+/* Reduce horizontal padding for tab labels (Angular Material MDC). */
+.mat-mdc-tab-group .mat-mdc-tab-header .mdc-tab.mat-mdc-tab {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+}
+
+/* Legacy (pre-MDC) tabs */
+.mat-tab-group .mat-tab-label {
+    flex: 0 0 auto;
+}
+
+.mat-tab-group .mat-tab-label {
+    padding-left: 12px;
+    padding-right: 12px;
+}
+
 .inbk {
     display: inline-block;
 }

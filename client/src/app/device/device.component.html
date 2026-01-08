@@ -1,10 +1,11 @@
 <div style="width: 100%;height: 100% !important;position: absolute;">
     <div class="header-panel">
+        <mat-icon>lan</mat-icon>
         {{'device.list-title' | translate}}
     </div>
     <div class="work-panel">
-        <app-device-list [hidden]="!showMode.startsWith(tagsViewMode)" #devicelist (goto)="gotoDevices(false)" [readonly]="readonly"></app-device-list>
-        <app-device-map [hidden]="!showMode.startsWith(devicesViewMode)" #devicemap [mode]="showMode" (goto)="gotoList($event)" [readonly]="readonly"></app-device-map>
+        <app-device-list [class.hidden]="!showMode.startsWith(tagsViewMode)" #devicelist (goto)="gotoDevices(false)" [readonly]="readonly"></app-device-list>
+        <app-device-map [class.hidden]="!showMode.startsWith(devicesViewMode)" #devicemap [mode]="showMode" (goto)="gotoList($event)" [readonly]="readonly"></app-device-map>
     </div>
 </div>
 <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="fab-reload" style="right: 50px !important">

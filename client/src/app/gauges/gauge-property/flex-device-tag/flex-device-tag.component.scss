@@ -1,41 +1,60 @@
+:host {
+    .device-input {
+        display: inline-block;
+        width: 100%;
+        input {
+            padding-left: 30px;
+            width: calc(100% - 36px);
 
-.device-input {
-    display: inline-block;
-    width: 100%;
-    input {
-        padding-left: 30px;
-        width: calc(100% - 36px);
+        }
+        button {
+            position: absolute;
+            left: 0px;
+            line-height: 22px;
+            height:28px;
+            width:28px;
+            vertical-align: middle;
+        }
+        span {
+            width: calc(100% - 5px);
+        }
+    }
 
+    .tag-link {
+        position:absolute;
+        bottom: 1px;
+        left: 1px !important;
+        height: 26px !important;
+        width: 26px !important;
+        border-radius: 2px 0px 0px 2px;
+        background-color: var(--formInputBackground);
+        color: var(--formInputColor);
     }
-    button {
-        position: absolute;
-        left: 0px;
-        line-height: 22px;
-        height:28px;
-        width:28px;
-        vertical-align: middle;
-    }
-    span {
-        width: calc(100% - 5px);
+
+    .device-variable-input {
+        font-size: 13px;
+        vertical-align: unset !important;
+        width: unset;
     }
 }
 
 ::ng-deep .device-group-label span {
     line-height: 28px;
     height: 28px;
+    font-size: 15px;
+    opacity: 0.7;
+    min-height: unset !important;
 }
 
 ::ng-deep .device-option-label  {
 
     line-height: 28px !important;
     height: 28px !important;
+    min-height: unset !important;
 
     span {
         font-size: 13px;
+        opacity: 1;
     }
 }
-::ng-deep .device-variable-input {
-    font-size: 13px;
-    vertical-align: unset !important;
-    width: unset;
-}
+

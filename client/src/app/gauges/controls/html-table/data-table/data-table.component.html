@@ -36,7 +36,10 @@
     <mat-paginator *ngIf="tableOptions.paginator.show" [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="data-table-paginator" [style.color]="tableOptions.row.color">
     </mat-paginator>
 </div>
-<mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background" matSort
+<mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background"
+    [style.--mat-table-row-item-outline-color]="tableOptions.gridColor"
+    [style.--mdc-data-table-row-divider-color]="tableOptions.gridColor"
+    matSort
     [style.height]="withToolbar ? 'calc(100% - 42px)' : '100%'">
     <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
         <th *matHeaderCellDef
@@ -71,53 +74,53 @@
         </td>
     </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns" class="data-table-header" [style.height.px]="tableOptions.header.height"
-        [style.backgroundColor]="tableOptions.header.background" [style.borderBottomColor]="tableOptions.gridColor" [style.display]="(tableOptions.header.show) ? 'flex' : 'none'">
+    <mat-header-row *matHeaderRowDef="displayedColumns" class="mat-row data-table-header" [style.height.px]="tableOptions.header.height"
+        [style.backgroundColor]="tableOptions.header.background" [style.borderBottom]="'1px solid ' + tableOptions.gridColor" [style.display]="(tableOptions.header.show) ? 'flex' : 'none'">
     </mat-header-row>
     <ng-container [ngSwitch]="type">
         <ng-container *ngSwitchCase="tableType.reports">
             <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
-                    class="data-table-row"
+                    class="mat-row data-table-row"
                     [ngStyle]="{
                         'cursor': isSelectable() ? 'pointer': 'unset',
                         'height.px': tableOptions.row.height,
                         'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
-                        'border-bottom-color': tableOptions.gridColor,
+                        'border-bottom': '1px solid ' + tableOptions.gridColor,
                         'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
             </mat-row>
         </ng-container>
         <ng-container *ngSwitchCase="tableType.alarms">
             <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
-                    class="data-table-row"
+                    class="mat-row data-table-row"
                     [ngStyle]="{
                         'cursor': isSelectable() ? 'pointer': 'unset',
                         'height.px': tableOptions.row.height,
                         'background-color': row.bkcolor,
-                        'border-bottom-color': tableOptions.gridColor,
+                        'border-bottom': '1px solid ' + tableOptions.gridColor,
                         'color': row.color}">
             </mat-row>
         </ng-container>
         <ng-container *ngSwitchCase="tableType.data">
             <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
                     (click)="selectRow(row)"
-                    class="data-table-row"
+                    class="mat-row data-table-row"
                     [ngStyle]="{
                     'cursor': isSelectable() ? 'pointer': 'unset',
                     'height.px': tableOptions.row.height,
                     'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
-                    'border-bottom-color': tableOptions.gridColor,
+                    'border-bottom': '1px solid ' + tableOptions.gridColor,
                     'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
             </mat-row>
         </ng-container>
         <ng-container *ngSwitchCase="tableType.history">
             <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
                     (click)="selectRow(row)"
-                    class="data-table-row"
+                    class="mat-row data-table-row"
                     [ngStyle]="{
                     'cursor': isSelectable() ? 'pointer': 'unset',
                     'height.px': tableOptions.row.height,
                     'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
-                    'border-bottom-color': tableOptions.gridColor,
+                    'border-bottom': '1px solid ' + tableOptions.gridColor,
                     'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
             </mat-row>
         </ng-container>

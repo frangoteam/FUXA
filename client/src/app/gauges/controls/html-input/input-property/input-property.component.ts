@@ -7,11 +7,11 @@ import { GaugePropertyData } from '../../../gauge-property/gauge-property.compon
 import { HtmlInputComponent } from '../html-input.component';
 import { PropertyType } from '../../../gauge-property/flex-input/flex-input.component';
 import { PermissionData, PermissionDialogComponent } from '../../../gauge-property/permission-dialog/permission-dialog.component';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
 import { SettingsService } from '../../../../_services/settings.service';
 import { ProjectService } from '../../../../_services/project.service';
 import { Script } from '../../../../_models/script';
 import { MatSelectChange } from '@angular/material/select';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-input-property',

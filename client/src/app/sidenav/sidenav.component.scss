@@ -1,4 +1,152 @@
 :host {
+    .sidenav-title {
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+    /* Match layout-property preview sizes for each nav type (MDC list sets a fixed 48px height by default). */
+    ::ng-deep .sidenav-menu {
+        .menu-item-text.mat-mdc-list-item,
+        .menu-item-text.mat-mdc-list-item.mdc-list-item--with-one-line {
+            height: 50px;
+        }
+
+        .menu-item-icon.mat-mdc-list-item,
+        .menu-item-icon.mat-mdc-list-item.mdc-list-item--with-one-line {
+            height: 60px;
+        }
+
+        .menu-item-block.mat-mdc-list-item,
+        .menu-item-block.mat-mdc-list-item.mdc-list-item--with-one-line {
+            height: 80px;
+        }
+
+        .menu-item-inline.mat-mdc-list-item,
+        .menu-item-inline.mat-mdc-list-item.mdc-list-item--with-one-line {
+            height: 50px;
+        }
+
+        /* Ensure the button fills the list item height so content doesn't get clipped. */
+        .sidenav-btn {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-left: 12px;
+            padding-right: 12px;
+            box-sizing: border-box;
+            border-radius: 6px;
+            transition: background-color 120ms ease, transform 60ms ease, box-shadow 120ms ease;
+            -webkit-tap-highlight-color: transparent;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, 0.08);
+                background-color: color-mix(in srgb, currentColor 10%, transparent);
+            }
+
+            &:active {
+                background-color: rgba(255, 255, 255, 0.16);
+                background-color: color-mix(in srgb, currentColor 18%, transparent);
+                transform: scale(0.98);
+            }
+
+            &:focus-visible {
+                outline: 2px solid rgba(255, 255, 255, 0.35);
+                outline-color: color-mix(in srgb, currentColor 45%, transparent);
+                outline-offset: -2px;
+                background-color: rgba(255, 255, 255, 0.10);
+                background-color: color-mix(in srgb, currentColor 12%, transparent);
+            }
+        }
+
+        /* Text mode: align main items left, keep submenu centered. */
+        .menu-item-text .sidenav-submenu-btn,
+        .menu-item-inline .sidenav-submenu-btn {
+            justify-content: flex-start;
+            padding-left: 12px;
+            padding-right: 44px;
+        }
+
+        .menu-item-text .sidenav-submenu-btn .menu-item-content-text,
+        .menu-item-inline .sidenav-submenu-btn .menu-item-content-inline {
+            width: 100%;
+            text-align: left;
+        }
+
+        .menu-item-inline .sidenav-submenu-btn .menu-item-content-inline {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+        }
+
+        .sidenav-submenu-btn {
+            // justify-content: left !important;
+            // padding-left: 20px !important;
+        }
+
+        .sidenav-submenu-item .sidenav-btn {
+            justify-content: center;
+            padding-left: 0;
+        }
+
+        .menu-item-content-block,
+        .menu-item-content-inline {
+            width: 100%;
+        }
+
+        /* Ensure Material MDC buttons/icons inherit the layout fg color */
+        color: inherit;
+
+        .mat-mdc-button,
+        .mat-mdc-button .mdc-button__label {
+            color: inherit;
+        }
+
+        /* MDC tokens used by MatButton */
+        --mdc-text-button-label-text-color: currentColor;
+        --mdc-filled-button-label-text-color: currentColor;
+        --mdc-outlined-button-label-text-color: currentColor;
+    }
+
+    ::ng-deep .sidenav-menu .mdc-list {
+        --mdc-list-list-item-leading-padding: 0px;
+        --mdc-list-list-item-trailing-padding: 0px;
+    }
+
+    ::ng-deep .sidenav-menu .mat-mdc-list-item.mdc-list-item {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+
+    ::ng-deep .sidenav-menu .mat-mdc-list-item .mdc-list-item__content {
+        display: flex;
+        width: 100%;
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+
+    ::ng-deep .sidenav-menu .mat-mdc-list-item .mat-mdc-list-item-unscoped-content {
+        flex: 1 1 auto;
+        display: flex;
+        min-width: 0;
+        width: 100%;
+    }
+
+    /* Center the title like the layout settings preview (MDC list wraps content in .mdc-list-item__content). */
+    ::ng-deep .sidenav-menu .sidenav-header.mat-mdc-list-item .mdc-list-item__content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        text-align: center;
+    }
+
+    ::ng-deep .sidenav-menu .sidenav-header.mat-mdc-list-item .mat-mdc-list-item-unscoped-content {
+        justify-content: center;
+    }
+
     .sidenav-submenu-btn {
         position: relative;
     }
@@ -6,7 +154,7 @@
     .sidenav-submenu-item {
         width: unset;
         min-height: unset;
-        height: unset;
+        height: 40px !important;
     }
 
     .sidenav-submenu-icon {
@@ -14,6 +162,9 @@
         right: 12px;
         top: 50%;
         transform: translateY(-50%);
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
     }
     .submenu-list {
         padding: 0;

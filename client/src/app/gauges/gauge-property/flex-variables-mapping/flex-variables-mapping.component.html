@@ -1,9 +1,10 @@
 <div class="flex-variable-mapping">
     <button mat-icon-button (click)="addVariableMapping($event)">
         <mat-icon>add_circle_outline</mat-icon>
-        {{'gauges.property-map-variable' | translate}}
     </button>
-
+    <span>
+        {{'gauges.property-map-variable' | translate}}
+    </span>
     <div *ngFor="let variableMap of mapping;index as i">
         <flex-variable-map [data]="data" [view]="view" [value]="mapping[i]" [placeholders]="viewPlaceholders" (valueChange)="onChange()">
             <button style="float: right; margin-top: 7px;" mat-icon-button (click)="removeVariableMapping($event, i)"  matTooltip="{{'gauges.property-head-remove-mapvariable' | translate}}">

@@ -1,7 +1,7 @@
 <div style="position: relative;" class="dialog-mdsd-main">
-    <h1 mat-dialog-title style="display:inline-block; cursor:move" mat-dialog-draggable>{{'dlg.layout-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
-    <div class="dialog-mdsd-content content">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'dlg.layout-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="dialog-mdsd-content content">
         <mat-tab-group (selectedTabChange)="onTabChanged($event)">
             <mat-tab label="{{'dlg.layout-general' | translate}}">
                 <div class="container-split-ver mt25">
@@ -77,11 +77,11 @@
             <mat-tab label="{{'dlg.layout-navigation' | translate}}">
                 <div class="tab-container">
                     <div [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
-                        <button mat-icon-button>
+                        <button mat-icon-button [style.color]="data.layout.header.fgcolor">
                             <mat-icon aria-label="Menu">menu</mat-icon>
                         </button>
                         <div style="display: inline-block;padding-left: 140px">
-                            <button mat-icon-button (click)="onAddMenuItem()">
+                            <button mat-icon-button (click)="onAddMenuItem()" [style.color]="data.layout.header.fgcolor">
                                 <mat-icon aria-label="Add">control_point</mat-icon>
                             </button>
                         </div>
@@ -91,34 +91,38 @@
                             <div class="sidenav-menu" [style.background-color]="data.layout.navigation.bkcolor" [style.color]="data.layout.navigation.fgcolor"
                                 style="height: calc(100% - 50px);" [ngClass]="'sidenav-menu-' + data.layout.navigation.type">
                                 <mat-list class="dndList" style="padding-top: 10px; background-color: inherit;">
-                                    <mat-list-item style="display: flex; justify-content: center; height: 35px; font-weight: bold; padding-bottom: 10px;margin-bottom: 10px; width: unset" [style.color]="data.layout.navigation.fgcolor">
-                                        <span *ngIf="!data.layout.navigation.logo; else hasLogo">{{'sidenav.title' | translate}}</span>
+                                    <mat-list-item class="sidenav-header" style="display: flex; justify-content: center; height: 35px; font-weight: bold; padding-bottom: 10px;margin-bottom: 10px; width: unset">
+                                        <span [style.color]="data.layout.navigation.fgcolor"
+                                              class="sidenav-title"
+                                              *ngIf="!data.layout.navigation.logo; else hasLogo">
+                                            {{'sidenav.title' | translate}}
+                                        </span>
                                         <ng-template #hasLogo><img src="{{data.layout.navigation.logo}}" style="max-width: 100%; max-height: 100%;"></ng-template>
                                     </mat-list-item>
                                     <ng-container *ngFor="let item of draggableListLeft; let i = index">
                                         <mat-list-item [ngClass]="'menu-item-' + data.layout.navigation.type"
-                                                    (click)="toggleSubMenu(item)"
-                                                    style="width: unset">
-                                            <button type="button"
-                                                    [ngSwitch]="data.layout.navigation.type"
-                                                    mat-button class="sidenav-btn sidenav-submenu-btn"
-                                                    [style.color]="data.layout.navigation.fgcolor">
+                                                       [style.color]="data.layout.header.fgcolor"
+                                                       (click)="toggleSubMenu(item)"
+                                                       style="width: unset">
+                                            <button type="button" mat-button class="sidenav-btn sidenav-submenu-btn"
+                                                    [style.color]="data.layout.navigation.fgcolor"
+                                                    [ngSwitch]="data.layout.navigation.type">
                                                 <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
                                                     <img *ngIf="item.image" src="{{item.image}}">
-                                                    <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+                                                    <mat-icon *ngIf="item.icon" [style.color]="data.layout.navigation.fgcolor">{{item.icon}}</mat-icon>
                                                 </div>
                                                 <div *ngSwitchCase="'text'" class="menu-item-content-text">
-                                                    <span>{{item.text}}</span>
+                                                    <span [style.color]="data.layout.navigation.fgcolor">{{item.text}}</span>
                                                 </div>
                                                 <div *ngSwitchCase="'block'" class="menu-item-content-block">
                                                     <img *ngIf="item.image" src="{{item.image}}">
-                                                    <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-                                                    <span>{{item.text}}</span>
+                                                    <mat-icon *ngIf="item.icon" [style.color]="data.layout.navigation.fgcolor">{{item.icon}}</mat-icon>
+                                                    <span [style.color]="data.layout.navigation.fgcolor">{{item.text}}</span>
                                                 </div>
                                                 <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
                                                     <img *ngIf="item.image" src="{{item.image}}">
-                                                    <mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
-                                                    <span style="display: inline-block">{{item.text}}</span>
+                                                    <mat-icon *ngIf="item.icon" [style.color]="data.layout.navigation.fgcolor">{{item.icon}}</mat-icon>
+                                                    <span style="display: inline-block" [style.color]="data.layout.navigation.fgcolor">{{item.text}}</span>
                                                 </div>
                                                 <mat-icon *ngIf="isExpandable(item)" class="sidenav-submenu-icon">
                                                     {{ isExpanded(item) ? 'expand_less' : 'expand_more' }}
@@ -146,24 +150,24 @@
                                                            class="sidenav-submenu-item"
                                                            [style.color]="data.layout.navigation.fgcolor">
                                                 <button type="button" mat-button class="sidenav-btn"
-                                                        style="padding-left: 20px !important;"
-                                                        [ngSwitch]="data.layout.navigation.type">
+                                                           [style.color]="data.layout.navigation.fgcolor"
+                                                           [ngSwitch]="data.layout.navigation.type">
                                                     <div *ngSwitchCase="'icon'" class="menu-item-content-icon">
                                                         <img *ngIf="child.image" src="{{child.image}}">
-                                                        <mat-icon *ngIf="child.icon">{{child.icon}}</mat-icon>
+                                                        <mat-icon *ngIf="child.icon" [style.color]="data.layout.navigation.fgcolor">{{child.icon}}</mat-icon>
                                                     </div>
                                                     <div *ngSwitchCase="'text'" class="menu-item-content-text">
-                                                        <span>{{child.text}}</span>
+                                                        <span [style.color]="data.layout.navigation.fgcolor">{{child.text}}</span>
                                                     </div>
                                                     <div *ngSwitchCase="'block'" class="menu-item-content-block">
                                                         <img *ngIf="child.image" src="{{child.image}}">
-                                                        <mat-icon *ngIf="child.icon">{{child.icon}}</mat-icon>
-                                                        <span>{{child.text}}</span>
+                                                        <mat-icon *ngIf="child.icon" [style.color]="data.layout.navigation.fgcolor">{{child.icon}}</mat-icon>
+                                                        <span [style.color]="data.layout.navigation.fgcolor">{{child.text}}</span>
                                                     </div>
                                                     <div *ngSwitchCase="'inline'" class="menu-item-content-inline">
                                                         <img *ngIf="child.image" src="{{child.image}}">
-                                                        <mat-icon *ngIf="child.icon">{{child.icon}}</mat-icon>
-                                                        <span style="display: inline-block">{{child.text}}</span>
+                                                        <mat-icon *ngIf="child.icon" [style.color]="data.layout.navigation.fgcolor">{{child.icon}}</mat-icon>
+                                                        <span style="display: inline-block" [style.color]="data.layout.navigation.fgcolor">{{child.text}}</span>
                                                     </div>
                                                 </button>
                                             </mat-list-item>
@@ -220,11 +224,13 @@
                 <div class="tab-container">
                     <div class="header-layout" [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
                         <div class="header-menu">
-                            <button mat-icon-button>
+                            <button mat-icon-button
+                                    [style.background-color]="data.layout.header.bkcolor"
+                                    [style.color]="data.layout.header.fgcolor">
                                 <mat-icon aria-label="Menu">menu</mat-icon>
                             </button>
                         </div>
-                        <div class="items" [style.textAlign]="data.layout.header.itemsAnchor">
+                        <div class="header-items-button" [style.textAlign]="data.layout.header.itemsAnchor">
                             <ng-container *ngFor="let item of headerItems; let i = index" [ngSwitch]="item.type">
                                 <ng-container *ngSwitchCase="'button'">
                                     <button mat-raised-button
@@ -260,25 +266,41 @@
                                 </ng-container>
                             </ng-container>
                         </div>
-                        <div class="header-notify-button">
-                            <button mat-icon-button class="alarm-button">
+                        <div class="header-notify-button"
+                             [style.background-color]="data.layout.header.bkcolor" [style.color]="data.layout.header.fgcolor">
+                            <button mat-icon-button class="alarm-button"
+                                    [style.background-color]="data.layout.header.bkcolor"
+                                    [style.color]="data.layout.header.fgcolor">
                                 <mat-icon aria-label="Alarms">notifications_none</mat-icon>
                             </button>
-                            <button mat-icon-button class="info-button">
+                            <button mat-icon-button class="info-button"
+                                    [style.background-color]="data.layout.header.bkcolor"
+                                    [style.color]="data.layout.header.fgcolor">
                                 <mat-icon aria-label="Info">error_outline</mat-icon>
                             </button>
-                            <div class="header-date-time" *ngIf="data.layout.header.dateTimeDisplay">
+                            <div class="header-date-time"
+                                 *ngIf="data.layout.header.dateTimeDisplay"
+                                 [style.fontFamily]="data.layout.header.fontFamily"
+                                 [style.fontSize]="data.layout.header.fontSize + 'px !important'">
                                 {{ currentDateTime | date: data.layout.header.dateTimeDisplay }}
                             </div>
                             <div *ngIf="data.layout.header.language && data.layout.header.language !== 'nothing'" class="header-language">
-                                <button mat-icon-button class="inbk">
+                                <button mat-icon-button class="inbk"
+                                        [style.background-color]="data.layout.header.bkcolor"
+                                        [style.color]="data.layout.header.fgcolor">
                                     <mat-icon aria-label="Language">language</mat-icon>
                                 </button>
-                                <div *ngIf="data.layout.header.language === 'key'" class="inbk">EN</div>
-                                <div *ngIf="data.layout.header.language === 'fullname'" class="inbk">English</div>
+                                <div class="inbk"
+                                     [style.fontFamily]="data.layout.header.fontFamily"
+                                     [style.fontSize]="data.layout.header.fontSize + 'px !important'">
+                                    <span *ngIf="data.layout.header.language === 'key'" class="inbk">EN</span>
+                                    <span *ngIf="data.layout.header.language === 'fullname'" class="inbk">English</span>
+                                </div>
                             </div>
-                            <div *ngIf="data.securityEnabled" class="header-login">
-                                <button mat-icon-button>
+                            <div *ngIf="!data.securityEnabled" class="header-login">
+                                <button mat-icon-button
+                                        [style.background-color]="data.layout.header.bkcolor"
+                                        [style.color]="data.layout.header.fgcolor">
                                     <mat-icon aria-label="Login">account_circle</mat-icon>
                                 </button>
                                 <div class="info">
