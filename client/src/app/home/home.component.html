@@ -89,7 +89,7 @@
 						</mat-menu>
 					</div>
 				</div>
-				<div *ngIf="!securityEnabled" class="header-login">
+				<div *ngIf="securityEnabled" class="header-login">
 					<button mat-icon-button (click)="onLogin()">
 						<mat-icon aria-label="Login" [style.color]="isLoggedIn() ? 'rgb(59, 144, 255)' : layoutHeader.fgcolor">account_circle</mat-icon>
 					</button>
