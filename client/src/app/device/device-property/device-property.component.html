@@ -30,7 +30,7 @@
             </div>
             <div class="my-form-field inbk " [style.marginLeft.px]="(isFuxaServer) ? 0 : 15" *ngIf="isWithPolling()">
                 <span>{{'device.property-polling' | translate}}</span>
-                <mat-select [(value)]="data.device.polling" style="width: 80px">
+                <mat-select [(value)]="data.device.polling" style="width: 100px">
                     <mat-option *ngFor="let polling of pollingType" [value]="polling.value"
                         [disabled]="isFuxaServer && polling.value > 3000">
                         {{ polling.text }}
@@ -504,7 +504,7 @@
                     </div>
                     <div class="my-form-field block mb5">
                         <span>{{'device.property-redis-readMode' | translate}}</span>
-                        <mat-select [(value)]="data.device.property.connectionOption" style="width: 350px">
+                        <mat-select [(value)]="data.device.property.connectionOption" style="display: flex;">
                             <mat-option *ngFor="let mode of redisReadModeType | enumToArray" [value]="mode.key">
                                 {{ 'device.property-redis-readmode-' + mode.value | translate }}
                             </mat-option>
@@ -519,7 +519,7 @@
                             <div *ngIf="data.device.property.connectionOption !== redisReadModeSimple" class="my-form-field block mb3">
                                 <span>{{'device.property-redis-read-keyValue' | translate}}</span>
                                 <input [(ngModel)]="redisOptions.readFields.value"
-                                       style="width: 330px"
+                                       style="width: 350px"
                                        placeholder="{{'device.property-redis-read-keyValue-ph' | translate}}"
                                        type="text"
                                        (click)="onAddressChanged()">
@@ -527,7 +527,7 @@
                             <div *ngIf="data.device.property.connectionOption !== redisReadModeSimple" class="my-form-field block mb3">
                                 <span>{{'device.property-redis-read-keyTimestamp' | translate}}</span>
                                 <input [(ngModel)]="redisOptions.readFields.timestamp"
-                                       style="width: 330px"
+                                       style="width: 350px"
                                        placeholder="{{'device.property-redis-read-keyTimestamp-ph' | translate}}"
                                        type="text"
                                        (click)="onAddressChanged()">
@@ -535,7 +535,7 @@
                             <div *ngIf="data.device.property.connectionOption !== redisReadModeSimple" class="my-form-field block mb3">
                                 <span>{{'device.property-redis-read-keyQuality' | translate}}</span>
                                 <input [(ngModel)]="redisOptions.readFields.quality"
-                                       style="width: 330px"
+                                       style="width: 350px"
                                        placeholder="{{'device.property-redis-read-keyQuality-ph' | translate}}"
                                        type="text"
                                        (click)="onAddressChanged()">
@@ -545,7 +545,7 @@
                             <div class="my-form-field block mb5">
                                 <span>{{'device.property-redis-writeName' | translate}}</span>
                                 <input [(ngModel)]="redisOptions.customCommand.write.name"
-                                       style="width: 330px"
+                                       style="width: 350px"
                                        placeholder="{{'device.property-redis-writeName-ph' | translate}}"
                                        type="text"
                                        (click)="onAddressChanged()">
