@@ -28,7 +28,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	deviceType: any = {};
 	showPassword: boolean;
 
-	pollingPlcType = [{text: '200 ms', value: 200},
+	pollingPlcType = [{text: '50 ms', value: 50},
+		              {text: '100 ms', value: 100},
+		              {text: '200 ms', value: 200},
 					  {text: '350 ms', value: 350},
 					  {text: '500 ms', value: 500},
 					  {text: '700 ms', value: 700},
