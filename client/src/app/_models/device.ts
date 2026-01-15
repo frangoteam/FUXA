@@ -1,4 +1,5 @@
 import { Utils } from '../_helpers/utils';
+import { Script } from './script';
 
 export const FuxaServer = {
     id: '0',
@@ -479,27 +480,241 @@ export class DevicesUtils {
     static readonly lineSectionHeader = '@';
     static readonly columnMaske = '~';
 
+    private static unmaskCsvValue(value: string): string {
+        return value.replace(new RegExp(DevicesUtils.columnMaske, 'g'), DevicesUtils.columnDelimiter);
+    }
+
+    private static formatCsvValue(value: any): string {
+        if (value === null || value === undefined) {
+            return '';
+        }
+        let text = '';
+        if (typeof value === 'function') {
+            text = value.name || '';
+            return text.replace(new RegExp(DevicesUtils.columnDelimiter, 'g'), DevicesUtils.columnMaske);
+        }
+        if (typeof value === 'object') {
+            try {
+                text = JSON.stringify(value);
+            } catch (err) {
+                text = value.toString();
+            }
+        } else {
+            text = value.toString();
+        }
+        return text.replace(new RegExp(DevicesUtils.columnDelimiter, 'g'), DevicesUtils.columnMaske);
+    }
+
+    private static isBooleanKey(key: string): boolean {
+        return key === 'enabled'
+            || key.endsWith('.enabled')
+            || key.endsWith('.changed')
+            || key.endsWith('.restored')
+            || key.endsWith('.forceFC16')
+            || key.endsWith('.ascii')
+            || key.endsWith('.octalIO');
+    }
+
+    private static isNumberKey(key: string): boolean {
+        return key === 'polling'
+            || key === 'divisor'
+            || key === 'format'
+            || key === 'sysType'
+            || key.endsWith('.interval')
+            || key.endsWith('.delay');
+    }
+
+    private static parseCsvValueForKey(key: string, value: string): any {
+        const text = DevicesUtils.unmaskCsvValue(value);
+        if (text === '') {
+            return '';
+        }
+        const jsonCandidate = text.trim();
+        if ((jsonCandidate.startsWith('{') || jsonCandidate.startsWith('[')) && Utils.isJson(jsonCandidate)) {
+            try {
+                return JSON.parse(jsonCandidate);
+            } catch (err) {
+            }
+        }
+        if (DevicesUtils.isBooleanKey(key)) {
+            return Utils.Boolify(text);
+        }
+        if (DevicesUtils.isNumberKey(key)) {
+            const parsed = parseFloat(text);
+            return Number.isNaN(parsed) ? text : parsed;
+        }
+        return text;
+    }
+
+    private static getScriptNameByIdMap(scripts?: Script[]): { [key: string]: string } {
+        const map: { [key: string]: string } = {};
+        if (!scripts) {
+            return map;
+        }
+        scripts.forEach(script => {
+            if (script?.id && script?.name) {
+                map[script.id] = script.name;
+            }
+        });
+        return map;
+    }
+
+    private static getScriptIdByNameMap(scripts?: Script[]): { [key: string]: string } {
+        const map: { [key: string]: string } = {};
+        if (!scripts) {
+            return map;
+        }
+        scripts.forEach(script => {
+            if (script?.id && script?.name) {
+                map[script.name] = script.id;
+            }
+        });
+        return map;
+    }
+
+    private static resolveScriptName(value: string, scriptNameById?: { [key: string]: string }): string {
+        if (!value || !scriptNameById) {
+            return value;
+        }
+        return scriptNameById[value] ?? value;
+    }
+
+    private static resolveScriptId(value: string, scriptIdByName?: { [key: string]: string }): string {
+        if (!value || !scriptIdByName) {
+            return value;
+        }
+        return scriptIdByName[value] ?? value;
+    }
+
+    private static setNestedValue(target: any, key: string, value: any) {
+        if (!key.includes('.')) {
+            target[key] = value;
+            return;
+        }
+        const parts = key.split('.');
+        let current = target;
+        for (let i = 0; i < parts.length - 1; i++) {
+            if (!current[parts[i]]) {
+                current[parts[i]] = {};
+            }
+            current = current[parts[i]];
+        }
+        current[parts[parts.length - 1]] = value;
+    }
+
+    private static collectDeviceKeys(devices: Device[]): { deviceKeys: string[]; propertyKeys: string[] } {
+        const baseDeviceKeys = Object.keys(Device.descriptor).filter(k => k !== 'tags' && k !== 'property');
+        const extraDeviceKeys = new Set<string>();
+        const basePropertyKeys = Object.keys(DeviceNetProperty.descriptor);
+        const extraPropertyKeys = new Set<string>();
+
+        devices.forEach(device => {
+            if (!device) {
+                return;
+            }
+            Object.keys(device).forEach(key => {
+                if (key === 'tags' || key === 'property') {
+                    return;
+                }
+                if (!baseDeviceKeys.includes(key)) {
+                    extraDeviceKeys.add(key);
+                }
+            });
+            if (device.property) {
+                Object.keys(device.property).forEach(key => {
+                    if (!basePropertyKeys.includes(key)) {
+                        extraPropertyKeys.add(key);
+                    }
+                });
+            }
+        });
+
+        return {
+            deviceKeys: [...baseDeviceKeys, ...Array.from(extraDeviceKeys).sort()],
+            propertyKeys: [...basePropertyKeys, ...Array.from(extraPropertyKeys).sort()]
+        };
+    }
+
+    private static collectTagKeys(devices: Device[]): { tagKeys: string[]; daqKeys: string[] } {
+        const baseTagKeys = Object.keys(Tag.descriptor).filter(k => k !== 'daq' && k !== 'options');
+        const extraTagKeys = new Set<string>();
+        const extraDaqKeys = new Set<string>();
+
+        devices.forEach(device => {
+            if (!device?.tags) {
+                return;
+            }
+            const tags = <Tag[]>Object.values(device.tags);
+            tags.forEach(tag => {
+                if (!tag) {
+                    return;
+                }
+                Object.keys(tag).forEach(key => {
+                    if (key === 'daq' || key === 'options' || key === 'value' || key === 'timestamp') {
+                        return;
+                    }
+                    if (!baseTagKeys.includes(key)) {
+                        extraTagKeys.add(key);
+                    }
+                });
+                if (tag.daq) {
+                    Object.keys(tag.daq).forEach(key => {
+                        if (key === 'enabled' || key === 'interval') {
+                            return;
+                        }
+                        extraDaqKeys.add(key);
+                    });
+                }
+            });
+        });
+
+        return {
+            tagKeys: [...baseTagKeys, ...Array.from(extraTagKeys).sort()],
+            daqKeys: ['enabled', 'interval', ...Array.from(extraDaqKeys).sort()]
+        };
+    }
+
+    private static parseHeaderKeys(line: string): string[] {
+        const items = line.split(DevicesUtils.columnDelimiter);
+        return items.slice(1).filter(item => item !== '');
+    }
+
+    private static mapLineToData(line: string, headerKeys: string[]): any {
+        const items = line.split(DevicesUtils.columnDelimiter);
+        const values = items.slice(1);
+        const data: any = {};
+        headerKeys.forEach((key, index) => {
+            if (index < values.length) {
+                data[key] = DevicesUtils.parseCsvValueForKey(key, values[index]);
+            }
+        });
+        return data;
+    }
+
     /**
      * converter of devices array to CSV format
      * @param devices
+     * @param scripts
      * @returns
      */
-    static devicesToCsv(devices: Device[]): string {
+    static devicesToCsv(devices: Device[], scripts?: Script[]): string {
         let result = '';
+        const scriptNameById = DevicesUtils.getScriptNameByIdMap(scripts);
         // devices list
         let devicesHeaderDescription = `!! CSV separator property convertion to "~"${DevicesUtils.lineDelimiter}`;
         let devicesHeader = `${DevicesUtils.lineSectionHeader}header${DevicesUtils.columnDelimiter}`;
         let devicesData = '';
-        const dkeys = Object.keys(Device.descriptor).filter(k => k !== 'tags');
-        const pkeys = Object.keys(DeviceNetProperty.descriptor);
+        const deviceKeysInfo = DevicesUtils.collectDeviceKeys(devices);
+        const dkeys = deviceKeysInfo.deviceKeys;
+        const pkeys = deviceKeysInfo.propertyKeys;
         dkeys.forEach(hk => {
-            if (hk !== 'property') {
-                devicesHeaderDescription += `${DevicesUtils.lineComment}${hk}${DevicesUtils.columnDelimiter}: ${Device.descriptor[hk]}${DevicesUtils.lineDelimiter}`;
-                devicesHeader += `${hk}${DevicesUtils.columnDelimiter}`;
-            }
+            const descriptor = Device.descriptor[hk] || 'dynamic device field';
+            devicesHeaderDescription += `${DevicesUtils.lineComment}${hk}${DevicesUtils.columnDelimiter}: ${descriptor}${DevicesUtils.lineDelimiter}`;
+            devicesHeader += `${hk}${DevicesUtils.columnDelimiter}`;
         });
         pkeys.forEach(pk => {
-            devicesHeaderDescription += `${DevicesUtils.lineComment}property.${pk}${DevicesUtils.columnDelimiter}: ${DeviceNetProperty.descriptor[pk]}${DevicesUtils.lineDelimiter}`;
+            const descriptor = DeviceNetProperty.descriptor[pk] || 'dynamic property field';
+            devicesHeaderDescription += `${DevicesUtils.lineComment}property.${pk}${DevicesUtils.columnDelimiter}: ${descriptor}${DevicesUtils.lineDelimiter}`;
             devicesHeader += `property.${pk}${DevicesUtils.columnDelimiter}`;
         });
         // device data
@@ -515,25 +730,29 @@ export class DevicesUtils {
         let tagsHeaderDescription = '';
         let tagsHeader = '';
         let tagsData = '';
-        const tkeys = Object.keys(Tag.descriptor).filter(k => k !== 'daq' && k !== 'options');
+        const tagKeysInfo = DevicesUtils.collectTagKeys(devices);
+        const tkeys = tagKeysInfo.tagKeys;
+        const daqKeys = tagKeysInfo.daqKeys;
         tagsHeaderDescription += `${DevicesUtils.lineComment}deviceId${DevicesUtils.columnDelimiter}:Reference to device${DevicesUtils.lineDelimiter}`;
         tagsHeader += `${DevicesUtils.lineSectionHeader}header${DevicesUtils.columnDelimiter}deviceId${DevicesUtils.columnDelimiter}`;
         tkeys.forEach(tk => {
-            tagsHeaderDescription += `${DevicesUtils.lineComment}${tk}${DevicesUtils.columnDelimiter}: ${Tag.descriptor[tk]}${DevicesUtils.lineDelimiter}`;
+            const descriptor = Tag.descriptor[tk] || 'dynamic tag field';
+            tagsHeaderDescription += `${DevicesUtils.lineComment}${tk}${DevicesUtils.columnDelimiter}: ${descriptor}${DevicesUtils.lineDelimiter}`;
             tagsHeader += `${tk}${DevicesUtils.columnDelimiter}`;
         });
         tagsHeaderDescription += `${DevicesUtils.lineComment}options${DevicesUtils.columnDelimiter}: ${Tag.descriptor.options}${DevicesUtils.lineDelimiter}`;
         tagsHeader += `options${DevicesUtils.columnDelimiter}`;
-        tagsHeaderDescription += `${DevicesUtils.lineComment}daq.enabled${DevicesUtils.columnDelimiter}: ${Tag.descriptor.daq.enabled}${DevicesUtils.lineDelimiter}`;
-        tagsHeader += `daq.enabled${DevicesUtils.columnDelimiter}`;
-        tagsHeaderDescription += `${DevicesUtils.lineComment}daq.interval${DevicesUtils.columnDelimiter}: ${Tag.descriptor.daq.interval}${DevicesUtils.lineDelimiter}`;
-        tagsHeader += `daq.interval${DevicesUtils.columnDelimiter}`;
+        daqKeys.forEach(dk => {
+            const descriptor = Tag.descriptor?.daq?.[dk] || 'dynamic daq field';
+            tagsHeaderDescription += `${DevicesUtils.lineComment}daq.${dk}${DevicesUtils.columnDelimiter}: ${descriptor}${DevicesUtils.lineDelimiter}`;
+            tagsHeader += `daq.${dk}${DevicesUtils.columnDelimiter}`;
+        });
 
         for (let i = 0; i < devices.length; i++) {
             if (devices[i].tags) {
                 const tags = <Tag[]>Object.values(devices[i].tags);
                 for (let y = 0; y < tags.length; y++) {
-                    tagsData += DevicesUtils.tag2Line(tags[y], devices[i].id, tkeys);
+                    tagsData += DevicesUtils.tag2Line(tags[y], devices[i].id, tkeys, daqKeys, scriptNameById);
                     tagsData += `${DevicesUtils.lineDelimiter}`;
                 }
             }
@@ -548,23 +767,46 @@ export class DevicesUtils {
     /**
      * convert string source of CSV to Device array
      * @param source
+     * @param scripts
      */
-    static csvToDevices(source: string): Device[] {
+    static csvToDevices(source: string, scripts?: Script[]): Device[] {
         try {
             // Device keys length to check, without tags and DeviceNetProperty instead of property
             const deviceKeyLength = Object.keys(Device.descriptor).length + Object.keys(DeviceNetProperty.descriptor).length;
             // Tags keys length to check, with daq splitted in enabled and interval
             const tagKeyLength = Object.keys(Tag.descriptor).length + 4;
             let devices = {};
-            const lines = source.split(DevicesUtils.lineDelimiter).filter(line => !line.startsWith(DevicesUtils.lineComment) && !line.startsWith(DevicesUtils.lineSectionHeader));
+            let deviceHeaderKeys: string[] = null;
+            let tagHeaderKeys: string[] = null;
+            const scriptIdByName = DevicesUtils.getScriptIdByNameMap(scripts);
+            const lines = source.split(DevicesUtils.lineDelimiter);
             lines.forEach((line) => {
+                if (!line) {
+                    return;
+                }
+                if (line.startsWith(DevicesUtils.lineComment)) {
+                    return;
+                }
+                if (line.startsWith(DevicesUtils.lineSectionHeader)) {
+                    const headerKeys = DevicesUtils.parseHeaderKeys(line);
+                    if (headerKeys[0] === 'deviceId') {
+                        tagHeaderKeys = headerKeys;
+                    } else {
+                        deviceHeaderKeys = headerKeys;
+                    }
+                    return;
+                }
                 if (line.startsWith(DevicesUtils.lineDevice)) {
                     // Device
-                    let device = DevicesUtils.line2Device(line, deviceKeyLength);
+                    let device = deviceHeaderKeys
+                        ? DevicesUtils.line2DeviceDynamic(line, deviceHeaderKeys)
+                        : DevicesUtils.line2Device(line, deviceKeyLength);
                     devices[device.id] = device;
                 } else if (line.startsWith(DevicesUtils.lineTag)) {
                     // Tag
-                    let result = DevicesUtils.line2Tag(line, tagKeyLength);
+                    let result = tagHeaderKeys
+                        ? DevicesUtils.line2TagDynamic(line, tagHeaderKeys, scriptIdByName)
+                        : DevicesUtils.line2Tag(line, tagKeyLength);
                     if (!devices[result.deviceId]) {
                         throw new Error(`Device don't exist: ${line}`);
                     }
@@ -584,16 +826,13 @@ export class DevicesUtils {
     static device2Line(device: Device, dkeys: string[], pkeys: string[]): string {
         let result = `${DevicesUtils.lineDevice}${DevicesUtils.columnDelimiter}`;
         dkeys.forEach(dk => {
-            if (dk !== 'property') {
-                let text = (device[dk]) ? device[dk].toString() : '';
-                result += `${text.replace(new RegExp(DevicesUtils.columnDelimiter, 'g'), DevicesUtils.columnMaske)}${DevicesUtils.columnDelimiter}`;
-            }
+            let text = DevicesUtils.formatCsvValue(device[dk]);
+            result += `${text}${DevicesUtils.columnDelimiter}`;
         });
-        if (device.property) {
-            pkeys.forEach(pk => {
-                result += `${device.property[pk] || ''}${DevicesUtils.columnDelimiter}`;
-            });
-        }
+        pkeys.forEach(pk => {
+            const text = device.property ? DevicesUtils.formatCsvValue(device.property[pk]) : '';
+            result += `${text}${DevicesUtils.columnDelimiter}`;
+        });
         return result;
     }
 
@@ -625,16 +864,74 @@ export class DevicesUtils {
         return device;
     }
 
-    static tag2Line(tag: Tag, deviceId: string, tkeys: string[]): string {
+    static line2DeviceDynamic(line: string, headerKeys: string[]): Device {
+        const data = DevicesUtils.mapLineToData(line, headerKeys);
+        const deviceId = data.id;
+        if (!deviceId) {
+            throw new Error(`Device id missing: ${line}`);
+        }
+        let device = new Device(deviceId);
+        let hasProperty = false;
+        Object.keys(data).forEach(key => {
+            if (key === 'id') {
+                return;
+            }
+            if (key.startsWith('property.')) {
+                if (!device.property) {
+                    device.property = <DeviceNetProperty>{};
+                }
+                hasProperty = true;
+                const propKey = key.substring('property.'.length);
+                DevicesUtils.setNestedValue(device.property, propKey, data[key]);
+                return;
+            }
+            if (key === 'enabled') {
+                device.enabled = Utils.Boolify(data[key]) ? true : false;
+                return;
+            }
+            if (key === 'polling') {
+                const polling = parseInt(data[key], 10);
+                device.polling = Number.isNaN(polling) ? 1000 : polling;
+                return;
+            }
+            if (key === 'type') {
+                device.type = <DeviceType>data[key];
+                return;
+            }
+            device[key] = data[key];
+        });
+        if (!hasProperty && !device.property) {
+            device.property = <DeviceNetProperty>{};
+        }
+        if (device.polling === undefined || device.polling === null || !device.polling) {
+            device.polling = 1000;
+        }
+        device.tags = {};
+        return device;
+    }
+
+    static tag2Line(
+        tag: Tag,
+        deviceId: string,
+        tkeys: string[],
+        daqKeys: string[],
+        scriptNameById?: { [key: string]: string }
+    ): string {
         let result = `${DevicesUtils.lineTag}${DevicesUtils.columnDelimiter}${deviceId}${DevicesUtils.columnDelimiter}`;
         tkeys.forEach(tk => {
-            let text = tag[tk] || '';
-            result += `${text.toString().replace(new RegExp(DevicesUtils.columnDelimiter, 'g'), DevicesUtils.columnMaske)}${DevicesUtils.columnDelimiter}`;
+            let value = tag[tk];
+            if (tk === 'scaleReadFunction' || tk === 'scaleWriteFunction') {
+                value = DevicesUtils.resolveScriptName(value, scriptNameById);
+            }
+            let text = DevicesUtils.formatCsvValue(value);
+            result += `${text}${DevicesUtils.columnDelimiter}`;
         });
-        let options = (tag.options) ? JSON.stringify(tag.options) : '';
-        result += `${options.replace(new RegExp(DevicesUtils.columnDelimiter, 'g'), DevicesUtils.columnMaske)}${DevicesUtils.columnDelimiter}`;
-        result += `${(tag.daq) ? tag.daq.enabled : ''}${DevicesUtils.columnDelimiter}`;
-        result += `${(tag.daq) ? tag.daq.interval : ''}${DevicesUtils.columnDelimiter}`;
+        let options = DevicesUtils.formatCsvValue(tag.options);
+        result += `${options}${DevicesUtils.columnDelimiter}`;
+        daqKeys.forEach(dk => {
+            const value = tag.daq ? tag.daq[dk] : '';
+            result += `${DevicesUtils.formatCsvValue(value)}${DevicesUtils.columnDelimiter}`;
+        });
         return result;
     }
 
@@ -662,6 +959,69 @@ export class DevicesUtils {
             changed: true,
             interval: parseInt(items[13]) || 60
         };
+        return { tag, deviceId };
+    }
+
+    static line2TagDynamic(
+        line: string,
+        headerKeys: string[],
+        scriptIdByName?: { [key: string]: string }
+    ): { tag: Tag; deviceId: string } {
+        const data = DevicesUtils.mapLineToData(line, headerKeys);
+        const deviceId = data.deviceId;
+        const tagId = data.id;
+        if (!deviceId || !tagId) {
+            throw new Error(`Tag missing deviceId or id: ${line}`);
+        }
+        let tag = new Tag(tagId);
+        tag.daq = tag.daq || new TagDaq(false, false, 60, false);
+        Object.keys(data).forEach(key => {
+            if (key === 'deviceId' || key === 'id') {
+                return;
+            }
+            if (key === 'divisor') {
+                const divisor = parseInt(data[key], 10);
+                tag.divisor = Number.isNaN(divisor) ? 1 : divisor;
+                return;
+            }
+            if (key === 'format') {
+                const format = parseInt(data[key], 10);
+                tag.format = Number.isNaN(format) ? null : format;
+                return;
+            }
+            if (key === 'sysType') {
+                const sysType = parseInt(data[key], 10);
+                tag.sysType = Number.isNaN(sysType) ? data[key] : sysType;
+                return;
+            }
+            if (key === 'options') {
+                tag.options = data[key];
+                return;
+            }
+            if (key.startsWith('daq.')) {
+                const daqKey = key.substring('daq.'.length);
+                if (!tag.daq) {
+                    tag.daq = <TagDaq>{};
+                }
+                if (daqKey === 'interval') {
+                    const interval = parseInt(data[key], 10);
+                    tag.daq.interval = Number.isNaN(interval) ? 60 : interval;
+                } else if (daqKey === 'enabled' || daqKey === 'changed' || daqKey === 'restored') {
+                    tag.daq[daqKey] = Utils.Boolify(data[key]) ? true : false;
+                } else {
+                    tag.daq[daqKey] = data[key];
+                }
+                return;
+            }
+            if (key === 'scaleReadFunction' || key === 'scaleWriteFunction') {
+                tag[key] = DevicesUtils.resolveScriptId(data[key], scriptIdByName);
+                return;
+            }
+            tag[key] = data[key];
+        });
+        if (tag.daq && tag.daq.changed === undefined) {
+            tag.daq.changed = true;
+        }
         return { tag, deviceId };
     }
     //#endregion

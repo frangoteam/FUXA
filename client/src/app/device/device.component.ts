@@ -176,7 +176,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
                 devices = JSON.parse(reader.result.toString());
             } else {
                 // CSV
-                devices = DevicesUtils.csvToDevices(reader.result.toString());
+                devices = DevicesUtils.csvToDevices(reader.result.toString(), this.projectService.getScripts());
             }
             //generate new id and filte fuxa
             let importDev = [];
