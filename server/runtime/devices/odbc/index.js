@@ -24,7 +24,7 @@ function ODBCclient(_data, _logger, _events) {
      * initialize the device type 
      */
     this.init = function (_type) {
-        console.error('Not supported!');
+        console.error('Not supported! (odbc.init)');
     }
 
     /**
@@ -165,14 +165,14 @@ function ODBCclient(_data, _logger, _events) {
      * Return Tags values array { id: <name>, value: <value> }
      */
     this.getValues = function () {
-        console.error('Not supported!');
+        console.error('Not supported! (odbc.getValues)');
     }
 
     /**
      * Return Tag value { id: <name>, value: <value>, ts: <lastTimestampValue> }
      */
     this.getValue = function (tagid) {
-        console.error('Not supported!');
+        console.error(`Not supported! (odbc.getValue) (TagID: ${tagid})`);
     }
 
     /**
@@ -186,14 +186,14 @@ function ODBCclient(_data, _logger, _events) {
      * Return Tag property to show in frontend
      */
     this.getTagProperty = function (tagid) {
-        console.error('Not supported!');
+        console.error(`Not supported! (odbc.getTagProperty) (TagID: ${tagid})`);
     }
 
     /**
      * Set the Tag value to device
      */
     this.setValue = function (tagid, value) {
-        console.error('Not supported!');
+        console.error(`Not supported! (odbc.setValue) (TagID: ${tagid}, Value: ${value})`);
     }
 
     /**

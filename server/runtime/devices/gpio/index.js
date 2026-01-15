@@ -198,7 +198,7 @@ function GpioClient(_data, _logger, _events, _runtime) {
      */
     this.lastReadTimestamp = () => {
         return lastTimestampValue;
-        console.error('Not supported!');
+        console.error('Not supported! (gpio.lastReadTimestamp)');
     }
 
     /**

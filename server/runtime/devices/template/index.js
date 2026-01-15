@@ -14,7 +14,7 @@ function DeviceTemplate(_data, _logger, _events) {
      * initialize the device type 
      */
     this.init = function (_type) {
-        console.error('Not supported!');
+        console.error('Not supported! (template.init)');
     }
 
     /**
@@ -22,7 +22,7 @@ function DeviceTemplate(_data, _logger, _events) {
      * Emit connection status to clients, clear all Tags values
      */
     this.connect = function () {
-        console.error('Not supported!');
+        console.error('Not supported! (template.connect)');
         // events.emit('device-status:changed', { id: data.id, status: 'connect-ok' });
         // events.emit('device-status:changed', { id: data.id, status: 'connect-error' });
     }
@@ -33,7 +33,7 @@ function DeviceTemplate(_data, _logger, _events) {
      * Emit connection status to clients, clear all Tags values
      */
     this.disconnect = function () {
-        console.error('Not supported!');
+        console.error('Not supported! (template.disconnect)');
         // events.emit('device-status:changed', { id: data.id, status: 'connect-off' });
     }
 
@@ -42,7 +42,7 @@ function DeviceTemplate(_data, _logger, _events) {
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
-        console.error('Not supported!');
+        console.error('Not supported! (template.polling)');
         // events.emit('device-value:changed', { id: data.name, values: values });
     }
 
@@ -50,49 +50,49 @@ function DeviceTemplate(_data, _logger, _events) {
      * Load Tags attribute to read with polling
      */
     this.load = function (_data) {
-        console.error('Not supported!');
+        console.error(`Not supported! (template.load) (Data: ${_data})`);
     }
 
     /**
      * Return Tags values array { id: <name>, value: <value> }
      */
     this.getValues = function () {
-        console.error('Not supported!');
+        console.error('Not supported! (template.getValues)');
     }
 
     /**
      * Return Tag value { id: <name>, value: <value>, ts: <lastTimestampValue> }
      */
     this.getValue = function (tagid) {
-        console.error('Not supported!');
+        console.error(`Not supported! (template.getValue) (TagID: ${tagid})`);
     }
 
     /**
      * Return connection status 'connect-off', 'connect-ok', 'connect-error', 'connect-busy'
      */
     this.getStatus = function () {
-        console.error('Not supported!');
+        console.error('Not supported! (template.getStatus)');
     }
 
     /**
      * Return Tag property to show in frontend
      */
     this.getTagProperty = function (tagid) {
-        console.error('Not supported!');
+        console.error(`Not supported! (template.getTagProperty) (TagID: ${tagid})`);
     }
 
     /**
      * Set the Tag value to device
      */
     this.setValue = function (tagid, value) {
-        console.error('Not supported!');
+        console.error(`Not supported! (template.setValue) (TagID: ${tagid}, Value: ${value})`);
     }
 
     /**
      * Return if device is connected
      */
     this.isConnected = function () {
-        console.error('Not supported!');
+        console.error('Not supported! (template.isConnected)');
     }
 
     /**
@@ -107,7 +107,7 @@ function DeviceTemplate(_data, _logger, _events) {
      * @returns 
      */
     this.lastReadTimestamp = () => {
-        console.error('Not supported!');
+        console.error('Not supported! (template.lastReadTimestamp)');
     }
 
     /**
@@ -115,7 +115,7 @@ function DeviceTemplate(_data, _logger, _events) {
      * @returns 
      */
     this.getTagDaqSettings = (tagId) => {
-        console.error('Not supported!');
+        console.error(`Not supported! (template.getTagDaqSettings) (TagID: ${tagId})`);
     }
 
     /**
@@ -123,7 +123,7 @@ function DeviceTemplate(_data, _logger, _events) {
      * @returns 
      */
     this.setTagDaqSettings = (tagId, settings) => {
-        console.error('Not supported!');
+        console.error(`Not supported! (template.setTagDaqSettings) (TagID: ${tagId}, Settings: ${settings})`);
     }
 }
 

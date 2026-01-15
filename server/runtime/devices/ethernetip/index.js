@@ -28,7 +28,7 @@ function EthernetIPclient(_data, _logger, _events, _runtime) {
      * initialize the device type
      */
     this.init = function (_type) {
-        console.error('Not supported!');
+        console.error('Not supported! (ethernetip.init)');
     }
 
     /**
