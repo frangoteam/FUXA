@@ -28,8 +28,11 @@
                 *ngIf="data.device.type === deviceType.internal">
                 {{'device.property-internal' | translate}}
             </div>
-            <div class="my-form-field inbk " [style.marginLeft.px]="(isFuxaServer) ? 0 : 15" *ngIf="isWithPolling()">
-                <span>{{'device.property-polling' | translate}}</span>
+            <div class="my-form-field inbk my-form-field-polling" [style.marginLeft.px]="(isFuxaServer) ? 0 : 15" *ngIf="isWithPolling()">
+                <span class="polling-label">
+                    {{'device.property-polling' | translate}}
+                    <mat-icon *ngIf="data.device.polling <= 100" matTooltip="{{'device.property-polling-warning' | translate}}">warning_amber</mat-icon>
+                </span>
                 <mat-select [(value)]="data.device.polling" style="width: 100px">
                     <mat-option *ngFor="let polling of pollingType" [value]="polling.value"
                         [disabled]="isFuxaServer && polling.value > 3000">

@@ -69,6 +69,23 @@
             margin-top: 5px;
         }
     }
+
+    .my-form-field-polling {
+
+        .polling-label {
+            display: block;
+            align-items: center;
+            gap: 6px;
+        }
+        mat-icon {
+            margin-left: 5px;
+            color:rgb(255, 187, 0);
+            display: inline-block;
+            height: 16px;
+            width: 16x;
+            font-size: 18px;
+        }
+    }
 }
 
 :host ::ng-deep .mat-expansion-panel-body {
