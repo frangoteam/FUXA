@@ -270,10 +270,13 @@ module.exports = {
                         var group = { name: resourcesDirs[i], items: [] };
                         var dirPath = path.resolve(runtime.settings.widgetsFileDir, resourcesDirs[i]);
                         var wwwSubDir = path.join('_widgets', resourcesDirs[i]);
-                        var files = getFiles(dirPath, ['.svg']);
+                        var files = getFilesRecursive(dirPath, ['.svg']);
                         for (var x = 0; x < files.length; x++) {
                             var filename = files[x];
-                            group.items.push({ path: path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep), name: filename });
+                            group.items.push({
+                                path: path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep),
+                                name: filename
+                            });
                         }
                         result.groups.push(group);
                     }
@@ -353,4 +356,18 @@ function getFiles(pathDir, extensions) {
     const filesInDIrectory = fs.readdirSync(pathDir)
         .filter((item) => extensions.indexOf(path.extname(item).toLowerCase()) !== -1);
     return filesInDIrectory;
+}
+
+function getFilesRecursive(pathDir, extensions, baseDir = pathDir) {
+    const entries = fs.readdirSync(pathDir, { withFileTypes: true });
+    const files = [];
+    for (const entry of entries) {
+        const entryPath = path.join(pathDir, entry.name);
+        if (entry.isDirectory()) {
+            files.push(...getFilesRecursive(entryPath, extensions, baseDir));
+        } else if (extensions.indexOf(path.extname(entry.name).toLowerCase()) !== -1) {
+            files.push(path.relative(baseDir, entryPath));
+        }
+    }
+    return files;
 }
