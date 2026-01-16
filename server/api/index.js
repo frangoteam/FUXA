@@ -151,24 +151,31 @@ function init(_server, _runtime) {
                     res.end();
                 } else if (res.statusCode === 403) {
                     runtime.logger.error("api post heartbeat: Tocken Expired");
-                } else if (req.body.params) {
-                    const token = authJwt.getNewToken(req.headers)
-                    if (token) {
-                        res.status(200).json({
-                            message: 'tokenRefresh',
-                            token: token
+                }
+                if (req.body.params) {
+
+                    if (!req.isAuthenticated) {
+                        // guest → NON puo rinnovare token
+                        return res.status(200).json({
+                            message: 'guest'
                         });
-                    } else {
-                        res.end();
                     }
-                } else if (req.userId === 'guest') {
-                    res.status(200).json({
+
+                    const token = authJwt.getNewTokenFromRequest(req);
+                    return res.status(200).json({
+                        message: 'tokenRefresh',
+                        token
+                    });
+                }
+
+                // Guest heartbeat
+                if (req.userId === 'guest') {
+                    return res.status(200).json({
                         message: 'guest',
                         token: authJwt.getGuestToken()
                     });
-                } else {
-                    res.end();
                 }
+                return res.end();
             });
 
             runtime.logger.info('api: init successful!', true);
