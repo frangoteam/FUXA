@@ -24,6 +24,7 @@ var commandApi = require('./command');
 const reports = require('../dist/reports.service');
 const reportsApi = new reports.ReportsApiService();
 const verifyApiOrToken = require('./apikeys/verify-api-or-token');
+const utils = require('../runtime/utils');
 
 const version = '1.0.0';
 
@@ -107,6 +108,9 @@ function init(_server, _runtime) {
                     if (tosend.smtp) {
                         delete tosend.smtp.password;
                     }
+                    if (tosend.daqstore?.credentials) {
+                        delete tosend.daqstore.credentials;
+                    }
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     res.json(tosend);
@@ -130,6 +134,9 @@ function init(_server, _runtime) {
                     try {
                         if (req.body.smtp && !req.body.smtp.password && runtime.settings.smtp && runtime.settings.smtp.password) {
                             req.body.smtp.password = runtime.settings.smtp.password;
+                        }
+                        if (utils.isEmptyObject(req.body.daqstore?.credentials) && runtime.settings.daqstore?.credentials) {
+                            req.body.daqstore.credentials = runtime.settings.daqstore?.credentials;
                         }
                         fs.writeFileSync(runtime.settings.userSettingsFile, JSON.stringify(req.body, null, 4));
                         mergeUserSettings(req.body);
