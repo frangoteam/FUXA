@@ -7,26 +7,26 @@ module.exports = function(RED) {
         // Store previous values to detect actual changes
         var previousValues = {};
 
+        // Prefer config.tagId, fallback to config.tag for backward compatibility
+        var configuredTagId = config.tagId;
+        if (!configuredTagId && config.tag) {
+            // Backward compatibility: old nodes use tag.name, need to convert to tagId
+            configuredTagId = fuxa.getTagId(config.tag, null);
+        }
+
         // Initialize previous value for the configured tag
-        if (config.tag) {
-            var tagId = fuxa.getTagId(config.tag, null);
-            if (tagId) {
-                // Initialize previous value
-                var initialValue = fuxa.getTag(tagId);
-                if (initialValue !== undefined) {
-                    previousValues[tagId] = initialValue;
-                }
+        if (configuredTagId) {
+            var initialValue = fuxa.getTag(configuredTagId);
+            if (initialValue !== undefined) {
+                previousValues[configuredTagId] = initialValue;
             }
         }
 
-                        // Event listener for device value changes (raw events from devices)
+        // Event listener for device value changes (raw events from devices)
         var deviceEventListener = function(deviceEvent) {
             try {
                 // deviceEvent format: { id: deviceId, values: { tagId: tagObject, ... } }
                 if (deviceEvent && deviceEvent.values) {
-                    // Check if any of the changed values match our configured tag
-                    var configuredTagId = fuxa.getTagId(config.tag, null);
-                    
                     if (configuredTagId && deviceEvent.values[configuredTagId]) {
                         var tagData = deviceEvent.values[configuredTagId];
                         
