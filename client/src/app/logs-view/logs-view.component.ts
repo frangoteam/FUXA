@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 
 import { UntypedFormControl } from '@angular/forms';
 import { MatTable as MatTable, MatTableDataSource as MatTableDataSource } from '@angular/material/table';
@@ -19,6 +19,8 @@ export class LogsViewComponent implements AfterViewInit {
     @ViewChild(MatTable, {static: false}) table: MatTable<any>;
     @ViewChild(MatSort, {static: false}) sort: MatSort;
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+    @ViewChild('workPanel', {static: false}) workPanel: ElementRef;
+    @ViewChild('textContent', {static: false}) textContent: ElementRef;
 
     dataSource = new MatTableDataSource([]);
     ontimeFilter = new UntypedFormControl();
@@ -57,5 +59,21 @@ export class LogsViewComponent implements AfterViewInit {
             this.appService.showLoading(false);
             console.error('get Logs err: ' + err);
         });
+    }
+
+    scrollToTop() {
+        if (this.tableView && this.workPanel) {
+            this.workPanel.nativeElement.scrollTop = 0;
+        } else if (!this.tableView && this.textContent) {
+            this.textContent.nativeElement.scrollTop = 0;
+        }
+    }
+
+    scrollToBottom() {
+        if (this.tableView && this.workPanel) {
+            this.workPanel.nativeElement.scrollTop = this.workPanel.nativeElement.scrollHeight;
+        } else if (!this.tableView && this.textContent) {
+            this.textContent.nativeElement.scrollTop = this.textContent.nativeElement.scrollHeight;
+        }
     }
 }
