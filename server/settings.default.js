@@ -24,6 +24,7 @@ module.exports = {
     // - 'common': Less detailed than 'combined', omitting the referrer and user-agent.
     // - 'short': Shorter format that includes the remote address and request details.
     // - 'tiny': Minimalist format, showing just the method, URL, status, response length, and response time.
+	// - 'none': Completely disables HTTP request logging to clean the console for custom debugging scripts and reduce I/O overhead.
     //
     // Default Value:
     // - 'combined': By default, logApiLevel is set to 'combined', providing detailed logs suitable for thorough tracking and analysis.
