@@ -342,22 +342,24 @@ app.use('/_widgets', express.static(settings.widgetsFileDir));
 app.use('/snapshots', express.static(settings.webcamSnapShotsDir))
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', { flags: 'a' });
-app.use(morgan('combined', {
-    stream: accessLogStream,
-    skip: function (req, res) { return res.statusCode < 400 }
-}));
-
-app.use(morgan('dev', {
-    skip: function (req, res) {
-        return res.statusCode < 400
-    }, stream: process.stderr
-}));
-
-app.use(morgan('dev', {
-    skip: function (req, res) {
-        return res.statusCode >= 400
-    }, stream: process.stdout
-}));
+if (runtime.settings.logApiLevel !== 'none') {
+	app.use(morgan('combined', {
+		stream: accessLogStream,
+		skip: function (req, res) { return res.statusCode < 400 }
+	}));
+	
+	app.use(morgan('dev', {
+		skip: function (req, res) {
+			return res.statusCode < 400
+		}, stream: process.stderr
+	}));
+	
+	app.use(morgan('dev', {
+		skip: function (req, res) {
+			return res.statusCode >= 400
+		}, stream: process.stdout
+	}));
+}
 
 function mountSwaggerIfEnabled() {
     const swaggerEnabled = settings.swagger || settings.swaggerEnabled;
