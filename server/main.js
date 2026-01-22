@@ -147,6 +147,9 @@ try {
         if (mysettings.tokenExpiresIn) {
             settings.tokenExpiresIn = mysettings.tokenExpiresIn;
         }
+        if (mysettings.secretCode) {
+            settings.secretCode = mysettings.secretCode;
+        }
         if (mysettings.smtp) {
             settings.smtp = mysettings.smtp;
         }

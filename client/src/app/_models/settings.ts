@@ -5,6 +5,8 @@ export class AppSettings {
     uiPort = 1881;
     /** Security access to enable user and authentication */
     secureEnabled = false;
+    /** Secret code to sign/verify tokens */
+    secretCode = '';
     /** Expiration of authanticated token (15m)*/
     tokenExpiresIn = '1h';
     /** authentication are valid only for edit mode */

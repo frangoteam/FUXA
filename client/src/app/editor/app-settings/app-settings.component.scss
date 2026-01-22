@@ -49,6 +49,15 @@
         width: 320px;
     }
 
+    .system-input mat-select {
+        width: 100%;
+    }
+
+    .system-input input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
     .node-red-info {
         margin-top: 6px;
         padding: 6px 8px;
