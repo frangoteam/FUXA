@@ -138,8 +138,22 @@ function init(_server, _runtime) {
                         if (utils.isEmptyObject(req.body.daqstore?.credentials) && runtime.settings.daqstore?.credentials) {
                             req.body.daqstore.credentials = runtime.settings.daqstore?.credentials;
                         }
+                        if (!req.body.secretCode && runtime.settings.secretCode) {
+                            req.body.secretCode = runtime.settings.secretCode;
+                        }
+                        const prevAuth = {
+                            secureEnabled: runtime.settings.secureEnabled,
+                            tokenExpiresIn: runtime.settings.tokenExpiresIn,
+                            secretCode: runtime.settings.secretCode
+                        };
                         fs.writeFileSync(runtime.settings.userSettingsFile, JSON.stringify(req.body, null, 4));
                         mergeUserSettings(req.body);
+                        if (prevAuth.secureEnabled !== runtime.settings.secureEnabled ||
+                            prevAuth.tokenExpiresIn !== runtime.settings.tokenExpiresIn ||
+                            prevAuth.secretCode !== runtime.settings.secretCode) {
+                            authJwt.init(runtime.settings.secureEnabled, runtime.settings.secretCode, runtime.settings.tokenExpiresIn);
+                            authApi.init(runtime, authJwt.secretCode, authJwt.tokenExpiresIn);
+                        }
                         runtime.restart(true).then(function(result) {
                             res.end();
                         });
@@ -202,6 +216,9 @@ function mergeUserSettings(settings) {
     runtime.settings.userRole = settings.userRole;
     runtime.settings.nodeRedEnabled = settings.nodeRedEnabled;
     runtime.settings.swaggerEnabled = settings.swaggerEnabled;
+    if (settings.secretCode) {
+        runtime.settings.secretCode = settings.secretCode;
+    }
     if (settings.secureEnabled) {
         runtime.settings.tokenExpiresIn = settings.tokenExpiresIn;
     }

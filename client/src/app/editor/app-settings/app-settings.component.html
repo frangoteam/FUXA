@@ -34,6 +34,10 @@
                                     <mat-slide-toggle color="primary" [(ngModel)]="settings.secureOnlyEditor" [disabled]="authentication === ''"></mat-slide-toggle>
                                 </div>
                             </div>
+                            <div class="my-form-field block mt15 system-input" *ngIf="authentication">
+                                <span>{{'dlg.app-settings-auth-secret' | translate}}</span>
+                                <input autocomplete="off" [(ngModel)]="settings.secretCode" style="width: 320px" type="password">
+                            </div>
                             <div class="my-form-field block mt15 system-input">
                                 <span>{{'dlg.app-settings-client-broadcast' | translate}}</span>
                                 <mat-select [(value)]="settings.broadcastAll">
