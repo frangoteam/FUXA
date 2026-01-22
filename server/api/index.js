@@ -39,8 +39,11 @@ function init(_server, _runtime) {
     return new Promise(function (resolve, reject) {
         if (runtime.settings.disableServer !== false) {
             apiApp = express();
-            apiApp.use(morgan(['combined', 'common', 'dev', 'short', 'tiny'].
-                includes(runtime.settings.logApiLevel) ? runtime.settings.logApiLevel : 'combined'));
+            
+			if (runtime.settings.logApiLevel !== 'none') {
+				apiApp.use(morgan(['combined', 'common', 'dev', 'short', 'tiny'].
+				includes(runtime.settings.logApiLevel) ? runtime.settings.logApiLevel : 'combined'));
+			}
 
             var maxApiRequestSize = runtime.settings.apiMaxLength || '100mb';
             apiApp.use(bodyParser.json({limit:maxApiRequestSize}));
