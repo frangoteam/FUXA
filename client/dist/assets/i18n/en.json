@@ -992,6 +992,7 @@
     "device.property-name": "Name",
     "device.property-type": "Type",
     "device.property-polling": "Polling",
+    "device.property-polling-warning": "Warning: Low polling intervals may cause high CPU and network load. Use with care.",
     "device.property-enable": "Enable",
     "device.property-subscribe": "Subscribe",
     "device.property-address": "Address (IP or opc.tcp://[server]:[port])",

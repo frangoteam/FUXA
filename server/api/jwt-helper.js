@@ -53,26 +53,19 @@ function verifyToken (req, res, next) {
             if (err) {
                 req.userId = "guest";
                 req.userGroups = ["guest"];
-            } else {
-                req.userId = decoded.id;
-                req.userGroups = decoded.groups;
-                if (req.headers['x-auth-user']) {
-                    let user = JSON.parse(req.headers['x-auth-user']);
-                    if (user && user.groups != req.userGroups) {
-                        res.status(403).json({ error: "unauthorized_error", message: "User Profile Corrupted!" });
-                    }
-                }
+                req.isAuthenticated = false;
+                return next();
             }
-            next();
+            req.userId = decoded.id;
+            req.userGroups = decoded.groups;
+            req.isAuthenticated = true;
+            return next();
         });
     } else {
         // notice that no token was provided...}
         req.userId = null;
         req.userGroups = null;
-        // if (secureEnabled) {
-        //     res.status(401).json({ error: "unauthorized_error", message: "Token missing!" });
-        // }
-        next();
+        return next();
     }
 }
 
@@ -110,29 +103,22 @@ function requireAuth (req, res, next) {
         } else {
             req.userId = decoded.id;
             req.userGroups = decoded.groups;
-            if (req.headers['x-auth-user']) {
-                let user = JSON.parse(req.headers['x-auth-user']);
-                if (user && user.groups != req.userGroups) {
-                    return res.status(403).json({ error: "unauthorized_error", message: "User Profile Corrupted!" });
-                }
-            }
             next();
         }
     });
 }
 
-function getNewToken(headers) {
-    const authUser = (headers['x-auth-user']) ? JSON.parse(headers['x-auth-user']) : null;
-    if (authUser) {
-        return jwt.sign({
-            id: authUser.user,
-            groups: authUser.groups
-        },
-        secretCode, {
-            expiresIn: tokenExpiresIn
-        });
+function getNewTokenFromRequest(req) {
+    if (!req.isAuthenticated) {
+        return null;
     }
-    return null;
+
+    return jwt.sign({
+        id: req.userId,
+        groups: req.userGroups
+    }, secretCode, {
+        expiresIn: tokenExpiresIn
+    });
 }
 
 function getGuestToken() {
@@ -165,7 +151,7 @@ module.exports = {
     verify: verify,
     verifyToken: verifyToken,
     requireAuth: requireAuth,
-    getNewToken: getNewToken,
+    getNewTokenFromRequest: getNewTokenFromRequest,
     getGuestToken: getGuestToken,
     get secretCode() { return secretCode },
     get tokenExpiresIn() { return tokenExpiresIn },

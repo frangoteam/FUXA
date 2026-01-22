@@ -174,7 +174,7 @@ export class ProjectService {
         let filename = `${name}-devices.${type}`;
         const devices = <Device[]>Object.values(this.convertToSave(this.getDevices()));
         if (type === 'csv') {
-            content = DevicesUtils.devicesToCsv(devices);
+            content = DevicesUtils.devicesToCsv(devices, this.getScripts());
         } else {    // json
             if (this.getProjectName()) {
                 filename = `${this.getProjectName()}-devices.json`;

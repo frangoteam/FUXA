@@ -167,7 +167,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
      * @param isTemplate use template for import, if true, generate new device id and tag id
      */
     onDevTplChangeListener(event, isTemplate: boolean){
-        let input = event.target;
+        let input = event.target as HTMLInputElement;
         let reader = new FileReader();
         reader.onload = (data) => {
             let devices;
@@ -176,7 +176,7 @@ export class DeviceComponent implements OnInit, OnDestroy {
                 devices = JSON.parse(reader.result.toString());
             } else {
                 // CSV
-                devices = DevicesUtils.csvToDevices(reader.result.toString());
+                devices = DevicesUtils.csvToDevices(reader.result.toString(), this.projectService.getScripts());
             }
             //generate new id and filte fuxa
             let importDev = [];
@@ -209,6 +209,8 @@ export class DeviceComponent implements OnInit, OnDestroy {
             alert(msg);
         };
         reader.readAsText(input.files[0]);
-        this.tplFileImportInput.nativeElement.value = null;
+        if (input) {
+            input.value = '';
+        }
     }
 }

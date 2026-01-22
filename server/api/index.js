@@ -24,6 +24,7 @@ var commandApi = require('./command');
 const reports = require('../dist/reports.service');
 const reportsApi = new reports.ReportsApiService();
 const verifyApiOrToken = require('./apikeys/verify-api-or-token');
+const utils = require('../runtime/utils');
 
 const version = '1.0.0';
 
@@ -107,6 +108,9 @@ function init(_server, _runtime) {
                     if (tosend.smtp) {
                         delete tosend.smtp.password;
                     }
+                    if (tosend.daqstore?.credentials) {
+                        delete tosend.daqstore.credentials;
+                    }
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     res.json(tosend);
@@ -131,6 +135,9 @@ function init(_server, _runtime) {
                         if (req.body.smtp && !req.body.smtp.password && runtime.settings.smtp && runtime.settings.smtp.password) {
                             req.body.smtp.password = runtime.settings.smtp.password;
                         }
+                        if (utils.isEmptyObject(req.body.daqstore?.credentials) && runtime.settings.daqstore?.credentials) {
+                            req.body.daqstore.credentials = runtime.settings.daqstore?.credentials;
+                        }
                         fs.writeFileSync(runtime.settings.userSettingsFile, JSON.stringify(req.body, null, 4));
                         mergeUserSettings(req.body);
                         runtime.restart(true).then(function(result) {
@@ -151,24 +158,31 @@ function init(_server, _runtime) {
                     res.end();
                 } else if (res.statusCode === 403) {
                     runtime.logger.error("api post heartbeat: Tocken Expired");
-                } else if (req.body.params) {
-                    const token = authJwt.getNewToken(req.headers)
-                    if (token) {
-                        res.status(200).json({
-                            message: 'tokenRefresh',
-                            token: token
+                }
+                if (req.body.params) {
+
+                    if (!req.isAuthenticated) {
+                        // guest → NON puo rinnovare token
+                        return res.status(200).json({
+                            message: 'guest'
                         });
-                    } else {
-                        res.end();
                     }
-                } else if (req.userId === 'guest') {
-                    res.status(200).json({
+
+                    const token = authJwt.getNewTokenFromRequest(req);
+                    return res.status(200).json({
+                        message: 'tokenRefresh',
+                        token
+                    });
+                }
+
+                // Guest heartbeat
+                if (req.userId === 'guest') {
+                    return res.status(200).json({
                         message: 'guest',
                         token: authJwt.getGuestToken()
                     });
-                } else {
-                    res.end();
                 }
+                return res.end();
             });
 
             runtime.logger.info('api: init successful!', true);

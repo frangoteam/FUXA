@@ -1097,14 +1097,6 @@ mat-toolbar-row {
     margin-top: 30px;
 }
 
-.ml10 {
-    margin-left: 10px;
-}
-
-.ml15 {
-    margin-left: 15px;
-}
-
 .mr5 {
     margin-right: 5px;
 }
@@ -1121,8 +1113,16 @@ mat-toolbar-row {
     margin-left: 5px;
 }
 
+.ml-8 {
+    margin-left: 8px;
+}
+
 .ml10 {
     margin-left: 10px;
+}
+
+.ml15 {
+    margin-left: 15px;
 }
 
 .ml12 {
