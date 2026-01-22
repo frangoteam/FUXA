@@ -43,6 +43,7 @@ export class AppSettingsComponent implements OnInit {
     settings = new AppSettings();
     originalNodeRedEnabled = false;
     originalSwaggerEnabled = false;
+    originalSecureEnabled = false;
     authentication = '';
     authenticationTooltip = '';
     smtpTesting = false;
@@ -74,6 +75,7 @@ export class AppSettingsComponent implements OnInit {
         if (this.settings.secureEnabled) {
             this.authentication = this.settings.tokenExpiresIn;
         }
+        this.originalSecureEnabled = this.settings.secureEnabled;
         if (Utils.isNullOrUndefined(this.settings.broadcastAll)) {
             this.settings.broadcastAll = true;
         }
@@ -109,6 +111,11 @@ export class AppSettingsComponent implements OnInit {
     }
 
     onOkClick() {
+        if (this.authentication && !this.originalSecureEnabled && (!this.settings.secretCode || !this.settings.secretCode.length)) {
+            let msg = this.translateService.instant('msg.secret-code-required');
+            this.notifyError(msg);
+            return;
+        }
         this.settings.secureEnabled = (this.authentication) ? true : false;
         this.settings.tokenExpiresIn = this.authentication;
         if (this.settingsService.setSettings(this.settings)) {

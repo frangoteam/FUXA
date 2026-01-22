@@ -62,6 +62,10 @@ export class SettingsService {
             this.appSettings.secureOnlyEditor = settings.secureOnlyEditor;
             dirty = true;
         }
+        if (settings.secretCode !== undefined && settings.secretCode !== this.appSettings.secretCode) {
+            this.appSettings.secretCode = settings.secretCode;
+            dirty = true;
+        }
         if (settings.broadcastAll !== this.appSettings.broadcastAll) {
             this.appSettings.broadcastAll = settings.broadcastAll;
             dirty = true;
