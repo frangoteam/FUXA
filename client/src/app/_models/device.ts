@@ -193,6 +193,8 @@ export class DeviceNetProperty {
     delay: number = 10;
     /** Modbus TCP socket reuse flag */
     socketReuse?: string;
+    /** If true, tag.address is treated as base-0 (no -1 conversion). Default: false */
+    base0?: boolean;
     /** Force FC16 for Modbus RTU/TCP write operations */
     forceFC16?: boolean;
     /** MELSEC */

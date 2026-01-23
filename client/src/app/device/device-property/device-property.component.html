@@ -214,6 +214,10 @@
                             <span>{{'device.property-force-fc16' | translate}}</span>
                             <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.forceFC16"></mat-slide-toggle>
                         </div>
+                        <div class="my-form-field inbk" style="width: 200px ;text-align: center;margin-left:15px;">
+                            <span>Base-0 addressing</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.base0"></mat-slide-toggle>
+                        </div>
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.ModbusTCP">
@@ -261,6 +265,10 @@
                         <div class="my-form-field inbk" style="width: 200px ;text-align: center;">
                             <span>{{'device.property-force-fc16' | translate}}</span>
                             <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.forceFC16"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field inbk" style="width: 200px ;text-align: center;margin-left:15px;">
+                            <span>Base-0 addressing</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.base0"></mat-slide-toggle>
                         </div>
                     </div>
                 </div>

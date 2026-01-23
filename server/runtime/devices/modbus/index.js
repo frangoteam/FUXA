@@ -27,6 +27,17 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     var type;
     var runtime = _runtime;             // Access runtime config such as scripts
 
+    // Helper: convert configured tag address to zero-based offset.
+    // By default FUXA expects tag.address to be 1-based (1..65536) and
+    // subtracts 1 before using with modbus functions. Some devices expect
+    // base-0 addressing; set `device.property.base0 = true` to keep addresses as-is.
+    const addressToOffset = (address) => {
+        if (data && data.property && data.property.base0) {
+            return parseInt(address);
+        }
+        return parseInt(address) - 1;
+    };
+
     /**
      * initialize the modubus type
      */
@@ -213,7 +224,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
         var count = 0;
         for (var id in data.tags) {
             try {
-                var offset = parseInt(data.tags[id].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
+                var offset = addressToOffset(data.tags[id].address);   // tag address -> offset (base1 default, set device.property.base0=true for base0)
                 var token = Math.trunc(offset / TOKEN_LIMIT);
                 var memaddr = formatAddress(data.tags[id].memaddress, token);
                 if (!memory[memaddr]) {
@@ -319,7 +330,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     this.setValue = async function (sigid, value) {
         if (data.tags[sigid]) {
             var memaddr = data.tags[sigid].memaddress;
-            var offset = parseInt(data.tags[sigid].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
+            var offset = addressToOffset(data.tags[sigid].address);   // tag address -> offset (base1 default, set device.property.base0=true for base0)
             value = await deviceUtils.tagRawCalculator(value, data.tags[sigid]);
 
             const divVal = convertValue(value, data.tags[sigid].divisor, true);
