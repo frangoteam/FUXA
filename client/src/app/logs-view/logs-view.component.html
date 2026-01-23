@@ -1,7 +1,7 @@
 <div class="header-panel">
     {{'logs.view-title' | translate}}
 </div>
-<div class="work-panel" *ngIf="tableView">
+ <div class="work-panel" #workPanel *ngIf="tableView">
     <mat-table #table [dataSource]="dataSource" matSort>
         <ng-container matColumnDef="ontime">
             <mat-header-cell *matHeaderCellDef mat-sort-header class="my-header-filter">
@@ -36,7 +36,7 @@
     </mat-table>
     <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="table-pagination"></mat-paginator>
 </div>
-<div class="work-panel text-content" *ngIf="!tableView" [innerHTML]="content">
+ <div class="work-panel text-content" #textContent *ngIf="!tableView" [innerHTML]="content">
 </div>
 <div class="logs-selector" *ngIf="!tableView">
     <div class="my-form-field">
@@ -45,4 +45,8 @@
             <mat-option *ngFor="let file of logs.files" [value]="file">{{file}}</mat-option>
         </mat-select>
     </div>
+</div>
+<div class="scroll-buttons">
+    <button (click)="scrollToTop()" class="scroll-btn scroll-top">↑</button>
+    <button (click)="scrollToBottom()" class="scroll-btn scroll-bottom">↓</button>
 </div>
