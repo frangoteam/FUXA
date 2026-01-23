@@ -190,7 +190,16 @@ module.exports = {
          * POST Upload file resource
          * images will be in media file saved
          */
-        prjApp.post('/api/upload', function (req, res) {
+        prjApp.post('/api/upload', secureFnc, function (req, res) {
+            const permission = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api get device: Tocken Expired");
+                return;
+            } else if (!authJwt.haveAdminPermission(permission)) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api get device: Unauthorized");
+                return;
+            }
             const file = req.body.resource;
             const destination = req.body.destination;
             try {
@@ -209,10 +218,21 @@ module.exports = {
                 }
                 let filePath = path.join(runtime.settings.uploadFileDir, fullPath || fileName);
                 if (destination) {
-                    let destinationDir = path.resolve(runtime.settings.appDir, `_${destination}`);
-                    if (process.versions.electron) {
-                        const userDataDir = process.env.userDir || path.join(os.homedir(), '.fuxa');
-                        destinationDir = path.join(userDataDir, `_${destination}`);
+                    const baseDir = process.versions.electron
+                        ? (process.env.userDir || path.join(os.homedir(), '.fuxa'))
+                        : runtime.settings.appDir;
+                    const normalizedDestination = path.normalize(destination).replace(/^([/\\])+/, '');
+                    const destinationParts = normalizedDestination.split(path.sep);
+                    const hasTraversal = destinationParts.includes('..');
+                    if (!normalizedDestination || hasTraversal || path.isAbsolute(destination)) {
+                        res.status(400).json({error:"invalid_destination", message: "Invalid destination path."});
+                        return;
+                    }
+                    const destinationDir = path.resolve(baseDir, `_${normalizedDestination}`);
+                    const resolvedBase = path.resolve(baseDir);
+                    if (destinationDir !== resolvedBase && !destinationDir.startsWith(resolvedBase + path.sep)) {
+                        res.status(400).json({error:"invalid_destination", message: "Invalid destination path."});
+                        return;
                     }
                     filePath = path.join(destinationDir, fullPath || fileName);
                     const dir = path.dirname(filePath);
