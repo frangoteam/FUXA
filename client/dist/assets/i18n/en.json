@@ -1796,6 +1796,7 @@
     "dlg.app-settings-logs": "Logs",
     "dlg.app-settings-auth-token": "Authentication with Token",
     "dlg.app-settings-auth-only-editor": "Only for Editor",
+    "dlg.app-settings-auth-secret": "Secret code",
     "dlg.app-auth-disabled": "Disabled",
     "dlg.app-auth-expiration-15m": "Enabled with token expiration in 15 min.",
     "dlg.app-auth-expiration-1h": "Enabled with token expiration in 1 hour.",
@@ -1896,7 +1897,8 @@
     "msg.project-save-error": "Project save failed!",
     "msg.project-format-error": "Project wrong format!",
     "msg.view-format-error": "View wrong format!",
-    "msg.project-save-unauthorized": "Project save failed! Unauthorized!",
+    "msg.project-save-unauthorized": "Project save failed! Unauthorized! Reload the page and try again.",
+    "msg.settings-save-unauthorized": "Settings save failed! Unauthorized! Reload the page and try again.",
     "msg.project-save-ask": "Do you want to leave the project?",
     "msg.login-username-required": "Enter a username",
     "msg.login-password-required": "Enter a password",
@@ -1922,5 +1924,6 @@
     "msg.maps-location-name-exist": "The Maps Location name already exists!",
     "msg.text-name-exist": "Text name already exists!",
     "msg.texts-text-remove": "Would you like to remove Text '{{value}}'?",
-    "msg.operation-unauthorized": "Operation Unauthorized!"
+    "msg.operation-unauthorized": "Operation Unauthorized!",
+    "msg.secret-code-required": "Secret code required to sign authentication tokens"
 }
