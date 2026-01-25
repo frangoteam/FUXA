@@ -1,6 +1,6 @@
 {
   "name": "fuxa-server",
-  "version": "1.3.0-2679",
+  "version": "1.3.0-2682",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
   "main": "main.js",
   "scripts": {

@@ -20,7 +20,7 @@
     "header.edit-users": "ユーザー設定",
     "header.edit-alarms": "アラーム設定",
     "header.edit-texts": "テキスト設定",
-    "header.help": "iFEMS ヘルプ",
+    "header.help": "ヘルプ",
     "header.help-tutorial": "チュートリアル",
     "header.help-info": "About",
     "header.change-thema": "テーマ切り替え (beta)",
@@ -29,11 +29,11 @@
 
     "project.name": "プロジェクト名",
 
-    "sidenav.title": "iFEMS",
+    "sidenav.title": "FUXA",
 
-    "tutorial.title": "iFEMS チュートリアル",
+    "tutorial.title": "チュートリアル",
 
-    "dlg.info-title": "iFEMS",
+    "dlg.info-title": "FUXA",
 
     "dlg.layout-title": "レイアウト設定",
     "dlg.layout-general": "一般",
@@ -893,7 +893,7 @@
     "device.tags-template-name-title": "タグテンプレート名",
     " devices.import-template": "テンプレートで接続をインポート",
     "device.property-client": "接続プロパティ",
-    "device.property-server": "iFEMSサーバープロパティ",
+    "device.property-server": "サーバープロパティ",
     "device.property-name": "名前",
     "device.property-type": "タイプ",
     "device.property-polling": "ポーリング",
