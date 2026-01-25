@@ -15,6 +15,7 @@ var notificator = require('./notificator');
 var scripts = require('./scripts');
 var plugins = require('./plugins');
 var utils = require('./utils');
+const jwt = require('jsonwebtoken');
 const daqstorage = require('./storage/daqstorage');
 const schedulerStorage = require('./scheduler/scheduler-storage');
 const schedulerService = require('./scheduler/scheduler-service');
@@ -31,6 +32,13 @@ var jobsMgr;
 var tagsSubscription = new Map();
 var socketPool = new Map();
 var socketMutex = new Map();
+
+function isSocketWriteAuthorized(socket) {
+    if (!settings || !settings.secureEnabled) {
+        return true;
+    }
+    return !!(socket && socket.isAuthenticated);
+}
 
 function init(_io, _api, _settings, _log, eventsMain) {
     io = _io;
@@ -102,24 +110,27 @@ function init(_io, _api, _settings, _log, eventsMain) {
         logger.info(`socket.io client connected ${socket.id}`);
         socket.tagsClientSubscriptions = [];
         // check authorizations
-        if (settings.secureEnabled && !settings.secureOnlyEditor) {
-            var token = socket.handshake.query.token;
-            if (!socket.handshake.query.token || socket.handshake.query.token === 'null') {
-                token = api.authJwt.getGuestToken();
-            }
+        const query = (socket && socket.handshake && socket.handshake.query) ? socket.handshake.query : {};
+        var token = query.token;
+        if (!query.token || query.token === 'null') {
+            token = api.authJwt.getGuestToken();
+        }
+        socket.userId = null;
+        socket.userGroups = null;
+        socket.isAuthenticated = !settings.secureEnabled;
+        if (settings.secureEnabled) {
             try {
-                const authenticated = await api.authJwt.verify(token);
-                if (!authenticated && token !== api.authJwt.getGuestToken()) {
-                    logger.error(`Token is missing!`);
-                    socket.disconnect();
-                } else {
-                    logger.info(`Client connected with ${token === api.authJwt.getGuestToken() ? 'guest access' : 'authenticated token'}`);
+                const decoded = jwt.verify(token, api.authJwt.secretCode);
+                socket.userId = decoded.id;
+                socket.userGroups = decoded.groups;
+                socket.isAuthenticated = decoded.id && decoded.id !== 'guest';
+                if (!settings.secureOnlyEditor) {
+                    logger.info(`Client connected with ${socket.isAuthenticated ? 'authenticated token' : 'guest access'}`);
                 }
             } catch (error) {
                 logger.error(`Token error: ${error}`);
-                if (token !== api.authJwt.getGuestToken()) {
-                    socket.disconnect();
-                }
+                socket.disconnect();
+                return;
             }
         }
 
@@ -168,6 +179,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
                         updateDeviceValues({ id: id, values: adevs[id] || {} });
                     }
                 } else if (message.cmd === 'set' && message.var) {
+                    if (!isSocketWriteAuthorized(socket)) {
+                        logger.warn(`${Events.IoEventTypes.DEVICE_VALUES}: unauthorized write attempt from ${socket.userId || 'guest'}`);
+                        return;
+                    }
                     devices.setDeviceValue(message.var.source, message.var.id, message.var.value, message.fnc);
                 }
             } catch (err) {
@@ -340,6 +355,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
         });
         socket.on(Events.IoEventTypes.DEVICE_ENABLE, (message) => {
             try {
+                if (!isSocketWriteAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_ENABLE}: unauthorized enable attempt from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 devices.enableDevice(message.deviceName, message.enable);
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_ENABLE}: ${err}`);
