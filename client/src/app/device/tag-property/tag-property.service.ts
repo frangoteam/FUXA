@@ -22,6 +22,7 @@ import { TagPropertyEditWebcamComponent, TagPropertyWebcamData } from './tag-pro
 import { TagPropertyEditMelsecComponent } from './tag-property-edit-melsec/tag-property-edit-melsec.component';
 import { TagPropertyEditRedisComponent, TagPropertyRedisData } from './tag-property-edit-redis/tag-property-edit-redis.component';
 import { TagPropertyRedisScanComponent, TagPropertyRedisScanData } from './tag-property-edit-redis/tag-property-redis-scan/tag-property-redis-scan.component';
+import { TagPropertyEditEpicsComponent, TagPropertyEpicsData } from './tag-property-edit-epics/tag-property-edit-epics.component';
 
 @Injectable({
     providedIn: 'root'
@@ -554,6 +555,41 @@ export class TagPropertyService {
                 }
                 dialogRef.close();
                 return device.tags;
+            })
+        );
+    }
+
+    public editTagPropertyEpics(device: Device, tag: Tag, checkToAdd: boolean): Observable<any> {
+        let oldTagId = tag.id;
+        let tagToEdit: Tag = Utils.clone(tag);
+        let dialogRef = this.dialog.open(TagPropertyEditEpicsComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            data: <TagPropertyEpicsData> {
+                device: device,
+                tag: tagToEdit
+            },
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                if (result) {
+                    tag.name = result.tagName;
+                    tag.address = result.tagAddress;
+                    tag.type = result.tagType;
+                    tag.description = result.tagDescription;
+                    tag.monitor = result.tagMonitor;
+                    if (checkToAdd) {
+                        this.checkToAdd(tag, device);
+                    } else if (tag.id !== oldTagId) {
+                        //remove old tag device reference
+                        delete device.tags[oldTagId];
+                        this.checkToAdd(tag, device);
+                    }
+                    this.projectService.setDeviceTags(device);
+                }
+                dialogRef.close();
+                return result;
             })
         );
     }

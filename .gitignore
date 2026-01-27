@@ -89,3 +89,9 @@ server/_appdata
 #client/package-lock.json
 
 server/_widgets
+
+client/dist/**/*
+app/electron/dist/**/*
+
+
+
