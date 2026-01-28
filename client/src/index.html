@@ -54,6 +54,9 @@
     <link rel="stylesheet" href="assets/lib/nouislider/nouislider.min.css">
 
     <!-- 2° Load libraries -->
+    <script>
+        if (typeof module === 'object') { window.module = module; module = undefined; }
+    </script>
     <script src="assets/lib/svgeditor/jquery.min.js"></script>
     <script src="assets/lib/svgeditor/jquery-ui-1.8.17.custom.min.js"></script>
     <script src="assets/lib/svgeditor/jquery-plugin.min.js"></script>
@@ -70,6 +73,9 @@
 
     <script src="assets/lib/svg/svg.min.js"></script>
     <script src="assets/lib/svg/raphael.min.js"></script>
+    <script>
+        if (window.module) module = window.module;
+    </script>
 
 </head>
 <!-- 3. Display the application -->
