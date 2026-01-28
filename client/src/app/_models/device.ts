@@ -40,7 +40,7 @@ export class Device {
         id: 'Device id, GUID',
         name: 'Device name',
         enabled: 'Enabled',
-        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | ADSclient | Gpio | WebCam | MELSEC | REDIS',
+        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | ADSclient | Gpio | WebCam | MELSEC | REDIS | EPICS',
         polling: 'Polling interval in millisec., check changed value after ask value, by OPCUA there is a monitor',
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
@@ -103,6 +103,10 @@ export class Tag {
      */
     direction?: string;
     edge?: string;
+    /**
+     * Optional EPICS monitor flag, if true use real-time monitor mode
+     */
+    monitor?: boolean;
 
 
     constructor(_id: string) {
@@ -127,6 +131,7 @@ export class Tag {
         format: 'Number of digits to appear after the decimal point',
         direction: 'A string specifying whether the GPIO should be configured as an input or output. The valid values are: \'in\', \'out\', \'high\', and \'low\'. If \'out\' is specified the GPIO will be configured as an output and the value of the GPIO will be set to 0. \'high\' and \'low\' are variants of \'out\' that configure the GPIO as an output with an initial level of 1 or 0 respectively.',
         edge: 'An optional string specifying the interrupt generating edge or edges for an input GPIO. The valid values are: \'none\', \'rising\', \'falling\' or \'both\'. The default value is \'none\' indicating that the GPIO will not generate interrupts. Whether or not interrupts are supported by an input GPIO is GPIO specific. If interrupts are not supported by a GPIO the edge argument should not be specified. The edge argument is ignored for output GPIOs.',
+        monitor: 'A boolean flag for EPICS tags indicating whether to use real-time monitor mode. If true, the EPICS Channel Access client will subscribe to PV changes and receive updates in real-time. If false or undefined, the tag will be polled at regular intervals.',
     };
 }
 
@@ -249,7 +254,8 @@ export enum DeviceType {
     GPIO = 'GPIO',
     WebCam = 'WebCam',
     MELSEC = 'MELSEC',
-    REDIS = 'REDIS'
+    REDIS = 'REDIS',
+    EPICS = 'EPICS'
     // Template: 'template'
 }
 
@@ -388,6 +394,15 @@ export enum GpioEdgeType {
     rising = 'rising',
     falling = 'falling',
     both = 'both',
+}
+
+/**
+ * EPICS Tag data types
+ */
+export enum EpicsTagType {
+    String = 'string',
+    Number = 'number',
+    Boolean = 'boolean'
 }
 
 export enum MessageSecurityMode {

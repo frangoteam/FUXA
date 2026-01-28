@@ -864,6 +864,9 @@
     "device.list-options": "标签选项",
     "device.list-clipboard": "复制标签对象到剪贴板",
     "device.list-direction":"方向",
+    "device.list-monitor":"模式",
+    "device.list-monitor-realtime":"监控（实时）",
+    "device.list-monitor-polling":"轮询",
 
     "devices.export": "导出设备",
     "devices.export-json": "JSON",
@@ -944,6 +947,11 @@
     "device.template-tags": "模板名称",
     "device.property-socket-reuse": "Socket重用",
 
+    "device.property-epics-addr-list": "EPICS CA地址列表",
+    "device.property-epics-auto-addr-list": "EPICS CA自动地址列表",
+    "device.property-epics-libca-path": "EPICS libca库路径",
+    "device.property-epics-libca-help": "可选：libca.so库的路径。留空以自动检测。",
+
     "device.browsetopics-property-title": "要订阅和发布的经纪人主题",
     "device.browsetopics-property-sub": "订阅",
     "device.browsetopics-property-pub": "发布",
@@ -996,6 +1004,14 @@
     "device.tag-property-direction": "方向",
     "device.tag-property-edge": "边缘",
     "device.tag-property-gpio": "GPIO编号",
+    "device.tag-property-pv-name": "PV名称",
+    "device.tag-property-pv-type": "PV类型",
+    "device.tag-property-monitor": "启用监控",
+    "device.tag-property-monitor-help": "如果启用，FUXA将订阅PV更新而不是轮询",
+
+
+
+
 
 
     "device.tag-array-id": "阵列ID:",

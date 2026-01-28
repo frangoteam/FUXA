@@ -64,12 +64,6 @@ export class AppSettingsComponent implements OnInit {
 
     ngOnInit() {
         this.settings = JSON.parse(JSON.stringify(this.settingsService.getSettings()));
-        for (let i = 0; i < this.languageType.length; i++) {
-            this.translateService.get(this.languageType[i].text).subscribe((txt: string) => { this.languageType[i].text = txt; });
-        }
-        for (let i = 0; i < this.authType.length; i++) {
-            this.translateService.get(this.authType[i].text).subscribe((txt: string) => { this.authType[i].text = txt; });
-        }
         this.translateService.get('dlg.app-auth-tooltip').subscribe((txt: string) => { this.authenticationTooltip = txt; });
 
         if (this.settings.secureEnabled) {
@@ -107,6 +101,7 @@ export class AppSettingsComponent implements OnInit {
     }
 
     onNoClick() {
+        this.translateService.use(this.settingsService.getSettings().language);
         this.dialogRef.close();
     }
 
@@ -126,6 +121,7 @@ export class AppSettingsComponent implements OnInit {
 
     onLanguageChange(language) {
         this.settings.language = language;
+        this.translateService.use(language);
     }
 
     onAlarmsClear() {

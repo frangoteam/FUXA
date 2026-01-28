@@ -18,16 +18,15 @@ export class SettingsService {
     private editModeLocked = false;
 
     constructor(private http: HttpClient,
-        private fuxaLanguage: TranslateService,
         private translateService: TranslateService,
         private toastr: ToastrService) {
     }
 
     init() {
         // this language will be used as a fallback when a translation isn't found in the current language
-		this.fuxaLanguage.setDefaultLang('en');
+		this.translateService.setDefaultLang('en');
 		// the lang to use, if the lang isn't available, it will use the current loader to get them
-		this.fuxaLanguage.use('en');
+		this.translateService.use('en');
         // to load saved settings
         if (environment.serverEnabled) {
             this.http.get<any>(this.endPointConfig + '/api/settings').subscribe(result => {
@@ -46,7 +45,7 @@ export class SettingsService {
     setSettings(settings: AppSettings) {
         var dirty = false;
         if (settings.language && settings.language !== this.appSettings.language) {
-            this.fuxaLanguage.use(settings.language);
+            this.translateService.use(settings.language);
             this.appSettings.language = settings.language;
             dirty = true;
         }

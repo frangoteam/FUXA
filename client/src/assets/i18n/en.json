@@ -977,6 +977,9 @@
     "device.list-options": "Tag options",
     "device.list-clipboard": "Copy Tag object to clipboard",
     "device.list-direction": "Direction",
+    "device.list-monitor": "Mode",
+    "device.list-monitor-realtime": "Monitor (Real-time)",
+    "device.list-monitor-polling": "Polling",
 
     "devices.export": "Export Connections",
     "devices.export-json": "JSON",
@@ -1086,6 +1089,10 @@
     "device.property-redis-scan-select": "Select all (filtered)",
     "device.property-redis-scan-scanning": "Scanning…",
     "device.property-redis-scan-found": "Found",
+    "device.property-epics-addr-list": "EPICS CA Address List",
+    "device.property-epics-auto-addr-list": "EPICS CA Auto Address List",
+    "device.property-epics-libca-path": "EPICS libca Library Path",
+    "device.property-epics-libca-help": "Optional: Path to libca.so library. Leave empty for auto-detection.",
 
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.browsetopics-property-sub": "Subscribe",
@@ -1140,6 +1147,14 @@
     "device.tag-property-direction": "Direction",
     "device.tag-property-edge": "Edge",
     "device.tag-property-gpio": "GPIO Number",
+    "device.tag-property-pv-name": "PV Name",
+    "device.tag-property-pv-type": "PV Type",
+    "device.tag-property-monitor": "Enable Monitor",
+    "device.tag-property-monitor-help": "If enabled, FUXA will subscribe to PV updates instead of polling",
+
+
+
+
 
 
     "device.tag-array-id": "Array ID:",

@@ -200,6 +200,15 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
             if (!this.data.device.property.forceFC16) {
                 this.data.device.property.forceFC16 = false;
             }
+            // Initialize EPICS default values
+            if (this.data.device.type === DeviceType.EPICS) {
+                if (!this.data.device.property.epicsAddrList) {
+                    this.data.device.property.epicsAddrList = '127.0.0.1';
+                }
+                if (!this.data.device.property.epicsAutoAddrList) {
+                    this.data.device.property.epicsAutoAddrList = 'no';
+                }
+            }
         }
 		if (this.data.device.type === DeviceType.REDIS) {
 			const opts = this.data.device?.property?.options;

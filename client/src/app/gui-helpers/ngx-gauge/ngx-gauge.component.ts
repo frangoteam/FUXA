@@ -66,12 +66,25 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
     @HostListener('window:resize', ['$event'])
     onResize(event) {
         let canvas = this.canvas.nativeElement;
-        let w = canvas.parentNode.clientWidth;
-        let h = canvas.parentNode.clientHeight;
-        if (w < h) {h = w;}
-        this.canvas.nativeElement.height = h;
-        this.canvas.nativeElement.width = w;
-        this.reini();
+        let parent = canvas.parentNode;
+        if (!parent || parent.clientWidth <= 0 || parent.clientHeight <= 0) {
+            return;
+        }
+        
+        // Use the smaller dimension to keep the gauge circular and centered
+        const style = window.getComputedStyle(parent);
+        const paddingX = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+        const paddingY = parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+        
+        let w = parent.clientWidth - paddingX;
+        let h = parent.clientHeight - paddingY;
+        let size = Math.min(w, h);
+        
+        if (size > 0) {
+            this.canvas.nativeElement.height = size;
+            this.canvas.nativeElement.width = size;
+            this.reini();
+        }
     }
 
     resize(height?, width?) {

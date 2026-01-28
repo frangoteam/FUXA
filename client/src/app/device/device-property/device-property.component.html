@@ -592,6 +592,35 @@
                         </div>
                     </div>
                 </div>
+                <div *ngSwitchCase="deviceType.EPICS">
+                    <div class="my-form-field block mb10">
+                        <span>{{'device.property-epics-addr-list' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.epicsAddrList" 
+                               placeholder="127.0.0.1" 
+                               style="width: 350px" 
+                               type="text" 
+                               (click)="onAddressChanged()">
+                    </div>
+                    <div class="my-form-field block mb10">
+                        <span>{{'device.property-epics-auto-addr-list' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.epicsAutoAddrList" 
+                               placeholder="no" 
+                               style="width: 350px" 
+                               type="text" 
+                               (click)="onAddressChanged()">
+                    </div>
+                    <div class="my-form-field block mb10">
+                        <span>{{'device.property-epics-libca-path' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.nodeEpicsCaLibca" 
+                               placeholder="/path/to/libca.so" 
+                               style="width: 350px" 
+                               type="text" 
+                               (click)="onAddressChanged()">
+                        <small class="help-text" style="display: block; margin-top: 5px; color: var(--inputPlaceholderColor);">
+                            {{'device.property-epics-libca-help' | translate}}
+                        </small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

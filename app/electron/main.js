@@ -333,14 +333,29 @@ function getHtmlPath(filename) {
 }
 
 function getServerPath() {
-    // In packaged app, server is at same level as main.js due to files: ["server/**/*"]
     const fs = require('fs');
-    const prodPath = require('path').join(__dirname, 'server/main.js');
+    const path = require('path');
+    
+    // 1. Packaged app: server is in the resources folder (extraResources)
+    // __dirname is usually 'resources/app' or 'resources/app.asar'
+    const prodPath = path.join(__dirname, '../server/main.js');
     if (fs.existsSync(prodPath)) {
         return prodPath;
     }
-    // Fall back to development path (app/electron is at app/electron, server is at project root)
-    return require('path').join(__dirname, '../../server/main.js');
+    
+    // 2. Local development: app/electron/main.js, server is at project root
+    const devPath = path.join(__dirname, '../../server/main.js');
+    if (fs.existsSync(devPath)) {
+        return devPath;
+    }
+
+    // 3. Fallback for potential files mapping in package.json
+    const localPath = path.join(__dirname, 'server/main.js');
+    if (fs.existsSync(localPath)) {
+        return localPath;
+    }
+    
+    return null;
 }
 
 // Create main window

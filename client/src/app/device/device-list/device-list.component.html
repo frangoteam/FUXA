@@ -18,7 +18,7 @@
     </div>
     <div class="table-container">
         <div class="table-scroll">
-            <mat-table #table [dataSource]="dataSource" matSort>
+            <mat-table #table [dataSource]="dataSource" matSort class="responsive-table">
                 <!-- Checkbox Column -->
                 <ng-container matColumnDef="select">
                     <mat-header-cell *matHeaderCellDef [ngClass]="'selectidthClass'">
@@ -56,6 +56,19 @@
                 <ng-container matColumnDef="type">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-type' | translate}} </mat-header-cell>
                     <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
+                </ng-container>
+
+                <!-- Monitor Column (for EPICS) -->
+                <ng-container matColumnDef="monitor">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-monitor' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-icon *ngIf="element.monitor === true" color="primary" matTooltip="{{'device.list-monitor-realtime' | translate}}">
+                            notifications_active
+                        </mat-icon>
+                        <mat-icon *ngIf="element.monitor !== true" matTooltip="{{'device.list-monitor-polling' | translate}}">
+                            schedule
+                        </mat-icon>
+                    </mat-cell>
                 </ng-container>
 
                 <!-- Min Column -->
@@ -153,8 +166,8 @@
                     <mat-cell *matCellDef="let element" matTooltip="{{element.direction}}"> {{element.direction}} </mat-cell>
                 </ng-container>
 
-                <mat-header-row *matHeaderRowDef="displayedColumns" [ngStyle]="{'min-width.px': tableWidth}" sticky></mat-header-row>
-                <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row" [ngStyle]="{'min-width.px': tableWidth}"></mat-row>
+                <mat-header-row *matHeaderRowDef="displayedColumns" sticky></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
             </mat-table>
         </div>
         <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="paginator"></mat-paginator>
