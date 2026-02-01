@@ -39,7 +39,7 @@ function init(_server, _runtime) {
     return new Promise(function (resolve, reject) {
         if (runtime.settings.disableServer !== false) {
             apiApp = express();
-            
+
 			if (runtime.settings.logApiLevel !== 'none') {
 				apiApp.use(morgan(['combined', 'common', 'dev', 'short', 'tiny'].
 				includes(runtime.settings.logApiLevel) ? runtime.settings.logApiLevel : 'combined'));
@@ -171,11 +171,11 @@ function init(_server, _runtime) {
              * GET Heartbeat to check token
              */
             apiApp.post('/api/heartbeat', authMiddleware, function (req, res) {
+
                 if (!runtime.settings.secureEnabled) {
-                    res.end();
-                } else if (res.statusCode === 403) {
-                    runtime.logger.error("api post heartbeat: Tocken Expired");
+                    return res.end();
                 }
+
                 if (req.body.params) {
 
                     if (!req.isAuthenticated) {
@@ -199,6 +199,7 @@ function init(_server, _runtime) {
                         token: authJwt.getGuestToken()
                     });
                 }
+
                 return res.end();
             });
 
