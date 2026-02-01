@@ -99,10 +99,8 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
             path: require('path'),
             util: require('util'),
             os: require('os'),
-            child_process: require('child_process'),
             http: require('http'),
             https: require('https'),
-            net: require('net'),
             dgram: require('dgram'),
             dns: require('dns'),
             url: require('url'),
@@ -114,34 +112,97 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
             buffer: require('buffer'),
             sqlite3: require('sqlite3'),
             serialport: require('serialport'),
+            // Dangerous modules are opt-in only (see settings.nodeRedUnsafeModules)
+            ...(settings.nodeRedUnsafeModules ? {
+                child_process: require('child_process'),
+                net: require('net'),
+            } : {}),
         },
     };
 
     // Initialize Node-RED on the existing HTTP server (must be done before server.listen)
     RED.init(server, redSettings);
 
-    // Allow dashboard UI, its admin APIs and socket.io without extra JWT; enforce auth for the rest
-    const allowDashboard = (req, res, next) => {
-            const url = req.originalUrl || req.url || req.path;
-
-            // Public dashboard UI and its HTTP APIs (served from httpNodeRoot/ui.path)
-            if (url.includes('/dashboard') || url.includes('/socket.io')) return next();
-
-            // Node-RED dashboard admin APIs used by the layout editor under /nodered/dashboard/...
-            if (url.startsWith('/nodered/dashboard/')) return next();
-
-            // Internal Node-RED flows APIs used by FlowFuse layout saves and deployments
-            if (url === '/nodered/flows' || url === '/nodered/flows/') return next();
-            if (url === '/nodered/flows/state' || url === '/nodered/flows/state/') return next();
-            if (url === '/nodered/flows/deploy' || url === '/nodered/flows/deploy/') return next();
-
-            const referer = req.headers.referer;
-            if (referer) {
-                const ok = ['/editor', '/viewer', '/lab', '/home', '/fuxa', '/flows', '/nodered']
-                        .some(p => referer.includes(p));
-                if (ok) return next();
+    const getCookieValue = (req, name) => {
+        const cookieHeader = req.headers.cookie;
+        if (!cookieHeader) return null;
+        const cookies = cookieHeader.split(';');
+        for (const cookie of cookies) {
+            const [key, ...rest] = cookie.trim().split('=');
+            if (key === name) {
+                return rest.join('=');
             }
-            return authJwt.requireAuth(req, res, next);
+        }
+        return null;
+    };
+
+    const verifyApiKey = (runtimeRef, apiKey) => {
+        return runtimeRef.apiKeys.getApiKeys().then(stored => {
+            const now = Date.now();
+            return stored.find(k => {
+                if (!k || k.key !== apiKey || k.enabled === false) {
+                    return false;
+                }
+                if (!k.expires) {
+                    return true;
+                }
+                const expiresAt = new Date(k.expires).getTime();
+                return !isNaN(expiresAt) && expiresAt > now;
+            });
+        });
+    };
+
+    // Allow public dashboard UI and socket.io; require JWT or API key for admin/editor/flows when security is enabled
+    const allowDashboard = (req, res, next) => {
+        const url = req.originalUrl || req.url || req.path;
+
+        // Public dashboard UI and its HTTP APIs (served from httpNodeRoot/ui.path)
+        if (url.includes('/dashboard') || url.includes('/socket.io')) return next();
+
+        if (!settings.secureEnabled) {
+            return next();
+        }
+
+        const apiKey = req.headers['x-api-key'];
+        if (apiKey) {
+            return verifyApiKey(runtime, apiKey)
+                .then(validKey => {
+                    if (!validKey) {
+                        return res.status(401).json({ error: "unauthorized_error", message: "Invalid API Key" });
+                    }
+                    return next();
+                })
+                .catch(err => {
+                    logger.error(`api-key validation failed: ${err}`);
+                    return res.status(500).json({ error: "unexpected_error", message: "ApiKey validation failed" });
+                });
+        }
+
+        const headerToken = req.headers['x-access-token'];
+        const queryToken = req.query?.token;
+        const cookieToken = getCookieValue(req, 'nodered_auth');
+        const token = headerToken || cookieToken || queryToken;
+        if (!token) {
+            return res.status(401).json({ error: "unauthorized_error", message: "Authentication required!" });
+        }
+
+        return authJwt.verify(token)
+            .then(() => {
+                if (queryToken) {
+                    res.cookie('nodered_auth', token, {
+                        httpOnly: true,
+                        sameSite: 'lax',
+                        secure: !!settings.https,
+                    });
+                    if (req.method === 'GET') {
+                        const cleanUrl = new URL(req.originalUrl, `http://${req.headers.host}`);
+                        cleanUrl.searchParams.delete('token');
+                        return res.redirect(cleanUrl.pathname + cleanUrl.search);
+                    }
+                }
+                return next();
+            })
+            .catch(() => res.status(401).json({ error: "unauthorized_error", message: "Invalid token!" }));
     };
 
     // Mount Node-RED admin/editor under /nodered; HTTP nodes (including dashboard)

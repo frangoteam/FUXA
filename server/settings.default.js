@@ -111,4 +111,8 @@ module.exports = {
     swaggerEnabled: false,
 
     nodeRedEnabled: false,
+
+    // Node-RED: allow unsafe stdlib modules in functionGlobalContext
+    // WARNING: Enabling this exposes modules like child_process/net to flows.
+    nodeRedUnsafeModules: false,
 }
