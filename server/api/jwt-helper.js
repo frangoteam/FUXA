@@ -132,6 +132,16 @@ function getGuestToken() {
     return token;
 }
 
+function isGuestUser(userId, userGroups) {
+    if (userId === 'guest') {
+        return true;
+    }
+    if (Array.isArray(userGroups) && userGroups.includes('guest')) {
+        return true;
+    }
+    return false;
+}
+
 function haveAdminPermission(permission) {
     if (permission === null || permission === undefined) {
         return false;
@@ -156,5 +166,6 @@ module.exports = {
     get secretCode() { return secretCode },
     get tokenExpiresIn() { return tokenExpiresIn },
     haveAdminPermission: haveAdminPermission,
-    adminGroups: adminGroups
+    adminGroups: adminGroups,
+    isGuestUser: isGuestUser
 };
