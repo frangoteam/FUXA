@@ -51,6 +51,16 @@ module.exports = {
 
         // POST scheduler data
         schedulerApp.post("/api/scheduler", secureFnc, function(req, res) {
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post scheduler: Tocken Expired");
+                return;
+            }
+            const isGuest = authJwt.isGuestUser(req.userId, req.userGroups);
+            if (runtime.settings?.secureEnabled && isGuest) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post scheduler: Unauthorized guest");
+                return;
+            }
             try {
                 if (req.body && req.body.id && req.body.data !== undefined) {
                     var schedulerId = req.body.id;
@@ -90,6 +100,16 @@ module.exports = {
 
         // DELETE scheduler data
         schedulerApp.delete("/api/scheduler", secureFnc, function(req, res) {
+            if (res.statusCode === 403) {
+                runtime.logger.error("api delete scheduler: Tocken Expired");
+                return;
+            }
+            const isGuest = authJwt.isGuestUser(req.userId, req.userGroups);
+            if (runtime.settings?.secureEnabled && isGuest) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api delete scheduler: Unauthorized guest");
+                return;
+            }
             try {
                 if (req.query && req.query.id) {
                     var schedulerId = req.query.id;
