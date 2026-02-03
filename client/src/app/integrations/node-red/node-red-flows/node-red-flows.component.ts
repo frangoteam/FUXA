@@ -3,6 +3,8 @@ import { ProjectService, SaveMode } from '../../../_services/project.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { AuthService } from '../../../_services/auth.service';
+import { SettingsService } from '../../../_services/settings.service';
 
 @Component({
     selector: 'app-node-red-flows',
@@ -22,20 +24,22 @@ export class NodeRedFlowsComponent implements OnInit, OnDestroy {
     constructor(
         private activeroute: ActivatedRoute,
         public sanitizer: DomSanitizer,
-        private projectService: ProjectService
+        private projectService: ProjectService,
+        private authService: AuthService,
+        private settingsService: SettingsService
     ) { }
 
     ngOnInit() {
         if (this._link) {
             // input
-            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this._link);
+            this.loadLink(this._link);
         } else {
             this.activeroute.params.pipe(
                 takeUntil(this.destroy$)
             ).subscribe(params => {
                 // routing
                 this._link = params['url'] || '/nodered/';
-                this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(this._link);
+                this.loadLink(this._link);
             });
         }
     }
@@ -58,7 +62,17 @@ export class NodeRedFlowsComponent implements OnInit, OnDestroy {
                 // Relative URL without leading / - add current origin and /
                 absoluteUrl = window.location.origin + '/' + this._link;
             }
-            this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(absoluteUrl);
+            try {
+                const url = new URL(absoluteUrl, window.location.origin);
+                const settings = this.settingsService.getSettings();
+                const token = this.authService.getUserToken();
+                if (settings?.secureEnabled && token && url.origin === window.location.origin) {
+                    url.searchParams.set('token', token);
+                }
+                this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(url.toString());
+            } catch {
+                this.urlSafe = this.sanitizer.bypassSecurityTrustResourceUrl(absoluteUrl);
+            }
         }
     }
 }
