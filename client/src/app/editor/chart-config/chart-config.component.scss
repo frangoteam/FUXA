@@ -106,6 +106,7 @@
 
     .list-header span {
         padding-right: 5px;
+        line-height: 21px;
     }
 
     .list-item-text {
@@ -167,6 +168,8 @@
     }
 
     .list-item-color {
+        line-height: 20px;
+        vertical-align: super;
         display: inline-block;
         width: 5%;
         max-width: 5%;
