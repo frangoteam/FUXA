@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 var express = require("express");
 const authJwt = require('../jwt-helper');
+const { normalizeRelativePath, resolveWithin } = require('../path-helper');
 var runtime;
 var secureFnc;
 var checkGroupsFnc;
@@ -67,14 +68,21 @@ module.exports = {
                 runtime.logger.error("api get logs: Unauthorized!");
             } else {
                 try {
-                    const fileName = req.query.file.replace(new RegExp('../', 'g'), '');
-                    var logFileName = fileName || 'fuxa.log';
+                    const requestedName = req.query.file ? normalizeRelativePath(req.query.file) : 'fuxa.log';
+                    if (!requestedName) {
+                        res.status(400).json({ error: "invalid_path", message: "Invalid log file." });
+                        return;
+                    }
                     var logPath = runtime.logger.logDir();
                     if (!fs.existsSync(logPath)) {
                         logPath = path.join(process.cwd(), runtime.logger.logDir());
                     }
-                    var logFiles = fs.readdirSync(logPath);
-                    let logFile = path.join(logPath, logFileName);
+                    const resolvedLog = resolveWithin(logPath, requestedName);
+                    if (!resolvedLog) {
+                        res.status(400).json({ error: "invalid_path", message: "Invalid log file." });
+                        return;
+                    }
+                    let logFile = resolvedLog.resolvedTarget;
                     res.header('Content-Type', 'text/plain; charset=utf-8');
                     res.download(logFile, (err) => {
                         if (err) {
