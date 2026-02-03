@@ -9,6 +9,7 @@ const authJwt = require('../jwt-helper');
 const Report = require('../../runtime/jobs/report');
 const fontkit = require('fontkit');
 const os = require('os');
+const { resolveWithin } = require('../path-helper');
 
 var runtime;
 var secureFnc;
@@ -116,8 +117,12 @@ module.exports = {
                 runtime.logger.error("api post remove resource: Unauthorized");
             } else {
                 try {
-                    let fileName = req.body.file.replace(new RegExp('../', 'g'), '');
-                    const filePath = path.join(runtime.settings.resourcesFileDir, fileName);
+                    const resolvedFile = resolveWithin(runtime.settings.resourcesFileDir, req.body.file);
+                    if (!resolvedFile) {
+                        res.status(400).json({ error: "invalid_path", message: "Invalid resource path." });
+                        return;
+                    }
+                    const filePath = resolvedFile.resolvedTarget;
                     if (fs.existsSync(filePath)) {
                         fs.unlinkSync(filePath);
                     }
@@ -302,7 +307,6 @@ module.exports = {
             }
             try {
                 let relPath = req.body?.path;
-                relPath = relPath.replace(new RegExp('\\.\\.\/', 'g'), '');
                 if (!relPath || typeof relPath !== 'string') {
                     return res.status(400).json({ error: "invalid_path", message: "Missing or invalid widget path." });
                 }
@@ -310,12 +314,12 @@ module.exports = {
                 if (process.versions.electron) {
                     basePath = process.env.userDir || path.join(os.homedir(), '.fuxa');
                 }
-                const fullPath = path.resolve(basePath, relPath);
-
-                if (!fullPath.startsWith(basePath)) {
-                    runtime.logger.error("api resources/widgets: security_violation " + fullPath);
+                const resolvedWidget = resolveWithin(basePath, relPath);
+                if (!resolvedWidget) {
+                    runtime.logger.error("api resources/widgets: security_violation " + relPath);
                     return res.status(403).json({ error: 'security_violation', message: 'Invalid path' });
                 }
+                const fullPath = resolvedWidget.resolvedTarget;
 
                 if (!fs.existsSync(fullPath)) {
                     return res.status(404).json({ error: "not_found", message: "Widget file not found." });

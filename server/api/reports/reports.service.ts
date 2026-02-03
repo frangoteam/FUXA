@@ -2,6 +2,7 @@
 const authJwt = require('../api/jwt-helper');
 const fs = require('fs');
 const path = require('path');
+const { resolveWithin } = require('../api/path-helper');
 import express, { Request, Response } from 'express';
 
 export class ReportsApiService {
@@ -121,7 +122,16 @@ export class ReportsApiService {
                     if (!fs.existsSync(reportPath)) {
                         reportPath = path.join(process.cwd(), this.runtime.settings.reportsDir, req.params);
                     }
-                    const filePath = path.join(reportPath, req.body.params?.fileName);
+                    const resolvedFile = resolveWithin(reportPath, req.body.params?.fileName);
+                    if (!resolvedFile) {
+                        res.status(400).json({ error: "invalid_path", message: "Invalid report file." });
+                        return;
+                    }
+                    const filePath = resolvedFile.resolvedTarget;
+                    if (!fs.existsSync(filePath)) {
+                        res.status(404).json({ error: "not_found", message: "Report file not found!" });
+                        return;
+                    }
                     fs.unlinkSync(filePath);
                     this.runtime.logger.info(`Report file '${filePath}' deleted!`, true);
                     res.end();
