@@ -159,7 +159,7 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
         // Public dashboard UI and its HTTP APIs (served from httpNodeRoot/ui.path)
         if (url.includes('/dashboard') || url.includes('/socket.io')) return next();
 
-        if (!settings.secureEnabled) {
+        if (!settings.secureEnabled || settings.nodeRedAuthMode === 'legacy-open') {
             return next();
         }
 

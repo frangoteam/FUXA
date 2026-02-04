@@ -112,6 +112,9 @@ module.exports = {
 
     nodeRedEnabled: false,
 
+    // Node-RED access mode: "secure" (auth required) or "legacy-open" (no auth)
+    nodeRedAuthMode: "secure",
+
     // Node-RED: allow unsafe stdlib modules in functionGlobalContext
     // WARNING: Enabling this exposes modules like child_process/net to flows.
     nodeRedUnsafeModules: false,

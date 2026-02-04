@@ -71,6 +71,14 @@
                                     {{ 'dlg.app-settings-node-red-info' | translate }}
                                 </div>
                             </div>
+                            <div *ngIf="settings.nodeRedEnabled" class="my-form-field block mt15 system-input">
+                                <span>{{'dlg.app-settings-node-red-auth' | translate}}</span>
+                                <mat-select [(value)]="settings.nodeRedAuthMode" [disabled]="!settings.nodeRedEnabled">
+                                    <mat-option *ngFor="let mode of nodeRedAuthModeType" [value]="mode.value">
+                                        {{ mode.text }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
                             <div class="my-form-field block mt15 system-input">
                                 <span>{{'dlg.app-settings-swagger' | translate}}</span>
                                 <mat-select [(value)]="settings.swaggerEnabled">
