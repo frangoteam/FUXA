@@ -32,7 +32,13 @@
     .table-scroll {
         flex: 1 1 auto;
         min-height: 0;
-        overflow-y: auto;
+        overflow: auto;
+        position: relative;
+
+        .responsive-table {
+            width: 100%;
+            min-width: 0;
+        }
 
         mat-header-row,
         .mat-mdc-header-row,
@@ -40,6 +46,11 @@
             position: sticky !important;
             top: 0;
             z-index: 20;
+            min-width: 0;
+        }
+
+        .my-mat-row {
+            min-width: 0;
         }
     }
 
@@ -71,28 +82,47 @@
 
     .mat-column-select {
         overflow: visible;
-        flex: 0 0 80px;
+        flex: 0 0 70px;
+        min-width: 70px;
     }
 
     .mat-column-name {
-        flex: 1 1 200px;
+        flex: 2 1 150px;
+        min-width: 150px;
     }
 
 
     .mat-column-address {
-        flex: 2 1 280px;
+        flex: 3 1 200px;
+        min-width: 200px;
     }
 
     .mat-column-device {
-        flex: 1 1 140px;
+        flex: 2 1 120px;
+        min-width: 120px;
     }
 
     .mat-column-type {
-        flex: 0 0 120px;
+        flex: 1 1 80px;
+        min-width: 80px;
+    }
+
+    .mat-column-monitor {
+        flex: 1 1 80px;
+        min-width: 80px;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .mat-column-monitor mat-icon {
+        font-size: 18px;
+        height: 18px;
+        width: 18px;
     }
 
     .mat-column-value {
-        flex: 1 1 180px;
+        flex: 2 1 120px;
+        min-width: 120px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -100,21 +130,24 @@
     }
 
     .mat-column-timestamp {
-        flex: 0 0 160px;
+        flex: 1 1 140px;
+        min-width: 140px;
     }
 
     .mat-column-description {
-        flex: 1 1 140px;
+        flex: 2 1 120px;
+        min-width: 120px;
     }
 
     .mat-column-logger {
-        flex: 0 0 110px;
+        flex: 1 1 80px;
+        min-width: 80px;
         font-size: 10px;
     }
 
     .mat-column-logger mat-icon {
-        font-size: 20px;
-        height: 20px;
+        font-size: 18px;
+        height: 18px;
     }
 
     .mat-column-info {
@@ -122,35 +155,43 @@
     }
 
     .mat-column-warning {
-        flex: 0 0 30px;
+        flex: 0 0 40px;
+        min-width: 40px;
     }
 
     .mat-column-options {
-        flex: 0 0 60px;
+        flex: 0 0 50px;
+        min-width: 50px;
     }
 
     .mat-column-min {
-        flex: 0 0 100px;
+        flex: 1 1 80px;
+        min-width: 80px;
     }
 
     .mat-column-max {
-        flex: 0 0 100px;
+        flex: 1 1 80px;
+        min-width: 80px;
     }
 
     .mat-column-remove {
-        flex: 0 0 60px;
+        flex: 0 0 50px;
+        min-width: 50px;
     }
 
     .mat-column-direction {
-        flex: 0 0 120px;
+        flex: 1 1 90px;
+        min-width: 90px;
     }
 
     .mat-column-quality {
-        flex: 0 0 100px;
+        flex: 1 1 80px;
+        min-width: 80px;
     }
 
     .selectidthClass{
         flex: 0 0 50px;
+        min-width: 50px;
     }
 
     .warning {

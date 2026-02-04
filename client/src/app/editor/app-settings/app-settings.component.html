@@ -11,7 +11,7 @@
                                 <span>{{'dlg.app-settings-language' | translate}}</span>
                                 <mat-select [(value)]="settings.language" (selectionChange)="onLanguageChange($event.value)">
                                     <mat-option *ngFor="let language of languageType" [value]="language.value">
-                                        {{ language.text }}
+                                        {{ language.text | translate }}
                                     </mat-option>
                                 </mat-select>
                             </div>
@@ -25,7 +25,7 @@
                                     <mat-icon class="my-form-field-info" style="height: 16px" matTooltip="{{authenticationTooltip}}">error_outline</mat-icon>
                                     <mat-select [(value)]="authentication" style="display: block;">
                                         <mat-option *ngFor="let auth of authType" [value]="auth.value">
-                                            {{ auth.text }}
+                                            {{ auth.text | translate }}
                                         </mat-option>
                                     </mat-select>
                                 </div>

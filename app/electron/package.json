@@ -21,21 +21,38 @@
     "build": {
         "appId": "com.frangoteam.fuxa",
         "productName": "FUXA",
-        "asar": false,
+        "asar": true,
+        "asarUnpack": [
+            "**/node_modules/koffi/**/*",
+            "**/node_modules/node-epics-ca/**/*"
+        ],
         "files": [
             "main.js",
             "*.html",
-            "server/**/*",
-            "client/dist/**/*",
             "icons/**/*"
         ],
         "extraResources": [
             {
-                "from": "server/node_modules",
-                "to": "app/server/node_modules",
+                "from": "../../server",
+                "to": "server",
                 "filter": [
-                    "!**/.bin/**"
+                    "**/*",
+                    "!node_modules",
+                    "!_logs",
+                    "!_db"
                 ]
+            },
+            {
+                "from": "../../server/node_modules",
+                "to": "server/node_modules",
+                "filter": [
+                    "!**/.bin",
+                    "**/*"
+                ]
+            },
+            {
+                "from": "../../client/dist",
+                "to": "client/dist"
             }
         ],
         "directories": {
@@ -45,10 +62,16 @@
             "target": [
                 {
                     "target": "nsis",
-                    "arch": ["x64"]
+                    "arch": [
+                        "x64"
+                    ]
                 }
             ],
             "icon": "icons/fuxa-logo.ico"
+        },
+        "nsis": {
+            "oneClick": true,
+            "allowToChangeInstallationDirectory": false
         },
         "linux": {
             "target": [
