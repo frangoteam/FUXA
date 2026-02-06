@@ -34,8 +34,8 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
     // Minimal Node-RED settings; extend only what is really needed
     const redSettings = {
         httpAdminRoot: '/nodered/',
-        // Let Node-RED own the HTTP space at root; dashboard will live under /dashboard
-        httpNodeRoot: '/',
+        // Serve Node-RED HTTP nodes under /dashboard to avoid intercepting FUXA routes
+        httpNodeRoot: '/dashboard',
         userDir,
         nodesDir: [path.join(__dirname, 'node-red-contrib-fuxa')],
         flowFile: 'flows.json',
@@ -44,7 +44,7 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
             tours: { enabled: false },
         },
         // Dashboard will be exposed at /dashboard/...
-        ui: { path: '/dashboard' },
+        ui: { path: '/' },
         // Values used by FlowFuse dashboard's ui_base.js for layout saves
         // These mirror the FUXA HTTP bind address so Node-RED can call its own /nodered/flows API
         uiHost: settings.uiHost,
@@ -181,7 +181,8 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
         const headerToken = req.headers['x-access-token'];
         const queryToken = req.query?.token;
         const cookieToken = getCookieValue(req, 'nodered_auth');
-        const token = headerToken || cookieToken || queryToken;
+        // Prefer explicit tokens over cookie to avoid stale cookie blocking valid logins
+        const token = headerToken || queryToken || cookieToken;
         if (!token) {
             return res.status(401).json({ error: "unauthorized_error", message: "Authentication required!" });
         }
@@ -202,13 +203,18 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
                 }
                 return next();
             })
-            .catch(() => res.status(401).json({ error: "unauthorized_error", message: "Invalid token!" }));
+            .catch(() => {
+                if (cookieToken) {
+                    res.clearCookie('nodered_auth');
+                }
+                return res.status(401).json({ error: "unauthorized_error", message: "Invalid token!" });
+            });
     };
 
     // Mount Node-RED admin/editor under /nodered; HTTP nodes (including dashboard)
-    // are served from httpNodeRoot ('/') so they appear at /dashboard/... etc.
+    // are served from httpNodeRoot ('/dashboard') so they appear at /dashboard/... etc.
     app.use('/nodered', allowDashboard, RED.httpAdmin);
-    app.use('/', allowDashboard, RED.httpNode);
+    app.use('/dashboard', allowDashboard, RED.httpNode);
 
     await RED.start();
 
