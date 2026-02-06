@@ -100,6 +100,10 @@ export class SettingsService {
             this.appSettings.nodeRedEnabled = settings.nodeRedEnabled;
             dirty = true;
         }
+        if (settings.nodeRedAuthMode !== undefined && settings.nodeRedAuthMode !== this.appSettings.nodeRedAuthMode) {
+            this.appSettings.nodeRedAuthMode = settings.nodeRedAuthMode;
+            dirty = true;
+        }
         if (settings.swaggerEnabled !== this.appSettings.swaggerEnabled) {
             this.appSettings.swaggerEnabled = settings.swaggerEnabled;
             dirty = true;

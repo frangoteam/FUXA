@@ -44,6 +44,7 @@ export class HmiService {
     variables = {};
     alarms = { highhigh: 0, high: 0, low: 0, info: 0 };
     private socket;
+    private socketToken: string | null = null;
     private endPointConfig: string = EndPointApi.getURL();
     private bridge: any = null;
 
@@ -187,8 +188,14 @@ export class HmiService {
         if (!environment.serverEnabled) {
             return;
         }
+        const normalizedToken = token || null;
+        if (this.socket && this.socket.connected && this.socketToken === normalizedToken) {
+            return;
+        }
         this.socket?.close();
-        this.socket = io(`${this.endPointConfig}/?token=${token}`);
+        this.socketToken = normalizedToken;
+        const query = normalizedToken ? { token: normalizedToken } : {};
+        this.socket = io(this.endPointConfig, { query });
         this.socket.on('connect', () => {
             this.onServerConnection$.next(true);
             this.tagsSubscribe();
