@@ -40,6 +40,11 @@ export class AppSettingsComponent implements OnInit {
 		{ text: 'dlg.app-auth-expiration-1d', value: '1d' }
 	];
 
+    nodeRedAuthModeType = [
+        { text: 'dlg.app-settings-node-red-auth-secure', value: 'secure' },
+        { text: 'dlg.app-settings-node-red-auth-legacy', value: 'legacy-open' }
+    ];
+
     settings = new AppSettings();
     originalNodeRedEnabled = false;
     originalSwaggerEnabled = false;
@@ -65,10 +70,13 @@ export class AppSettingsComponent implements OnInit {
     ngOnInit() {
         this.settings = JSON.parse(JSON.stringify(this.settingsService.getSettings()));
         for (let i = 0; i < this.languageType.length; i++) {
-            this.translateService.get(this.languageType[i].text).subscribe((txt: string) => { this.languageType[i].text = txt; });
+            this.languageType[i].text = this.translateService.instant(this.languageType[i].text);
         }
         for (let i = 0; i < this.authType.length; i++) {
-            this.translateService.get(this.authType[i].text).subscribe((txt: string) => { this.authType[i].text = txt; });
+            this.authType[i].text = this.translateService.instant(this.authType[i].text);
+        }
+        for (let i = 0; i < this.nodeRedAuthModeType.length; i++) {
+            this.nodeRedAuthModeType[i].text = this.translateService.instant(this.nodeRedAuthModeType[i].text);
         }
         this.translateService.get('dlg.app-auth-tooltip').subscribe((txt: string) => { this.authenticationTooltip = txt; });
 
@@ -99,6 +107,9 @@ export class AppSettingsComponent implements OnInit {
             this.settings.nodeRedEnabled = false;
         }
         this.originalNodeRedEnabled = this.settings.nodeRedEnabled;
+        if (Utils.isNullOrUndefined(this.settings.nodeRedAuthMode)) {
+            this.settings.nodeRedAuthMode = 'secure';
+        }
 
         if (Utils.isNullOrUndefined(this.settings.swaggerEnabled)) {
             this.settings.swaggerEnabled = false;

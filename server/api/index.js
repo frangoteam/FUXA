@@ -149,6 +149,11 @@ function init(_server, _runtime) {
                             tokenExpiresIn: runtime.settings.tokenExpiresIn,
                             secretCode: runtime.settings.secretCode
                         };
+                        if (req.body.nodeRedEnabled === true &&
+                            utils.isNullOrUndefined(req.body.nodeRedAuthMode) &&
+                            runtime.settings.nodeRedEnabled === false) {
+                            req.body.nodeRedAuthMode = 'secure';
+                        }
                         fs.writeFileSync(runtime.settings.userSettingsFile, JSON.stringify(req.body, null, 4));
                         mergeUserSettings(req.body);
                         if (prevAuth.secureEnabled !== runtime.settings.secureEnabled ||
@@ -219,6 +224,12 @@ function mergeUserSettings(settings) {
     runtime.settings.logFull = settings.logFull;
     runtime.settings.userRole = settings.userRole;
     runtime.settings.nodeRedEnabled = settings.nodeRedEnabled;
+    if (!utils.isNullOrUndefined(settings.nodeRedAuthMode)) {
+        runtime.settings.nodeRedAuthMode = settings.nodeRedAuthMode;
+    }
+    if (!utils.isNullOrUndefined(settings.nodeRedUnsafeModules)) {
+        runtime.settings.nodeRedUnsafeModules = settings.nodeRedUnsafeModules;
+    }
     runtime.settings.swaggerEnabled = settings.swaggerEnabled;
     if (settings.secretCode) {
         runtime.settings.secretCode = settings.secretCode;
