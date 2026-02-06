@@ -174,8 +174,14 @@ try {
         if (!utils.isNullOrUndefined(mysettings.nodeRedEnabled)) {
             settings.nodeRedEnabled = mysettings.nodeRedEnabled;
         }
+        if (!utils.isNullOrUndefined(mysettings.nodeRedAuthMode)) {
+            settings.nodeRedAuthMode = mysettings.nodeRedAuthMode;
+        }
         if (!utils.isNullOrUndefined(mysettings.swaggerEnabled)) {
             settings.swaggerEnabled = mysettings.swaggerEnabled;
+        }
+        if (mysettings.nodeRedEnabled === true && utils.isNullOrUndefined(mysettings.nodeRedAuthMode)) {
+            settings.nodeRedAuthMode = 'legacy-open';
         }
     }
 } catch (err) {

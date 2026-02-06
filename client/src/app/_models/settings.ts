@@ -27,6 +27,8 @@ export class AppSettings {
     userRole = false;
     /** Enable Node-Red */
     nodeRedEnabled = true;
+    /** Node-RED access mode: secure | legacy-open */
+    nodeRedAuthMode = 'secure';
     /** Enable Swagger */
     swaggerEnabled = false;
 }
