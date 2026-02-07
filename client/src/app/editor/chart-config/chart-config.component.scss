@@ -105,8 +105,9 @@
     }
 
     .list-header span {
+        vertical-align: top;
         padding-right: 5px;
-        line-height: 21px;
+        line-height: 26px;
     }
 
     .list-item-text {
@@ -130,6 +131,8 @@
     }
 
     .list-header {
+        // display: flex;
+        // align-items: center;
         background-color: rgba(0, 0, 0, 0.8);
         color: #ffffff;
         line-height: 26px;

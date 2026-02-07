@@ -12,6 +12,14 @@
         }
     }
 
+    .partial-input {
+        width: 150px;
+
+        input {
+            width: calc(100% - 7px);
+        }
+    }
+
     .block-zones {
         display: block;
         max-height: 220px;

@@ -29,18 +29,15 @@
     }
 
     .mychart-toolbar-srange {
-        width: 140px; 
+        width: 140px;
         background-color: inherit !important;
+        border-radius: 4px;
+        height: 28px;
+        line-height: 20px;
         /* border: 0.5px solid #888; */
-        box-shadow: 1px 1px 3px -1px #888;
-    }
-
-    ::ng-deep .mychart-toolbar-srange .mat-select-value {
-        color: inherit !important;
-    }
-
-    ::ng-deep .mychart-toolbar-srange .mat-select-arrow {
-        color: inherit !important;
+        box-shadow: 1px 1px 3px -1px #888 !important;
+        min-width: 140px;
+        padding: 0 8px;
     }
 
     .mychart-toolbar-step {
@@ -50,16 +47,22 @@
         width: 40px;
         cursor: pointer;
         vertical-align: middle;
-        line-height: 20px;
+        line-height: 28px;
         /* border: 0.5px solid #888; */
         box-shadow: 1px 1px 3px -1px #888 !important;
         min-width: 40px;
         padding: unset;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    ::ng-deep .my-select-panel-class {
-        background: inherit !important;
-        color: inherit !important;
+    .mychart-toolbar-step .mat-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
+        margin: auto;
     }
 
     .spinner {
@@ -90,4 +93,8 @@
         right: 5px;
         z-index: 9999;
     }
+}
+
+::ng-deep .my-select-panel-class {
+    background-color: inherit !important;
 }
