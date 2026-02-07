@@ -26,6 +26,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
     var overloading = 0;                // Overloading counter to mange the break connection
 
     var devices = {};                   // Devices found { id, maxApdu, segmentation, vendorId }
+    var rpmErrorByDevice = {};          // Track RPM error state per device to reduce log noise
 
     /**
      * Connect the client to BACnet device
@@ -141,7 +142,6 @@ function BACNETclient(_data, _logger, _events, _runtime) {
         return new Promise((resolve, reject) => {
             client.readPropertyMultiple(deviceAddress, requestArray, async (err, value) => {
                 if (err) {
-                    logger.error(`'${data.name}' readPropertyMultiple error! ${err}`);
                     reject(err);
                 }
                 resolve(value);
@@ -160,6 +160,10 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                     const deviceAddress = _getDeviceAddress(devices[deviceId]);
                     //wrap the client.readPropertyMultiple in a promise so the callback can be awaited
                     const value = await this.apiFunctionWrapper(deviceAddress, objectsMapToRead[deviceId]);
+                    if (rpmErrorByDevice[deviceId]) {
+                        logger.info(`'${data.name}' readPropertyMultiple recovered`, true);
+                        rpmErrorByDevice[deviceId] = false;
+                    }
 
                     if (!(value && value.values && value.values[0] && value.values[0].values)) {
                         logger.error(`'${data.name}' readPropertyMultiple error! unknow`);
@@ -194,7 +198,10 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                     }
                 } catch (err) {
                     if (err) {
-                        logger.error(`'${data.name}' readPropertyMultiple error! ${err}`);
+                        if (!rpmErrorByDevice[deviceId]) {
+                            logger.error(`'${data.name}' readPropertyMultiple error! ${err}`);
+                            rpmErrorByDevice[deviceId] = true;
+                        }
                     }
                 }
             }
@@ -389,7 +396,6 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                         client.whoIs({deviceIPAddress: settings['broadcastAddress']});
                     }, 2000);
                 }
-
             } catch (err) {
                 reject(err);
                 if (tdelay) {
@@ -453,50 +459,73 @@ function BACNETclient(_data, _logger, _events, _runtime) {
      */
     var _readObjectList = function(instance) {
         return new Promise(function (resolve, reject) {
-            client.readProperty(_getDeviceAddress(devices[instance]), {type: bacnet.enum.ObjectType.DEVICE, instance: instance}, bacnet.enum.PropertyIdentifier.OBJECT_LIST, (err, value) => {
+            client.readProperty(_getDeviceAddress(devices[instance]), {type: bacnet.enum.ObjectType.DEVICE, instance: instance}, bacnet.enum.PropertyIdentifier.OBJECT_LIST, async (err, value) => {
                 if (err) {
                     logger.error(`'${data.name}' _readObjectList error! ${err}`);
+                    resolve([]);
                 } else if (value && value.values && value.values.length) {
                     var objects = [];
-                    var readfnc = [];
+                    var results = [];
+
+                    // Filtrer les objets à lire
                     for (var index in value.values) {
                         var object = value.values[index].value;
                         object.parent = instance;
                         if (_isObjectToShow(object.type)) {
                             objects.push(object);
+                        }
+                    }
+
+                    logger.info(`'${data.name}' reading ${objects.length} objects...`);
+
+                    // Lire les objets par batch de 10 avec délai
+                    const BATCH_SIZE = 10;
+                    const DELAY_MS = 100;
+
+                    for (let i = 0; i < objects.length; i += BATCH_SIZE) {
+                        const batch = objects.slice(i, i + BATCH_SIZE);
+                        const batchPromises = batch.map(obj => {
                             try {
-                                readfnc.push(_readProperty(_getDeviceAddress(devices[instance]), { type: object.type, instance: object.instance}, bacnet.enum.PropertyIdentifier.OBJECT_NAME));
+                                return _readProperty(_getDeviceAddress(devices[instance]), { type: obj.type, instance: obj.instance}, bacnet.enum.PropertyIdentifier.OBJECT_NAME);
                             } catch (error) {
                                 logger.error(`'${data.name}' _readObjectList error! ${error}`);
+                                return Promise.resolve(null);
+                            }
+                        });
+
+                        try {
+                            const batchResults = await Promise.all(batchPromises);
+                            results.push(...batchResults);
+                            logger.info(`'${data.name}' read ${Math.min(i + BATCH_SIZE, objects.length)}/${objects.length} objects`);
+                        } catch (batchErr) {
+                            logger.error(`'${data.name}' batch error: ${batchErr}`);
+                        }
+
+                        // Délai entre les batches
+                        if (i + BATCH_SIZE < objects.length) {
+                            await new Promise(r => setTimeout(r, DELAY_MS));
+                        }
+                    }
+
+                    // Associer les noms aux objets
+                    let resolvedCount = 0;
+                    for (var idx in results) {
+                        if (results[idx]) {
+                            resolvedCount++;
+                            var object = _getObject(objects, results[idx].type, results[idx].instance);
+                            if (object) {
+                                object.id = _formatId(object.type, object.instance);
+                                object.name = results[idx].value;
+                                object.class = _getObjectClass(object.type);
                             }
                         }
                     }
-                    Promise.all(readfnc).then(results => {
-                        if (results) {
-                            for (var index in results) {
-                                if (results[index]) {
-                                    var object = _getObject(objects, results[index].type, results[index].instance);
-                                    if (object) {
-                                        object.id = _formatId(object.type, object.instance);
-                                        object.name = results[index].value;
-                                        object.class = _getObjectClass(object.type);
-                                    }
-                                }
-                            }
-                        }
-                        resolve(objects);
-                    }, reason => {
-                        if (reason) {
-                            if (reason.stack) {
-                                logger.error(`'${data.name}' _readObjectList error! ${reason.stack}`);
-                            } else if (reason.message) {
-                                logger.error(`'${data.name}' _readObjectList error! ${reason.message}`);
-                            }
-                        } else {
-                            logger.error(`'${data.name}' _readObjectList error! ${reason}`);
-                        }
-                        reject(reason);
-                    });
+                    if (resolvedCount !== objects.length) {
+                        logger.warn(`'${data.name}' _readObjectList partial: ${resolvedCount}/${objects.length} objects named`);
+                    }
+                    resolve(objects);
+                } else {
+                    resolve([]);
                 }
             });
         });
@@ -511,6 +540,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
         return new Promise(function (resolve, reject) {
             client.readProperty(address, bacobj, property, (err, value) => {
                 if (err) {
+                    logger.error(`'${data.name}' _readProperty error! ${err}`);
                     resolve();
                 } else if (value && value.values && value.values[0] && value.values[0].value) {
                     resolve({ type: bacobj.type, instance: bacobj.instance, value: value.values[0].value });
@@ -726,7 +756,11 @@ function BACNETclient(_data, _logger, _events, _runtime) {
     }
 
     var _getDeviceAddress = function (device) {
-        return device.address || device.sender.address;
+        if (!device) {
+            logger.error(`'${data.name}' _getDeviceAddress error! device is undefined`);
+            return null;
+        }
+        return device.address || (device.sender ? device.sender.address : null);
     }
 }
 
