@@ -11,7 +11,7 @@
             <input formControlName="label" type="text">
         </div>
         <div class="block mt10">
-            <div class="my-form-field" style="width: 140px;">
+            <div class="my-form-field partial-input">
                 <span>{{'chart.config-line-yaxis' | translate}}</span>
                 <mat-select formControlName="yaxis">
                     <mat-option *ngFor="let yaxis of chartAxesType" [value]="yaxis">
@@ -19,7 +19,7 @@
                     </mat-option>
                 </mat-select>
             </div>
-            <div class="my-form-field ml20" style="width: 140px">
+            <div class="my-form-field ml20 partial-input">
                 <span>{{'chart.config-line-interpolation' | translate}}</span>
                 <mat-select formControlName="lineInterpolation">
                     <mat-option *ngFor="let interpo of data.lineInterpolationType" [value]="interpo.value">
@@ -29,9 +29,9 @@
             </div>
         </div>
         <div class="block mt10">
-            <div class="my-form-field" style="width: 140px;">
+            <div class="my-form-field partial-input">
                 <span>{{'chart.config-line-width' | translate}}</span>
-                <input numberOnly formControlName="lineWidth" style="width:140px" type="number" min="1">
+                <input numberOnly formControlName="lineWidth" type="number" min="1">
             </div>
             <div class="my-form-field inbk ml20 tac">
                 <span>{{'chart.config-line-gap' | translate}}</span>

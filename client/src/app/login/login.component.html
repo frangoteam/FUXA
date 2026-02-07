@@ -1,10 +1,10 @@
 <form>
-	<div style="width: 250px;position: relative;padding-bottom: 40px">
+	<div style="width: 320px;position: relative;padding-bottom: 40px">
 		<h1 mat-dialog-title style="display:inline-block;margin-bottom: 14px !important;">{{'dlg.login-title' | translate}}</h1>
 		<div mat-dialog-content>
 			<div class="my-form-field" style="display: block;margin-bottom: 10px;margin-right: 5px;">
 				<span>{{'general.username' | translate}}</span>
-				<input cdkFocusInitial 
+				<input cdkFocusInitial
 					   autocomplete="off"
 					   [type]="'text'"
 					   [formControl]="username"
@@ -17,7 +17,7 @@
 				<span>{{'general.password' | translate}}</span>
 				<input autocomplete="off"
 					   [type]="showPassword ? 'text' : 'password'"
-					   [formControl]="password" 
+					   [formControl]="password"
 					   (keydown)="keyDownStopPropagation($event)"
 					   (focus)="onFocus($event)"
 					   style="width:100%;">
