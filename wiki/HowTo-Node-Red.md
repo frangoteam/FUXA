@@ -25,6 +25,20 @@ Dashboard 2 must be installed separately if needed:
 ### Configuration
 No additional configuration is required. Node-RED automatically connects to FUXA's runtime environment.
 
+### Security and Access Mode
+Node-RED access can be configured when FUXA security is enabled.
+
+**Setting**: `nodeRedAuthMode`
+
+- `secure` (default): Node-RED editor and admin APIs require authentication (JWT or API key).
+- `legacy-open`: Node-RED remains open (no auth) to preserve legacy behavior.
+
+**Notes**:
+- Changes apply after server restart.
+- If `secureEnabled=true` and `nodeRedAuthMode=secure`, external systems can access Node-RED HTTP endpoints using an API key header:
+  `x-api-key: <api-key>`
+  API keys are managed in FUXA under **Editor → Setup → API Keys**.
+
 ## Accessing Node-RED
 
 ### Node-RED Editor
