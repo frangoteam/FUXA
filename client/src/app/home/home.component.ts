@@ -2,7 +2,7 @@
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
 import { MatDialog as MatDialog, MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { combineLatest, interval, Observable, Subject, Subscription } from 'rxjs';
+import { interval, Observable, Subject, Subscription } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ActivatedRoute, Router } from '@angular/router';
 

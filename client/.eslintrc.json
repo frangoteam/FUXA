@@ -8,14 +8,13 @@
             "files": [
                 "*.ts"
             ],
-            "plugins": ["unused-imports"],
+            "plugins": ["unused-imports", "@typescript-eslint"],
             "parserOptions": {
                 "project": "./tsconfig.json",
                 "createDefaultProgram": true
             },
             "extends": [
                 "plugin:@angular-eslint/recommended",
-                "plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
                 "plugin:@angular-eslint/template/process-inline-templates"
             ],
             "rules": {
