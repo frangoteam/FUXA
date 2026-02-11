@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,6 +14,7 @@ import { AppSettings, DaqStore, SmtpSettings } from '../_models/settings';
 export class SettingsService {
 
     private appSettings = new AppSettings();
+    settings$ = new BehaviorSubject<AppSettings>(this.appSettings);
     private endPointConfig: string = EndPointApi.getURL();
 
     private editModeLocked = false;
@@ -56,10 +58,14 @@ export class SettingsService {
         }
         if (settings.secureEnabled !== this.appSettings.secureEnabled ||
             settings.tokenExpiresIn !== this.appSettings.tokenExpiresIn ||
-            settings.secureOnlyEditor !== this.appSettings.secureOnlyEditor) {
+            settings.secureOnlyEditor !== this.appSettings.secureOnlyEditor ||
+            settings.enableRefreshCookieAuth !== this.appSettings.enableRefreshCookieAuth ||
+            settings.refreshTokenExpiresIn !== this.appSettings.refreshTokenExpiresIn) {
             this.appSettings.secureEnabled = settings.secureEnabled;
             this.appSettings.tokenExpiresIn = settings.tokenExpiresIn;
             this.appSettings.secureOnlyEditor = settings.secureOnlyEditor;
+            this.appSettings.enableRefreshCookieAuth = settings.enableRefreshCookieAuth;
+            this.appSettings.refreshTokenExpiresIn = settings.refreshTokenExpiresIn;
             dirty = true;
         }
         if (settings.secretCode !== undefined && settings.secretCode !== this.appSettings.secretCode) {
@@ -107,6 +113,9 @@ export class SettingsService {
         if (settings.swaggerEnabled !== this.appSettings.swaggerEnabled) {
             this.appSettings.swaggerEnabled = settings.swaggerEnabled;
             dirty = true;
+        }
+        if (dirty) {
+            this.settings$.next(this.appSettings);
         }
         return dirty;
     }

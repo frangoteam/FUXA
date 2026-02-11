@@ -56,7 +56,7 @@ function init(_server, _runtime) {
             apiApp.use(usersApi.app());
             alarmsApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(alarmsApi.app());
-            authApi.init(runtime, authJwt.secretCode, authJwt.tokenExpiresIn);
+            authApi.init(runtime, authJwt.secretCode, authJwt.tokenExpiresIn, runtime.settings.enableRefreshCookieAuth, runtime.settings.refreshTokenExpiresIn);
             apiApp.use(authApi.app());
             pluginsApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(pluginsApi.app());
@@ -149,6 +149,8 @@ function init(_server, _runtime) {
                         const prevAuth = {
                             secureEnabled: runtime.settings.secureEnabled,
                             tokenExpiresIn: runtime.settings.tokenExpiresIn,
+                            enableRefreshCookieAuth: runtime.settings.enableRefreshCookieAuth,
+                            refreshTokenExpiresIn: runtime.settings.refreshTokenExpiresIn,
                             secretCode: runtime.settings.secretCode
                         };
                         if (req.body.nodeRedEnabled === true &&
@@ -160,9 +162,11 @@ function init(_server, _runtime) {
                         mergeUserSettings(req.body);
                         if (prevAuth.secureEnabled !== runtime.settings.secureEnabled ||
                             prevAuth.tokenExpiresIn !== runtime.settings.tokenExpiresIn ||
+                            prevAuth.enableRefreshCookieAuth !== runtime.settings.enableRefreshCookieAuth ||
+                            prevAuth.refreshTokenExpiresIn !== runtime.settings.refreshTokenExpiresIn ||
                             prevAuth.secretCode !== runtime.settings.secretCode) {
                             authJwt.init(runtime.settings.secureEnabled, runtime.settings.secretCode, runtime.settings.tokenExpiresIn);
-                            authApi.init(runtime, authJwt.secretCode, authJwt.tokenExpiresIn);
+                            authApi.init(runtime, authJwt.secretCode, authJwt.tokenExpiresIn, runtime.settings.enableRefreshCookieAuth, runtime.settings.refreshTokenExpiresIn);
                         }
                         runtime.restart(true).then(function(result) {
                             res.end();
@@ -229,6 +233,12 @@ function mergeUserSettings(settings) {
     if (!utils.isNullOrUndefined(settings.nodeRedAuthMode)) {
         runtime.settings.nodeRedAuthMode = settings.nodeRedAuthMode;
     }
+    if (!utils.isNullOrUndefined(settings.enableRefreshCookieAuth)) {
+        runtime.settings.enableRefreshCookieAuth = settings.enableRefreshCookieAuth;
+    }
+    if (!utils.isNullOrUndefined(settings.refreshTokenExpiresIn)) {
+        runtime.settings.refreshTokenExpiresIn = settings.refreshTokenExpiresIn;
+    }
     if (!utils.isNullOrUndefined(settings.nodeRedUnsafeModules)) {
         runtime.settings.nodeRedUnsafeModules = settings.nodeRedUnsafeModules;
     }
@@ -238,6 +248,8 @@ function mergeUserSettings(settings) {
     }
     if (settings.secureEnabled) {
         runtime.settings.tokenExpiresIn = settings.tokenExpiresIn;
+        runtime.settings.enableRefreshCookieAuth = settings.enableRefreshCookieAuth;
+        runtime.settings.refreshTokenExpiresIn = settings.refreshTokenExpiresIn;
     }
     if (settings.smtp) {
         runtime.settings.smtp = settings.smtp;

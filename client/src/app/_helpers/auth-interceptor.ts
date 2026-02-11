@@ -17,10 +17,17 @@ export class AuthInterceptor implements HttpInterceptor {
     }
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        if (req.headers.has('Skip-Auth')) {
-            const cleanHeaders = req.headers.delete('Skip-Auth');
-            const cleanRequest = req.clone({ headers: cleanHeaders });
-            return next.handle(cleanRequest);
+        const skipAuth = req.headers.has('Skip-Auth');
+        const skipError = req.headers.has('Skip-Error');
+        if (skipAuth || skipError) {
+            let cleanHeaders = req.headers;
+            if (skipAuth) {
+                cleanHeaders = cleanHeaders.delete('Skip-Auth');
+            }
+            if (skipError) {
+                cleanHeaders = cleanHeaders.delete('Skip-Error');
+            }
+            req = req.clone({ headers: cleanHeaders });
         }
 
         const authService = this.injector.get(AuthService);
@@ -40,7 +47,7 @@ export class AuthInterceptor implements HttpInterceptor {
             tap((event: HttpEvent<any>) => {
             }, (err: any) => {
                 if (err instanceof HttpErrorResponse) {
-                    if (err.status === 401 || err.status === 403) {
+                    if (!skipError && (err.status === 401 || err.status === 403)) {
                         authService.signOut();
                         const projectService = this.injector.get(ProjectService);
                         projectService.reload();
