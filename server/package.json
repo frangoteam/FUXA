@@ -21,7 +21,7 @@
     "app-root-path": "2.2.1",
     "async": "3.2.3",
     "async-mutex": "0.5.0",
-    "axios": "0.30.2",
+    "axios": "1.13.5",
     "bcryptjs": "2.4.3",
     "bluebird": "3.7.2",
     "body-parser": "1.20.3",
