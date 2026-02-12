@@ -53,6 +53,9 @@
     "ws": "8.18.0",
     "yamljs": "^0.3.0"
   },
+  "overrides": {
+    "tar": "^7.4.3"
+  },
   "devDependencies": {
     "@mapbox/node-pre-gyp": "^1.0.0",
     "@types/express": "5.0.0",
