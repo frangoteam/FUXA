@@ -9,6 +9,10 @@ export class AppSettings {
     secretCode = '';
     /** Expiration of authanticated token (15m)*/
     tokenExpiresIn = '1h';
+    /** Enable refresh token HttpOnly cookie flow */
+    enableRefreshCookieAuth = false;
+    /** Expiration of refresh token (default 7d) */
+    refreshTokenExpiresIn?: string;
     /** authentication are valid only for edit mode */
     secureOnlyEditor = false;
     /** Broadcast all tags, without check the frontend views */

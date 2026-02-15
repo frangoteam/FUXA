@@ -93,7 +93,9 @@ module.exports = {
     // Used to enable security, authentication and authorization and crypt Token
     //secureEnabled: true,
     //secretCode: 'frangoteam751',
-    //tokenExpiresIn: '1h'  // '1h'=1hour, 60=60seconds, '1d'=1day
+    //tokenExpiresIn: '1h',  // '1h'=1hour, 60=60seconds, '1d'=1day
+    //enableRefreshCookieAuth: false, // if true, use refresh token HttpOnly cookie flow
+    //refreshTokenExpiresIn: '7d' // '7d'=7days, 12h=12hours, 3600=3600seconds
 
     // Heartbeat interval in seconds (1-20)
     heartbeatIntervalSec: 10,
