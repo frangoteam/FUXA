@@ -6,7 +6,13 @@ module.exports = function(RED) {
 
         this.on('input', async function(msg) {
             try {
-                var tagId = fuxa.getTagId(config.tag, null);
+                // Prefer config.tagId, fallback to config.tag for backward compatibility
+                var tagId = config.tagId;
+                if (!tagId && config.tag) {
+                    // Backward compatibility: old nodes use tag.name, need to convert to tagId
+                    tagId = fuxa.getTagId(config.tag, null);
+                }
+                
                 if (tagId) {
                     var fromts = config.from || msg.from || Date.now() - 3600000; // default 1 hour ago
                     var tots = config.to || msg.to || Date.now();
@@ -14,7 +20,7 @@ module.exports = function(RED) {
                     msg.payload = data;
                     node.send(msg);
                 } else {
-                    node.error('Tag not found: ' + config.tag, msg);
+                    node.error('Tag not found: ' + (config.tag || config.tagId), msg);
                 }
             } catch (err) {
                 node.error(err, msg);
