@@ -9,6 +9,7 @@ var events = Events.create();
 var devices = require('./devices');
 var project = require('./project');
 var users = require('./users');
+var auth = require('./auth');
 var apiKeys = require('./apikeys');
 var alarms = require('./alarms');
 var notificator = require('./notificator');
@@ -80,6 +81,12 @@ function init(_io, _api, _settings, _log, eventsMain) {
         logger.error('runtime.failed-to-init apiKeys: ' + err);
     });
 
+    auth.init(runtime, settings, logger).then(() => {
+        logger.info('runtime init auth successful!', true);
+    }).catch(err => {
+        logger.error('runtime.failed-to-init auth: ' + err);
+    });
+
     users.init(settings, logger).then(result => {
         logger.info('runtime init users successful!', true);
         events.emit('init-users-ok');
@@ -117,12 +124,14 @@ function init(_io, _api, _settings, _log, eventsMain) {
         }
         socket.userId = null;
         socket.userGroups = null;
+        socket.userRoles = null;
         socket.isAuthenticated = !settings.secureEnabled;
         if (settings.secureEnabled) {
             try {
                 const decoded = jwt.verify(token, api.authJwt.secretCode);
                 socket.userId = decoded.id;
                 socket.userGroups = decoded.groups;
+                socket.userRoles = decoded.roles;
                 socket.isAuthenticated = decoded.id && decoded.id !== 'guest';
                 if (!settings.secureOnlyEditor) {
                     logger.info(`Client connected with ${socket.isAuthenticated ? 'authenticated token' : 'guest access'}`);
@@ -698,6 +707,7 @@ var runtime = module.exports = {
     init: init,
     project: project,
     users: users,
+    auth: auth,
     plugins: plugins,
     start: start,
     stop: stop,

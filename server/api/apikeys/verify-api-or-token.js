@@ -33,6 +33,7 @@ module.exports = function verifyApiOrToken(runtime) {
                     // Grant admin group to match existing authorization checks.
                     req.userId = validKey.id || `apikey:${apiKey}`;
                     req.userGroups = authJwt.adminGroups[0];
+                    req.userRoles = ['admin'];
                     return next();
                 }
             } catch (err) {

@@ -146,6 +146,9 @@ function init(_server, _runtime) {
                         if (!req.body.secretCode && runtime.settings.secretCode) {
                             req.body.secretCode = runtime.settings.secretCode;
                         }
+                        if (utils.isNullOrUndefined(req.body.auth) && runtime.settings.auth) {
+                            req.body.auth = runtime.settings.auth;
+                        }
                         const prevAuth = {
                             secureEnabled: runtime.settings.secureEnabled,
                             tokenExpiresIn: runtime.settings.tokenExpiresIn,
@@ -243,6 +246,9 @@ function mergeUserSettings(settings) {
         runtime.settings.nodeRedUnsafeModules = settings.nodeRedUnsafeModules;
     }
     runtime.settings.swaggerEnabled = settings.swaggerEnabled;
+    if (!utils.isNullOrUndefined(settings.auth)) {
+        runtime.settings.auth = settings.auth;
+    }
     if (settings.secretCode) {
         runtime.settings.secretCode = settings.secretCode;
     }
@@ -274,7 +280,19 @@ function verifyGroups(req) {
             return (runtime.settings.userRole) ? null : 0;
         }
         const userInfo = runtime.users.getUserCache(req.userId);
-        return (runtime.settings.userRole && req.userId !== 'admin') ? userInfo : userInfo ? userInfo.groups : req.userGroups;
+        if (runtime.settings.userRole && req.userId !== 'admin') {
+            if (userInfo) {
+                return userInfo;
+            }
+            // Keep role-mode authorization functional for external providers
+            return {
+                groups: req.userGroups,
+                info: {
+                    roles: Array.isArray(req.userRoles) ? req.userRoles : []
+                }
+            };
+        }
+        return userInfo ? userInfo.groups : req.userGroups;
     } else {
         return authJwt.adminGroups[0];
     }
