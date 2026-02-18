@@ -34,13 +34,13 @@
                 </mat-option>
             </mat-select>
         </div>
-        <div class="my-form-field block mb10">
+        <div class="my-form-field block mb10" style="min-width: 300px;">
             <span>{{'dlg.menuitem-text' | translate}}</span>
-            <input [(ngModel)]="data.item.text" type="text" style="width: 300px">
+            <input [(ngModel)]="data.item.text" type="text" style="width: calc(100% - 7px)">
         </div>
-        <div class="my-form-field block mb10" >
+        <div class="my-form-field block mb10">
             <span>{{'dlg.menuitem-view' | translate}}</span>
-            <mat-select [(value)]="data.item.view" style="width: 300px">
+            <mat-select [(value)]="data.item.view">
                 <mat-option *ngFor="let view of data.views" [value]="view.id">
                     {{ view.name }}
                 </mat-option>

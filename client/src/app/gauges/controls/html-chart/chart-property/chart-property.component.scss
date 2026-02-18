@@ -14,8 +14,11 @@
 
     .field-block {
         width: 100%;
-        mat-select, input, span {
+        input, span {
             width:calc(100% - 15px);
+        }
+        mat-select {
+            width:calc(100% - 8px);
         }
     }
 

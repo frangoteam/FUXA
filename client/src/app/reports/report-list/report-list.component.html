@@ -86,7 +86,7 @@
                 </td>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="my-mat-row"
                 (click)="toogleDetails(element)">
             </tr>

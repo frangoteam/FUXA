@@ -63,6 +63,8 @@
                 <mat-row class="mat-row" *matRowDef="let row; columns: defColumns;"></mat-row>
             </mat-table>
         </div>
+    </div>
+    <div class="ml20">
         <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" style="float: left;"></mat-paginator>
     </div>
     <div mat-dialog-actions class="dialog-action">

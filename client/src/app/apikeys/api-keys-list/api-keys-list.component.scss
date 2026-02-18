@@ -1,4 +1,7 @@
 :host {
+    display: block;
+    height: 100%;
+
     .header-panel {
         background-color: var(--headerBackground);
         color: var(--headerColor);
@@ -27,6 +30,12 @@
         right: 0px;
         bottom: 0px;
         background-color: var(--workPanelBackground);
+        overflow: hidden;
+    }
+
+    .container {
+        height: 100%;
+        overflow-y: auto;
     }
 
     .mat-column-select {
@@ -74,17 +83,34 @@
         flex: 0 0 60px;
     }
 
-    .mat-cell {
+    .mat-cell,
+    .mat-mdc-cell,
+    .mdc-data-table__cell {
         font-size: 13px;
+        border-top: none !important;
+        border-bottom: 1px solid rgb(81, 81, 81) !important;
     }
 
-    .mat-header-row {
+    .mat-row,
+    .mat-mdc-row,
+    .my-mat-row {
+        border-top: none !important;
+        border-bottom: none !important;
+    }
+
+    .mat-header-row,
+    .mat-mdc-header-row {
         top: 0;
         position: sticky;
-        z-index: 1;
+        z-index: 10;
+        background-color: var(--workPanelBackground);
     }
 
     .mat-header-cell {
         font-size: 15px;
+        position: sticky;
+        top: 0;
+        z-index: 11;
+        background-color: var(--workPanelBackground);
     }
 }

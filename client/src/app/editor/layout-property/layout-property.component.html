@@ -376,7 +376,7 @@
                             </div>
                             <div class="my-form-field block mt10">
                                 <span>{{'dlg.layout-lbl-datetime' | translate}}</span>
-                                <input [(ngModel)]="data.layout.header.dateTimeDisplay" (input)="checkTimer()" type="text" style="width: 260px">
+                                <input [(ngModel)]="data.layout.header.dateTimeDisplay" (input)="checkTimer()" type="text" style="width: 253px">
                             </div>
                             <div class="my-form-field block mt10">
                                 <span>{{'dlg.layout-lbl-alarms' | translate}}</span>
@@ -419,19 +419,19 @@
                                 </mat-select>
                             </div>
                             <div class="colors block">
-                                <div class="my-form-field" style="display: inline-block">
+                                <div class="my-form-field inbk">
                                     <span>{{'dlg.layout-header-bkcolor' | translate}}</span>
                                     <input [(colorPicker)]="data.layout.header.bkcolor" [style.background]="data.layout.header.bkcolor" [cpAlphaChannel]="'always'"
                                         class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
                                         [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                                        style="width:120px;" [cpPosition]="'bottom'" />
+                                        style="width:100px;" [cpPosition]="'bottom'" />
                                 </div>
-                                <div class="my-form-field" style="float: right;">
+                                <div class="my-form-field inbk ml10">
                                     <span>{{'dlg.layout-header-fgcolor' | translate}}</span>
                                     <input [(colorPicker)]="data.layout.header.fgcolor" [style.background]="data.layout.header.fgcolor" [cpAlphaChannel]="'always'"
                                         class="input-color" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
                                         [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                                        style="width:120px;" [cpPosition]="'bottom'" />
+                                        style="width:100px;" [cpPosition]="'bottom'" />
                                 </div>
                             </div>
                         </div>
