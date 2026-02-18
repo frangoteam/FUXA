@@ -8,7 +8,7 @@
         </ng-template>
     </h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div mat-dialog-content style="display: contents;">
+    <div mat-dialog-content>
         <ng-container *ngIf="data.tag; else addTag">
             <div [formGroup]="formGroup" class="container">
                 <div class="my-form-field item-block">
