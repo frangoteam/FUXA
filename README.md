@@ -172,3 +172,7 @@ We’d be really happy if you send us your own shapes in order to collect a libr
 
 ## License
 MIT.
+
+## Star History
+[![Star History Chart](https://api.star-history.com/svg?repos=frangoteam/FUXA&type=Date)](https://star-history.com/#frangoteam/FUXA&Date)
+
