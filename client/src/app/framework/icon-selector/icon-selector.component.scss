@@ -1,0 +1,12 @@
+:host {
+    .icons-selector {
+        width: 60px;
+        height: 30px;
+    }
+}
+
+::ng-deep .icon-selector-panel .mat-pseudo-checkbox,
+::ng-deep .icon-selector-panel .mat-mdc-option-pseudo-checkbox,
+::ng-deep .icon-selector-panel .mdc-list-item__start {
+    display: none !important;
+}
