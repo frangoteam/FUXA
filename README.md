@@ -109,11 +109,11 @@ npm run package
 
 After following these steps, you will have a standalone Electron application for FUXA. The application can be found in the ./app directory.
 
-## Usage
+## Usage and Documentation
 - Look the guide in [wiki](https://github.com/frangoteam/FUXA/wiki) pages
 - Look video from [frangoteam](https://www.youtube.com/@umbertonocelli5301)
 - Look video from [Fusion Automate - Urvish Nakum](https://youtube.com/playlist?list=PLxrSjjYyzaaK8uY3kVaFzfGnwhVXiCEAO&si=aU1OxgkUvLQ3bXHq)
-
+- Browse the [DeepWiki](https://deepwiki.com/frangoteam/FUXA) for AI-assisted docs and code navigation
 ## Community SVG Widgets
 
 Looking for ready-made, reusable SVG widgets?
