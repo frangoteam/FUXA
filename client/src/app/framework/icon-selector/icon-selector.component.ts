@@ -13,6 +13,7 @@ export class IconSelectorComponent implements OnInit {
     @Output() selected = new EventEmitter<string>();
 
     @Input() panelWidth = '310px';
+    @Input() panelClass = 'icon-selector-panel';
     @Input() filterPlaceholder = 'dlg.headeritem-icons-filter';
     @Input() width = '60px';
     @Input() height = '30px';
