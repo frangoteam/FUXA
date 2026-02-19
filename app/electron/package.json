@@ -13,7 +13,7 @@
     "license": "MIT",
     "devDependencies": {
         "electron": "^39.2.6",
-        "electron-builder": "^26.3.5"
+        "electron-builder": "^26.7.0"
     },
     "dependencies": {
         "sqlite3": "5.1.5"
