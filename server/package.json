@@ -36,7 +36,7 @@
     "jsonwebtoken": "9.0.0",
     "live-plugin-manager": "0.15.1",
     "modbus-serial": "8.0.19",
-    "morgan": "1.10.0",
+    "morgan": "1.10.1",
     "mqtt": "4.3.7",
     "node-bacnet": "0.2.4",
     "node-opcua": "2.149.0",
