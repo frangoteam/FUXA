@@ -858,7 +858,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private nextZIndex(): number {
-        return ++this.zIndexCounter;
+        const targetCards = this.parentcards ?? this.cards;
+        const maxCurrentZIndex = targetCards.reduce((max, currentCard) => {
+            const cardZIndex = Number(currentCard?.zIndex ?? 0);
+            return cardZIndex > max ? cardZIndex : max;
+        }, 0);
+        this.zIndexCounter = Math.max(this.zIndexCounter, maxCurrentZIndex) + 1;
+        return this.zIndexCounter;
     }
 
     onOpenCard(id: string, event: PointerEvent | TouchEvent | any, viewref: string, options: any = {}) {
@@ -900,7 +906,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         card.disableDefaultClose = options?.hideClose;
         card.sourceDeviceId = options?.sourceDeviceId;
         card.zIndex = this.nextZIndex();
-
+        console.log('index', card.zIndex);
         if (this.parentcards) {
             this.parentcards.push(card);
         } else {
