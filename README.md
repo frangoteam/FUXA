@@ -1,5 +1,10 @@
 ![fuxa logo](/client/src/favicon.ico)
 # FUXA
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Docs](https://img.shields.io/badge/docs-online-brightgreen)](https://frangoteam.github.io/FUXA/)
+[![Node](https://img.shields.io/badge/node-18%20LTS-green)](https://nodejs.org/)
+[![Docker](https://img.shields.io/badge/docker-supported-blue)](https://hub.docker.com/r/frangoteam/fuxa)
+
 FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With FUXA you can create modern process visualizations with individual designs for your machines and real-time data display.
 
 ![fuxa editor](/screenshot/fuxa-editor.png)
@@ -8,22 +13,31 @@ FUXA is a web-based Process Visualization (SCADA/HMI/Dashboard) software. With F
 
 ![fuxa action](/screenshot/feature-action-move.gif)
 
-## Features
+## ✨ Features
 - Devices connectivity with Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley), ODBC, ADSclient, Gpio (Raspberry), WebCam, MELSEC, Redis
 - SCADA/HMI Web-Editor - Engineering and Design completely web-based
 - Cross-Platform Full-Stack - Backend with NodeJs and Frontend with Web technologies (HTML5, CSS, Javascript, Angular, SVG)
 
-## Live Demo
+## 🚀 Live Demo
 Here is a [live demo](https://frangoteam.github.io) example of FUXA editor.
 
-## Installing and Running
+## 📚 Documentation
+
+Official documentation is available at:
+
+👉 https://frangoteam.github.io/FUXA/
+
+The documentation source is located in the `/docs` directory of this repository.
+
+The site is built using MkDocs (Material theme) and automatically deployed via GitHub Actions.
+
+## 🛠 Installing and Running
 FUXA is developed with NodeJS (backend) and Angular (frontend).
 
-See the Wiki for more details about installing and getting started
+For detailed guides and advanced configuration options, see the official documentation:
 
-[Wiki](https://github.com/frangoteam/FUXA/wiki)
+👉 https://frangoteam.github.io/FUXA/
 
-[Wiki Installing/Building](https://github.com/frangoteam/FUXA/wiki/Installing-and-Running)
 
 ### 1° Option - Running from docker
 ```
@@ -110,7 +124,7 @@ npm run package
 After following these steps, you will have a standalone Electron application for FUXA. The application can be found in the ./app directory.
 
 ## Usage and Documentation
-- Look the guide in [wiki](https://github.com/frangoteam/FUXA/wiki) pages
+- 📚 Official Documentation: https://frangoteam.github.io/FUXA/
 - Look video from [frangoteam](https://www.youtube.com/@umbertonocelli5301)
 - Look video from [Fusion Automate - Urvish Nakum](https://youtube.com/playlist?list=PLxrSjjYyzaaK8uY3kVaFzfGnwhVXiCEAO&si=aU1OxgkUvLQ3bXHq)
 - Browse the [DeepWiki](https://deepwiki.com/frangoteam/FUXA) for AI-assisted docs and code navigation
@@ -123,7 +137,7 @@ Check out the companion repository **FUXA-SVG-Widgets**:
 - Authoring guide & examples: see the repo README and the Wiki page:
   https://github.com/frangoteam/FUXA/wiki/HowTo-Widgets
 
-## To Debug (Full Stack)
+## 🧪 To Debug (Full Stack)
 Install and start to serve the frontend
 ```
 cd ./client
@@ -136,39 +150,35 @@ Start the Server and Client (Browser) in Debug Mode
 In vscode: Debug ‘Server & Client’
 ```
 
-## To Build
+## 🏗 To Build
 Build the frontend for production
 ```
 cd ./client
 ng build --configuration=production
 ```
 
-## Contributing
-Any contributions you make are greatly appreciated.
-If you identify any errors, or have an idea for an improvement, please open an [issue](/../../issues).
-But before filing a new issue, please look through already existing issues. Search open and closed issues first.
+## 🤝 Contributing
 
-Non-code contributions are also highly appreciated, such as improving the documentation or promoting FUXA on social media.
+Contributions are welcome and greatly appreciated.
 
-### Pull-Requests
-If you want to raise a pull-request with a new feature, or a refactoring of existing code please first open an issue explaining the problem.
-```
-1. Fork the Project
-2. Create your Feature Branch (git checkout -b feature/AmazingFeature)
-3. Commit your Changes (git commit -m 'Add some AmazingFeature')
-4. Push to the Branch (git push origin feature/AmazingFeature)
-5. Open a Pull Request
-```
+You can contribute by:
 
-### Coding standards
-Please ensure you follow the coding standards used through-out the existing code base. Some basic rules include:
-- Indent with 4-spaces, no tabs.
-- Opening brace on same line as if/for/function and so on, closing brace on its own line.
+- Improving or fixing code
+- Enhancing documentation
+- Reporting bugs
+- Proposing new features
+- Sharing examples and use cases
 
-## Let us know!
+Before submitting a Pull Request, please open an issue to discuss major changes.
+
+For full contribution guidelines (code and documentation), please read:
+
+👉 [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## 💬 Let us know!
 We’d be really happy if you send us your own shapes in order to collect a library to share it with others. Just send an email to info@frangoteam.org and do let us know if you have any questions or suggestions regarding our work.
 
 ## <a href="https://discord.gg/WZhxz9uHh4" target="_blank" > <img src="https://skillicons.dev/icons?i=discord" alt=""></a>
 
-## License
+## 📄 License
 MIT.
