@@ -197,7 +197,7 @@ The FUXA contrib package provides specialized nodes for SCADA integration, this 
       ]
     },
     {
-      "tag": "temp2", 
+      "tag": "temp2",
       "data": [
         {"timestamp": "2025-01-01T08:00:00Z", "value": 24.8},
         {"timestamp": "2025-01-01T09:00:00Z", "value": 25.2}

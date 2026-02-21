@@ -8,7 +8,7 @@ The project will be automatically saved in an internal database after every chan
 The Views will be automatically saved by selecting another or by leaving the editor.
 
 By **Save Project** you can force the internal saving process.
-By **Save Project As…** you can export the whole project to a file in JSON format (MyProject.fuxap), useful for making backups of the project.
+By **Save Project As…** you can export the whole project to a file in JSON format (MyProject.json), useful for making backups of the project.
 
 ### Open the project
-You can open a project from the exported file (MyProject.fuxap).
+You can open a project from the exported file (MyProject.json).
