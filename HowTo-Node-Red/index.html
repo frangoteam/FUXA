@@ -1,0 +1,2760 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://frangoteam.github.io/FUXA/HowTo-Node-Red/">
+      
+      
+        <link rel="prev" href="../HowTo-Scheduler/">
+      
+      
+        <link rel="next" href="../HowTo-save-load-Project/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.2">
+    
+    
+      
+        <title>Node-RED - FUXA Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#howto-node-red-integration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="FUXA Documentation" class="md-header__button md-logo" aria-label="FUXA Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            FUXA Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Node-RED
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="FUXA Documentation" class="md-nav__button md-logo" aria-label="FUXA Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    FUXA Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Installing-and-Running/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installing and Running
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    HowTo
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    HowTo
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-Devices-and-Tags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Devices and Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-bind-Controls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bind Controls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-Chart-Control/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chart Control
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-UI-Layout/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    UI Layout
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-setup-Alarms/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Setup Alarms
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-define-Shapes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Define Shapes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-animate-Pipe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Animate Pipe
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-Scheduler/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Scheduler
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Node-RED
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Node-RED
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup-and-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup and Installation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup and Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#node-red-in-fuxa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node-RED in FUXA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-dashboard-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing Dashboard 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#required-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Required Dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-and-access-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security and Access Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-node-red" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accessing Node-RED
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Accessing Node-RED">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#node-red-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node-RED Editor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard 2
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dashboard 2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#accessing-dashboard-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accessing Dashboard 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embedding-dashboard-in-fuxa-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Embedding Dashboard in FUXA View
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fuxa-contrib-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FUXA Contrib Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FUXA Contrib Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tags-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tags Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tags Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set-tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-tag-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-tag-change
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-tag-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-tag-id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-historical-tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-historical-tags
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-tag-daq-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-tag-daq-settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-tag-daq-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set-tag-daq-settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#devices-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Devices Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Devices Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enable-device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enable-device_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enable-device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-device-property" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-device-property
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-device-property" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set-device-property
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alarms-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alarms Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Alarms Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-alarms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-alarms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-history-alarms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-history-alarms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ack-alarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ack-alarm
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#views-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Views Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Views Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set-view
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open-card" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        open-card
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scripts-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scripts Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scripts Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#execute-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        execute-script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#daq-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DAQ Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DAQ Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-daq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-daq
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Events Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Events Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#emit-event" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        emit-event
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        send-message
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Formats
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Formats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tag-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tag Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timestamps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Timestamps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-not-loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard Not Loading
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fuxa-nodes-not-appearing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FUXA Nodes Not Appearing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dropdowns-not-populated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dropdowns Not Populated
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Events Not Working
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#email-notifications-not-sending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Email Notifications Not Sending
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-save-load-Project/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Save/Load Project
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-configure-events/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configure Events
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-use-same-view/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Use Same View
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-configure-Script/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configure Script
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-ODBC/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ODBC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-Widgets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Widgets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../HowTo-WebSockets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WebSockets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Settings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Settings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Tips-and-Tricks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tips and Tricks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#setup-and-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup and Installation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup and Installation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#node-red-in-fuxa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node-RED in FUXA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#installing-dashboard-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing Dashboard 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#required-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Required Dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#security-and-access-mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security and Access Mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-node-red" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accessing Node-RED
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Accessing Node-RED">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#node-red-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Node-RED Editor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard 2
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dashboard 2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#accessing-dashboard-2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accessing Dashboard 2
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embedding-dashboard-in-fuxa-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Embedding Dashboard in FUXA View
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fuxa-contrib-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FUXA Contrib Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="FUXA Contrib Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tags-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tags Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tags Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set-tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-tag-change" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-tag-change
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-tag-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-tag-id
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-historical-tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-historical-tags
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-tag-daq-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-tag-daq-settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-tag-daq-settings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set-tag-daq-settings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#devices-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Devices Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Devices Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enable-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enable-device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enable-device_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        enable-device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-device-property" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-device-property
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-device-property" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set-device-property
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alarms-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alarms Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Alarms Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-alarms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-alarms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get-history-alarms" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-history-alarms
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ack-alarm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ack-alarm
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#views-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Views Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Views Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#set-view" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set-view
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open-card" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        open-card
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scripts-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scripts Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Scripts Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#execute-script" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        execute-script
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#daq-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DAQ Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DAQ Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-daq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get-daq
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events-nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Events Nodes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Events Nodes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#emit-event" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        emit-event
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#send-message" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        send-message
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-formats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data Formats
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Data Formats">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#tag-values" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tag Values
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timestamps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Timestamps
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-handling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Error Handling
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-not-loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard Not Loading
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fuxa-nodes-not-appearing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FUXA Nodes Not Appearing
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dropdowns-not-populated" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dropdowns Not Populated
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#events-not-working" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Events Not Working
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#email-notifications-not-sending" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Email Notifications Not Sending
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="howto-node-red-integration">HowTo Node-RED Integration</h1>
+<h2 id="overview">Overview</h2>
+<p>FUXA includes full Node-RED integration, allowing you to create powerful automation flows that interact with your SCADA system.</p>
+<h2 id="setup-and-installation">Setup and Installation</h2>
+<h3 id="node-red-in-fuxa">Node-RED in FUXA</h3>
+<p>Node-RED is automatically included with FUXA and requires no additional installation. Access it through the FUXA settings menu.</p>
+<h3 id="installing-dashboard-2">Installing Dashboard 2</h3>
+<p>Dashboard 2 must be installed separately if needed:</p>
+<ol>
+<li>Open Node-RED editor (via FUXA settings)</li>
+<li>Click the menu (☰) → <strong>Manage Palette</strong></li>
+<li>Search for: <code>@flowfuse/node-red-dashboard</code></li>
+<li>Click <strong>Install</strong></li>
+<li>Restart Node-RED/FUXA</li>
+</ol>
+<h3 id="required-dependencies">Required Dependencies</h3>
+<ul>
+<li><strong>@flowfuse/node-red-dashboard</strong>: For modern dashboard creation</li>
+<li><strong>node-red-contrib-fuxa</strong>: Automatically included (provides FUXA integration nodes)</li>
+</ul>
+<h3 id="configuration">Configuration</h3>
+<p>No additional configuration is required. Node-RED automatically connects to FUXA's runtime environment.</p>
+<h3 id="security-and-access-mode">Security and Access Mode</h3>
+<p>Node-RED access can be configured when FUXA security is enabled.</p>
+<p><strong>Setting</strong>: <code>nodeRedAuthMode</code></p>
+<ul>
+<li><code>secure</code> (default): Node-RED editor and admin APIs require authentication (JWT or API key).</li>
+<li><code>legacy-open</code>: Node-RED remains open (no auth) to preserve legacy behavior.</li>
+</ul>
+<p><strong>Notes</strong>:
+- Changes apply after server restart.
+- If <code>secureEnabled=true</code> and <code>nodeRedAuthMode=secure</code>, external systems can access Node-RED HTTP endpoints using an API key header:
+  <code>x-api-key: &lt;api-key&gt;</code>
+  API keys are managed in FUXA under <strong>Editor → Setup → API Keys</strong>.</p>
+<h2 id="accessing-node-red">Accessing Node-RED</h2>
+<h3 id="node-red-editor">Node-RED Editor</h3>
+<p>Access the Node-RED flow editor through the FUXA settings:</p>
+<ol>
+<li>Click the <strong>Settings</strong> button in FUXA</li>
+<li>Navigate to <strong>Node-RED</strong> section</li>
+<li>Click <strong>Open Node-RED Editor</strong></li>
+</ol>
+<p>This opens the Node-RED flow editor in a new window/tab.</p>
+<h3 id="dashboard-2">Dashboard 2</h3>
+<p><strong>Note</strong>: Dashboard 2 is not installed by default and must be installed separately.</p>
+<h4 id="installation">Installation</h4>
+<ol>
+<li>In Node-RED, go to <strong>Menu → Manage Palette</strong></li>
+<li>Search for and install: <code>@flowfuse/node-red-dashboard</code></li>
+<li>Restart Node-RED/FUXA</li>
+</ol>
+<h4 id="accessing-dashboard-2">Accessing Dashboard 2</h4>
+<p>Once installed, view your Node-RED dashboards:</p>
+<p><strong>Embedded in FUXA Views</strong>: Add an iframe component to any FUXA view</p>
+<h4 id="embedding-dashboard-in-fuxa-view">Embedding Dashboard in FUXA View</h4>
+<ol>
+<li>Open your FUXA project in the editor</li>
+<li>Add an iframe component to your view</li>
+<li>Set the URL to: <code>/dashboard</code></li>
+<li>Configure the iframe size and properties as needed</li>
+<li>If you only want to display a single page you can adjust dashboard settings and use <code>/dashboard/page1</code> or the name of your page</li>
+</ol>
+<p><strong>Important</strong>: Dashboard 2 must be installed before attempting to access <code>/dashboard</code></p>
+<h2 id="fuxa-contrib-nodes">FUXA Contrib Nodes</h2>
+<p>The FUXA contrib package provides specialized nodes for SCADA integration, this package is designed to only work with the FUXA Node-Red Integration and will not work in a standalone Node-Red installation</p>
+<h3 id="tags-nodes">Tags Nodes</h3>
+<h4 id="get-tag">get-tag</h4>
+<p><strong>Purpose</strong>: Retrieve the current value of a FUXA tag</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Tag</strong>: Tag name (dropdown populated from FUXA devices)</p>
+<p><strong>Input</strong>: Any message (triggers tag read)
+<strong>Output</strong>: <code>msg.payload</code> contains the tag value</p>
+<p><strong>Example Output</strong>:</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: 25.3,
+  &quot;_msgid&quot;: &quot;abc123&quot;
+}
+</code></pre>
+<h4 id="set-tag">set-tag</h4>
+<p><strong>Purpose</strong>: Write a value to a FUXA tag</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Tag</strong>: Tag name (dropdown populated from FUXA devices)</p>
+<p><strong>Input</strong>: <code>msg.payload</code> contains the value to write
+<strong>Output</strong>: <code>msg.payload</code> contains the written value</p>
+<p><strong>Example Input</strong>:</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: 50.0
+}
+</code></pre>
+<h4 id="get-tag-change">get-tag-change</h4>
+<p><strong>Purpose</strong>: Monitor a FUXA tag for value changes based on device polling events</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Tag</strong>: Tag name (dropdown populated from FUXA devices)</p>
+<p><strong>Input</strong>: None (event-driven)
+<strong>Output</strong>: <code>msg.payload</code> contains the new tag value when it changes</p>
+<p><strong>How it works</strong>: This node subscribes to FUXA's device polling events. When devices are polled and a tag value has changed since the last poll, the node outputs a message with the new value. The timing depends on the device's polling interval (typically 1-5 seconds).</p>
+<p><strong>Example Output</strong>:</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: 25.3,
+  &quot;topic&quot;: &quot;temperature&quot;,
+  &quot;tagId&quot;: &quot;device1.temperature&quot;,
+  &quot;tagName&quot;: &quot;temperature&quot;,
+  &quot;timestamp&quot;: &quot;2025-01-01T10:30:00.000Z&quot;,
+  &quot;previousValue&quot;: 24.8
+}
+</code></pre>
+<p><strong>Note</strong>: This node only outputs messages when tag values actually change, not on every polling cycle. It efficiently monitors for changes without requiring manual polling.</p>
+<h4 id="get-tag-id">get-tag-id</h4>
+<p><strong>Purpose</strong>: Get the internal ID of a tag by name</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Tag</strong>: Tag name (dropdown populated from FUXA devices)</p>
+<p><strong>Input</strong>: Any message
+<strong>Output</strong>: <code>msg.payload</code> contains the tag ID</p>
+<h4 id="get-historical-tags">get-historical-tags</h4>
+<p><strong>Purpose</strong>: Retrieve historical tag data for multiple tags simultaneously</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Tags</strong>: Comma-separated list of tag names (e.g., "temp1,temp2,pressure")
+- <strong>From Time</strong>: Start of historical period (datetime-local picker)
+- <strong>To Time</strong>: End of historical period (datetime-local picker)</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.tags</code>, <code>msg.from</code>, <code>msg.to</code>
+<strong>Output</strong>: <code>msg.payload</code> contains historical data array</p>
+<p><strong>Multiple Tags Support</strong>:
+- Enter tags as comma-separated values: <code>temp1,temp2,pressure</code>
+- Each tag's historical data is retrieved for the same time period
+- Results are combined in a single response</p>
+<p><strong>Example Input</strong> (comma-separated):</p>
+<pre><code class="language-json">{
+  &quot;tags&quot;: &quot;temp1,temp2,pressure&quot;,
+  &quot;from&quot;: &quot;2025-01-01T08:00&quot;,
+  &quot;to&quot;: &quot;2025-01-01T17:00&quot;
+}
+</code></pre>
+<p><strong>Example Input</strong> (array):</p>
+<pre><code class="language-json">{
+  &quot;tags&quot;: [&quot;temp1&quot;, &quot;temp2&quot;, &quot;pressure&quot;],
+  &quot;from&quot;: &quot;2025-01-01T08:00&quot;,
+  &quot;to&quot;: &quot;2025-01-01T17:00&quot;
+}
+</code></pre>
+<p><strong>Example Output</strong>:</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: [
+    {
+      &quot;tag&quot;: &quot;temp1&quot;,
+      &quot;data&quot;: [
+        {&quot;timestamp&quot;: &quot;2025-01-01T08:00:00Z&quot;, &quot;value&quot;: 25.3},
+        {&quot;timestamp&quot;: &quot;2025-01-01T09:00:00Z&quot;, &quot;value&quot;: 26.1}
+      ]
+    },
+    {
+      &quot;tag&quot;: &quot;temp2&quot;,
+      &quot;data&quot;: [
+        {&quot;timestamp&quot;: &quot;2025-01-01T08:00:00Z&quot;, &quot;value&quot;: 24.8},
+        {&quot;timestamp&quot;: &quot;2025-01-01T09:00:00Z&quot;, &quot;value&quot;: 25.2}
+      ]
+    }
+  ]
+}
+</code></pre>
+<h4 id="get-tag-daq-settings">get-tag-daq-settings</h4>
+<p><strong>Purpose</strong>: Get DAQ (Data Acquisition) settings for a tag</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Tag</strong>: Tag name (dropdown populated from FUXA devices)</p>
+<p><strong>Input</strong>: Any message
+<strong>Output</strong>: <code>msg.payload</code> contains DAQ settings object</p>
+<h4 id="set-tag-daq-settings">set-tag-daq-settings</h4>
+<p><strong>Purpose</strong>: Configure DAQ (Data Acquisition) settings for a tag</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Tag</strong>: Tag name (dropdown populated from FUXA devices)
+- <strong>Enabled</strong>: Checkbox to enable/disable DAQ for this tag
+- <strong>Interval</strong>: Sampling interval in milliseconds
+- <strong>Deadband</strong>: Minimum change threshold for data updates</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.tag</code>, <code>msg.enabled</code>, <code>msg.interval</code>, <code>msg.deadband</code>
+<strong>Output</strong>: <code>msg.payload</code> contains updated settings</p>
+<p><strong>DAQ Settings</strong>:
+- <strong>Enabled</strong>: Turn data acquisition on/off for this tag
+- <strong>Interval</strong>: How often to sample the tag (in milliseconds)
+- <strong>Deadband</strong>: Only report changes greater than this threshold (prevents noise)</p>
+<h3 id="devices-nodes">Devices Nodes</h3>
+<h4 id="enable-device">enable-device</h4>
+<p><strong>Purpose</strong>: Enable or disable a device connection</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Device Name</strong>: Device name (dropdown populated from FUXA devices)
+- <strong>Enabled</strong>: Checkbox to enable/disable the device</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.deviceName</code>, <code>msg.enabled</code>
+<strong>Output</strong>: <code>msg.payload</code> contains operation result</p>
+<p><strong>Enable/Disable</strong>: Check the box to enable device, uncheck to disablenterface for connecting devices, processing data, and controlling your industrial processes.</p>
+<h4 id="get-device">get-device</h4>
+<p><strong>Purpose</strong>: Get information about a FUXA device</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Device Name</strong>: Device name (dropdown populated from FUXA devices)
+- <strong>Include Tags</strong>: Checkbox to include tag information in the response</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.deviceName</code>, <code>msg.includeTags</code>
+<strong>Output</strong>: <code>msg.payload</code> contains device information object</p>
+<p><strong>Include Tags</strong>: When checked, the response includes all tags associated with the device</p>
+<h4 id="enable-device_1">enable-device</h4>
+<p><strong>Purpose</strong>: Enable or disable a device connection</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Device</strong>: Device name (dropdown populated from FUXA devices)
+- <strong>Enable</strong>: Checkbox to enable/disable</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.enable</code>
+<strong>Output</strong>: <code>msg.payload</code> contains operation result</p>
+<h4 id="get-device-property">get-device-property</h4>
+<p><strong>Purpose</strong>: Get a property value from a device</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Device Name</strong>: Device name (dropdown populated from FUXA devices)
+- <strong>Property</strong>: Property name to retrieve</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.deviceName</code>, <code>msg.property</code>
+<strong>Output</strong>: <code>msg.payload</code> contains property value</p>
+<p><strong>Property Names</strong>: Common properties include "status", "connected", "lastError", etc.</p>
+<h4 id="set-device-property">set-device-property</h4>
+<p><strong>Purpose</strong>: Set a property value on a device</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Device Name</strong>: Device name (dropdown populated from FUXA devices)
+- <strong>Property</strong>: Property name to set
+- <strong>Value</strong>: Value to set for the property</p>
+<p><strong>Input</strong>: <code>msg.payload</code> contains the value or override with <code>msg.deviceName</code>, <code>msg.property</code>, <code>msg.value</code>
+<strong>Output</strong>: <code>msg.payload</code> contains the set value</p>
+<h3 id="alarms-nodes">Alarms Nodes</h3>
+<h4 id="get-alarms">get-alarms</h4>
+<p><strong>Purpose</strong>: Get current active alarms</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification</p>
+<p><strong>Input</strong>: Any message
+<strong>Output</strong>: <code>msg.payload</code> contains array of active alarms</p>
+<p><strong>Example Output</strong>:</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: [
+    {
+      &quot;id&quot;: &quot;alarm1&quot;,
+      &quot;name&quot;: &quot;High Temperature&quot;,
+      &quot;status&quot;: &quot;active&quot;,
+      &quot;timestamp&quot;: &quot;2025-01-01T10:30:00Z&quot;,
+      &quot;value&quot;: 85.5
+    }
+  ]
+}
+</code></pre>
+<h4 id="get-history-alarms">get-history-alarms</h4>
+<p><strong>Purpose</strong>: Get historical alarm data</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Start Time</strong>: Start of historical period (datetime-local picker)
+- <strong>End Time</strong>: End of historical period (datetime-local picker)</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.startTime</code> and <code>msg.endTime</code>
+<strong>Output</strong>: <code>msg.payload</code> contains historical alarms array</p>
+<h4 id="ack-alarm">ack-alarm</h4>
+<p><strong>Purpose</strong>: Acknowledge alarms in FUXA</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Alarm Name</strong>: Alarm name (dropdown populated from FUXA alarms)
+- <strong>Types</strong>: Comma-separated alarm types (optional)</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.alarmName</code>, <code>msg.types</code>
+<strong>Output</strong>: <code>msg.payload</code> contains acknowledgment result</p>
+<p><strong>Alarm Types</strong>: Specify alarm types to acknowledge specific alarm categories (comma-separated: "warning,error,critical")</p>
+<h3 id="views-nodes">Views Nodes</h3>
+<h4 id="set-view">set-view</h4>
+<p><strong>Purpose</strong>: Change the current view in FUXA</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>View Name</strong>: View name (dropdown populated from FUXA views)</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.viewName</code>
+<strong>Output</strong>: <code>msg.payload</code> contains operation result</p>
+<h4 id="open-card">open-card</h4>
+<p><strong>Purpose</strong>: Open a specific card/dialog in FUXA</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Card</strong>: Card name (dropdown populated from FUXA cards)</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.cardName</code>
+<strong>Output</strong>: <code>msg.payload</code> contains operation result</p>
+<h3 id="scripts-nodes">Scripts Nodes</h3>
+<h4 id="execute-script">execute-script</h4>
+<p><strong>Purpose</strong>: Execute a FUXA script</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Script</strong>: Script name (dropdown populated from FUXA scripts)</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.scriptName</code>
+<strong>Output</strong>: <code>msg.payload</code> contains execution result</p>
+<p><strong>Example Output</strong>:</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: {
+    &quot;success&quot;: true,
+    &quot;script&quot;: &quot;myScript&quot;,
+    &quot;result&quot;: &quot;Script completed successfully&quot;,
+    &quot;timestamp&quot;: &quot;2025-01-01T10:45:00Z&quot;
+  }
+}
+</code></pre>
+<h3 id="daq-nodes">DAQ Nodes</h3>
+<h4 id="get-daq">get-daq</h4>
+<p><strong>Purpose</strong>: Get Data Acquisition (DAQ) data for a single tag</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Tag</strong>: Single tag name (dropdown populated from FUXA devices)
+- <strong>From Time</strong>: Start of DAQ period (datetime-local picker)
+- <strong>To Time</strong>: End of DAQ period (datetime-local picker)</p>
+<p><strong>Input</strong>: Any message or override with <code>msg.from</code>, <code>msg.to</code>
+<strong>Output</strong>: <code>msg.payload</code> contains DAQ data for the single tag</p>
+<p><strong>Single Tag Only</strong>: Unlike get-historical-tags, this node only processes one tag at a time. For multiple tags, use separate get-daq nodes or get-historical-tags.</p>
+<p><strong>Example Output</strong>:</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: [
+    {&quot;timestamp&quot;: &quot;2025-01-01T10:00:00Z&quot;, &quot;value&quot;: 25.3, &quot;quality&quot;: &quot;good&quot;},
+    {&quot;timestamp&quot;: &quot;2025-01-01T10:01:00Z&quot;, &quot;value&quot;: 25.8, &quot;quality&quot;: &quot;good&quot;}
+  ]
+}
+</code></pre>
+<h3 id="events-nodes">Events Nodes</h3>
+<h4 id="emit-event">emit-event</h4>
+<p><strong>Purpose</strong>: Emit custom events through FUXA's event system for inter-system communication and automation triggering</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Event Type</strong>: Custom event name/type (e.g., "machine-fault", "production-complete", "maintenance-required")</p>
+<p><strong>Input</strong>: <code>msg.payload</code> contains the event data (any format: string, number, object, array)
+<strong>Output</strong>: <code>msg.payload</code> unchanged (passes through)</p>
+<p><strong>Event Types and Usage</strong>:</p>
+<p><strong>System Events</strong> (built-in FUXA events):
+- <code>device-status</code> - Device connection status changes
+- <code>device-property</code> - Device property updates
+- <code>device-values</code> - Tag value changes
+- <code>alarms-status</code> - Alarm state changes
+- <code>script-console</code> - Script console output
+- <code>heartbeat</code> - System heartbeat/alive signals</p>
+<p><strong>Custom Events</strong> (user-defined):
+- <code>production-start</code> - Production line started
+- <code>production-stop</code> - Production line stopped
+- <code>quality-alert</code> - Quality control alert
+- <code>maintenance-due</code> - Equipment maintenance required
+- <code>operator-login</code> - Operator authentication
+- <code>batch-complete</code> - Production batch finished</p>
+<p><strong>Event Data Examples</strong>:</p>
+<p><strong>Simple string event</strong>:</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: &quot;Machine fault detected&quot;
+}
+</code></pre>
+<p><strong>Structured event data</strong>:</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: {
+    &quot;eventType&quot;: &quot;production-alert&quot;,
+    &quot;machine&quot;: &quot;Line-A&quot;,
+    &quot;severity&quot;: &quot;high&quot;,
+    &quot;timestamp&quot;: &quot;2025-01-01T10:30:00Z&quot;,
+    &quot;details&quot;: {
+      &quot;temperature&quot;: 85.5,
+      &quot;pressure&quot;: 2.1,
+      &quot;errorCode&quot;: &quot;E-202&quot;
+    }
+  }
+}
+</code></pre>
+<p><strong>Array data event</strong>:</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: [
+    {&quot;sensor&quot;: &quot;temp1&quot;, &quot;value&quot;: 75.2},
+    {&quot;sensor&quot;: &quot;temp2&quot;, &quot;value&quot;: 76.8},
+    {&quot;sensor&quot;: &quot;temp3&quot;, &quot;value&quot;: 74.9}
+  ]
+}
+</code></pre>
+<p><strong>How Events Work</strong>:
+1. Events are emitted to FUXA's internal event system
+2. Other FUXA components can listen for these events
+3. Events can trigger scripts, update displays, or initiate automation sequences
+4. Events persist until consumed or the system restarts</p>
+<p><strong>Common Use Cases</strong>:
+- <strong>Machine Monitoring</strong>: Emit events when equipment enters fault states
+- <strong>Production Tracking</strong>: Signal production milestones or quality issues
+- <strong>Maintenance Alerts</strong>: Notify when equipment needs servicing
+- <strong>Operator Notifications</strong>: Alert operators to system conditions
+- <strong>Data Integration</strong>: Send structured data to external systems</p>
+<p><strong>Integration with Scripts</strong>:
+Events can be consumed by FUXA scripts using the event system. Scripts can listen for specific event types and execute automated responses.</p>
+<h4 id="send-message">send-message</h4>
+<p><strong>Purpose</strong>: Send email notifications or messages through FUXA's notification system</p>
+<p><strong>Parameters</strong>:
+- <strong>Name</strong>: Optional node name for identification
+- <strong>Address</strong>: Recipient email address
+- <strong>Subject</strong>: Email subject line
+- <strong>Message</strong>: Default message content (can be overridden)</p>
+<p><strong>Input</strong>: <code>msg.payload</code> can contain message data or override with <code>msg.address</code>, <code>msg.subject</code>, <code>msg.message</code>
+<strong>Output</strong>: <code>msg.payload</code> contains send result</p>
+<p><strong>Message Format Options</strong>:</p>
+<p><strong>Simple text message</strong> (uses configured address/subject):</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: &quot;Alert: Temperature exceeded threshold&quot;
+}
+</code></pre>
+<p><strong>Complete message override</strong>:</p>
+<pre><code class="language-json">{
+  &quot;address&quot;: &quot;operator@company.com&quot;,
+  &quot;subject&quot;: &quot;Production Alert&quot;,
+  &quot;message&quot;: &quot;Line A has stopped due to maintenance requirement&quot;
+}
+</code></pre>
+<p><strong>Multiple recipients</strong>:</p>
+<pre><code class="language-json">{
+  &quot;address&quot;: [&quot;operator1@company.com&quot;, &quot;supervisor@company.com&quot;],
+  &quot;subject&quot;: &quot;Quality Control Alert&quot;,
+  &quot;message&quot;: &quot;Batch #1234 failed quality inspection&quot;
+}
+</code></pre>
+<h2 id="data-formats">Data Formats</h2>
+<h3 id="tag-values">Tag Values</h3>
+<p>Tag values can be:
+- <strong>Numbers</strong>: <code>25.3</code>, <code>100</code>, <code>0</code>
+- <strong>Strings</strong>: <code>"Running"</code>, <code>"Stopped"</code>
+- <strong>Booleans</strong>: <code>true</code>, <code>false</code>
+- <strong>Objects</strong>: Complex data structures</p>
+<h3 id="timestamps">Timestamps</h3>
+<p>All timestamps use ISO 8601 format:</p>
+<pre><code class="language-json">&quot;2025-01-01T10:30:00.000Z&quot;
+</code></pre>
+<h3 id="error-handling">Error Handling</h3>
+<p>All nodes output errors to the debug tab. Common error patterns:</p>
+<pre><code class="language-json">{
+  &quot;payload&quot;: null,
+  &quot;_msgid&quot;: &quot;abc123&quot;,
+  &quot;error&quot;: &quot;Tag not found: myTag&quot;
+}
+</code></pre>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="dashboard-not-loading">Dashboard Not Loading</h3>
+<p><strong>Problem</strong>: <code>/dashboard</code> shows error or blank page</p>
+<p><strong>Solution</strong>: Install Dashboard 2
+1. Open Node-RED editor
+2. Go to <strong>Manage Palette</strong>
+3. Install <code>@flowfuse/node-red-dashboard</code>
+4. Restart Node-RED/FUXA</p>
+<h3 id="fuxa-nodes-not-appearing">FUXA Nodes Not Appearing</h3>
+<p><strong>Problem</strong>: FUXA contrib nodes not visible in palette</p>
+<p><strong>Solution</strong>: Check Node-RED logs for errors. The nodes are automatically registered when FUXA starts Node-RED.</p>
+<h3 id="dropdowns-not-populated">Dropdowns Not Populated</h3>
+<p><strong>Problem</strong>: Tag/device dropdowns are empty</p>
+<p><strong>Solution</strong>: Ensure you have devices and tags configured in FUXA. The dropdowns populate from your FUXA project data.</p>
+<h3 id="events-not-working">Events Not Working</h3>
+<p><strong>Problem</strong>: Emitted events not triggering expected behavior</p>
+<p><strong>Solution</strong>: Check that other FUXA components (scripts, views) are listening for the correct event types. Events are case-sensitive.</p>
+<h3 id="email-notifications-not-sending">Email Notifications Not Sending</h3>
+<p><strong>Problem</strong>: send-message node not delivering emails</p>
+<p><strong>Solution</strong>: Configure SMTP settings in FUXA server configuration. Check FUXA logs for SMTP connection errors.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
