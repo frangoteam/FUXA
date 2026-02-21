@@ -1,0 +1,29 @@
+site_name: FUXA Documentation
+site_url: https://frangoteam.github.io/FUXA/
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installing and Running: Installing-and-Running.md
+  - HowTo:
+      - Devices and Tags: HowTo-Devices-and-Tags.md
+      - Bind Controls: HowTo-bind-Controls.md
+      - Chart Control: HowTo-Chart-Control.md
+      - UI Layout: HowTo-UI-Layout.md
+      - Setup Alarms: HowTo-setup-Alarms.md
+      - Define Shapes: HowTo-define-Shapes.md
+      - Animate Pipe: HowTo-animate-Pipe.md
+      - Scheduler: HowTo-Scheduler.md
+      - Node-RED: HowTo-Node-Red.md
+      - Save/Load Project: HowTo-save-load-Project.md
+      - Configure Events: HowTo-configure-events.md
+      - Use Same View: HowTo-use-same-view.md
+      - Configure Script: HowTo-configure-Script.md
+      - ODBC: HowTo-ODBC.md
+      - Widgets: HowTo-Widgets.md
+      - WebSockets: HowTo-WebSockets.md
+  - Settings: Settings.md
+  - Tips and Tricks: Tips-and-Tricks.md
