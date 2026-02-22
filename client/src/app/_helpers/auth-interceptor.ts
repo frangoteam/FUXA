@@ -31,7 +31,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
                 if (user) {
                     let locuser = {user: user.username, groups: user.groups};
-                    req = req.clone({ headers: req.headers.set(USER_HEADER_KEY, JSON.stringify(locuser)) });
+                    req = req.clone({ headers: req.headers.set(USER_HEADER_KEY, encodeURIComponent(JSON.stringify(locuser))) });
                 }
                 req = req.clone({ headers: req.headers.set(TOKEN_HEADER_KEY, token) });
             }
