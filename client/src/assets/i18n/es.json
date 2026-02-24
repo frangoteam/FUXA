@@ -736,6 +736,10 @@
     "dlg.app-settings-server-port": "Servidor esta escuchando el puerto",
     "dlg.app-settings-alarms-clear": "Borrar todas las alarmas y el historias",
     "dlg.app-settings-auth-token": "Autenticación con token",
+    "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-auth-disabled": "Deshabilitado",
     "dlg.app-auth-expiration-15m": "Habilitado con token expira en 15 min.",
     "dlg.app-auth-expiration-1h": "Habilitado con token expira en 1 hora.",
@@ -774,3 +778,6 @@
     "msg.editor-mode-locked": "El editor ya esta abierto!",
     "msg.alarms-clear-success": "Todas las alarmas han sido canceladas!"
   }
+
+
+
