@@ -1,25 +1,52 @@
 module.exports = function(RED) {
     function FuxaGetTagNode(config) {
         RED.nodes.createNode(this, config);
-        var node = this;
-        // Access FUXA functions from global context
-        var fuxa = RED.settings.functionGlobalContext.fuxa;
+        const node = this;
 
-        this.on('input', function(msg) {
+        // Access FUXA functions from global context
+        const fuxa = RED.settings?.functionGlobalContext?.fuxa;
+
+        node.on("input", function(msg, send, done) {
+            send = send || node.send.bind(node);
+
             try {
-                var tagId = fuxa.getTagId(config.tag, null);
-                if (tagId) {
-                    var value = fuxa.getTag(tagId);
-                    msg.payload = value;
-                    msg.topic = config.tag;  // Set topic to tag name for join operations
-                    node.send(msg);
-                } else {
-                    node.error('Tag not found: ' + config.tag, msg);
+                if (!fuxa) {
+                    node.error("FUXA not available in functionGlobalContext", msg);
+                    return done && done();
                 }
+
+                const uiTag = (typeof config.tag === "string") ? config.tag.trim() : "";
+                const topicTag = (typeof msg.topic === "string") ? msg.topic.trim() : "";
+
+                // Fallback logic: UI tag first, else msg.topic
+                const tagRef = uiTag !== "" ? uiTag : topicTag;
+
+                // Only error if BOTH are missing
+                if (!tagRef) {
+                    node.error("No tag provided: set Tag in the node OR provide msg.topic", msg);
+                    return done && done();
+                }
+
+                const tagId = fuxa.getTagId(tagRef, null);
+
+                if (!tagId) {
+                    node.error("Tag not found: " + tagRef, msg);
+                    return done && done();
+                }
+
+                const value = fuxa.getTag(tagId);
+
+                msg.payload = value;
+                msg.topic = tagRef; // always reflect the actual tag used
+
+                send(msg);
+                return done && done();
             } catch (err) {
                 node.error(err, msg);
+                return done && done(err);
             }
         });
     }
+
     RED.nodes.registerType("get-tag", FuxaGetTagNode);
-}
+};

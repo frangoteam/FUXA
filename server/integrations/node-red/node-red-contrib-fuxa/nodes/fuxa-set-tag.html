@@ -1,27 +1,36 @@
 <script type="text/javascript">
-    RED.nodes.registerType('set-tag',{
+    RED.nodes.registerType('set-tag', {
         category: 'FUXA',
         color: '#a6bbcf',
         defaults: {
-            name: {value:""},
-            tag: {value:"", required:true}
+            name: { value: "" },
+            tag: { value: "" } // NOT required: empty => uses msg.topic
         },
-        inputs:1,
-        outputs:1,
+        inputs: 1,
+        outputs: 1,
         icon: "white-globe.png",
         label: function() {
-            return this.name||this.tag||"set tag";
+            // If no name and no UI tag, show that it uses msg.topic
+            return this.name || this.tag || "set tag";
         },
         oneditprepare: function() {
+            // Optional: populate datalist for convenience (still works if you type manually)
             $.getJSON('/nodered/fuxa/devices', function(data) {
                 var datalist = $('#fuxa-tags-set');
                 datalist.empty();
-                data.forEach(function(device) {
-                    device.tags.forEach(function(tag) {
-                        datalist.append('<option value="' + tag.name + '">' + device.name + ' - ' + tag.name + '</option>');
+                (data || []).forEach(function(device) {
+                    (device.tags || []).forEach(function(tag) {
+                        datalist.append(
+                            '<option value="' + tag.name + '">' +
+                            device.name + ' - ' + tag.name +
+                            '</option>'
+                        );
                     });
                 });
             });
+
+            // Small helper text under the field
+            $("#node-input-tag").attr("placeholder", "Optional — leave empty to use msg.topic");
         }
     });
 </script>
@@ -31,13 +40,28 @@
         <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
+
     <div class="form-row">
         <label for="node-input-tag"><i class="fa fa-tag"></i> Tag</label>
-        <input type="text" id="node-input-tag" list="fuxa-tags-set" placeholder="Tag Name">
+        <input type="text" id="node-input-tag" list="fuxa-tags-set" placeholder="Optional — leave empty to use msg.topic">
         <datalist id="fuxa-tags-set"></datalist>
+    </div>
+
+    <div class="form-row">
+        <div style="margin-left: 105px; font-size: 12px; color: #666;">
+            If <b>Tag</b> is empty, the node uses <code>msg.topic</code> as the tag name/id.
+        </div>
     </div>
 </script>
 
 <script type="text/x-red" data-help-name="set-tag">
-    <p>Set the value of a FUXA tag to <code>msg.payload</code>.</p>
+    <p>Sets the value of a FUXA tag to <code>msg.payload</code>.</p>
+    <p><b>Tag selection:</b></p>
+    <ul>
+        <li>If the node's <b>Tag</b> field is set, that tag is used.</li>
+        <li>If the node's <b>Tag</b> field is empty, the node uses <code>msg.topic</code> as the tag name/id.</li>
+    </ul>
+    <p><b>Example:</b></p>
+    <pre>msg.topic = "V2";
+msg.payload = true;</pre>
 </script>
