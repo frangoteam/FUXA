@@ -782,6 +782,9 @@
     "device-tag-dialog-title": "Выбор тега",
 
     "device.tag-options-title": "Свойства тегов",
+
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-daq-enabled": "Регистрация включена",
     "device.tag-daq-changed": "Сохранять значения по изменению",
     "device.tag-daq-interval": "Интервал сохранения значений (сек.)",

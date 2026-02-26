@@ -1009,6 +1009,8 @@
 
     "device.tag-format": "數字格式化（2 = #.##）",
     "device.tag-deadband": "死區",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "縮放模式",
     "device.tag-scale-mode-undefined": "無縮放",
     "device.tag-scale-mode-undefined-tooltip": "標籤值",

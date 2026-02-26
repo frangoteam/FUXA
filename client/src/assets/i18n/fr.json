@@ -1009,6 +1009,8 @@
 
   "device.tag-format": "Format du nombre (2 = #.##)",
   "device.tag-deadband": "Zone morte",
+
+  "device.tag-uns-path": "UNS Path",
   "device.tag-scale": "Mode mise à l'échelle / Conversion",
   "device.tag-scale-mode-undefined": "Pas de mise à l'échelle",
   "device.tag-scale-mode-undefined-tooltip": "Valeur du tag",

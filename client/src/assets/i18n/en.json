@@ -1154,6 +1154,8 @@
 
     "device.tag-format": "Format digits (2 = #.##)",
     "device.tag-deadband": "Deadband",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "Scale Mode / Convertion",
     "device.tag-scale-mode-undefined": "No Scaling",
     "device.tag-scale-mode-undefined-tooltip": "Tag Value",

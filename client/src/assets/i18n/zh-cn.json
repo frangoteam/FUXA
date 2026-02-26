@@ -1010,6 +1010,8 @@
 
     "device.tag-format": "格式化数字（2 = #.##）",
     "device.tag-deadband": "死区",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "刻度模式",
     "device.tag-scale-mode-undefined": "无缩放",
     "device.tag-scale-mode-undefined-tooltip": "标签值",

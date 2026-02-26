@@ -50,6 +50,7 @@ function QuestDB(_settings, _log, _currentStorage) {
                 tagid,
                 deviceId,
                 deviceName: deviceName || '',
+                unsPath: normalizeUnsPath(tag.unsPath),
                 value: tag.value,
                 timestamp: tag.timestamp || Date.now(),
             });
@@ -69,6 +70,9 @@ function QuestDB(_settings, _log, _currentStorage) {
                         .symbol('tag_id', row.tagid)
                         .symbol('device_id', row.deviceId)
                         .stringColumn('device_name', row.deviceName);
+                    if (!utils.isNullOrUndefined(row.unsPath)) {
+                        line = line.stringColumn('uns_path', row.unsPath);
+                    }
 
                     if (!utils.isNullOrUndefined(parsedValue.numberValue)) {
                         line = line.floatColumn('number_value', parsedValue.numberValue);
@@ -156,7 +160,8 @@ function QuestDB(_settings, _log, _currentStorage) {
             number_value FLOAT,
             string_value STRING,
             device_id SYMBOL,
-            device_name STRING
+            device_name STRING,
+            uns_path SYMBOL
         ) TIMESTAMP(timestamp) PARTITION BY DAY`);
     }
 
@@ -199,6 +204,14 @@ function QuestDB(_settings, _log, _currentStorage) {
             return { numberValue: value, stringValue: null };
         }
         return { numberValue: null, stringValue: String(value) };
+    }
+
+    function normalizeUnsPath(value) {
+        if (utils.isNullOrUndefined(value)) {
+            return null;
+        }
+        const normalized = String(value).trim();
+        return normalized.length ? normalized : null;
     }
 
     initPromise = this.init();

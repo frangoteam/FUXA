@@ -1031,6 +1031,8 @@
 
     "device.tag-format": "桁数フォーマット (2 = #.##)",
     "device.tag-deadband": "デッドバンド",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "スケーリングモード / 変換",
     "device. tag-scale-mode-undefined": "スケーリングなし",
     "device.tag-scale-mode-undefined-tooltip": "タグ値",

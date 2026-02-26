@@ -673,7 +673,6 @@
 	"msg.project-save-ask": "Projeden çıkmak istiyor musunuz?",
 	"msg.login-username-required": "Kullanıcı adı girin",
 	"msg.login-password-required": "Şifre girin",
-	"msg.signin-failed": "Yetkisiz giriş."
+	"msg.signin-failed": "Yetkisiz giriş.",
+    "device.tag-uns-path": "UNS Path"
 }
-
-

@@ -660,8 +660,6 @@
     "msg.project-save-ask": "De certeza que quer sair do Projeto?",
     "msg.login-username-required": "Entra o Utilizador",
     "msg.login-password-required": "Entra uma palavra-passe",
-    "msg.signin-failed": "Não autorizado"
+    "msg.signin-failed": "Não autorizado",
+    "device.tag-uns-path": "UNS Path"
 }
-
-
-

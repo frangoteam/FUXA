@@ -544,6 +544,9 @@
     "device-tag-dialog-title": "태그 선택",
 
     "device.tag-options-title": "태그 옵션",
+
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-daq-enabled": "등록 활성화",
     "device.tag-daq-changed": "값 변경 가능시 저장",
     "device.tag-daq-interval": "값 차이 저장 (sec.)",

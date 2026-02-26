@@ -834,6 +834,8 @@
     "device.tag-daq-changed": "Wert speichern, wenn geändert",
     "device.tag-daq-interval": "Intervall für Speichern (Sek.)",
     "device.tag-format": "Ziffern formatieren (2 = #.##)",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "Skalierungsmodus",
     "device.tag-scale-mode-undefined": "Keine Skalierung",
     "device.tag-scale-mode-undefined-tooltip": "Tag-Wert",

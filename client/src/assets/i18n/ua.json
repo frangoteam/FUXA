@@ -614,8 +614,6 @@
     "msg.project-save-ask": "При закритті вікна всі не збережені зміни пропадуть!",
     "msg.login-username-required": "Користувач",
     "msg.login-password-required": "Пароль",
-    "msg.signin-failed": "Не авторизований"
+    "msg.signin-failed": "Не авторизований",
+    "device.tag-uns-path": "UNS Path"
 }
-
-
-

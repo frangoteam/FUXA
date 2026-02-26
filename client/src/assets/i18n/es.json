@@ -544,6 +544,9 @@
     "device-tag-dialog-title": "Etiqueta seleccionada",
 
     "device.tag-options-title": "Opciones de etiquetas",
+
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-daq-enabled": "Registration Enabled",
     "device.tag-daq-changed": "Guardar valor si cambia",
     "device.tag-daq-interval": "Intervalo para guardar valor (segundos)",

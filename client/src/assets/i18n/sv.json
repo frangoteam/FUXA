@@ -1003,6 +1003,8 @@
 
     "device.tag-format": "Format decimaler (2 = #.##)",
     "device.tag-deadband": "Deadband",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "Skalningsläge / Konvertering",
     "device.tag-scale-mode-undefined": "Ingen skalning",
     "device.tag-scale-mode-undefined-tooltip": "Taggvärde",
