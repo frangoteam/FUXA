@@ -37,13 +37,14 @@ function getProviderOrFallback() {
     return providers.local;
 }
 
-function normalizeIdentity(identity) {
+async function normalizeIdentity(identity) {
     const normalized = { ...identity };
     const info = normalizeInfo(normalized.info);
-    const roles = normalizeRoles(normalized.roles, info);
+    const rolesRaw = normalizeRoles(normalized.roles, info);
+    const roles = await resolveRoleIds(rolesRaw);
     info.roles = roles;
     normalized.info = JSON.stringify(info);
-    normalized.groups = normalizeLegacyGroups(normalized.groups, roles);
+    normalized.groups = normalizeLegacyGroups(normalized.groups, rolesRaw);
     normalized.roles = roles;
     return normalized;
 }
@@ -110,11 +111,27 @@ async function authenticate(credentials) {
     const provider = getProviderOrFallback();
     try {
         const identity = await provider.authenticate(credentials);
-        return normalizeIdentity(identity);
+        return await normalizeIdentity(identity);
     } catch (err) {
         if (shouldTryLocalFallback(selected, err)) {
             const identity = await providers.local.authenticate(credentials);
-            return normalizeIdentity(identity);
+            return await normalizeIdentity(identity);
+        }
+        throw err;
+    }
+}
+
+async function authenticateByProvider(providerName, credentials, options) {
+    const selected = providerName || getSelectedProviderName();
+    const provider = providers[selected] || providers.local;
+    const allowFallback = !(options && options.allowFallback === false);
+    try {
+        const identity = await provider.authenticate(credentials);
+        return await normalizeIdentity(identity);
+    } catch (err) {
+        if (allowFallback && shouldTryLocalFallback(selected, err)) {
+            const identity = await providers.local.authenticate(credentials);
+            return await normalizeIdentity(identity);
         }
         throw err;
     }
@@ -127,20 +144,20 @@ async function refreshIdentity(context) {
         if (typeof provider.refreshIdentity === 'function') {
             const identity = await provider.refreshIdentity(context);
             if (identity) {
-                return normalizeIdentity(identity);
+                return await normalizeIdentity(identity);
             }
         }
         if (shouldTryLocalFallback(selected)) {
             const identity = await providers.local.refreshIdentity(context);
             if (identity) {
-                return normalizeIdentity(identity);
+                return await normalizeIdentity(identity);
             }
         }
     } catch (err) {
         if (shouldTryLocalFallback(selected, err)) {
             const identity = await providers.local.refreshIdentity(context);
             if (identity) {
-                return normalizeIdentity(identity);
+                return await normalizeIdentity(identity);
             }
         } else {
             throw err;
@@ -169,8 +186,64 @@ function shouldTryLocalFallback(selectedProvider, err) {
     return false;
 }
 
+async function resolveRoleIds(roles) {
+    if (!Array.isArray(roles) || !roles.length) {
+        return [];
+    }
+    if (!settings || !settings.userRole) {
+        return roles;
+    }
+    const lookup = await getRoleLookup();
+    if (!lookup) {
+        return roles;
+    }
+    const resolved = [];
+    for (const role of roles) {
+        if (lookup.byId.has(role)) {
+            resolved.push(role);
+            continue;
+        }
+        const mapped = lookup.byName.get(role.toLowerCase());
+        resolved.push(mapped || role);
+    }
+    return Array.from(new Set(resolved));
+}
+
+async function getRoleLookup() {
+    if (!runtime || !runtime.users || typeof runtime.users.getRoles !== 'function') {
+        return null;
+    }
+    try {
+        const roles = await runtime.users.getRoles();
+        const roleList = Array.isArray(roles) ? roles : [];
+        const byId = new Set();
+        const byName = new Map();
+        for (const role of roleList) {
+            if (!role || !role.id) {
+                continue;
+            }
+            const id = String(role.id);
+            byId.add(id);
+            byName.set(id.toLowerCase(), id);
+            if (role.name) {
+                byName.set(String(role.name).toLowerCase(), id);
+            }
+            if (role.description) {
+                byName.set(String(role.description).toLowerCase(), id);
+            }
+        }
+        return { byId, byName };
+    } catch (err) {
+        if (logger) {
+            logger.error(`auth role lookup failed: ${err.message || err}`);
+        }
+        return null;
+    }
+}
+
 module.exports = {
     init: init,
     authenticate: authenticate,
+    authenticateByProvider: authenticateByProvider,
     refreshIdentity: refreshIdentity
 };

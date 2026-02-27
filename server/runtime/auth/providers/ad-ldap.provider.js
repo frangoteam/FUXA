@@ -16,14 +16,7 @@ function create(context) {
         }
 
         const LdapClient = getLdapClientClass();
-        const client = new LdapClient({
-            url: ad.url,
-            timeout: ad.timeoutMs || 5000,
-            connectTimeout: ad.connectTimeoutMs || 5000,
-            tlsOptions: {
-                rejectUnauthorized: ad.rejectUnauthorized !== false
-            }
-        });
+        const client = new LdapClient(buildClientOptions(ad));
 
         try {
             if (ad.bindDN && ad.bindPassword) {
@@ -83,14 +76,7 @@ function create(context) {
         }
 
         const LdapClient = getLdapClientClass();
-        const client = new LdapClient({
-            url: ad.url,
-            timeout: ad.timeoutMs || 5000,
-            connectTimeout: ad.connectTimeoutMs || 5000,
-            tlsOptions: {
-                rejectUnauthorized: ad.rejectUnauthorized !== false
-            }
-        });
+        const client = new LdapClient(buildClientOptions(ad));
 
         try {
             if (!(ad.bindDN && ad.bindPassword)) {
@@ -147,6 +133,21 @@ function getLdapClientClass() {
     } catch (err) {
         throw createProviderError('ad_ldapts_missing', 'Missing dependency ldapts. Run npm install in server folder.');
     }
+}
+
+function buildClientOptions(ad) {
+    const options = {
+        url: ad.url,
+        timeout: ad.timeoutMs || 5000,
+        connectTimeout: ad.connectTimeoutMs || 5000
+    };
+    // Apply TLS options only for ldaps:// URLs.
+    if (typeof ad.url === 'string' && ad.url.toLowerCase().startsWith('ldaps://')) {
+        options.tlsOptions = {
+            rejectUnauthorized: ad.rejectUnauthorized !== false
+        };
+    }
+    return options;
 }
 
 function buildUserFilter(ad, username) {
