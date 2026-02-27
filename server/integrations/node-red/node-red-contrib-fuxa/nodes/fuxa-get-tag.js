@@ -7,14 +7,20 @@ module.exports = function(RED) {
 
         this.on('input', function(msg) {
             try {
-                var tagId = fuxa.getTagId(config.tag, null);
+                // Prefer config.tagId, fallback to config.tag for backward compatibility
+                var tagId = config.tagId;
+                if (!tagId && config.tag) {
+                    // Backward compatibility: old nodes use tag.name, need to convert to tagId
+                    tagId = fuxa.getTagId(config.tag, null);
+                }
+                
                 if (tagId) {
                     var value = fuxa.getTag(tagId);
                     msg.payload = value;
                     msg.topic = config.tag;  // Set topic to tag name for join operations
                     node.send(msg);
                 } else {
-                    node.error('Tag not found: ' + config.tag, msg);
+                    node.error('Tag not found: ' + (config.tag || config.tagId), msg);
                 }
             } catch (err) {
                 node.error(err, msg);
