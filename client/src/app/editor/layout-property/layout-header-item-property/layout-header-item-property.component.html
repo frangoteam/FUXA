@@ -4,34 +4,11 @@
     <div mat-dialog-content>
         <div class="my-form-field block mb10">
             <span>{{'dlg.headeritem-icon' | translate}}</span>
-            <mat-select [(value)]="item.icon"
-                        panelWidth="310px"
-                        class="icons-selector"
-                        #iconsel>
-                <mat-select-trigger>
-                    <mat-icon>{{iconsel.value}}</mat-icon>
-                </mat-select-trigger>
-                <!-- <mat-option [value]="'image'" (click)="imagefile.value = '';imagefile.click();">
-                  {{'dlg.menuitem-image' | translate}}
-                  <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/png|jpg|svg" />
-              </mat-option> -->
-              <mat-option>
-                    <div class="my-form-field">
-                        <input
-                            matInput
-                            [(ngModel)]="filterText"
-                            (input)="onFilterChange()"
-                            (click)="$event.stopPropagation()"
-                            (keydown)="$event.stopPropagation()"
-                            placeholder="{{'dlg.headeritem-icons-filter' | translate}}"
-                            type="text"
-                            autocomplete="off"/>
-                    </div>
-                </mat-option>
-                <mat-option *ngFor="let icon of filteredIcons$ | async" [value]="icon" (click)="item.image = ''" style="display: inline-block !important;">
-                    <mat-icon class="">{{ icon }}</mat-icon>
-                </mat-option>
-            </mat-select>
+            <app-icon-selector
+                [(value)]="item.icon"
+                [filterPlaceholder]="'dlg.headeritem-icons-filter'"
+                (selected)="item.image = ''">
+            </app-icon-selector>
         </div>
         <div class="block mt10">
             <div class="my-form-field ftl">
@@ -57,13 +34,13 @@
             <span>{{'dlg.layout-nav-bkcolor' | translate}}</span>
             <input [(colorPicker)]="item.bkcolor" [style.background]="item.bkcolor" [cpAlphaChannel]="'always'" class="input-color" [cpPresetColors]="defaultColor"
                 [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-                [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;" [cpPosition]="'bottom'" />
+                [cpOKButtonClass]="'cpOKButtonClass'" style="width:120px;" [cpPosition]="'bottom'" />
         </div>
         <div class="my-form-field ftr mt10">
             <span>{{'dlg.layout-nav-fgcolor' | translate}}</span>
             <input [(colorPicker)]="item.fgcolor" [style.background]="item.fgcolor" [cpAlphaChannel]="'always'" class="input-color" [cpPresetColors]="defaultColor"
                 [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'"
-                [cpOKButtonClass]="'cpOKButtonClass'" style="width:126px;" [cpPosition]="'bottom'" />
+                [cpOKButtonClass]="'cpOKButtonClass'" style="width:120px;" [cpPosition]="'bottom'" />
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

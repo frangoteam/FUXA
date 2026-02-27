@@ -31,7 +31,7 @@ export class AuthInterceptor implements HttpInterceptor {
         }
 
         const authService = this.injector.get(AuthService);
-        if (authService.getUserToken) {
+        if (!skipAuth && authService.getUserToken) {
             const token = authService.getUserToken();
             if (token != null) {
                 const user = authService.getUser();

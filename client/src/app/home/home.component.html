@@ -25,7 +25,10 @@
 								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
 								[style.marginLeft.px]="item.marginLeft"
 								[style.marginRight.px]="item.marginRight">
-								<mat-icon *ngIf="item.icon">{{item.icon}}</mat-icon>
+							<mat-icon *ngIf="item.icon"
+									  style="font-size: 1.5rem; height: 1.5rem; width: 1.5rem;">
+								{{item.icon}}
+							</mat-icon>
 							{{ item.text ?? item.type }}
 						</button>
 					</ng-container>
