@@ -53,11 +53,13 @@ function verifyToken (req, res, next) {
             if (err) {
                 req.userId = "guest";
                 req.userGroups = ["guest"];
+                req.userRoles = [];
                 req.isAuthenticated = false;
                 return next();
             }
             req.userId = decoded.id;
             req.userGroups = decoded.groups;
+            req.userRoles = decoded.roles;
             req.isAuthenticated = true;
             return next();
         });
@@ -65,6 +67,7 @@ function verifyToken (req, res, next) {
         // notice that no token was provided...}
         req.userId = null;
         req.userGroups = null;
+        req.userRoles = null;
         return next();
     }
 }
@@ -103,6 +106,7 @@ function requireAuth (req, res, next) {
         } else {
             req.userId = decoded.id;
             req.userGroups = decoded.groups;
+            req.userRoles = decoded.roles;
             next();
         }
     });
@@ -115,7 +119,8 @@ function getNewTokenFromRequest(req) {
 
     return jwt.sign({
         id: req.userId,
-        groups: req.userGroups
+        groups: req.userGroups,
+        roles: req.userRoles
     }, secretCode, {
         expiresIn: tokenExpiresIn
     });
@@ -124,7 +129,8 @@ function getNewTokenFromRequest(req) {
 function getGuestToken() {
     const token = jwt.sign({
             id: "guest",
-            groups: ["guest"]
+            groups: ["guest"],
+            roles: []
         },
         secretCode, {
             expiresIn: tokenExpiresIn
@@ -144,6 +150,16 @@ function isGuestUser(userId, userGroups) {
 
 function haveAdminPermission(permission) {
     if (permission === null || permission === undefined) {
+        return false;
+    }
+    if (typeof permission === 'object') {
+        const roles = permission && permission.info && Array.isArray(permission.info.roles) ? permission.info.roles : [];
+        if (roles.some(role => typeof role === 'string' && ['admin', 'administrator'].includes(role.toLowerCase()))) {
+            return true;
+        }
+        if (typeof permission.groups === 'number') {
+            return adminGroups.indexOf(permission.groups) !== -1;
+        }
         return false;
     }
     if (adminGroups.indexOf(permission) !== -1) {

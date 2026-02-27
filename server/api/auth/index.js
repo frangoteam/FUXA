@@ -3,7 +3,6 @@
  */
 
 var express = require('express');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authJwt = require('../jwt-helper');
 
@@ -48,11 +47,29 @@ function getCookieValue(req, name) {
 }
 
 function buildAccessToken(user) {
-    return jwt.sign({ id: user.username, groups: user.groups }, secretCode, { expiresIn: tokenExpiresIn });
+    return jwt.sign({ id: user.username, groups: user.groups, roles: extractRoles(user.info) }, secretCode, { expiresIn: tokenExpiresIn });
 }
 
 function buildRefreshToken(user) {
-    return jwt.sign({ id: user.username, groups: user.groups, type: 'refresh' }, secretCode, { expiresIn: refreshTokenExpiresIn });
+    return jwt.sign({ id: user.username, groups: user.groups, roles: extractRoles(user.info), type: 'refresh' }, secretCode, { expiresIn: refreshTokenExpiresIn });
+}
+
+function extractRoles(info) {
+    if (!info) {
+        return [];
+    }
+    if (typeof info === 'string') {
+        try {
+            const parsed = JSON.parse(info);
+            return Array.isArray(parsed.roles) ? parsed.roles : [];
+        } catch (err) {
+            return [];
+        }
+    }
+    if (typeof info === 'object') {
+        return Array.isArray(info.roles) ? info.roles : [];
+    }
+    return [];
 }
 
 function setRefreshCookie(res, token) {
@@ -97,43 +114,44 @@ module.exports = {
          * POST SignIn
          * Sign In with User credentials
          */
-        authApp.post('/api/signin', function (req, res, next) {
-            runtime.users.findOne(req.body).then(function (userInfo) {
-                if (userInfo && userInfo.length && userInfo[0].password) {
-                    if (bcrypt.compareSync(req.body.password, userInfo[0].password)) {
-                        const token = buildAccessToken(userInfo[0]);
-                        if (enableRefreshCookieAuth) {
-                            const refreshToken = buildRefreshToken(userInfo[0]);
-                            setRefreshCookie(res, refreshToken);
-                        }
-                        res.json({
-                            status: 'success',
-                            message: 'user found!!!',
-                            data: {
-                                username: userInfo[0].username,
-                                fullname: userInfo[0].fullname,
-                                groups: userInfo[0].groups,
-                                info: userInfo[0].info,
-                                token: token
-                            }
-                        });
-                        runtime.logger.info('api-signin: ' + userInfo[0].username + ' ' + userInfo[0].fullname + ' ' + userInfo[0].groups);
-                    } else {
-                        res.status(401).json({ status: 'error', message: 'Invalid email/password!!!', data: null });
-                        runtime.logger.error('api post signin: Invalid email/password!!!');
+        authApp.post('/api/signin', async function (req, res, next) {
+            try {
+                const userInfo = await runtime.auth.authenticate(req.body);
+                const token = buildAccessToken(userInfo);
+                if (enableRefreshCookieAuth) {
+                    const refreshToken = buildRefreshToken(userInfo);
+                    setRefreshCookie(res, refreshToken);
+                }
+                res.json({
+                    status: 'success',
+                    message: 'user found!!!',
+                    data: {
+                        username: userInfo.username,
+                        fullname: userInfo.fullname,
+                        groups: userInfo.groups,
+                        info: userInfo.info,
+                        token: token
                     }
-                } else {
+                });
+                runtime.logger.info('api-signin: ' + userInfo.username + ' ' + userInfo.fullname + ' ' + userInfo.groups);
+            } catch (err) {
+                if (err.status === 401) {
+                    res.status(401).json({ status: 'error', message: 'Invalid email/password!!!', data: null });
+                    runtime.logger.error('api post signin: Invalid email/password!!!');
+                    return;
+                }
+                if (err.status === 404) {
                     res.status(404).end();
                     runtime.logger.error('api post signin: Not Found!');
+                    return;
                 }
-            }).catch(function (err) {
                 if (err.code) {
-                    res.status(400).json({error:err.code, message: err.message});
+                    res.status(400).json({ error: err.code, message: err.message });
                 } else {
-                    res.status(400).json({error:'unexpected_error', message:err.toString()});
+                    res.status(400).json({ error: 'unexpected_error', message: err.toString() });
                 }
                 runtime.logger.error('api post signin: ' + err.message);
-            });
+            }
         });
 
         /**
@@ -157,10 +175,7 @@ module.exports = {
 
                 let userData = null;
                 try {
-                    const users = await runtime.users.getUsers({ username: decoded.id });
-                    if (users && users.length) {
-                        userData = users[0];
-                    }
+                    userData = await runtime.auth.refreshIdentity({ username: decoded.id, groups: decoded.groups, roles: decoded.roles });
                 } catch (err) {
                     runtime.logger.error(`api refresh: user lookup failed ${err}`);
                 }
@@ -168,8 +183,8 @@ module.exports = {
                 const user = {
                     username: decoded.id,
                     fullname: userData?.fullname,
-                    groups: userData?.groups || decoded.groups,
-                    info: userData?.info
+                    groups: userData?.groups ?? decoded.groups,
+                    info: userData?.info || JSON.stringify({ roles: Array.isArray(decoded.roles) ? decoded.roles : [] })
                 };
 
                 const newAccessToken = buildAccessToken(user);
