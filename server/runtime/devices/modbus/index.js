@@ -168,8 +168,16 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 	};
 
 	this._polling = async function () {
+		// Safety check: if port was disconnected, do not attempt to poll
+		if (!client.isOpen) {
+			_emitStatus("connect-off");
+			return;
+		}
+
 		if (_checkWorking(true)) {
 			try {
+				const readDelay = parseInt(data.property.delay) || 10;
+
 				// --- STEP 1: WRITE PHASE (Handle User Commands via Shadow Registry) ---
 				for (let sigid of Array.from(this.dirtyTags)) {
 					try {
@@ -186,18 +194,21 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 								true,
 							);
 
-							// Clear flag after successful physical write
 							this.dirtyTags.delete(sigid);
 							this.desiredState.delete(sigid);
-
-							await delay(50); // Guard interval for hardware stabilization
+							await delay(readDelay);
 						} else {
 							this.dirtyTags.delete(sigid);
 							this.desiredState.delete(sigid);
 						}
 					} catch (reason) {
+						let errMsg =
+							reason.message ||
+							(typeof reason === "object"
+								? JSON.stringify(reason)
+								: reason);
 						logger.error(
-							`'${data.name}' Write phase error for ${sigid}: ${reason.stack || reason}`,
+							`'${data.name}' Write phase error for ${sigid}: ${errMsg}`,
 						);
 						// Clear to prevent infinite looping on dead registers. User can retry interaction.
 						this.dirtyTags.delete(sigid);
@@ -206,55 +217,60 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 				}
 
 				// --- STEP 2: READ PHASE (Verification & Actual State) ---
-				var readVarsfnc = [];
+				var results = [];
+
 				if (!data.property.options) {
 					for (var memaddr in memory) {
-						var tokenizedAddress = parseAddress(memaddr);
 						try {
-							readVarsfnc.push(
-								await _readMemory(
-									parseInt(tokenizedAddress.address),
-									memory[memaddr].Start,
-									memory[memaddr].MaxSize,
-									Object.values(memory[memaddr].Items),
-								),
+							var tokenizedAddress = parseAddress(memaddr);
+							var vars = await _readMemory(
+								parseInt(tokenizedAddress.address),
+								memory[memaddr].Start,
+								memory[memaddr].MaxSize,
+								Object.values(memory[memaddr].Items),
 							);
-							readVarsfnc.push(
-								await delay(data.property.delay || 10),
-							);
+
+							if (vars && vars.length > 0) results.push(vars);
+							await delay(readDelay);
 						} catch (err) {
+							let errMsg =
+								err.message ||
+								(typeof err === "object"
+									? JSON.stringify(err)
+									: err);
 							logger.error(
-								`'${data.name}' _readMemory error! ${err}`,
+								`'${data.name}' _readMemory error! ${errMsg}`,
 							);
 						}
 					}
 				} else {
 					for (var memaddr in mixItemsMap) {
 						try {
-							readVarsfnc.push(
-								await _readMemory(
-									getMemoryAddress(parseInt(memaddr), false),
-									mixItemsMap[memaddr].Start,
-									mixItemsMap[memaddr].MaxSize,
-									Object.values(mixItemsMap[memaddr].Items),
-								),
+							var vars = await _readMemory(
+								getMemoryAddress(parseInt(memaddr), false),
+								mixItemsMap[memaddr].Start,
+								mixItemsMap[memaddr].MaxSize,
+								Object.values(mixItemsMap[memaddr].Items),
 							);
-							readVarsfnc.push(
-								await delay(data.property.delay || 10),
-							);
+
+							if (vars && vars.length > 0) results.push(vars);
+							await delay(readDelay);
 						} catch (err) {
+							let errMsg =
+								err.message ||
+								(typeof err === "object"
+									? JSON.stringify(err)
+									: err);
 							logger.error(
-								`'${data.name}' _readMemory error! ${err}`,
+								`'${data.name}' _readMemory error! ${errMsg}`,
 							);
 						}
 					}
 				}
 
 				// --- STEP 3: UPDATE & EMIT PHASE ---
-				const result = await Promise.all(readVarsfnc);
-
-				if (result.length) {
-					let varsValueChanged = await _updateVarsValue(result);
+				if (results.length > 0) {
+					let varsValueChanged = await _updateVarsValue(results);
 					lastTimestampValue = new Date().getTime();
 					// UI ONLY updates here, confirming write success automatically!
 					_emitValues(varsValue);
@@ -267,23 +283,18 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 					_emitStatus("connect-ok");
 				}
 			} catch (reason) {
-				if (reason) {
-					if (reason.stack) {
-						logger.error(
-							`'${data.name}' _readVars error! ${reason.stack}`,
-						);
-					} else if (reason.message) {
-						logger.error(
-							`'${data.name}' _readVars error! ${reason.message}`,
-						);
-					}
-				} else {
-					logger.error(`'${data.name}' _readVars error! ${reason}`);
-				}
+				let errMsg =
+					reason.stack ||
+					reason.message ||
+					(typeof reason === "object"
+						? JSON.stringify(reason)
+						: reason);
+				logger.error(`'${data.name}' _polling error! ${errMsg}`);
 			} finally {
 				_checkWorking(false);
 			}
 		} else {
+			// Emitting connect-busy indicates the cycle was skipped due to overlap, but port remains open.
 			_emitStatus("connect-busy");
 		}
 	};
@@ -983,17 +994,13 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 	var _checkWorking = function (check) {
 		if (check && working) {
 			overloading++;
-			// !The driver don't give the break connection
-			if (overloading >= 3) {
-				if (type !== ModbusTypes.RTU) {
-					logger.warn(
-						`'${data.name}' working (connection || polling) overload! ${overloading}`,
-					);
-				}
-				client.close();
-			} else {
-				return false;
+			if (overloading % 5 === 0) {
+				// Log a warning every 5 skipped cycles so it doesn't spam
+				logger.warn(
+					`'${data.name}' polling overload! Skipping cycle. Delay might be too short.`,
+				);
 			}
+			return false; // Skip this cycle, DO NOT call client.close()
 		}
 		working = check;
 		overloading = 0;
