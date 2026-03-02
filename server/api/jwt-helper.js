@@ -1,9 +1,11 @@
 'use strict';
 
 const jwt = require('jsonwebtoken');
+const utils = require('../runtime/utils');
 
 var secureEnabled = false;
-var secretCode = 'frangoteam751';
+// Runtime fallback secret used only when no persistent secret is configured.
+var secretCode = utils.generateSecretCode();
 var tokenExpiresIn = 60 * 60;   // 60 minutes
 const adminGroups = [-1, 255];
 

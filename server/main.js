@@ -194,6 +194,12 @@ try {
     logger.error('Error loading user settings file: ' + userSettingsFile)
 }
 
+// Ensure secure mode never runs with an empty/static-known JWT secret.
+if (settings.secureEnabled && !settings.secretCode) {
+    settings.secretCode = utils.generateSecretCode();
+    logger.warn('Generated a random JWT secret in memory because secureEnabled=true and secretCode was missing. Persist it in settings for stable sessions across restarts.');
+}
+
 // Check logger
 if (!settings.logDir) {
     settings.logDir = path.resolve(rootDir, '_logs');
