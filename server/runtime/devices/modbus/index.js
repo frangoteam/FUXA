@@ -27,6 +27,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 	var type;
 	var runtime = _runtime; // Access runtime config such as scripts
 
+	// --- NEW ARCHITECTURE: Shadow-Registry / State-Machine Buffers ---
+	this.desiredState = new Map(); // Command buffer mapping tag IDs to raw values to be written
+	this.dirtyTags = new Set(); // Tracker for tag IDs that have pending writes
+	// -----------------------------------------------------------------
+
 	/**
 	 * initialize the modubus type
 	 */
@@ -161,75 +166,125 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 			}
 		}
 	};
+
 	this._polling = async function () {
-		// Only proceed if not already working
 		if (_checkWorking(true)) {
 			try {
-				const mapToUse = !data.property.options ? memory : mixItemsMap;
-				let varsValueChanged = {};
-
-				for (var memaddr in mapToUse) {
+				// --- STEP 1: WRITE PHASE (Handle User Commands via Shadow Registry) ---
+				for (let sigid of Array.from(this.dirtyTags)) {
 					try {
-						// Extract addresses (keeping your existing logic)
-						let addr, start, size, items;
-						if (!data.property.options) {
-							var tokenizedAddress = parseAddress(memaddr);
-							addr = parseInt(tokenizedAddress.address);
-							start = memory[memaddr].Start;
-							size = memory[memaddr].MaxSize;
-							items = Object.values(memory[memaddr].Items);
+						const tag = data.tags[sigid];
+						if (tag) {
+							const memaddr = parseInt(tag.memaddress);
+							const offset = parseInt(tag.address) - 1;
+							const val = this.desiredState.get(sigid);
+
+							await _writeMemory(memaddr, offset, val);
+							logger.info(
+								`'${data.name}' _writeMemory(${sigid}, ${val}) success`,
+								true,
+								true,
+							);
+
+							// Clear flag after successful physical write
+							this.dirtyTags.delete(sigid);
+							this.desiredState.delete(sigid);
+
+							await delay(50); // Guard interval for hardware stabilization
 						} else {
-							addr = getMemoryAddress(parseInt(memaddr), false);
-							start = mixItemsMap[memaddr].Start;
-							size = mixItemsMap[memaddr].MaxSize;
-							items = Object.values(mixItemsMap[memaddr].Items);
+							this.dirtyTags.delete(sigid);
+							this.desiredState.delete(sigid);
 						}
-
-						// The await ensures we don't collide on the serial line
-						const result = await _readMemory(
-							addr,
-							start,
-							size,
-							items,
-						);
-
-						if (result) {
-							let changed = await _updateVarsValue([result]);
-							Object.assign(varsValueChanged, changed);
-						}
-
-						// Crucial: wait for the physical device to "reset" its buffer
-						await delay(data.property.delay || 30);
-					} catch (err) {
-						// Log the actual error message instead of [object Object]
+					} catch (reason) {
 						logger.error(
-							`'${data.name}' _readMemory error! ${err.message || err}`,
+							`'${data.name}' Write phase error for ${sigid}: ${reason.stack || reason}`,
 						);
+						// Clear to prevent infinite looping on dead registers. User can retry interaction.
+						this.dirtyTags.delete(sigid);
+						this.desiredState.delete(sigid);
 					}
 				}
 
-				lastTimestampValue = new Date().getTime();
-				_emitValues(varsValue);
-
-				if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
-					this.addDaq(varsValueChanged, data.name, data.id);
+				// --- STEP 2: READ PHASE (Verification & Actual State) ---
+				var readVarsfnc = [];
+				if (!data.property.options) {
+					for (var memaddr in memory) {
+						var tokenizedAddress = parseAddress(memaddr);
+						try {
+							readVarsfnc.push(
+								await _readMemory(
+									parseInt(tokenizedAddress.address),
+									memory[memaddr].Start,
+									memory[memaddr].MaxSize,
+									Object.values(memory[memaddr].Items),
+								),
+							);
+							readVarsfnc.push(
+								await delay(data.property.delay || 10),
+							);
+						} catch (err) {
+							logger.error(
+								`'${data.name}' _readMemory error! ${err}`,
+							);
+						}
+					}
+				} else {
+					for (var memaddr in mixItemsMap) {
+						try {
+							readVarsfnc.push(
+								await _readMemory(
+									getMemoryAddress(parseInt(memaddr), false),
+									mixItemsMap[memaddr].Start,
+									mixItemsMap[memaddr].MaxSize,
+									Object.values(mixItemsMap[memaddr].Items),
+								),
+							);
+							readVarsfnc.push(
+								await delay(data.property.delay || 10),
+							);
+						} catch (err) {
+							logger.error(
+								`'${data.name}' _readMemory error! ${err}`,
+							);
+						}
+					}
 				}
 
-				if (lastStatus !== "connect-ok") _emitStatus("connect-ok");
+				// --- STEP 3: UPDATE & EMIT PHASE ---
+				const result = await Promise.all(readVarsfnc);
+
+				if (result.length) {
+					let varsValueChanged = await _updateVarsValue(result);
+					lastTimestampValue = new Date().getTime();
+					// UI ONLY updates here, confirming write success automatically!
+					_emitValues(varsValue);
+					if (this.addDaq && !utils.isEmptyObject(varsValueChanged)) {
+						this.addDaq(varsValueChanged, data.name, data.id);
+					}
+				}
+
+				if (lastStatus !== "connect-ok") {
+					_emitStatus("connect-ok");
+				}
 			} catch (reason) {
-				logger.error(
-					`'${data.name}' _polling error! ${reason.message || reason}`,
-				);
+				if (reason) {
+					if (reason.stack) {
+						logger.error(
+							`'${data.name}' _readVars error! ${reason.stack}`,
+						);
+					} else if (reason.message) {
+						logger.error(
+							`'${data.name}' _readVars error! ${reason.message}`,
+						);
+					}
+				} else {
+					logger.error(`'${data.name}' _readVars error! ${reason}`);
+				}
 			} finally {
-				// ALWAYS set working to false when the loop is totally done
 				_checkWorking(false);
 			}
 		} else {
-			// If we get here, it means a poll was skipped because the previous one is still running.
-			// This is NORMAL for slow RTU devices; don't let it trigger a disconnect.
-			if (lastStatus === "connect-ok") {
-				logger.debug("Device busy, skipping poll");
-			}
+			_emitStatus("connect-busy");
 		}
 	};
 
@@ -240,6 +295,8 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 		data = JSON.parse(JSON.stringify(_data));
 		memory = {};
 		varsValue = [];
+		this.desiredState.clear();
+		this.dirtyTags.clear();
 		// memItemsMap = {};
 		mixItemsMap = {}; // Map the fragmented tag { key = start address, value = MemoryItems }
 		var stepsMap = {}; // Map the tag start address and size { key = start address, value = signal size and offset }
@@ -381,12 +438,10 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 
 	/**
 	 * Set the Tag value
-	 * Read the current Tag object, write the value in object and send to SPS
+	 * Appends command to the desiredState buffer - write is executed during next cyclic polling
 	 */
 	this.setValue = async function (sigid, value) {
 		if (data.tags[sigid]) {
-			var memaddr = data.tags[sigid].memaddress;
-			var offset = parseInt(data.tags[sigid].address) - 1; // because settings address from 1 to 65536 but communication start from 0
 			value = await deviceUtils.tagRawCalculator(value, data.tags[sigid]);
 
 			const divVal = convertValue(value, data.tags[sigid].divisor, true);
@@ -436,63 +491,17 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 				val = datatypes[data.tags[sigid].type].formatter(divVal);
 			}
 
-			// Wait logic for RTU removed, o Mutex will control concurrency.
-			// if (type === ModbusTypes.RTU) {
-			//     const start = Date.now();
-			//     let now = start;
-			//     while ((now - start) < 3000 && working) {  // wait max 3 seconds
-			//         now = Date.now();
-			//         await delay(20);
-			//     }
-			// }
+			// --- NEW ARCHITECTURE: Intent Tracking ---
+			// Decouple UI from Modbus packet generation. Record intent and satisfy later.
+			this.desiredState.set(sigid, val);
+			this.dirtyTags.add(sigid);
 
-			let socketRelease;
-			try {
-				// Connexion/Resource reutilization logic (Socket/Serial) for TCP and RTU
-				if (data.property.socketReuse) {
-					let resourceKey;
-					if (type === ModbusTypes.TCP || type === ModbusTypes.RTU) {
-						// For TCP: socket addres. For RTU: serial port address
-						resourceKey = data.property.address;
-					}
+			logger.info(
+				`'${data.name}' setValue intent recorded for (${sigid}, ${value})`,
+				true,
+				true,
+			);
 
-					if (resourceKey && runtime.socketMutex.has(resourceKey)) {
-						socketRelease = await runtime.socketMutex
-							.get(resourceKey)
-							.acquire();
-					}
-				}
-
-				_checkWorking(true);
-
-				await _writeMemory(parseInt(memaddr), offset, val).then(
-					(result) => {
-						logger.info(
-							`'${data.name}' setValue(${sigid}, ${value})`,
-							true,
-							true,
-						);
-					},
-					(reason) => {
-						if (reason && reason.stack) {
-							logger.error(
-								`'${data.name}' _writeMemory error! ${reason.stack}`,
-							);
-						} else {
-							logger.error(
-								`'${data.name}' _writeMemory error! ${reason}`,
-							);
-						}
-					},
-				);
-			} catch (err) {
-				logger.error(`'${data.name}' setValue error! ${err}`);
-			} finally {
-				_checkWorking(false);
-				if (!utils.isNullOrUndefined(socketRelease)) {
-					socketRelease();
-				}
-			}
 			return true;
 		} else {
 			logger.error(
@@ -871,12 +880,15 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 	 * Clear the Tags values by setting to null
 	 * Emit to clients
 	 */
-	var _clearVarsValue = function () {
+	var _clearVarsValue = () => {
+		if (this.dirtyTags) this.dirtyTags.clear();
+		if (this.desiredState) this.desiredState.clear();
+
 		for (var id in varsValue) {
 			varsValue[id].value = null;
 		}
 		for (var id in memItemsMap) {
-			memItemsMap[id].value = null;
+			if (memItemsMap[id]) memItemsMap[id].value = null;
 		}
 		_emitValues(varsValue);
 	};
@@ -971,25 +983,20 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 	var _checkWorking = function (check) {
 		if (check && working) {
 			overloading++;
-			// Increase threshold and NEVER close the client if it's RTU
-			// Closing a serial port abruptly causes the "Port Not Open" loop.
-			if (overloading >= 10) {
+			// !The driver don't give the break connection
+			if (overloading >= 3) {
 				if (type !== ModbusTypes.RTU) {
 					logger.warn(
-						`'${data.name}' working overload! ${overloading}`,
+						`'${data.name}' working (connection || polling) overload! ${overloading}`,
 					);
-					client.close();
 				}
+				client.close();
+			} else {
+				return false;
 			}
-			return false; // Tell the caller we are busy
 		}
-
-		if (check) {
-			working = true;
-		} else {
-			working = false;
-			overloading = 0;
-		}
+		working = check;
+		overloading = 0;
 		return true;
 	};
 
