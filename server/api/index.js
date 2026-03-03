@@ -146,6 +146,10 @@ function init(_server, _runtime) {
                         if (!req.body.secretCode && runtime.settings.secretCode) {
                             req.body.secretCode = runtime.settings.secretCode;
                         }
+                        if (req.body.secureEnabled && !req.body.secretCode) {
+                            req.body.secretCode = utils.generateSecretCode();
+                            runtime.logger.warn('Generated random JWT secret because secureEnabled=true and no secretCode was provided.');
+                        }
                         const prevAuth = {
                             secureEnabled: runtime.settings.secureEnabled,
                             tokenExpiresIn: runtime.settings.tokenExpiresIn,

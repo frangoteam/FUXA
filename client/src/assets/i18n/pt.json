@@ -625,6 +625,12 @@
     "dlg.app-language-zh-cn": "Chinês",
     "dlg.app-settings-server-port": "Servidor está à escuta no porto",
     "dlg.app-settings-auth-token": "Autentificar com Token",
+    "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-auth-disabled": "Desativado",
     "dlg.app-auth-expiration-15m": "Ativar token com expiração em 15 minutos.",
     "dlg.app-auth-expiration-1h": "Ativar token com expiração em 1 horas.",
@@ -656,5 +662,6 @@
     "msg.project-save-ask": "De certeza que quer sair do Projeto?",
     "msg.login-username-required": "Entra o Utilizador",
     "msg.login-password-required": "Entra uma palavra-passe",
-    "msg.signin-failed": "Não autorizado"
+    "msg.signin-failed": "Não autorizado",
+    "device.tag-uns-path": "UNS Path"
 }

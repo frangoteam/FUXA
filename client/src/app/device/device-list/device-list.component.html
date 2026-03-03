@@ -86,6 +86,14 @@
                     <mat-cell *matCellDef="let element" matTooltip="{{element.description}}">{{ element.description }}</mat-cell>
                 </ng-container>
 
+                <!-- UNS Column -->
+                <ng-container matColumnDef="uns">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <mat-icon *ngIf="element.unsPath" [matTooltip]="element.unsPath" matTooltipPosition="left">account_tree</mat-icon>
+                    </mat-cell>
+                </ng-container>
+
                 <!-- Logger Column -->
                 <ng-container matColumnDef="logger">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> </mat-header-cell>

@@ -982,6 +982,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     onStartCurrent() {
         this.onSaveProject();
+        if (this.projectService.cleanView(this.currentView)) {
+            this.onSaveProject();
+        }
         this.winRef.nativeWindow.open('lab', 'MyTest', 'width=800,height=640,menubar=0');
     }
     //#endregion

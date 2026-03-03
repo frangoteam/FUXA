@@ -834,6 +834,8 @@
     "device.tag-daq-changed": "Wert speichern, wenn geändert",
     "device.tag-daq-interval": "Intervall für Speichern (Sek.)",
     "device.tag-format": "Ziffern formatieren (2 = #.##)",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "Skalierungsmodus",
     "device.tag-scale-mode-undefined": "Keine Skalierung",
     "device.tag-scale-mode-undefined-tooltip": "Tag-Wert",
@@ -1240,6 +1242,11 @@
     "dlg.app-settings-daqstore": "DAQ-Speicher",
     "dlg.app-settings-daqstore-type": "Datenbanktyp",
     "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-settings-daqstore-token": "Token",
     "dlg.app-settings-daqstore-bucket": "Bucket",
     "dlg.app-settings-daqstore-organization": "Organisation",
@@ -1306,3 +1313,6 @@
     "msg.report-build-error": "Senden zum Erstellen des Berichts fehlgeschlagen!",
     "msg.device-tags-request-result": "Lade {{value}} von {{current}}"
 }
+
+
+

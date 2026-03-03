@@ -4,34 +4,11 @@
     <div mat-dialog-content>
         <div class="my-form-field block mb10">
             <span>{{'dlg.headeritem-icon' | translate}}</span>
-            <mat-select [(value)]="item.icon"
-                        panelWidth="310px"
-                        class="icons-selector"
-                        #iconsel>
-                <mat-select-trigger>
-                    <mat-icon>{{iconsel.value}}</mat-icon>
-                </mat-select-trigger>
-                <!-- <mat-option [value]="'image'" (click)="imagefile.value = '';imagefile.click();">
-                  {{'dlg.menuitem-image' | translate}}
-                  <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/png|jpg|svg" />
-              </mat-option> -->
-              <mat-option>
-                    <div class="my-form-field">
-                        <input
-                            matInput
-                            [(ngModel)]="filterText"
-                            (input)="onFilterChange()"
-                            (click)="$event.stopPropagation()"
-                            (keydown)="$event.stopPropagation()"
-                            placeholder="{{'dlg.headeritem-icons-filter' | translate}}"
-                            type="text"
-                            autocomplete="off"/>
-                    </div>
-                </mat-option>
-                <mat-option *ngFor="let icon of filteredIcons$ | async" [value]="icon" (click)="item.image = ''" style="display: inline-block !important;">
-                    <mat-icon class="">{{ icon }}</mat-icon>
-                </mat-option>
-            </mat-select>
+            <app-icon-selector
+                [(value)]="item.icon"
+                [filterPlaceholder]="'dlg.headeritem-icons-filter'"
+                (selected)="item.image = ''">
+            </app-icon-selector>
         </div>
         <div class="block mt10">
             <div class="my-form-field ftl">
