@@ -742,6 +742,8 @@
     "dlg.app-settings-daqstore-url": "URL",
     "dlg.app-settings-daqstore-configurl": "Config URL",
     "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
     "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-auth-disabled": "Deshabilitado",
     "dlg.app-auth-expiration-15m": "Habilitado con token expira en 15 min.",

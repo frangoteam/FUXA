@@ -9,7 +9,6 @@ const path = require('path');
 const SqliteDB = require("./sqlite");
 const InfluxDB = require("./influxdb");
 const TDengine  =require("./tdengine");
-const QuestDB = require("./questdb");
 const CurrentStorage = require("./sqlite/currentstorage");
 // var DaqNode = require('./daqnode');
 var calculator = require('./calculator');
@@ -22,6 +21,7 @@ var logger;
 var daqDB = {};                 // list of daqDB node: SQlite one pro device, influxDB only one
 var currentStorateDB;
 var runtime;
+var questDbModule = null;
 
 function init(_settings, _log, _runtime) {
     settings = _settings;
@@ -52,7 +52,13 @@ function addDaqNode(_id, fncgetprop) {
         } else if(id === DaqStoreTypeEnum.TDengine){
             daqDB[id] = TDengine.create(settings, logger, currentStorateDB);
         } else if(id === DaqStoreTypeEnum.questDB){
-            daqDB[id] = QuestDB.create(settings, logger, currentStorateDB);
+            const QuestDB = _getQuestDbModule();
+            if (QuestDB) {
+                daqDB[id] = QuestDB.create(settings, logger, currentStorateDB);
+            } else {
+                logger.warn('daqstorage: QuestDB storage selected but package dependencies are not installed. Falling back to SQLite.');
+                daqDB[id] = SqliteDB.create(settings, logger, id, currentStorateDB);
+            }
         } else {
             daqDB[id] = SqliteDB.create(settings, logger, id, currentStorateDB);
         }
@@ -169,6 +175,19 @@ function _getDbType() {
         return settings.daqstore.type;
     }
     return DaqStoreTypeEnum.SQlite;
+}
+
+function _getQuestDbModule() {
+    if (questDbModule) {
+        return questDbModule;
+    }
+    try {
+        questDbModule = require("./questdb");
+    } catch (err) {
+        questDbModule = null;
+        logger.warn(`daqstorage: QuestDB module unavailable (${err.message})`);
+    }
+    return questDbModule;
 }
 
 var DaqStoreTypeEnum = {
