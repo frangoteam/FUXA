@@ -578,6 +578,12 @@
     "dlg.app-language-ua": "Ukrainian",
     "dlg.app-settings-server-port": "Порт сервера",
     "dlg.app-settings-auth-token": "Авторизація з токеном",
+    "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-auth-disabled": "Вимкнено",
     "dlg.app-auth-expiration-15m": "Увімкнено. Автоматичний вихід через 15хв.",
     "dlg.app-auth-expiration-1h": "Увімкнено. Автоматичний вихід через 1год.",
@@ -610,5 +616,6 @@
     "msg.project-save-ask": "При закритті вікна всі не збережені зміни пропадуть!",
     "msg.login-username-required": "Користувач",
     "msg.login-password-required": "Пароль",
-    "msg.signin-failed": "Не авторизований"
+    "msg.signin-failed": "Не авторизований",
+    "device.tag-uns-path": "UNS Path"
 }

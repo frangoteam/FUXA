@@ -203,6 +203,34 @@
                                     <input [(ngModel)]="settings.daqstore.credentials.password" placeholder="taosdata" class="input-row" type="text">
                                 </div>
                             </div>
+                            <div *ngSwitchCase="daqstoreType.questDB">
+                                <div class="block mt20 w100">
+                                    <span>{{'dlg.app-settings-daqstore-queryconn' | translate}}</span>
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-questdb-host' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.host" placeholder="127.0.0.1" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-database' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.tableName" placeholder="meters" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-username' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.credentials.username" placeholder="admin" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-password' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.credentials.password" placeholder="quest" class="input-row" type="text">
+                                </div>
+                                <div class="block mt20 w100">
+                                    <span>{{'dlg.app-settings-daqstore-ingestconn' | translate}}</span>
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-configurl' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.configurationString" placeholder="http::addr=localhost:9000;" class="input-row" type="text">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
