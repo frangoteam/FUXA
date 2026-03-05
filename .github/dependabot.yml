@@ -1,0 +1,87 @@
+version: 2
+
+updates:
+
+  # ========================
+  # SERVER (backend)
+  # ========================
+  - package-ecosystem: "npm"
+    directory: "/server"
+    schedule:
+      interval: "weekly"
+
+    rebase-strategy: disabled
+
+    open-pull-requests-limit: 5
+
+    versioning-strategy: increase-if-necessary
+
+    labels:
+      - "dependencies"
+
+    allow:
+      - dependency-type: "direct"
+
+    groups:
+      server-dependencies:
+        patterns:
+          - "*"
+
+    ignore:
+      - dependency-name: "electron-builder"
+      - dependency-name: "electron"
+      - dependency-name: "webpack"
+        update-types:
+          - "version-update:semver-major"
+
+    allow:
+      - dependency-type: "direct"
+
+  # ========================
+  # CLIENT (Angular)
+  # ========================
+  - package-ecosystem: "npm"
+    directory: "/client"
+    schedule:
+      interval: "weekly"
+
+    rebase-strategy: disabled
+
+    open-pull-requests-limit: 5
+
+    versioning-strategy: increase-if-necessary
+
+    labels:
+      - "dependencies"
+
+    groups:
+      client-dependencies:
+        patterns:
+          - "*"
+
+    ignore:
+      - dependency-name: "electron"
+      - dependency-name: "electron-builder"
+        update-types:
+          - "version-update:semver-major"
+
+  # ========================
+  # ELECTRON
+  # ========================
+  - package-ecosystem: "npm"
+    directory: "/app/electron"
+    schedule:
+      interval: "monthly"
+
+    rebase-strategy: disabled
+
+    open-pull-requests-limit: 2
+
+    labels:
+      - "electron"
+
+    ignore:
+      - dependency-name: "electron-builder"
+      - dependency-name: "electron"
+        update-types:
+          - "version-update:semver-major"
