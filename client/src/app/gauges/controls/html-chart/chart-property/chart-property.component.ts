@@ -91,10 +91,12 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
         if (this.property.options) {
             this.options = Object.assign(this.options, this.property.options);
         }
+        this.normalizeWheelModes();
         this.chartCtrl.setValue(chart);
     }
 
     onChartChanged() {
+        this.normalizeWheelModes();
         if (this.chartCtrl.value) {
             this.property.id = this.chartCtrl.value.id;
         }
@@ -110,6 +112,26 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
             this.data.settings.property.id = this.chartCtrl.value.id;
         }
         this.onPropChanged.emit(this.data.settings);
+    }
+
+    onMouseWheelScrollChanged() {
+        if (this.options.mouseWheelScroll) {
+            this.options.mouseWheelZoom = false;
+        }
+        this.onChartChanged();
+    }
+
+    onMouseWheelZoomChanged() {
+        if (this.options.mouseWheelZoom) {
+            this.options.mouseWheelScroll = false;
+        }
+        this.onChartChanged();
+    }
+
+    private normalizeWheelModes() {
+        if (this.options.mouseWheelScroll && this.options.mouseWheelZoom) {
+            this.options.mouseWheelZoom = false;
+        }
     }
 
     onEditNewChart() {
