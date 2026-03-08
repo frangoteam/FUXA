@@ -9,8 +9,11 @@ const path = require('path');
 const os = require('os');
 const { normalizeRelativePath, resolveWithin } = require('../path-helper');
 const multer = require('multer');
-const { parseTpyFile } = require('../runtime/devices/adsclient/tpy-parser');
-const upload = multer({ storage: multer.memoryStorage() });
+const { parseTpyFile } = require('../../runtime/devices/adsclient/tpy-parser');
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 1024 * 1024, files: 1 }
+});
 
 var runtime;
 var secureFnc;
@@ -24,6 +27,21 @@ module.exports = {
     },
     app: function () {
         var prjApp = express();
+        const ensureAdmin = (req, res, next) => {
+            const permission = checkGroupsFnc(req);
+            if (!authJwt.haveAdminPermission(permission)) {
+                return res.status(401).json({ error: 'unauthorized_error', message: 'Unauthorized!' });
+            }
+            next();
+        };
+        const uploadTpyFile = (req, res, next) => {
+            upload.single('tpyFile')(req, res, (err) => {
+                if (err) {
+                    return res.status(400).json({ error: 'invalid_file', message: err.message });
+                }
+                next();
+            });
+        };
         prjApp.use(function (req, res, next) {
             if (!runtime.project) {
                 res.status(404).end();
@@ -36,12 +54,7 @@ module.exports = {
  * POST /api/ads/import-tpy
  * Parse a Beckhoff TwinCAT .tpy file and return extracted tags
  */
-        prjApp.post('/api/ads/import-tpy', secureFnc, upload.single('tpyFile'), async (req, res) => {
-            const permission = checkGroupsFnc(req);
-            if (!authJwt.haveAdminPermission(permission)) {
-                return res.status(401).json({ error: 'unauthorized_error', message: 'Unauthorized!' });
-            }
-
+        prjApp.post('/api/ads/import-tpy', secureFnc, ensureAdmin, uploadTpyFile, async (req, res) => {
             if (!req.file) {
                 return res.status(400).json({ error: 'missing_file', message: 'No .tpy file uploaded' });
             }
