@@ -63,24 +63,24 @@ describe('ADS TPY parser', () => {
     it('parses TwinCAT 2 symbols and maps basic types', async () => {
         const tags = await parseTpyFile(TC2_SAMPLE);
 
-        assert.equal(tags.length, 4);
-        assert.equal(tags[0].name, 'MAIN.bMotorRunning');
-        assert.equal(tags[0].type, 'boolean');
-        assert.equal(tags[0].address, 'MAIN.bMotorRunning');
-        assert.equal(tags[0].iGroup, 16448);
-        assert.equal(tags[0].iOffset, 0);
-        assert.equal(tags[1].type, 'number');
-        assert.equal(tags[2].type, 'number');
-        assert.equal(tags[3].type, 'string');
+        assert.equal(tags.length, 4, `Should extract 4 tags (got ${tags.length})`);
+        assert.equal(tags[0].name, 'MAIN.bMotorRunning', 'First tag name should be MAIN.bMotorRunning');
+        assert.equal(tags[0].type, 'boolean', 'BOOL should map to boolean type');
+        assert.equal(tags[0].address, 'MAIN.bMotorRunning', 'Address should equal name for ADS');
+        assert.equal(tags[0].iGroup, 16448, 'IGroup should be parsed as integer');
+        assert.equal(tags[0].iOffset, 0, 'IOffset should be parsed as integer');
+        assert.equal(tags[1].type, 'number', 'REAL should map to number type');
+        assert.equal(tags[2].type, 'number', 'INT should map to number type');
+        assert.equal(tags[3].type, 'string', 'STRING should map to string type');
     });
 
     it('parses TwinCAT 3 symbols', async () => {
         const tags = await parseTpyFile(TC3_SAMPLE);
 
-        assert.equal(tags.length, 3);
-        assert.equal(tags[0].name, 'MAIN.bMotorRunning');
-        assert.equal(tags[1].type, 'number');
-        assert.equal(tags[2].type, 'number');
+        assert.equal(tags.length, 3, `Should extract 3 tags (got ${tags.length})`);
+        assert.equal(tags[0].name, 'MAIN.bMotorRunning', 'First tag name should be MAIN.bMotorRunning');
+        assert.equal(tags[1].type, 'number', 'LREAL should map to number type');
+        assert.equal(tags[2].type, 'number', 'DINT should map to number type');
     });
 
     it('rejects invalid XML content', async () => {
@@ -91,13 +91,13 @@ describe('ADS TPY parser', () => {
             err = e;
         }
 
-        assert.ok(err instanceof Error);
-        assert.ok(err.message.includes('Failed to parse'));
+        assert.ok(err instanceof Error, 'Should throw error for invalid XML');
+        assert.ok(err.message.includes('Failed to parse'), 'Should throw parse error for invalid XML');
     });
 
     it('returns empty list for XML without symbols', async () => {
         const tags = await parseTpyFile(EMPTY_SAMPLE);
-        assert.ok(Array.isArray(tags));
-        assert.equal(tags.length, 0);
+        assert.ok(Array.isArray(tags), 'Expected parsed tags to be an array');
+        assert.equal(tags.length, 0, 'Should return empty array for empty symbol list');
     });
 });
