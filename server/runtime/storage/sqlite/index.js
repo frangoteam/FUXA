@@ -227,14 +227,14 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                         _checkDataWorking(false);
                     });
                 } 
-                // check function to add daq data            
+                // check function to add daq data
                 if (addDaqfnc.length > 0) {
                     if (_checkDataWorking(true)) {
                         Promise.all(addDaqfnc).then(result => {
                             // check db tokenizer after inserted
                             var lastts = 0 || result[0];
                             if (daqNextToken && daqNextToken < lastts) {
-                                // close data DB, open and bind the new db, rename and move the closed db 
+                                // close data DB, open and bind the new db, rename and move the closed db
                                 db_daqdata.close(function () {
                                     var suffix = _getDateTimeSuffix(new Date());
                                     var oldfile = db_daqdata_file;
@@ -262,6 +262,9 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                             }
                             _checkDataWorking(false);
                         });
+                    } else {
+                        // overload: attach no-op catch handlers to prevent UnhandledPromiseRejection
+                        addDaqfnc.forEach(function (p) { p.catch(function () {}); });
                     }
                 }
                 if (dataToRestore.length && currentStorage) {
@@ -618,7 +621,7 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
             var sqlRequest = "INSERT INTO data (dt, id, value) ";
             db_daqdata.run(sqlRequest + "VALUES('" + ts + "','" + mapid + "','" + value + "')", function (err) {
                 if (err !== null) {
-                    reject();
+                    reject(err);
                 }
                 else {
                     resolve(ts);
