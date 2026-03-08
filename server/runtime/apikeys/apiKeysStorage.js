@@ -13,6 +13,18 @@ var settings        // Application settings
 var logger;         // Application logger
 var db_apikeys;     // Database of apikeys
 
+function _run(sql, params = []) {
+    return new Promise((resolve, reject) => {
+        db_apikeys.run(sql, params, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this);
+            }
+        });
+    });
+}
+
 /**
  * Init and bind the database resource
  * @param {*} _settings
@@ -73,18 +85,18 @@ function getApiKeys() {
  */
 function setApiKeys(apiKeys) {
     return new Promise(async function (resolve, reject) {
-        for (var i = 0; i < apiKeys.length; i++) {
-            const apiKey = apiKeys[i];
-            var value = JSON.stringify(apiKey).replace(/\'/g,"''");
-            var sql = "INSERT OR REPLACE INTO apikeys (name, value) VALUES('" + apiKey.id + "','"+ value + "');";
-            await db_apikeys.exec(sql, function (err) {
-                if (err) {
-                    logger.error(`apiKeysStorage.set apikeys failed! ${err}`);
-                    reject();
-                }
-            });
+        try {
+            const sql = "INSERT OR REPLACE INTO apikeys (name, value) VALUES(?, ?)";
+            for (var i = 0; i < apiKeys.length; i++) {
+                const apiKey = apiKeys[i];
+                var value = JSON.stringify(apiKey);
+                await _run(sql, [apiKey.id, value]);
+            }
+            resolve();
+        } catch (err) {
+            logger.error(`apiKeysStorage.set apikeys failed! ${err}`);
+            reject();
         }
-        resolve();
     });
 }
 
@@ -93,17 +105,17 @@ function setApiKeys(apiKeys) {
  */
 function removeApiKeys(apiKeys) {
     return new Promise(async function (resolve, reject) {
-        for (var i = 0; i < apiKeys.length; i++) {
-            const apiKey = apiKeys[i];
-            var sql = "DELETE FROM apikeys WHERE name = '" + apiKey.id + "'";
-            await db_apikeys.exec(sql, function (err) {
-                if (err) {
-                    logger.error(`apiKeysStorage.remove apikeys failed! ${err}`);
-                    reject();
-                }
-            });
+        try {
+            const sql = "DELETE FROM apikeys WHERE name = ?";
+            for (var i = 0; i < apiKeys.length; i++) {
+                const apiKey = apiKeys[i];
+                await _run(sql, [apiKey.id]);
+            }
+            resolve();
+        } catch (err) {
+            logger.error(`apiKeysStorage.remove apikeys failed! ${err}`);
+            reject();
         }
-        resolve();
     });
 }
 
