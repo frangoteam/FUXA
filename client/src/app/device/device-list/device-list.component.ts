@@ -25,11 +25,11 @@ import { TagPropertyService } from '../tag-property/tag-property.service';
 })
 export class DeviceListComponent implements OnInit, AfterViewInit {
 
-    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'logger', 'options', 'remove'];
-    readonly defAllExtColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'quality', 'description', 'warning', 'logger', 'options', 'remove'];
+    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'uns', 'logger', 'options', 'remove'];
+    readonly defAllExtColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'quality', 'description', 'warning', 'uns', 'logger', 'options', 'remove'];
     readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'description', 'options', 'remove'];
-    readonly defGpipColumns = ['select', 'name', 'device', 'address', 'direction', 'value', 'timestamp', 'description', 'logger', 'options', 'remove'];
-    readonly defWebcamColumns = ['select', 'name', 'device', 'address', 'value', 'timestamp', 'description', 'logger', 'options', 'remove'];
+    readonly defGpipColumns = ['select', 'name', 'device', 'address', 'direction', 'value', 'timestamp', 'description', 'uns', 'logger', 'options', 'remove'];
+    readonly defWebcamColumns = ['select', 'name', 'device', 'address', 'value', 'timestamp', 'description', 'uns', 'logger', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
     readonly defInternalRowWidth = 1200;
@@ -383,6 +383,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     tags[i].scaleReadParams = tagOption.scaleReadParams;
                     tags[i].scaleWriteFunction = tagOption.scaleWriteFunction;
                     tags[i].scaleWriteParams = tagOption.scaleWriteParams;
+                    tags[i].unsPath = tagOption.unsPath;
                 }
                 this.projectService.setDeviceTags(this.deviceSelected);
             }

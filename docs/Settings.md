@@ -5,7 +5,7 @@ To enable and config the authentication:
 
 ```
 secureEnabled: true,            // enable or diasable
-secretCode: 'frangoteam751',    // secret code to encode the token
+secretCode: '<strong-random-secret>', // secret code to encode the token
 tokenExpiresIn: '1h'            // token expiration delay '1h'=1hour, 60=60seconds, '1d'=1day
 ```
 

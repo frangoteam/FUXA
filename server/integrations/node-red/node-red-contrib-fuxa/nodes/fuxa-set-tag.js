@@ -17,17 +17,18 @@ module.exports = function(RED) {
 
                 const uiTag = (typeof config.tag === "string") ? config.tag.trim() : "";
                 const topicTag = (typeof msg.topic === "string") ? msg.topic.trim() : "";
+                const tagRef = uiTag || topicTag;
+                let tagId = config.tagId || null;
 
-                // If UI tag is empty, fall back to msg.topic
-                const tagRef = uiTag !== "" ? uiTag : topicTag;
-
-                // Only error if BOTH are missing/empty
-                if (!tagRef) {
+                // Keep master behavior (prefer configured tagId), then fallback to UI tag/topic lookup.
+                if (!tagId && !tagRef) {
                     node.error("No tag provided: set Tag in the node OR provide msg.topic", msg);
                     return done && done();
                 }
 
-                const tagId = fuxa.getTagId(tagRef, null);
+                if (!tagId) {
+                    tagId = fuxa.getTagId(tagRef, null);
+                }
 
                 if (tagId) {
                     await fuxa.setTag(tagId, msg.payload);

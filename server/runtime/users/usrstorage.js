@@ -15,6 +15,18 @@ var settings        // Application settings
 var logger;         // Application logger
 var db_usr;         // Database of users
 
+function _run(sql, params = []) {
+    return new Promise((resolve, reject) => {
+        db_usr.run(sql, params, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this);
+            }
+        });
+    });
+}
+
 /**
  * Init and bind the database resource
  * @param {*} _settings
@@ -96,16 +108,13 @@ function _checkUpdate(columnsToAdd) {
  */
 function setDefault() {
     return new Promise(function (resolve, reject) {
-        // prepare query
-        var sql = "";
-        sql += "INSERT OR REPLACE INTO users (username, fullname, password, groups) VALUES('admin', 'Administrator Account', '" + bcrypt.hashSync('123456', 10) + "','-1');";
-        db_usr.exec(sql, function (err) {
-            if (err) {
-                logger.error(`usrstorage.set failed! ${err}`);
-                reject();
-            } else {
-                resolve();
-            }
+        const sql = "INSERT OR REPLACE INTO users (username, fullname, password, groups) VALUES(?, ?, ?, ?)";
+        const params = ['admin', 'Administrator Account', bcrypt.hashSync('123456', 10), -1];
+        _run(sql, params).then(() => {
+            resolve();
+        }).catch((err) => {
+            logger.error(`usrstorage.set failed! ${err}`);
+            reject();
         });
     });
 }
@@ -136,33 +145,33 @@ function getUsers(user) {
  */
 function setUser(usr, fullname, pwd, groups, info) {
     return new Promise(function (resolve, reject) {
-        // prepare query
-        var exist = false;
         getUsers({ username: usr }).then(function (data) {
-            if (data && data.length) {
-                exist = true;
-            }
-            var sql = "";
+            const exist = data && data.length;
+            let sql = '';
+            let params = [];
             if (pwd) {
-                sql = "INSERT OR REPLACE INTO users (username, fullname, password, groups, info) VALUES('" + usr + "','" + fullname + "','" + bcrypt.hashSync(pwd, 10) + "','" + groups + "','" + info + "');";
+                const hashedPwd = bcrypt.hashSync(pwd, 10);
                 if (exist) {
-                    sql = "UPDATE users SET password = '" + bcrypt.hashSync(pwd, 10) + "', info = '" + info + "', groups = '" + groups + "', fullname = '" + fullname + "' WHERE username = '" + usr + "';";
-                }
-            } else {
-                sql = "INSERT OR REPLACE INTO users (username, fullname, groups, info) VALUES('" + usr + "','" + fullname + "','" + groups + "','" + info + "');";
-                if (exist) {
-                    sql = "UPDATE users SET groups = '" + groups + "', info = '" + info + "', fullname = '" + fullname + "' WHERE username = '" + usr + "';";
-                }
-            }
-            db_usr.exec(sql, function (err) {
-                if (err) {
-                    logger.error(`usrstorage.set failed! ${err}`);
-                    reject();
+                    sql = "UPDATE users SET password = ?, info = ?, groups = ?, fullname = ? WHERE username = ?";
+                    params = [hashedPwd, info, groups, fullname, usr];
                 } else {
-                    resolve();
+                    sql = "INSERT OR REPLACE INTO users (username, fullname, password, groups, info) VALUES(?, ?, ?, ?, ?)";
+                    params = [usr, fullname, hashedPwd, groups, info];
                 }
+            } else if (exist) {
+                sql = "UPDATE users SET groups = ?, info = ?, fullname = ? WHERE username = ?";
+                params = [groups, info, fullname, usr];
+            } else {
+                sql = "INSERT OR REPLACE INTO users (username, fullname, groups, info) VALUES(?, ?, ?, ?)";
+                params = [usr, fullname, groups, info];
+            }
+            _run(sql, params).then(() => {
+                resolve();
+            }).catch((err) => {
+                logger.error(`usrstorage.set failed! ${err}`);
+                reject();
             });
-        }).catch(function (err) {
+        }).catch(function () {
             reject();
         });
     });
@@ -173,15 +182,12 @@ function setUser(usr, fullname, pwd, groups, info) {
  */
 function removeUser(usr) {
     return new Promise(function (resolve, reject) {
-        // prepare query
-        var sql = "DELETE FROM users WHERE username = '" + usr + "'";
-        db_usr.exec(sql, function (err) {
-            if (err) {
-                logger.error(`usrstorage.remove failed! ${err}`);
-                reject();
-            } else {
-                resolve();
-            }
+        var sql = "DELETE FROM users WHERE username = ?";
+        _run(sql, [usr]).then(() => {
+            resolve();
+        }).catch((err) => {
+            logger.error(`usrstorage.remove failed! ${err}`);
+            reject();
         });
     });
 }
@@ -207,18 +213,17 @@ function getRoles() {
  */
 function setRoles(roles) {
     return new Promise(async function (resolve, reject) {
-        for (var i = 0; i < roles.length; i++) {
-            const role = roles[i];
-            var value = JSON.stringify(role).replace(/\'/g,"''");
-            var sql = "INSERT OR REPLACE INTO roles (name, value) VALUES('" + role.id + "','"+ value + "');";
-            await db_usr.exec(sql, function (err) {
-                if (err) {
-                    logger.error(`usrstorage.set role failed! ${err}`);
-                    reject();
-                }
-            });
+        try {
+            const sql = "INSERT OR REPLACE INTO roles (name, value) VALUES(?, ?)";
+            for (const role of roles) {
+                const value = JSON.stringify(role);
+                await _run(sql, [role.id, value]);
+            }
+            resolve();
+        } catch (err) {
+            logger.error(`usrstorage.set role failed! ${err}`);
+            reject();
         }
-        resolve();
     });
 }
 
@@ -227,17 +232,16 @@ function setRoles(roles) {
  */
 function removeRoles(roles) {
     return new Promise(async function (resolve, reject) {
-        for (var i = 0; i < roles.length; i++) {
-            const role = roles[i];
-            var sql = "DELETE FROM roles WHERE name = '" + role.id + "'";
-            await db_usr.exec(sql, function (err) {
-                if (err) {
-                    logger.error(`usrstorage.remove role failed! ${err}`);
-                    reject();
-                }
-            });
+        try {
+            const sql = "DELETE FROM roles WHERE name = ?";
+            for (const role of roles) {
+                await _run(sql, [role.id]);
+            }
+            resolve();
+        } catch (err) {
+            logger.error(`usrstorage.remove role failed! ${err}`);
+            reject();
         }
-        resolve();
     });
 }
 

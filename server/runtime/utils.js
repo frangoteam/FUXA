@@ -1,5 +1,6 @@
 const os = require('os');
 const ip = require('ip');
+const crypto = require('crypto');
 
 'use strict';
 var utils = module.exports = {
@@ -361,5 +362,9 @@ var utils = module.exports = {
             }
         }
         return target;
+    },
+
+    generateSecretCode: function(byteLength = 32) {
+        return crypto.randomBytes(byteLength).toString('hex');
     }
 }

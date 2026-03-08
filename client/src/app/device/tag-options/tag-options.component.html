@@ -29,6 +29,13 @@
             <span>{{'device.tag-deadband' | translate}}</span>
             <input numberOnly formControlName="deadband" type="number">
         </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.tag-uns-path' | translate}}</span>
+            <input formControlName="unsPath" type="text">
+            <span *ngIf="formGroup.controls.unsPath.errors?.unsPathExists" class="form-input-error">
+                {{'msg.device-tag-exist' | translate}}
+            </span>
+        </div>
         <div *ngIf="!isFuxaServerTag()">
             <div class="my-form-field item-block mt10">
                 <span>{{'device.tag-scale' | translate}}</span>

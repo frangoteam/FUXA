@@ -227,14 +227,14 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                         _checkDataWorking(false);
                     });
                 } 
-                // check function to add daq data            
+                // check function to add daq data
                 if (addDaqfnc.length > 0) {
                     if (_checkDataWorking(true)) {
                         Promise.all(addDaqfnc).then(result => {
                             // check db tokenizer after inserted
                             var lastts = 0 || result[0];
                             if (daqNextToken && daqNextToken < lastts) {
-                                // close data DB, open and bind the new db, rename and move the closed db 
+                                // close data DB, open and bind the new db, rename and move the closed db
                                 db_daqdata.close(function () {
                                     var suffix = _getDateTimeSuffix(new Date());
                                     var oldfile = db_daqdata_file;
@@ -262,6 +262,9 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                             }
                             _checkDataWorking(false);
                         });
+                    } else {
+                        // overload: attach no-op catch handlers to prevent UnhandledPromiseRejection
+                        addDaqfnc.forEach(function (p) { p.catch(function () {}); });
                     }
                 }
                 if (dataToRestore.length && currentStorage) {
@@ -554,8 +557,8 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
 
     function _insertTagToMap(tagid, name, type) {
         return new Promise(function (resolve, reject) {
-            var sqlRequest = "INSERT INTO data (id, name, type) ";
-            db_daqmap.run(sqlRequest + "VALUES('" + tagid + "','" + name + "','" + type + "'); SELECT last_insert_rowid() FROM data", function (err) {
+            var sqlRequest = "INSERT INTO data (id, name, type) VALUES (?, ?, ?)";
+            db_daqmap.run(sqlRequest, [tagid, name, type], function (err) {
                 if (err !== null) {
                     reject(err);
                 } else {
@@ -615,10 +618,10 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
     function _insertTagValue(mapid, value) {
         return new Promise(function (resolve, reject) {
             var ts = new Date().getTime();
-            var sqlRequest = "INSERT INTO data (dt, id, value) ";
-            db_daqdata.run(sqlRequest + "VALUES('" + ts + "','" + mapid + "','" + value + "')", function (err) {
+            var sqlRequest = "INSERT INTO data (dt, id, value) VALUES (?, ?, ?)";
+            db_daqdata.run(sqlRequest, [ts, mapid, value], function (err) {
                 if (err !== null) {
-                    reject();
+                    reject(err);
                 }
                 else {
                     resolve(ts);
