@@ -156,6 +156,7 @@ After following these steps, you will have a standalone Electron application for
 - Look video from [frangoteam](https://www.youtube.com/@umbertonocelli5301)
 - Look video from [Fusion Automate - Urvish Nakum](https://youtube.com/playlist?list=PLxrSjjYyzaaK8uY3kVaFzfGnwhVXiCEAO&si=aU1OxgkUvLQ3bXHq)
 - Browse the [DeepWiki](https://deepwiki.com/frangoteam/FUXA) for AI-assisted docs and code navigation
+
 ## Community SVG Widgets
 
 Looking for ready-made, reusable SVG widgets?
@@ -188,6 +189,24 @@ ng build --configuration=production
 ## Who uses FUXA
 
 FUXA is used in industrial automation, IoT, monitoring and research environments.
+
+### FUXA Pro
+
+If you are using FUXA in production, consider supporting the development of the project by using **FUXA Pro**.**.
+
+FUXA Pro includes additional professional features such as:
+
+- White-label branding (custom logo and labels)
+- Additional resources and templates
+- User and script event logging
+- Unlimited installations
+
+The open-source version of FUXA remains fully available and continues to evolve with community contributions.
+
+**License:** one-time payment – €100
+
+More information:
+https://frangoteam.org
 
 ## 🤝 Contributing
 
