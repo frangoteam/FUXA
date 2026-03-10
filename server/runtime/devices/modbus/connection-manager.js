@@ -16,8 +16,9 @@ var connectionPool = new Map();
  */
 function getConnectionKey(data, type) {
     if (type === 0) { // RTU
-        // For RTU, include baudrate and parity in key to prevent mixing different configs
-        return `${data.property.address}_${data.property.baudrate}_${data.property.parity}`;
+        // For RTU, include all serial parameters in key to prevent mixing different configs
+        // This ensures devices with different configurations don't share the same connection
+        return `${data.property.address}_${data.property.baudrate}_${data.property.databits}_${data.property.stopbits}_${data.property.parity}`;
     } else { // TCP
         return data.property.address;
     }
