@@ -9,13 +9,13 @@ const utils = require("../../utils");
 const deviceUtils = require("../device-utils");
 const net = require("net");
 const TOKEN_LIMIT = 100;
-const Mutex = require("async-mutex").Mutex;
+const connectionManager = require("./connection-manager");
 
 function MODBUSclient(_data, _logger, _events, _runtime) {
 	var memory = {}; // Loaded Signal grouped by memory { memory index, start, size, ... }
 	var data = JSON.parse(JSON.stringify(_data)); // Current Device data { id, name, tags, enabled, ... }
 	var logger = _logger;
-	var client = new ModbusRTU(); // Client Modbus (Master)
+	var connection = null; // Shared connection object from Connection Manager
 	var working = false; // Working flag to manage overloading polling and connection
 	var events = _events; // Events to commit change to runtime
 	var lastStatus = ""; // Last Device status
@@ -56,7 +56,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 						data.property.parity))
 			) {
 				try {
-					if (!client.isOpen && _checkWorking(true)) {
+					// Get shared connection from Connection Manager
+					connection = connectionManager.getConnection(data, type, ModbusRTU);
+					var client = connection.client;
+					
+					if (!connectionManager.isConnected(connection.key) && _checkWorking(true)) {
 						logger.info(
 							`'${data.name}' try to connect ${data.property.address}`,
 							true,
@@ -70,23 +74,23 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 								_clearVarsValue();
 								reject();
 							} else {
-								if (data.property.slaveid) {
-									// set the client's unit id
-									client.setID(
-										parseInt(data.property.slaveid),
-									);
-								}
+								connectionManager.setConnected(connection.key, true);
+								// set the client's unit id for this slave
+								client.setID(connection.slaveId);
 								// set a timout for requests default is null (no timeout)
 								client.setTimeout(2000);
-								logger.info(`'${data.name}' connected!`, true);
+								logger.info(`'${data.name}' connected! (Slave ID: ${connection.slaveId})`, true);
 								_emitStatus("connect-ok");
 								resolve();
 							}
 							_checkWorking(false);
 						});
 					} else {
-						reject();
-						_emitStatus("connect-error");
+						// Already connected (shared connection)
+						logger.info(`'${data.name}' using shared connection (Slave ID: ${connection.slaveId})`, true);
+						_emitStatus("connect-ok");
+						resolve();
+						_checkWorking(false);
 					}
 				} catch (err) {
 					logger.error(`'${data.name}' try to connect error! ${err}`);
@@ -111,23 +115,30 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 	this.disconnect = function () {
 		return new Promise(function (resolve, reject) {
 			_checkWorking(false);
-			if (!client.isOpen) {
+			if (!connection) {
 				_emitStatus("connect-off");
 				_clearVarsValue();
 				resolve(true);
+				return;
+			}
+			
+			var client = connection.client;
+			if (!client.isOpen) {
+				_emitStatus("connect-off");
+				_clearVarsValue();
+				connection.release();
+				connection = null;
+				resolve(true);
 			} else {
-				client.close(function (result) {
-					if (result) {
-						logger.error(
-							`'${data.name}' try to disconnect failed!`,
-						);
-					} else {
-						logger.info(`'${data.name}' disconnected!`, true);
-					}
-					_emitStatus("connect-off");
-					_clearVarsValue();
-					resolve(result);
-				});
+				// Release the connection reference - don't close physical connection
+				// if other slaves are still using it
+				connection.release();
+				connection = null;
+				
+				logger.info(`'${data.name}' disconnected (connection released)`, true);
+				_emitStatus("connect-off");
+				_clearVarsValue();
+				resolve(true);
 			}
 		});
 	};
@@ -137,42 +148,37 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 	 * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
 	 */
 	this.polling = async function () {
+		if (!connection) {
+			logger.error(`'${data.name}' polling: No connection established`);
+			return;
+		}
+		
 		let socketRelease;
 		try {
-			// Connexion/Resource reutilization logic (Socket/Serial) for TCP e RTU
-			if (data.property.socketReuse) {
-				let resourceKey;
-				if (type === ModbusTypes.TCP) {
-					resourceKey = data.property.address;
-				} else if (type === ModbusTypes.RTU) {
-					// Para RTU, usa o endereço da porta serial como identificador único do recurso
-					resourceKey = data.property.address;
-				}
-
-				if (resourceKey && runtime.socketMutex.has(resourceKey)) {
-					// Adquire o mutex para garantir acesso exclusivo ao recurso (socket TCP ou porta Serial RTU)
-					socketRelease = await runtime.socketMutex
-						.get(resourceKey)
-						.acquire();
-				}
+			// Acquire mutex from shared connection to ensure exclusive access
+			if (connection.mutex) {
+				socketRelease = await connection.mutex.acquire();
 			}
 
 			await this._polling();
 		} catch (err) {
 			logger.error(`'${data.name}' polling! ${err}`);
 		} finally {
-			if (!utils.isNullOrUndefined(socketRelease)) {
+			if (socketRelease) {
 				socketRelease();
 			}
 		}
 	};
 
 	this._polling = async function () {
-		// Safety check: if port was disconnected, do not attempt to poll
-		if (!client.isOpen) {
+		// Safety check: if connection was lost, do not attempt to poll
+		if (!connection || !connection.client.isOpen) {
 			_emitStatus("connect-off");
 			return;
 		}
+		
+		// Ensure the correct slave ID is set for this operation
+		connection.client.setID(connection.slaveId);
 
 		if (_checkWorking(true)) {
 			try {
@@ -216,57 +222,57 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 					}
 				}
 
-				// --- STEP 2: READ PHASE (Verification & Actual State) ---
-				var results = [];
+			// --- STEP 2: READ PHASE (Verification & Actual State) ---
+			var results = [];
 
-				if (!data.property.options) {
-					for (var memaddr in memory) {
-						try {
-							var tokenizedAddress = parseAddress(memaddr);
-							var vars = await _readMemory(
-								parseInt(tokenizedAddress.address),
-								memory[memaddr].Start,
-								memory[memaddr].MaxSize,
-								Object.values(memory[memaddr].Items),
-							);
+			if (!data.property.options) {
+				for (var memAddr in memory) {
+					try {
+						var tokenizedAddress = parseAddress(memAddr);
+						var readVars = await _readMemory(
+							parseInt(tokenizedAddress.address),
+							memory[memAddr].Start,
+							memory[memAddr].MaxSize,
+							Object.values(memory[memAddr].Items),
+						);
 
-							if (vars && vars.length > 0) results.push(vars);
-							await delay(readDelay);
-						} catch (err) {
-							let errMsg =
-								err.message ||
-								(typeof err === "object"
-									? JSON.stringify(err)
-									: err);
-							logger.error(
-								`'${data.name}' _readMemory error! ${errMsg}`,
-							);
-						}
-					}
-				} else {
-					for (var memaddr in mixItemsMap) {
-						try {
-							var vars = await _readMemory(
-								getMemoryAddress(parseInt(memaddr), false),
-								mixItemsMap[memaddr].Start,
-								mixItemsMap[memaddr].MaxSize,
-								Object.values(mixItemsMap[memaddr].Items),
-							);
-
-							if (vars && vars.length > 0) results.push(vars);
-							await delay(readDelay);
-						} catch (err) {
-							let errMsg =
-								err.message ||
-								(typeof err === "object"
-									? JSON.stringify(err)
-									: err);
-							logger.error(
-								`'${data.name}' _readMemory error! ${errMsg}`,
-							);
-						}
+						if (readVars && readVars.length > 0) results.push(readVars);
+						await delay(readDelay);
+					} catch (err) {
+						let errMsg =
+							err.message ||
+							(typeof err === "object"
+								? JSON.stringify(err)
+								: err);
+						logger.error(
+							`'${data.name}' _readMemory error! ${errMsg}`,
+						);
 					}
 				}
+			} else {
+				for (var mixAddr in mixItemsMap) {
+					try {
+						var mixReadVars = await _readMemory(
+							getMemoryAddress(parseInt(mixAddr), false),
+							mixItemsMap[mixAddr].Start,
+							mixItemsMap[mixAddr].MaxSize,
+							Object.values(mixItemsMap[mixAddr].Items),
+						);
+
+						if (mixReadVars && mixReadVars.length > 0) results.push(mixReadVars);
+						await delay(readDelay);
+					} catch (err) {
+						let errMsg =
+							err.message ||
+							(typeof err === "object"
+								? JSON.stringify(err)
+								: err);
+						logger.error(
+							`'${data.name}' _readMemory error! ${errMsg}`,
+						);
+					}
+				}
+			}
 
 				// --- STEP 3: UPDATE & EMIT PHASE ---
 				if (results.length > 0) {
@@ -529,7 +535,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 	 * Don't work if PLC will disconnect
 	 */
 	this.isConnected = function () {
-		return client.isOpen;
+		return connection && connection.client && connection.client.isOpen;
 	};
 
 	/**
@@ -572,6 +578,8 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 	 */
 	var _connect = function (callback) {
 		try {
+			var client = connection.client;
+			
 			if (type === ModbusTypes.RTU) {
 				const rtuOptions = {
 					baudRate: parseInt(data.property.baudrate),
@@ -579,17 +587,6 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 					stopBits: parseFloat(data.property.stopbits),
 					parity: data.property.parity.toLowerCase(),
 				};
-
-				// >>> ADDED: Initialize the mutex for  Modbus RTU (porta serial) <<<
-				if (
-					data.property.socketReuse ===
-						ModbusReuseModeType.ReuseSerial &&
-					!runtime.socketMutex.has(data.property.address)
-				) {
-					// port address (data.property.address) is the key for the resource
-					runtime.socketMutex.set(data.property.address, new Mutex());
-				}
-				// >>> END OF CHANGE <<<
 
 				if (
 					data.property.connectionOption ===
@@ -629,38 +626,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 					);
 					port = parseInt(temp);
 				}
-				//reuse socket
-				if (data.property.socketReuse) {
-					var socket;
-					if (runtime.socketPool.has(data.property.address)) {
-						socket = runtime.socketPool.get(data.property.address);
-					} else {
-						socket = new net.Socket();
-						runtime.socketPool.set(data.property.address, socket);
-						//init read mutex
-						if (
-							data.property.socketReuse ===
-							ModbusReuseModeType.ReuseSerial
-						) {
-							runtime.socketMutex.set(
-								data.property.address,
-								new Mutex(),
-							);
-						}
-					}
-					var openFlag =
-						socket.readyState === "opening" ||
-						socket.readyState === "open";
-					if (!openFlag) {
-						socket.connect({
-							// Default options
-							...{
-								host: addr,
-								port: port,
-							},
-						});
-					}
-				}
+				
 				if (
 					data.property.connectionOption === ModbusOptionType.UdpPort
 				) {
@@ -669,40 +635,18 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 					data.property.connectionOption ===
 					ModbusOptionType.TcpRTUBufferedPort
 				) {
-					if (data.property.socketReuse) {
-						client.linkTcpRTUBuffered(
-							runtime.socketPool.get(data.property.address),
-							callback,
-						);
-					} else {
-						client.connectTcpRTUBuffered(
-							addr,
-							{ port: port },
-							callback,
-						);
-					}
+					client.connectTcpRTUBuffered(
+						addr,
+						{ port: port },
+						callback,
+					);
 				} else if (
 					data.property.connectionOption ===
 					ModbusOptionType.TelnetPort
 				) {
-					if (data.property.socketReuse) {
-						client.linkTelnet(
-							runtime.socketPool.get(data.property.address),
-							callback,
-						);
-					} else {
-						client.connectTelnet(addr, { port: port }, callback);
-					}
+					client.connectTelnet(addr, { port: port }, callback);
 				} else {
-					//reuse socket
-					if (data.property.socketReuse) {
-						client.linkTCP(
-							runtime.socketPool.get(data.property.address),
-							callback,
-						);
-					} else {
-						client.connectTCP(addr, { port: port }, callback);
-					}
+					client.connectTCP(addr, { port: port }, callback);
 				}
 			}
 		} catch (err) {
@@ -721,13 +665,22 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 	var _readMemory = function (memoryAddress, start, size, vars) {
 		return new Promise((resolve, reject) => {
 			if (vars.length === 0) return resolve([]);
+			
+			// Ensure we have a valid connection and client
+			if (!connection || !connection.client) {
+				reject(new Error("No connection available"));
+				return;
+			}
+			
+			var client = connection.client;
+			
 			// define read function
 			if (memoryAddress === ModbusMemoryAddress.CoilStatus) {
 				// Coil Status (Read/Write 000001-065536)
 				client.readCoils(start, size).then(
 					(res) => {
 						if (res.data) {
-							vars.map((v) => {
+							vars.forEach((v) => {
 								let bitoffset = Math.trunc(
 									(v.offset - start) / 8,
 								);
@@ -752,7 +705,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 				client.readDiscreteInputs(start, size).then(
 					(res) => {
 						if (res.data) {
-							vars.map((v) => {
+							vars.forEach((v) => {
 								let bitoffset = Math.trunc(
 									(v.offset - start) / 8,
 								);
@@ -777,7 +730,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 				client.readInputRegisters(start, size).then(
 					(res) => {
 						if (res.data) {
-							vars.map((v) => {
+							vars.forEach((v) => {
 								try {
 									let byteoffset = (v.offset - start) * 2;
 									let buffer = Buffer.from(
@@ -807,7 +760,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 				client.readHoldingRegisters(start, size).then(
 					(res) => {
 						if (res.data) {
-							vars.map((v) => {
+							vars.forEach((v) => {
 								let byteoffset = (v.offset - start) * 2;
 								let buffer = Buffer.from(
 									res.buffer.slice(
@@ -841,6 +794,14 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 	 */
 	var _writeMemory = function (memoryAddress, start, value) {
 		return new Promise((resolve, reject) => {
+			// Ensure we have a valid connection and client
+			if (!connection || !connection.client) {
+				reject(new Error("No connection available"));
+				return;
+			}
+			
+			var client = connection.client;
+			
 			if (memoryAddress === ModbusMemoryAddress.CoilStatus) {
 				// Coil Status (Read/Write 000001-065536)
 				client.writeCoil(start, value).then(
@@ -895,11 +856,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 		if (this.dirtyTags) this.dirtyTags.clear();
 		if (this.desiredState) this.desiredState.clear();
 
-		for (var id in varsValue) {
-			varsValue[id].value = null;
+		for (var vid in varsValue) {
+			varsValue[vid].value = null;
 		}
-		for (var id in memItemsMap) {
-			if (memItemsMap[id]) memItemsMap[id].value = null;
+		for (var mid in memItemsMap) {
+			if (memItemsMap[mid]) memItemsMap[mid].value = null;
 		}
 		_emitValues(varsValue);
 	};
