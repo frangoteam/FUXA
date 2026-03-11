@@ -296,6 +296,7 @@ export class ProjectService {
      * @param view
      */
     setView(view: View, notify = false) {
+        this.cleanView(view);
         const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
         if (existingView) {
             Object.assign(existingView, view);
@@ -313,6 +314,7 @@ export class ProjectService {
     }
 
     async setViewAsync(view: View, notify = false): Promise<void> {
+        this.cleanView(view);
         const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
         if (existingView) {
             Object.assign(existingView, view);
