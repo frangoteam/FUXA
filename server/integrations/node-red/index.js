@@ -154,14 +154,9 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
 
     // Allow only dashboard routes as public; require JWT or API key for admin/editor/flows when security is enabled
     const allowDashboard = (req, res, next) => {
-        // Build route path from Express mount path + parsed request path (query string excluded).
-        // Using req.path prevents auth bypasses via crafted query params.
-        const basePath = req.baseUrl || '';
-        const pathname = req.path || '/';
-        const routePath = `${basePath}${pathname}`;
-
-        // Public dashboard UI and its HTTP APIs (served from httpNodeRoot/ui.path)
-        if (routePath === '/dashboard' || routePath.startsWith('/dashboard/')) return next();
+        // Public dashboard UI and its HTTP APIs (served from httpNodeRoot/ui.path).
+        // baseUrl comes from Express mount point and is not affected by query/path tricks.
+        if (req.baseUrl === '/dashboard') return next();
 
         if (!settings.secureEnabled || settings.nodeRedAuthMode === 'legacy-open') {
             return next();
