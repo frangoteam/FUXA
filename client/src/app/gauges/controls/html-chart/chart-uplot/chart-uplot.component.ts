@@ -583,6 +583,9 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             title: 'Title', fontFamily: 'Roboto-Regular', legendFontSize: 12, colorBackground: 'rgba(255,255,255,0)', legendBackground: 'rgba(255,255,255,0)',
             titleHeight: 18, axisLabelFontSize: 12, labelsDivWidth: 0, axisLineColor: 'rgba(0,0,0,1)', axisLabelColor: 'rgba(0,0,0,1)',
             legendMode: 'always', series: [], width: 360, height: 200, decimalsPrecision: 2, realtime: 60,
+            mouseWheelScroll: false,
+            mouseWheelZoom: false,
+            staticChart: false,
             dateFormat: Utils.getEnumKey(DateFormatType, DateFormatType.MM_DD_YYYY),
             timeFormat: Utils.getEnumKey(TimeFormatType, TimeFormatType.hh_mm_ss_AA)
         };

@@ -293,6 +293,8 @@
     "chart.property-refresh-interval": "重新整理間隔（分鐘）",
     "chart.property-hide-toolbar": "隱藏工具列",
     "chart.property-thouch-zoom": "觸控縮放",
+    "chart.property-mouse-wheel-scroll": "滑鼠滾輪捲動",
+    "chart.property-mouse-wheel-zoom": "滑鼠滾輪縮放",
     "chart.property-load-old-values": "載入歷史",
     "chart.property-date.format": "日期格式",
     "chart.property-time.format": "時間格式",
@@ -1723,6 +1725,5 @@
     "msg.texts-text-remove": "您是否要刪除文字 '{{value}}'？",
     "msg.operation-unauthorized": "操作未授權！"
 }
-
 
 
