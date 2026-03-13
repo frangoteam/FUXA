@@ -1,8 +1,8 @@
-const authJwt = require('../../api/jwt-helper');
-const fs = require('fs');
 const path = require('path');
+const authJwt = require(path.join(process.cwd(), 'api/jwt-helper'));
+const fs = require('fs');
 const schedule = require('node-schedule');
-const { processDynamicData, init: initPdfme } = require('../../api/pdfme/index');
+const { processDynamicData, init: initPdfme } = require(path.join(process.cwd(), 'api/pdfme/index'));
 import express, { Request, Response } from 'express';
 import { generate } from '@pdfme/generator';
 import { text, multiVariableText, barcodes, image, svg, line, table, rectangle, ellipse, dateTime, date, time, select, checkbox, radioGroup } from '@pdfme/schemas';
