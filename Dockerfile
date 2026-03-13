@@ -1,57 +1,78 @@
-# --- STAGE 1: The Builder ---
-FROM node:18-bookworm AS builder
+# --- STAGE 1: Angular Client Builder ---
+FROM node:18-bookworm AS client-builder
+WORKDIR /usr/src/app/client
+COPY client/package*.json ./
+RUN npm install --no-audit --no-fund
+COPY client/ ./
+RUN npm run build -- --configuration production
 
-ARG NODE_SNAP=false
+# --- STAGE 2: Server & Native Dependencies Builder ---
+FROM node:18-bookworm AS server-builder
+# Define build arguments with defaults
+ARG INSTALL_SNAP=false
+ARG INSTALL_ODBC=true
+
 WORKDIR /usr/src/app/FUXA
 
-# Install ONLY what is needed to compile
+# Base build tools (always needed for SQLite)
 RUN apt-get update && apt-get install -y \
-    dos2unix build-essential unixodbc-dev sqlite3 libsqlite3-dev \
+    python3 build-essential libsqlite3-dev dos2unix \
+    $( [ "$INSTALL_ODBC" = "true" ] && echo "unixodbc-dev" ) \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy only dependency files first to leverage caching
+# Install Server dependencies
 COPY server/package*.json ./server/
 WORKDIR /usr/src/app/FUXA/server
+RUN npm install --no-audit --no-fund
 
-# Optimized NPM for speed
-RUN npm config set audit false && npm config set fund false
-RUN npm install --no-audit --no-fund --network-timeout=600000
+# Optional Snap7 installation
+RUN if [ "$INSTALL_SNAP" = "true" ]; then npm install node-snap7; fi
 
-# Install snap7 if requested
-RUN if [ "$NODE_SNAP" = "true" ]; then npm install node-snap7; fi
-
-# Rebuild sqlite3 for the container architecture
+# Force rebuild of SQLite for the container
 RUN npm install --build-from-source --sqlite=/usr/bin sqlite3
 
-# Now copy the rest of the source code
-WORKDIR /usr/src/app/FUXA
-COPY . .
+# Optional ODBC driver preparation
+WORKDIR /usr/src/app/FUXA/odbc
+COPY odbc/ ./
+RUN if [ "$INSTALL_ODBC" = "true" ]; then \
+    dos2unix install_odbc_drivers.sh && chmod +x install_odbc_drivers.sh && ./install_odbc_drivers.sh; \
+    fi
 
-# Run the driver scripts (only needed for the setup files they generate)
-RUN dos2unix odbc/install_odbc_drivers.sh && \
-    chmod +x odbc/install_odbc_drivers.sh
+# 3. Copy server source, build, then cleanup
+WORKDIR /usr/src/app/FUXA/server
+COPY server/ ./
+RUN npm run build
+# Remove unecessary runtime stuff
+RUN rm -rf test docs
 
-# --- STAGE 2: The Runner (Final Image) ---
+# --- STAGE 3: Runner ---
 FROM node:18-bookworm-slim
-
+ARG INSTALL_ODBC=true
 WORKDIR /usr/src/app/FUXA
 
-# Install ONLY the runtime libraries (no compilers/build-essential)
+# Install ONLY runtime libraries
 RUN apt-get update && apt-get install -y \
-    unixodbc sqlite3 libsqlite3-dev \
+    sqlite3 libsqlite3-0 \
+    $( [ "$INSTALL_ODBC" = "true" ] && echo "unixodbc" ) \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy ONLY the necessary artifacts from the builder
-COPY --from=builder /usr/src/app/FUXA/server ./server
-COPY --from=builder /usr/src/app/FUXA/app ./app
-COPY --from=builder /usr/src/app/FUXA/client ./client
-COPY --from=builder /usr/src/app/FUXA/node-red ./node-red
-COPY --from=builder /usr/src/app/FUXA/odbc ./odbc
-COPY --from=builder /usr/src/app/FUXA/odbc/odbcinst.ini /etc/odbcinst.ini
+# 1. Copy Server
+COPY --from=server-builder /usr/src/app/FUXA/server ./server
 
-# Set environment and expose
+# 2. Copy Client
+COPY --from=client-builder /usr/src/app/client/dist ./client/dist
+
+# 3. Conditional ODBC Config
+COPY --from=server-builder /usr/src/app/FUXA/odbc ./odbc
+RUN if [ "$INSTALL_ODBC" = "true" ]; then cp odbc/odbcinst.ini /etc/odbcinst.ini; fi
+
+# 4. Copy static app files
+COPY node-red/ ./node-red/
+
+# Final cleanup
 WORKDIR /usr/src/app/FUXA/server
+RUN npm prune --production
+
 ENV NODE_ENV=production
 EXPOSE 1881
-
-CMD [ "npm", "start" ]
+CMD [ "node", "main.js" ]
