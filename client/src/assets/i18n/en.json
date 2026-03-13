@@ -307,6 +307,8 @@
     "chart.property-refresh-interval": "Refresh interval (min.)",
     "chart.property-hide-toolbar": "Hide toolbar",
     "chart.property-thouch-zoom": "Thouch Zoom",
+    "chart.property-mouse-wheel-scroll": "Mouse wheel scroll",
+    "chart.property-mouse-wheel-zoom": "Mouse wheel zoom",
     "chart.property-load-old-values": "Load history",
     "chart.property-date.format": "Date format",
     "chart.property-time.format": "Time format",
@@ -1938,6 +1940,5 @@
     "msg.operation-unauthorized": "Operation Unauthorized!",
     "msg.secret-code-required": "Secret code required to sign authentication tokens"
 }
-
 
 
