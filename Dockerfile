@@ -9,12 +9,12 @@ RUN npm run build -- --configuration production
 # --- STAGE 2: Server & Native Dependencies Builder ---
 FROM node:18-bookworm AS server-builder
 # Define build arguments with defaults
-ARG INSTALL_SNAP=false
+ARG NODE_SNAP=false
 ARG INSTALL_ODBC=true
 
 WORKDIR /usr/src/app/FUXA
 
-# Base build tools (always needed for SQLite)
+# Base build tools
 RUN apt-get update && apt-get install -y \
     python3 build-essential libsqlite3-dev dos2unix \
     $( [ "$INSTALL_ODBC" = "true" ] && echo "unixodbc-dev" ) \
@@ -26,7 +26,7 @@ WORKDIR /usr/src/app/FUXA/server
 RUN npm install --no-audit --no-fund
 
 # Optional Snap7 installation
-RUN if [ "$INSTALL_SNAP" = "true" ]; then npm install node-snap7; fi
+RUN if [ "$NODE_SNAP" = "true" ]; then npm install node-snap7; fi
 
 # Force rebuild of SQLite for the container
 RUN npm install --build-from-source --sqlite=/usr/bin sqlite3
