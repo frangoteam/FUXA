@@ -1,0 +1,53 @@
+<div class="advanced-report-editor">
+    <!-- FUXA-style Header -->
+    <div class="header">
+        <div class="header-left">
+            <button mat-button title="Settings" class="header-btn" (click)="openSettingsDialog()">
+                <mat-icon>settings</mat-icon>
+            </button>
+            <button mat-button title="Report Settings" class="header-btn" (click)="openReportSettingsDialog()">
+                <mat-icon>build</mat-icon>
+            </button>
+            <button mat-button title="Designer" class="header-btn" (click)="switchToDesigner()">
+                <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-button title="Viewer" class="header-btn" (click)="switchToViewer()">
+                <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-button title="Generate PDF" class="header-btn" (click)="onPreview()">
+                <mat-icon>picture_as_pdf</mat-icon>
+            </button>
+            <button mat-button title="Tag Browser" class="header-btn" (click)="openTagBrowser()">
+                <mat-icon>link</mat-icon>
+            </button>
+            <button mat-button title="Save" class="header-btn" (click)="saveReport()">
+                <mat-icon>save</mat-icon>
+            </button>
+            
+            <!-- Mode Selection (only show in viewer mode) -->
+            <div class="mode-selection" *ngIf="isInViewerMode()">
+                <label class="mode-label">Mode:</label>
+                <mat-radio-group [(ngModel)]="currentMode" (change)="onModeChange($event)">
+                    <mat-radio-button value="form" class="mode-radio">Form</mat-radio-button>
+                    <mat-radio-button value="viewer" class="mode-radio">Viewer</mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+        <div class="header-center">
+            <span class="header-title">{{ editMode === 1 ? 'Add Advanced Report' : 'Edit Advanced Report' }}</span>
+        </div>
+        <div class="header-right">
+            <button mat-button title="Close" class="header-btn" (click)="onCancel()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <!-- Full Screen Content -->
+    <div class="designer-content">
+        <!-- Designer Iframe - takes full remaining space -->
+        <div class="designer-iframe-container">
+            <iframe [src]="designerUrl" width="100%" height="100%" frameborder="0" scrolling="no"></iframe>
+        </div>
+    </div>
+</div>

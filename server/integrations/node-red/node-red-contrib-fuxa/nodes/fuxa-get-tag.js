@@ -10,6 +10,14 @@ module.exports = function(RED) {
             send = send || node.send.bind(node);
 
             try {
+                var tagId = fuxa.getTagId(config.tag, null);
+                if (tagId) {
+                    var value = fuxa.getTag(tagId);
+                    msg.payload = value;
+                    msg.topic = config.tag;  // Set topic to tag name for join operations
+                    node.send(msg);
+                } else {
+                    node.error('Tag not found: ' + config.tag, msg);
                 if (!fuxa) {
                     node.error("FUXA not available in functionGlobalContext", msg);
                     return done && done();

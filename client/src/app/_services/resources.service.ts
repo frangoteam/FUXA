@@ -38,6 +38,18 @@ export class ResourcesService {
         return this.http.get<any>(this.endPointConfig + '/api/resources/generateImage', requestOptions);
     }
 
+    browse(path: string): Observable<any> {
+        return this.http.get<any>(`${this.endPointConfig}/api/resources/browse`, {
+            params: { path: path }
+        });
+    }
+
+    deleteResource(path: string): Observable<any> {
+        return this.http.delete<any>(`${this.endPointConfig}/api/resources/browse`, {
+            params: { path: path }
+        });
+    }
+
     isVideo(path: string): boolean {
         const videoExtensions = ['.mp4', '.webm', '.ogg'];
         return videoExtensions.some(ext => path.toLowerCase().endsWith(ext));
