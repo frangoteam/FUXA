@@ -29,6 +29,7 @@ import { GraphBaseComponent } from './controls/html-graph/graph-base/graph-base.
 import { HtmlIframeComponent } from './controls/html-iframe/html-iframe.component';
 import { HtmlTableComponent } from './controls/html-table/html-table.component';
 import { DataTableComponent } from './controls/html-table/data-table/data-table.component';
+import { ParameterTableComponent } from './controls/html-table/parameter-table/parameter-table.component';
 import { HtmlSchedulerComponent } from './controls/html-scheduler/html-scheduler.component';
 import { ChartOptions } from '../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { GaugeBaseComponent } from './gauge-base/gauge-base.component';
@@ -95,7 +96,7 @@ export class GaugesManager {
                     gauge.setValues(message.result, message.chunk);
                 } else if (this.mapTable[message.gid]) {
                     let gauge: DataTableComponent = this.mapTable[message.gid];
-                    gauge.setValues(message.result);
+                    gauge.setValues(message.result, message.chunk);
                 }
             } catch (err) {
 
@@ -873,11 +874,13 @@ export class GaugesManager {
             if (gauge) {
                 this.setTablePropety(gauge, ga.property, targetSignalsId);
                 this.mapTable[ga.id] = gauge;
-                gauge.onTimeRange$.subscribe(data => {
-                    if (data) {
-                        this.hmiService.queryDaqValues(data);
-                    }
-                });
+                if (gauge instanceof DataTableComponent) {
+                    gauge.onTimeRange$.subscribe(data => {
+                        if (data) {
+                            this.hmiService.queryDaqValues(data);
+                        }
+                    });
+                }
                 this.mapGauges[ga.id] = gauge;
             }
             return gauge;
@@ -982,10 +985,12 @@ export class GaugesManager {
         }
     }
 
-    private setTablePropety(table: DataTableComponent, property: any, targetSignalsId?: Record<string, string>) {
+    private setTablePropety(table: DataTableComponent | ParameterTableComponent, property: any, targetSignalsId?: Record<string, string>) {
         if (property) {
             if (property.options) {
-                table.remapVariableIds(property.options, targetSignalsId);
+                if (table instanceof DataTableComponent) {
+                    table.remapVariableIds(property.options, targetSignalsId);
+                }
                 table.setOptions(property.options);
             }
         }

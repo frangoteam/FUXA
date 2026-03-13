@@ -1,132 +1,213 @@
+<div class="data-table-wrapper"
+    [ngStyle]="{'--header-bg': tableOptions.header.background, '--header-color': tableOptions.header.color, '--row-bg': tableOptions.row.background, '--toolbar-bg': tableOptions.toolbar?.background || tableOptions.header.background, '--toolbar-color': tableOptions.toolbar?.color || tableOptions.header.color, '--toolbar-button-bg': tableOptions.toolbar?.buttonColor || tableOptions.header.background}"
+    style="display: flex; flex-direction: column; height: 100%;">
 <div *ngIf="withToolbar" class="table-toolbar"
-    [style.backgroundColor]="tableOptions.row.background">
-    <div *ngIf="tableOptions.filter.show" class="my-form-field" style="float: left; padding-left: 20px;">
-        <input (keyup)="applyFilter($event.target.value)" placeholder="{{'table.history-filter' | translate}}" style="width: 250px;" type="text"
-            [style.backgroundColor]="tableOptions.header.background" [style.color]="tableOptions.row.color">
-    </div>
-    <div *ngIf="tableOptions.daterange.show" class="date-range">
-        <div *ngIf="!isEditor">
-            <mat-select class="moka-toolbar-editor moka-toolbar-select" [(value)]="tableOptions.lastRange" [style.color]="tableOptions.row.color"
-                [style.backgroundColor]="tableOptions.row.background" panelClass="my-select-panel-class" (selectionChange)="onRangeChanged($event.source.value)">
-                <mat-option *ngFor="let ev of lastRangeType | enumToArray" [value]="ev.key" [style.color]="tableOptions.row.color"
-                    [style.backgroundColor]="tableOptions.row.background">
-                    {{ ev.value }}
-                </mat-option>
-            </mat-select>
-            <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background"
-                (click)="onDateRange()">
-                <mat-icon aria-label="time range">access_time</mat-icon>
-            </button>
-            <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background"
-                (click)="onExportData()">
-                <mat-icon aria-label="export data">vertical_align_bottom</mat-icon>
-            </button>
+    [style.backgroundColor]="tableOptions.toolbar?.background || tableOptions.header.background"
+    [style.color]="tableOptions.toolbar?.color || tableOptions.header.color"
+    [style.--toolbar-color]="tableOptions.toolbar?.color || tableOptions.header.color"
+    [style.--toolbar-button-bg]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+    [style.height.px]="(tableOptions.header.height >= 42 ? tableOptions.header.height : 42)"
+    [style.--toolbar-height]="(tableOptions.header.height >= 42 ? tableOptions.header.height + 'px' : '42px')"
+    style="flex: 0 0 auto;">
+    <div class="toolbar-left">
+        <div *ngIf="tableOptions.filter.show" class="my-form-field" style="float: left; padding-left: 10px;">
+            <input (keyup)="applyFilter($event.target.value)" placeholder="{{'table.history-filter' | translate}}" style="width: 250px; box-shadow: 1px 1px 3px -1px #888 !important; height: 32px;" type="text"
+                [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background" [style.color]="(tableOptions.toolbar?.color || tableOptions.header.color) + ' !important'">
         </div>
-        <div *ngIf="isEditor">
-            <button class="moka-toolbar-editor moka-toolbar-select" [style.color]="tableOptions.row.color" [style.background-color]="tableOptions.row.background">
-            </button>
-            <button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background">
-                <mat-icon aria-label="time range">access_time</mat-icon>
-            </button>
-            <button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.row.color" [style.backgroundColor]="tableOptions.row.background">
-                <mat-icon aria-label="export data">vertical_align_bottom</mat-icon>
-            </button>
+        <div *ngIf="tableOptions.daterange.show" class="date-range">
+            <div *ngIf="!isEditor" class="date-range-inner">
+                <div class="data-custom-select" [class.open]="isRangeDropdownOpen">
+                    <div class="custom-select-trigger" (click)="toggleRangeDropdown()" [style]="getSelectStyles(isRangeDropdownOpen)">
+                        <span class="selected-text">{{ selectedRangeLabel }}</span>
+                        <span class="material-icons arrow">arrow_drop_down</span>
+                    </div>
+                    <div class="custom-select-dropdown" *ngIf="isRangeDropdownOpen" [style]="getDropdownStyles()">
+                        <div class="custom-option" [class.selected]="lastRangeType['last1h'] === tableOptions.lastRange" (click)="selectRange('last1h')" [style]="getOptionStyle(lastRangeType['last1h'] === tableOptions.lastRange)">
+                            Last 1 hour
+                        </div>
+                        <div class="custom-option" [class.selected]="lastRangeType['last1d'] === tableOptions.lastRange" (click)="selectRange('last1d')" [style]="getOptionStyle(lastRangeType['last1d'] === tableOptions.lastRange)">
+                            Last 1 day
+                        </div>
+                        <div class="custom-option" [class.selected]="lastRangeType['last3d'] === tableOptions.lastRange" (click)="selectRange('last3d')" [style]="getOptionStyle(lastRangeType['last3d'] === tableOptions.lastRange)">
+                            Last 3 days
+                        </div>
+                    </div>
+                </div>
+                <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+                    (click)="onDateRange()">
+                    <mat-icon aria-label="time range">access_time</mat-icon>
+                </button>
+                <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+                    (click)="onExportData()">
+                    <mat-icon aria-label="export data">vertical_align_bottom</mat-icon>
+                </button>
+            </div>
+            <div *ngIf="isEditor" class="date-range-inner">
+                <div class="data-custom-select" [class.open]="isRangeDropdownOpen">
+                    <div class="custom-select-trigger" (click)="toggleRangeDropdown()" [style]="getSelectStyles(isRangeDropdownOpen)">
+                        <span class="selected-text">{{ selectedRangeLabel }}</span>
+                        <span class="material-icons arrow">arrow_drop_down</span>
+                    </div>
+                    <div class="custom-select-dropdown" *ngIf="isRangeDropdownOpen" [style]="getDropdownStyles()">
+                        <div class="custom-option" [class.selected]="lastRangeType['last1h'] === tableOptions.lastRange" (click)="selectRange('last1h')" [style]="getOptionStyle(lastRangeType['last1h'] === tableOptions.lastRange)">
+                            Last 1 hour
+                        </div>
+                        <div class="custom-option" [class.selected]="lastRangeType['last1d'] === tableOptions.lastRange" (click)="selectRange('last1d')" [style]="getOptionStyle(lastRangeType['last1d'] === tableOptions.lastRange)">
+                            Last 1 day
+                        </div>
+                        <div class="custom-option" [class.selected]="lastRangeType['last3d'] === tableOptions.lastRange" (click)="selectRange('last3d')" [style]="getOptionStyle(lastRangeType['last3d'] === tableOptions.lastRange)">
+                            Last 3 days
+                        </div>
+                    </div>
+                </div>
+                <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+                    (click)="onDateRange()">
+                    <mat-icon aria-label="time range">access_time</mat-icon>
+                </button>
+                <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background"
+                    (click)="onExportData()">
+                    <mat-icon aria-label="export data">vertical_align_bottom</mat-icon>
+                </button>
+            </div>
         </div>
     </div>
-    <mat-paginator *ngIf="tableOptions.paginator.show" [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="data-table-paginator" [style.color]="tableOptions.row.color">
-    </mat-paginator>
+    <div *ngIf="tableOptions.paginator.show" class="toolbar-right">
+        <div class="page-info" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color">
+            {{ getPageInfo() }}
+        </div>
+        <div class="page-size">
+            <div class="data-custom-select" [class.open]="isPageSizeDropdownOpen">
+                <div class="custom-select-trigger" (click)="togglePageSizeDropdown()" [style]="getSelectStyles(isPageSizeDropdownOpen)">
+                    <span class="selected-text">{{ selectedPageSizeLabel }}</span>
+                    <span class="material-icons arrow">arrow_drop_down</span>
+                </div>
+                <div class="custom-select-dropdown" *ngIf="isPageSizeDropdownOpen" [style]="getDropdownStyles()">
+                    <div class="custom-option" *ngFor="let size of pageSizeOptions" [class.selected]="size === selectedPageSize" (click)="selectPageSize(size)" [style]="getOptionStyle(size === selectedPageSize)">
+                        {{ size }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button custom-disabled-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background" [disabled]="!canGoPrevious()" (click)="previousPage()">
+            <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button mat-flat-button class="moka-toolbar-editor moka-toolbar-button custom-disabled-button" [style.color]="tableOptions.toolbar?.color || tableOptions.header.color" [style.backgroundColor]="tableOptions.toolbar?.buttonColor || tableOptions.header.background" [disabled]="!canGoNext()" (click)="nextPage()">
+            <mat-icon>chevron_right</mat-icon>
+        </button>
+    </div>
 </div>
-<mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background"
-    [style.--mat-table-row-item-outline-color]="tableOptions.gridColor"
-    [style.--mdc-data-table-row-divider-color]="tableOptions.gridColor"
-    matSort
-    [style.height]="withToolbar ? 'calc(100% - 42px)' : '100%'">
-    <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
-        <th *matHeaderCellDef
-            mat-sort-header
-            [style.width.px]="columnsStyle[column]?.width ? columnsStyle[column].width : 'auto'"
-            [style.color]="columnsStyle[column]?.color ? columnsStyle[column].color : tableOptions.header?.color"
-            [style.textAlign]="columnsStyle[column]?.align ? columnsStyle[column].align : 'left'"
-            [style.fontSize.px]="tableOptions.header.fontSize">
-            {{ columnsStyle[column]?.label }}
-        </th>
-        <td *matCellDef="let element; index as i"
-            class="data-table-row-cell"
-            [ngStyle]="{
-                'width.px': columnsStyle[column].width,
-                'text-align': columnsStyle[column].align,
-                'font-size.px': tableOptions.row.fontSize}">
-            <ng-container *ngIf="setOfSourceTableData; else stringValue">
-                {{element[column]}}
-            </ng-container>
-            <ng-template #stringValue>
-                {{element[column]?.stringValue}}
-                <button mat-icon-button *ngIf="column === alarmColumnType.ack && element.toack >= 0" (click)="onAckAlarm(element)" [disabled]="element.toack === 0">
-                    <mat-icon>check_circle_outline</mat-icon>
-                </button>
-                <button mat-icon-button *ngIf="column === reportColumnType.download" (click)="onDownloadReport(element)">
-                    <mat-icon>vertical_align_bottom</mat-icon>
-                </button>
-                <button mat-icon-button *ngIf="column === reportColumnType.delete" (click)="onRemoveReportFile(element)" [disabled]="!element.deletable" class="custom-disabled-button">
-                    <mat-icon>delete_forever</mat-icon>
-                </button>
-            </ng-template>
-        </td>
-    </ng-container>
+    <mat-table #tableHeader [dataSource]="[]" [style.backgroundColor]="tableOptions.row.background"
+        [style.--mat-table-row-item-outline-color]="tableOptions.gridColor"
+        [style.--mdc-data-table-row-divider-color]="tableOptions.gridColor"
+        matSort
+        style="width: 100%; flex: 0 0 auto;">
+        <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+            <th *matHeaderCellDef
+                mat-sort-header
+                [style.width.px]="columnsStyle[column]?.width || null"
+                [style.color]="columnsStyle[column]?.color ? columnsStyle[column].color : tableOptions.header?.color"
+                [style.textAlign]="columnsStyle[column]?.align ? columnsStyle[column].align : 'left'"
+                [style.fontSize.px]="tableOptions.header.fontSize">
+                {{ columnsStyle[column]?.label }}
+            </th>
+        </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns" class="mat-row data-table-header" [style.height.px]="tableOptions.header.height"
-        [style.backgroundColor]="tableOptions.header.background" [style.borderBottom]="'1px solid ' + tableOptions.gridColor" [style.display]="(tableOptions.header.show) ? 'flex' : 'none'">
-    </mat-header-row>
-    <ng-container [ngSwitch]="type">
-        <ng-container *ngSwitchCase="tableType.reports">
-            <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
-                    class="mat-row data-table-row"
+        <mat-header-row *matHeaderRowDef="displayedColumns" class="mat-header-row data-table-header"
+            [style.height.px]="tableOptions.header.height"
+            [style.backgroundColor]="tableOptions.header.background"
+            [style.borderBottom]="'1px solid ' + tableOptions.gridColor"
+            [style.display]="(tableOptions.header.show) ? 'flex' : 'none'">
+        </mat-header-row>
+    </mat-table>
+
+    <div class="table-scroll-container" style="flex: 1 1 auto; overflow-y: auto !important; overflow-x: hidden;">
+        <mat-table #table [dataSource]="dataSource" [style.backgroundColor]="tableOptions.row.background"
+            [style.--mat-table-row-item-outline-color]="tableOptions.gridColor"
+            [style.--mdc-data-table-row-divider-color]="tableOptions.gridColor"
+            [class.selectable]="isSelectable()"
+            style="width: 100%;">
+            <ng-container *ngFor="let column of displayedColumns" [matColumnDef]="column">
+                <th *matHeaderCellDef style="display: none;"></th>
+                <td *matCellDef="let element; index as i"
+                    class="data-table-row-cell"
                     [ngStyle]="{
-                        'cursor': isSelectable() ? 'pointer': 'unset',
-                        'height.px': tableOptions.row.height,
-                        'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
-                        'border-bottom': '1px solid ' + tableOptions.gridColor,
-                        'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
-            </mat-row>
-        </ng-container>
-        <ng-container *ngSwitchCase="tableType.alarms">
-            <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
-                    class="mat-row data-table-row"
-                    [ngStyle]="{
-                        'cursor': isSelectable() ? 'pointer': 'unset',
-                        'height.px': tableOptions.row.height,
-                        'background-color': row.bkcolor,
-                        'border-bottom': '1px solid ' + tableOptions.gridColor,
-                        'color': row.color}">
-            </mat-row>
-        </ng-container>
-        <ng-container *ngSwitchCase="tableType.data">
-            <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
-                    (click)="selectRow(row)"
-                    class="mat-row data-table-row"
-                    [ngStyle]="{
-                    'cursor': isSelectable() ? 'pointer': 'unset',
-                    'height.px': tableOptions.row.height,
-                    'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
-                    'border-bottom': '1px solid ' + tableOptions.gridColor,
-                    'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
-            </mat-row>
-        </ng-container>
-        <ng-container *ngSwitchCase="tableType.history">
-            <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
-                    (click)="selectRow(row)"
-                    class="mat-row data-table-row"
-                    [ngStyle]="{
-                    'cursor': isSelectable() ? 'pointer': 'unset',
-                    'height.px': tableOptions.row.height,
-                    'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
-                    'border-bottom': '1px solid ' + tableOptions.gridColor,
-                    'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
-            </mat-row>
-        </ng-container>
-    </ng-container>
-</mat-table>
-<div *ngIf="!isEditor && type === tableHistoryType" class="reload-btn" [style.top.px]="withToolbar ? 45 : 0">
+                        'width.px': columnsStyle[column].width,
+                        'text-align': columnsStyle[column].align,
+                        'font-size.px': tableOptions.row.fontSize}">
+                    <ng-container *ngIf="setOfSourceTableData; else stringValue">
+                        {{element[column]}}
+                    </ng-container>
+                    <ng-template #stringValue>
+                        {{element[column]?.stringValue}}
+                        <button mat-icon-button *ngIf="column === alarmColumnType.ack && element.toack >= 0" (click)="onAckAlarm(element)" [disabled]="element.toack === 0">
+                            <mat-icon>check_circle_outline</mat-icon>
+                        </button>
+                        <button mat-icon-button *ngIf="column === reportColumnType.download" (click)="onDownloadReport(element)">
+                            <mat-icon>vertical_align_bottom</mat-icon>
+                        </button>
+                        <button mat-icon-button *ngIf="column === reportColumnType.delete" (click)="onRemoveReportFile(element)" [disabled]="!element.deletable" class="custom-disabled-button">
+                            <mat-icon>delete_forever</mat-icon>
+                        </button>
+                    </ng-template>
+                </td>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns" style="display: none;"></mat-header-row>
+            <ng-container [ngSwitch]="type">
+                <ng-container *ngSwitchCase="tableType.reports">
+                    <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
+                            class="mat-row data-table-row"
+                            [ngStyle]="{
+                                'flex': '0 0 auto',
+                                'cursor': isSelectable() ? 'pointer': 'unset',
+                                'height.px': tableOptions.row.height,
+                                'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
+                                'border-bottom': '1px solid ' + tableOptions.gridColor,
+                                'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
+                    </mat-row>
+                </ng-container>
+                <ng-container *ngSwitchCase="tableType.alarms">
+                    <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
+                            class="mat-row data-table-row"
+                            [ngStyle]="{
+                                'flex': '0 0 auto',
+                                'cursor': isSelectable() ? 'pointer': 'unset',
+                                'height.px': tableOptions.row.height,
+                                'background-color': row.bkcolor,
+                                'border-bottom': '1px solid ' + tableOptions.gridColor,
+                                'color': row.color}">
+                    </mat-row>
+                </ng-container>
+                <ng-container *ngSwitchCase="tableType.data">
+                    <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
+                            (click)="selectRow(row)"
+                            class="mat-row data-table-row"
+                            [ngStyle]="{
+                            'flex': '0 0 auto',
+                            'cursor': isSelectable() ? 'pointer': 'unset',
+                            'height.px': tableOptions.row.height,
+                            'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
+                            'border-bottom': '1px solid ' + tableOptions.gridColor,
+                            'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
+                    </mat-row>
+                </ng-container>
+                <ng-container *ngSwitchCase="tableType.history">
+                    <mat-row *matRowDef="let row; columns: displayedColumns; index as i"
+                            (click)="selectRow(row)"
+                            class="mat-row data-table-row"
+                            [ngStyle]="{
+                            'flex': '0 0 auto',
+                            'cursor': isSelectable() ? 'pointer': 'unset',
+                            'height.px': tableOptions.row.height,
+                            'background-color': isSelected(row) ? tableOptions.selection.background : tableOptions.row.background,
+                            'border-bottom': '1px solid ' + tableOptions.gridColor,
+                            'color': isSelected(row) ? tableOptions.selection.color : tableOptions.row.color}">
+                    </mat-row>
+                </ng-container>
+            </ng-container>
+        </mat-table>
+    </div>
+<div *ngIf="!isEditor && type === tableHistoryType" class="reload-btn" [style.top.px]="withToolbar ? 36 : -2">
     <button mat-icon-button
             (click)="onRefresh()"
             class="small-icon-button default-color"
@@ -136,4 +217,5 @@
 </div>
 <div *ngIf="loading" class="spinner">
     <mat-spinner style="margin: auto" diameter="40"></mat-spinner>
+</div>
 </div>

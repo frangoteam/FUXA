@@ -1,5 +1,5 @@
 .container {
-    background-color: white;
+    background-color: var(--md-drppicker-bg-color, white);
 }
 
 .custom-datapicker {
@@ -10,14 +10,20 @@
     float: right;
     padding-right: 20px;
     margin-bottom: 8px;
+    background-color: var(--md-drppicker-bg-color, white);
 }
 
 .action-panel .btn-cancel {
-    background-color: white;
-    color: black;
+    background-color: var(--md-drppicker-header-bg, white);
+    color: var(--md-drppicker-header-color, black);
     margin-right: 10px;
 }
 
+.action-panel .btn-ok {
+    background-color: var(--md-drppicker-button-bg, #3f51b5);
+    color: var(--md-drppicker-button-color, white);
+}
+
 ::ng-deep .light-dialog-container .mat-dialog-container {
-    background-color: white !important;
+    background-color: var(--md-drppicker-bg-color, white) !important;
 }

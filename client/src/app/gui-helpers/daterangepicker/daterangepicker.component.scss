@@ -1,8 +1,8 @@
 /*
 *  variables
 */
-$md-drppicker-color:                      inherit !default;
-$md-drppicker-bg-color:                   #fff !default;
+$md-drppicker-color:                      var(--md-drppicker-color, inherit) !default;
+$md-drppicker-bg-color:                   var(--md-drppicker-bg-color, #fff) !default;
 
 $md-drppicker-cell-color:                 $md-drppicker-color !default;
 $md-drppicker-cell-border-color:          transparent !default;
@@ -16,8 +16,8 @@ $md-drppicker-in-range-color:             #000 !default;
 $md-drppicker-in-range-border-color:      transparent !default;
 $md-drppicker-in-range-bg-color:          #dde2e4 !default;
 
-$md-drppicker-active-color:               #fff !default;
-$md-drppicker-active-bg-color:            #3f51b5 !default;
+$md-drppicker-active-color:               var(--md-drppicker-button-color, #fff) !default;
+$md-drppicker-active-bg-color:            var(--md-drppicker-button-bg, #3f51b5) !default;
 $md-drppicker-active-border-color:        transparent !default;
 
 $md-drppicker-unselected-color:           #999 !default;
@@ -67,8 +67,8 @@ $input-height: 3rem !default;
 .md-drppicker {
   position: absolute;
   font-family: Roboto, sans-serif;
-  color: $md-drppicker-color;
-  background-color: $md-drppicker-bg-color;
+  color: var(--md-drppicker-color, $md-drppicker-color);
+  background-color: var(--md-drppicker-bg-color, $md-drppicker-bg-color);
   border-radius: 4px;
   width: $md-drppicker-width;
   padding: 4px;
@@ -76,7 +76,7 @@ $input-height: 3rem !default;
   overflow: hidden;
   z-index: 1000;
   font-size: 14px;
-  background-color: #ffffff;
+  background-color: var(--md-drppicker-bg-color, #ffffff) !important;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.16), 0 2px 8px 0 rgba(0, 0, 0, 0.12);
   &.double {
     width: $md-drppicker-width-double;
@@ -211,7 +211,7 @@ $input-height: 3rem !default;
     border: $md-drppicker-calendar-border-size solid $md-drppicker-calendar-border-color;
     padding: $md-drppicker-calendar-margin;
     border-radius: $md-drppicker-calendar-border-radius;
-    background-color: $md-drppicker-calendar-bg-color;
+    background-color: var(--md-drppicker-bg-color, #ffffff) !important;
   }
 
   table {
@@ -219,7 +219,7 @@ $input-height: 3rem !default;
     margin: 0;
   }
   th {
-    color: #988c8c;
+    color: var(--md-drppicker-header-color, #988c8c);
   }
   td, th {
     text-align: center;
@@ -235,6 +235,8 @@ $input-height: 3rem !default;
     &.available {
       &.prev {
         display: block;
+        background-color: var(--md-drppicker-header-bg, #f0f0f0);
+        filter: invert(var(--md-drppicker-icon-invert, 0)) brightness(var(--md-drppicker-icon-brightness, 1));
         background-image: url("data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMy43IDYiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMuNyA2IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxwYXRoIGQ9Ik0zLjcsMC43TDEuNCwzbDIuMywyLjNMMyw2TDAsM2wzLTNMMy43LDAuN3oiLz4NCjwvZz4NCjwvc3ZnPg0K");
         background-repeat: no-repeat;
         background-size: .5em;
@@ -247,7 +249,9 @@ $input-height: 3rem !default;
         }
       }
       &.next {
+        background-color: var(--md-drppicker-header-bg, #f0f0f0);
         transform: rotate(180deg);
+        filter: invert(var(--md-drppicker-icon-invert, 0)) brightness(var(--md-drppicker-icon-brightness, 1));
         display: block;
         background-image: url("data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB2aWV3Qm94PSIwIDAgMy43IDYiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMuNyA2IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxwYXRoIGQ9Ik0zLjcsMC43TDEuNCwzbDIuMywyLjNMMyw2TDAsM2wzLTNMMy43LDAuN3oiLz4NCjwvZz4NCjwvc3ZnPg0K");
         background-repeat: no-repeat;
@@ -259,6 +263,8 @@ $input-height: 3rem !default;
         &:hover {
           margin: 0;
           transform: rotate(180deg);
+          background-color: var(--md-drppicker-header-bg, #f0f0f0);
+          filter: invert(var(--md-drppicker-icon-invert, 0)) brightness(var(--md-drppicker-icon-brightness, 1));
         }
       }
       &:hover {
@@ -294,9 +300,10 @@ $input-height: 3rem !default;
         transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms;
     &.off {
       &, &.in-range, &.start-date, &.end-date {
-        background-color: $md-drppicker-unselected-bg-color;
+        background-color: var(--md-drppicker-header-bg, #f0f0f0);
         border-color: $md-drppicker-unselected-border-color;
-        color: $md-drppicker-unselected-color;
+        color: var(--md-drppicker-header-color, #999);
+        opacity: 0.5;
       }
     }
 

@@ -221,7 +221,6 @@ export class SvgUtils {
         // Extract the export section
         const globalSectionRegex = new RegExp(`${SvgUtils.exportStart}([\\s\\S]*?)${SvgUtils.exportEnd}`, 'g');
         const match = globalSectionRegex.exec(scriptContent);
-        
         if (!match) {
             return varsToBind;
         }

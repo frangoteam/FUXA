@@ -40,6 +40,7 @@ export class FlexVariableComponent implements OnInit {
     @Input() bitmask: number;
     @Input() readonly = false;
     @Input() placeholders = [];
+    @Input() deviceId: string;
     @Input() devicesOnly = false;
 
     @Output() onchange: EventEmitter<any> = new EventEmitter();
