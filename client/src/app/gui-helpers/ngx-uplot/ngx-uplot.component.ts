@@ -223,7 +223,21 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             }
         }
         let opt = this.options || this.defOptions;
-        opt.cursor = this.defOptions.cursor;
+        const isStaticChart = !!this.options?.staticChart;
+        opt.cursor = {
+            ...this.defOptions.cursor,
+            ...opt.cursor,
+            drag: {
+                ...opt.cursor?.drag,
+                setScale: !isStaticChart,
+                x: !isStaticChart,
+                y: false,
+            }
+        };
+        opt.select = {
+            ...opt.select,
+            show: !isStaticChart
+        };
         if (this.uplot) {
             this.uplot.destroy();
         }
@@ -867,6 +881,7 @@ export interface NgxOptions extends Options {
     thouchZoom?: boolean;
     mouseWheelScroll?: boolean;
     mouseWheelZoom?: boolean;
+    staticChart?: boolean;
 }
 
 export interface ChartOptions extends NgxOptions {

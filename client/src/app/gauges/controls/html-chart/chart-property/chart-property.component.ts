@@ -115,6 +115,12 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
     }
 
     onMouseWheelScrollChanged() {
+        if (this.options.staticChart) {
+            this.options.mouseWheelScroll = false;
+            this.options.mouseWheelZoom = false;
+            this.onChartChanged();
+            return;
+        }
         if (this.options.mouseWheelScroll) {
             this.options.mouseWheelZoom = false;
         }
@@ -122,6 +128,12 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
     }
 
     onMouseWheelZoomChanged() {
+        if (this.options.staticChart) {
+            this.options.mouseWheelScroll = false;
+            this.options.mouseWheelZoom = false;
+            this.onChartChanged();
+            return;
+        }
         if (this.options.mouseWheelZoom) {
             this.options.mouseWheelScroll = false;
         }
@@ -129,7 +141,10 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
     }
 
     private normalizeWheelModes() {
-        if (this.chartViewValue !== ChartViewType.history) {
+        if (Utils.isNullOrUndefined(this.options.staticChart)) {
+            this.options.staticChart = false;
+        }
+        if (this.options.staticChart || this.chartViewValue !== ChartViewType.history) {
             this.options.mouseWheelScroll = false;
             this.options.mouseWheelZoom = false;
             return;
