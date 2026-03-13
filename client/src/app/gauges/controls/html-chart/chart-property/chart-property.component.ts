@@ -129,6 +129,11 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
     }
 
     private normalizeWheelModes() {
+        if (this.chartViewValue !== ChartViewType.history) {
+            this.options.mouseWheelScroll = false;
+            this.options.mouseWheelZoom = false;
+            return;
+        }
         if (this.options.mouseWheelScroll && this.options.mouseWheelZoom) {
             this.options.mouseWheelZoom = false;
         }
