@@ -34,9 +34,6 @@ updates:
         update-types:
           - "version-update:semver-major"
 
-    allow:
-      - dependency-type: "direct"
-
   # ========================
   # CLIENT (Angular)
   # ========================
@@ -60,6 +57,12 @@ updates:
           - "*"
 
     ignore:
+      - dependency-name: "@angular/*"
+      - dependency-name: "@angular-devkit/*"
+      - dependency-name: "@angular/cli"
+      - dependency-name: "typescript"
+      - dependency-name: "rxjs"
+      - dependency-name: "zone.js"
       - dependency-name: "electron"
       - dependency-name: "electron-builder"
         update-types:

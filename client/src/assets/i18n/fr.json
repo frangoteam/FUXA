@@ -293,6 +293,8 @@
   "chart.property-refresh-interval": "Intervalle de rafraîchissement (min.)",
   "chart.property-hide-toolbar": "Masquer la barre d'outils",
   "chart.property-thouch-zoom": "Zoom tactile",
+  "chart.property-mouse-wheel-scroll": "Défilement molette souris",
+  "chart.property-mouse-wheel-zoom": "Zoom molette souris",
   "chart.property-load-old-values": "Charger l'historique",
   "chart.property-date.format": "Format de la date",
   "chart.property-time.format": "Format de l'heure",
@@ -1722,6 +1724,5 @@
   "msg.texts-text-remove": "Souhaitez-vous supprimer le texte '{{value}}' ?",
   "msg.operation-unauthorized": "Opération non autorisée !"
 }
-
 
 
