@@ -526,6 +526,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 // check gauge to init
                 this.gaugesRef = {};
+                if (v) { this.projectService.cleanView(v); }
                 setTimeout(() => {
                     for (let key in v.items) {
                         let ga: GaugeSettings = this.getGaugeSettings(v.items[key]);
