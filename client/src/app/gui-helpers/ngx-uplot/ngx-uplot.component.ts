@@ -8,6 +8,31 @@ import { ChartLineZone } from '../../_models/chart';
 declare const uPlot: any;
 declare const placement: any;
 
+interface WheelScaleLike {
+    min: unknown;
+    max: unknown;
+}
+
+interface WheelDataBounds {
+    min: number;
+    max: number;
+    span: number;
+}
+
+interface WheelUplotLike {
+    over?: HTMLElement | null;
+    scales?: { x?: WheelScaleLike };
+    data?: unknown[][];
+    setScale: (scale: 'x', limits: { min: number; max: number }) => void;
+}
+
+type WheelMode = 'scroll' | 'zoom';
+
+const WHEEL_PAN_STEP = 0.1;            // pan by 10% of current visible x-range per wheel step.
+const WHEEL_PAN_FAST_STEP = 0.3;       // pan by 30% when shift is pressed.
+const WHEEL_ZOOM_SENSITIVITY = 0.0015; // exponential zoom sensitivity (higher = faster zooming).
+const WHEEL_MIN_RANGE_DIVISOR = 1e4;   // prevent over-zoom: min range = current range / divisor.
+
 @Component({
     selector: 'ngx-uplot',
     templateUrl: './ngx-uplot.component.html',
@@ -198,7 +223,21 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             }
         }
         let opt = this.options || this.defOptions;
-        opt.cursor = this.defOptions.cursor;
+        const isStaticChart = !!this.options?.staticChart;
+        opt.cursor = {
+            ...this.defOptions.cursor,
+            ...opt.cursor,
+            drag: {
+                ...opt.cursor?.drag,
+                setScale: !isStaticChart,
+                x: !isStaticChart,
+                y: false,
+            }
+        };
+        opt.select = {
+            ...opt.select,
+            show: !isStaticChart
+        };
         if (this.uplot) {
             this.uplot.destroy();
         }
@@ -238,6 +277,10 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         opt.plugins = (this.options.tooltip && this.options.tooltip.show) ? [this.tooltipPlugin()] : [];
         if (this.options.thouchZoom) {
             opt.plugins.push(this.touchZoomPlugin(opt));
+        }
+        const wheelMode: WheelMode | null = this.options.mouseWheelZoom ? 'zoom' : (this.options.mouseWheelScroll ? 'scroll' : null);
+        if (wheelMode) {
+            opt.plugins.push(this.mouseWheelPlugin(wheelMode));
         }
         this.uplot = new uPlot(opt, this.data, this.graph.nativeElement);
         const over = this.uplot.root.querySelector('.u-over');
@@ -730,6 +773,103 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             }
         };
     }
+
+    // Creates a single wheel handler plugin and dispatches behavior by selected mode.
+    private mouseWheelPlugin(mode: WheelMode) {
+        let over: HTMLElement | null = null;
+        let onWheel: ((event: WheelEvent) => void) | null = null;
+        return {
+            hooks: {
+                init: (u: unknown) => {
+                    // Runtime type guard for uPlot-like object used by wheel interactions.
+                    const wheelPlot = (typeof u === 'object' && u !== null) ? (u as WheelUplotLike) : null;
+                    const target = wheelPlot?.over;
+                    if (!wheelPlot || typeof wheelPlot.setScale !== 'function' || !target) {
+                        return;
+                    }
+                    over = target;
+                    onWheel = (event: WheelEvent) => {
+                        const scale = this.normalizeFiniteRange(wheelPlot.scales?.x?.min, wheelPlot.scales?.x?.max);
+                        if (!scale) {
+                            return;
+                        }
+                        // Pick dominant wheel axis; sign is inverted by request.
+                        const rawDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+                        const delta = Number.isFinite(rawDelta) ? -rawDelta : 0;
+                        if (!delta) {
+                            return;
+                        }
+                        event.preventDefault();
+
+                        const xData = Array.isArray(wheelPlot.data?.[0]) ? wheelPlot.data[0] : null;
+                        // Time-series data is ordered, so first/last points define data bounds.
+                        const bounds = xData?.length
+                            ? this.normalizeFiniteRange(xData[0], xData[xData.length - 1])
+                            : null;
+
+                        if (mode === 'scroll') {
+                            const stepRatio = event.shiftKey ? WHEEL_PAN_FAST_STEP : WHEEL_PAN_STEP;
+                            const step = scale.span * stepRatio * Math.sign(delta);
+                            const next = this.clampXWindowToData(scale.min + step, scale.max + step, bounds);
+                            wheelPlot.setScale('x', next);
+                            return;
+                        }
+
+                        const rect = target.getBoundingClientRect();
+                        if (!rect.width) {
+                            return;
+                        }
+                        const anchorPct = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+                        // Keep the point under cursor stable while zooming.
+                        const anchor = scale.min + (scale.span * anchorPct);
+                        const zoomFactor = Math.exp(-delta * WHEEL_ZOOM_SENSITIVITY);
+                        let newRange = scale.span * zoomFactor;
+                        const minRange = Math.max(1e-6, scale.span / WHEEL_MIN_RANGE_DIVISOR);
+                        newRange = Math.max(minRange, newRange);
+                        if (bounds) {
+                            newRange = Math.min(bounds.span, newRange);
+                        }
+
+                        const min = anchor - ((anchor - scale.min) * (newRange / scale.span));
+                        const next = this.clampXWindowToData(min, min + newRange, bounds);
+                        wheelPlot.setScale('x', next);
+                    };
+                    over.addEventListener('wheel', onWheel, { passive: false });
+                },
+                destroy: () => {
+                    if (over && onWheel) {
+                        over.removeEventListener('wheel', onWheel);
+                    }
+                    over = null;
+                    onWheel = null;
+                }
+            }
+        };
+    }
+
+    // Shared finite-range validator/converter used for both scale ranges and data bounds.
+    private normalizeFiniteRange(minValue: unknown, maxValue: unknown): WheelDataBounds | null {
+        const min = Number(minValue);
+        const max = Number(maxValue);
+        if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
+            return null;
+        }
+        return { min, max, span: max - min };
+    }
+
+    // Constrains the requested x-window to available data bounds while preserving its width.
+    private clampXWindowToData(min: number, max: number, bounds: WheelDataBounds | null): { min: number, max: number } {
+        if (!bounds) {
+            return { min, max };
+        }
+        const range = max - min;
+        if (range <= 0 || range > bounds.span) {
+            return { min, max };
+        }
+        // Clamp window start into [dataMin, dataMax - range] and preserve the current window width.
+        const clampedMin = Math.min(Math.max(min, bounds.min), bounds.max - range);
+        return { min: clampedMin, max: clampedMin + range };
+    }
 }
 
 export interface NgxOptions extends Options {
@@ -739,6 +879,9 @@ export interface NgxOptions extends Options {
     dateFormat?: string;
     timeFormat?: string;
     thouchZoom?: boolean;
+    mouseWheelScroll?: boolean;
+    mouseWheelZoom?: boolean;
+    staticChart?: boolean;
 }
 
 export interface ChartOptions extends NgxOptions {
