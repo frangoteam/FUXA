@@ -1,0 +1,7 @@
+.git
+.angular
+**/node_modules
+**/dist
+app/electron
+docs
+screenshot
