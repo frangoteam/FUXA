@@ -117,6 +117,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     mapsViewType = ViewType.maps;
     shapesGrps = [];
     private gaugesRef = {};
+    private _svgMutationObserver?: MutationObserver;
 
     private subscriptionSave: Subscription;
     private subscriptionLoad: Subscription;
@@ -197,6 +198,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         } catch (e) {
             console.error(e);
         }
+        this._svgMutationObserver?.disconnect();
+        this._svgMutationObserver = undefined;
         this.onSaveProject();
         this.destroy$.next(null);
         this.destroy$.complete();
@@ -535,6 +538,35 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.winRef.nativeWindow.svgEditor.refreshCanvas();
                     this.checkSvgElementsMap(true);
                     this.winRef.nativeWindow.svgEditor.resetUndoStack();
+
+                    // Observe gauge element removals (delete, cut, undo) so that
+                    // view.items stays in sync with svgcontent without requiring
+                    // a manual "Clean View" or Play-button press.
+                    const svgLayer = document.querySelector('#svgcanvas g');
+                    if (svgLayer) {
+                        this._svgMutationObserver = new MutationObserver((records: MutationRecord[]) => {
+                            const removed: { id: string }[] = [];
+                            records.forEach(record => {
+                                record.removedNodes.forEach((node: Node) => {
+                                    if (!(node instanceof Element)) { return; }
+                                    if (node.getAttribute('type')?.startsWith('svg-ext') && node.id) {
+                                        // Direct gauge element removed (delete, cut, or undo).
+                                        removed.push({ id: node.id });
+                                    } else {
+                                        // Container removed (e.g. a group holding gauges).
+                                        // Collect any gauge descendants inside it.
+                                        node.querySelectorAll('[type^="svg-ext"]').forEach((child: Element) => {
+                                            if (child.id) { removed.push({ id: child.id }); }
+                                        });
+                                    }
+                                });
+                            });
+                            if (removed.length > 0) {
+                                this.onRemoveElement(removed);
+                            }
+                        });
+                        this._svgMutationObserver.observe(svgLayer, { childList: true });
+                    }
                 }, 500);
             } else if (this.isCardsEditMode(this.editorMode) && this.cardsview) {
                 this.cardsview.view = view;
@@ -637,6 +669,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * clear svg-editor and the canvas
      */
     private clearEditor() {
+        this._svgMutationObserver?.disconnect();
+        this._svgMutationObserver = undefined;
         if (this.winRef.nativeWindow.svgEditor) {
             this.winRef.nativeWindow.svgEditor.clickClearAll();
         }
