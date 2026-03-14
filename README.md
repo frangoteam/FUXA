@@ -128,6 +128,18 @@ click on the workflow and scroll down to Artifacts and click the download icon f
 
 <img width="2082" height="531" alt="image" src="https://github.com/user-attachments/assets/40f01e1d-cf39-4145-99a0-e8fedf791edf" />
 
+### 5° Option - Headless Portable Binaries for Embedded Devices
+
+For headless deployments on embedded devices or servers without GUI, FUXA provides self-contained portable binaries for Windows, macOS, and Linux.
+
+These binaries include everything needed (server, client) and run as standalone executables.
+
+Download the latest builds from GitHub Actions artifacts:
+
+[Headless Portable Builds](https://github.com/frangoteam/FUXA/actions/workflows/headless_packaging.yml)
+
+For detailed installation and running instructions, see the documentation.
+
 ### Creating the Electron Application
 Electron is a framework for building cross-platform desktop applications using web technologies. An Electron application is standalone, meaning it can be run independently on your desktop without needing a web browser.
 
