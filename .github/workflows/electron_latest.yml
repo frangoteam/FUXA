@@ -31,6 +31,36 @@ jobs:
       with:
         node-version: '18'
 
+    - name: Install system dependencies (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew update
+        brew install cairo pango pkg-config
+
+    - name: Install system dependencies (Linux)
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev pkg-config
+
+    - name: Install system dependencies (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        choco install cairo --version=1.17.2.1
+        choco install pkgconfiglite
+
+    - name: Configure npm for reliable CI builds
+      run: |
+        npm config set registry https://registry.npmjs.org/
+        npm config set fetch-retries 8
+        npm config set fetch-retry-factor 2
+        npm config set fetch-retry-mintimeout 30000
+        npm config set fetch-retry-maxtimeout 300000
+        npm config set audit false
+        npm config set fund false
+      env:
+        NODE_OPTIONS: --max-old-space-size=4096 --dns-result-order=ipv4first
+
     - name: Clear npm cache
       run: npm cache clean --force
 
@@ -39,20 +69,28 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y build-essential unixodbc unixodbc-dev
 
     - name: Install server dependencies
-      run: npm install
+      run: npm install && npm run build:all
       working-directory: ./server
+      env:
+        NODE_OPTIONS: --max-old-space-size=4096 --dns-result-order=ipv4first
 
     - name: Install client dependencies
       run: npm install
       working-directory: ./client
+      env:
+        NODE_OPTIONS: --max-old-space-size=4096 --dns-result-order=ipv4first
 
     - name: Build client
       run: npm run build -- --configuration=production
       working-directory: ./client
+      env:
+        NODE_OPTIONS: --max-old-space-size=4096 --dns-result-order=ipv4first
 
     - name: Install app dependencies
       run: npm install
       working-directory: ./app/electron
+      env:
+        NODE_OPTIONS: --max-old-space-size=4096 --dns-result-order=ipv4first
 
     - name: Copy server and client build to app/electron
       run: |
@@ -76,6 +114,7 @@ jobs:
     - name: Package for Linux
       if: startsWith(matrix.os, 'ubuntu')
       run: |
+        ulimit -n 10240
         if [ "${{ matrix.arch }}" = "arm64" ]; then
           npx electron-builder --linux appimage --arm64
         else
@@ -85,7 +124,11 @@ jobs:
 
     - name: Package for macOS
       if: matrix.os == 'macos-latest'
-      run: npx electron-builder --mac dmg --${{ matrix.arch }}
+      run: |
+        sudo sysctl -w kern.maxfiles=65536
+        sudo sysctl -w kern.maxfilesperproc=65536
+        ulimit -n 65536
+        npx electron-builder --mac dmg --${{ matrix.arch }}
       working-directory: ./app/electron
 
     - name: Prepare artifacts

@@ -1,0 +1,84 @@
+<div class="file-explorer-dialog">
+    <!-- Header -->
+    <div class="dialog-header">
+        <h2>{{ data.title || 'File Explorer' }}</h2>
+        <button mat-icon-button class="close-button" (click)="onCancel()" matTooltip="Close">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- Body -->
+    <div class="dialog-body">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button mat-icon-button (click)="goUp()" [disabled]="!canGoUp()" matTooltip="Go up" class="toolbar-button">
+                <mat-icon>arrow_upward</mat-icon>
+            </button>
+            <button mat-icon-button (click)="refresh()" matTooltip="Refresh" class="toolbar-button">
+                <mat-icon>refresh</mat-icon>
+            </button>
+            <button mat-icon-button (click)="createFolder()" matTooltip="Create new folder" class="toolbar-button">
+                <mat-icon>create_new_folder</mat-icon>
+            </button>
+            <button mat-icon-button (click)="createFile()" matTooltip="Create new file" class="toolbar-button">
+                <mat-icon>note_add</mat-icon>
+            </button>
+            <button mat-icon-button
+                    (click)="deleteSelected()"
+                    [disabled]="!selectedItems.length"
+                    [matTooltip]="selectedItems.length > 0 ? 'Delete selected items (' + selectedItems.length + ')' : 'Delete selected items'"
+                    color="warn"
+                    class="toolbar-button">
+                <mat-icon>delete</mat-icon>
+            </button>
+            <span *ngIf="selectedItems.length > 0" class="selection-count">
+                {{ selectedItems.length }} selected
+            </span>
+            <span class="current-path">{{ currentPath }}</span>
+        </div>
+
+        <!-- File List -->
+        <div class="file-list-container">
+            <mat-selection-list #fileList [multiple]="true" (selectionChange)="onSelectionChange($event)">
+                <mat-list-option *ngFor="let item of items; let i = index"
+                               [value]="item"
+                               [selected]="isSelected(item)"
+                               (dblclick)="onItemDoubleClick(item)">
+                    <mat-icon mat-list-icon [class.selected]="isSelected(item)">
+                        {{ getItemIcon(item) }}
+                    </mat-icon>
+                    <div mat-line class="item-name" [class.selected]="isSelected(item)">
+                        {{ item.name }}
+                    </div>
+                </mat-list-option>
+            </mat-selection-list>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading" *ngIf="loading">
+            <mat-spinner diameter="30"></mat-spinner>
+            <span>Loading...</span>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty" *ngIf="!loading && items.length === 0">
+            <mat-icon>folder_open</mat-icon>
+            <span>This directory is empty</span>
+        </div>
+
+        <!-- Selection Info -->
+        <div class="selection-info" *ngIf="selectedItems.length > 0">
+            <span>{{ selectedItems.length }} item(s) selected</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="dialog-footer">
+        <button mat-button (click)="onCancel()">Cancel</button>
+        <button mat-raised-button color="primary"
+                (click)="onSelect()"
+                [disabled]="!hasValidSelection()">
+            {{ getSelectButtonText() }}
+        </button>
+    </div>
+</div>

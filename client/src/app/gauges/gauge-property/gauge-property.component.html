@@ -55,6 +55,13 @@
 						<flex-event [property]="property" [views]="views" [data]="data" [inputs]="inputs" [scripts]="scripts" #flexevent style="padding-bottom: 5px"></flex-event>
 					</div>
 				</div>
+				<div mat-dialog-content style="overflow: visible; width:100%;">
+					<flex-widget-property *ngIf="isWidget()"
+										  [property]="property">
+					</flex-widget-property>
+					<app-file-viewer-property *ngIf="dialogType === 19" [data]="data" (onPropChanged)="onPropertyChanged($event)"></app-file-viewer-property>
+					<flex-head *ngIf="!isWidget() && dialogType !== 18" [data]="data" [property]="property" #flexhead [withBitmask]="withBitmask"></flex-head>
+				</div>
 			</mat-tab>
 			<mat-tab label="{{'gauges.property-actions' | translate}}" *ngIf="actionsSupported">
 				<div class="mat-tab-container">
