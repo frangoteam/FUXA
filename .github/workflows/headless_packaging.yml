@@ -1,0 +1,130 @@
+name: Build FUXA Headless (Latest)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            arch: x64
+          - os: ubuntu-24.04-arm
+            arch: arm64
+          - os: windows-latest
+            arch: x64
+          - os: macos-latest
+            arch: x64
+          - os: macos-latest
+            arch: arm64
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install build dependencies
+      if: startsWith(matrix.os, 'ubuntu')
+      run: sudo apt-get update && sudo apt-get install -y build-essential unixodbc unixodbc-dev
+
+    - name: Install server dependencies
+      run: |
+        npm config set fetch-retry-maxtimeout 120000
+        npm config set fetch-retries 5
+        npm install --prefer-offline --no-audit
+      working-directory: ./server
+
+    - name: Install client dependencies
+      run: |
+        npm config set fetch-retry-maxtimeout 120000
+        npm config set fetch-retries 5
+        npm install --prefer-offline --no-audit
+      working-directory: ./client
+
+    - name: Build client
+      run: npm run build -- --configuration=production
+      working-directory: ./client
+
+    - name: Setup Headless Package Directory
+      run: |
+        mkdir -p fuxa-headless/server
+        mkdir -p fuxa-headless/client/dist
+        
+        # Copy everything just like the Electron workflow does
+        cp -r server/. fuxa-headless/server/
+        cp -r client/dist/. fuxa-headless/client/dist/
+        
+        # Use the entry point as the main file for pkg
+        cp app/headless/headless-entry.js fuxa-headless/main.js
+      shell: bash
+
+    - name: Create Package Config
+      run: |
+        cat > fuxa-headless/package.json <<EOF
+        {
+          "name": "fuxa-headless",
+          "version": "1.0.0",
+          "bin": "main.js",
+          "pkg": {
+            "assets": [
+              "server/**/*",
+              "client/dist/**/*",
+              "_reports/**/*"
+            ],
+            "compression": "Brotli"
+          }
+        }
+        EOF
+      shell: bash
+
+    - name: Install yao-pkg
+      run: npm install -g @yao-pkg/pkg
+
+
+    - name: Build Standalone Binaries (Headless)
+      run: |
+        if [ "$RUNNER_OS" = "Linux" ]; then
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            TARGET="node20-linux-arm64"
+          else
+            TARGET="node20-linux-x64"
+          fi
+        elif [ "$RUNNER_OS" = "Windows" ]; then
+          TARGET="node20-win-x64"
+        elif [ "$RUNNER_OS" = "macOS" ]; then
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            TARGET="node20-macos-arm64"
+          else
+            TARGET="node20-macos-x64"
+          fi
+        fi
+        pkg fuxa-headless/package.json --targets $TARGET --out-path artifacts
+      shell: bash
+      working-directory: .
+
+
+    - name: Prepare artifacts
+      run: |
+        if [ "${{ matrix.os }}" = "windows-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
+          mv artifacts/fuxa-headless-win-x64.exe artifacts/FUXA-headless-windows-x64.exe || true
+        elif [ "${{ matrix.os }}" = "ubuntu-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
+          mv artifacts/fuxa-headless-linux-x64 artifacts/FUXA-headless-linux-x64 || true
+        elif [ "${{ matrix.os }}" = "ubuntu-24.04-arm" ] && [ "${{ matrix.arch }}" = "arm64" ]; then
+          mv artifacts/fuxa-headless-linux-arm64 artifacts/FUXA-headless-linux-arm64 || true
+        elif [ "${{ matrix.os }}" = "macos-latest" ] && [ "${{ matrix.arch }}" = "x64" ]; then
+          mv artifacts/fuxa-headless-macos-x64 artifacts/FUXA-headless-macos-x64 || true
+        elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+          mv artifacts/fuxa-headless-macos-arm64 artifacts/FUXA-headless-macos-arm64 || true
+        fi
+      shell: bash
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: FUXA-headless-${{ matrix.os }}-${{ matrix.arch }}
+        path: artifacts/*
