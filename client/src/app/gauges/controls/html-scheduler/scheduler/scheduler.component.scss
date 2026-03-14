@@ -27,17 +27,18 @@
     transition: background 0.2s, color 0.2s;
 }
 .month-btn.active {
-    background: var(--scheduler-accent-color, #2196f3);
+    background: var(--scheduler-accent-color, #556e82);
     color: var(--scheduler-secondary-text-color, #ffffff);
-    border-color: var(--scheduler-accent-color, #2196f3);
+    border-color: var(--scheduler-accent-color, #556e82);
 }
 .month-btn:hover {
-    background: #e0e0e0;
+    background: var(--scheduler-hover-bg, #e0e0e0);
     color: var(--scheduler-text-color, #333333);
 }
 .month-btn.active:hover {
-    background: var(--scheduler-accent-color, #1976d2);
+    background: var(--scheduler-accent-color, #556e82);
     color: var(--scheduler-secondary-text-color, #ffffff);
+    opacity: 0.9;
 }
 
 // Month indicator for calendar popup (non-interactive)
@@ -59,10 +60,10 @@
 }
 
 // Active state for month indicator
-.month-indicator[style*="background: #2196f3"] {
-    background: var(--scheduler-accent-color, #2196f3) !important;
+.month-indicator[style*="background: #556e82"] {
+    background: var(--scheduler-accent-color, #556e82) !important;
     color: var(--scheduler-secondary-text-color, #ffffff) !important;
-    border-color: var(--scheduler-accent-color, #2196f3) !important;
+    border-color: var(--scheduler-accent-color, #556e82) !important;
 }
 
 // Responsive toggle row
@@ -114,17 +115,18 @@
     }
 }
 .day-of-month-btn.active {
-    background: var(--scheduler-accent-color, #2196f3);
+    background: var(--scheduler-accent-color, #556e82);
     color: var(--scheduler-secondary-text-color, #ffffff);
-    border-color: var(--scheduler-accent-color, #2196f3);
+    border-color: var(--scheduler-accent-color, #556e82);
 }
 .day-of-month-btn:hover {
-    background: #e0e0e0;
+    background: var(--scheduler-hover-bg, #e0e0e0);
     color: var(--scheduler-text-color, #333333);
 }
 .day-of-month-btn.active:hover {
-    background: var(--scheduler-accent-color, #1976d2);
+    background: var(--scheduler-accent-color, #556e82);
     color: var(--scheduler-secondary-text-color, #ffffff);
+    opacity: 0.9;
 }
 
 // Day indicator for calendar popup (non-interactive)
@@ -147,10 +149,10 @@
 }
 
 // Active state for day indicator
-.day-indicator[style*="background: #2196f3"] {
-    background: var(--scheduler-accent-color, #2196f3) !important;
+.day-indicator[style*="background: #556e82"] {
+    background: var(--scheduler-accent-color, #556e82) !important;
     color: var(--scheduler-secondary-text-color, #ffffff) !important;
-    border-color: var(--scheduler-accent-color, #2196f3) !important;
+    border-color: var(--scheduler-accent-color, #556e82) !important;
 }
 
 .day-btn.round-btn {
@@ -163,15 +165,23 @@
     align-items: center;
     justify-content: center;
     font-size: 14px;
-    background: #e0e0e0;
-    color: #333;
-    border: 1px solid #bbb;
+    background: #f9f9f9;
+    color: var(--scheduler-text-color, #333333);
+    border: 1px solid #ccc;
+    cursor: pointer;
     transition: background 0.2s, color 0.2s;
 }
+.day-btn.round-btn:hover {
+    background: var(--scheduler-hover-bg, #e0e0e0);
+    color: var(--scheduler-text-color, #333333);
+}
 .day-btn.round-btn.active {
-    background: var(--scheduler-accent-color, #2196f3);
-    color: #fff;
-    border: 2px solid var(--scheduler-accent-color, #2196f3);
+    background: var(--scheduler-accent-color, #556e82);
+    color: var(--scheduler-secondary-text-color, #ffffff);
+    border: 2px solid var(--scheduler-accent-color, #556e82);
+}
+.day-btn.round-btn.active:hover {
+    opacity: 0.9;
 }
 
 // Days grid with two rows for up to 14 days
@@ -232,7 +242,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 8px 12px;
-    background: var(--scheduler-accent-color, #2196f3);
+    background: var(--scheduler-accent-color, #556e82);
     color: var(--scheduler-secondary-text-color, #ffffff);
     border-bottom: 1px solid var(--scheduler-border-color, #cccccc);
 
@@ -343,11 +353,11 @@
 
         &.mdc-list-item--selected {
             background: var(--scheduler-accent-color) !important;
-            color: var(--scheduler-secondary-text-color, #ffffff) !important;
+            color: var(--scheduler-secondary-text-color) !important;
         }
 
         ::ng-deep &:hover:not(.mdc-list-item--selected) {
-            background: var(--scheduler-hover-color, rgba(173, 216, 230, 0.3)) !important;
+            background: var(--scheduler-hover-color) !important;
         }
     }
 }
@@ -446,12 +456,12 @@
             }
 
             &.selected {
-                background: var(--scheduler-accent-color, #2196f3);
+                background: var(--scheduler-accent-color, #556e82);
                 color: var(--scheduler-secondary-text-color, #ffffff);
             }
 
             &.selected:hover {
-                background: var(--scheduler-accent-color, #2196f3) !important;
+                background: var(--scheduler-accent-color, #556e82) !important;
                 color: var(--scheduler-secondary-text-color, #ffffff) !important;
             }
         }
@@ -459,19 +469,19 @@
 }
 
 ::ng-deep .mat-mdc-select-panel .mat-mdc-option:hover:not(.mdc-list-item--selected) {
-    background: var(--scheduler-hover-color, rgba(173, 216, 230, 0.3)) !important;
+    background: var(--scheduler-hover-color) !important;
 }
 
 ::ng-deep .mat-mdc-option:hover:not(.mdc-list-item--selected) {
-    background: var(--scheduler-hover-color, rgba(173, 216, 230, 0.3)) !important;
+    background: var(--scheduler-hover-color) !important;
 }
 
 ::ng-deep .mat-mdc-option:hover {
-    background: var(--scheduler-hover-color, rgba(173, 216, 230, 0.3)) !important;
+    background: var(--scheduler-hover-color) !important;
 }
 
 ::ng-deep .mdc-list-item:hover:not(.mdc-list-item--selected) {
-    background: var(--scheduler-hover-color, rgba(173, 216, 230, 0.3)) !important;
+    background: var(--scheduler-hover-color) !important;
 }
 
 
@@ -515,8 +525,8 @@
                 }
 
                 &.active {
-                    background: var(--scheduler-accent-color, #2196f3);
-                    border: 1px solid var(--scheduler-accent-color, #2196f3);
+                    background: var(--scheduler-accent-color, #556e82);
+                    border: 1px solid var(--scheduler-accent-color, #556e82);
 
                     .material-icons {
                         color: var(--scheduler-secondary-text-color, #ffffff);
@@ -593,7 +603,7 @@
             }
 
             .settings-option {
-                background: var(--scheduler-accent-color, #2196f3);
+                background: var(--scheduler-accent-color, #556e82);
                 color: var(--scheduler-secondary-text-color, #ffffff);
                 border: 1px solid rgba(255, 255, 255, 0.3);
                 padding: 6px 12px;
@@ -647,8 +657,8 @@
                 }
 
                 .save-btn {
-                    background: var(--scheduler-accent-color, #2196f3);
-                    border: 1px solid var(--scheduler-accent-color, #2196f3);
+                    background: var(--scheduler-accent-color, #556e82);
+                    border: 1px solid var(--scheduler-accent-color, #556e82);
 
                     &:hover {
                         background: var(--scheduler-accent-color, #1976d2);
@@ -690,7 +700,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-        background: var(--scheduler-accent-color, #2196f3);
+        background: var(--scheduler-accent-color, #556e82);
         border-radius: 3px;
     }
 
@@ -725,7 +735,7 @@
         grid-template-columns: 30px 1fr 1fr 1fr 40px 40px;
         gap: 4px;
         padding: 6px 8px;
-        background: var(--scheduler-accent-color, #2196f3);
+        background: var(--scheduler-accent-color, #556e82);
         color: var(--scheduler-secondary-text-color, #ffffff);
         font-weight: 500;
         font-size: 12px;
@@ -860,7 +870,7 @@
                     justify-content: flex-end;
 
                     .delete-btn {
-                        background: var(--scheduler-accent-color, #2196f3);
+                        background: var(--scheduler-accent-color, #556e82);
                         color: var(--scheduler-secondary-text-color, #ffffff);
                         border: none;
                         border-radius: 3px;
@@ -884,7 +894,7 @@
             }
 
             .calendar-view-btn {
-                background: var(--scheduler-accent-color, #2196f3);
+                background: var(--scheduler-accent-color, #556e82);
                 color: var(--scheduler-secondary-text-color, #ffffff);
                 border: none;
                 border-radius: 3px;
@@ -914,7 +924,7 @@
 
             .schedule-number {
                 font-weight: bold;
-                color: var(--scheduler-accent-color, #2196f3);
+                color: var(--scheduler-accent-color, #556e82);
             }
 
             .device-name {
@@ -955,7 +965,7 @@
 
                     &.edit-btn {
                         background: #e3f2fd;
-                        border-color: #2196f3;
+                        border-color: #556e82;
                         color: #1976d2;
 
                         &:hover {
@@ -996,9 +1006,9 @@
                 color: var(--scheduler-text-color, #333333);
 
                 &.active {
-                    background: var(--scheduler-accent-color, #2196f3);
+                    background: var(--scheduler-accent-color, #556e82);
                     color: var(--scheduler-secondary-text-color, #ffffff);
-                    border-color: var(--scheduler-accent-color, #2196f3);
+                    border-color: var(--scheduler-accent-color, #556e82);
                 }
             }
         }
@@ -1031,9 +1041,9 @@
                     color: var(--scheduler-text-color, #333333);
 
                     &.active {
-                        background: var(--scheduler-accent-color, #2196f3);
+                        background: var(--scheduler-accent-color, #556e82);
                         color: var(--scheduler-secondary-text-color, #ffffff);
-                        border-color: var(--scheduler-accent-color, #2196f3);
+                        border-color: var(--scheduler-accent-color, #556e82);
                     }
                 }
             }
@@ -1054,7 +1064,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-        background: var(--scheduler-accent-color, #2196f3);
+        background: var(--scheduler-accent-color, #556e82);
         border-radius: 3px;
 
         &:hover {
@@ -1115,7 +1125,7 @@
     }
 
     input:checked + .slider {
-        background-color: var(--scheduler-accent-color, #2196f3);
+        background-color: var(--scheduler-accent-color, #556e82);
     }
 
     input:checked + .slider:before {
@@ -1173,7 +1183,7 @@
     }
 
     &::-webkit-scrollbar-thumb {
-        background: var(--scheduler-accent-color, #2196f3);
+        background: var(--scheduler-accent-color, #556e82);
         border-radius: 3px;
     }
 
@@ -1183,7 +1193,7 @@
 
     h3 {
         margin: 0 0 16px 0;
-        color: var(--scheduler-accent-color, #2196f3);
+        color: var(--scheduler-accent-color, #556e82);
     }
 
     .form-row {
@@ -1207,7 +1217,7 @@
 
             &:focus {
                 outline: none;
-                border-color: var(--scheduler-accent-color, #2196f3);
+                border-color: var(--scheduler-accent-color, #556e82);
             }
         }
     }
@@ -1215,8 +1225,8 @@
     .recurring-toggle {
         margin-bottom: 16px;
         padding: 12px;
-        background: rgba(var(--scheduler-accent-color-rgb, 33, 150, 243), 0.05);
-        border: 1px solid rgba(var(--scheduler-accent-color-rgb, 33, 150, 243), 0.2);
+        background: var(--scheduler-hover-bg, rgba(0, 0, 0, 0.05));
+        border: 1px solid var(--scheduler-border-color, #cccccc);
         border-radius: 4px;
 
         .toggle-label {
@@ -1265,8 +1275,8 @@
         gap: 16px;
         margin-bottom: 16px;
         padding: 12px;
-        background: rgba(var(--scheduler-accent-color-rgb, 33, 150, 243), 0.05);
-        border: 1px solid rgba(var(--scheduler-accent-color-rgb, 33, 150, 243), 0.2);
+        background: var(--scheduler-hover-bg, rgba(0, 0, 0, 0.05));
+        border: 1px solid var(--scheduler-border-color, #cccccc);
         border-radius: 4px;
 
         .toggle-item {
@@ -1323,18 +1333,19 @@
                 font-size: 11px;
 
                 &.active {
-                    background: var(--scheduler-accent-color, #2196f3);
+                    background: var(--scheduler-accent-color, #556e82);
                     color: var(--scheduler-secondary-text-color, #ffffff);
-                    border-color: var(--scheduler-accent-color, #2196f3);
+                    border-color: var(--scheduler-accent-color, #556e82);
                 }
 
                 &:hover {
-                    background: #e0e0e0;
+                    background: var(--scheduler-hover-bg, #e0e0e0);
                     color: var(--scheduler-text-color, #333333);
 
                     &.active {
-                        background: var(--scheduler-accent-color, #1976d2);
+                        background: var(--scheduler-accent-color, #556e82);
                         color: var(--scheduler-secondary-text-color, #ffffff);
+                        opacity: 0.9;
                     }
                 }
             }
@@ -1377,9 +1388,9 @@
             }
 
             &.save-btn {
-                background: var(--scheduler-accent-color, #2196f3);
+                background: var(--scheduler-accent-color, #556e82);
                 color: var(--scheduler-secondary-text-color, #ffffff);
-                border-color: var(--scheduler-accent-color, #2196f3);
+                border-color: var(--scheduler-accent-color, #556e82);
 
                 &:hover {
                     background: var(--scheduler-accent-color, #1976d2);
@@ -1401,7 +1412,7 @@
 .device-group {
 
     .device-header {
-        background: var(--scheduler-accent-color, #2196f3);
+        background: var(--scheduler-accent-color, #556e82);
         color: var(--scheduler-secondary-text-color, #ffffff);
         padding: 8px 12px;
         margin: 0 0 0 0;
@@ -1416,7 +1427,7 @@
 
         .schedule-headers .header-row {
             // Lighter shade of accent color for mode table headers
-            background: color-mix(in srgb, var(--scheduler-accent-color, #2196f3) 70%, white 30%);
+            background: color-mix(in srgb, var(--scheduler-accent-color, #556e82) 70%, white 30%);
         }
     }
 }
@@ -1460,7 +1471,7 @@
         }
 
         &.mdc-list-item--selected {
-            background: var(--scheduler-accent-color, #2196f3) !important;
+            background: var(--scheduler-accent-color, #556e82) !important;
             color: var(--scheduler-secondary-text-color, #ffffff) !important;
         }
     }
@@ -1492,13 +1503,13 @@
         height: 28px;
 
         &:hover {
-            border-color: var(--scheduler-accent-color, #2196f3);
-            background-color: rgba(33, 150, 243, 0.05);
+            border-color: var(--scheduler-accent-color);
+            background-color: var(--scheduler-hover-bg);
         }
 
         &:focus-within {
-            border-color: var(--scheduler-accent-color, #2196f3);
-            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+            border-color: var(--scheduler-accent-color);
+            box-shadow: 0 0 0 2px var(--scheduler-hover-color);
             outline: none;
         }
 
@@ -1514,7 +1525,7 @@
             margin-left: 8px;
             font-size: 20px;
             transition: transform 0.2s ease;
-            color: var(--scheduler-accent-color, #2196f3);
+            color: var(--scheduler-accent-color, #556e82);
         }
     }
 
@@ -1547,7 +1558,7 @@
         }
 
         &::-webkit-scrollbar-thumb {
-            background: var(--scheduler-accent-color, #2196f3);
+            background: var(--scheduler-accent-color, #556e82);
             border-radius: 4px;
             opacity: 0.6;
         }
@@ -1557,7 +1568,7 @@
         }
 
         scrollbar-width: thin;
-        scrollbar-color: var(--scheduler-accent-color, #2196f3) rgba(0,0,0,0.05);
+        scrollbar-color: var(--scheduler-accent-color, #556e82) rgba(0,0,0,0.05);
 
         .form-custom-option {
             padding: 6px 10px;
@@ -1583,7 +1594,7 @@
             }
 
             &.selected {
-                background: var(--scheduler-accent-color, #2196f3);
+                background: var(--scheduler-accent-color, #556e82);
                 color: var(--scheduler-secondary-text-color, #ffffff);
                 font-weight: 500;
 
@@ -1595,7 +1606,7 @@
             }
 
             &.selected:hover {
-                background: var(--scheduler-accent-color, #2196f3) !important;
+                background: var(--scheduler-accent-color, #556e82) !important;
                 color: var(--scheduler-secondary-text-color, #ffffff) !important;
                 transform: none;
             }
@@ -1610,7 +1621,7 @@
         .loading-more {
             padding: 8px 16px;
             text-align: center;
-            color: var(--scheduler-accent-color, #2196f3);
+            color: var(--scheduler-accent-color, #556e82);
             font-size: 12px;
             font-style: italic;
         }
@@ -1647,15 +1658,15 @@
             transition: all 0.2s ease;
 
             &:hover {
-                border-color: var(--scheduler-accent-color, #2196f3);
-                background-color: rgba(33, 150, 243, 0.05);
+                border-color: var(--scheduler-accent-color);
+                background-color: var(--scheduler-hover-bg);
             }
 
             &:focus, &.active {
                 outline: none;
-                border-color: var(--scheduler-accent-color, #2196f3);
-                box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
-                background-color: rgba(33, 150, 243, 0.05);
+                border-color: var(--scheduler-accent-color);
+                box-shadow: 0 0 0 2px var(--scheduler-hover-color);
+                background-color: var(--scheduler-hover-bg);
             }
 
             &::placeholder {
@@ -1668,7 +1679,7 @@
             right: 8px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--scheduler-accent-color, #2196f3);
+            color: var(--scheduler-accent-color, #556e82);
             font-size: 18px;
             pointer-events: none;
             transition: color 0.2s ease;
@@ -1728,7 +1739,7 @@
                     }
 
                     &::-webkit-scrollbar-thumb {
-                        background: var(--scheduler-accent-color, #2196f3);
+                        background: var(--scheduler-accent-color, #556e82);
                         border-radius: 3px;
                         opacity: 0.6;
                     }
@@ -1751,13 +1762,13 @@
                         }
 
                         &.selected {
-                            background: var(--scheduler-accent-color, #2196f3);
+                            background: var(--scheduler-accent-color, #556e82);
                             color: var(--scheduler-secondary-text-color, #ffffff);
                             font-weight: 500;
                         }
 
                         &.selected:hover {
-                            background: var(--scheduler-accent-color, #2196f3) !important;
+                            background: var(--scheduler-accent-color, #556e82) !important;
                             color: var(--scheduler-secondary-text-color, #ffffff) !important;
                         }
                     }
@@ -1795,13 +1806,13 @@
 
                             &:hover {
                                 background: var(--scheduler-hover-color);
-                                border-color: var(--scheduler-accent-color, #2196f3);
+                                border-color: var(--scheduler-accent-color, #556e82);
                             }
 
                             &.active {
-                                background: var(--scheduler-accent-color, #2196f3);
+                                background: var(--scheduler-accent-color, #556e82);
                                 color: var(--scheduler-secondary-text-color, #ffffff);
-                                border-color: var(--scheduler-accent-color, #2196f3);
+                                border-color: var(--scheduler-accent-color, #556e82);
                                 font-weight: 600;
                             }
                         }
@@ -1844,7 +1855,7 @@
     border-bottom: 1px solid #e0e0e0;
 
     .material-icons {
-        color: var(--scheduler-accent-color, #2196f3);
+        color: var(--scheduler-accent-color, #556e82);
         font-size: 24px;
     }
 
@@ -1888,9 +1899,9 @@
             }
 
             &.active:hover {
-                background: var(--scheduler-accent-color, #2196f3) !important;
+                background: var(--scheduler-accent-color, #556e82) !important;
                 color: var(--scheduler-secondary-text-color, #ffffff) !important;
-                border-color: var(--scheduler-accent-color, #2196f3) !important;
+                border-color: var(--scheduler-accent-color, #556e82) !important;
             }
         }
     }
@@ -1921,7 +1932,7 @@
         }
 
         &.confirm-btn {
-            background: var(--scheduler-accent-color, #2196f3);
+            background: var(--scheduler-accent-color, #556e82);
             color: var(--scheduler-secondary-text-color, #ffffff);
 
             &:hover {
@@ -1948,7 +1959,7 @@
     top: 100%;
     right: 0;
     z-index: 1000;
-    background: var(--scheduler-accent-color, #2196f3);
+    background: var(--scheduler-accent-color, #556e82);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 4px;
     padding: 8px 12px;

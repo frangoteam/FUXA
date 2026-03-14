@@ -296,6 +296,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     }
 
     ngAfterViewInit() {
+        this.applyCustomColors();
         setTimeout(() => this.checkScrollingState(), 0);
     }
 
@@ -799,13 +800,13 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     getOptionStyle(isSelected: boolean): { [key: string]: string } {
         if (isSelected) {
             return {
-                color: this.property?.secondaryTextColor || '#ffffff',
-                backgroundColor: this.property?.accentColor || '#2196f3'
+                color: 'var(--scheduler-secondary-text-color)',
+                backgroundColor: 'var(--scheduler-accent-color)'
             };
         } else {
             return {
-                color: this.property?.textColor || '#333333',
-                backgroundColor: this.property?.backgroundColor || '#ffffff'
+                color: 'var(--scheduler-text-color)',
+                backgroundColor: 'var(--scheduler-bg-color)'
             };
         }
     }
@@ -1527,55 +1528,45 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     }
 
     applyCustomColors() {
-        if (this.property && this.schedulerContainer) {
-            const element = this.schedulerContainer.nativeElement;
+        if (this.property) {
+            const root = document.documentElement;
+            // Get colors from property
+            const accentColor = this.property.accentColor || '#556e82';
+            const bgColor = this.property.backgroundColor || '#f0f0f0';
+            const textColor = this.property.textColor || '#505050';
+            const secondaryTextColor = this.property.secondaryTextColor || '#ffffff';
+            const borderColor = this.property.borderColor || '#cccccc';
 
-            if (this.property.accentColor) {
-                element.style.setProperty('--scheduler-accent-color', this.property.accentColor);
-                // Create hover background as very light accent color
-                const hoverBg = this.hexToRgba(this.property.accentColor, 0.05);
-                element.style.setProperty('--scheduler-hover-bg', hoverBg);
-                // Also set hover-color for menu items (light version of accent)
-                const hoverColor = this.hexToRgba(this.property.accentColor, 0.20); // Increased opacity for better visibility
-                element.style.setProperty('--scheduler-hover-color', hoverColor);
-            } else {
-                // Set default hover background if no accent color
-                element.style.setProperty('--scheduler-hover-bg', 'rgba(33, 150, 243, 0.05)');
-                element.style.setProperty('--scheduler-hover-color', 'rgba(33, 150, 243, 0.12)');
-            }
-            if (this.property.backgroundColor) {
-                element.style.setProperty('--scheduler-bg-color', this.property.backgroundColor);
-            }
-            if (this.property.textColor) {
-                element.style.setProperty('--scheduler-text-color', this.property.textColor);
-            }
-            if (this.property.secondaryTextColor) {
-                element.style.setProperty('--scheduler-secondary-text-color', this.property.secondaryTextColor);
-            }
-            if (this.property.borderColor) {
-                element.style.setProperty('--scheduler-border-color', this.property.borderColor);
-            }
-            if (this.property.hoverColor) {
-                element.style.setProperty('--scheduler-hover-bg', this.property.hoverColor);
-            }
-            // Note: Don't override hover color here as it's already set above with the theme color
+            // Set all variables
+            root.style.setProperty('--scheduler-accent-color', accentColor);
+            root.style.setProperty('--scheduler-hover-bg', this.hexToRgba(accentColor, 0.05));
+            root.style.setProperty('--scheduler-hover-color', this.hexToRgba(accentColor, 0.20));
+            
+            root.style.setProperty('--scheduler-bg-color', bgColor);
+            root.style.setProperty('--scheduler-text-color', textColor);
+            root.style.setProperty('--scheduler-secondary-text-color', secondaryTextColor);
+            root.style.setProperty('--scheduler-border-color', borderColor);
         }
     }
 
     private hexToRgba(hex: string, alpha: number): string {
         try {
-            const originalHex = hex;
             // Remove # if present
-            hex = hex.replace('#', '');
+            hex = (hex || '#556e82').replace('#', '');
 
             // Handle 3-digit hex codes
             if (hex.length === 3) {
                 hex = hex.split('').map(char => char + char).join('');
             }
 
-            // Ensure we have a 6-digit hex
+            // If it's an 8-digit hex (RGBA from color picker), strip the alpha
+            if (hex.length === 8) {
+                hex = hex.substring(0, 6);
+            }
+
+            // Ensure we have a 6-digit hex now
             if (hex.length !== 6) {
-                return `rgba(33, 150, 243, ${alpha})`; // Fallback to blue
+                return `rgba(200, 200, 200, ${alpha})`; // Fallback to neutral grey
             }
 
             // Parse hex values using substring instead of substr (deprecated)
@@ -1585,40 +1576,37 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
             // Validate the parsed values
             if (isNaN(r) || isNaN(g) || isNaN(b)) {
-                return `rgba(33, 150, 243, ${alpha})`; // Fallback to blue
+                return `rgba(200, 200, 200, ${alpha})`; // Fallback to neutral grey
             }
 
             return `rgba(${r}, ${g}, ${b}, ${alpha})`;
         } catch (error) {
             console.error('Error converting hex to rgba:', error);
-            // Fallback to blue if anything goes wrong
-            return `rgba(33, 150, 243, ${alpha})`;
+            // Fallback to neutral grey if anything goes wrong
+            return `rgba(200, 200, 200, ${alpha})`;
         }
     }
 
     getOptionBackgroundColor(isSelected: boolean, isHovered: boolean): string {
         if (isSelected) {
-            return `${this.property?.accentColor || '#2196f3'} !important`;
+            return `var(--scheduler-accent-color, #556e82) !important`;
         } else if (isHovered) {
-            const accentColor = this.property?.accentColor || '#2196f3';
-            return `${this.hexToRgba(accentColor, 0.4)} !important`;
+            return `var(--scheduler-hover-color, rgba(85, 110, 130, 0.4)) !important`;
         } else {
-            return `${this.property?.backgroundColor || '#ffffff'} !important`;
+            return `var(--scheduler-bg-color, #ffffff) !important`;
         }
     }
 
     getOptionTextColor(isSelected: boolean): string {
-        return isSelected ? `${this.property?.secondaryTextColor || '#ffffff'} !important` : `${this.property?.textColor || '#333333'} !important`;
+        return isSelected ? `var(--scheduler-secondary-text-color, #ffffff) !important` : `var(--scheduler-text-color, #333333) !important`;
     }
 
     onOptionHover(deviceName: string, event: MouseEvent): void {
         this.hoveredDevice = deviceName;
         const element = event.target as HTMLElement;
         if (element && !element.classList.contains('mdc-list-item--selected')) {
-            const accentColor = this.property?.accentColor || '#2196f3';
-            const hoverColor = this.hexToRgba(accentColor, 0.4);
-            element.style.setProperty('background-color', hoverColor, 'important');
-            element.style.setProperty('color', this.property?.textColor || '#333333', 'important');
+            element.style.setProperty('background-color', 'var(--scheduler-hover-color)', 'important');
+            element.style.setProperty('color', 'var(--scheduler-text-color)', 'important');
         }
     }
 
@@ -1626,8 +1614,8 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         this.hoveredDevice = null;
         const element = event.target as HTMLElement;
         if (element && !element.classList.contains('mdc-list-item--selected')) {
-            element.style.setProperty('background-color', this.property?.backgroundColor || '#ffffff', 'important');
-            element.style.setProperty('color', this.property?.textColor || '#333333', 'important');
+            element.style.setProperty('background-color', 'var(--scheduler-bg-color)', 'important');
+            element.style.setProperty('color', 'var(--scheduler-text-color)', 'important');
         }
     }
 
