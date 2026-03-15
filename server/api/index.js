@@ -20,6 +20,7 @@ var scriptsApi = require('./scripts');
 var resourcesApi = require('./resources');
 var daqApi = require('./daq');
 var schedulerApi = require('./scheduler');
+var parametersTableApi = require('./parameters-table');
 var commandApi = require('./command');
 const reports = require('../dist/reports.service');
 const reportsApi = new reports.ReportsApiService();
@@ -66,6 +67,8 @@ function init(_server, _runtime) {
             apiApp.use(daqApi.app());
             schedulerApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(schedulerApi.app());
+            parametersTableApi.init(runtime, authMiddleware, verifyGroups);
+            apiApp.use(parametersTableApi.app());
             scriptsApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(scriptsApi.app());
             resourcesApi.init(runtime, authMiddleware, verifyGroups);
@@ -116,8 +119,6 @@ function init(_server, _runtime) {
                     if (tosend.daqstore?.credentials) {
                         delete tosend.daqstore.credentials;
                     }
-                    // res.header("Access-Control-Allow-Origin", "*");
-                    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     res.json(tosend);
                 } else {
                     res.status(404).end();
