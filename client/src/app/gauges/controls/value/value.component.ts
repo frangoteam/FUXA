@@ -76,9 +76,11 @@ export class ValueComponent extends GaugeBaseComponent {
                 }
                 if (ga.property) {
                     let unit = GaugeBaseComponent.getUnit(ga.property, gaugeStatus);
-                    let digit = GaugeBaseComponent.getDigits(ga.property, gaugeStatus);
+                    let digitValue = GaugeBaseComponent.getDigits(ga.property, gaugeStatus);
+                    const digit = Number(digitValue);
                     if (Number.isInteger(digit) && digit >= 0) {
                         const numericValue = Utils.toFiniteNumber(sig.value); // o val, ma coerente
+                        console.log('ValueComponent processValue', sig.value, val, unit, digit);
                         if (numericValue !== null) {
                             val = numericValue.toFixed(digit);
                         }
