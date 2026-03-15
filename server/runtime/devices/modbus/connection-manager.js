@@ -15,11 +15,13 @@ var connectionPool = new Map();
  * Generate a connection key based on device properties
  */
 function getConnectionKey(data, type) {
-    if (type === 0) { // RTU
+    if (type === 0) {
+        // RTU
         // For RTU, include all serial parameters in key to prevent mixing different configs
         // This ensures devices with different configurations don't share the same connection
         return `${data.property.address}_${data.property.baudrate}_${data.property.databits}_${data.property.stopbits}_${data.property.parity}`;
-    } else { // TCP
+    } else {
+        // TCP
         return data.property.address;
     }
 }
@@ -30,33 +32,33 @@ function getConnectionKey(data, type) {
 function getConnection(data, type, modbusRTULib) {
     ModbusRTU = modbusRTULib;
     const key = getConnectionKey(data, type);
-    
+
     if (!connectionPool.has(key)) {
         connectionPool.set(key, {
             client: new ModbusRTU(),
             mutex: new Mutex(),
             refCount: 0,
             isOpen: false,
-            slaves: new Map() // Track which slaves are using this connection
+            slaves: new Map(), // Track which slaves are using this connection
         });
     }
-    
+
     const conn = connectionPool.get(key);
     conn.refCount++;
-    
+
     // Track this specific slave ID
     const slaveId = data.property.slaveid ? parseInt(data.property.slaveid) : 1;
     if (!conn.slaves.has(slaveId)) {
         conn.slaves.set(slaveId, { refCount: 0 });
     }
     conn.slaves.get(slaveId).refCount++;
-    
+
     return {
         key: key,
         client: conn.client,
         mutex: conn.mutex,
         slaveId: slaveId,
-        release: () => releaseConnection(key, slaveId)
+        release: () => releaseConnection(key, slaveId),
     };
 }
 
@@ -66,7 +68,7 @@ function getConnection(data, type, modbusRTULib) {
 function releaseConnection(key, slaveId) {
     const conn = connectionPool.get(key);
     if (!conn) return;
-    
+
     // Decrement slave reference
     if (conn.slaves.has(slaveId)) {
         const slave = conn.slaves.get(slaveId);
@@ -75,10 +77,10 @@ function releaseConnection(key, slaveId) {
             conn.slaves.delete(slaveId);
         }
     }
-    
+
     // Decrement overall reference count
     conn.refCount--;
-    
+
     // If no more references, mark for closure (but don't close immediately
     // to allow reconnection without full reinitialization)
     if (conn.refCount <= 0) {
@@ -115,7 +117,10 @@ function getConnectionInfo() {
             refCount: conn.refCount,
             isOpen: conn.isOpen,
             slaveCount: conn.slaves.size,
-            slaves: Array.from(conn.slaves.entries()).map(([id, data]) => ({ id, refCount: data.refCount }))
+            slaves: Array.from(conn.slaves.entries()).map(([id, data]) => ({
+                id,
+                refCount: data.refCount,
+            })),
         };
     });
     return info;
@@ -127,5 +132,5 @@ module.exports = {
     isConnected,
     setConnected,
     getConnectionInfo,
-    getConnectionKey
+    getConnectionKey,
 };
