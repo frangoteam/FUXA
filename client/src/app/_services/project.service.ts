@@ -145,14 +145,7 @@ export class ProjectService {
             }
             subject.next(true);
         }, err => {
-            console.error(err);
-            var msg = '';
-            this.translateService.get('msg.project-save-error').subscribe((txt: string) => { msg = txt; });
-            this.toastr.error(msg, '', {
-                timeOut: 3000,
-                closeButton: true,
-                disableTimeOut: true
-            });
+            this.notifySaveError(err);
             subject.next(false);
         });
         return subject;
@@ -935,6 +928,8 @@ export class ProjectService {
             msg = this.translateService.instant('msg.project-save-unauthorized');
         } else if (err.status === 413) {
             msg = err.error?.message || err.message || err.statusText;
+        } else if (err.status === 0 && this.serverSettings?.apiMaxLength) {
+            msg = `Upload failed: project size may exceed the server limit (${this.serverSettings.apiMaxLength})`;
         }
         if (msg) {
             this.toastr.error(msg, '', {
@@ -1334,6 +1329,7 @@ export class ProjectService {
 export class ServerSettings {
     version: string;
     secureEnabled: boolean;
+    apiMaxLength?: string;
 }
 
 export enum SaveMode {
