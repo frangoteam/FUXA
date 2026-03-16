@@ -1,8 +1,7 @@
-
 const path = require('path');
-const authJwt = require(path.join(process.cwd(), 'api/jwt-helper'));
+const authJwt = require(path.join(__dirname, '../../api/jwt-helper'));
 const fs = require('fs');
-const { resolveWithin } = require(path.join(process.cwd(), 'api/path-helper'));
+const { resolveWithin } = require(path.join(__dirname, '../../api/path-helper'));
 import express, { Request, Response } from 'express';
 
 export class ReportsApiService {

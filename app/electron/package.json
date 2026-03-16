@@ -26,6 +26,7 @@
             "main.js",
             "*.html",
             "server/**/*",
+            "!server/react/pdfme/node_modules/**",
             "client/dist/**/*",
             "icons/**/*"
         ],
@@ -38,6 +39,9 @@
                 ]
             }
         ],
+        "dmg": {
+            "size": "1.5GB"
+        },
         "directories": {
             "output": "dist"
         },

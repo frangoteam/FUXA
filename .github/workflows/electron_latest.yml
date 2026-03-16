@@ -37,6 +37,50 @@ jobs:
         brew update
         brew install cairo pango pkg-config
 
+    - name: Free up disk space (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        df -h
+        # Remove Android SDK
+        sudo rm -rf /usr/local/lib/android || true
+        # Remove .NET SDKs
+        sudo rm -rf /usr/local/share/dotnet || true
+        # Remove Swift toolchain
+        sudo rm -rf /usr/share/swift || true
+        # Remove Haskell (GHC)
+        sudo rm -rf /usr/local/.ghcup || true
+        # Remove Julia
+        sudo rm -rf /usr/local/julia* || true
+        # Remove Chromium
+        sudo rm -rf /usr/local/share/chromium || true
+        # Remove Microsoft/Edge and Google Chrome builds
+        sudo rm -rf /opt/microsoft /opt/google || true
+        # Remove Azure CLI
+        sudo rm -rf /opt/az || true
+        # Remove PowerShell
+        sudo rm -rf /usr/local/share/powershell || true
+        # Remove CodeQL and other toolcaches
+        sudo rm -rf /opt/hostedtoolcache || true
+        # Remove LLVM
+        sudo rm -rf /usr/lib/llvm-* || true
+        # Remove Mono
+        sudo rm -rf /usr/lib/mono || true
+        # Remove pipx
+        sudo rm -rf /opt/pipx || true
+        # Remove Xcode caches and other macOS specific
+        sudo rm -rf ~/Library/Caches/* || true
+        sudo rm -rf ~/Library/Developer/Xcode/DerivedData/* || true
+        sudo rm -rf ~/Library/Developer/Xcode/iOS\ DeviceSupport/* || true
+        sudo rm -rf ~/Library/Developer/Xcode/Archives/* || true
+        sudo rm -rf ~/.npm || true
+        sudo rm -rf ~/.yarn || true
+        sudo rm -rf ~/Library/Caches/pip || true
+        sudo rm -rf ~/.gem || true
+        sudo rm -rf /var/log/* || true
+        sudo rm -rf /tmp/* || true
+        brew cleanup || true
+        df -h
+
     - name: Install system dependencies (Linux)
       if: startsWith(matrix.os, 'ubuntu')
       run: |
@@ -100,11 +144,19 @@ jobs:
         cp -r client/dist/. app/electron/client/dist
       shell: bash
 
+    - name: Remove unnecessary node_modules
+      run: rm -rf app/electron/server/react/pdfme/node_modules
+      shell: bash
+
     - name: Install app dependencies for Electron
       run: npx electron-builder install-app-deps
       working-directory: ./app/electron
       env:
         ELECTRON_ARCH: ${{ matrix.arch }}
+
+    - name: Clear electron-builder cache (macOS)
+      if: matrix.os == 'macos-latest'
+      run: rm -rf ~/Library/Caches/electron-builder
 
     - name: Package for Windows
       if: matrix.os == 'windows-latest' && matrix.arch == 'x64'
