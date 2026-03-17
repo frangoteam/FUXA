@@ -1306,6 +1306,34 @@ export class OdbcBrowserComponent implements OnInit, OnDestroy {
     return `${dateStr} ${timeStr}`;
   }
 
+  getDateInputValue(value: string): string {
+    if (!value) return '';
+    return value.split(' ')[0] || '';
+  }
+
+  getTimeInputValue(value: string): string {
+    if (!value) return '';
+    if (value.includes(' ')) {
+      return value.split(' ')[1] || '';
+    }
+    return value;
+  }
+
+  getDateTimeInputValue(value: string): string {
+    if (!value) return '';
+    return value.replace(' ', 'T');
+  }
+
+  formatDateTimeInputForSQL(value: string): string {
+    if (!value) return '';
+    const normalized = value.replace('T', ' ');
+    const parts = normalized.split(' ');
+    if (parts.length < 2) {
+      return normalized;
+    }
+    return `${parts[0]} ${this.formatTimeForSQL(parts[1])}`;
+  }
+
   /**
    * Handle date change from picker
    */

@@ -455,35 +455,31 @@
                                     <input matInput [(ngModel)]="condition.value" placeholder="Enter value">
                                 </mat-form-field>
                                 
-                                <!-- Date picker for DATE columns -->
-                                <app-ui5-datetime-picker 
-                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATE'"
-                                    [columnType]="'DATE'"
-                                    [value]="condition.value"
-                                    [placeholder]="'YYYY-MM-DD'"
-                                    (valueChange)="condition.value = $event"
-                                    class="condition-field">
-                                </app-ui5-datetime-picker>
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATE'" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput
+                                           type="date"
+                                           [ngModel]="getDateInputValue(condition.value)"
+                                           (ngModelChange)="condition.value = formatDateForSQL($event)">
+                                </mat-form-field>
 
-                                <!-- Time picker for TIME columns -->
-                                <app-ui5-datetime-picker 
-                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'TIME'"
-                                    [columnType]="'TIME'"
-                                    [value]="condition.value"
-                                    [placeholder]="'HH:mm:ss'"
-                                    (valueChange)="condition.value = $event"
-                                    class="condition-field">
-                                </app-ui5-datetime-picker>
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'TIME'" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput
+                                           type="time"
+                                           step="1"
+                                           [ngModel]="getTimeInputValue(condition.value)"
+                                           (ngModelChange)="condition.value = formatTimeForSQL($event)">
+                                </mat-form-field>
 
-                                <!-- DateTime picker for DATETIME/TIMESTAMP columns -->
-                                <app-ui5-datetime-picker 
-                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATETIME'"
-                                    [columnType]="'DATETIME'"
-                                    [value]="condition.value"
-                                    [placeholder]="'YYYY-MM-DD HH:mm:ss'"
-                                    (valueChange)="condition.value = $event"
-                                    class="condition-field">
-                                </app-ui5-datetime-picker>
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATETIME'" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput
+                                           type="datetime-local"
+                                           step="1"
+                                           [ngModel]="getDateTimeInputValue(condition.value)"
+                                           (ngModelChange)="condition.value = formatDateTimeInputForSQL($event)">
+                                </mat-form-field>
                                 
                                 <button mat-icon-button (click)="removeCondition(i)" [matTooltip]="'odbc.remove-condition' | translate">
                                     <mat-icon>delete</mat-icon>
@@ -533,35 +529,31 @@
                                     <input matInput [(ngModel)]="condition.value" placeholder="Enter value">
                                 </mat-form-field>
                                 
-                                <!-- Date picker for DATE columns -->
-                                <app-ui5-datetime-picker 
-                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATE'"
-                                    [columnType]="'DATE'"
-                                    [value]="condition.value"
-                                    [placeholder]="'YYYY-MM-DD'"
-                                    (valueChange)="condition.value = $event"
-                                    class="condition-field">
-                                </app-ui5-datetime-picker>
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATE'" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput
+                                           type="date"
+                                           [ngModel]="getDateInputValue(condition.value)"
+                                           (ngModelChange)="condition.value = formatDateForSQL($event)">
+                                </mat-form-field>
 
-                                <!-- Time picker for TIME columns -->
-                                <app-ui5-datetime-picker 
-                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'TIME'"
-                                    [columnType]="'TIME'"
-                                    [value]="condition.value"
-                                    [placeholder]="'HH:mm:ss'"
-                                    (valueChange)="condition.value = $event"
-                                    class="condition-field">
-                                </app-ui5-datetime-picker>
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'TIME'" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput
+                                           type="time"
+                                           step="1"
+                                           [ngModel]="getTimeInputValue(condition.value)"
+                                           (ngModelChange)="condition.value = formatTimeForSQL($event)">
+                                </mat-form-field>
 
-                                <!-- DateTime picker for DATETIME/TIMESTAMP columns -->
-                                <app-ui5-datetime-picker 
-                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATETIME'"
-                                    [columnType]="'DATETIME'"
-                                    [value]="condition.value"
-                                    [placeholder]="'YYYY-MM-DD HH:mm:ss'"
-                                    (valueChange)="condition.value = $event"
-                                    class="condition-field">
-                                </app-ui5-datetime-picker>
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATETIME'" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput
+                                           type="datetime-local"
+                                           step="1"
+                                           [ngModel]="getDateTimeInputValue(condition.value)"
+                                           (ngModelChange)="condition.value = formatDateTimeInputForSQL($event)">
+                                </mat-form-field>
                                 
                                 <button mat-icon-button (click)="removeHavingCondition(i)" [matTooltip]="'odbc.remove-condition' | translate">
                                     <mat-icon>delete</mat-icon>
