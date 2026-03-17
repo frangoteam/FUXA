@@ -243,10 +243,16 @@ $internal-backcolor: rgb(114, 120, 125);
     .my-mat-row {
         min-height: 44px !important;
         height: 44px !important;
+        border-top: none !important;
+        border-bottom: none !important;
     }
 
-    .mat-cell {
+    .mat-cell,
+    .mat-mdc-cell,
+    .mdc-data-table__cell {
         font-size: 13px;
+        border-top: none !important;
+        border-bottom: 1px solid rgb(81, 81, 81) !important;
     }
 
     .mat-header-row {

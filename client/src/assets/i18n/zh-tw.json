@@ -1,4 +1,4 @@
-﻿{
+{
     "with param": "示例 {{value}}",
 
     "app.home": "首頁",
@@ -293,6 +293,8 @@
     "chart.property-refresh-interval": "重新整理間隔（分鐘）",
     "chart.property-hide-toolbar": "隱藏工具列",
     "chart.property-thouch-zoom": "觸控縮放",
+    "chart.property-mouse-wheel-scroll": "滑鼠滾輪捲動",
+    "chart.property-mouse-wheel-zoom": "滑鼠滾輪縮放",
     "chart.property-load-old-values": "載入歷史",
     "chart.property-date.format": "日期格式",
     "chart.property-time.format": "時間格式",
@@ -1009,6 +1011,8 @@
 
     "device.tag-format": "數字格式化（2 = #.##）",
     "device.tag-deadband": "死區",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "縮放模式",
     "device.tag-scale-mode-undefined": "無縮放",
     "device.tag-scale-mode-undefined-tooltip": "標籤值",
@@ -1619,6 +1623,11 @@
     "dlg.app-settings-daqstore": "DAQ 儲存",
     "dlg.app-settings-daqstore-type": "資料庫類型",
     "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-settings-daqstore-token":"權杖",
     "dlg.app-settings-daqstore-bucket": "Bucket",
     "dlg.app-settings-daqstore-organization": "組織",
@@ -1716,3 +1725,5 @@
     "msg.texts-text-remove": "您是否要刪除文字 '{{value}}'？",
     "msg.operation-unauthorized": "操作未授權！"
 }
+
+

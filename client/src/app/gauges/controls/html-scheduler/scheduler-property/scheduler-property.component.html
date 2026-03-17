@@ -31,28 +31,33 @@
                     <div class="flex mt5"  style="flex-wrap: wrap; gap: 15px; justify-content: flex-start;">
                         <div class="my-form-field">
                             <span>{{'scheduler.property-settings-theme' | translate}}</span>
-                            <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
-                                (change)="onPropertyChanged()" [(ngModel)]="data.settings.property.accentColor">
+                            <input [(colorPicker)]="data.settings.property.accentColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="data.settings.property.accentColor"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                (colorPickerChange)="onPropertyChanged()" />
                         </div>
                         <div class="my-form-field">
                             <span>{{'scheduler.property-settings-background' | translate}}</span>
-                            <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
-                                (change)="onPropertyChanged()" [(ngModel)]="data.settings.property.backgroundColor">
+                            <input [(colorPicker)]="data.settings.property.backgroundColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="data.settings.property.backgroundColor"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                (colorPickerChange)="onPropertyChanged()" />
                         </div>
                         <div class="my-form-field">
                             <span>{{'scheduler.property-settings-border' | translate}}</span>
-                            <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
-                                (change)="onPropertyChanged()" [(ngModel)]="data.settings.property.borderColor">
+                            <input [(colorPicker)]="data.settings.property.borderColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="data.settings.property.borderColor"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                (colorPickerChange)="onPropertyChanged()" />
                         </div>
                         <div class="my-form-field">
                             <span>{{'scheduler.property-settings-primary-text' | translate}}</span>
-                            <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
-                                (change)="onPropertyChanged()" [(ngModel)]="data.settings.property.textColor">
+                            <input [(colorPicker)]="data.settings.property.textColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="data.settings.property.textColor"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                (colorPickerChange)="onPropertyChanged()" />
                         </div>
                         <div class="my-form-field">
                             <span>{{'scheduler.property-settings-secondary-text' | translate}}</span>
-                            <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
-                                (change)="onPropertyChanged()" [(ngModel)]="data.settings.property.secondaryTextColor">
+                            <input [(colorPicker)]="data.settings.property.secondaryTextColor" [cpAlphaChannel]="'always'" class="input-color" [style.background]="data.settings.property.secondaryTextColor"
+                                [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
+                                (colorPickerChange)="onPropertyChanged()" />
                         </div>
                     </div>
                 </div>

@@ -638,6 +638,12 @@
 	"dlg.app-language-tr": "Turkish",
 	"dlg.app-settings-server-port": "Sunucuya erişmek için port",
 	"dlg.app-settings-auth-token": "Anahtar şifre işe yetkilendir",
+	"dlg.app-settings-daqstore-url": "URL",
+	"dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
 
 	"dlg.app-auth-disabled": "Etkisiz",
 	"dlg.app-auth-expiration-15m": "Anahtar şifre 15dk içinde geçerliliğini yitirecek.",
@@ -669,5 +675,6 @@
 	"msg.project-save-ask": "Projeden çıkmak istiyor musunuz?",
 	"msg.login-username-required": "Kullanıcı adı girin",
 	"msg.login-password-required": "Şifre girin",
-	"msg.signin-failed": "Yetkisiz giriş."
+	"msg.signin-failed": "Yetkisiz giriş.",
+    "device.tag-uns-path": "UNS Path"
 }

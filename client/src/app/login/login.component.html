@@ -25,9 +25,9 @@
 				<mat-error class="error" *ngIf="errorEnabled && password.errors && password.errors.required">{{'msg.login-password-required' | translate}}
 				</mat-error>
 			</div>
-		</div>
-		<div *ngIf="messageError" class="message-error">
-			{{messageError}}
+			<div *ngIf="messageError" class="message-error" role="alert" aria-live="assertive">
+				{{messageError}}
+			</div>
 		</div>
 		<div *ngIf="submitLoading">
 			<mat-spinner style="margin: auto" diameter="20"></mat-spinner>

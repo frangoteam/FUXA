@@ -6,6 +6,7 @@ import { Script } from '../../../../_models/script';
 import { ProjectService } from '../../../../_services/project.service';
 import { TranslateService } from '@ngx-translate/core';
 import { FlexAuthValues } from '../../../gauge-property/flex-auth/flex-auth.component';
+import { Utils } from '../../../../_helpers/utils';
 
 @Component({
     selector: 'app-scheduler-property',
@@ -27,6 +28,7 @@ export class SchedulerPropertyComponent implements OnInit {
     actionType = GaugeEventActionType;
     actionTypeKeys: any = {};
     property: GaugeSchedulerProperty;
+    defaultColor = Utils.defaultColor;
 
     constructor(
         private dialog?: MatDialog,

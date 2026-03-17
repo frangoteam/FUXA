@@ -1010,6 +1010,8 @@
 
     "device.tag-format": "格式化数字（2 = #.##）",
     "device.tag-deadband": "死区",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "刻度模式",
     "device.tag-scale-mode-undefined": "无缩放",
     "device.tag-scale-mode-undefined-tooltip": "标签值",
@@ -1621,6 +1623,11 @@
     "dlg.app-settings-daqstore": "DAQ存储",
     "dlg.app-settings-daqstore-type": "数据库类型",
     "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-settings-daqstore-token":"令牌",
     "dlg.app-settings-daqstore-bucket": "Bucket",
     "dlg.app-settings-daqstore-organization": "组织",
@@ -1718,3 +1725,6 @@
     "msg.texts-text-remove": "您是否想删除文本'{{value}}'?",
     "msg.operation-unauthorized": "操作未经授权！"
 }
+
+
+

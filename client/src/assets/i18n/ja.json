@@ -298,6 +298,8 @@
     "chart.property-refresh-interval": "更新間隔 (分)",
     "chart.property-hide-toolbar": "ツールバー非表示",
     "chart.property-thouch-zoom": "タッチズーム",
+    "chart.property-mouse-wheel-scroll": "マウスホイールスクロール",
+    "chart.property-mouse-wheel-zoom": "マウスホイールズーム",
     " chart.property-load-old-values": "履歴を読み込む",
     "chart.property-date.format": "日付形式",
     "chart.property-time.format": "時刻形式",
@@ -1031,6 +1033,8 @@
 
     "device.tag-format": "桁数フォーマット (2 = #.##)",
     "device.tag-deadband": "デッドバンド",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "スケーリングモード / 変換",
     "device. tag-scale-mode-undefined": "スケーリングなし",
     "device.tag-scale-mode-undefined-tooltip": "タグ値",
@@ -1652,6 +1656,11 @@
     "dlg.app-settings-daqstore": "DAQストレージ",
     "dlg.app-settings-daqstore-type": "データベースタイプ",
     "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-settings-daqstore-token": "トークン",
     "dlg.app-settings-daqstore-bucket": "バケット",
     "dlg.app-settings-daqstore-organization": "組織",
@@ -1749,3 +1758,4 @@
     "msg.texts-text-remove": "テキスト '{{value}}' を削除しますか？",
     "msg.operation-unauthorized": "操作が許可されていません！"
 }
+

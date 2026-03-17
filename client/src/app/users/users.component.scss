@@ -1,4 +1,7 @@
 :host {
+    display: block;
+    height: 100%;
+
     .header-panel {
         /* z-index: 9999 !important; */
         background-color: var(--headerBackground);
@@ -25,6 +28,7 @@
         right: 0px;
         bottom: 0px;
         background-color: var(--workPanelBackground);
+        overflow: hidden;
     }
 
     .container {
@@ -36,10 +40,11 @@
         top: 0px;
         left:0px;
         right:0px;
+        overflow-y: auto;
     }
 
     .mat-table {
-        overflow: auto;
+        width: 100%;
         /* min-width: 1560px; */
     }
 
@@ -48,20 +53,32 @@
     .my-mat-row {
         min-height: 44px !important;
         height: 44px !important;
+        border-top: none !important;
+        border-bottom: none !important;
     }
 
-    .mat-cell {
+    .mat-cell,
+    .mat-mdc-cell,
+    .mdc-data-table__cell {
         font-size: 13px;
+        border-top: none !important;
+        border-bottom: 1px solid rgb(81, 81, 81) !important;
     }
 
-    .mat-header-row {
+    .mat-header-row,
+    .mat-mdc-header-row {
         top: 0;
         position: sticky;
-        z-index: 1;
+        z-index: 10;
+        background-color: var(--workPanelBackground);
     }
 
     .mat-header-cell {
         font-size: 15px;
+        position: sticky;
+        top: 0;
+        z-index: 11;
+        background-color: var(--workPanelBackground);
     }
 
     .mat-column-select {
