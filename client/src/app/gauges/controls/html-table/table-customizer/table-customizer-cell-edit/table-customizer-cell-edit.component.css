@@ -1,0 +1,26 @@
+.item {
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 0px 0px 5px 0px;
+    margin-bottom: 3px;
+    position: relative;
+}
+
+.item-remove {
+    float: right;
+}
+
+.remove {
+    position: relative;
+    top: 4px;
+    right: 0px;
+}
+
+.toolbox-btn {
+    margin-right: -8px;
+}
+
+.my-form-field mat-select {
+    font-size: 12px;
+}

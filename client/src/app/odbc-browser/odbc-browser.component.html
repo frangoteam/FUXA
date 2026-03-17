@@ -1,0 +1,934 @@
+<div class="odbc-browser-container">
+    <div class="dialog-header">
+        <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'odbc.browser-title' | translate}}</h1>
+        <div class="header-actions">
+            <button mat-icon-button (click)="toggleHelpDialog()" matTooltip="SQL Syntax Reference">
+                <mat-icon>help</mat-icon>
+            </button>
+            <mat-icon (click)="onCancelClick()" class="dialog-close-btn">clear</mat-icon>
+        </div>
+    </div>
+
+    <div mat-dialog-content class="dialog-content-tabs">
+        <!-- Global Error Display -->
+        <div *ngIf="error" class="error-banner">
+            <mat-icon>error</mat-icon>
+            <span>{{error}}</span>
+        </div>
+
+        <!-- Global Success Display -->
+        <div *ngIf="success" class="success-banner">
+            <mat-icon>check_circle</mat-icon>
+            <span>{{success}}</span>
+        </div>
+
+        <!-- SQL Syntax Help Dialog -->
+        <div *ngIf="showHelpDialog" class="help-dialog">
+            <div class="help-dialog-header">
+                <h2>SQL Syntax Reference</h2>
+                <button mat-icon-button (click)="toggleHelpDialog()" class="help-close-btn">
+                    <mat-icon>close</mat-icon>
+                </button>
+            </div>
+            <div class="help-dialog-content">
+                <div *ngFor="let item of sqlSyntaxReference" class="syntax-item">
+                    <div class="syntax-header">
+                        <h3>{{item.name}}</h3>
+                        <div class="syntax-actions">
+                            <button mat-icon-button (click)="copySyntaxToClipboard(item.syntax)" matTooltip="Copy to Clipboard">
+                                <mat-icon>content_copy</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="editSyntaxInSqlEditor(item.syntax)" matTooltip="Edit in SQL Editor">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="syntax-description">{{item.description}}</p>
+                    <pre class="syntax-code">{{item.syntax}}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Device Selection - Always Visible -->
+        <div class="device-selector">
+            <span class="label">{{'odbc.select-device' | translate}}</span>
+            <mat-select [(value)]="selectedDevice" (selectionChange)="onDeviceChange()" class="device-select">
+                <mat-option *ngFor="let device of devices" [value]="device">
+                    {{device.name}}
+                </mat-option>
+            </mat-select>
+        </div>
+
+        <!-- Tabs Section -->
+        <mat-tab-group [(selectedIndex)]="selectedTabIndex" class="browser-tabs" *ngIf="selectedDevice">
+            <!-- Tab 1: Browser -->
+            <mat-tab label="Browser" [disabled]="!selectedDevice">
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">storage</mat-icon>
+                    <span class="tab-label">{{'odbc.browser' | translate}}</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <!-- Tables List -->
+                    <div class="section">
+                        <h3 class="section-title">{{'odbc.select-table' | translate}}</h3>
+                        <div *ngIf="loading" class="loading-container">
+                            <mat-spinner diameter="20"></mat-spinner>
+                            <span>{{'odbc.loading-tables' | translate}}</span>
+                        </div>
+                        <div *ngIf="!loading && tables.length > 0" class="table-selection-wrapper">
+                            <table class="selection-table">
+                                <tbody>
+                                    <tr *ngFor="let table of tables" 
+                                        [class.selected]="selectedTable === table"
+                                        (click)="onTableSelect(table)">
+                                        <td class="checkbox-cell">
+                                            <mat-radio-button [checked]="selectedTable === table" 
+                                                            (change)="onTableSelect(table)"></mat-radio-button>
+                                        </td>
+                                        <td class="content-cell">
+                                            <mat-icon class="table-icon">table_chart</mat-icon>
+                                            <span class="table-name">{{table}}</span>
+                                        </td>
+                                        <td class="action-cell">
+                                            <button mat-icon-button 
+                                                    (click)="editTable(table); $event.stopPropagation()"
+                                                    matTooltip="Edit table structure"
+                                                    class="edit-btn">
+                                                <mat-icon>edit</mat-icon>
+                                            </button>
+                                            <button mat-icon-button 
+                                                    (click)="deleteTable(table); $event.stopPropagation()"
+                                                    matTooltip="Delete table"
+                                                    class="delete-btn">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div *ngIf="!loading && tables.length === 0" class="no-items">
+                            <span>{{'odbc.no-tables-found' | translate}}</span>
+                        </div>
+                    </div>
+
+                    <!-- Columns Selection -->
+                    <div *ngIf="selectedTable" class="section">
+                        <h3 class="section-title">
+                            <span *ngIf="!selectColumnMode">{{'odbc.select-columns' | translate}}</span>
+                            <span *ngIf="selectColumnMode">{{'odbc.select-timestamp-column' | translate}}</span>
+                        </h3>
+                        <div *ngIf="loading" class="loading-container">
+                            <mat-spinner diameter="20"></mat-spinner>
+                            <span>{{'odbc.loading-columns' | translate}}</span>
+                        </div>
+                        <div *ngIf="!loading && columns.length > 0" class="column-selection-wrapper">
+                            <table class="selection-table">
+                                <tbody>
+                                    <tr *ngFor="let column of columns" 
+                                        [class.selected]="selectColumnMode ? selectedColumn === column.name : selectedColumns.includes(column.name)"
+                                        (click)="onColumnToggle(column.name, selectColumnMode ? selectedColumn !== column.name : !selectedColumns.includes(column.name))">
+                                        <td class="checkbox-cell">
+                                            <mat-checkbox *ngIf="!selectColumnMode"
+                                                        [checked]="selectedColumns.includes(column.name)"
+                                                        (change)="onColumnToggle(column.name, $event.checked)"
+                                                        (click)="$event.stopPropagation()"></mat-checkbox>
+                                            <mat-radio-button *ngIf="selectColumnMode"
+                                                            [checked]="selectedColumn === column.name"
+                                                            (change)="onColumnToggle(column.name, true)"
+                                                            (click)="$event.stopPropagation()"></mat-radio-button>
+                                        </td>
+                                        <td class="content-cell">
+                                            <mat-icon>view_column</mat-icon>
+                                            <span>{{column.name}}</span>
+                                            <span class="column-type">{{column.type}}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div *ngIf="!loading && columns.length === 0" class="no-items">
+                            <span>{{'odbc.no-columns-found' | translate}}</span>
+                        </div>
+                    </div>
+
+                    <!-- Generated Query Preview -->
+                    <div *ngIf="selectedColumns.length > 0 && !selectColumnMode" class="section">
+                        <h3 class="section-title">{{'odbc.generated-query' | translate}}</h3>
+                        <div class="query-preview">
+                            <code>{{generateQuery()}}</code>
+                            <button mat-icon-button class="copy-btn" (click)="copySqlQuery()" matTooltip="Copy to Clipboard">
+                                <mat-icon>content_copy</mat-icon>
+                            </button>
+                            <button mat-icon-button class="copy-btn" (click)="copyQueryToSqlEditor()" matTooltip="Edit in SQL Editor">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Tab 2: Data Viewer -->
+            <mat-tab label="Data Viewer">
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">table_chart</mat-icon>
+                    <span class="tab-label">{{'odbc.data-viewer' | translate}}</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <div *ngIf="!selectedTable" class="no-items">
+                        <span>{{'odbc.select-columns-first' | translate}}</span>
+                    </div>
+
+                    <div *ngIf="selectedTable && columns.length === 0" class="no-items">
+                        <span>{{'odbc.loading-columns' | translate}}</span>
+                    </div>
+
+                    <!-- Column Selection for Data Viewer -->
+                    <div *ngIf="selectedTable && columns.length > 0" class="section">
+                        <h3 class="section-title">{{'odbc.select-columns' | translate}}</h3>
+                        <div class="column-selection-wrapper">
+                            <table class="selection-table">
+                                <tbody>
+                                    <tr *ngFor="let column of columns" 
+                                        [class.selected]="selectedColumns.includes(column.name)"
+                                        (click)="onColumnToggle(column.name, !selectedColumns.includes(column.name))">
+                                        <td class="checkbox-cell">
+                                            <mat-checkbox [checked]="selectedColumns.includes(column.name)"
+                                                        (change)="onColumnToggle(column.name, $event.checked)"
+                                                        (click)="$event.stopPropagation()"></mat-checkbox>
+                                        </td>
+                                        <td class="content-cell">
+                                            <mat-icon>view_column</mat-icon>
+                                            <span>{{column.name}}</span>
+                                            <span class="column-type">{{column.type}}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Data Viewer Controls -->
+                    <div *ngIf="selectedColumns.length > 0" class="section">
+                        <div class="viewer-controls">
+                            <div class="control-group">
+                                <label for="rowLimitSelect">{{'odbc.rows-limit' | translate}}</label>
+                                <mat-form-field class="row-limit-field">
+                                    <mat-label>{{'odbc.show-rows' | translate}}</mat-label>
+                                    <mat-select [(value)]="rowLimit" (selectionChange)="onRowLimitChange()" id="rowLimitSelect">
+                                        <mat-option *ngFor="let limit of rowLimitOptions" [value]="limit">{{limit}}</mat-option>
+                                        <mat-option value="999999">{{'odbc.all-rows' | translate}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                            <button mat-raised-button color="primary" (click)="loadTableData()" [disabled]="loading">
+                                <mat-icon>refresh</mat-icon>
+                                {{'odbc.refresh-data' | translate}}
+                            </button>
+                        </div>
+
+                        <div *ngIf="loading" class="loading-container">
+                            <mat-spinner diameter="30"></mat-spinner>
+                            <span>{{'odbc.loading-data' | translate}}</span>
+                        </div>
+
+                        <div *ngIf="!loading && tableData.rows.length > 0" class="data-table-wrapper">
+                            <div class="data-info">
+                                <span>{{'odbc.rows-count' | translate}}: <strong>{{tableData.rowCount}}</strong></span>
+                            </div>
+                            <div class="table-scroll">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th *ngFor="let col of displayedColumns">{{col}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let row of tableData.rows">
+                                            <td *ngFor="let col of displayedColumns">{{row[col]}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div *ngIf="!loading && tableData.rows.length === 0" class="no-items">
+                            <span>{{'odbc.no-data' | translate}}</span>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Tab 3: Query Builder -->
+            <mat-tab label="Query Builder" [disabled]="!selectedDevice">
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">build</mat-icon>
+                    <span class="tab-label">{{'odbc.query-builder' | translate}}</span>
+                </ng-template>
+
+                <div class="tab-content query-builder-tab">
+                    <!-- Query Type Selection -->
+                    <div class="section query-type-section">
+                        <h3 class="section-title">{{'odbc.query-type' | translate}}</h3>
+                        <div class="query-type-buttons">
+                            <button mat-stroked-button 
+                                    [class.active]="queryBuilderConfig.queryType === 'SELECT'"
+                                    (click)="setQueryType('SELECT')">
+                                SELECT
+                            </button>
+                            <button mat-stroked-button 
+                                    [class.active]="queryBuilderConfig.queryType === 'INSERT'"
+                                    (click)="setQueryType('INSERT')">
+                                INSERT
+                            </button>
+                            <button mat-stroked-button 
+                                    [class.active]="queryBuilderConfig.queryType === 'UPDATE'"
+                                    (click)="setQueryType('UPDATE')">
+                                UPDATE
+                            </button>
+                            <button mat-stroked-button 
+                                    [class.active]="queryBuilderConfig.queryType === 'DELETE'"
+                                    (click)="setQueryType('DELETE')">
+                                DELETE
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Table Selection -->
+                    <div class="section select-section">
+                        <h3 class="section-title">{{'odbc.select-table' | translate}}</h3>
+                        <mat-form-field class="full-width">
+                            <mat-label>{{'odbc.main-table' | translate}}</mat-label>
+                            <mat-select [(value)]="queryBuilderConfig.mainTable" (selectionChange)="onQueryBuilderTableSelected()">
+                                <mat-option value="">{{'{none}' | translate}}</mat-option>
+                                <mat-option *ngFor="let table of tables" [value]="table">{{table}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- SELECT: Column Selection -->
+                    <div *ngIf="queryBuilderConfig.queryType === 'SELECT'" class="section select-section">
+                        <h3 class="section-title">{{'odbc.select-columns' | translate}}</h3>
+                        <div class="column-selection">
+                            <div class="column-checkboxes">
+                                <mat-checkbox [(ngModel)]="queryBuilderSelectAll" (change)="toggleSelectAll()">
+                                    {{'odbc.select-all' | translate}}
+                                </mat-checkbox>
+                                <mat-checkbox [(ngModel)]="queryBuilderConfig.distinct" class="distinct-checkbox">
+                                    DISTINCT
+                                </mat-checkbox>
+                            </div>
+                            <div class="column-checkboxes">
+                                <div *ngFor="let col of availableColumns" class="column-row">
+                                    <mat-checkbox [(ngModel)]="col.selected"
+                                                 (change)="updateSelectedColumns()">
+                                        {{col.name}} <span class="column-type">({{col.type}})</span>
+                                    </mat-checkbox>
+                                    <mat-form-field *ngIf="col.selected" class="aggregate-field">
+                                        <mat-label>Aggregate</mat-label>
+                                        <mat-select [compareWith]="compareByValue">
+                                            <mat-option value=""><em>None</em></mat-option>
+                                            <mat-option value="COUNT">COUNT</mat-option>
+                                            <mat-option value="SUM">SUM</mat-option>
+                                            <mat-option value="AVG">AVG</mat-option>
+                                            <mat-option value="MIN">MIN</mat-option>
+                                            <mat-option value="MAX">MAX</mat-option>
+                                            <mat-option value="COUNT(DISTINCT)">COUNT(DISTINCT)</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- JOIN: Join Tables (SELECT only) -->
+                    <div *ngIf="queryBuilderConfig.queryType === 'SELECT'" class="section join-section">
+                        <h3 class="section-title">{{'odbc.joins' | translate}}</h3>
+                        <div class="joins-container">
+                            <div *ngFor="let join of queryBuilderConfig.joins; let i = index" class="join-item">
+                                <mat-form-field class="join-field">
+                                    <mat-label>{{'odbc.join-type' | translate}}</mat-label>
+                                    <mat-select [(value)]="join.type">
+                                        <mat-option value="INNER">INNER</mat-option>
+                                        <mat-option value="LEFT">LEFT</mat-option>
+                                        <mat-option value="RIGHT">RIGHT</mat-option>
+                                        <mat-option value="FULL">FULL</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field class="join-field">
+                                    <mat-label>{{'odbc.table' | translate}}</mat-label>
+                                    <mat-select [(value)]="join.table">
+                                        <mat-option *ngFor="let table of tables" [value]="table">{{table}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field class="join-field">
+                                    <mat-label>{{'odbc.on-column' | translate}}</mat-label>
+                                    <input matInput [(ngModel)]="join.onColumn" placeholder="table.column">
+                                </mat-form-field>
+                                <mat-form-field class="join-field">
+                                    <mat-label>{{'odbc.with-column' | translate}}</mat-label>
+                                    <input matInput [(ngModel)]="join.withColumn" placeholder="table.column">
+                                </mat-form-field>
+                                <button mat-icon-button (click)="removeJoin(i)" [matTooltip]="'odbc.remove-join' | translate">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <button mat-stroked-button (click)="addJoin()" class="add-button">
+                            <mat-icon>add</mat-icon>
+                            {{'odbc.add-join' | translate}}
+                        </button>
+                    </div>
+
+                    <!-- INSERT: Column Values (INSERT only) -->
+                    <div *ngIf="queryBuilderConfig.queryType === 'INSERT'" class="section insert-section">
+                        <h3 class="section-title">{{'odbc.insert-values' | translate}}</h3>
+                        <div class="insert-rows-container">
+                            <div *ngFor="let row of queryBuilderConfig.insertRows; let i = index" class="insert-row">
+                                <h4 class="row-title">Row {{i + 1}}</h4>
+                                <div class="row-fields">
+                                    <mat-form-field *ngFor="let col of availableColumns" class="insert-field">
+                                        <mat-label>{{col.name}}</mat-label>
+                                        <input matInput [(ngModel)]="row.values[col.name]" placeholder="{{col.type}}">
+                                    </mat-form-field>
+                                </div>
+                                <button mat-icon-button (click)="removeInsertRow(i)" [matTooltip]="'odbc.remove-row' | translate">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <button mat-stroked-button (click)="addInsertRow()" class="add-button">
+                            <mat-icon>add</mat-icon>
+                            {{'odbc.add-row' | translate}}
+                        </button>
+                    </div>
+
+                    <!-- UPDATE: Set Values (UPDATE only) -->
+                    <div *ngIf="queryBuilderConfig.queryType === 'UPDATE'" class="section update-section">
+                        <h3 class="section-title">{{'odbc.set-values' | translate}}</h3>
+                        <div class="update-values-container">
+                            <div *ngFor="let updateVal of queryBuilderConfig.updateValues; let i = index" class="update-value-item">
+                                <mat-form-field class="update-field">
+                                    <mat-label>{{'odbc.column' | translate}}</mat-label>
+                                    <mat-select [(value)]="updateVal.column">
+                                        <mat-option *ngFor="let col of availableColumns" [value]="col.name">{{col.name}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field class="update-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput [(ngModel)]="updateVal.value" placeholder="New value">
+                                </mat-form-field>
+                                <button mat-icon-button (click)="removeUpdateValue(i)" [matTooltip]="'odbc.remove-value' | translate">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <button mat-stroked-button (click)="addUpdateValue()" class="add-button">
+                            <mat-icon>add</mat-icon>
+                            {{'odbc.add-value' | translate}}
+                        </button>
+                    </div>
+
+                    <!-- WHERE: Conditions (for SELECT/UPDATE/DELETE) -->
+                    <div *ngIf="queryBuilderConfig.queryType !== 'INSERT'" class="section where-section">
+                        <h3 class="section-title">{{'odbc.where-conditions' | translate}}</h3>
+                        <div class="conditions-builder">
+                            <div *ngFor="let condition of queryBuilderConfig.conditions.conditions; let i = index" class="condition-item">
+                                <mat-form-field class="condition-field">
+                                    <mat-label>{{'odbc.column' | translate}}</mat-label>
+                                    <mat-select [(value)]="condition.column" (selectionChange)="updateConditionOperators(condition)">
+                                        <mat-option *ngFor="let col of availableColumns" [value]="col.name">{{col.name}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field class="condition-field">
+                                    <mat-label>{{'odbc.operator' | translate}}</mat-label>
+                                    <mat-select [(value)]="condition.operator">
+                                        <mat-option *ngFor="let op of getConditionOperators(condition)" [value]="op">{{op}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                
+                                <!-- Regular value input for non-date/time columns or NULL operators -->
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && !isDateTimeColumn(condition)" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput [(ngModel)]="condition.value" placeholder="Enter value">
+                                </mat-form-field>
+                                
+                                <!-- Date picker for DATE columns -->
+                                <app-ui5-datetime-picker 
+                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATE'"
+                                    [columnType]="'DATE'"
+                                    [value]="condition.value"
+                                    [placeholder]="'YYYY-MM-DD'"
+                                    (valueChange)="condition.value = $event"
+                                    class="condition-field">
+                                </app-ui5-datetime-picker>
+
+                                <!-- Time picker for TIME columns -->
+                                <app-ui5-datetime-picker 
+                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'TIME'"
+                                    [columnType]="'TIME'"
+                                    [value]="condition.value"
+                                    [placeholder]="'HH:mm:ss'"
+                                    (valueChange)="condition.value = $event"
+                                    class="condition-field">
+                                </app-ui5-datetime-picker>
+
+                                <!-- DateTime picker for DATETIME/TIMESTAMP columns -->
+                                <app-ui5-datetime-picker 
+                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATETIME'"
+                                    [columnType]="'DATETIME'"
+                                    [value]="condition.value"
+                                    [placeholder]="'YYYY-MM-DD HH:mm:ss'"
+                                    (valueChange)="condition.value = $event"
+                                    class="condition-field">
+                                </app-ui5-datetime-picker>
+                                
+                                <button mat-icon-button (click)="removeCondition(i)" [matTooltip]="'odbc.remove-condition' | translate">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <button mat-stroked-button (click)="addCondition()" class="add-button">
+                            <mat-icon>add</mat-icon>
+                            {{'odbc.add-condition' | translate}}
+                        </button>
+                    </div>
+
+                    <!-- GROUP BY (SELECT only) -->
+                    <div *ngIf="queryBuilderConfig.queryType === 'SELECT'" class="section group-section">
+                        <h3 class="section-title">{{'odbc.group-by' | translate}}</h3>
+                        <div class="column-checkboxes">
+                            <div *ngFor="let col of availableColumns" class="column-row">
+                                <mat-checkbox [checked]="queryBuilderConfig.groupByColumns.includes(col.name)"
+                                             (change)="$event.checked ? queryBuilderConfig.groupByColumns.push(col.name) : queryBuilderConfig.groupByColumns.splice(queryBuilderConfig.groupByColumns.indexOf(col.name), 1)">
+                                    {{col.name}} <span class="column-type">({{col.type}})</span>
+                                </mat-checkbox>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HAVING (SELECT only, with GROUP BY) -->
+                    <div *ngIf="queryBuilderConfig.queryType === 'SELECT' && queryBuilderConfig.groupByColumns && queryBuilderConfig.groupByColumns.length > 0" class="section having-section">
+                        <h3 class="section-title">HAVING</h3>
+                        <div class="conditions-builder">
+                            <div *ngFor="let condition of queryBuilderConfig.havingConditions.conditions; let i = index" class="condition-item">
+                                <mat-form-field class="condition-field">
+                                    <mat-label>{{'odbc.column' | translate}}</mat-label>
+                                    <mat-select [(value)]="condition.column" (selectionChange)="updateConditionOperators(condition)">
+                                        <mat-option *ngFor="let col of availableColumns" [value]="col.name">{{col.name}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field class="condition-field">
+                                    <mat-label>{{'odbc.operator' | translate}}</mat-label>
+                                    <mat-select [(value)]="condition.operator">
+                                        <mat-option *ngFor="let op of getConditionOperators(condition)" [value]="op">{{op}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                
+                                <!-- Regular value input for non-date/time columns or NULL operators -->
+                                <mat-form-field *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && !isDateTimeColumn(condition)" class="condition-field">
+                                    <mat-label>{{'odbc.value' | translate}}</mat-label>
+                                    <input matInput [(ngModel)]="condition.value" placeholder="Enter value">
+                                </mat-form-field>
+                                
+                                <!-- Date picker for DATE columns -->
+                                <app-ui5-datetime-picker 
+                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATE'"
+                                    [columnType]="'DATE'"
+                                    [value]="condition.value"
+                                    [placeholder]="'YYYY-MM-DD'"
+                                    (valueChange)="condition.value = $event"
+                                    class="condition-field">
+                                </app-ui5-datetime-picker>
+
+                                <!-- Time picker for TIME columns -->
+                                <app-ui5-datetime-picker 
+                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'TIME'"
+                                    [columnType]="'TIME'"
+                                    [value]="condition.value"
+                                    [placeholder]="'HH:mm:ss'"
+                                    (valueChange)="condition.value = $event"
+                                    class="condition-field">
+                                </app-ui5-datetime-picker>
+
+                                <!-- DateTime picker for DATETIME/TIMESTAMP columns -->
+                                <app-ui5-datetime-picker 
+                                    *ngIf="condition.operator !== 'IS NULL' && condition.operator !== 'IS NOT NULL' && condition.dateTimeType === 'DATETIME'"
+                                    [columnType]="'DATETIME'"
+                                    [value]="condition.value"
+                                    [placeholder]="'YYYY-MM-DD HH:mm:ss'"
+                                    (valueChange)="condition.value = $event"
+                                    class="condition-field">
+                                </app-ui5-datetime-picker>
+                                
+                                <button mat-icon-button (click)="removeHavingCondition(i)" [matTooltip]="'odbc.remove-condition' | translate">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <button mat-stroked-button (click)="addHavingCondition()" class="add-button">
+                            <mat-icon>add</mat-icon>
+                            Add HAVING Condition
+                        </button>
+                    </div>
+
+                    <!-- ORDER BY (SELECT only) -->
+                    <div *ngIf="queryBuilderConfig.queryType === 'SELECT'" class="section order-section">
+                        <h3 class="section-title">{{'odbc.order-by' | translate}}</h3>
+                        <div class="order-by-container">
+                            <div *ngFor="let order of queryBuilderConfig.orderByColumns; let i = index" class="order-by-item">
+                                <mat-form-field class="order-field">
+                                    <mat-label>{{'odbc.column' | translate}}</mat-label>
+                                    <mat-select [(value)]="order.column">
+                                        <mat-option *ngFor="let col of availableColumns" [value]="col.name">{{col.name}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field class="order-field">
+                                    <mat-label>{{'odbc.direction' | translate}}</mat-label>
+                                    <mat-select [(value)]="order.direction">
+                                        <mat-option value="ASC">ASC</mat-option>
+                                        <mat-option value="DESC">DESC</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <button mat-icon-button (click)="removeOrderBy(i)" [matTooltip]="'odbc.remove-order' | translate">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <button mat-stroked-button (click)="addOrderBy()" class="add-button">
+                            <mat-icon>add</mat-icon>
+                            {{'odbc.add-order' | translate}}
+                        </button>
+                    </div>
+
+                    <!-- LIMIT / OFFSET (SELECT only) -->
+                    <div *ngIf="queryBuilderConfig.queryType === 'SELECT'" class="section order-section">
+                        <div class="limit-offset-row">
+                            <mat-form-field class="limit-field">
+                                <mat-label>LIMIT</mat-label>
+                                <input matInput type="number" [(ngModel)]="queryBuilderConfig.limit" placeholder="Optional">
+                            </mat-form-field>
+                            <mat-form-field class="limit-field">
+                                <mat-label>OFFSET</mat-label>
+                                <input matInput type="number" [(ngModel)]="queryBuilderConfig.offset" placeholder="Optional">
+                            </mat-form-field>
+                        </div>
+                    </div>
+
+                    <!-- Generated Query Display -->
+                    <div class="section query-display-section">
+                        <h3 class="section-title">{{'odbc.generated-query' | translate}}</h3>
+                        <div class="query-display">
+                            <code>{{getGeneratedQueryBuilderQuery()}}</code>
+                            <div class="query-actions">
+                                <button mat-icon-button (click)="copyQueryBuilderQuery()" matTooltip="Copy to Clipboard">
+                                    <mat-icon>content_copy</mat-icon>
+                                </button>
+                                <button mat-icon-button (click)="editQueryInSqlEditor()" matTooltip="Edit in SQL Editor">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-raised-button color="primary" (click)="executeQueryBuilderQuery()" [disabled]="loading">
+                                    <mat-icon>play_arrow</mat-icon>
+                                    Execute
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Query Results -->
+                    <div *ngIf="queryBuilderResults && queryBuilderResults.rows.length > 0" class="section">
+                        <h3 class="section-title">{{'odbc.query-results' | translate}}</h3>
+                        <div class="data-info">
+                            <span>{{'odbc.rows-count' | translate}}: <strong>{{queryBuilderResults.rowCount}}</strong></span>
+                        </div>
+                        <div class="table-scroll">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th *ngFor="let col of queryBuilderResults.columns">{{col}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of queryBuilderResults.rows">
+                                        <td *ngFor="let col of queryBuilderResults.columns">{{row[col]}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Tab 4: SQL Editor -->
+            <mat-tab label="SQL Editor" [disabled]="!selectedDevice">
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">code</mat-icon>
+                    <span class="tab-label">{{'odbc.sql-editor' | translate}}</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <div class="editor-section">
+                        <h3 class="section-title">{{'odbc.custom-query' | translate}}</h3>
+                        <textarea class="sql-editor" 
+                                  [(ngModel)]="customSqlQuery" 
+                                  placeholder="SELECT * FROM table_name LIMIT 10"
+                                  [disabled]="loading"></textarea>
+                        
+                        <div class="editor-controls">
+                            <button mat-raised-button color="primary" (click)="executeSqlQuery()" [disabled]="loading || !customSqlQuery.trim()">
+                                <mat-icon>play_arrow</mat-icon>
+                                {{'odbc.execute-query' | translate}}
+                            </button>
+                            <button mat-raised-button (click)="clearSqlEditor()" [disabled]="loading">
+                                <mat-icon>clear</mat-icon>
+                                {{'odbc.clear' | translate}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div *ngIf="loading" class="loading-container">
+                        <mat-spinner diameter="30"></mat-spinner>
+                        <span>{{'odbc.executing-query' | translate}}</span>
+                    </div>
+
+                    <div *ngIf="sqlExecutionError" class="error-container">
+                        <mat-icon>error</mat-icon>
+                        <span class="error-text">{{sqlExecutionError}}</span>
+                    </div>
+
+                    <div *ngIf="!loading && sqlExecutionResult.rows.length > 0" class="results-section">
+                        <h3 class="section-title">{{'odbc.query-results' | translate}}</h3>
+                        <div class="data-info">
+                            <span>{{'odbc.rows-count' | translate}}: <strong>{{sqlExecutionResult.rowCount}}</strong></span>
+                        </div>
+                        <div class="table-scroll">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th *ngFor="let col of sqlExecutionResult.columns">{{col}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let row of sqlExecutionResult.rows">
+                                        <td *ngFor="let col of sqlExecutionResult.columns">{{row[col]}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div *ngIf="!loading && sqlExecutionResult.rows.length === 0 && customSqlQuery.trim() && !sqlExecutionError" class="no-items">
+                        <span>{{'odbc.no-results' | translate}}</span>
+                    </div>
+                </div>
+            </mat-tab>
+
+            <!-- Tab 4: Create Table -->
+            <mat-tab label="Create Table" [disabled]="!selectedDevice">
+                <ng-template mat-tab-label>
+                    <mat-icon class="tab-icon">add_box</mat-icon>
+                    <span class="tab-label">{{'odbc.create-table' | translate}}</span>
+                </ng-template>
+
+                <div class="tab-content">
+                    <!-- Query Preview Section -->
+                    <div *ngIf="showQueryPreview" class="query-preview-section">
+                        <h3 class="section-title">{{ isEditingTable ? 'ALTER TABLE Query' : 'CREATE TABLE Query' }}</h3>
+                        <div class="query-display">
+                            <pre>{{generatedQuery}}</pre>
+                        </div>
+                        <div class="query-actions">
+                            <button mat-raised-button color="primary" (click)="executeTableQuery()" [disabled]="loading">
+                                <mat-icon>check_circle</mat-icon>
+                                Execute
+                            </button>
+                            <button mat-raised-button (click)="copyQueryToSqlEditorFromTableCreator()" [disabled]="loading">
+                                <mat-icon>edit</mat-icon>
+                                Edit in SQL Editor
+                            </button>
+                            <button mat-raised-button (click)="cancelTableCreation()" [disabled]="loading">
+                                <mat-icon>cancel</mat-icon>
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div *ngIf="deleteConfirmation.show" class="delete-confirmation-modal">
+                        <div class="modal-content">
+                            <mat-icon class="warning-icon">warning</mat-icon>
+                            <h2>Delete Table</h2>
+                            <p>Are you sure you want to delete the table <strong>{{ deleteConfirmation.tableName }}</strong>?</p>
+                            <p class="warning-text">This action cannot be undone.</p>
+                            <div class="modal-actions">
+                                <button mat-raised-button color="warn" (click)="confirmDeleteTable()" [disabled]="loading">
+                                    <mat-icon>delete</mat-icon>
+                                    Delete
+                                </button>
+                                <button mat-raised-button (click)="cancelDeleteTable()" [disabled]="loading">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table Definition Section -->
+                    <div class="create-table-section" *ngIf="!showQueryPreview">
+                        <h3 class="section-title">{{ isEditingTable ? 'Edit Table Structure' : 'Table Definition' }}</h3>
+                        
+                        <mat-form-field class="full-width">
+                            <mat-label>{{'odbc.table-name' | translate}}</mat-label>
+                            <input matInput [(ngModel)]="newTableName" [disabled]="loading" />
+                        </mat-form-field>
+
+                        <div class="columns-definition">
+                            <h4 class="subsection-title">{{'odbc.columns' | translate}}
+                                <span *ngIf="isEditingTable && originalPrimaryKeyColumn" class="info-badge">
+                                    Current PK: {{originalPrimaryKeyColumn}}
+                                </span>
+                            </h4>
+                            <div *ngFor="let col of newTableColumns; let i = index" class="column-row" [class.is-primary-key]="col.name === primaryKeyColumn" [class.has-foreign-key]="col.foreignKey">
+                                <mat-icon *ngIf="col.name === primaryKeyColumn" class="pk-indicator" matTooltip="Primary Key">vpn_key</mat-icon>
+                                <mat-icon *ngIf="col.name !== primaryKeyColumn && col.foreignKey" class="fk-indicator" matTooltip="Foreign Key: {{col.foreignKey.tableName}}.{{col.foreignKey.columnName}}">link</mat-icon>
+                                <mat-icon *ngIf="col.name !== primaryKeyColumn && !col.foreignKey" class="pk-placeholder"></mat-icon>
+
+                                <mat-form-field class="column-name">
+                                    <mat-label>{{'odbc.column-name' | translate}}</mat-label>
+                                    <input matInput [(ngModel)]="col.name" [disabled]="loading" />
+                                </mat-form-field>
+
+                                <mat-form-field class="column-type">
+                                    <mat-label>{{'odbc.data-type' | translate}}</mat-label>
+                                    <mat-select [(ngModel)]="col.type" [disabled]="loading">
+                                        <mat-optgroup label="Current Type">
+                                            <mat-option [value]="col.type" selected>{{col.type}}</mat-option>
+                                        </mat-optgroup>
+                                        <mat-divider></mat-divider>
+                                        <mat-optgroup label="Available Types">
+                                            <mat-option *ngFor="let dtype of dataTypeOptions" [value]="dtype">{{dtype}}</mat-option>
+                                        </mat-optgroup>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-checkbox [(ngModel)]="col.nullable" class="nullable-check" [disabled]="loading">
+                                    {{'odbc.nullable' | translate}}
+                                </mat-checkbox>
+
+                                <mat-checkbox [(ngModel)]="col.autoIncrement" class="auto-increment-check" [disabled]="loading" matTooltip="Auto-increment primary key">
+                                    {{'odbc.auto-increment' | translate}}
+                                </mat-checkbox>
+
+                                <mat-checkbox [(ngModel)]="col.autoTimestamp" class="auto-timestamp-check" [disabled]="loading" matTooltip="Auto-set to current timestamp">
+                                    {{'odbc.auto-timestamp' | translate}}
+                                </mat-checkbox>
+
+                                <button mat-icon-button (click)="removeColumn(i)" class="remove-btn" [disabled]="loading" matTooltip="Remove column">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+
+                                <button mat-icon-button (click)="moveColumn(i, i - 1)" [disabled]="loading || i === 0" matTooltip="Move up">
+                                    <mat-icon>arrow_upward</mat-icon>
+                                </button>
+
+                                <button mat-icon-button (click)="moveColumn(i, i + 1)" [disabled]="loading || i === newTableColumns.length - 1" matTooltip="Move down">
+                                    <mat-icon>arrow_downward</mat-icon>
+                                </button>
+                            </div>
+
+                            <button mat-stroked-button (click)="addColumnField()" class="add-column-btn" [disabled]="loading">
+                                <mat-icon>add</mat-icon>
+                                {{'odbc.add-column' | translate}}
+                            </button>
+                        </div>
+
+                        <mat-form-field class="full-width">
+                            <mat-label>{{'odbc.primary-key' | translate}}</mat-label>
+                            <mat-select [(value)]="primaryKeyColumn" [disabled]="loading">
+                                <mat-option value="">{{'{none}' | translate}}</mat-option>
+                                <mat-option *ngFor="let col of newTableColumns" [value]="col.name">{{col.name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <div class="foreign-key-section">
+                            <h4>{{'odbc.foreign-key' | translate}}</h4>
+                            <div class="foreign-key-controls">
+                                <mat-form-field class="fk-column-select">
+                                    <mat-label>{{'odbc.column' | translate}}</mat-label>
+                                    <mat-select [(value)]="foreignKeyColumn" [disabled]="loading">
+                                        <mat-option value="">{{'{none}' | translate}}</mat-option>
+                                        <mat-option *ngFor="let col of newTableColumns" [value]="col.name">{{col.name}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field class="fk-table-select">
+                                    <mat-label>References Table</mat-label>
+                                    <mat-select [(value)]="foreignKeyReferencedTable" [disabled]="loading || !foreignKeyColumn" (selectionChange)="onForeignKeyTableSelected($event.value)">
+                                        <mat-option value="">{{'{none}' | translate}}</mat-option>
+                                        <mat-option *ngFor="let table of tables" [value]="table">{{table}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <mat-form-field class="fk-column-select">
+                                    <mat-label>References Column</mat-label>
+                                    <mat-select [(value)]="foreignKeyReferencedColumn" [disabled]="loading || !foreignKeyColumn || !foreignKeyReferencedTable || foreignKeyReferencedTableColumns.length === 0">
+                                        <mat-option value="">{{'{none}' | translate}}</mat-option>
+                                        <mat-option *ngFor="let col of foreignKeyReferencedTableColumns" [value]="col">{{col}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+
+                                <button mat-icon-button (click)="addForeignKey()" [disabled]="loading || !foreignKeyColumn || !foreignKeyReferencedTable || !foreignKeyReferencedColumn" matTooltip="Add foreign key constraint">
+                                    <mat-icon>add_link</mat-icon>
+                                </button>
+
+                                <button mat-icon-button (click)="clearForeignKey()" [disabled]="loading" matTooltip="Clear foreign key">
+                                    <mat-icon>link_off</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="create-table-controls">
+                            <button mat-raised-button color="primary" (click)="createTable()" [disabled]="loading || !newTableName.trim() || newTableColumns.length === 0">
+                                <mat-icon>{{ isEditingTable ? 'save' : 'add_box' }}</mat-icon>
+                                {{ isEditingTable ? 'Preview Changes' : 'Preview Query' }}
+                            </button>
+                            <button mat-raised-button (click)="cancelTableCreation()" [disabled]="loading">
+                                {{'dlg.cancel' | translate}}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div *ngIf="loading && !showQueryPreview" class="loading-container">
+                        <mat-spinner diameter="30"></mat-spinner>
+                        <span>{{'odbc.creating-table' | translate}}</span>
+                    </div>
+                </div>
+            </mat-tab>
+
+        </mat-tab-group>
+
+        <!-- No Device Selected Message -->
+        <div *ngIf="!selectedDevice" class="no-device-message">
+            <mat-icon>info</mat-icon>
+            <span>{{'odbc.select-device-first' | translate}}</span>
+        </div>
+    </div>
+
+    <!-- Dialog Actions -->
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onCancelClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary"
+                (click)="onOkClick()"
+                *ngIf="!selectColumnMode"
+                [disabled]="!selectedDevice || !selectedTable || selectedColumns.length === 0">
+            {{'dlg.ok' | translate}}
+        </button>
+        <button mat-raised-button color="primary"
+                (click)="onOkClick()"
+                *ngIf="selectColumnMode"
+                [disabled]="!selectedDevice || !selectedTable || !selectedColumn">
+            {{'dlg.ok' | translate}}
+        </button>
+    </div>
+</div>

@@ -1,0 +1,31 @@
+
+:host ::ng-deep .mat-dialog-content {
+  overflow: visible !important;
+}
+
+.dialog-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 24px;
+    z-index: 1000;
+}
+
+.my-form-field {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.my-form-field span {
+    display: block;
+    font-size: 12px;
+    opacity: 0.5;
+    margin-bottom: 4px;
+}
+
+.my-form-field input,
+.my-form-field textarea {
+    width: 100%;
+    box-sizing: border-box;
+}

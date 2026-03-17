@@ -1,9 +1,9 @@
-<div class="container">
+<div class="container" [ngStyle]="{'--md-drppicker-bg-color': data?.rowBg || '#fff', '--md-drppicker-color': data?.rowColor || 'inherit', '--md-drppicker-header-bg': data?.headerBg || '#f0f0f0', '--md-drppicker-header-color': data?.headerColor || '#988c8c', '--md-drppicker-button-bg': (data?.buttonBg && data?.buttonBg !== data?.headerBg) ? data?.buttonBg : data?.headerColor || '#3f51b5', '--md-drppicker-button-color': data?.rowBg || '#fff', '--md-drppicker-icon-invert': (data?.headerColor?.toLowerCase()?.includes('ffffff') || data?.headerColor?.toLowerCase()?.includes('white')) ? '1' : '0', '--md-drppicker-icon-brightness': (data?.headerColor?.toLowerCase()?.includes('ffffff') || data?.headerColor?.toLowerCase()?.includes('white')) ? '10' : '1'}">
     <ngx-daterangepicker-material #dtrange [autoApply]="true" [locale]="options" class="custom-datapicker">
     </ngx-daterangepicker-material>
     
-    <div class="action-panel">
+    <div class="action-panel" [style.background-color]="data?.rowBg">
         <button mat-raised-button class="btn-cancel" (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button class="btn-ok" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>
 </div>

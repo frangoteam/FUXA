@@ -34,10 +34,12 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 import { CdkTableModule } from '@angular/cdk/table';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
     imports: [
         CdkTableModule,
+        ScrollingModule,
         MatAutocompleteModule,
         MatButtonModule,
         MatButtonToggleModule,
@@ -103,6 +105,7 @@ import { CdkTableModule } from '@angular/cdk/table';
         MatTabsModule,
         MatToolbarModule,
         MatTooltipModule,
+        ScrollingModule,
     ],
     providers: [{
         provide: MatPaginatorIntl,

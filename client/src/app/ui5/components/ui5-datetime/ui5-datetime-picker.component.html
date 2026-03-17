@@ -1,0 +1,33 @@
+<!-- DATE mode -->
+<div ui5-fuxa-wrapper>
+    <ui5-date-picker
+    	*ngIf="columnType === 'DATE'"
+    	[value]="value"
+    	[placeholder]="placeholder || 'YYYY-MM-DD'"
+    	[disabled]="disabled"
+    	(change)="onUi5Change($event)">
+    </ui5-date-picker>
+</div>
+
+<!-- TIME mode -->
+<div ui5-fuxa-wrapper>  
+    <ui5-time-picker
+    	*ngIf="columnType === 'TIME'"
+    	[value]="value"
+    	[placeholder]="placeholder || 'HH:mm:ss'"
+    	[disabled]="disabled"
+    	(change)="onUi5Change($event)">
+    </ui5-time-picker>
+</div>
+
+<!-- DATETIME mode (unified control) -->
+<div ui5-fuxa-wrapper>
+    <ui5-datetime-picker
+    	*ngIf="columnType === 'DATETIME'"
+    	[value]="value"
+    	[attr.value-format]="'yyyy-MM-dd HH:mm:ss'"
+    	[attr.display-format]="'medium'"
+    	[disabled]="disabled"
+    	(change)="onUi5Change($event)">
+    </ui5-datetime-picker>
+</div>
