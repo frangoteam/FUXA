@@ -71,7 +71,7 @@ function QuestDB(_settings, _log, _currentStorage) {
                         .symbol('device_id', row.deviceId)
                         .stringColumn('device_name', row.deviceName);
                     if (!utils.isNullOrUndefined(row.unsPath)) {
-                        line = line.stringColumn('uns_path', row.unsPath);
+                        line = line.symbol('uns_path', row.unsPath);
                     }
 
                     if (!utils.isNullOrUndefined(parsedValue.numberValue)) {
