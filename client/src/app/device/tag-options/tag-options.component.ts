@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FuxaServer, TagDaq, TagDeadband, TagDeadbandModeType, TagScale, TagScaleModeType } from '../../_models/device';
 import { Utils} from '../../_helpers/utils';
@@ -56,6 +56,7 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             scaleWriteFunction: null,
             scaleReadExpression: null,
             scaleWriteExpression: null,
+            unsPath: [null, [this.validateUnsPathUnique()]],
         });
 
         this.formGroup.controls.enabled.valueChanges.subscribe(enabled => {
@@ -88,6 +89,7 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             //let scaleWriteParams = { value: null, valid: true };
             let scaleReadExpression = { value: null, valid: true };
             let scaleWriteExpression = { value: null, valid: true };
+            let unsPath = { value: null, valid: true, initialized: false };
             for (let i = 0; i < this.data.tags.length; i++) {
                 if (!this.data.tags[i].daq) {
                     continue;
@@ -153,6 +155,14 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                     const tagParams = JSON.parse(this.data.tags[i].scaleWriteParams) as ScriptParam[];
                     const notValid = this.initializeScriptParams(script, tagParams, this.configedWriteParams);
                 }
+
+                const currentUnsPath = this.normalizeUnsPath(this.data.tags[i].unsPath);
+                if (!unsPath.initialized) {
+                    unsPath.value = currentUnsPath;
+                    unsPath.initialized = true;
+                } else if (unsPath.value !== currentUnsPath) {
+                    unsPath.valid = false;
+                }
             }
             let values = {};
             if (enabled.valid && enabled.value !== null) {
@@ -191,6 +201,9 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
 
             if (scaleWriteFunction.valid && scaleWriteFunction.value) {
                 values = {...values, scaleWriteFunction: scaleWriteFunction.value};
+            }
+            if (unsPath.valid && unsPath.initialized) {
+                values = {...values, unsPath: unsPath.value};
             }
 
             this.formGroup.patchValue(values);
@@ -274,7 +287,8 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             scaleReadFunction: this.formGroup.value.scaleReadFunction,
             scaleReadParams: readParamsStr,
             scaleWriteFunction: this.formGroup.value.scaleWriteFunction,
-            scaleWriteParams: writeParamsStr
+            scaleWriteParams: writeParamsStr,
+            unsPath: this.normalizeUnsPath(this.formGroup.value.unsPath)
         });
     }
 
@@ -368,6 +382,30 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
         }
         return true;
     }
+
+    private validateUnsPathUnique(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const currentUnsPath = this.normalizeUnsPath(control?.value);
+            if (!currentUnsPath || !this.data?.device?.tags) {
+                return null;
+            }
+            const currentTagIds = new Set((this.data?.tags || []).map(t => t.id));
+            const exists = Object.values(this.data.device.tags).some((tag: any) =>
+                tag &&
+                !currentTagIds.has(tag.id) &&
+                this.normalizeUnsPath(tag.unsPath) === currentUnsPath
+            );
+            return exists ? { unsPathExists: true } : null;
+        };
+    }
+
+    private normalizeUnsPath(value: any): string | null {
+        if (Utils.isNullOrUndefined(value)) {
+            return null;
+        }
+        const normalized = String(value).trim();
+        return normalized.length ? normalized : null;
+    }
 }
 
 export interface TagOptionType {
@@ -379,4 +417,5 @@ export interface TagOptionType {
     scaleReadParams?: string;
     scaleWriteFunction?: string;
     scaleWriteParams?: string;
+    unsPath?: string | null;
 }

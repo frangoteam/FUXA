@@ -147,6 +147,12 @@ try {
         if (mysettings.tokenExpiresIn) {
             settings.tokenExpiresIn = mysettings.tokenExpiresIn;
         }
+        if (!utils.isNullOrUndefined(mysettings.enableRefreshCookieAuth)) {
+            settings.enableRefreshCookieAuth = mysettings.enableRefreshCookieAuth;
+        }
+        if (mysettings.refreshTokenExpiresIn) {
+            settings.refreshTokenExpiresIn = mysettings.refreshTokenExpiresIn;
+        }
         if (mysettings.secretCode) {
             settings.secretCode = mysettings.secretCode;
         }
@@ -186,6 +192,12 @@ try {
     }
 } catch (err) {
     logger.error('Error loading user settings file: ' + userSettingsFile)
+}
+
+// Ensure secure mode never runs with an empty/static-known JWT secret.
+if (settings.secureEnabled && !settings.secretCode) {
+    settings.secretCode = utils.generateSecretCode();
+    logger.warn('Generated a random JWT secret in memory because secureEnabled=true and secretCode was missing. Persist it in settings for stable sessions across restarts.');
 }
 
 // Check logger
@@ -321,10 +333,13 @@ const allowCrossDomain = function (req, res, next) {
 
     if (isOriginAllowed(origin)) {
         res.header('Access-Control-Allow-Origin', origin || '*');
+        if (settings.enableRefreshCookieAuth) {
+            res.header('Access-Control-Allow-Credentials', 'true');
+        }
     }
 
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'x-access-token, x-auth-user, Origin, Content-Type, Accept');
+    res.header('Access-Control-Allow-Headers', 'x-access-token, x-auth-user, Origin, Content-Type, Accept, Skip-Auth, Skip-Error');
 
 
     if (req.method === 'OPTIONS') {
@@ -353,13 +368,13 @@ if (runtime.settings.logApiLevel !== 'none') {
 		stream: accessLogStream,
 		skip: function (req, res) { return res.statusCode < 400 }
 	}));
-	
+
 	app.use(morgan('dev', {
 		skip: function (req, res) {
 			return res.statusCode < 400
 		}, stream: process.stderr
 	}));
-	
+
 	app.use(morgan('dev', {
 		skip: function (req, res) {
 			return res.statusCode >= 400

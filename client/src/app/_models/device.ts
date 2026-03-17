@@ -96,6 +96,8 @@ export class Tag {
     sysType: TagSystemType;
     /** Description */
     description?: string;
+    /** Optional Unified Namespace path */
+    unsPath?: string | null;
     /** Deadband to set changed value */
     deadband?: TagDeadband;
     /**

@@ -544,6 +544,9 @@
     "device-tag-dialog-title": "태그 선택",
 
     "device.tag-options-title": "태그 옵션",
+
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-daq-enabled": "등록 활성화",
     "device.tag-daq-changed": "값 변경 가능시 저장",
     "device.tag-daq-interval": "값 차이 저장 (sec.)",
@@ -734,6 +737,12 @@
     "dlg.app-settings-server-port": "서버가 포팅 수신 대기중",
     "dlg.app-settings-alarms-clear": "모든 알림과 기록 삭제",
     "dlg.app-settings-auth-token": "토큰 권한",
+    "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-auth-disabled": "비활성화",
     "dlg.app-auth-expiration-15m": "15분 후 토큰 만료로 활성화.",
     "dlg.app-auth-expiration-1h": "1시간 후 토큰 만료로 활성화.",
@@ -772,3 +781,6 @@
     "msg.editor-mode-locked": "편집자가 이미 열려있습니다!",
     "msg.alarms-clear-success": "모든 알림이 취소되었습니다!"
 }
+
+
+

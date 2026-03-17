@@ -526,6 +526,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 // check gauge to init
                 this.gaugesRef = {};
+                if (v) { this.projectService.cleanView(v); }
                 setTimeout(() => {
                     for (let key in v.items) {
                         let ga: GaugeSettings = this.getGaugeSettings(v.items[key]);
@@ -982,6 +983,9 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     onStartCurrent() {
         this.onSaveProject();
+        if (this.projectService.cleanView(this.currentView)) {
+            this.onSaveProject();
+        }
         this.winRef.nativeWindow.open('lab', 'MyTest', 'width=800,height=640,menubar=0');
     }
     //#endregion

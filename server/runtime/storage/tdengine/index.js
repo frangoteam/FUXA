@@ -3,11 +3,20 @@
 let { options, connect } = require("@tdengine/rest");
 let utils = require('../../utils');
 
+function quoteTdIdentifier(value) {
+    return '`' + String(value).replace(/`/g, '``') + '`';
+}
+
+function escapeTdString(value) {
+    return String(value).replace(/'/g, "''");
+}
+
 function TDengine(_settings, _log, _currentStorage) {
     let settings = _settings;               // Application settings
     const logger = _log;                      // Application logger
     const currentStorage = _currentStorage;  // Database to set the last value (current)
     const database = settings.daqstore.database || 'fuxa';
+    const databaseRef = quoteTdIdentifier(database);
     let conn;
 
     this.setCall = function (_fncGetProp) {
@@ -25,8 +34,8 @@ function TDengine(_settings, _log, _currentStorage) {
         const cursor = conn.cursor();
         try {
             //TODO add retention
-            let res = await cursor.query(`CREATE DATABASE IF NOT EXISTS ${database} `);
-            res = await cursor.query(`CREATE STABLE IF NOT EXISTS ${database}.meters (dt TIMESTAMP,tag_id VARCHAR(200), tag_value BINARY(20)) TAGS (device_id VARCHAR(200),device_name BINARY(256) )`);
+            let res = await cursor.query(`CREATE DATABASE IF NOT EXISTS ${databaseRef} `);
+            res = await cursor.query(`CREATE STABLE IF NOT EXISTS ${databaseRef}.meters (dt TIMESTAMP,tag_id VARCHAR(200), tag_value BINARY(20)) TAGS (device_id VARCHAR(200),device_name BINARY(256) )`);
 
         } catch (error) {
             console.error(error);
@@ -47,8 +56,13 @@ function TDengine(_settings, _log, _currentStorage) {
                     continue;
                 }
             }
-            let insertSql = `INSERT INTO ${database}.\`${deviceId}\` USING ${database}.meters TAGS('${deviceId}','${deviceName}')
-                             VALUES (NOW, '${tagid}', '${tag.value}')`;
+            const safeDeviceId = quoteTdIdentifier(deviceId);
+            const safeDeviceTag = escapeTdString(deviceId);
+            const safeDeviceName = escapeTdString(deviceName);
+            const safeTagId = escapeTdString(tagid);
+            const safeTagValue = escapeTdString(tag.value);
+            let insertSql = `INSERT INTO ${databaseRef}.${safeDeviceId} USING ${databaseRef}.meters TAGS('${safeDeviceTag}','${safeDeviceName}')
+                             VALUES (NOW, '${safeTagId}', '${safeTagValue}')`;
             //async
 
             cursor.query(insertSql).then((rst) => {
@@ -71,11 +85,12 @@ function TDengine(_settings, _log, _currentStorage) {
             const cursor = conn.cursor()
             let data = []
             //add by J, the tagid is missed in the sql, should be one of the filter condition
+            const safeTagId = escapeTdString(tagid);
             cursor.query(`SELECT CAST(dt as BIGINT) as dt, tag_value
-                          FROM ${database}.meters
-                            WHERE tag_id = '${tagid}' 
-                            and dt >= ${fromts}
-                            and dt < ${tots} `).then((result) => {
+                          FROM ${databaseRef}.meters
+                            WHERE tag_id = '${safeTagId}'
+                            and dt >= ${Number(fromts)}
+                            and dt < ${Number(tots)} `).then((result) => {
                 // logger.debug(result)
                 result.getData().forEach((row) => {
                     data.push({ dt: row[0], value: row[1] })

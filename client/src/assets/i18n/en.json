@@ -307,6 +307,9 @@
     "chart.property-refresh-interval": "Refresh interval (min.)",
     "chart.property-hide-toolbar": "Hide toolbar",
     "chart.property-thouch-zoom": "Thouch Zoom",
+    "chart.property-mouse-wheel-scroll": "Mouse wheel scroll",
+    "chart.property-mouse-wheel-zoom": "Mouse wheel zoom",
+    "chart.property-static-chart": "Static chart",
     "chart.property-load-old-values": "Load history",
     "chart.property-date.format": "Date format",
     "chart.property-time.format": "Time format",
@@ -1154,6 +1157,8 @@
 
     "device.tag-format": "Format digits (2 = #.##)",
     "device.tag-deadband": "Deadband",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "Scale Mode / Convertion",
     "device.tag-scale-mode-undefined": "No Scaling",
     "device.tag-scale-mode-undefined-tooltip": "Tag Value",
@@ -1813,6 +1818,11 @@
     "dlg.app-settings-daqstore": "DAQ storage",
     "dlg.app-settings-daqstore-type": "Database type",
     "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-settings-daqstore-token": "Token",
     "dlg.app-settings-daqstore-bucket": "Bucket",
     "dlg.app-settings-daqstore-organization": "Organization",
