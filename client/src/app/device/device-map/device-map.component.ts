@@ -439,6 +439,8 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                 return '#ff2d2d';
             } else if (st === 'connect-off' || st === 'connect-busy') {
                 return '#ffc000';
+            } else if (st === 'connect-skipped'){
+                return '#8a2be2';
             }
         }
     }

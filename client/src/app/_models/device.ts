@@ -1070,6 +1070,7 @@ export enum DeviceConnectionStatusType {
     failed = 'device.connect-failed',
     off = 'device.connect-off',
     busy = 'device.connect-busy',
+    skipped = 'device.connect-skipped',
 }
 
 export enum ServerTagType {

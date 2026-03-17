@@ -1040,6 +1040,7 @@
     "device.connect-failed": "失敗",
     "device.connect-off": "關閉",
     "device.connect-busy": "忙碌",
+    "device.connect-skipped": "略過",
 
     "devices.mode-map": "裝置圖示",
     "devices.mode-list": "裝置清單",

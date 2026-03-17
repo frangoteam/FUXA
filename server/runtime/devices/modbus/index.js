@@ -1,5 +1,6 @@
 /**
  * 'modbus': modbus wrapper to communicate with PLC through RTU/TCP
+ * Refactored with ConnectionManager & State Synchronization (Desired vs Actual)
  */
 
 'use strict';
@@ -26,6 +27,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     var type;
     var runtime = _runtime;             // Access runtime config such as scripts
 
+    // --- State Synchronization Cache ---
+    this.tagState = {};                 // Maps tag ID to { desired: val, actual: val, tag: {} }
+
     /**
      * initialize the modbus type
      */
@@ -46,7 +50,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     if ((!client || !client.isOpen) && _checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         
-                        // [Added] RTU branching logic
+                        // 1. RTU Mode
                         if (type === ModbusTypes.RTU) {
                             try {
                                 // the same logic as TCP
@@ -68,8 +72,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                             return;
                         }
 
-                        // 2. TCP Mode
-                        // [Added] Check for ReuseSerial mode
+                        // 2. TCP Mode (ReuseSerial)
                         if (data.property.socketReuse === 'ReuseSerial') {
                             try {
                                 //If the client already exists (which means this is a reconnection), release the old reference count first.
@@ -152,9 +155,13 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
         return new Promise(async function (resolve, reject) {
             _checkWorking(false);
             
-            // [Added] RTU resource release
+            // [Added] Clear error timers on disconnect (usually due to config changes) to ensure immediate reconnection.
+            connectionManager.clearTcpErrors(data.id);
+            if (data.property) connectionManager.clearRtuErrors(data.property);
+
             if (type === ModbusTypes.RTU) {
                 await connectionManager.releaseRtuClient(data.property);                
+                client = null; // [Added] Nullify instance reference
                 _emitStatus('connect-off');
                 _clearVarsValue();
                 resolve(true);
@@ -165,6 +172,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             if (data.property.socketReuse === 'ReuseSerial') {
                 // Decrement refCount, close if needed
                 await connectionManager.releaseTcpClient(data.property);
+                client = null; // [Added] Nullify instance reference
                 _emitStatus('connect-off');
                 _clearVarsValue();
                 resolve(true);
@@ -173,11 +181,13 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 
             // 3. Standard TCP Close
             if (!client || !client.isOpen) {
+                client = null; // [Added] Nullify instance reference
                 _emitStatus('connect-off');
                 _clearVarsValue();
                 resolve(true);
             } else {
                 client.close(function (result) {
+                	client = null; // [Added] Nullify instance reference
                     if (result) {
                         logger.error(`'${data.name}' try to disconnect failed!`);
                     } else {
@@ -204,7 +214,21 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 logger.info(
                     `'${data.name}' temporarily skipped (state: ${skipInfo.state}, retry in ${skipInfo.skipRemaining}s)`
                 );
+                _emitStatus('connect-skipped');
                 return;
+            }
+
+            // [Added]Check if RTU device should be skipped
+            if (type === ModbusTypes.RTU) {
+                const slaveId = parseInt(data.property.slaveid) || 1;
+                if (connectionManager.shouldSkipRtuSlave(data.property, slaveId)) {
+                    const skipInfo = connectionManager.getRtuSkipInfo(data.property,slaveId);
+                    logger.info(
+                         `'${data.name}' RTU Slave ${slaveId} temporarily skipped (state: ${skipInfo.state}, retry in ${skipInfo.skipRemaining}s)`
+                    );            
+                    _emitStatus('connect-skipped');
+                    return;
+                }
             }
 
             // [Added] Check if TCP connection is closed and attempt reconnect
@@ -228,38 +252,61 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     }
     this._polling = async function () {
         if (_checkWorking(true)) {
-            var readVarsfnc = [];
-            if (!data.property.options) {
-                for (var memaddr in memory) {
-                    var tokenizedAddress = parseAddress(memaddr);
-                    // [Fixed] Don't use await here - let promises settle in Promise.allSettled
-                    // This allows multiple slaves to fail without blocking the queue
-                    readVarsfnc.push(
-                        _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items))
-                            .catch(err => {
-                                logger.error(`'${data.name}' _readMemory error at ${memaddr}! ${err.message || err}`);
-                                return []; // Return empty array on error so Promise.allSettled can continue
-                            })
-                    );
-                    readVarsfnc.push(delay(data.property.delay || 10));
-                }
-            } else {
-                for (var memaddr in mixItemsMap) {
-                    // [Fixed] Don't use await here - let promises settle in Promise.allSettled
-                    readVarsfnc.push(
-                        _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items))
-                            .catch(err => {
-                                logger.error(`'${data.name}' _readMemory error at ${memaddr}! ${err.message || err}`);
-                                return []; // Return empty array on error so Promise.allSettled can continue
-                            })
-                    );
-                    readVarsfnc.push(delay(data.property.delay || 10));
-                }
-            }
-            // _checkWorking(false);
             try {
-                // [Fixed] Use allSettled instead of all to handle multiple slave failures
-                // allSettled never rejects - it waits for all promises to complete
+                // --- STEP 1: WRITE PHASE (State Synchronization) ---
+                for (let sigid in this.tagState) {
+                    const state = this.tagState[sigid];
+
+                    if (state.desired !== null && !_isEqual(state.desired, state.actual)) {
+                        try {
+                            const tag = state.tag;
+                            const memaddr = parseInt(tag.memaddress);
+                            const offset = parseInt(tag.address) - 1;
+
+                            await _writeMemory(memaddr, offset, state.desired);
+                            logger.info(`'${data.name}' Sync write success for ${sigid} (val: ${state.desired})`, true, true);
+
+                            state.actual = state.desired;
+                            state.desired = null;
+                            await delay(data.property.delay || 15);
+                        } catch (reason) {
+                            let errMsg = reason.message || (typeof reason === "object" ? JSON.stringify(reason) : reason);
+                            logger.error(`'${data.name}' Sync write error for ${sigid}: ${errMsg}`);
+                            // Fail: do not delete desired, allow auto-retry next poll
+                        }
+                    } else if (state.desired !== null && _isEqual(state.desired, state.actual)) {
+                        state.desired = null;
+                    }
+                }
+
+                // --- STEP 2: READ PHASE 
+                var readVarsfnc = [];
+                if (!data.property.options) {
+                    for (var memaddr in memory) {
+                        var tokenizedAddress = parseAddress(memaddr);
+                        readVarsfnc.push(
+                            _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items))
+                                .catch(err => {
+                                    logger.error(`'${data.name}' _readMemory error at ${memaddr}! ${err.message || err}`);
+                                    return []; 
+                                })
+                        );
+                        readVarsfnc.push(delay(data.property.delay || 10));
+                    }
+                } else {
+                    for (var memaddr in mixItemsMap) {
+                        readVarsfnc.push(
+                            _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items))
+                                .catch(err => {
+                                    logger.error(`'${data.name}' _readMemory error at ${memaddr}! ${err.message || err}`);
+                                    return []; 
+                                })
+                        );
+                        readVarsfnc.push(delay(data.property.delay || 10));
+                    }
+                }
+
+                // Use allSettled to handle multiple slave failures without breaking the loop
                 const results = await Promise.allSettled(readVarsfnc);
                 // Extract successful results (status === 'fulfilled')
                 const result = results
@@ -308,8 +355,17 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
         mixItemsMap = {};   // Map the fragmented tag { key = start address, value = MemoryItems }
         var stepsMap = {};  // Map the tag start address and size { key = start address, value = signal size and offset }
         var count = 0;
+        
+        // Initialize State Cache
+        this.tagState = {};
+
         for (var id in data.tags) {
             try {
+            	this.tagState[id] = {
+                    desired: null,
+                    actual: null,
+                    tag: data.tags[id]
+                };
                 var offset = parseInt(data.tags[id].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
                 var token = Math.trunc(offset / TOKEN_LIMIT);
                 var memaddr = formatAddress(data.tags[id].memaddress, token);
@@ -410,11 +466,10 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     }
 
     /**
-     * Set the Tag value
-     * Read the current Tag object, write the value in object and send to SPS
+     * Set the Tag value (State Sync Mode - Immediate Return)
      */
     this.setValue = async function (sigid, value) {
-        if (data.tags[sigid]) {
+        if (data.tags[sigid] && this.tagState[sigid]) {
             var memaddr = data.tags[sigid].memaddress;
             var offset = parseInt(data.tags[sigid].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
             value = await deviceUtils.tagRawCalculator(value, data.tags[sigid]);
@@ -453,30 +508,15 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 } catch (error) {
                     logger.error(`'${data.tags[sigid].name}' setValue script error! ${error.toString()}`);
                     return false;
-                }
-
+                }              
             } else {
                 val = datatypes[data.tags[sigid].type].formatter(divVal);
             }
-
-            try {
-                _checkWorking(true);
-
-                await _writeMemory(parseInt(memaddr), offset, val).then(result => {
-                    logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
-                }, reason => {
-                    if (reason && reason.stack) {
-                        logger.error(`'${data.name}' _writeMemory error! ${reason.stack}`);
-                    } else {
-                        logger.error(`'${data.name}' _writeMemory error! ${reason}`);
-                    }
-                });
-            } catch (err) {
-                logger.error(`'${data.name}' setValue error! ${err}`);
-            } finally {
-                _checkWorking(false);                
-            }
+            // Append to State Cache instead of waiting for Modbus transaction
+            this.tagState[sigid].desired = val;
+            logger.info(`'${data.name}' Tag ${sigid} desired state updated (${value})`, true,true);
             return true;
+        
         } else {
             logger.error(`'${data.name}' setValue(${sigid}, ${value}) Tag not found`, true, true);
         }
@@ -654,7 +694,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     }
                     resolve(vars);
                 }, reason => {
-                    console.error(reason);
+                    //console.error(reason);
                     reject(reason);
                 });
             } else {
@@ -676,7 +716,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 _execute(c => c.writeCoil(start, value)).then(res => {
                     resolve();
                 }, reason => {
-                    console.error(reason);
+                    //console.error(reason);
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.DigitalInputs) {           // Digital Inputs (Read 100001-165536)
@@ -689,14 +729,14 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     _execute(c => c.writeRegisters(start, value)).then(res => {
                         resolve();
                     }, reason => {
-                        console.error(reason);
+                        //console.error(reason);
                         reject(reason);
                     });
                 } else {
                     _execute(c => c.writeRegister(start, value)).then(res => {
                         resolve();
                     }, reason => {
-                        console.error(reason);
+                        //console.error(reason);
                         reject(reason);
                     });
                 }
@@ -736,6 +776,10 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     let rawValue = items[itemidx].rawValue;
                     let tags = items[itemidx].Tags;
                     tags.forEach(tag => {
+                        // [State Sync] Write Actual Value back to Cache
+                        if (this.tagState[tag.id]) {
+                            this.tagState[tag.id].actual = rawValue;
+                        }
                         tempTags[tag.id] = {
                             id: tag.id,
                             rawValue: convertValue(rawValue, tag.divisor),
@@ -747,6 +791,10 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         someval = true;
                     });
                 } else {
+                	// Fragmented array branch
+                    if (this.tagState[items[itemidx].id]) {
+                        this.tagState[items[itemidx].id].actual = items[itemidx].rawValue;
+                    }
                     tempTags[items[itemidx].id] = {
                         id: items[itemidx].id,
                         rawValue: items[itemidx].rawValue,
@@ -851,6 +899,26 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
         }
     }
 
+    /**
+     * Helper to deeply compare Primitives, Arrays, and Buffers
+     */
+    const _isEqual = function (a, b) {
+        if (a === b) return true; 
+        if (a == null || b == null) return false;
+        if (typeof a === 'object' && typeof b === 'object') {
+            if (Array.isArray(a) && Array.isArray(b)) {
+                if (a.length !== b.length) return false;
+                for (let i = 0; i < a.length; i++) {
+                    if (a[i] !== b[i]) return false;
+                }
+                return true;
+            }
+            if (Buffer.isBuffer(a) && Buffer.isBuffer(b)) {
+                return a.equals(b);
+            }
+        }
+        return false;
+    };
     const formatAddress = function (address, token) { return token + '-' + address; }
     const parseAddress = function (address) { return { token: address.split('-')[0], address: address.split('-')[1] }; }
     const getMemoryAddress = function (address, askey, token) {
@@ -886,7 +954,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 }
             }
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
         return value;
     }
@@ -987,12 +1055,35 @@ class ConnectionManager {
                 }
             });
         }
-        console.info('Connection Manager configured.');
+        //console.info('Connection Manager configured.');
     }
 
     // ==========================================
     // [Generic] Helper Methods (The Core Logic)
     // ==========================================
+
+    //[Fix] Force wait to ensure the modbus-serial port is completely closed.
+    _closeClient(targetClient) {
+        return new Promise(resolve => {
+            if (!targetClient) return resolve();
+            try {
+                targetClient.close(() => resolve());
+            } catch (e) {
+                resolve();
+            }
+        });
+    }
+
+    // [Fix] Clear error timers on config update to prevent delayed reconnection from Skip state.
+    clearTcpErrors(deviceId) {
+        if (this.tcpDeviceErrors[deviceId]) delete this.tcpDeviceErrors[deviceId];
+    }
+    clearRtuErrors(config) {
+        const key = this.getRtuKey(config);
+        for (let mapKey in this.rtuSlaveErrors) {
+            if (mapKey.startsWith(key)) delete this.rtuSlaveErrors[mapKey];
+        }
+    }
 
     /**
      * Generic resource acquirer with Promise Caching to prevent race conditions.
@@ -1036,10 +1127,10 @@ class ConnectionManager {
                          // Update the shared object with the new client reference
                          portObj.client = newClient;
                          portObj.isConnecting = false;
-                         console.info(`'${key}' Shared connection recovered successfully.`);
+                         //console.info(`'${key}' Shared connection recovered successfully.`);
                      } catch (err) {
                          portObj.isConnecting = false;
-                         console.error(`'${key}' Recovery failed: ${err.message}`);
+                         //console.error(`'${key}' Recovery failed: ${err.message}`);
                          // If the connection fails, throw the error so the outer MODBUSclient knows
                          throw err;
                      }
@@ -1082,9 +1173,9 @@ class ConnectionManager {
                     isConnecting: false,
                     connectAction: connectFn // Store for reconnection usage
                 };
-                console.info(`'${key}' Shared Connection created`);
+                //console.info(`'${key}' Shared Connection created`);
             } catch (err) {
-                console.error(`'${key}' Connection failed: ${err.message}`);
+                //console.error(`'${key}' Connection failed: ${err.message}`);
                 throw err;
             } finally {
                 delete connectingMap[key];
@@ -1120,7 +1211,7 @@ class ConnectionManager {
 
         // Skip period expired, reset
         if (errorInfo.skipUntil && Date.now() >= errorInfo.skipUntil) {
-            console.info(`'${key}' retry after skip period (state: ${errorInfo.state}, count reset to 0)`);
+            //console.info(`'${key}' retry after skip period (state: ${errorInfo.state}, count reset to 0)`);
             errorInfo.count = 0;
             errorInfo.skipUntil = null;
             return false;
@@ -1158,10 +1249,10 @@ class ConnectionManager {
                 errorInfo.state = currentState.nextState;
                 errorInfo.count = 0;
                 errorInfo.stateEnteredAt = Date.now();
-                console.warn(`'${key}' escalated: ${previousState} -> ${errorInfo.state}. Skip ${skipDuration/1000}s`);
+                //console.warn(`'${key}' escalated: ${previousState} -> ${errorInfo.state}. Skip ${skipDuration/1000}s`);
             } else {
                 
-                console.warn(`'${key}' state '${errorInfo.state}': Skip ${skipDuration/1000}s`);
+                //console.warn(`'${key}' state '${errorInfo.state}': Skip ${skipDuration/1000}s`);
             }
         }
     }
@@ -1171,7 +1262,7 @@ class ConnectionManager {
      */
     _recordSuccess(errorMap, key) {
         if (errorMap[key]) {
-            console.info(`'${key}' recovered from error state.`);
+            //console.info(`'${key}' recovered from error state.`);
             delete errorMap[key];
         }
     }
@@ -1219,8 +1310,9 @@ class ConnectionManager {
             this.rtuPorts[key].refCount--;
             if (this.rtuPorts[key].refCount <= 0) {
                 if (this.rtuPorts[key].client.isOpen) {
-                    console.info(`'${key}' disconnect`);
-                    this.rtuPorts[key].client.close();
+                    //console.info(`'${key}' disconnect`);
+                    // [Fix] Wait for the OS to completely close the port.
+                    await this._closeClient(this.rtuPorts[key].client);
                 }
                 delete this.rtuPorts[key];
             }
@@ -1235,9 +1327,9 @@ class ConnectionManager {
         if (!portObj.isConnecting) {
             portObj.isConnecting = true;
             try {
-                console.warn(`'${key}' RTU reconnecting...`);
+                //console.warn(`'${key}' RTU reconnecting...`);
                 try { 
-                    if (portObj.client._port) await portObj.client.close(); 
+                    if (portObj.client._port) await this._closeClient(portObj.client);
                 } catch (e) {}
                 await new Promise(r => setTimeout(r, 100));
                 
@@ -1245,7 +1337,7 @@ class ConnectionManager {
                 const newClient = await portObj.connectAction();
                 portObj.client = newClient; // Replace client
                 
-                console.info(`'${key}' RTU reconnected`);
+                //console.info(`'${key}' RTU reconnected`);
                 portObj.isConnecting = false;
                 return true;
             } catch (err) {
@@ -1267,6 +1359,14 @@ class ConnectionManager {
     }
     recordRtuSlaveSuccess(config, slaveId) {
         this._recordSuccess(this.rtuSlaveErrors, this.getRtuSlaveKey(config, slaveId));
+    }
+    getRtuSkipInfo(config,slaveId) {
+        const errorInfo = this.rtuSlaveErrors[this.getRtuSlaveKey(config, slaveId)];
+        if (!errorInfo || !errorInfo.skipUntil) return null;
+        return {
+            state: errorInfo.state,
+            skipRemaining: Math.ceil((errorInfo.skipUntil - Date.now()) / 1000)
+        };
     }
 
     async executeRtu(deviceData, action, timeout = 2000) {
@@ -1365,8 +1465,9 @@ class ConnectionManager {
             this.tcpPorts[key].refCount--;
             if (this.tcpPorts[key].refCount <= 0) {
                 if (this.tcpPorts[key].client.isOpen) {
-                    console.info(`'${key}' TCP disconnect (Ref=0)`);
-                    this.tcpPorts[key].client.close();
+                    //console.info(`'${key}' TCP disconnect (Ref=0)`);
+                    // [Fix] Wait for the OS to completely release the socket.
+                    await this._closeClient(this.tcpPorts[key].client);
                 }
                 delete this.tcpPorts[key];
             }
@@ -1383,7 +1484,7 @@ class ConnectionManager {
             console.warn(`'${key}' TCP reconnecting...`);
             try {
                 try { 
-                    await portObj.client.close(); 
+                    await this._closeClient(portObj.client);
                 } catch (e) {}
                 await new Promise(r => setTimeout(r, 500));
                 
@@ -1391,11 +1492,11 @@ class ConnectionManager {
                 const newClient = await portObj.connectAction();
                 portObj.client = newClient; // Replace client (IMPORTANT: Update the object ref)
 
-                console.info(`'${key}' TCP reconnected`);
+                //console.info(`'${key}' TCP reconnected`);
                 portObj.isConnecting = false;
                 return true;
             } catch (err) {
-                console.error(`'${key}' TCP reconnect failed: ${err.message}`);
+                //console.error(`'${key}' TCP reconnect failed: ${err.message}`);
                 portObj.isConnecting = false;
                 await new Promise(r => setTimeout(r, 1000));
                 return false;
@@ -1460,22 +1561,24 @@ class ConnectionManager {
                 const isFatalError = err.code === 'EPIPE' || err.code === 'ECONNRESET' || 
                                      err.code === 'ECONNREFUSED' || err.message.includes('This socket is closed');
                 
-                // Zombie Connection Check
-                let isZombieConnection = (errorInfo && errorInfo.state === 'disconnect' && errorInfo.count >= 3);
-
-                if (isFatalError || isZombieConnection) {
-                    const reason = isFatalError ? `Fatal(${err.code})` : `Zombie(Count>=3)`;
-                    console.warn(`TCP Device '${deviceId}' reset. Reason: ${reason}`);
-                    if (targetClient) {
-                        try { targetClient.close(); } catch(e) {}
-                        if (isReuseSerial && this.tcpPorts[key]) {
-                             try { this.tcpPorts[key].client._client.destroy(); } catch(e) {}
-                        }
+                if (isReuseSerial) {
+                    // [Shared Mode (e.g., Gateway)]
+                    // Destroy the socket ONLY on fatal TCP errors.
+                    // A single slave's timeout (Zombie state) will only cause itself to be skipped, without affecting other healthy devices.
+                    if (isFatalError) {
+                        if (targetClient) try { targetClient.close(); } catch(e) {}
+                        if (this.tcpPorts[key]) try { this.tcpPorts[key].client._client.destroy(); } catch(e) {}
+                        if (errorInfo) errorInfo.count = 0;
+                        logger.warn(`Shared TCP '${key}' fatal error, socket destroyed.`);
                     }
-
-                    if(errorInfo){
-                        errorInfo.count = 0;
-                        console.info(`TCP Device '${deviceId}' error count reset to 0 after force close.`);
+                } else {
+                    // [Standalone Mode (1 IP per Device)]
+                    // Since the socket is exclusive, it can be safely reset upon becoming a zombie connection without affecting others.
+                    let isZombieConnection = (errorInfo && errorInfo.state === 'disconnect' && errorInfo.count >= 3);
+                    if (isFatalError || isZombieConnection) {
+                        if (targetClient) try { targetClient.close(); } catch(e) {}
+                        if (errorInfo) errorInfo.count = 0;
+                        logger.warn(`Standalone TCP device '${deviceId}' reset due to fatal/zombie state.`);
                     }
                 }
                 throw err;
@@ -1501,4 +1604,3 @@ class ConnectionManager {
 
 // Global instance
 const connectionManager = new ConnectionManager();
-
