@@ -74,6 +74,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     events: GaugeEvent[];
     eventSelectionType = Utils.getEnumKey(GaugeEventType, GaugeEventType.select);
     dataFilter: TableFilter | AlarmsFilter | ReportsFilter;
+    private lastRenderedSignature = '';
 
     constructor(
         private dataService: DataConverterService,
@@ -332,6 +333,11 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             rows.push(alarm);
         });
+        const nextSignature = this.getTableSignature(rows);
+        if (nextSignature === this.lastRenderedSignature) {
+            return;
+        }
+        this.lastRenderedSignature = nextSignature;
         this.dataSource.data = rows;
     }
 
@@ -346,7 +352,28 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             };
             rows.push(report);
         });
+        const nextSignature = this.getTableSignature(rows);
+        if (nextSignature === this.lastRenderedSignature) {
+            return;
+        }
+        this.lastRenderedSignature = nextSignature;
         this.dataSource.data = rows;
+    }
+
+    trackByRow(index: number, row: any): string | number {
+        if (row?.name?.stringValue || row?.ontime?.stringValue) {
+            return `${row?.name?.stringValue || ''}|${row?.ontime?.stringValue || ''}|${row?.fileName || ''}`;
+        }
+        if (row?.fileName) {
+            return row.fileName;
+        }
+        if (this.displayedColumns?.length) {
+            const firstCell = row?.[this.displayedColumns[0]];
+            if (firstCell?.rowIndex !== undefined) {
+                return firstCell.rowIndex;
+            }
+        }
+        return index;
     }
 
     isSelectable(): boolean {
@@ -505,9 +532,14 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataSource.sortingDataAccessor = (data, sortHeaderId) => data[sortHeaderId].stringValue;
     }
 
+    private getTableSignature(rows: any[]): string {
+        return rows.map((row) => JSON.stringify(row)).join('|');
+    }
+
     private loadData() {
         // columns
         let columnIds = [];
+        this.lastRenderedSignature = '';
         this.columnsStyle = {};
         const columns = this.isAlarmsType() ? this.tableOptions.alarmsColumns : this.isReportsType() ? this.tableOptions.reportsColumns : this.tableOptions.columns;
         columns.forEach(cn => {
