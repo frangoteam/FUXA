@@ -1,8 +1,7 @@
-
-const authJwt = require('../api/jwt-helper');
-const fs = require('fs');
 const path = require('path');
-const { resolveWithin } = require('../api/path-helper');
+const authJwt = require(path.join(__dirname, '../../api/jwt-helper'));
+const fs = require('fs');
+const { resolveWithin } = require(path.join(__dirname, '../../api/path-helper'));
 import express, { Request, Response } from 'express';
 
 export class ReportsApiService {
@@ -60,7 +59,7 @@ export class ReportsApiService {
                                 created
                             });
                         } catch (err) {
-                            console.log(`Parsing ${file} Error ${err}`);
+                            this.runtime.logger.error(`Parsing ${file} Error ${err}`);
                         }
                     }
                     if (filter.count) {

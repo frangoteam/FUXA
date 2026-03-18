@@ -1,0 +1,96 @@
+<script type="text/x-red" data-template-name="report-data">
+    <div class="form-row">
+        <label for="node-input-numberFormat"><i class="fa fa-calculator"></i> Number Format</label>
+        <input type="text" id="node-input-numberFormat" placeholder="0.00">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Extract Report Data">
+    </div>
+    <div class="form-tips">
+        <p><strong>Input:</strong> <code>msg.payload</code> - Values from FUXA tags</p>
+        <p><strong>Output:</strong> <code>msg.reportData</code> - Formatted scalars for PDF placeholders</p>
+
+        <h4>Data Formatting:</h4>
+        <p>Numbers are formatted to specified decimal places. Strings and booleans are preserved as-is.</p>
+
+        <h4>Example - Object Input:</h4>
+        <pre>msg.payload = {
+  temperature: 21.77456,
+  pressure: "1012.5",
+  status: true
+}</pre>
+
+        <p><strong>With "0.00" format:</strong></p>
+        <pre>msg.reportData = {
+  temperature: "21.77",
+  pressure: "1012.50",
+  status: true
+}</pre>
+
+        <h4>Example - Single Value:</h4>
+        <pre>msg.payload = 21.77456
+msg.topic = "temp"</pre>
+
+        <p><strong>Output:</strong></p>
+        <pre>msg.reportData = {
+  temp: "21.77"
+}</pre>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="report-data">
+    <p>Extracts scalar values from message payload for use in FUXA PDF reports.</p>
+
+    <h3>Properties</h3>
+    <dl class="message-properties">
+        <dt>Name <span class="property-type">string</span></dt>
+        <dd>Optional name for the node</dd>
+        <dt>Number Format <span class="property-type">string</span></dt>
+        <dd>Format template for numeric values (e.g., "0.00" for 2 decimals, "0.000" for 3 decimals)</dd>
+    </dl>
+
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object|string|number</span></dt>
+        <dd>Input data containing values to format for the report</dd>
+    </dl>
+
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>reportData <span class="property-type">object</span></dt>
+        <dd>Formatted scalar values ready for PDF report placeholders</dd>
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Contains reportData object for chaining</dd>
+    </dl>
+
+    <h3>Processing</h3>
+    <p>Extracts and formats scalar values (numbers, strings, booleans) from input data. Numeric values are formatted according to the Number Format template. Non-numeric values are preserved as-is.</p>
+
+    <h3>Supported Input Formats</h3>
+    <ul>
+        <li><strong>Single value:</strong> <code>msg.payload = 21.77</code> (uses msg.topic as key)</li>
+        <li><strong>Object with multiple values:</strong> <code>msg.payload = {temp: 21.77, pressure: 1012.5}</code></li>
+        <li><strong>String numbers:</strong> Automatically converted to numbers and formatted</li>
+    </ul>
+
+    <h3>Usage</h3>
+    <p>Connect this node to get-tag or get-historical-tags nodes. Use the Number Format to control decimal precision in your reports. Connect output to report-generate node.</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('report-data', {
+        category: 'FUXA',
+        color: '#C0DEED',
+        defaults: {
+            name: { value: "" },
+            numberFormat: { value: "0.00" }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "white-globe.png",
+        label: function() {
+            return this.name || "Report Data";
+        }
+    });
+</script>
