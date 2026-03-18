@@ -80,7 +80,6 @@ export class ValueComponent extends GaugeBaseComponent {
                     const digit = Number(digitValue);
                     if (Number.isInteger(digit) && digit >= 0) {
                         const numericValue = Utils.toFiniteNumber(sig.value); // o val, ma coerente
-                        console.log('ValueComponent processValue', sig.value, val, unit, digit);
                         if (numericValue !== null) {
                             val = numericValue.toFixed(digit);
                         }
