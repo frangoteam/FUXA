@@ -152,12 +152,11 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
         });
     };
 
-    // Allow public dashboard UI and socket.io; require JWT or API key for admin/editor/flows when security is enabled
+    // Allow only dashboard routes as public; require JWT or API key for admin/editor/flows when security is enabled
     const allowDashboard = (req, res, next) => {
-        const url = req.originalUrl || req.url || req.path;
-
-        // Public dashboard UI and its HTTP APIs (served from httpNodeRoot/ui.path)
-        if (url.includes('/dashboard') || url.includes('/socket.io')) return next();
+        // Public dashboard UI and its HTTP APIs (served from httpNodeRoot/ui.path).
+        // baseUrl comes from Express mount point and is not affected by query/path tricks.
+        if (req.baseUrl === '/dashboard') return next();
 
         if (!settings.secureEnabled || settings.nodeRedAuthMode === 'legacy-open') {
             return next();
