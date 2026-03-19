@@ -293,6 +293,8 @@
   "chart.property-refresh-interval": "Intervalle de rafraîchissement (min.)",
   "chart.property-hide-toolbar": "Masquer la barre d'outils",
   "chart.property-thouch-zoom": "Zoom tactile",
+  "chart.property-mouse-wheel-scroll": "Défilement molette souris",
+  "chart.property-mouse-wheel-zoom": "Zoom molette souris",
   "chart.property-load-old-values": "Charger l'historique",
   "chart.property-date.format": "Format de la date",
   "chart.property-time.format": "Format de l'heure",
@@ -1009,6 +1011,8 @@
 
   "device.tag-format": "Format du nombre (2 = #.##)",
   "device.tag-deadband": "Zone morte",
+
+  "device.tag-uns-path": "UNS Path",
   "device.tag-scale": "Mode mise à l'échelle / Conversion",
   "device.tag-scale-mode-undefined": "Pas de mise à l'échelle",
   "device.tag-scale-mode-undefined-tooltip": "Valeur du tag",
@@ -1618,6 +1622,11 @@
   "dlg.app-settings-daqstore": "Stockage DAQ",
   "dlg.app-settings-daqstore-type": "Type de base de données",
   "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
   "dlg.app-settings-daqstore-token": "Jeton",
   "dlg.app-settings-daqstore-bucket": "Seau",
   "dlg.app-settings-daqstore-organization": "Organisation",
@@ -1715,3 +1724,5 @@
   "msg.texts-text-remove": "Souhaitez-vous supprimer le texte '{{value}}' ?",
   "msg.operation-unauthorized": "Opération non autorisée !"
 }
+
+

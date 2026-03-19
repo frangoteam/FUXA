@@ -1,6 +1,6 @@
 {
   "name": "fuxa-server",
-  "version": "1.3.0-2727",
+  "version": "1.3.0-2765",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
   "main": "main.js",
   "scripts": {
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@influxdata/influxdb-client": "1.25.0",
+    "@questdb/nodejs-client": "^3.0.0",
     "@tdengine/rest": "3.0.2",
     "ads-client": "2.1.0",
     "app-root-path": "2.2.1",
@@ -37,7 +38,7 @@
     "ldapts": "^7.4.0",
     "live-plugin-manager": "0.15.1",
     "modbus-serial": "8.0.19",
-    "morgan": "1.10.0",
+    "morgan": "1.10.1",
     "mqtt": "4.3.7",
     "node-bacnet": "0.2.4",
     "node-opcua": "2.149.0",
@@ -47,6 +48,7 @@
     "nopt": "5.0.0",
     "odbc": "2.4.9",
     "pdfmake": "0.2.5",
+    "pg": "^8.18.0",
     "socket.io": "4.8.1",
     "sqlite3": "5.1.5",
     "swagger-ui-express": "^5.0.1",

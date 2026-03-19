@@ -11,7 +11,7 @@ import { LoginOverlayColorType } from '../_models/hmi';
 @Component({
 	selector: 'app-login',
 	templateUrl: './login.component.html',
-	styleUrls: ['./login.component.css']
+	styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
 

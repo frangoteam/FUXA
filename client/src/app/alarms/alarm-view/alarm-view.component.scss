@@ -1,4 +1,8 @@
 :host {
+    display: block;
+    height: 100%;
+    min-height: 0;
+
     .header-panel {
         /* z-index: 9999 !important; */
         /* position: fixed; */
@@ -20,14 +24,51 @@
         left: 0px;
         right: 0px;
         bottom: 0px;
+        overflow: hidden;
         background-color: var(--workPanelBackground);
+    }
+
+    .table-container {
+        overflow: auto;
+        height: 100%;
     }
 
     .table-pagination {
         position: absolute;
+        bottom: 8px;
+        z-index: 3;
+        width: fit-content;
         right: 20px;
-        bottom: 0px;
-        background: rgba(0, 0, 0, 0) !important;
+        margin-right: 0;
+        overflow: hidden;
+        border-radius: 6px;
+        background-color: var(--headerBackground);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+        color: rgba(255, 255, 255, 0.95);
+        opacity: 0.82;
+    }
+
+    ::ng-deep .table-pagination .mat-mdc-paginator-container {
+        min-height: 44px;
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    ::ng-deep .table-pagination .mat-mdc-paginator-page-size,
+    ::ng-deep .table-pagination .mat-mdc-paginator-range-label,
+    ::ng-deep .table-pagination .mat-mdc-select-value,
+    ::ng-deep .table-pagination .mat-mdc-select-arrow,
+    ::ng-deep .table-pagination .mat-mdc-icon-button {
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    ::ng-deep .table-pagination .mat-mdc-text-field-wrapper {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    ::ng-deep .table-pagination .mdc-notched-outline__leading,
+    ::ng-deep .table-pagination .mdc-notched-outline__notch,
+    ::ng-deep .table-pagination .mdc-notched-outline__trailing {
+        border-color: rgba(255, 255, 255, 0.3) !important;
     }
 
     .filter {
@@ -42,8 +83,12 @@
     }
 
     .mat-table {
-        overflow: auto;
+        display: block;
         height: 100%;
+        min-width: 100%;
+        overflow: auto;
+        box-sizing: border-box;
+        padding-bottom: 58px;
     }
 
     .mat-header-cell.mat-sort-header-sorted {
@@ -52,13 +97,14 @@
 
     .mat-header-row {
         top: 0;
-        position: relative;
-        z-index: 1;
+        position: sticky;
+        z-index: 2;
         /* background-color: rgba(76,76,76,1); */
         /* color: white; */
         min-height: unset;
         height: 40px;
         align-items: center;
+        background-color: rgba(255, 255, 255, 0.92);
     }
 
     .my-header-row {
@@ -73,6 +119,7 @@
         height: 40px;
         align-items: center;
         line-height: 40px;
+        background-color: rgba(255, 255, 255, 0.92);
     }
 
     .mat-row {

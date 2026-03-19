@@ -21,6 +21,7 @@ var logger;
 var daqDB = {};                 // list of daqDB node: SQlite one pro device, influxDB only one
 var currentStorateDB;
 var runtime;
+var questDbModule = null;
 
 function init(_settings, _log, _runtime) {
     settings = _settings;
@@ -42,7 +43,7 @@ function reset() {
 function addDaqNode(_id, fncgetprop) {
     var id = _id;
     const dbType = _getDbType();
-    if (dbType === DaqStoreTypeEnum.influxDB || dbType === DaqStoreTypeEnum.influxDB18 || dbType === DaqStoreTypeEnum.TDengine) {
+    if (dbType === DaqStoreTypeEnum.influxDB || dbType === DaqStoreTypeEnum.influxDB18 || dbType === DaqStoreTypeEnum.TDengine || dbType === DaqStoreTypeEnum.questDB) {
         id = dbType;
     }
     if (!daqDB[id]) {
@@ -50,6 +51,14 @@ function addDaqNode(_id, fncgetprop) {
             daqDB[id] = InfluxDB.create(settings, logger, currentStorateDB);
         } else if(id === DaqStoreTypeEnum.TDengine){
             daqDB[id] = TDengine.create(settings, logger, currentStorateDB);
+        } else if(id === DaqStoreTypeEnum.questDB){
+            const QuestDB = _getQuestDbModule();
+            if (QuestDB) {
+                daqDB[id] = QuestDB.create(settings, logger, currentStorateDB);
+            } else {
+                logger.warn('daqstorage: QuestDB storage selected but package dependencies are not installed. Falling back to SQLite.');
+                daqDB[id] = SqliteDB.create(settings, logger, id, currentStorateDB);
+            }
         } else {
             daqDB[id] = SqliteDB.create(settings, logger, id, currentStorateDB);
         }
@@ -160,9 +169,25 @@ function _getDaqNode(tagid) {
 
 function _getDbType() {
     if (settings.daqstore && settings.daqstore.type) {
+        if (settings.daqstore.type === 'QuestDB') {
+            return DaqStoreTypeEnum.questDB;
+        }
         return settings.daqstore.type;
     }
     return DaqStoreTypeEnum.SQlite;
+}
+
+function _getQuestDbModule() {
+    if (questDbModule) {
+        return questDbModule;
+    }
+    try {
+        questDbModule = require("./questdb");
+    } catch (err) {
+        questDbModule = null;
+        logger.warn(`daqstorage: QuestDB module unavailable (${err.message})`);
+    }
+    return questDbModule;
 }
 
 var DaqStoreTypeEnum = {
@@ -170,6 +195,7 @@ var DaqStoreTypeEnum = {
     influxDB: 'influxDB',
     influxDB18: 'influxDB18',
     TDengine: 'TDengine',
+    questDB: 'questDB',
 }
 
 function _getValue(value) {

@@ -9,6 +9,55 @@ click on the workflow and scroll down to Artifacts and click the download icon f
 
 <img width="2082" height="531" alt="image" src="https://github.com/user-attachments/assets/cf0e5282-f1ef-48b3-a122-de2a2754cf19" />
 
+**Headless Portable Binaries** (alternative to Electron)
+
+For headless deployments on embedded devices, servers, or systems without a GUI, FUXA provides self-contained portable binaries that bundle the entire application (server, client) into a single executable file.
+
+These binaries are ideal for industrial environments, IoT devices, and automated systems where no user interface is needed.
+
+### Downloading Headless Binaries
+
+Headless binaries are available as GitHub Actions artifacts. You need to be logged into GitHub to download them.
+
+[Headless Portable Builds](https://github.com/frangoteam/FUXA/actions/workflows/headless_packaging.yml)
+
+Click on the latest workflow run, scroll down to "Artifacts", and download the appropriate file for your platform:
+
+- **Linux**: `fuxa-headless-linux-x64` (or `fuxa-headless-linux-arm64` for ARM devices)
+- **Windows**: `fuxa-headless-win-x64.exe`
+- **macOS**: `fuxa-headless-macos-x64` (or `fuxa-headless-macos-arm64` for Apple Silicon)
+
+### Running Headless Binaries
+
+#### Linux
+1. Download the Linux binary (e.g., `fuxa-headless-linux-x64`).
+2. Make it executable: `chmod +x fuxa-headless-linux-x64`
+3. Run: `./fuxa-headless-linux-x64`
+4. Access via web browser at `http://localhost:1881` (or the device's IP:1881)
+
+#### Windows
+1. Download the Windows executable (e.g., `fuxa-headless-win-x64.exe`).
+2. Double-click the `.exe` file to run.
+3. Access via web browser at `http://localhost:1881`
+
+#### macOS
+1. Download the macOS binary (e.g., `fuxa-headless-macos-x64`).
+2. Make it executable: `chmod +x fuxa-headless-macos-x64`
+3. Run: `./fuxa-headless-macos-x64`
+4. Access via web browser at `http://localhost:1881`
+
+### Headless Features
+- **Self-contained**: No external dependencies or installations required.
+- **Data persistence**: User data is stored in `~/.fuxa-headless-data` on the host system.
+- **Cross-platform**: Runs on Windows, macOS, and Linux (including ARM architectures).
+- **Industrial protocols**: Full support for Modbus, OPC-UA, MQTT, Siemens S7, and more.
+- **Web interface**: Access the full FUXA editor and dashboards via any web browser.
+
+### Troubleshooting
+- Ensure port 1881 is available and not blocked by firewalls.
+- For embedded devices, check system resources (RAM, CPU) as FUXA uses Node.js runtime.
+- Logs are available in the user data directory (`~/.fuxa-headless-data/logs`).
+
 **Access with Web browser once installed non Electron Install**
 
 Once you have finished one of the install processes you can access the Fuxa UI via default port 1881 and the web server IP address either localhost or the IP of the Host machine, first try localhost:1881 or host machine IP:1881

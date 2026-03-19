@@ -106,7 +106,7 @@ function ScriptsManager(_runtime) {
     this.isAuthorisedByScriptName = function (scriptName, permission) {
         const script = scriptModule.getScriptByName(scriptName);
         if (!script) {
-            return true;
+            return false;
         }
         return this.isAuthorised(script, permission);
     }
