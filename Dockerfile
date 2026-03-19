@@ -24,6 +24,7 @@ RUN apt-get update && apt-get install -y \
 COPY server/package*.json ./server/
 WORKDIR /usr/src/app/FUXA/server
 RUN npm install --no-audit --no-fund
+RUN npm prune --production
 
 # Optional Snap7 installation
 RUN if [ "$NODE_SNAP" = "true" ]; then npm install node-snap7; fi
@@ -41,9 +42,8 @@ RUN if [ "$INSTALL_ODBC" = "true" ]; then \
 # 3. Copy server source, build, then cleanup
 WORKDIR /usr/src/app/FUXA/server
 COPY server/ ./
+RUN rm -rf test
 RUN npm run build
-# Remove unecessary runtime stuff
-RUN rm -rf test docs
 
 # --- STAGE 3: Runner ---
 FROM node:18-bookworm-slim
@@ -71,7 +71,6 @@ COPY node-red/ ./node-red/
 
 # Final cleanup
 WORKDIR /usr/src/app/FUXA/server
-RUN npm prune --production
 
 ENV NODE_ENV=production
 EXPOSE 1881
