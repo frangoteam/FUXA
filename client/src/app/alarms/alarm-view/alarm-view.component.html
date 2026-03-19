@@ -7,82 +7,84 @@
     </div>
 </div>
 <div class="work-panel" [ngStyle]="{'height': (!showInContainer && (fullview || currentShowMode === 'expand')) ? 'calc(100% - 83px)' : 'calc(100% - 37px)'}">
-    <mat-table #table [dataSource]="dataSource" matSort>
-        <ng-container matColumnDef="ontime">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-ontime' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.ontime | date: 'yyyy.MM.dd HH:mm:ss'}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="text">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-text' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.text}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="type">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-type' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.type}}</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="group">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-group' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.group}}</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="status">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-status' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.status}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="offtime">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-offtime' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{(element.offtime) ? (element.offtime | date: 'yyyy.MM.dd HH:mm:ss') : ''}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="acktime">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-acktime' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{(element.acktime) ? (element.acktime | date: 'yyyy.MM.dd HH:mm:ss') : ''}} </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="ack">
-            <mat-header-cell *matHeaderCellDef>
-                <button mat-icon-button (click)="onAckAllAlarm()" matTooltip="{{'alarms.view-ack-all-alarms' | translate}}">
-                    <mat-icon>check_circle_outline</mat-icon>
-                </button>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color">
-                <button mat-icon-button (click)="onAckAlarm(element)" *ngIf="element.toack >= 0" [disabled]="element.toack === 0" class="remove">
-                    <mat-icon>check_circle_outline</mat-icon>
-                </button>
-            </mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="userack">
-            <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-userack' | translate}} </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.userack}}</mat-cell>
-        </ng-container>
-        <ng-container matColumnDef="history">
-            <mat-header-cell *matHeaderCellDef [style.flex]="(showInContainer) ? '0 0 10px' : '0 0 120px'">
-                <div class="header-tools" *ngIf="!fullview || showInContainer">
-                    <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="header-tools-options">
-                        <mat-icon>more_vert</mat-icon>
+    <div class="table-container">
+        <mat-table #table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="ontime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-ontime' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.ontime | date: 'yyyy.MM.dd HH:mm:ss'}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="text">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-text' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.text}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="type">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-type' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.type}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="group">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-group' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.group}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="status">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-status' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.status}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="offtime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-offtime' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.color]="element.color"> {{(element.offtime) ? (element.offtime | date: 'yyyy.MM.dd HH:mm:ss') : ''}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="acktime">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-acktime' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.color]="element.color"> {{(element.acktime) ? (element.acktime | date: 'yyyy.MM.dd HH:mm:ss') : ''}} </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ack">
+                <mat-header-cell *matHeaderCellDef>
+                    <button mat-icon-button (click)="onAckAllAlarm()" matTooltip="{{'alarms.view-ack-all-alarms' | translate}}">
+                        <mat-icon>check_circle_outline</mat-icon>
                     </button>
-                    <mat-menu #optionsgMenu [overlapTrigger]="false">
-                        <button mat-menu-item (click)="onShowAlarms()" style="font-size: 14px;">{{'alarms.show-current' | translate}}</button>
-                        <button mat-menu-item (click)="picker.open()" style="font-size: 14px;">{{'alarms.show-history' | translate}}</button>
-                    </mat-menu>
-                    <div style="display: inline-block;padding-left: unset;" *ngIf="!showInContainer">
-                        <button mat-icon-button (click)="$event.stopPropagation();onShowMode('expand')" *ngIf="currentShowMode === 'collapse'" class="header-tools-options">
-                            <mat-icon>fullscreen</mat-icon>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.color]="element.color">
+                    <button mat-icon-button (click)="onAckAlarm(element)" *ngIf="element.toack >= 0" [disabled]="element.toack === 0" class="remove">
+                        <mat-icon>check_circle_outline</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="userack">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'alarms.view-userack' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.color]="element.color"> {{element.userack}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="history">
+                <mat-header-cell *matHeaderCellDef [style.flex]="(showInContainer) ? '0 0 10px' : '0 0 120px'">
+                    <div class="header-tools" *ngIf="!fullview || showInContainer">
+                        <button mat-icon-button [matMenuTriggerFor]="optionsgMenu" class="header-tools-options">
+                            <mat-icon>more_vert</mat-icon>
                         </button>
-                        <button mat-icon-button (click)="$event.stopPropagation();onShowMode('collapse')" *ngIf="currentShowMode === 'expand'" class="header-tools-options">
-                            <mat-icon>fullscreen_exit</mat-icon>
-                        </button>
-                        <button mat-icon-button (click)="onClose();$event.stopPropagation()" class="header-tools-options">
-                            <mat-icon>clear</mat-icon>
-                        </button>
+                        <mat-menu #optionsgMenu [overlapTrigger]="false">
+                            <button mat-menu-item (click)="onShowAlarms()" style="font-size: 14px;">{{'alarms.show-current' | translate}}</button>
+                            <button mat-menu-item (click)="picker.open()" style="font-size: 14px;">{{'alarms.show-history' | translate}}</button>
+                        </mat-menu>
+                        <div style="display: inline-block;padding-left: unset;" *ngIf="!showInContainer">
+                            <button mat-icon-button (click)="$event.stopPropagation();onShowMode('expand')" *ngIf="currentShowMode === 'collapse'" class="header-tools-options">
+                                <mat-icon>fullscreen</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="$event.stopPropagation();onShowMode('collapse')" *ngIf="currentShowMode === 'expand'" class="header-tools-options">
+                                <mat-icon>fullscreen_exit</mat-icon>
+                            </button>
+                            <button mat-icon-button (click)="onClose();$event.stopPropagation()" class="header-tools-options">
+                                <mat-icon>clear</mat-icon>
+                            </button>
+                        </div>
                     </div>
-                </div>
-            </mat-header-cell>
-            <mat-cell *matCellDef="let element" [style.color]="element.color" [style.flex]="(showInContainer) ? '0 0 10px' : '0 0 120px'"></mat-cell>
-        </ng-container>
-        <mat-header-row *matHeaderRowDef="displayColumns; sticky: true" class="my-header-row"></mat-header-row>
-        <mat-row *matRowDef="let element; columns: displayColumns;" class="my-mat-row" [style.background-color]="element.bkcolor"></mat-row>
-    </mat-table>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" [style.color]="element.color" [style.flex]="(showInContainer) ? '0 0 10px' : '0 0 120px'"></mat-cell>
+            </ng-container>
+            <mat-header-row *matHeaderRowDef="displayColumns; sticky: true" class="my-header-row"></mat-header-row>
+            <mat-row *matRowDef="let element; columns: displayColumns;" class="my-mat-row" [style.background-color]="element.bkcolor"></mat-row>
+        </mat-table>
+    </div>
     <mat-paginator [pageSizeOptions]="[10, 25, 100]" [pageSize]="25" class="table-pagination"></mat-paginator>
     <div *ngIf="alarmsLoading" class="spinner-overlay">
-        <mat-spinner style="margin: auto" diameter="40"  class="spinner"></mat-spinner>
+        <mat-spinner style="margin: auto" diameter="40" class="spinner"></mat-spinner>
     </div>
     <mat-date-range-input [formGroup]="dateRange" [rangePicker]="picker" style="display: none;">
         <input matStartDate formControlName="startDate">
@@ -92,6 +94,6 @@
         <mat-date-range-picker-actions>
             <button mat-button matDateRangePickerCancel>{{'dlg.cancel' | translate}}</button>
             <button mat-raised-button color="primary" matDateRangePickerApply (click)="onShowAlarmsHistory()">{{'dlg.apply' | translate}}</button>
-          </mat-date-range-picker-actions>
+        </mat-date-range-picker-actions>
     </mat-date-range-picker>
 </div>

@@ -1,34 +1,32 @@
 <script type="text/javascript">
-    RED.nodes.registerType('get-tag',{
+    RED.nodes.registerType('get-tag', {
         category: 'FUXA',
         color: '#a6bbcf',
         defaults: {
-            name: {value:""},
-            tag: {value:""},           // Keep: tag name for display and backward compatibility
-            tagId: {value:""}          // New: unique identifier (optional, for backward compatibility)
+            name: {value: ""},
+            tag: {value: ""},
+            tagId: {value: ""}
         },
-        inputs:1,
-        outputs:1,
+        inputs: 1,
+        outputs: 1,
         icon: "white-globe.png",
         label: function() {
             if (this.name) {
                 return this.name;
             }
-            // Display tag name or tagId
             return this.tag || this.tagId || "get tag";
         },
         oneditprepare: function() {
             var node = this;
-            var tagMap = {}; // Use tag.id as key to avoid tag.name duplication issues
-            
+            var tagMap = {};
+
             $.getJSON('/nodered/fuxa/devices', function(data) {
                 var datalist = $('#fuxa-tags');
                 datalist.empty();
-                
-                data.forEach(function(device) {
-                    device.tags.forEach(function(tag) {
+
+                (data || []).forEach(function(device) {
+                    (device.tags || []).forEach(function(tag) {
                         var fullName = device.name + ' - ' + tag.name;
-                        // datalist option value format: tag.name(tag.id)
                         var optionValue = tag.name + '(' + tag.id + ')';
                         datalist.append('<option value="' + optionValue + '">' + fullName + '</option>');
                         tagMap[tag.id] = {
@@ -38,39 +36,34 @@
                         };
                     });
                 });
-                
-                // Listen for tagSelected input changes
+
                 $('#node-input-tagSelected').on('change', function() {
                     var selectedValue = $(this).val();
-                    // Parse format: tag.name(tag.id)
                     var match = selectedValue.match(/^(.+)\(([^)]+)\)$/);
                     if (match) {
-                        var tagName = match[1];
-                        var tagId = match[2];
-                        
-                        // Set the actual stored fields
-                        $('#node-input-tag').val(tagName);
-                        $('#node-input-tagId').val(tagId);
+                        $('#node-input-tag').val(match[1]);
+                        $('#node-input-tagId').val(match[2]);
+                    } else if (!selectedValue || !selectedValue.trim()) {
+                        $('#node-input-tag').val('');
+                        $('#node-input-tagId').val('');
                     }
                 });
-                
-                // Initialize display (when editing existing node)
+
                 if (node.tagId && tagMap[node.tagId]) {
-                    // Has tagId, construct tagSelected value
                     var tagName = node.tag || tagMap[node.tagId].name;
                     $('#node-input-tagSelected').val(tagName + '(' + node.tagId + ')');
                 } else if (node.tag && !node.tagId) {
-                    // Old node: only has tag (tag.name), need to find corresponding tagId
-                    // Note: if there are duplicate names, only the first match will be found
-                    for (var tagId in tagMap) {
-                        if (tagMap[tagId].name === node.tag) {
-                            $('#node-input-tagSelected').val(node.tag + '(' + tagId + ')');
-                            $('#node-input-tagId').val(tagId);
+                    for (var id in tagMap) {
+                        if (tagMap[id].name === node.tag) {
+                            $('#node-input-tagSelected').val(node.tag + '(' + id + ')');
+                            $('#node-input-tagId').val(id);
                             break;
                         }
                     }
                 }
             });
+
+            $('#node-input-tagSelected').attr('placeholder', 'Optional - leave empty to use msg.topic');
         }
     });
 </script>
@@ -82,14 +75,25 @@
     </div>
     <div class="form-row">
         <label for="node-input-tagSelected"><i class="fa fa-tag"></i> Tag</label>
-        <input type="text" id="node-input-tagSelected" list="fuxa-tags" placeholder="Select Tag">
+        <input type="text" id="node-input-tagSelected" list="fuxa-tags" placeholder="Optional - leave empty to use msg.topic">
         <datalist id="fuxa-tags"></datalist>
     </div>
     <input type="hidden" id="node-input-tag">
     <input type="hidden" id="node-input-tagId">
+    <div class="form-row">
+        <div style="margin-left:105px;font-size:12px;color:#666;">
+            If <b>Tag</b> is empty, the node uses <code>msg.topic</code>.
+        </div>
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="get-tag">
-    <p>Get the value of a FUXA tag.</p>
-    <p>The tag value is set to <code>msg.payload</code>.</p>
+    <p>Gets the value of a FUXA tag.</p>
+    <ul>
+        <li>If <b>Tag</b> is set in the node, that tag is used.</li>
+        <li>If <b>Tag</b> is empty, <code>msg.topic</code> is used.</li>
+    </ul>
+    <p>The tag value is returned in <code>msg.payload</code>.</p>
+    <p>The resolved tag name is always set on <code>msg.topic</code>.</p>
+    <pre>msg.topic = "V2";</pre>
 </script>

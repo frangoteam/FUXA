@@ -298,6 +298,8 @@
     "chart.property-refresh-interval": "更新間隔 (分)",
     "chart.property-hide-toolbar": "ツールバー非表示",
     "chart.property-thouch-zoom": "タッチズーム",
+    "chart.property-mouse-wheel-scroll": "マウスホイールスクロール",
+    "chart.property-mouse-wheel-zoom": "マウスホイールズーム",
     " chart.property-load-old-values": "履歴を読み込む",
     "chart.property-date.format": "日付形式",
     "chart.property-time.format": "時刻形式",
@@ -1756,5 +1758,4 @@
     "msg.texts-text-remove": "テキスト '{{value}}' を削除しますか？",
     "msg.operation-unauthorized": "操作が許可されていません！"
 }
-
 
