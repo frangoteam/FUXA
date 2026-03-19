@@ -234,6 +234,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                 y: false,
             }
         };
+        opt.cursor.bind = this.getScaledCursorBind(opt.cursor.bind);
         opt.select = {
             ...opt.select,
             show: !isStaticChart
@@ -309,18 +310,112 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         const over = this.uplot?.root?.querySelector('.u-over');
         if (!over || !this.uplot) return null;
 
-        const rect = over.getBoundingClientRect();
         const clientX = (e instanceof TouchEvent) ? e.touches[0].clientX : e.clientX;
         const clientY = (e instanceof TouchEvent) ? e.touches[0].clientY : e.clientY;
+        const point = this.getRelativeClientPoint(over, clientX, clientY);
 
-        const left = clientX - rect.left;
-        const top = clientY - rect.top;
-
-        const x = this.uplot.posToVal(left, 'x');
+        const x = this.uplot.posToVal(point.left, 'x');
         const yScaleKey = this.uplot.series[1]?.scale ?? 'y';
-        const y = this.uplot.posToVal(top, yScaleKey);
+        const y = this.uplot.posToVal(point.top, yScaleKey);
 
         return { x, y };
+    }
+
+    private getElementScale(target: HTMLElement): { x: number, y: number } {
+        const rect = target.getBoundingClientRect();
+        // `rect` is post-transform size; offset/client sizes are pre-transform. Their ratio is the active CSS scale.
+        const baseWidth = target.offsetWidth || target.clientWidth || rect.width || 1;
+        const baseHeight = target.offsetHeight || target.clientHeight || rect.height || 1;
+        const rawScaleX = rect.width / baseWidth;
+        const rawScaleY = rect.height / baseHeight;
+        const x = Number.isFinite(rawScaleX) && rawScaleX > 0 ? rawScaleX : 1;
+        const y = Number.isFinite(rawScaleY) && rawScaleY > 0 ? rawScaleY : 1;
+        return { x, y };
+    }
+
+    private getRelativeClientPoint(target: HTMLElement, clientX: number, clientY: number): { left: number, top: number, rect: DOMRect } {
+        const rect = target.getBoundingClientRect();
+        const scale = this.getElementScale(target);
+        return {
+            left: (clientX - rect.left) / scale.x,
+            top: (clientY - rect.top) / scale.y,
+            rect
+        };
+    }
+
+    private createScaledMouseEvent(event: MouseEvent, referenceElement: HTMLElement, clampToBounds: boolean = false): MouseEvent {
+        // Re-map event coordinates from transformed viewport space back to uPlot's unscaled local space.
+        const point = this.getRelativeClientPoint(referenceElement, event.clientX, event.clientY);
+        let left = point.left;
+        let top = point.top;
+        if (clampToBounds) {
+            const maxX = referenceElement.offsetWidth || referenceElement.clientWidth || left;
+            const maxY = referenceElement.offsetHeight || referenceElement.clientHeight || top;
+            left = Math.max(0, Math.min(maxX, left));
+            top = Math.max(0, Math.min(maxY, top));
+        }
+        const adjustedClientX = point.rect.left + left;
+        const adjustedClientY = point.rect.top + top;
+        return new Proxy(event, {
+            get(target, property) {
+                if (property === 'clientX') {
+                    return adjustedClientX;
+                }
+                if (property === 'clientY') {
+                    return adjustedClientY;
+                }
+                const value = Reflect.get(target, property, target);
+                return typeof value === 'function' ? value.bind(target) : value;
+            }
+        }) as MouseEvent;
+    }
+
+    private getScaledCursorBind(bind: any = {}) {
+        if (bind?.__fuxaScaled) {
+            return bind;
+        }
+
+        const eventNames = ['mousedown', 'mouseup', 'click', 'dblclick', 'mousemove', 'mouseleave', 'mouseenter'];
+        const passthroughFactory = (_self: unknown, _target: EventTarget, handler: (event: MouseEvent) => void) => handler;
+        const primaryButtonFactory = (_self: unknown, _target: EventTarget, handler: (event: MouseEvent) => void) => (event: MouseEvent) => {
+            if (event.button === 0) {
+                handler(event);
+            }
+        };
+        const defaultFactories = {
+            mousedown: primaryButtonFactory,
+            mouseup: primaryButtonFactory,
+            click: primaryButtonFactory,
+            dblclick: primaryButtonFactory,
+            mousemove: passthroughFactory,
+            mouseleave: passthroughFactory,
+            mouseenter: passthroughFactory
+        };
+        // Clamp drag/click paths to avoid oversized selections when pointer is outside plot bounds.
+        const clampEvents = new Set(['mousedown', 'mouseup', 'mousemove', 'click', 'dblclick']);
+        const scaledBind = { ...bind };
+
+        eventNames.forEach(eventName => {
+            const currentFactory = (bind?.[eventName] || defaultFactories[eventName] || passthroughFactory) as
+                ((_self: unknown, _target: EventTarget, handler: (event: MouseEvent) => void) => ((event: MouseEvent) => void) | undefined | null);
+            scaledBind[eventName] = (self: { over?: EventTarget | null }, target: EventTarget, handler: (event: MouseEvent) => void) => {
+                const listener = currentFactory(self, target, handler);
+                if (!listener) {
+                    return listener;
+                }
+                return (event: MouseEvent) => {
+                    const referenceElement = self?.over as HTMLElement;
+                    if (!event || !referenceElement) {
+                        listener(event);
+                        return;
+                    }
+                    listener(this.createScaledMouseEvent(event, referenceElement, clampEvents.has(eventName)));
+                };
+            };
+        });
+
+        Object.defineProperty(scaledBind, '__fuxaScaled', { value: true, enumerable: false });
+        return scaledBind;
     }
 
     setOptions(options: Options) {
@@ -452,7 +547,9 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
     paintLegendCuror = (u: any, overlay, bLeft, bTop, bound) => {
         const { left, top, idx } = u.cursor;
         const x = u.data[0][idx];
-        const anchor = { left: left + bLeft, top: top + bTop };
+        // uPlot cursor coords are unscaled; overlay is positioned in viewport space, so re-apply element scale.
+        const scale = this.getElementScale(bound as HTMLElement);
+        const anchor = { left: left * scale.x + bLeft, top: top * scale.y + bTop };
         const time = this.fmtDate(new Date(x * 1e3));
         const xdiv = `<div class="ut-head">${u.series[0].label}: ${this.rawData ? x : time}</div>`;
         let series = '';
@@ -747,7 +844,6 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
             over.addEventListener('touchstart', function(e) {
                 rect = over.getBoundingClientRect();
-
                 storePos(fr, e);
 
                 oxRange = u.scales.x.max - u.scales.x.min;
