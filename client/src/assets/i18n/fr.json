@@ -1044,6 +1044,7 @@
   "device.connect-failed": "Echec",
   "device.connect-off": "Eteint",
   "device.connect-busy": "Occupé",
+  "device.connect-skipped": "Sautée",
 
   "devices.mode-map": "Carte des appareils",
   "devices.mode-list": "Liste des appareils",

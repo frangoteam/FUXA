@@ -48,7 +48,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 try {
                     // [Modified] Logic to check if client exists
                     if ((!client || !client.isOpen) && _checkWorking(true)) {
-                        logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
+                        logger.info(`'${data.name}' try to connect ${data.property.address}`);
                         
                         // 1. RTU Mode
                         if (type === ModbusTypes.RTU) {
@@ -59,8 +59,8 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                                     client = null;
                                 }
 
-                                client = await connectionManager.getRtuClient(data.property);                                
-                                logger.info(`'${data.name}' connected (RTU Shared)!`, true);
+                                client = await connectionManager.getRtuClient(data);                                
+                                logger.info(`'${data.name}' connected (RTU Shared)!`);
                                 _emitStatus('connect-ok');
                                 resolve();
                             } catch (err) {
@@ -83,8 +83,8 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                                 }
 
                                 // Request shared client from Manager
-                                client = await connectionManager.getTcpClient(data.property);
-                                logger.info(`'${data.name}' connected (TCP Shared)!`, true);
+                                client = await connectionManager.getTcpClient(data);
+                                logger.info(`'${data.name}' connected (TCP Shared)!`);
                                 _emitStatus('connect-ok');
                                 resolve();
                             } catch (err) {
@@ -121,7 +121,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                                     client._client.socket.setMaxListeners(30);
                                 }
                                 
-                                logger.info(`'${data.name}' connected!`, true);
+                                logger.info(`'${data.name}' connected!`);
                                 _emitStatus('connect-ok');
                                 resolve();
                             }
@@ -191,7 +191,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     if (result) {
                         logger.error(`'${data.name}' try to disconnect failed!`);
                     } else {
-                        logger.info(`'${data.name}' disconnected!`, true);
+                        logger.info(`'${data.name}' disconnected!`);
                     }
                     _emitStatus('connect-off');
                     _clearVarsValue();
@@ -209,7 +209,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
         
         try {
             // [Added] Check if TCP device should be skipped
-            if (type === ModbusTypes.TCP && connectionManager.shouldSkipTcpDevice(data.id)) {
+            if (type === ModbusTypes.TCP && connectionManager.shouldSkipTcpDevice(data.id, data.name)) {
                 const skipInfo = connectionManager.getTcpSkipInfo(data.id);
                 logger.info(
                     `'${data.name}' temporarily skipped (state: ${skipInfo.state}, retry in ${skipInfo.skipRemaining}s)`
@@ -221,7 +221,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             // [Added]Check if RTU device should be skipped
             if (type === ModbusTypes.RTU) {
                 const slaveId = parseInt(data.property.slaveid) || 1;
-                if (connectionManager.shouldSkipRtuSlave(data.property, slaveId)) {
+                if (connectionManager.shouldSkipRtuSlave(data.property, slaveId, data.name)) {
                     const skipInfo = connectionManager.getRtuSkipInfo(data.property,slaveId);
                     logger.info(
                          `'${data.name}' RTU Slave ${slaveId} temporarily skipped (state: ${skipInfo.state}, retry in ${skipInfo.skipRemaining}s)`
@@ -236,7 +236,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 logger.warn(`'${data.name}' TCP connection closed, attempting to reconnect...`);
                 try {
                     await this.connect();
-                    logger.info(`'${data.name}' TCP reconnected successfully`, true);
+                    logger.info(`'${data.name}' TCP reconnected successfully`);
                 } catch (err) {
                     logger.error(`'${data.name}' TCP reconnection failed: ${err}`);
                     _emitStatus('connect-error');
@@ -264,7 +264,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                             const offset = parseInt(tag.address) - 1;
 
                             await _writeMemory(memaddr, offset, state.desired);
-                            logger.info(`'${data.name}' Sync write success for ${sigid} (val: ${state.desired})`, true, true);
+                            logger.info(`'${data.name}' Sync write success for ${sigid} (val: ${state.desired})`);
 
                             state.actual = state.desired;
                             state.desired = null;
@@ -427,7 +427,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 logger.error(`'${data.name}' load error! ${err}`);
             }
         });
-        logger.info(`'${data.name}' data loaded (${count})`, true);
+        logger.info(`'${data.name}' data loaded (${count})`);
     }
 
     /**
@@ -514,11 +514,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             }
             // Append to State Cache instead of waiting for Modbus transaction
             this.tagState[sigid].desired = val;
-            logger.info(`'${data.name}' Tag ${sigid} desired state updated (${value})`, true,true);
+            logger.info(`'${data.name}' Tag ${sigid} desired state updated (${value})`);
             return true;
         
         } else {
-            logger.error(`'${data.name}' setValue(${sigid}, ${value}) Tag not found`, true, true);
+            logger.error(`'${data.name}' setValue(${sigid}, ${value}) Tag not found`);
         }
         return false;
     }
@@ -999,6 +999,11 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
+        //first time create modbus device , binding FUXA built-in logger to connection manager
+        if(connectionManager.logger === console){
+            connectionManager.setLogger(logger);
+        }
+
         try { ModbusRTU = require('modbus-serial'); } catch { }
         if (!ModbusRTU && manager) { try { ModbusRTU = manager.require('modbus-serial'); } catch { } }
         if (!ModbusRTU) return null;
@@ -1026,6 +1031,8 @@ function MemoryItems() {
  */
 class ConnectionManager {
     constructor() {
+        this.logger = console;
+
         // Resource Pools
         this.rtuPorts = {}; // { key: { client, queue, refCount, config, isConnecting } }
         this.tcpPorts = {}; // { key: { client, queue, refCount, config, isConnecting, connectAction } }
@@ -1058,6 +1065,10 @@ class ConnectionManager {
         //console.info('Connection Manager configured.');
     }
 
+    setLogger(logger){
+        this.logger = logger;
+    }
+
     // ==========================================
     // [Generic] Helper Methods (The Core Logic)
     // ==========================================
@@ -1088,14 +1099,18 @@ class ConnectionManager {
     /**
      * Generic resource acquirer with Promise Caching to prevent race conditions.
      */
-    async _getSharedClient(key, portsMap, connectingMap, config, connectFn) {
+    async _getSharedClient(key, portsMap, connectingMap, data, connectFn) {
+        const config = data.property;
+        const deviceName = data.name;
+        const displayName = deviceName || key;
+
         // 1. Fast Path: Return existing
         if (portsMap[key]) {
             const portObj = portsMap[key];
 
             //Check the connection status. If it’s disconnected, it must be repaired 
             if (!portObj.client.isOpen) {
-                console.warn(`'${key}' Shared client found but closed. Attempting to recover...`);
+                this.logger.warn(`'${displayName}' Shared client found but closed. Attempting to recover...`);                
                 
                 // Case A: Another device (or polling loop) is already reconnecting , need to wait
                 if (portObj.isConnecting) {
@@ -1127,10 +1142,10 @@ class ConnectionManager {
                          // Update the shared object with the new client reference
                          portObj.client = newClient;
                          portObj.isConnecting = false;
-                         //console.info(`'${key}' Shared connection recovered successfully.`);
+                         this.logger.info(`'${displayName}' Shared connection recovered successfully.`);                         
                      } catch (err) {
                          portObj.isConnecting = false;
-                         //console.error(`'${key}' Recovery failed: ${err.message}`);
+                         this.logger.error(`'${displayName}' Recovery failed: ${err.message}`);                         
                          // If the connection fails, throw the error so the outer MODBUSclient knows
                          throw err;
                      }
@@ -1140,7 +1155,7 @@ class ConnectionManager {
                     portObj.refCount++;
                     return portObj.client;
                 } else {
-                    throw new Error(`Failed to recover shared connection for '${key}'`);
+                    throw new Error(`Failed to recover shared connection for '${displayName}'`);
                 }
             }
             portsMap[key].refCount++;
@@ -1154,7 +1169,7 @@ class ConnectionManager {
                 portsMap[key].refCount++;
                 return portsMap[key].client;
             }
-            throw new Error(`Connection wait failed for ${key}`);
+            throw new Error(`Connection wait failed for ${displayName}`);
         }
 
         // 3. Initiate Connection (Locked)
@@ -1173,9 +1188,9 @@ class ConnectionManager {
                     isConnecting: false,
                     connectAction: connectFn // Store for reconnection usage
                 };
-                //console.info(`'${key}' Shared Connection created`);
+                this.logger.info(`'${displayName}' Shared Connection created`);                
             } catch (err) {
-                //console.error(`'${key}' Connection failed: ${err.message}`);
+                this.logger.error(`'${displayName}' Connection failed: ${err.message}`);                
                 throw err;
             } finally {
                 delete connectingMap[key];
@@ -1200,7 +1215,7 @@ class ConnectionManager {
     /**
      * Generic Skip Logic
      */
-    _shouldSkip(errorMap, key) {
+    _shouldSkip(errorMap, key, devcieName) {
         const errorInfo = errorMap[key];
         if (!errorInfo) return false;
 
@@ -1211,7 +1226,8 @@ class ConnectionManager {
 
         // Skip period expired, reset
         if (errorInfo.skipUntil && Date.now() >= errorInfo.skipUntil) {
-            //console.info(`'${key}' retry after skip period (state: ${errorInfo.state}, count reset to 0)`);
+            const displayName = devcieName || key;
+            this.logger.info(`'${displayName}' retry after skip period (state: ${errorInfo.state}, count reset to 0)`);            
             errorInfo.count = 0;
             errorInfo.skipUntil = null;
             return false;
@@ -1222,7 +1238,7 @@ class ConnectionManager {
     /**
      * Generic Error Recording & State Transition
      */
-    _recordError(errorMap, key, error) {
+    _recordError(errorMap, key, error, deviceName) {
         if (!errorMap[key]) {
             errorMap[key] = {
                 count: 0,
@@ -1244,15 +1260,16 @@ class ConnectionManager {
             const skipDuration = currentState.duration;
             errorInfo.skipUntil = Date.now() + skipDuration;
 
+            const displayName = deviceName || key;
+
             if (currentState.nextState) {
                 const previousState = errorInfo.state;
                 errorInfo.state = currentState.nextState;
                 errorInfo.count = 0;
                 errorInfo.stateEnteredAt = Date.now();
-                //console.warn(`'${key}' escalated: ${previousState} -> ${errorInfo.state}. Skip ${skipDuration/1000}s`);
+                this.logger.warn(`'${displayName}' escalated: ${previousState} -> ${errorInfo.state}. Skip ${skipDuration/1000}s`);                
             } else {
-                
-                //console.warn(`'${key}' state '${errorInfo.state}': Skip ${skipDuration/1000}s`);
+                this.logger.warn(`'${displayName}' state '${errorInfo.state}': Skip ${skipDuration/1000}s`);                
             }
         }
     }
@@ -1260,9 +1277,10 @@ class ConnectionManager {
     /**
      * Generic Success Recovery
      */
-    _recordSuccess(errorMap, key) {
+    _recordSuccess(errorMap, key, deviceName) {
         if (errorMap[key]) {
-            //console.info(`'${key}' recovered from error state.`);
+            const displayName = deviceName || key;
+            this.logger.info(`'${displayName}' recovered from error state.`);            
             delete errorMap[key];
         }
     }
@@ -1279,9 +1297,10 @@ class ConnectionManager {
         return this.getRtuKey(config) + '_Slave' + slaveId;
     }
 
-    async getRtuClient(config) {
+    async getRtuClient(data) {        
+        const config = data.property;
         const key = this.getRtuKey(config);
-        
+
         // Define RTU specific connection logic
         const connectFn = async () => {
             const client = new ModbusRTU();
@@ -1301,7 +1320,7 @@ class ConnectionManager {
             return client;
         };
 
-        return this._getSharedClient(key, this.rtuPorts, this.rtuConnecting, config, connectFn);
+        return this._getSharedClient(key, this.rtuPorts, this.rtuConnecting, data, connectFn);
     }
 
     async releaseRtuClient(config) {
@@ -1310,7 +1329,7 @@ class ConnectionManager {
             this.rtuPorts[key].refCount--;
             if (this.rtuPorts[key].refCount <= 0) {
                 if (this.rtuPorts[key].client.isOpen) {
-                    //console.info(`'${key}' disconnect`);
+                    this.logger.info(`'${key}' disconnect`);                    
                     // [Fix] Wait for the OS to completely close the port.
                     await this._closeClient(this.rtuPorts[key].client);
                 }
@@ -1327,7 +1346,7 @@ class ConnectionManager {
         if (!portObj.isConnecting) {
             portObj.isConnecting = true;
             try {
-                //console.warn(`'${key}' RTU reconnecting...`);
+                this.logger.warn(`'${key}' RTU reconnecting...`);                
                 try { 
                     if (portObj.client._port) await this._closeClient(portObj.client);
                 } catch (e) {}
@@ -1337,10 +1356,11 @@ class ConnectionManager {
                 const newClient = await portObj.connectAction();
                 portObj.client = newClient; // Replace client
                 
-                //console.info(`'${key}' RTU reconnected`);
+                this.logger.info(`'${key}' RTU reconnected`);                
                 portObj.isConnecting = false;
                 return true;
             } catch (err) {
+
                 console.error(`'${key}' RTU reconnect failed: ${err.message}`);
                 portObj.isConnecting = false;
                 await new Promise(r => setTimeout(r, 1000));
@@ -1351,14 +1371,14 @@ class ConnectionManager {
     }
 
     // Wrappers for RTU Error/Skip
-    shouldSkipRtuSlave(config, slaveId) {
-        return this._shouldSkip(this.rtuSlaveErrors, this.getRtuSlaveKey(config, slaveId));
+    shouldSkipRtuSlave(config, slaveId, deviceName) {
+        return this._shouldSkip(this.rtuSlaveErrors, this.getRtuSlaveKey(config, slaveId), deviceName);
     }
-    recordRtuSlaveError(config, slaveId, error) {
-        this._recordError(this.rtuSlaveErrors, this.getRtuSlaveKey(config, slaveId), error);
+    recordRtuSlaveError(config, slaveId, error, deviceName) {
+        this._recordError(this.rtuSlaveErrors, this.getRtuSlaveKey(config, slaveId), error, deviceName);
     }
-    recordRtuSlaveSuccess(config, slaveId) {
-        this._recordSuccess(this.rtuSlaveErrors, this.getRtuSlaveKey(config, slaveId));
+    recordRtuSlaveSuccess(config, slaveId, deviceName) {
+        this._recordSuccess(this.rtuSlaveErrors, this.getRtuSlaveKey(config, slaveId), deviceName);
     }
     getRtuSkipInfo(config,slaveId) {
         const errorInfo = this.rtuSlaveErrors[this.getRtuSlaveKey(config, slaveId)];
@@ -1369,19 +1389,20 @@ class ConnectionManager {
         };
     }
 
-    async executeRtu(deviceData, action, timeout = 2000) {
-        const options = deviceData.property || {};
+    async executeRtu(data, action, timeout = 2000) {
+        const options = data.property || {};
         const key = this.getRtuKey(options);
         const portObj = this.rtuPorts[key];
         timeout = options.rtuTimeout || timeout;
         const slaveId = parseInt(options.slaveid) || 1;
+        const deviceName = data.name;
 
         if (!portObj) return Promise.reject('Port not connected');
         
-        if (this.shouldSkipRtuSlave(options, slaveId)) {
+        if (this.shouldSkipRtuSlave(options, slaveId, deviceName)) {
             const errorInfo = this.rtuSlaveErrors[this.getRtuSlaveKey(options, slaveId)];
             const skipRemaining = Math.ceil((errorInfo.skipUntil - Date.now()) / 1000);
-            return Promise.reject(new Error(`RTU SlaveID ${slaveId} skipped (state: ${errorInfo.state}, retry: ${skipRemaining}s)`));
+            return Promise.reject(new Error(`RTU Device ${deviceName} skipped (state: ${errorInfo.state}, retry: ${skipRemaining}s)`));
         }
 
         const result = portObj.queue.then(async () => {
@@ -1401,10 +1422,10 @@ class ConnectionManager {
                 });
 
                 const res = await Promise.race([operationPromise, timeoutPromise]);
-                this.recordRtuSlaveSuccess(options, slaveId);
+                this.recordRtuSlaveSuccess(options, slaveId, deviceName);
                 return res;
             } catch (err) {
-                this.recordRtuSlaveError(options, slaveId, err);
+                this.recordRtuSlaveError(options, slaveId, err, deviceName);
                 throw err;
             }
         });
@@ -1430,7 +1451,8 @@ class ConnectionManager {
         return `${address}:${port}`;
     }
 
-    async getTcpClient(config) {
+    async getTcpClient(data) {        
+        const config = data.property;
         const key = this.getTcpKey(config);
 
         // Define TCP specific connection logic
@@ -1456,7 +1478,7 @@ class ConnectionManager {
             return client;
         };
 
-        return this._getSharedClient(key, this.tcpPorts, this.tcpConnecting, config, connectFn);
+        return this._getSharedClient(key, this.tcpPorts, this.tcpConnecting, data, connectFn);
     }
 
     async releaseTcpClient(config) {
@@ -1465,7 +1487,7 @@ class ConnectionManager {
             this.tcpPorts[key].refCount--;
             if (this.tcpPorts[key].refCount <= 0) {
                 if (this.tcpPorts[key].client.isOpen) {
-                    //console.info(`'${key}' TCP disconnect (Ref=0)`);
+                    this.logger.info(`'${key}' TCP disconnect (Ref=0)`);                    
                     // [Fix] Wait for the OS to completely release the socket.
                     await this._closeClient(this.tcpPorts[key].client);
                 }
@@ -1481,7 +1503,7 @@ class ConnectionManager {
 
         if (!portObj.isConnecting) {
             portObj.isConnecting = true;
-            console.warn(`'${key}' TCP reconnecting...`);
+            this.logger.warn(`'${key}' TCP reconnecting...`);            
             try {
                 try { 
                     await this._closeClient(portObj.client);
@@ -1491,12 +1513,12 @@ class ConnectionManager {
                 // Re-execute stored connection action
                 const newClient = await portObj.connectAction();
                 portObj.client = newClient; // Replace client (IMPORTANT: Update the object ref)
-
-                //console.info(`'${key}' TCP reconnected`);
+                                
+                this.logger.info(`'${key}' TCP reconnected`);
                 portObj.isConnecting = false;
                 return true;
             } catch (err) {
-                //console.error(`'${key}' TCP reconnect failed: ${err.message}`);
+                this.logger.error(`'${key}' TCP reconnect failed: ${err.message}`);                
                 portObj.isConnecting = false;
                 await new Promise(r => setTimeout(r, 1000));
                 return false;
@@ -1506,14 +1528,14 @@ class ConnectionManager {
     }
 
     // Wrappers for TCP Error/Skip
-    shouldSkipTcpDevice(deviceId) {
-        return this._shouldSkip(this.tcpDeviceErrors, deviceId);
+    shouldSkipTcpDevice(deviceId, deviceName) {
+        return this._shouldSkip(this.tcpDeviceErrors, deviceId, deviceName);
     }
-    recordTcpDeviceError(deviceId, error) {
-        this._recordError(this.tcpDeviceErrors, deviceId, error);
+    recordTcpDeviceError(deviceId, error, deviceName) {
+        this._recordError(this.tcpDeviceErrors, deviceId, error, deviceName);
     }
-    recordTcpDeviceSuccess(deviceId) {
-        this._recordSuccess(this.tcpDeviceErrors, deviceId);
+    recordTcpDeviceSuccess(deviceId, deviceName) {
+        this._recordSuccess(this.tcpDeviceErrors, deviceId, deviceName);
     }
     getTcpSkipInfo(deviceId) {
         const errorInfo = this.tcpDeviceErrors[deviceId];
@@ -1524,17 +1546,18 @@ class ConnectionManager {
         };
     }
 
-    async executeTcp(client, deviceData, action, timeout = 2000) {
-        const deviceId = deviceData.id;
-        const options = deviceData.property || {};
+    async executeTcp(client, data, action, timeout = 2000) {
+        const deviceId = data.id;
+        const options = data.property || {};
         const isReuseSerial = options.socketReuse === 'ReuseSerial';
         const key = this.getTcpKey(options);
         timeout = options.tcpTimeout || timeout;
+        const deviceName = data.name;
 
-        if (this.shouldSkipTcpDevice(deviceId)) {
+        if (this.shouldSkipTcpDevice(deviceId, deviceName)) {
             const errorInfo = this.tcpDeviceErrors[deviceId];
             const skipRemaining = Math.ceil((errorInfo.skipUntil - Date.now()) / 1000);
-            return Promise.reject(new Error(`TCP device '${deviceId}' skipped (state: ${errorInfo.state}, retry: ${skipRemaining}s)`));
+            return Promise.reject(new Error(`TCP device '${deviceName}' skipped (state: ${errorInfo.state}, retry: ${skipRemaining}s)`));
         }
 
         const runOperation = async (targetClient) => {
@@ -1551,10 +1574,10 @@ class ConnectionManager {
                 });
 
                 const result = await Promise.race([operationPromise, timeoutPromise]);
-                this.recordTcpDeviceSuccess(deviceId);
+                this.recordTcpDeviceSuccess(deviceId, deviceName);
                 return result;
             } catch (err) {
-                this.recordTcpDeviceError(deviceId, err);
+                this.recordTcpDeviceError(deviceId, err, deviceName);
                 const errorInfo = this.tcpDeviceErrors[deviceId];
                 
                 // Hard Error Checks
@@ -1569,7 +1592,7 @@ class ConnectionManager {
                         if (targetClient) try { targetClient.close(); } catch(e) {}
                         if (this.tcpPorts[key]) try { this.tcpPorts[key].client._client.destroy(); } catch(e) {}
                         if (errorInfo) errorInfo.count = 0;
-                        logger.warn(`Shared TCP '${key}' fatal error, socket destroyed.`);
+                        this.logger.warn(`Shared TCP '${key}' fatal error, socket destroyed.`);                        
                     }
                 } else {
                     // [Standalone Mode (1 IP per Device)]
@@ -1578,7 +1601,7 @@ class ConnectionManager {
                     if (isFatalError || isZombieConnection) {
                         if (targetClient) try { targetClient.close(); } catch(e) {}
                         if (errorInfo) errorInfo.count = 0;
-                        logger.warn(`Standalone TCP device '${deviceId}' reset due to fatal/zombie state.`);
+                        this.logger.warn(`Standalone TCP device '${deviceId}' reset due to fatal/zombie state.`);                        
                     }
                 }
                 throw err;

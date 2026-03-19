@@ -1037,6 +1037,7 @@
     "device.connect-failed": "Misslyckades",
     "device.connect-off": "Av",
     "device.connect-busy": "Upptagen",
+    "device.connect-skipped": "Översprunget",
 
     "devices.mode-map": "Anslutningsdiagram",
     "devices.mode-list": "Anslutningslista",

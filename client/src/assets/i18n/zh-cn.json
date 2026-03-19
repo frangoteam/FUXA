@@ -1045,6 +1045,7 @@
     "device.connect-failed": "失败",
     "device.connect-off": "关闭",
     "device.connect-busy": "忙",
+    "device.connect-skipped": "略过",
 
     "devices.mode-map": "设备图示",
     "devices.mode-list": "设备列表",
