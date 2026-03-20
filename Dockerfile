@@ -1,75 +1,77 @@
-FROM node:18-bookworm
+# --- STAGE 1: Angular Client Builder ---
+FROM node:18-bookworm AS client-builder
+WORKDIR /usr/src/app/client
+COPY client/package*.json ./
+RUN npm install --no-audit --no-fund
+COPY client/ ./
+RUN npm run build -- --configuration production
 
+# --- STAGE 2: Server & Native Dependencies Builder ---
+FROM node:18-bookworm AS server-builder
+# Define build arguments with defaults
 ARG NODE_SNAP=false
+ARG INSTALL_ODBC=true
 
-RUN apt-get update && apt-get install -y dos2unix
+WORKDIR /usr/src/app/FUXA
 
-# Change working directory
-WORKDIR /usr/src/app
+# Base build tools
+RUN apt-get update && apt-get install -y \
+    python3 build-essential libsqlite3-dev dos2unix \
+    $( [ "$INSTALL_ODBC" = "true" ] && echo "unixodbc-dev" ) \
+    && rm -rf /var/lib/apt/lists/*
 
-# Clone FUXA repository
-RUN git clone https://github.com/frangoteam/FUXA.git
-
-# Install build dependencies for node-odbc
-RUN apt-get update && apt-get install -y build-essential unixodbc unixodbc-dev
-
-# Convert the script to Unix format and make it executable
-RUN dos2unix FUXA/odbc/install_odbc_drivers.sh && chmod +x FUXA/odbc/install_odbc_drivers.sh
-
-WORKDIR /usr/src/app/FUXA/odbc
-RUN ./install_odbc_drivers.sh
-
-# Change working directory
-WORKDIR /usr/src/app
-
-# Copy odbcinst.ini to /etc
-RUN cp FUXA/odbc/odbcinst.ini /etc/odbcinst.ini
-
-# Install Fuxa server
+# Install Server dependencies
+COPY server/package*.json ./server/
 WORKDIR /usr/src/app/FUXA/server
+RUN npm install --no-audit --no-fund
+RUN npm prune --production
 
-# More tolerant npm config
-ENV NODE_OPTIONS=--dns-result-order=ipv4first
-RUN npm config set registry https://registry.npmjs.org/ \
- && npm config set fetch-retries 8 \
- && npm config set fetch-retry-factor 2 \
- && npm config set fetch-retry-mintimeout 30000 \
- && npm config set fetch-retry-maxtimeout 300000 \
- && npm config set audit false \
- && npm config set fund false
+# Optional Snap7 installation
+RUN if [ "$NODE_SNAP" = "true" ]; then npm install node-snap7; fi
 
-# Retry loop con backoff + timeout alto
-RUN bash -lc '\
-  for i in 1 2 3 4 5 6 7 8; do \
-    echo "npm install - attempt $i/8"; \
-    npm install --no-audit --no-fund --prefer-offline --network-timeout=600000 && exit 0; \
-    echo "Failed, wait $((10*i))s and try again..."; \
-    sleep $((10*i)); \
-  done; \
-  echo "npm install failed after 8 attempts"; \
-  exit 1'
+# Force rebuild of SQLite for the container
+RUN npm install --build-from-source --sqlite=/usr/bin sqlite3
 
-
-# Install options snap7
-RUN if [ "$NODE_SNAP" = "true" ]; then \
-    npm install node-snap7; \
+# Optional ODBC driver preparation
+WORKDIR /usr/src/app/FUXA/odbc
+COPY odbc/ ./
+RUN if [ "$INSTALL_ODBC" = "true" ]; then \
+    dos2unix install_odbc_drivers.sh && chmod +x install_odbc_drivers.sh && ./install_odbc_drivers.sh; \
     fi
 
-# Workaround for sqlite3 https://stackoverflow.com/questions/71894884/sqlite3-err-dlopen-failed-version-glibc-2-29-not-found
-RUN apt-get update && apt-get install -y sqlite3 libsqlite3-dev && \
-    apt-get autoremove -yqq --purge && \
-    apt-get clean  && \
-    rm -rf /var/lib/apt/lists/*  && \
-    npm install --build-from-source --sqlite=/usr/bin sqlite3
+# 3. Copy server source, build, then cleanup
+WORKDIR /usr/src/app/FUXA/server
+COPY server/ ./
+RUN rm -rf test
+RUN npm run build
 
-# Add project files
-ADD . /usr/src/app/FUXA
+# --- STAGE 3: Runner ---
+FROM node:18-bookworm-slim
+ARG INSTALL_ODBC=true
+WORKDIR /usr/src/app/FUXA
 
-# Set working directory
+# Install ONLY runtime libraries
+RUN apt-get update && apt-get install -y \
+    sqlite3 libsqlite3-0 \
+    $( [ "$INSTALL_ODBC" = "true" ] && echo "unixodbc" ) \
+    && rm -rf /var/lib/apt/lists/*
+
+# 1. Copy Server
+COPY --from=server-builder /usr/src/app/FUXA/server ./server
+
+# 2. Copy Client
+COPY --from=client-builder /usr/src/app/client/dist ./client/dist
+
+# 3. Conditional ODBC Config
+COPY --from=server-builder /usr/src/app/FUXA/odbc ./odbc
+RUN if [ "$INSTALL_ODBC" = "true" ]; then cp odbc/odbcinst.ini /etc/odbcinst.ini; fi
+
+# 4. Copy static app files
+COPY node-red/ ./node-red/
+
+# Final cleanup
 WORKDIR /usr/src/app/FUXA/server
 
-# Expose port
+ENV NODE_ENV=production
 EXPOSE 1881
-
-# Start the server
-CMD [ "npm", "start" ]
+CMD [ "node", "main.js" ]
