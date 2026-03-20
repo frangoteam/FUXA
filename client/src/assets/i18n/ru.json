@@ -794,6 +794,7 @@
     "device.connect-failed": "Не удалось",
     "device.connect-off": "Выключено",
     "device.connect-busy": "Занято",
+    "device.connect-skipped": "Пропущено",
 
     "devices.mode-map": "Диаграмма устройств",
     "devices.mode-list": "Список устройств",

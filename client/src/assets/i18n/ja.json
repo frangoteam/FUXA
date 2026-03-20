@@ -1077,6 +1077,7 @@
     "device.connect-failed": "接続失敗",
     "device.connect-off": "オフ",
     "device.connect-busy": "ビジー",
+    "device.connect-skipped": "スキップ済み",
 
     "devices.mode-map": "デバイス図",
     "devices. mode-list": "デバイス一覧",

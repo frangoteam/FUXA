@@ -1205,6 +1205,7 @@
     "device.connect-failed": "Failed",
     "device.connect-off": "Off",
     "device.connect-busy": "Busy",
+    "device.connect-skipped": "Skip",
 
     "devices.mode-map": "Devices diagramm",
     "devices.mode-list": "Devices list",
