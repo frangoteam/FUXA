@@ -35,6 +35,7 @@
     "influx": "5.9.3",
     "ip": "~2.0.1",
     "jsonwebtoken": "9.0.0",
+    "ldapts": "^7.4.0",
     "live-plugin-manager": "0.15.1",
     "modbus-serial": "8.0.19",
     "morgan": "1.10.1",
@@ -64,6 +65,7 @@
     "chai": "^5.1.2",
     "mocha": "^10.8.2",
     "sinon": "^19.0.2",
+    "supertest": "^7.2.2",
     "typescript": "^5.6.3"
   }
 }

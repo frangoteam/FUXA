@@ -186,6 +186,9 @@ try {
         if (!utils.isNullOrUndefined(mysettings.swaggerEnabled)) {
             settings.swaggerEnabled = mysettings.swaggerEnabled;
         }
+        if (!utils.isNullOrUndefined(mysettings.auth)) {
+            settings.auth = mysettings.auth;
+        }
         if (mysettings.nodeRedEnabled === true && utils.isNullOrUndefined(mysettings.nodeRedAuthMode)) {
             settings.nodeRedAuthMode = 'legacy-open';
         }

@@ -116,6 +116,9 @@ function init(_server, _runtime) {
                     if (tosend.daqstore?.credentials) {
                         delete tosend.daqstore.credentials;
                     }
+                    if (tosend.auth) {
+                        delete tosend.auth;
+                    }
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     res.json(tosend);
@@ -132,53 +135,102 @@ function init(_server, _runtime) {
                 const permission = verifyGroups(req);
                 if (res.statusCode === 403) {
                     runtime.logger.error("api post settings: Tocken Expired");
-                } else if (!authJwt.haveAdminPermission(permission)) {
+                    return;
+                }
+                if (!authJwt.haveAdminPermission(permission)) {
                     res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                     runtime.logger.error("api post settings: Unauthorized");
-                } else {
-                    try {
-                        if (req.body.smtp && !req.body.smtp.password && runtime.settings.smtp && runtime.settings.smtp.password) {
-                            req.body.smtp.password = runtime.settings.smtp.password;
-                        }
-                        if (utils.isEmptyObject(req.body.daqstore?.credentials) && runtime.settings.daqstore?.credentials) {
-                            req.body.daqstore.credentials = runtime.settings.daqstore?.credentials;
-                        }
-                        if (!req.body.secretCode && runtime.settings.secretCode) {
-                            req.body.secretCode = runtime.settings.secretCode;
-                        }
-                        if (req.body.secureEnabled && !req.body.secretCode) {
-                            req.body.secretCode = utils.generateSecretCode();
-                            runtime.logger.warn('Generated random JWT secret because secureEnabled=true and no secretCode was provided.');
-                        }
-                        const prevAuth = {
-                            secureEnabled: runtime.settings.secureEnabled,
-                            tokenExpiresIn: runtime.settings.tokenExpiresIn,
-                            enableRefreshCookieAuth: runtime.settings.enableRefreshCookieAuth,
-                            refreshTokenExpiresIn: runtime.settings.refreshTokenExpiresIn,
-                            secretCode: runtime.settings.secretCode
-                        };
-                        if (req.body.nodeRedEnabled === true &&
-                            utils.isNullOrUndefined(req.body.nodeRedAuthMode) &&
-                            runtime.settings.nodeRedEnabled === false) {
-                            req.body.nodeRedAuthMode = 'secure';
-                        }
-                        fs.writeFileSync(runtime.settings.userSettingsFile, JSON.stringify(req.body, null, 4));
-                        mergeUserSettings(req.body);
-                        if (prevAuth.secureEnabled !== runtime.settings.secureEnabled ||
-                            prevAuth.tokenExpiresIn !== runtime.settings.tokenExpiresIn ||
-                            prevAuth.enableRefreshCookieAuth !== runtime.settings.enableRefreshCookieAuth ||
-                            prevAuth.refreshTokenExpiresIn !== runtime.settings.refreshTokenExpiresIn ||
-                            prevAuth.secretCode !== runtime.settings.secretCode) {
-                            authJwt.init(runtime.settings.secureEnabled, runtime.settings.secretCode, runtime.settings.tokenExpiresIn);
-                            authApi.init(runtime, authJwt.secretCode, authJwt.tokenExpiresIn, runtime.settings.enableRefreshCookieAuth, runtime.settings.refreshTokenExpiresIn);
-                        }
-                        runtime.restart(true).then(function(result) {
-                            res.end();
-                        });
-                    } catch (err) {
-                        res.status(400).json({ error: "unexpected_error", message: err });
-                        runtime.logger.error("api post settings: " + err);
+                    return;
+                }
+                try {
+                    if (req.body.smtp && !req.body.smtp.password && runtime.settings.smtp && runtime.settings.smtp.password) {
+                        req.body.smtp.password = runtime.settings.smtp.password;
                     }
+                    if (utils.isEmptyObject(req.body.daqstore?.credentials) && runtime.settings.daqstore?.credentials) {
+                        req.body.daqstore.credentials = runtime.settings.daqstore?.credentials;
+                    }
+                    if (!req.body.secretCode && runtime.settings.secretCode) {
+                        req.body.secretCode = runtime.settings.secretCode;
+                    }
+                    preserveAuthSettings(req.body, runtime.settings);
+                    const prevAuth = {
+                        secureEnabled: runtime.settings.secureEnabled,
+                        tokenExpiresIn: runtime.settings.tokenExpiresIn,
+                        enableRefreshCookieAuth: runtime.settings.enableRefreshCookieAuth,
+                        refreshTokenExpiresIn: runtime.settings.refreshTokenExpiresIn,
+                        secretCode: runtime.settings.secretCode
+                    };
+                    if (req.body.nodeRedEnabled === true &&
+                        utils.isNullOrUndefined(req.body.nodeRedAuthMode) &&
+                        runtime.settings.nodeRedEnabled === false) {
+                        req.body.nodeRedAuthMode = 'secure';
+                    }
+                    fs.writeFileSync(runtime.settings.userSettingsFile, JSON.stringify(req.body, null, 4));
+                    mergeUserSettings(req.body);
+                    if (prevAuth.secureEnabled !== runtime.settings.secureEnabled ||
+                        prevAuth.tokenExpiresIn !== runtime.settings.tokenExpiresIn ||
+                        prevAuth.enableRefreshCookieAuth !== runtime.settings.enableRefreshCookieAuth ||
+                        prevAuth.refreshTokenExpiresIn !== runtime.settings.refreshTokenExpiresIn ||
+                        prevAuth.secretCode !== runtime.settings.secretCode) {
+                        authJwt.init(runtime.settings.secureEnabled, runtime.settings.secretCode, runtime.settings.tokenExpiresIn);
+                        authApi.init(runtime, authJwt.secretCode, authJwt.tokenExpiresIn, runtime.settings.enableRefreshCookieAuth, runtime.settings.refreshTokenExpiresIn);
+                    }
+                    runtime.restart(true).then(function(result) {
+                        res.end();
+                    });
+                } catch (err) {
+                    res.status(400).json({ error: "unexpected_error", message: err });
+                    runtime.logger.error("api post settings: " + err);
+                }
+            });
+
+            /**
+             * POST Test AD authentication with current settings.auth.ad
+             * Body: { username: string, password: string }
+             */
+            apiApp.post("/api/settings/auth/test-ad", authMiddleware, async function (req, res) {
+                const permission = verifyGroups(req);
+                if (res.statusCode === 403) {
+                    runtime.logger.error("api post settings/auth/test-ad: Tocken Expired");
+                    return;
+                }
+                if (!authJwt.haveAdminPermission(permission)) {
+                    res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+                    runtime.logger.error("api post settings/auth/test-ad: Unauthorized");
+                    return;
+                }
+                try {
+                    const username = req.body && req.body.username ? String(req.body.username).trim() : '';
+                    const password = req.body && req.body.password ? String(req.body.password) : '';
+                    if (!username || !password) {
+                        return res.status(400).json({ error: "validation_error", message: "username and password are required" });
+                    }
+                    const user = await runtime.auth.authenticateByProvider('ad', { username, password }, { allowFallback: false });
+                    let adGroups = [];
+                    try {
+                        const info = typeof user.info === 'string' ? JSON.parse(user.info) : (user.info || {});
+                        adGroups = Array.isArray(info?.ad?.groups) ? info.ad.groups : [];
+                    } catch (e) {
+                    }
+                    return res.json({
+                        status: 'success',
+                        message: 'ad authentication successful',
+                        data: {
+                            username: user.username,
+                            fullname: user.fullname,
+                            groups: user.groups,
+                            roles: user.roles,
+                            adGroups: adGroups
+                        }
+                    });
+                } catch (err) {
+                    if (err.status === 401) {
+                        return res.status(401).json({ error: "unauthorized_error", message: "Invalid email/password!!!" });
+                    }
+                    if (err.status === 404) {
+                        return res.status(404).json({ error: "not_found", message: "Not Found!" });
+                    }
+                    return res.status(400).json({ error: err.code || "unexpected_error", message: err.message || String(err) });
                 }
             });
 
@@ -225,6 +277,16 @@ function init(_server, _runtime) {
     });
 }
 
+function preserveAuthSettings(incomingSettings, currentSettings) {
+    if (!incomingSettings || !currentSettings) {
+        return incomingSettings;
+    }
+    if (utils.isNullOrUndefined(incomingSettings.auth) && currentSettings.auth) {
+        incomingSettings.auth = currentSettings.auth;
+    }
+    return incomingSettings;
+}
+
 function mergeUserSettings(settings) {
     if (settings.language) {
         runtime.settings.language = settings.language;
@@ -247,6 +309,9 @@ function mergeUserSettings(settings) {
         runtime.settings.nodeRedUnsafeModules = settings.nodeRedUnsafeModules;
     }
     runtime.settings.swaggerEnabled = settings.swaggerEnabled;
+    if (!utils.isNullOrUndefined(settings.auth)) {
+        runtime.settings.auth = settings.auth;
+    }
     if (settings.secretCode) {
         runtime.settings.secretCode = settings.secretCode;
     }
@@ -278,7 +343,19 @@ function verifyGroups(req) {
             return (runtime.settings.userRole) ? null : 0;
         }
         const userInfo = runtime.users.getUserCache(req.userId);
-        return (runtime.settings.userRole && req.userId !== 'admin') ? userInfo : userInfo ? userInfo.groups : req.userGroups;
+        if (runtime.settings.userRole && req.userId !== 'admin') {
+            if (userInfo) {
+                return userInfo;
+            }
+            // Keep role-mode authorization functional for external providers
+            return {
+                groups: req.userGroups,
+                info: {
+                    roles: Array.isArray(req.userRoles) ? req.userRoles : []
+                }
+            };
+        }
+        return userInfo ? userInfo.groups : req.userGroups;
     } else {
         return authJwt.adminGroups[0];
     }

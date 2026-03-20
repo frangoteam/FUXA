@@ -96,6 +96,39 @@ module.exports = {
     //tokenExpiresIn: '1h',  // '1h'=1hour, 60=60seconds, '1d'=1day
     //enableRefreshCookieAuth: false, // if true, use refresh token HttpOnly cookie flow
     //refreshTokenExpiresIn: '7d' // '7d'=7days, 12h=12hours, 3600=3600seconds
+    auth: {
+        // Current provider. "local" preserves existing behavior.
+        provider: 'local',
+        // If true and the selected provider fails, try local provider.
+        fallbackLocal: true,
+        // Role names treated as administrator for role-mode compatibility checks.
+        adminRoleNames: ['admin', 'administrator'],
+        ad: {
+            enabled: false,
+            // Example: ldaps://dc01.example.local:636
+            url: '',
+            baseDN: '',
+            // Service account for user lookup (optional but recommended)
+            bindDN: '',
+            bindPassword: '',
+            // Use {{username}} placeholder; value is escaped before execution.
+            userFilter: '(&(objectClass=user)(|(sAMAccountName={{username}})(userPrincipalName={{username}})))',
+            userAttributes: ['dn', 'cn', 'displayName', 'memberOf', 'mail', 'userPrincipalName', 'sAMAccountName'],
+            groupAttribute: 'memberOf',
+            // If true refresh endpoint will re-resolve roles from AD.
+            refreshIdentity: false,
+            // TLS validation (set false only for lab/self-signed environments).
+            rejectUnauthorized: true,
+            timeoutMs: 5000,
+            connectTimeoutMs: 5000,
+            // Map AD groups (DN or CN) -> FUXA roles (string or string[])
+            groupToRoles: {},
+            // Map AD groups (DN or CN) -> legacy bitmask (number or number[])
+            groupToMask: {},
+            defaultRoles: [],
+            defaultGroup: 0
+        }
+    },
 
     // Heartbeat interval in seconds (1-20)
     heartbeatIntervalSec: 10,
