@@ -235,6 +235,7 @@ import { ApiKeysListComponent } from './apikeys/api-keys-list/api-keys-list.comp
 import { ApiKeyPropertyComponent } from './apikeys/api-key-property/api-key-property.component';
 import { TagPropertyEditRedisComponent } from './device/tag-property/tag-property-edit-redis/tag-property-edit-redis.component';
 import { TagPropertyRedisScanComponent } from './device/tag-property/tag-property-edit-redis/tag-property-redis-scan/tag-property-redis-scan.component';
+import { OnboardingWizardComponent } from './editor/onboarding-wizard/onboarding-wizard.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -419,6 +420,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ApiKeyPropertyComponent,
         TagPropertyEditRedisComponent,
         TagPropertyRedisScanComponent,
+        OnboardingWizardComponent,
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         FormsModule,

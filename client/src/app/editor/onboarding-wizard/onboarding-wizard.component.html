@@ -1,0 +1,37 @@
+<form [formGroup]="formGroup" class="container">
+    <h1 mat-dialog-title class="dialog-title pointer-move" mat-dialog-draggable>{{'editor.onboarding-wizard-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="container wizard-content">
+        <p class="wizard-text">{{'editor.onboarding-wizard-message' | translate}}</p>
+        <div class="my-form-field block">
+            <span style="display: inline-block;">{{'dlg.app-settings-auth-token' | translate}}</span>
+            <mat-select formControlName="authentication" style="display: block;">
+                <mat-option *ngFor="let auth of authType" [value]="auth.value">
+                    {{ auth.text }}
+                </mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field block system-input" *ngIf="formGroup.get('authentication').value">
+            <span>{{'dlg.app-settings-auth-secret' | translate}}</span>
+            <div class="password-wrap">
+                <input autocomplete="off" formControlName="secretCode" [type]="showSecretCode ? 'text' : 'password'">
+                <mat-icon (click)="showSecretCode = !showSecretCode" class="show-password">{{showSecretCode ? 'visibility' : 'visibility_off'}}</mat-icon>
+            </div>
+        </div>
+        <div class="my-form-field block system-input" *ngIf="formGroup.get('authentication').value">
+            <span>{{'editor.onboarding-wizard-admin-password' | translate}}</span>
+            <div class="password-wrap">
+                <input autocomplete="off" formControlName="adminPassword" [type]="showAdminPassword ? 'text' : 'password'">
+                <mat-icon (click)="showAdminPassword = !showAdminPassword" class="show-password">{{showAdminPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+            </div>
+            <small class="wizard-hint">{{'editor.onboarding-wizard-admin-password-message' | translate}}</small>
+        </div>
+        <mat-checkbox color="primary" formControlName="hideEditorOnboarding" *ngIf="!formGroup.get('authentication').value">
+            {{'editor.onboarding-wizard-hide' | translate}}
+        </mat-checkbox>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.close' | translate}}</button>
+        <button mat-raised-button [disabled]="formGroup.invalid || isSaving" (click)="onOkClick()" color="primary">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

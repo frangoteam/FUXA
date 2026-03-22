@@ -15,6 +15,7 @@ export class SettingsService {
 
     private appSettings = new AppSettings();
     settings$ = new BehaviorSubject<AppSettings>(this.appSettings);
+    loaded$ = new BehaviorSubject<boolean>(!environment.serverEnabled);
     private endPointConfig: string = EndPointApi.getURL();
 
     private editModeLocked = false;
@@ -34,8 +35,10 @@ export class SettingsService {
         if (environment.serverEnabled) {
             this.http.get<any>(this.endPointConfig + '/api/settings').subscribe(result => {
                 this.setSettings(result);
+                this.loaded$.next(true);
             }, error => {
                 console.error('settings.service err: ' + error);
+                this.loaded$.next(true);
             });
         }
         // this.setLanguage(this.appSettings.language);
@@ -54,6 +57,10 @@ export class SettingsService {
         }
         if (settings.uiPort && settings.uiPort !== this.appSettings.uiPort) {
             this.appSettings.uiPort = settings.uiPort;
+            dirty = true;
+        }
+        if (settings.hideEditorOnboarding !== this.appSettings.hideEditorOnboarding) {
+            this.appSettings.hideEditorOnboarding = !!settings.hideEditorOnboarding;
             dirty = true;
         }
         if (settings.secureEnabled !== this.appSettings.secureEnabled ||
