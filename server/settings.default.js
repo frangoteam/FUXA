@@ -6,6 +6,9 @@ module.exports = {
     // Standard language (editor)
     language: 'en',
 
+    // Hide the editor onboarding wizard when entering editor mode
+    hideEditorOnboarding: false,
+
     // The tcp port that the FUXA web server is listening on
     uiPort: process.env.PORT || 1881,
 

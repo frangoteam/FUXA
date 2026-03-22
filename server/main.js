@@ -132,6 +132,9 @@ try {
         if (mysettings.language) {
             settings.language = mysettings.language;
         }
+        if (!utils.isNullOrUndefined(mysettings.hideEditorOnboarding)) {
+            settings.hideEditorOnboarding = mysettings.hideEditorOnboarding;
+        }
         if (mysettings.uiPort) {
             settings.uiPort = mysettings.uiPort;
         }

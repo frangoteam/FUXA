@@ -229,6 +229,9 @@ function mergeUserSettings(settings) {
     if (settings.language) {
         runtime.settings.language = settings.language;
     }
+    if (!utils.isNullOrUndefined(settings.hideEditorOnboarding)) {
+        runtime.settings.hideEditorOnboarding = settings.hideEditorOnboarding;
+    }
     runtime.settings.broadcastAll = settings.broadcastAll;
     runtime.settings.secureEnabled = settings.secureEnabled;
     runtime.settings.logFull = settings.logFull;
