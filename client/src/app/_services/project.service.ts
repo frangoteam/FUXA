@@ -296,7 +296,6 @@ export class ProjectService {
      * @param view
      */
     setView(view: View, notify = false) {
-        this.cleanView(view);
         const existingView = this.projectData.hmi.views.find(v => v.id === view.id);
         if (existingView) {
             Object.assign(existingView, view);
