@@ -28,7 +28,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     var runtime = _runtime;             // Access runtime config such as scripts
 
     // --- State Synchronization Cache ---
-    this.tagState = {};                 // Maps tag ID to { desired: val, actual: val, tag: {} }
+    this.tagState = {};                 // Maps tag ID to { desired: val, actual: val, payload: val, tag: {} }
 
     /**
      * initialize the modbus type
@@ -263,19 +263,21 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                             const memaddr = parseInt(tag.memaddress);
                             const offset = parseInt(tag.address) - 1;
 
-                            await _writeMemory(memaddr, offset, state.desired);
-                            logger.info(`'${data.name}' Sync write success for ${sigid} (val: ${state.desired})`);
+                            await _writeMemory(memaddr, offset, state.payload);
+                            logger.info(`'${data.name}' Sync write success for ${data.tags[sigid].name} (val: ${state.desired})`);
 
                             state.actual = state.desired;
                             state.desired = null;
+                            state.payload = null;
                             await delay(data.property.delay || 15);
                         } catch (reason) {
                             let errMsg = reason.message || (typeof reason === "object" ? JSON.stringify(reason) : reason);
-                            logger.error(`'${data.name}' Sync write error for ${sigid}: ${errMsg}`);
+                            logger.error(`'${data.name}' Sync write error for ${data.tags[sigid].name}: ${errMsg}`);
                             // Fail: do not delete desired, allow auto-retry next poll
                         }
                     } else if (state.desired !== null && _isEqual(state.desired, state.actual)) {
                         state.desired = null;
+                        state.payload = null;
                     }
                 }
 
@@ -364,6 +366,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             	this.tagState[id] = {
                     desired: null,
                     actual: null,
+                    payload: null,
                     tag: data.tags[id]
                 };
                 var offset = parseInt(data.tags[id].address) - 1;   // because settings address from 1 to 65536 but communication start from 0
@@ -513,8 +516,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 val = datatypes[data.tags[sigid].type].formatter(divVal);
             }
             // Append to State Cache instead of waiting for Modbus transaction
-            this.tagState[sigid].desired = val;
-            logger.info(`'${data.name}' Tag ${sigid} desired state updated (${value})`);
+            this.tagState[sigid].desired = value;
+            this.tagState[sigid].payload = val;
+            logger.info(`'${data.name}' Tag ${data.tags[sigid].name} desired state updated (${value})`);
             return true;
         
         } else {
