@@ -426,6 +426,8 @@
     "video.property-data": "データ",
     "video.property-address": "アドレス",
     "video.property-controls": "コントロールを表示",
+
+    "video.property-loop": "ループ",
     "video.property-image": "初期画像",
     "video.property-image-placeholder": "初期画像を選択",
 

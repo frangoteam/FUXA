@@ -20,8 +20,13 @@
     }
 
     .item-slider {
-        margin-left: 20px;
         width: 100px;
+    }
+
+    .video-options-row {
+        display: flex;
+        gap: 16px;
+        margin-left: 20px;
     }
 
     .toolbox {

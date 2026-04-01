@@ -32,9 +32,15 @@
                         <input #imagefile type="file" style="display: none;" (change)="onSetImage($event)" accept="image/*" />
                     </ng-template>
                 </div>
-                <div class="my-form-field block tac mt5 item-slider mb20">
-                    <span>{{'video.property-controls' | translate}}</span>
-                    <mat-slide-toggle color="primary" [(ngModel)]="property.options.showControls" (change)="onVideoChanged()"></mat-slide-toggle>
+                <div class="video-options-row mt5 mb20">
+                    <div class="my-form-field block tac item-slider">
+                        <span>{{'video.property-controls' | translate}}</span>
+                        <mat-slide-toggle color="primary" [(ngModel)]="property.options.showControls" (change)="onVideoChanged()"></mat-slide-toggle>
+                    </div>
+                    <div class="my-form-field block tac item-slider">
+                        <span>{{'video.property-loop' | translate}}</span>
+                        <mat-slide-toggle color="primary" [(ngModel)]="property.options.loop" (change)="onVideoChanged()"></mat-slide-toggle>
+                    </div>
                 </div>
             </mat-tab>
             <!-- <mat-tab label="{{'editor.settings-events' | translate}}">
