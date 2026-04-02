@@ -652,6 +652,9 @@ paths:
       tags: [Scripts]
       summary: Run script
       security: [{ AccessToken: [] }, { ApiKey: [] }]
+      description: >
+        Runs a stored server-side script. Requests that set `params.script.test=true`
+        are limited to authenticated administrators.
       requestBody:
         required: true
         content:
