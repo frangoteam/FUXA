@@ -1,5 +1,5 @@
 /**
- *  Calculator for DAQ value array (integrale, max, min, average...) 
+ *  Calculator for DAQ value array (integrale, max, min, average...)
  */
 
 'use strict';
@@ -19,11 +19,11 @@ function getFunctionValues(values, fromts, tots, fnc, interval, format) {
 }
 
 /**
- * 
- * @param {*} values 
- * @param {*} fnc 
- * @param {*} intervalType hour / day 
- * @returns 
+ *
+ * @param {*} values
+ * @param {*} fnc
+ * @param {*} intervalType hour / day
+ * @returns
  */
 function getMin(timeserie, fromts, tots, intervalType) {
     let result = getInterval(fromts, tots, intervalType, Number.MAX_VALUE);
@@ -39,7 +39,7 @@ function getMin(timeserie, fromts, tots, intervalType) {
             intervals[intervalIndex] = value;
         }
     }
-    
+
     for (let i = 0; i < sorted.length; i++) {
         let intervalIndex = getIntervalTime(sorted[i].dt, intervalType, false).getTime();
         addToInterval(result, intervalIndex, utils.parseFloat(sorted[i].value, 5));
@@ -61,7 +61,7 @@ function getMax(timeserie, fromts, tots, intervalType) {
             intervals[intervalIndex] = value;
         }
     }
-    
+
     for (let i = 0; i < sorted.length; i++) {
         let intervalIndex = getIntervalTime(sorted[i].dt, intervalType, false).getTime();
         addToInterval(result, intervalIndex, utils.parseFloat(sorted[i].value, 5));
@@ -85,7 +85,7 @@ function getAverage(timeserie, fromts, tots, intervalType, format) {
         }
         counters[intervalIndex]++;
     }
-    
+
     for (let i = 0; i < sorted.length; i++) {
         let intervalIndex = getIntervalTime(sorted[i].dt, intervalType, false).getTime();
         addToInterval(result, counts, intervalIndex, parseFloat(sorted[i].value));
@@ -96,7 +96,7 @@ function getAverage(timeserie, fromts, tots, intervalType, format) {
             result[k] = utils.parseFloat(result[k] / counts[k], format || 5);
         }
     });
-    return result; 
+    return result;
 }
 
 function getSum(timeserie, fromts, tots, intervalType) {
@@ -114,12 +114,12 @@ function getSum(timeserie, fromts, tots, intervalType) {
             intervals[intervalIndex] = utils.parseFloat(intervals[intervalIndex], 5)
         }
     }
-    
+
     for (let i = 0; i < sorted.length; i++) {
         let intervalIndex = getIntervalTime(sorted[i].dt, intervalType, false).getTime();
         addToInterval(result, intervalIndex, parseFloat(sorted[i].value));
     }
-    return result;    
+    return result;
 }
 
 
@@ -137,7 +137,7 @@ function getIntegral(timeserie, fromts, tots, intervalType) {
             intervals[intervalIndex] += value;
         }
     }
-    
+
     let lastRecord = null;// : TimeValue { dt: number, value: number };
     let lastIntervalIndex = null;
     for (let i = 0; i < sorted.length; i++) {
@@ -191,6 +191,10 @@ function getStepDate(ts, type, toadd) {
         dtRange = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours(), 0, 0);
         var minutesRange = parseInt(dt.getMinutes() / 30);
         dtRange.setMinutes((minutesRange + toadd) * 30);
+    } else if (type === ReportIntervalType.min15) {
+        dtRange = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours(), 0, 0);
+        var minutesRange = parseInt(dt.getMinutes() / 15);
+        dtRange.setMinutes((minutesRange + toadd) * 15);
     } else if (type === ReportIntervalType.min10) {
         dtRange = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate(), dt.getHours(), 0, 0);
         var minutesRange = parseInt(dt.getMinutes() / 10);
