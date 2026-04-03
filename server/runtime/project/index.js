@@ -928,6 +928,22 @@ function _filterProjectPermission(userPermission) {
         // from device remove the not used (no permission)
         // delete result.devices;
         delete result.server;
+        if (Array.isArray(result.scripts)) {
+            // Keep only scripts authorised for the current user. For authorised
+            // server-side scripts, retain just the metadata needed for event
+            // bindings and execution requests; do not expose source code.
+            result.scripts = result.scripts.filter(script => {
+                return script && runtime.scriptsMgr.isAuthorised(script, userPermission);
+            }).map(script => {
+                delete script.permission;
+                delete script.permissionRoles;
+                if (script.mode === 'CLIENT') {
+                    return script;
+                }
+                delete script.code;
+                return script;
+            });
+        }
         // check navigation permission
         if (result.hmi.layout && result.hmi.layout.navigation.items) {
             for (var i = result.hmi.layout.navigation.items.length - 1; i >= 0; i--) {
