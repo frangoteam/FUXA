@@ -348,7 +348,7 @@ function S7client(_data, _logger, _events, _runtime) {
                         type: items[itemidx].type,
                         daq: items[itemidx].daq,
                         changed: changed,
-                        tagref: items[itemidx]
+                        tagref: data.tags[items[itemidx].id] // <--- Passes full tag config including scaling
                     };
                     someval = true;
                 }
