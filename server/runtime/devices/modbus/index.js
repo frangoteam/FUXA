@@ -55,11 +55,12 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                             try {
                                 // the same logic as TCP
                                 if(client){
-                                    connectionManager.releaseRtuClient(data.property);
+                                    await connectionManager.releaseRtuClient(data.property);
                                     client = null;
                                 }
 
-                                client = await connectionManager.getRtuClient(data);                                
+                                client = await connectionManager.getRtuClient(data);         
+                                connectionManager.clearRtuErrors(data.property);
                                 logger.info(`'${data.name}' connected (RTU Shared)!`);
                                 _emitStatus('connect-ok');
                                 resolve();
@@ -78,12 +79,13 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                                 //If the client already exists (which means this is a reconnection), release the old reference count first.
                                 if(client){
                                     //do not use await , just for decrementing the counter
-                                    connectionManager.releaseTcpClient(data.property);
+                                    await connectionManager.releaseTcpClient(data.property);
                                     client = null;
                                 }
 
                                 // Request shared client from Manager
                                 client = await connectionManager.getTcpClient(data);
+                                connectionManager.clearTcpErrors(data.id);
                                 logger.info(`'${data.name}' connected (TCP Shared)!`);
                                 _emitStatus('connect-ok');
                                 resolve();
@@ -120,7 +122,8 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                                     // attach error handlers to the same shared socket connection
                                     client._client.socket.setMaxListeners(30);
                                 }
-                                
+
+                                connectionManager.clearTcpErrors(data.id);
                                 logger.info(`'${data.name}' connected!`);
                                 _emitStatus('connect-ok');
                                 resolve();
@@ -230,20 +233,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     return;
                 }
             }
-
-            // [Added] Check if TCP connection is closed and attempt reconnect
-            if (type === ModbusTypes.TCP && (!client || !client.isOpen)) {
-                logger.warn(`'${data.name}' TCP connection closed, attempting to reconnect...`);
-                try {
-                    await this.connect();
-                    logger.info(`'${data.name}' TCP reconnected successfully`);
-                } catch (err) {
-                    logger.error(`'${data.name}' TCP reconnection failed: ${err}`);
-                    _emitStatus('connect-error');
-                    return; // Skip this polling cycle
-                }
-            }
-
+    
             await this._polling()
 
         } catch (err) {
@@ -532,7 +522,13 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      * Don't work if PLC will disconnect
      */
     this.isConnected = function () {
-        return client && client.isOpen;
+        if(type === ModbusTypes.TCP && data.property.socketReuse === 'ReuseSerial'){
+            const key = connectionManager.getTcpKey(data.property);
+            return connectionManager.tcpPorts[key] !== undefined && client && client.isOpen;
+
+        }else{
+            return client && client.isOpen;
+        }
     }
 
     /**
@@ -854,6 +850,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      * @param {*} check
      */
     var _checkWorking = function (check) {
+        const options = data.property;
         if (check && working) {
             overloading++;
             
@@ -870,18 +867,29 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 return false; // Indicate overload but don't break
             } else {
                 // For TCP: More lenient threshold before closing
-                if (overloading >= 10) {
-                    logger.warn(`'${data.name}' TCP working overload! ${overloading} - closing connection`);
+                if (options.socketReuse === 'ReuseSerial' && overloading >= 10) {
+                    //tcp reuseSerial do not close, because it will cause connect and disconnect flapping
+                    logger.warn(`'${data.name}' TCP ReuseSerial working overload! ${overloading}`);
+
+                    overloading = 0;
+                    return false;
+                          
+                } else if(options.socketReuse !== 'ReuseSerial' && overloading >= 10){
+                    logger.warn(`'${data.name}' TCP standalone working overload! ${overloading} - closing connection`);
                     if (client && typeof client.close === 'function') {
                         try {
                             client.close();
-                        } catch (err) {
+
+                        } catch(err){
                             logger.error(`'${data.name}' error closing overloaded connection: ${err}`);
                         }
                     }
+                    client = null;
+                    overloading = 0;
+                    return false;
                 } else {
                     return false;
-                }
+                }                
             }
         }
         working = check;
@@ -1190,7 +1198,8 @@ class ConnectionManager {
                     refCount: 0, // Will be incremented after return
                     config: config,
                     isConnecting: false,
-                    connectAction: connectFn // Store for reconnection usage
+                    connectAction: connectFn, // Store for reconnection usage
+                    lastSuccess: Date.now()
                 };
                 this.logger.info(`'${displayName}' Shared Connection created`);                
             } catch (err) {
@@ -1346,31 +1355,7 @@ class ConnectionManager {
         const portObj = this.rtuPorts[key];
         if (!portObj) return false;
         try { if (portObj.client.isOpen) return true; } catch (e) {}
-
-        if (!portObj.isConnecting) {
-            portObj.isConnecting = true;
-            try {
-                this.logger.warn(`'${key}' RTU reconnecting...`);                
-                try { 
-                    if (portObj.client._port) await this._closeClient(portObj.client);
-                } catch (e) {}
-                await new Promise(r => setTimeout(r, 100));
-                
-                // Re-execute stored connection action
-                const newClient = await portObj.connectAction();
-                portObj.client = newClient; // Replace client
-                
-                this.logger.info(`'${key}' RTU reconnected`);                
-                portObj.isConnecting = false;
-                return true;
-            } catch (err) {
-
-                console.error(`'${key}' RTU reconnect failed: ${err.message}`);
-                portObj.isConnecting = false;
-                await new Promise(r => setTimeout(r, 1000));
-                return false;
-            }
-        }
+        
         return false;
     }
 
@@ -1475,9 +1460,24 @@ class ConnectionManager {
             }
 
             // Enable KeepAlive
-            if (client._client && client._client.socket) {
-                client._client.socket.setKeepAlive(true, 5000);
-                client._client.socket.setNoDelay(true);
+            if (client._port && client._port._client) {
+                const socket = client._port._client;
+                socket.setKeepAlive(true, 2000);
+                socket.setNoDelay(true);
+
+                //when idle 15s , trigger timeout
+                const IDLE_TIMEOUT_MS = 15000;
+                socket.setTimeout(IDLE_TIMEOUT_MS);
+                socket.on('timeout', () => {
+                    this.logger.error(`[TCP] OS Socket idle timeout (${IDLE_TIMEOUT_MS}ms) on ${key}, forcing destroy.`);
+                    
+                    // manually make ECONNRESET error
+                    const err = new Error('This socket is closed due to idle timeout');
+                    err.code = 'ECONNRESET';
+                    
+                    // call destroy and error，trigger executeTcp's catch area！
+                    socket.destroy(err);
+                });
             }
             return client;
         };
@@ -1505,29 +1505,6 @@ class ConnectionManager {
         if (!portObj) return false;
         if (portObj.client.isOpen) return true;
 
-        if (!portObj.isConnecting) {
-            portObj.isConnecting = true;
-            this.logger.warn(`'${key}' TCP reconnecting...`);            
-            try {
-                try { 
-                    await this._closeClient(portObj.client);
-                } catch (e) {}
-                await new Promise(r => setTimeout(r, 500));
-                
-                // Re-execute stored connection action
-                const newClient = await portObj.connectAction();
-                portObj.client = newClient; // Replace client (IMPORTANT: Update the object ref)
-                                
-                this.logger.info(`'${key}' TCP reconnected`);
-                portObj.isConnecting = false;
-                return true;
-            } catch (err) {
-                this.logger.error(`'${key}' TCP reconnect failed: ${err.message}`);                
-                portObj.isConnecting = false;
-                await new Promise(r => setTimeout(r, 1000));
-                return false;
-            }
-        }
         return false;
     }
 
@@ -1565,6 +1542,26 @@ class ConnectionManager {
         }
 
         const runOperation = async (targetClient) => {
+            const portObj = this.tcpPorts[key];
+            const now = Date.now();
+            const watchdogTimeout = options.watchdogTimeout || 15000
+
+            //watchdog check, no read/write 15s
+            if (portObj && (now - portObj.lastSuccess > watchdogTimeout)) {
+                this.logger.warn(`[Watchdog] TCP '${key}' dead for 15s. Forcing destroy.`);
+                
+                if (targetClient) try { targetClient.close(); } catch(e){}
+                if (portObj.client && portObj.client._client) {
+                    try { portObj.client._client.destroy(); } catch(e){}
+                }
+                delete this.tcpPorts[key]; // kill pool
+                
+                // throw FatalError 
+                const watchdogErr = new Error('Watchdog timeout: No data for 15s');
+                watchdogErr.code = 'ECONNRESET';
+                throw watchdogErr; 
+            }
+
             try {
                 const operationPromise = (async () => {
                     if (options.slaveid) await targetClient.setID(parseInt(options.slaveid));
@@ -1578,36 +1575,49 @@ class ConnectionManager {
                 });
 
                 const result = await Promise.race([operationPromise, timeoutPromise]);
+
+                //read data successfully,rest counter
+                if (portObj) portObj.lastSuccess = Date.now();
+
                 this.recordTcpDeviceSuccess(deviceId, deviceName);
                 return result;
             } catch (err) {
                 this.recordTcpDeviceError(deviceId, err, deviceName);
                 const errorInfo = this.tcpDeviceErrors[deviceId];
+
+                this.logger.warn(`TCP Error caught on '${deviceName}': message="${err.message}", code="${err.code}"`);
                 
                 // Hard Error Checks
-                const isFatalError = err.code === 'EPIPE' || err.code === 'ECONNRESET' || 
-                                     err.code === 'ECONNREFUSED' || err.message.includes('This socket is closed');
+                const errMsg = (err.message || "").toLowerCase();
+                const isFatalError = err.code === 'EPIPE' || 
+                                     err.code === 'ECONNRESET' || 
+                                     err.code === 'ECONNREFUSED' || 
+                                     err.code === 'EHOSTUNREACH' || 
+                                     err.code === 'ENOTFOUND' ||
+                                     err.code === 'ERR_STREAM_WRITE_AFTER_END' ||
+                                     errMsg.includes('this socket is closed') ||
+                                     errMsg.includes('port not open') ||
+                                     errMsg.includes('socket error') ||
+                                     errMsg.includes('connection closed') ||
+                                     errMsg.includes('write after end') || 
+                                     errMsg.includes('broken pipe');
                 
-                if (isReuseSerial) {
-                    // [Shared Mode (e.g., Gateway)]
-                    // Destroy the socket ONLY on fatal TCP errors.
-                    // A single slave's timeout (Zombie state) will only cause itself to be skipped, without affecting other healthy devices.
-                    if (isFatalError) {
+                const isZombieConnection = (errorInfo && errorInfo.state === 'disconnect' && errorInfo.count >= 3);
+
+                if (isFatalError || isZombieConnection) {
+                    this.logger.warn(`TCP '${key}' reset due to fatal error or zombie state (Continuous Timeout).`);
+
+                    if(isReuseSerial && isFatalError){
                         if (targetClient) try { targetClient.close(); } catch(e) {}
                         if (this.tcpPorts[key]) try { this.tcpPorts[key].client._client.destroy(); } catch(e) {}
-                        if (errorInfo) errorInfo.count = 0;
-                        this.logger.warn(`Shared TCP '${key}' fatal error, socket destroyed.`);                        
-                    }
-                } else {
-                    // [Standalone Mode (1 IP per Device)]
-                    // Since the socket is exclusive, it can be safely reset upon becoming a zombie connection without affecting others.
-                    let isZombieConnection = (errorInfo && errorInfo.state === 'disconnect' && errorInfo.count >= 3);
-                    if (isFatalError || isZombieConnection) {
+                        delete this.tcpPorts[key];
+                        this.logger.warn(`Shared TCP '${key}' fatal error, socket destroyed, and remove from pool`);   
+                    }else{
                         if (targetClient) try { targetClient.close(); } catch(e) {}
-                        if (errorInfo) errorInfo.count = 0;
-                        this.logger.warn(`Standalone TCP device '${deviceId}' reset due to fatal/zombie state.`);                        
+                        this.logger.warn(`Standalone TCP device '${deviceName}' reset due to fatal/zombie state.`);  
                     }
                 }
+                
                 throw err;
             }
         };
@@ -1618,7 +1628,7 @@ class ConnectionManager {
             
             const result = portObj.queue.then(async () => {
                 const isConnected = await this.ensureTcpConnection(key);
-                if (!isConnected) throw new Error('TCP Reconnect Failed');
+                if (!isConnected) throw new Error('TCP socket is closed, waiting for upper layer to recover.');
                 return runOperation(portObj.client); // Use client from portObj (may be updated)
             });
             portObj.queue = result.catch(() => {});
