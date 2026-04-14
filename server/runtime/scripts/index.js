@@ -88,10 +88,6 @@ function ScriptsManager(_runtime) {
             const st = scriptModule.getScript(_script);
             var admin = (permission === -1 || permission === 255) ? true : false;
             if (runtime.settings.userRole) {
-                admin = admin || permission?.groups === -1 || permission?.groups === 255;
-                if (admin) {
-                    return true;
-                }
                 if (!st.permissionRoles || !st.permissionRoles.enabled) {
                     return true;
                 }
@@ -110,7 +106,7 @@ function ScriptsManager(_runtime) {
     this.isAuthorisedByScriptName = function (scriptName, permission) {
         const script = scriptModule.getScriptByName(scriptName);
         if (!script) {
-            return false;
+            return true;
         }
         return this.isAuthorised(script, permission);
     }

@@ -1,49 +1,29 @@
 module.exports = function(RED) {
     function FuxaSetTagNode(config) {
         RED.nodes.createNode(this, config);
-        const node = this;
-
+        var node = this;
         // Access FUXA functions from global context
-        const fuxa = RED.settings?.functionGlobalContext?.fuxa;
+        var fuxa = RED.settings.functionGlobalContext.fuxa;
 
-        node.on("input", async function(msg, send, done) {
-            send = send || node.send.bind(node);
-
+        this.on('input', async function(msg) {
             try {
-                if (!fuxa) {
-                    node.error("FUXA not available in functionGlobalContext", msg);
-                    return done && done();
+                // Prefer config.tagId, fallback to config.tag for backward compatibility
+                var tagId = config.tagId;
+                if (!tagId && config.tag) {
+                    // Backward compatibility: old nodes use tag.name, need to convert to tagId
+                    tagId = fuxa.getTagId(config.tag, null);
                 }
-
-                const uiTag = (typeof config.tag === "string") ? config.tag.trim() : "";
-                const topicTag = (typeof msg.topic === "string") ? msg.topic.trim() : "";
-                const tagRef = uiTag || topicTag;
-                let tagId = config.tagId || null;
-
-                // Keep master behavior (prefer configured tagId), then fallback to UI tag/topic lookup.
-                if (!tagId && !tagRef) {
-                    node.error("No tag provided: set Tag in the node OR provide msg.topic", msg);
-                    return done && done();
-                }
-
-                if (!tagId) {
-                    tagId = fuxa.getTagId(tagRef, null);
-                }
-
+                
                 if (tagId) {
                     await fuxa.setTag(tagId, msg.payload);
-                    send(msg);
-                    return done && done();
+                    node.send(msg);
                 } else {
-                    node.error("Tag not found: " + tagRef, msg);
-                    return done && done();
+                    node.error('Tag not found: ' + (config.tag || config.tagId), msg);
                 }
             } catch (err) {
                 node.error(err, msg);
-                return done && done(err);
             }
         });
     }
-
     RED.nodes.registerType("set-tag", FuxaSetTagNode);
-};
+}

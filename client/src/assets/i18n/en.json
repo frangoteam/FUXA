@@ -307,9 +307,6 @@
     "chart.property-refresh-interval": "Refresh interval (min.)",
     "chart.property-hide-toolbar": "Hide toolbar",
     "chart.property-thouch-zoom": "Thouch Zoom",
-    "chart.property-mouse-wheel-scroll": "Mouse wheel scroll",
-    "chart.property-mouse-wheel-zoom": "Mouse wheel zoom",
-    "chart.property-static-chart": "Static chart",
     "chart.property-load-old-values": "Load history",
     "chart.property-date.format": "Date format",
     "chart.property-time.format": "Time format",
@@ -578,12 +575,6 @@
     "editor.controls-slider": "Slider",
     "editor.controls-slider-settings": "Slider settings",
     "editor.controls-shape-settings": "Shape settings",
-    "editor.onboarding-wizard-title": "Initial Security Setup",
-    "editor.onboarding-wizard-message": "Configure the editor's initial security now to avoid unprotected access and the use of default credentials.",
-    "editor.onboarding-wizard-hide": "Do not show this wizard again",
-    "editor.onboarding-wizard-admin-password": "Administrator password",
-    "editor.onboarding-wizard-admin-password-message": "Set a new password for the default administrator account 'admin'.",
-    "editor.onboarding-wizard-admin-password-required": "Administrator password required",
     "editor.controls-html-switch-settings": "Switch settings",
 	"editor.controls-switch": "Switch",
     "editor.controls-graphbar": "Bar Graph",
@@ -1627,7 +1618,6 @@
     "report.item-interval": "Interval (period)",
     "report.item-interval-min5": "5 minutes",
     "report.item-interval-min10": "10 minutes",
-    "report.item-interval-min15": "15 minutes",
     "report.item-interval-min30": "30 minutes",
     "report.item-interval-hour": "1 Hour",
     "report.item-interval-day": "1 Day",
@@ -1948,3 +1938,6 @@
     "msg.operation-unauthorized": "Operation Unauthorized!",
     "msg.secret-code-required": "Secret code required to sign authentication tokens"
 }
+
+
+

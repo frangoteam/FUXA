@@ -1,8 +1,6 @@
 export class AppSettings {
     /** Editor language */
     language = 'en';
-    /** Hide the editor onboarding wizard on editor entry */
-    hideEditorOnboarding = false;
     /** Web server port */
     uiPort = 1881;
     /** Security access to enable user and authentication */

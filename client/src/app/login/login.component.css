@@ -1,0 +1,18 @@
+.error {
+    display: block;
+    font-size: 12px;
+}
+
+.message-error {
+    width: 100%;
+    /* background-color: red;; */
+    color: red;
+    padding-bottom: 20px;
+    font-size: 13px;
+}
+
+.show-password {
+    bottom: 2px;
+    right: 0px;
+    position: absolute;
+}

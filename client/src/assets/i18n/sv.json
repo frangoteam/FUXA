@@ -296,8 +296,6 @@
     "chart.property-refresh-interval": "Uppdateringsintervall (min.)",
     "chart.property-hide-toolbar": "Dölj verktygsfält",
     "chart.property-thouch-zoom": "Pekzoom",
-    "chart.property-mouse-wheel-scroll": "Mushjulsskroll",
-    "chart.property-mouse-wheel-zoom": "Mushjulszoom",
     "chart.property-load-old-values": "Ladda historik",
     "chart.property-date.format": "Datumformat",
     "chart.property-time.format": "Tidsformat",
@@ -1703,4 +1701,5 @@
     "msg.texts-text-remove": "Vill du ta bort texten '{{value}}'?",
     "msg.operation-unauthorized": "Operation obehörig!"
 }
+
 

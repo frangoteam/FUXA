@@ -263,12 +263,12 @@ function ODBCclient(_data, _logger, _events) {
  * Return tables list
  */
 function getTables(endpoint, fncGetProperty, packagerManager) {
-    return new Promise(async function (resolve, reject) {
-        if (loadOdbcLib(packagerManager)) {
+    return new Promise( async function (resolve, reject) {
+        if (loadOdbcLib(packagerManager)) { 
             var connection;
             try {
                 var security
-                await fncGetProperty({ query: 'security', name: endpoint.id }).then((result, error) => {
+                await fncGetProperty({query: 'security', name: endpoint.id}).then((result, error) => {
                     if (result) {
                         security = utils.JsonTryToParse(result.value);
                     }
@@ -286,12 +286,7 @@ function getTables(endpoint, fncGetProperty, packagerManager) {
                     loginTimeout: 10,
                 }
                 connection = await odbc.connect(connectionConfig)
-                var tables = [];
-
-                try {
-                    tables = await connection.tables(null, 'dbo', null, null);
-                } catch (err) { }
-
+                var tables = await connection.tables(null, 'dbo', null, null);
                 if (tables.length <= 0) {
                     tables = await connection.tables(null, null, null, null);
                 }

@@ -41,8 +41,6 @@ import { MapsViewComponent } from '../maps/maps-view/maps-view.component';
 import { KioskWidgetsComponent } from '../resources/kiosk-widgets/kiosk-widgets.component';
 import { ResourcesService } from '../_services/resources.service';
 import { InputPropertyComponent } from '../gauges/controls/html-input/input-property/input-property.component';
-import { SettingsService } from '../_services/settings.service';
-import { OnboardingWizardComponent } from './onboarding-wizard/onboarding-wizard.component';
 
 declare var Gauge: any;
 
@@ -123,8 +121,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     private subscriptionSave: Subscription;
     private subscriptionLoad: Subscription;
     private destroy$ = new Subject<void>();
-    private onboardingWizardHandled = false;
-    private onboardingWizardOpened = false;
 
     constructor(private projectService: ProjectService,
         private winRef: WindowRef,
@@ -135,8 +131,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         private viewContainerRef: ViewContainerRef,
         private resolver: ComponentFactoryResolver,
         private resourcesService: ResourcesService,
-        private libWidgetsService: LibWidgetsService,
-        private settingsService: SettingsService) {
+        private libWidgetsService: LibWidgetsService) {
     }
 
     //#region Implemented onInit / onAfterInit event
@@ -179,11 +174,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         this.myInit();
         this.setMode('select');
-        this.settingsService.loaded$.pipe(takeUntil(this.destroy$)).subscribe(loaded => {
-            if (loaded) {
-                this.openOnboardingWizardIfNeeded();
-            }
-        });
         let hmi = this.projectService.getHmi();
         if (hmi) {
             this.loadHmi(true);
@@ -536,7 +526,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
 
                 // check gauge to init
                 this.gaugesRef = {};
-                if (v) { this.projectService.cleanView(v); }
                 setTimeout(() => {
                     for (let key in v.items) {
                         let ga: GaugeSettings = this.getGaugeSettings(v.items[key]);
@@ -1650,27 +1639,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.gaugeSettingsHide = gaugeSettings?.hide ?? false;
         this.gaugeSettingsLock = gaugeSettings?.lock ?? false;
         this.winRef.nativeWindow.svgEditor.lockSelection(gaugeSettings?.lock);
-    }
-
-    private openOnboardingWizardIfNeeded() {
-        if (this.onboardingWizardHandled || this.onboardingWizardOpened ||
-            this.settingsService.getSettings()?.hideEditorOnboarding ||
-            this.settingsService.getSettings()?.secureEnabled) {
-            this.onboardingWizardHandled = true;
-            return;
-        }
-
-        this.onboardingWizardOpened = true;
-        const dialogRef = this.dialog.open(OnboardingWizardComponent, {
-            autoFocus: false,
-            width: '560px',
-            panelClass: 'light-dialog-container'
-        });
-
-        dialogRef.afterClosed().subscribe(() => {
-            this.onboardingWizardOpened = false;
-            this.onboardingWizardHandled = true;
-        });
     }
 
     flipSelected(fliptype: string) {
