@@ -12,10 +12,6 @@ var { InfluxDB, Point, flux } = require('@influxdata/influxdb-client');
 const VERSION_18_FLUX = '1.8-flux';
 const VERSION_20 = '2.0';
 
-function escapeInfluxIdentifier(value) {
-    return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-}
-
 function Influx(_settings, _log, _currentStorate) {
 
     var settings = _settings;               // Application settings
@@ -161,8 +157,7 @@ function Influx(_settings, _log, _currentStorate) {
                 if (influxdbVersion === VERSION_18_FLUX) {
                     fromts *= 1000000;
                     tots *= 1000000;
-                    const measurement = escapeInfluxIdentifier(tagid);
-                    const query = `SELECT * FROM "${measurement}" WHERE time >= ${Number(fromts)} AND time <= ${Number(tots)}`;
+                    const query = `SELECT * FROM "${tagid}" WHERE time >= ${fromts} AND time <= ${tots}`;
                     client.query(query).then((result) => {
                         resolve(result.map(row => {
                             return {
@@ -176,7 +171,7 @@ function Influx(_settings, _log, _currentStorate) {
                         reject(error);
                     });
                 } else {
-                    const query = flux`from(bucket: ${settings.daqstore.bucket}) |> range(start: ${new Date(fromts)}, stop: ${new Date(tots)}) |> filter(fn: (r) => r.id == ${String(tagid)})`;
+                    const query = flux`from(bucket: "${settings.daqstore.bucket}") |> range(start: ${new Date(fromts)}, stop: ${new Date(tots)}) |> filter(fn: (r) => r.id == "${tagid}")`;
                     var result = [];
                     queryApi.queryRows(query, {
                         next(row, tableMeta) {
