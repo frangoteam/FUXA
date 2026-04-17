@@ -679,12 +679,18 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
-        try { snap7 = require('node-snap7'); } catch { }
-        if (!snap7 && manager) { try { snap7 = manager.require('node-snap7'); } catch { } }
-        if (snap7) datatypes = require('./datatypes');
-        else return null;
+        if (!loadSnap7Lib(manager)) return null;
+        datatypes = require('./datatypes')(snap7.S7Client ? snap7.S7Client() : snap7);
         return new S7client(data, logger, events, runtime);
     }
+}
+
+function loadSnap7Lib(manager) {
+    if (!snap7) {
+        try { snap7 = require('node-snap7'); } catch { }
+        if (!snap7 && manager) { try { snap7 = manager.require('node-snap7'); } catch { } }
+    }
+    return !!snap7;
 }
 
 function DbItem(dbnum) {
