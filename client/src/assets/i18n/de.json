@@ -851,6 +851,7 @@
     "device.connect-failed": "Fehlgeschlagen",
     "device.connect-off": "Aus",
     "device.connect-busy": "Besetzt",
+    "device.connect-skipped": "Übersprungen",
 
     "devices.mode-map": "Geräte-Diagramm",
     "devices.mode-list": "Geräte-Liste",
