@@ -2,10 +2,10 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialog as MatDialog, MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { TranslateService } from '@ngx-translate/core';
-import { ProjectService } from '../../_services/project.service';
-import { PluginService } from '../../_services/plugin.service';
+import { ProjectService } from '../_services/project.service';
+import { PluginService } from '../_services/plugin.service';
 
-import { Plugin } from '../../_models/plugin';
+import { Plugin } from '../_models/plugin';
 
 @Component({
     selector: 'app-plugins',

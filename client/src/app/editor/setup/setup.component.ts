@@ -8,7 +8,7 @@ import { AppService } from '../../_services/app.service';
 import { ChartConfigComponent } from '../../editor/chart-config/chart-config.component';
 import { GraphConfigComponent } from '../../editor/graph-config/graph-config.component';
 import { ILayoutPropertyData, LayoutPropertyComponent } from '../../editor/layout-property/layout-property.component';
-import { PluginsComponent } from '../../editor/plugins/plugins.component';
+import { PluginsComponent } from '../../plugins/plugins.component';
 import { AppSettingsComponent } from '../../editor/app-settings/app-settings.component';
 import { ClientScriptAccessComponent } from '../client-script-access/client-script-access.component';
 import { PluginService } from '../../_services/plugin.service';

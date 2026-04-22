@@ -27,7 +27,7 @@ import { LogsViewComponent } from './logs-view/logs-view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent } from './editor/layout-property/layout-property.component';
-import { PluginsComponent } from './editor/plugins/plugins.component';
+import { PluginsComponent } from './plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
 import { ChartConfigComponent } from './editor/chart-config/chart-config.component';

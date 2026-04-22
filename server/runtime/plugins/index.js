@@ -294,14 +294,14 @@ function createDefaultPlugins() {
     registry['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.9', PluginGroupType.connectionDevice, true);
     registry['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4', PluginGroupType.connectionDevice, true);
     registry['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.7', PluginGroupType.connectionDevice, true);
-    registry['ads-client'] = new Plugin('ads-client', './ads-client', 'ADSclient', '2.1.0', PluginGroupType.connectionDevice, true);
+    registry['ads-client'] = new Plugin('ads-client', './adsclient', 'ADSclient', '2.1.0', PluginGroupType.connectionDevice, true);
     registry['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.17', PluginGroupType.connectionDevice, true);
     registry['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8', PluginGroupType.connectionDatabase, true);
     registry['chart.js'] = new Plugin('chart.js', './chartjs', 'Chart', '2.9.4', PluginGroupType.chartReport, true);
     registry['chartjs-node-canvas'] = new Plugin('chartjs-node-canvas', 'chartjs-canvas', 'Chart', '3.2.0', PluginGroupType.chartReport, true);
-    registry['onoff'] = new Plugin('onoff', './onoff', 'GPIO', '6.0.3', PluginGroupType.connectionDevice, true);
-    registry['node-webcam'] = new Plugin('node-webcam', './node-webcam', 'WebCam', '0.8.2', PluginGroupType.connectionDevice, true);
-    registry['mcprotocol'] = new Plugin('mcprotocol', './mcprotocol', 'MELSEC', '0.1.2', PluginGroupType.connectionDevice, true);
+    registry['onoff'] = new Plugin('onoff', './gpio', 'GPIO', '6.0.3', PluginGroupType.connectionDevice, true);
+    registry['node-webcam'] = new Plugin('node-webcam', './webcam', 'WebCam', '0.8.2', PluginGroupType.connectionDevice, true);
+    registry['mcprotocol'] = new Plugin('mcprotocol', './melsec', 'MELSEC', '0.1.2', PluginGroupType.connectionDevice, true);
     registry['node-red'] = new Plugin('node-red', './node-red', 'node-red', '4.1.0', PluginGroupType.service, true);
     registry['redis'] = new Plugin('redis', './redis', 'REDIS', '5.8.2', PluginGroupType.connectionDevice, true);
     return registry;
