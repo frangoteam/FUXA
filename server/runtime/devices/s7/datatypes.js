@@ -1,4 +1,3 @@
-const snap7 = require('node-snap7').S7Client();
 /**
  * S7Client Datatype
  *
@@ -25,64 +24,66 @@ function _gen(bytes, bFn, S7WordLen) {
 /**
  * @enum
  */
-const Datatypes = {
-  /**
-   * BOOL
-   * @type {S7ClientDatatype}
-   */
-  BOOL: {
-    bytes: 1,
-    parser: (buffer, offset = 0, bit = 0) => +buffer.readUInt8(offset) >> bit & 1 === 1,
-    formatter: v => new Buffer([v ? 0x01 : 0x00]),
-    S7WordLen: snap7.S7WLBit
-  },
+function createDatatypes(snap7) {
+  return {
+    /**
+     * BOOL
+     * @type {S7ClientDatatype}
+     */
+    BOOL: {
+      bytes: 1,
+      parser: (buffer, offset = 0, bit = 0) => +buffer.readUInt8(offset) >> bit & 1 === 1,
+      formatter: v => Buffer.from([v ? 0x01 : 0x00]),
+      S7WordLen: snap7.S7WLBit
+    },
 
-  /**
-   * BYTE
-   * @type {S7ClientDatatype}
-   */
-  BYTE: _gen(1, 'UInt8', snap7.S7WLByte),
+    /**
+     * BYTE
+     * @type {S7ClientDatatype}
+     */
+    BYTE: _gen(1, 'UInt8', snap7.S7WLByte),
 
-  /**
-   * WORD
-   * @type {S7ClientDatatype}
-   */
-  WORD: _gen(2, 'UInt16BE', snap7.S7WLWord),
+    /**
+     * WORD
+     * @type {S7ClientDatatype}
+     */
+    WORD: _gen(2, 'UInt16BE', snap7.S7WLWord),
 
-  /**
-   * DWORD
-   * @type {S7ClientDatatype}
-   */
-  DWORD: _gen(4, 'UInt32BE', snap7.S7WLDWord),
+    /**
+     * DWORD
+     * @type {S7ClientDatatype}
+     */
+    DWORD: _gen(4, 'UInt32BE', snap7.S7WLDWord),
 
-  /**
-   * CHAR
-   * @type {S7ClientDatatype}
-   */
-  CHAR: {
-    bytes: 1,
-    parser: (buffer, offset = 0) => buffer.toString('ascii', offset, offset + 1),
-    formatter: v => new Buffer(v, 'ascii'),
-    S7WordLen: snap7.S7WLByte
-  },
+    /**
+     * CHAR
+     * @type {S7ClientDatatype}
+     */
+    CHAR: {
+      bytes: 1,
+      parser: (buffer, offset = 0) => buffer.toString('ascii', offset, offset + 1),
+      formatter: v => Buffer.from(v, 'ascii'),
+      S7WordLen: snap7.S7WLByte
+    },
 
-  /**
-   * INT
-   * @type {S7ClientDatatype}
-   */
-  INT: _gen(2, 'Int16BE', snap7.S7WLWord),
+    /**
+     * INT
+     * @type {S7ClientDatatype}
+     */
+    INT: _gen(2, 'Int16BE', snap7.S7WLWord),
 
-  /**
-   * DINT
-   * @type {S7ClientDatatype}
-   */
-  DINT: _gen(4, 'Int32BE', snap7.S7WLDWord),
+    /**
+     * DINT
+     * @type {S7ClientDatatype}
+     */
+    DINT: _gen(4, 'Int32BE', snap7.S7WLDWord),
 
-  /**
-   * REAL
-   * @type {S7ClientDatatype}
-   */
-  REAL: _gen(4, 'FloatBE', snap7.S7WLReal),
-};
+    /**
+     * REAL
+     * @type {S7ClientDatatype}
+     */
+    REAL: _gen(4, 'FloatBE', snap7.S7WLReal),
+  };
+}
 
-module.exports = Datatypes;
+module.exports = createDatatypes;

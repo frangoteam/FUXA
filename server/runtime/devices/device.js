@@ -478,7 +478,7 @@ function getSupportedProperty(endpoint, type, packagerManager) {
     var self = this;
     return new Promise(function (resolve, reject) {
         if (type === DeviceEnum.OPCUA) {
-            OpcUAclient.getEndPoints(endpoint).then(function (result) {
+            OpcUAclient.getEndPoints(endpoint, packagerManager).then(function (result) {
                 resolve(result);
             }).catch(function (err) {
                 reject(err);

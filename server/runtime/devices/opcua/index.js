@@ -752,9 +752,9 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 /**
  * Return security and encryption mode supported from server endpoint
  */
-function getEndPoints(endpointUrl) {
+function getEndPoints(endpointUrl, manager) {
     return new Promise(function (resolve, reject) {
-        if (loadOpcUALib()) {
+        if (loadOpcUALib(manager)) {
             let opts = { connectionStrategy: { maxRetry: 1 } };
             let client = opcua.OPCUAClient.create(opts);
             try {
@@ -785,7 +785,7 @@ function getEndPoints(endpointUrl) {
     });
 }
 
-function loadOpcUALib() {
+function loadOpcUALib(manager) {
     if (!opcua) {
         try { opcua = require('node-opcua'); } catch { }
         if (!opcua && manager) { try { opcua = manager.require('node-opcua'); } catch { } }
@@ -798,7 +798,7 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
-        if (!loadOpcUALib()) return null;
+        if (!loadOpcUALib(manager)) return null;
         return new OpcUAclient(data, logger, events, runtime);
     },
     getEndPoints: getEndPoints
