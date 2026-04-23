@@ -269,7 +269,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     mixItemsMap[lastStart].MaxSize = lastAdrSize - lastStart;
                     mixItemsMap[lastStart].Items = getMemoryItems(memory[lastMemAdr].Items, mixItemsMap[lastStart].Start, mixItemsMap[lastStart].MaxSize);
                 }
-                nextAdr = 1 + adr + stepsMap[key].size;
+                nextAdr = adr + stepsMap[key].size;
             } catch (err) {
                 logger.error(`'${data.name}' load error! ${err}`);
             }
