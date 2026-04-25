@@ -17,14 +17,25 @@
                 <div class="connection-line" [style.left.px]="getDeviceConnectionLeftPosition()" [style.top.px]="getDeviceConnectionTopPosition()"
                     [style.width.px]="getDeviceConnectionWidth()" [style.height.px]="lineDeviceSize"></div>
             </div>
-            <div class="map-container">
-                <div class="main-device" *ngIf="server?.property" [style.left.px]="getMainLeftPosition()" [style.top.px]="getMainTopPosition()" [style.width.px]="mainWidth"
+            <div class="map-container map-stage">
+                <div class="main-device device-card device-card--server" *ngIf="server?.property" [ngClass]="getDeviceAccentClass(server)"
+                    [style.left.px]="getMainLeftPosition()" [style.top.px]="getMainTopPosition()" [style.width.px]="mainWidth"
                     [style.height.px]="mainHeight" [style.borderWidth.px]="mainBorder">
-                    <span class="device-header" style="padding-top: 10px;">{{ server.name }}</span>
-                    <span class="device-pro">{{ server.property.address }}</span>
-                    <!-- <mat-icon (click)="onListDevice(server)" class="device-icon device-list">list_alt</mat-icon> -->
-                    <!-- <mat-icon (click)="onEditDevice(server)" class="device-icon device-edit" >edit</mat-icon> -->
-                    <button *ngIf="!readonly" mat-icon-button (click)="onListDevice(server)" class="device-icon device-list mat-button-sm" [style.right.px]="(readonly) ? 2 : 30"
+                    <div class="device-card__glow"></div>
+                    <div class="device-card__topline">
+                        <span class="device-type">{{ server.type }}</span>
+                    </div>
+                    <div class="device-card__main">
+                        <div class="device-avatar">
+                            <mat-icon>{{ getDeviceIcon(server) }}</mat-icon>
+                        </div>
+                        <div class="device-copy">
+                            <span class="device-header">{{ server.name }}</span>
+                            <span class="device-pro">{{ server.property.address }}</span>
+                            <span class="device-pro device-pro--meta">Central node</span>
+                        </div>
+                    </div>
+                    <button *ngIf="!readonly" mat-icon-button (click)="onListDevice(server)" class="device-icon device-list mat-button-sm" [style.right.px]="(readonly) ? 2 : 40"
                         matTooltip="{{'device.property-tags' | translate}}">
                         <mat-icon>link</mat-icon>
                     </button>
@@ -33,15 +44,27 @@
                     </button>
                 </div>
 
-                <div *ngFor="let flow of devicesValue('flow'); index as i" class="node-flow" [style.color]="(flow.enabled) ? '#000000' : '#828282'"
+                <div *ngFor="let flow of devicesValue('flow'); index as i" class="node-flow device-card device-card--flow" [ngClass]="getDeviceAccentClass(flow)"
+                    [style.color]="(flow.enabled) ? '#111827' : '#6b7280'"
                     [style.left.px]="getDeviceLeftPosition(i, 'flow')" [style.top.px]="getDeviceTopPosition('flow')" [style.width.px]="flowWidth" [style.height.px]="flowHeight"
                     [style.borderWidth.px]="flowBorder">
-                    <span class="device-header" style="color: black;">{{ flow.name }}</span>
-                    <span class="device-pro" *ngIf="flow.property">{{ flow.property.address }}</span>
-                    <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(flow) }}</span>
+                    <div class="device-card__glow"></div>
+                    <div class="device-card__topline">
+                        <span class="device-type">{{ flow.type }}</span>
+                    </div>
+                    <div class="device-card__main">
+                        <div class="device-avatar">
+                            <mat-icon>{{ getDeviceIcon(flow) }}</mat-icon>
+                        </div>
+                        <div class="device-copy">
+                            <span class="device-header">{{ flow.name }}</span>
+                            <span class="device-pro" *ngIf="flow.property">{{ flow.property.address }}</span>
+                            <span class="device-pro device-pro--meta">{{ getDevicePropertyToShow(flow) || 'Service bridge' }}</span>
+                        </div>
+                    </div>
                     <div class="device-status" *ngIf="flow.enabled" [style.background-color]="getDeviceStatusColor(flow)"></div>
                     <button *ngIf="!readonly && withListConfig(flow)" mat-icon-button (click)="onListDevice(flow)" class="device-list mat-button-sm"
-                        [style.right.px]="(readonly) ? 0 : 30" matTooltip="{{'device.property-tags' | translate}}">
+                        [style.right.px]="(readonly) ? 0 : 40" matTooltip="{{'device.property-tags' | translate}}">
                         <mat-icon>link</mat-icon>
                     </button>
                     <button *ngIf="!readonly" mat-icon-button (click)="onEditDevice(flow)" class="device-edit mat-button-sm" matTooltip="{{'device.property-edit' | translate}}">
@@ -53,15 +76,27 @@
                     </button>
                 </div>
 
-                <div *ngFor="let device of devicesValue(); index as i" [ngClass]="getNodeClass(device)" [style.color]="(device.enabled) ? '#FFFFFF' : '#C5C5C5'"
+                <div *ngFor="let device of devicesValue(); index as i" [ngClass]="[getNodeClass(device), 'device-card', 'device-card--device', getDeviceAccentClass(device)]"
+                    [style.color]="(device.enabled) ? '#f8fafc' : '#cbd5e1'"
                     [style.left.px]="getDeviceLeftPosition(i)" [style.top.px]="getDeviceTopPosition()" [style.width.px]="deviceWidth" [style.height.px]="deviceHeight"
                     [style.borderWidth.px]="deviceBorder">
-                    <span class="device-header">{{ device.name }}</span>
-                    <span class="device-pro" *ngIf="device.property">{{ device.property.address }}</span>
-                    <span class="device-pro" style="padding-bottom: 10px;">{{ getDevicePropertyToShow(device) }}</span>
+                    <div class="device-card__glow"></div>
+                    <div class="device-card__topline">
+                        <span class="device-type">{{ device.type }}</span>
+                    </div>
+                    <div class="device-card__main">
+                        <div class="device-avatar">
+                            <mat-icon>{{ getDeviceIcon(device) }}</mat-icon>
+                        </div>
+                        <div class="device-copy">
+                            <span class="device-header">{{ device.name }}</span>
+                            <span class="device-pro" *ngIf="device.property">{{ device.property.address }}</span>
+                            <span class="device-pro device-pro--meta">{{ getDevicePropertyToShow(device) || 'Live connection' }}</span>
+                        </div>
+                    </div>
                     <div class="device-status" *ngIf="device.enabled" [style.background-color]="getDeviceStatusColor(device)"></div>
                     <button *ngIf="!readonly && withListConfig(device)" mat-icon-button (click)="onListDevice(device)" class="device-list mat-button-sm"
-                        [style.right.px]="(readonly) ? 0 : 30" matTooltip="{{'device.property-tags' | translate}}">
+                        [style.right.px]="(readonly) ? 0 : 40" matTooltip="{{'device.property-tags' | translate}}">
                         <mat-icon>link</mat-icon>
                     </button>
                     <button *ngIf="!readonly" mat-icon-button (click)="onEditDevice(device)" class="device-edit mat-button-sm" matTooltip="{{'device.property-edit' | translate}}">
