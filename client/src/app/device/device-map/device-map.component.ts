@@ -44,7 +44,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     flowBorder = 5;
     flowWidth = 220;
     flowHeight = 92;
-    flowLineHeight = 100;
+    flowLineHeight = 80;
 
     deviceBorder = 5;
     deviceWidth = 220;

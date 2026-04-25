@@ -1,10 +1,10 @@
 $main-backcolor: #0f4c81;
 $main-bordercolor: #2f79be;
 $device-color: #374151;
-$line-color: #d1d5db;
+$line-color: #9ca3af;
 $flow-backcolor: #f3f4f6;
 $flow-bordercolor: #9ca3af;
-$flowline-color: #e5e7eb;
+$flowline-color: #9ca3af;
 $internal-backcolor: #4b5563;
 
 :host {
@@ -48,8 +48,8 @@ $internal-backcolor: #4b5563;
         position: absolute;
         border-style: solid;
         text-align: left;
-        padding: 12px 14px 34px;
-        border-radius: 8px;
+        padding: 7px 7px 12px;
+        border-radius: 5px;
         overflow: hidden;
         box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
         transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
@@ -212,7 +212,7 @@ $internal-backcolor: #4b5563;
     .flow-line,
     .connection-line {
         position: absolute;
-        border-radius: 2px;
+        // border-radius: 2px;
         box-shadow: none;
         z-index: 1;
     }
