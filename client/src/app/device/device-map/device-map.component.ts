@@ -42,12 +42,12 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     laneSidePadding = 64;
 
     flowBorder = 5;
-    flowWidth = 220;
+    flowWidth = 190;
     flowHeight = 92;
     flowLineHeight = 80;
 
     deviceBorder = 5;
-    deviceWidth = 220;
+    deviceWidth = 190;
     deviceHeight = 110;
     deviceLineHeight = 60;
 
@@ -55,7 +55,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     lineFlowHeight = 70;
     lineDeviceSize = 6;
     mainDeviceLineHeight = 120;
-    mainWidth = 220;
+    mainWidth = 190;
     mainHeight = 110;
     mainBorder = 5;
 
@@ -436,8 +436,6 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                 return 'api';
             case DeviceType.ODBC:
                 return 'storage';
-            case DeviceType.OPCUA:
-                return 'account_tree';
             case DeviceType.MQTTclient:
                 return 'rss_feed';
             case DeviceType.internal:

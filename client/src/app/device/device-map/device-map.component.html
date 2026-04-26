@@ -59,7 +59,7 @@
                         <div class="device-copy">
                             <span class="device-header">{{ flow.name }}</span>
                             <span class="device-pro" *ngIf="flow.property">{{ flow.property.address }}</span>
-                            <span class="device-pro device-pro--meta">{{ getDevicePropertyToShow(flow) || 'Service bridge' }}</span>
+                            <span class="device-pro device-pro--meta">{{ getDevicePropertyToShow(flow) }}</span>
                         </div>
                     </div>
                     <div class="device-status" *ngIf="flow.enabled" [style.background-color]="getDeviceStatusColor(flow)"></div>
@@ -91,7 +91,7 @@
                         <div class="device-copy">
                             <span class="device-header">{{ device.name }}</span>
                             <span class="device-pro" *ngIf="device.property">{{ device.property.address }}</span>
-                            <span class="device-pro device-pro--meta">{{ getDevicePropertyToShow(device) || 'Live connection' }}</span>
+                            <span class="device-pro device-pro--meta">{{ getDevicePropertyToShow(device) || ('device.property-live-connection' | translate) }}</span>
                         </div>
                     </div>
                     <div class="device-status" *ngIf="device.enabled" [style.background-color]="getDeviceStatusColor(device)"></div>
