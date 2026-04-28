@@ -27,7 +27,6 @@ import { LogsViewComponent } from './logs-view/logs-view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent } from './editor/layout-property/layout-property.component';
-import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
 import { ChartConfigComponent } from './editor/chart-config/chart-config.component';
@@ -236,6 +235,7 @@ import { ApiKeyPropertyComponent } from './apikeys/api-key-property/api-key-prop
 import { TagPropertyEditRedisComponent } from './device/tag-property/tag-property-edit-redis/tag-property-edit-redis.component';
 import { TagPropertyRedisScanComponent } from './device/tag-property/tag-property-edit-redis/tag-property-redis-scan/tag-property-redis-scan.component';
 import { OnboardingWizardComponent } from './editor/onboarding-wizard/onboarding-wizard.component';
+import { PluginsListComponent } from './plugins/plugins-list/plugins-list.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -274,7 +274,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DeviceWebapiPropertyDialogComponent,
         LayoutPropertyComponent,
         TagsIdsConfigComponent,
-        PluginsComponent,
         AppSettingsComponent,
         SetupComponent,
         LayoutMenuItemPropertyComponent,
@@ -421,6 +420,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyEditRedisComponent,
         TagPropertyRedisScanComponent,
         OnboardingWizardComponent,
+        PluginsListComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         FormsModule,

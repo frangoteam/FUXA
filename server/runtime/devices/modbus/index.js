@@ -859,12 +859,18 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
-        try { ModbusRTU = require('modbus-serial'); } catch { }
-        if (!ModbusRTU && manager) { try { ModbusRTU = manager.require('modbus-serial'); } catch { } }
-        if (!ModbusRTU) return null;
+        if (!loadModbusLib(manager)) return null;
         return new MODBUSclient(data, logger, events, runtime);
     },
     ModbusTypes: ModbusTypes
+}
+
+function loadModbusLib(manager) {
+    if (!ModbusRTU) {
+        try { ModbusRTU = require('modbus-serial'); } catch { }
+        if (!ModbusRTU && manager) { try { ModbusRTU = manager.require('modbus-serial'); } catch { } }
+    }
+    return !!ModbusRTU;
 }
 
 function MemoryItem(type, offset) {

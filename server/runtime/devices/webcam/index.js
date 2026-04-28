@@ -275,18 +275,15 @@ module.exports = {
     init: function (settings) {
     },
     create: function (data, logger, events, manager, runtime) {
-        //To use with plugin
-        try {
-            NodeWebcam = require('node-webcam');
-        } catch {
-        }
-        if (!NodeWebcam && manager) {
-            try {
-                NodeWebcam = manager.require('node-webcam');
-            } catch {
-            }
-        }
-        if (!NodeWebcam) return null;
+        if (!loadNodeWebcamLib(manager)) return null;
         return new WebCamClient(data, logger, events, manager, runtime);
     }
+}
+
+function loadNodeWebcamLib(manager) {
+    if (!NodeWebcam) {
+        try { NodeWebcam = require('node-webcam'); } catch { }
+        if (!NodeWebcam && manager) { try { NodeWebcam = manager.require('node-webcam'); } catch { } }
+    }
+    return !!NodeWebcam;
 }
