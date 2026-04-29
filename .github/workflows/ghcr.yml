@@ -1,0 +1,62 @@
+name: Build and push image to ghcr.io
+
+# Builds the FUXA Docker image from this fork's Dockerfile and pushes it to
+# GitHub Container Registry under the repository owner's namespace
+# (e.g. ghcr.io/bartei/fuxa). Uses the auto-provisioned GITHUB_TOKEN — no
+# DOCKERHUB_* secrets needed, unlike the upstream docker_image.yml.
+
+on:
+  push:
+    branches:
+      - master
+      - 'fix/**'
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # ghcr.io requires the image name in lowercase. github.repository_owner
+          # is already lowercase but we pipe through tolower for safety.
+          images: ghcr.io/${{ github.repository_owner }}/fuxa
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha,format=short
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
