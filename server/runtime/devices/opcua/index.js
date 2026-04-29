@@ -471,12 +471,21 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     }
 
     /**
-     * Create a session subscription to refresh Tags value
+     * Create a session subscription to refresh Tags value.
+     *
+     * The subscription's `requestedPublishingInterval` follows the device's
+     * polling rate (`data.polling`) so the device-level "update rate" UI
+     * setting actually propagates to the OPC-UA subscription. Falls back to
+     * 100 ms — the OPC-UA protocol minimum in most servers — when the user
+     * hasn't configured a polling rate.
+     *
+     * Previously this was hard-coded to 500 ms regardless of UI input,
+     * capping subscription updates at 2 Hz no matter what the user picked.
      */
     var _createSubscription = function () {
         if (the_session) {
             const parameters = {
-                requestedPublishingInterval: 500,
+                requestedPublishingInterval: data.polling || 100,
                 requestedLifetimeCount: 600,
                 requestedMaxKeepAliveCount: 10,
                 maxNotificationsPerPublish: 0,
