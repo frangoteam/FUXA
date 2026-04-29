@@ -152,19 +152,24 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device property
         socket.on(Events.IoEventTypes.DEVICE_PROPERTY, (message) => {
             try {
+                if (!isSocketWriteAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_PROPERTY}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message && message.endpoint && message.type) {
                     devices.getSupportedProperty(message.endpoint, message.type).then(result => {
                         message.result = result;
-                        io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                     }).catch(function (err) {
                         logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: ${err}`);
                         message.error = err;
-                        io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                     });
                 } else {
                     logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: wrong message`);
+                    message = message || {};
                     message.error = 'wrong message';
-                    io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
+                    socket.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: ${err}`);
@@ -295,19 +300,24 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device webapi request and return result
         socket.on(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
             try {
+                if (!isSocketWriteAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message && message.property) {
                     devices.getRequestResult(message.property).then(result => {
                         message.result = result;
-                        io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                     }).catch(function (err) {
                         logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: ${err}`);
                         message.error = err;
-                        io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                     });
                 } else {
                     logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: wrong message`);
+                    message = message || {};
                     message.error = 'wrong message';
-                    io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
+                    socket.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: ${err}`);
