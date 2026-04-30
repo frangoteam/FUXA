@@ -734,7 +734,7 @@ function getDevices() {
  * Return internal FUXA server device
  */
 function getServer() {
-    return data.server || null;
+    return data.devices['0'] || data.server || null;
 }
 
 /**

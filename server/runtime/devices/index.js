@@ -125,6 +125,9 @@ function load() {
     }
     // check existing or to add new
     for (var id in tempdevices) {
+        if (serverDevice && id === FuxaServerId) {
+            continue;
+        }
         if (tempdevices[id].enabled) {
             if(tempdevices[id].type == 'ModbusRTU'){
                 if(!(tempdevices[id].property.address in sharedDevices)){
