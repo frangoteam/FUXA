@@ -6,7 +6,7 @@
 var fs = require('fs');
 const path = require('path');
 var device = require('../devices/device');
-const PluginManager = require('live-plugin-manager');
+const { createRuntimeService, listInstalledPackages } = require('./npm-runtime-service');
 var events = require("../events").create();
 
 var settings;                   // Application settings
@@ -23,23 +23,7 @@ const PluginGroupType = {
     service: 'service',
 }
 
-var plugins = {};
-plugins['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '2.78.0', PluginGroupType.connectionDevice);
-plugins['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.9', PluginGroupType.connectionDevice);
-plugins['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4', PluginGroupType.connectionDevice);
-plugins['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.7', PluginGroupType.connectionDevice);
-plugins['ads-client'] = new Plugin('ads-client', './ads-client', 'ADSclient', '2.1.0', PluginGroupType.connectionDevice);
-plugins['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.17', PluginGroupType.connectionDevice, true);
-plugins['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8', PluginGroupType.connectionDatabase);
-// plugins['influxdb-client'] = new Plugin('@influxdata/influxdb-client', '../storage/influxdb', 'influxDB', '1.25.0', true);
-// plugins['onoff'] = new Plugin('onoff', './raspy', 'Raspberry', '6.0.1');
-plugins['chart.js'] = new Plugin('chart.js', './chartjs', 'Chart', '2.9.4', PluginGroupType.chartReport);
-plugins['chartjs-node-canvas'] = new Plugin('chartjs-node-canvas', 'chartjs-canvas', 'Chart', '3.2.0', PluginGroupType.chartReport);
-plugins['onoff'] = new Plugin('onoff', './onoff', 'GPIO', '6.0.3', PluginGroupType.connectionDevice);
-plugins['node-webcam'] = new Plugin('node-webcam', './node-webcam', 'WebCam', '0.8.2', PluginGroupType.connectionDevice, true);
-plugins['mcprotocol'] = new Plugin('mcprotocol', './mcprotocol', 'MELSEC', '0.1.2', PluginGroupType.connectionDevice, true);
-plugins['node-red'] = new Plugin('node-red', './node-red', 'node-red', '4.1.0', PluginGroupType.service);
-plugins['redis'] = new Plugin('redis', './redis', 'REDIS', '5.8.2', PluginGroupType.connectionDevice, true);
+var plugins = createDefaultPlugins();
 
 
 /**
@@ -50,7 +34,7 @@ plugins['redis'] = new Plugin('redis', './redis', 'REDIS', '5.8.2', PluginGroupT
 function init(_settings, log) {
     settings = _settings;
     logger = log;
-    manager = new PluginManager.PluginManager({ pluginsPath: settings.packageDir });
+    manager = createRuntimeService({ packageDir: settings.packageDir, logger });
 
     // Init Plugins
     return new Promise(function (resolve, reject) {
@@ -78,9 +62,10 @@ function init(_settings, log) {
             resolve();
         }
         // add plugins
+        const installedSnapshot = plugins;
         Object.values(plugins).forEach(async (pg) => {
             if (pg.current) {
-                await addPlugin(pg).then(result => {
+                await addPlugin(pg, { installed: installedSnapshot, refreshInstalled: false }).then(result => {
                     logger.info(`plugin-installed ${pg.name} ${pg.current}`, true);
                     events.emit(pg.name);
                 }).catch(function (err) {
@@ -129,7 +114,7 @@ function init(_settings, log) {
 function getPlugin(type) {
     var plugin;
     Object.values(plugins).forEach((pg) => {
-        if (type.startWith(pg.type)) {
+        if (type && type.startsWith(pg.type)) {
             plugin = pg;
         }
     });
@@ -154,40 +139,55 @@ function getPlugins() {
 /**
  * Install plugin, install
  */
-async function addPlugin(plugin) {
-    if (plugin) {
-        try {
-            if (plugin.pkg) {
-                await manager.installFromNpm(plugin.name, plugin.version).then(async function (data) {
-                    await device.loadPlugin(plugin.type, plugin.module);
-                }).catch(function (err) {
-                });
-            } else {
-                await device.loadPlugin(plugin.type, plugin.module);
-            }
-        } catch (err) {
-        }
-    } else {
+async function addPlugin(plugin, options) {
+    const addOptions = _normalizeAddPluginOptions(options);
+    const normalized = _normalizePlugin(plugin);
+    if (!normalized) {
+        throw new Error('Invalid plugin');
     }
+    const installed = addOptions.installed || _checkPluginsSupported();
+    const current = installed[normalized.name];
+    const isInstalled = current && current.current;
+    const needsRuntimeInstall = normalized.pkg || normalized.dynamicPackage || !isInstalled;
+
+    if (needsRuntimeInstall && !isInstalled) {
+        normalized.current = await manager.installPackage(normalized.name, normalized.version);
+        normalized.pkg = true;
+    } else if (current) {
+        normalized.current = current.current;
+        normalized.pkg = current.pkg;
+    }
+
+    if (normalized.module && normalized.type) {
+        await device.loadPlugin(normalized.type, normalized.module);
+    }
+    plugins[normalized.name] = normalized;
+    if (addOptions.refreshInstalled !== false) {
+        plugins = _checkPluginsSupported();
+    }
+    return normalized;
 }
 
 /**
  * Remove plugin, uninstall
  */
 function removePlugin(plugin) {
-    return new Promise(function (resolve, reject) {
-        if (plugin) {
-            try {
-                manager.uninstall(plugin).then(function (data) {
-                    resolve();
-                }).catch(function (err) {
-                    reject(err);
-                });
-            } catch (err) {
-                reject(err);
+    return new Promise(async function (resolve, reject) {
+        try {
+            const normalized = _normalizePlugin(plugin);
+            if (!normalized) {
+                reject(new Error('Invalid plugin'));
+                return;
             }
-        } else {
-            reject();
+            if (!manager.isRuntimeManaged(normalized.name)) {
+                reject(new Error(`Package '${normalized.name}' is not installed in the isolated runtime`));
+                return;
+            }
+            await manager.uninstallPackage(normalized.name);
+            plugins = _checkPluginsSupported();
+            resolve();
+        } catch (err) {
+            reject(err);
         }
     });
 }
@@ -196,58 +196,115 @@ function removePlugin(plugin) {
  * Get the supported plugins list by check in node_modules if installed
  */
 function _checkPluginsSupported() {
-    Object.values(plugins).forEach((pg) => {
+    const registry = createDefaultPlugins();
+    Object.values(registry).forEach((pg) => {
         pg.current = '';
+        pg.canRemove = false;
     });
-    // check in node_modules
-    module = path.resolve(__dirname, '../../node_modules');
-    if (!fs.existsSync(module)) {
-        module = path.resolve(__dirname, '../../../node_modules');
+    const installed = _scanInstalledPlugins();
+    const rootPackages = installed.rootPackages;
+    Object.entries(rootPackages).forEach(([name, version]) => {
+        if (registry[name]) {
+            registry[name].current = version;
+        }
+    });
+
+    const runtimePackages = installed.runtimePackages;
+    Object.entries(runtimePackages).forEach(([name, version]) => {
+        if (!registry[name]) {
+            return;
+        }
+        registry[name].current = version;
+        registry[name].pkg = true;
+        registry[name].dynamicPackage = true;
+        registry[name].canRemove = installed.runtimeManagedNames.has(name);
+    });
+
+    plugins = registry;
+    return registry;
+}
+
+function _scanInstalledPlugins() {
+    const rootModules = _getRootNodeModules();
+    const rootPackages = listInstalledPackages(rootModules);
+    const runtimePackages = manager ? manager.getInstalledPackages() : {};
+    const runtimePaths = manager ? manager.getPaths() : null;
+    const runtimeManagedNames = new Set(
+        runtimePaths ? Object.keys(listInstalledPackages(runtimePaths.runtimeDir)) : []
+    );
+    return {
+        rootPackages,
+        runtimePackages,
+        runtimeManagedNames,
+    };
+}
+
+function _getRootNodeModules() {
+    let modulePath = path.resolve(__dirname, '../../node_modules');
+    if (!fs.existsSync(modulePath)) {
+        modulePath = path.resolve(__dirname, '../../../node_modules');
     }
-    var dirs = fs.readdirSync(module);
-    var data = {};
-    dirs.forEach(function (dir) {
-        try {
-            var file = path.resolve(module, dir + '/package.json');
-            if (fs.existsSync(file)) {
-                var json = require(file);
-                if (json) {
-                    var name = json.name;
-                    var version = json.version;
-                    data[name] = version;
-                    if (plugins[name]) {
-                        plugins[name].current = version;
-                    }
-                }
-            }
-        } catch (err) {
-            logger.error(err);
-        }
-    });
-    // check in _pkg
-    var module = settings.packageDir;
-    var dirs = fs.readdirSync(module);
-    var data = {};
-    dirs.forEach(function (dir) {
-        try {
-            var file = path.resolve(module, dir + '/package.json');
-            if (fs.existsSync(file)) {
-                var json = require(file);
-                if (json) {
-                    var name = json.name;
-                    var version = json.version;
-                    data[name] = version;
-                    if (plugins[name]) {
-                        plugins[name].current = version;
-                        plugins[name].pkg = true;
-                    }
-                }
-            }
-        } catch (err) {
-            logger.error(err);
-        }
-    });
-    return plugins;
+    return modulePath;
+}
+
+function _normalizePlugin(plugin) {
+    if (!plugin) {
+        return null;
+    }
+    if (typeof plugin === 'string') {
+        return plugins[plugin] || new Plugin(plugin, '', plugin, 'latest', PluginGroupType.service, true);
+    }
+    if (plugin.name && plugins[plugin.name]) {
+        const knownPlugin = plugins[plugin.name];
+        return Object.assign(new Plugin(
+            knownPlugin.name,
+            knownPlugin.module,
+            knownPlugin.type,
+            plugin.version || knownPlugin.version,
+            plugin.group || knownPlugin.group,
+            true
+        ), knownPlugin, plugin);
+    }
+    if (plugin.name) {
+        const customPlugin = new Plugin(
+            plugin.name,
+            plugin.module || '',
+            plugin.type || plugin.name,
+            plugin.version || 'latest',
+            plugin.group || PluginGroupType.service,
+            true
+        );
+        customPlugin.custom = true;
+        customPlugin.dynamicPackage = true;
+        return Object.assign(customPlugin, plugin);
+    }
+    return null;
+}
+
+function _normalizeAddPluginOptions(options) {
+    if (options === true || options === false || options === undefined || options === null) {
+        return {};
+    }
+    return options;
+}
+
+function createDefaultPlugins() {
+    const registry = {};
+    registry['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '2.149.0', PluginGroupType.connectionDevice, true);
+    registry['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.9', PluginGroupType.connectionDevice, true);
+    registry['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4', PluginGroupType.connectionDevice, true);
+    registry['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.7', PluginGroupType.connectionDevice, true);
+    registry['ads-client'] = new Plugin('ads-client', './adsclient', 'ADSclient', '2.1.0', PluginGroupType.connectionDevice, true);
+    registry['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.17', PluginGroupType.connectionDevice, true);
+    registry['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8', PluginGroupType.connectionDatabase, true);
+    registry['chart.js'] = new Plugin('chart.js', './chartjs', 'Chart', '2.9.4', PluginGroupType.chartReport, true);
+    registry['chartjs-node-canvas'] = new Plugin('chartjs-node-canvas', 'chartjs-canvas', 'Chart', '3.2.0', PluginGroupType.chartReport, true);
+    registry['onoff'] = new Plugin('onoff', './gpio', 'GPIO', '6.0.3', PluginGroupType.connectionDevice, true);
+    registry['node-webcam'] = new Plugin('node-webcam', './webcam', 'WebCam', '0.8.2', PluginGroupType.connectionDevice, true);
+    registry['mcprotocol'] = new Plugin('mcprotocol', './melsec', 'MELSEC', '0.1.2', PluginGroupType.connectionDevice, true);
+    registry['node-red'] = new Plugin('node-red', './node-red', 'node-red', '4.1.0', PluginGroupType.service, true);
+    registry['redis'] = new Plugin('redis', './redis', 'REDIS', '5.8.2', PluginGroupType.connectionDevice, true);
+    return registry;
 }
 
 module.exports = {
@@ -269,4 +326,7 @@ function Plugin(name, module, type, version, group, dinamic) {
     this.pkg = false;
     this.group = group;
     this.dinamic = false || dinamic;
+    this.dynamicPackage = false;
+    this.custom = false;
+    this.canRemove = false;
 }
