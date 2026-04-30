@@ -117,8 +117,12 @@ function removeDevice(device) {
  */
 function load() {
     var tempdevices = runtime.project.getDevices();
+    var serverDevice = runtime.project.getServer();
     activeDevices = {};
     runtime.daqStorage.reset();
+    if (serverDevice) {
+        devices.loadDevice(serverDevice);
+    }
     // check existing or to add new
     for (var id in tempdevices) {
         if (tempdevices[id].enabled) {
@@ -437,7 +441,9 @@ async function setDeviceValue(deviceid, sigid, value, fnc) {
  * @param {*} status
  */
 function setDeviceConnectionStatus(deviceId, status) {
-    activeDevices[FuxaServerId].setDeviceConnectionStatus(deviceId, status);
+    if (activeDevices[FuxaServerId] && activeDevices[FuxaServerId].setDeviceConnectionStatus) {
+        activeDevices[FuxaServerId].setDeviceConnectionStatus(deviceId, status);
+    }
 }
 
 /**

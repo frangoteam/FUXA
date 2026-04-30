@@ -419,27 +419,27 @@ function start() {
 
 function stop() {
     return new Promise(function (resolve, reject) {
-        devices.stop().then(function () {
+        Promise.all([
+            devices.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-devices: ' + err);
+            }),
+            alarmsMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-alarms: ' + err);
+            }),
+            notificatorMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-notificatorMgr: ' + err);
+            }),
+            scriptsMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-scriptsMgr: ' + err);
+            }),
+            jobsMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-jobsMgr: ' + err);
+            })
+        ]).then(function () {
+            resolve(true);
         }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-devices: ' + err);
+            reject(err);
         });
-        alarmsMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-alarms: ' + err);
-        });
-        notificatorMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-notificatorMgr: ' + err);
-        });
-        scriptsMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-scriptsMgr: ' + err);
-        });
-        jobsMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-jobsMgr: ' + err);
-        });
-        resolve(true);
     });
 }
 
