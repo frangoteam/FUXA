@@ -3,6 +3,8 @@ export class AppSettings {
     language = 'en';
     /** Hide the editor onboarding wizard on editor entry */
     hideEditorOnboarding = false;
+    /** Per-section informational messages in editor areas */
+    editorSectionMessages = new EditorSectionMessagesSettings();
     /** Web server port */
     uiPort = 1881;
     /** Security access to enable user and authentication */
@@ -37,6 +39,17 @@ export class AppSettings {
     nodeRedAuthMode = 'secure';
     /** Enable Swagger */
     swaggerEnabled = false;
+}
+
+export class EditorSectionMessagesSettings {
+    /** Hide the drivers/plugins notice shown in device connections */
+    hideDevicePluginsNotice = false;
+
+    constructor(settings: Partial<EditorSectionMessagesSettings> = null) {
+        if (settings) {
+            this.hideDevicePluginsNotice = !!settings.hideDevicePluginsNotice;
+        }
+    }
 }
 
 export class SmtpSettings {

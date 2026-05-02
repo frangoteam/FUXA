@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
-import { AppSettings, DaqStore, SmtpSettings } from '../_models/settings';
+import { AppSettings, DaqStore, EditorSectionMessagesSettings, SmtpSettings } from '../_models/settings';
 
 @Injectable({
     providedIn: 'root'
@@ -61,6 +61,11 @@ export class SettingsService {
         }
         if (settings.hideEditorOnboarding !== this.appSettings.hideEditorOnboarding) {
             this.appSettings.hideEditorOnboarding = !!settings.hideEditorOnboarding;
+            dirty = true;
+        }
+        const nextEditorSectionMessages = new EditorSectionMessagesSettings(settings.editorSectionMessages);
+        if (nextEditorSectionMessages.hideDevicePluginsNotice !== this.appSettings.editorSectionMessages.hideDevicePluginsNotice) {
+            this.appSettings.editorSectionMessages = nextEditorSectionMessages;
             dirty = true;
         }
         if (settings.secureEnabled !== this.appSettings.secureEnabled ||

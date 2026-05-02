@@ -232,6 +232,13 @@ function mergeUserSettings(settings) {
     if (!utils.isNullOrUndefined(settings.hideEditorOnboarding)) {
         runtime.settings.hideEditorOnboarding = settings.hideEditorOnboarding;
     }
+    if (settings.editorSectionMessages) {
+        runtime.settings.editorSectionMessages = Object.assign(
+            {},
+            runtime.settings.editorSectionMessages || {},
+            settings.editorSectionMessages
+        );
+    }
     runtime.settings.broadcastAll = settings.broadcastAll;
     runtime.settings.secureEnabled = settings.secureEnabled;
     runtime.settings.logFull = settings.logFull;
