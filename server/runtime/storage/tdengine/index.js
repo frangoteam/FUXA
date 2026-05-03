@@ -8,7 +8,7 @@ function quoteTdIdentifier(value) {
 }
 
 function escapeTdString(value) {
-    return String(value).replace(/'/g, "''");
+    return String(value).replace(/\\/g, "\\\\").replace(/'/g, "''");
 }
 
 function TDengine(_settings, _log, _currentStorage) {
@@ -119,5 +119,8 @@ function TDengine(_settings, _log, _currentStorage) {
 module.exports = {
     create: function (data, logger, currentStorage) {
         return new TDengine(data, logger, currentStorage);
+    },
+    _private: {
+        escapeTdString
     }
 };
