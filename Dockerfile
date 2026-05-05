@@ -32,6 +32,22 @@ RUN if [ "$NODE_SNAP" = "true" ]; then npm install node-snap7; fi
 # Force rebuild of SQLite for the container
 RUN npm install --build-from-source --sqlite=/usr/bin sqlite3
 
+# Pre-install FUXA's runtime protocol plugins so they're present in the
+# slim runner stage. FUXA's plugin manager (server/runtime/plugins/index.js,
+# createDefaultPlugins) normally installs these via runtime npm — but the
+# stage-3 image has no build toolchain, so any plugin with native deps
+# fails to compile and the protocol disappears from the device dropdown.
+# Versions mirror createDefaultPlugins(); the set mirrors what the
+# upstream frangoteam/fuxa:latest ships pre-installed (node-opcua,
+# modbus-serial, node-bacnet, ads-client, node-red, odbc).
+RUN npm install --no-save --no-audit --no-fund \
+    node-opcua@2.149.0 \
+    modbus-serial@8.0.9 \
+    node-bacnet@0.2.4 \
+    ads-client@2.1.0 \
+    node-red@4.1.0 \
+    $( [ "$INSTALL_ODBC" = "true" ] && echo "odbc@2.4.8" )
+
 # Optional ODBC driver preparation
 WORKDIR /usr/src/app/FUXA/odbc
 COPY odbc/ ./
