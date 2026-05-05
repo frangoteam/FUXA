@@ -38,22 +38,25 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     @ViewChild(MatSort, {static: false}) sort: MatSort;
     @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
+    cardGap = 40;
+    laneSidePadding = 64;
+
     flowBorder = 5;
-    flowWidth = 160;
-    flowHeight = 70;
-    flowLineHeight = 60;
+    flowWidth = 190;
+    flowHeight = 92;
+    flowLineHeight = 80;
 
     deviceBorder = 5;
-    deviceWidth = 160;
-    deviceHeight = 90;
+    deviceWidth = 190;
+    deviceHeight = 110;
     deviceLineHeight = 60;
 
     lineFlowSize = 6;
-    lineFlowHeight = 60;
+    lineFlowHeight = 70;
     lineDeviceSize = 6;
-    mainDeviceLineHeight = 60;
-    mainWidth = 160;
-    mainHeight = 90;
+    mainDeviceLineHeight = 120;
+    mainWidth = 190;
+    mainHeight = 110;
     mainBorder = 5;
 
     server: Device;
@@ -172,14 +175,29 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
             result = this.elementRef.nativeElement.parentElement.clientWidth;
         }
         if (this.devices) {
-            if (result < (this.plcs().length + 2) * this.deviceWidth) {
-                result = (this.plcs().length + 2) * this.deviceWidth;
-            }
-            if (result < (this.flows().length + 2) * this.deviceWidth) {
-                result = (this.flows().length + 2) * this.deviceWidth;
-            }
+            result = Math.max(result, this.getLaneRequiredWidth(this.plcs().length, this.deviceWidth), this.getLaneRequiredWidth(this.flows().length, this.flowWidth));
         }
         return result;
+    }
+
+    private getLaneRequiredWidth(count: number, cardWidth: number) {
+        if (!count) {
+            return cardWidth + this.laneSidePadding * 2;
+        }
+        return count * cardWidth + Math.max(0, count - 1) * this.cardGap + this.laneSidePadding * 2;
+    }
+
+    private getLaneStart(count: number, cardWidth: number) {
+        const laneWidth = this.getLaneRequiredWidth(count, cardWidth);
+        return Math.max(this.laneSidePadding, (this.getWindowWidth() - laneWidth) / 2 + this.laneSidePadding);
+    }
+
+    private getLaneLeftPosition(index: number, count: number, cardWidth: number) {
+        return this.getLaneStart(count, cardWidth) + index * (cardWidth + this.cardGap);
+    }
+
+    private getLaneCenterX(index: number, count: number, cardWidth: number, borderWidth: number, lineSize: number) {
+        return this.getLaneLeftPosition(index, count, cardWidth) + borderWidth + cardWidth / 2 - lineSize / 2;
     }
 
     private getHorizontalCenter() {
@@ -234,17 +252,11 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.devices) {
             if (type === 'flow') {
                 if (this.flows().length) {
-                    let pos = index + 1;
-                    let centerd = this.flows().length + 1;
-                    let result = ((this.getWindowWidth() - this.flowWidth) / centerd) * pos;
-                    return result;
+                    return this.getLaneLeftPosition(index, this.flows().length, this.flowWidth);
                 }
             } else {
                 if (this.plcs().length) {
-                    let pos = index + 1;
-                    let centerd = this.plcs().length + 1;
-                    let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * pos;
-                    return result;
+                    return this.getLaneLeftPosition(index, this.plcs().length, this.deviceWidth);
                 }
             }
         }
@@ -274,19 +286,11 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         if (this.devices) {
             if (type === 'flow') {
                 if (this.flows().length) {
-                    let pos = index + 1;
-                    let centerd = this.flows().length + 1;
-                    let result = ((this.getWindowWidth() - this.flowWidth) / centerd) * pos;
-                    result += this.flowBorder + this.flowWidth / 2 - this.lineDeviceSize / 2;
-                    return result;
+                    return this.getLaneCenterX(index, this.flows().length, this.flowWidth, this.flowBorder, this.lineDeviceSize);
                 }
             } else {
                 if (this.plcs().length) {
-                    let pos = index + 1;
-                    let centerd = this.plcs().length + 1;
-                    let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * pos;
-                    result += this.deviceBorder + this.deviceWidth / 2 - this.lineDeviceSize / 2;
-                    return result;
+                    return this.getLaneCenterX(index, this.plcs().length, this.deviceWidth, this.deviceBorder, this.lineDeviceSize);
                 }
             }
         }
@@ -303,15 +307,9 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
 
     getDeviceConnectionLeftPosition(type = null) {
         if (type === 'flow') {
-            let centerd = this.flows().length + 1;
-            let result = ((this.getWindowWidth() - this.flowWidth) / centerd) * 1;
-            result += this.deviceBorder + (this.flowWidth - this.lineFlowSize) / 2;
-            return result;
+            return this.getLaneCenterX(0, this.flows().length, this.flowWidth, this.flowBorder, this.lineFlowSize);
         } else {
-            let centerd = this.plcs().length + 1;
-            let result = ((this.getWindowWidth() - this.deviceWidth) / centerd) * 1;
-            result += this.deviceBorder + (this.deviceWidth - this.lineDeviceSize) / 2;
-            return result;
+            return this.getLaneCenterX(0, this.plcs().length, this.deviceWidth, this.deviceBorder, this.lineDeviceSize);
         }
     }
 
@@ -328,16 +326,20 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
             if (type === 'flow') {
                 let count = this.flows().length;
                 if (count) {
-                    let centerd = this.flows().length + 1;
-                    let result = (((this.getWindowWidth() - this.flowWidth) / centerd) * count) - (((this.getWindowWidth() - this.flowWidth) / centerd) * 1);
-                    return result;
+                    if (count === 1) {
+                        return 0;
+                    }
+                    return this.getLaneCenterX(count - 1, count, this.flowWidth, this.flowBorder, this.lineFlowSize)
+                        - this.getLaneCenterX(0, count, this.flowWidth, this.flowBorder, this.lineFlowSize);
                 }
             } else {
                 let count = this.plcs().length;
                 if (count) {
-                    let centerd = this.plcs().length + 1;
-                    let result = (((this.getWindowWidth() - this.deviceWidth) / centerd) * count) - (((this.getWindowWidth() - this.deviceWidth) / centerd) * 1);
-                    return result;
+                    if (count === 1) {
+                        return 0;
+                    }
+                    return this.getLaneCenterX(count - 1, count, this.deviceWidth, this.deviceBorder, this.lineDeviceSize)
+                        - this.getLaneCenterX(0, count, this.deviceWidth, this.deviceBorder, this.lineDeviceSize);
                 }
             }
         }
@@ -421,6 +423,46 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
             }
         }
         return result;
+    }
+
+    getDeviceIcon(device: Device) {
+        if (!device) {
+            return 'devices';
+        }
+        switch (device.type) {
+            case DeviceType.FuxaServer:
+                return 'hub';
+            case DeviceType.WebAPI:
+                return 'api';
+            case DeviceType.ODBC:
+                return 'storage';
+            case DeviceType.MQTTclient:
+                return 'rss_feed';
+            case DeviceType.internal:
+                return 'memory';
+            case DeviceType.WebCam:
+                return 'videocam';
+            case DeviceType.GPIO:
+                return 'settings_input_component';
+            default:
+                return 'developer_board';
+        }
+    }
+
+    getDeviceAccentClass(device: Device) {
+        if (!device) {
+            return 'accent-device';
+        }
+        if (device.type === DeviceType.FuxaServer) {
+            return 'accent-server';
+        }
+        if (device.type === DeviceType.internal) {
+            return 'accent-internal';
+        }
+        if (device.type === DeviceType.WebAPI || device.type === DeviceType.ODBC) {
+            return 'accent-flow';
+        }
+        return 'accent-device';
     }
 
     getDeviceStatusColor(device: Device) {
