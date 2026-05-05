@@ -1305,6 +1305,8 @@
     "gauges.property-input-convertion-string": "String",
     "gauges.property-input-maxlength": "Max length",
     "gauges.property-input-readonly": "Readonly",
+    "gauges.property-icon": "Icon",
+    "gauges.property-icons-filter": "Icons Filter",
 
     "gauges.property-update-enabled": "Enable update",
     "gauges.property-update-esc": "ESC update",
