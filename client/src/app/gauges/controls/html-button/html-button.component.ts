@@ -51,11 +51,51 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
         if (ele && gab.property) {
             let htmlButton = Utils.searchTreeStartWith(ele, this.prefixB);
             if (htmlButton) {
-                let text = textTranslation || gab.property.text || gab.name;
-                htmlButton.innerHTML = (text) ? text : '<span>&nbsp;</span>';
+                const icon = gab.property.icon;
+                const image = gab.property.image;
+                let text = textTranslation || gab.property.text;
+                if (!icon && !image) {
+                    text = text || gab.name;
+                }
+                this.setButtonContent(htmlButton, text, icon, image);
             }
         }
         return ele;
+    }
+
+    private static setButtonContent(htmlButton: HTMLElement, text: string, icon?: string, image?: string) {
+        if (!icon && !image) {
+            htmlButton.innerHTML = (text) ? text : '<span>&nbsp;</span>';
+            return;
+        }
+
+        htmlButton.innerHTML = '';
+        htmlButton.style.display = 'inline-flex';
+        htmlButton.style.alignItems = 'center';
+        htmlButton.style.justifyContent = 'center';
+        htmlButton.style.gap = '8px';
+
+        if (image) {
+            const img = document.createElement('img');
+            img.src = image;
+            img.style.width = '1em';
+            img.style.height = '1em';
+            img.style.objectFit = 'contain';
+            htmlButton.appendChild(img);
+        } else if (icon) {
+            const iconElement = document.createElement('span');
+            iconElement.className = 'material-icons';
+            iconElement.style.fontSize = '1em';
+            iconElement.style.lineHeight = '1';
+            iconElement.textContent = icon;
+            htmlButton.appendChild(iconElement);
+        }
+
+        if (text) {
+            const textElement = document.createElement('span');
+            textElement.textContent = text;
+            htmlButton.appendChild(textElement);
+        }
     }
 
     static initElementColor(bkcolor, color, ele) {

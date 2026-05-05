@@ -24,7 +24,15 @@
 						</div>
 						<div class="my-form-field ml10" *ngIf="isTextToShow()">
 							<span>{{'gauges.property-text' | translate}}</span>
-							<input [(ngModel)]="property.text" style="width: 270px" type="text" placeholder="{{'gauges.property-language-text' | translate}}">
+							<input [(ngModel)]="property.text" style="width: 250px" type="text" placeholder="{{'gauges.property-language-text' | translate}}">
+						</div>
+						<div class="my-form-field ml10" *ngIf="isButton()">
+							<span>{{'gauges.property-icon' | translate}}</span>
+							<app-icon-selector
+								[(value)]="property.icon"
+								[filterPlaceholder]="'gauges.property-icons-filter'"
+								(selected)="property.image = ''">
+							</app-icon-selector>
 						</div>
 						<div class="my-form-field" style="padding-left: 100px" *ngIf="isReadonlyToShow()">
 							<span>{{'gauges.property-readonly' | translate}}</span>
