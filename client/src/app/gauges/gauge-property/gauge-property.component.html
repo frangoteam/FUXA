@@ -26,7 +26,7 @@
 							<span>{{'gauges.property-text' | translate}}</span>
 							<input [(ngModel)]="property.text" style="width: 250px" type="text" placeholder="{{'gauges.property-language-text' | translate}}">
 						</div>
-						<div class="my-form-field ml10" *ngIf="isButton()">
+						<div class="my-form-field ml10 icon-property-field" *ngIf="isButton()">
 							<span>{{'gauges.property-icon' | translate}}</span>
 							<app-icon-selector
 								[(value)]="property.icon"

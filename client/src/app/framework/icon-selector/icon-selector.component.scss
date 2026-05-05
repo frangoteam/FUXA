@@ -1,7 +1,32 @@
 :host {
+    display: inline-block;
+    vertical-align: bottom;
+
     .icons-selector {
         width: 60px;
         height: 30px;
+    }
+
+    ::ng-deep .icons-selector .mat-mdc-select-trigger {
+        align-items: center;
+        height: 30px;
+        min-height: 30px;
+        box-sizing: border-box;
+    }
+
+    ::ng-deep .icons-selector .mat-mdc-select-value,
+    ::ng-deep .icons-selector .mat-mdc-select-value-text,
+    ::ng-deep .icons-selector .mat-mdc-select-min-line {
+        display: inline-flex;
+        align-items: center;
+        height: 100%;
+    }
+
+    ::ng-deep .icons-selector mat-icon {
+        width: 22px;
+        height: 22px;
+        font-size: 22px;
+        line-height: 22px;
     }
 }
 
