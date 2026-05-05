@@ -158,7 +158,7 @@ async function addPlugin(plugin, options) {
         normalized.pkg = current.pkg;
     }
 
-    if (normalized.module && normalized.type) {
+    if (normalized.group !== PluginGroupType.service && normalized.module && normalized.type) {
         await device.loadPlugin(normalized.type, normalized.module);
     }
     plugins[normalized.name] = normalized;
@@ -291,12 +291,12 @@ function _normalizeAddPluginOptions(options) {
 function createDefaultPlugins() {
     const registry = {};
     registry['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '2.149.0', PluginGroupType.connectionDevice, true);
-    registry['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.9', PluginGroupType.connectionDevice, true);
+    registry['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.19', PluginGroupType.connectionDevice, true);
     registry['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4', PluginGroupType.connectionDevice, true);
-    registry['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.7', PluginGroupType.connectionDevice, true);
+    registry['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.9', PluginGroupType.connectionDevice, true);
     registry['ads-client'] = new Plugin('ads-client', './adsclient', 'ADSclient', '2.1.0', PluginGroupType.connectionDevice, true);
     registry['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.17', PluginGroupType.connectionDevice, true);
-    registry['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8', PluginGroupType.connectionDatabase, true);
+    registry['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.9', PluginGroupType.connectionDatabase, true);
     registry['chart.js'] = new Plugin('chart.js', './chartjs', 'Chart', '2.9.4', PluginGroupType.chartReport, true);
     registry['chartjs-node-canvas'] = new Plugin('chartjs-node-canvas', 'chartjs-canvas', 'Chart', '3.2.0', PluginGroupType.chartReport, true);
     registry['onoff'] = new Plugin('onoff', './gpio', 'GPIO', '6.0.3', PluginGroupType.connectionDevice, true);

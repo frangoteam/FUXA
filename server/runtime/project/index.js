@@ -731,6 +731,13 @@ function getDevices() {
 }
 
 /**
+ * Return internal FUXA server device
+ */
+function getServer() {
+    return data.devices['0'] || data.server || null;
+}
+
+/**
  * Return Device from name
  */
 function getDevice(name) {
@@ -1079,6 +1086,7 @@ module.exports = {
     init: init,
     load: load,
     getDevices: getDevices,
+    getServer: getServer,
     getDevice: getDevice,
     getAlarms: getAlarms,
     getNotifications: getNotifications,
