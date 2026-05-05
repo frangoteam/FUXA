@@ -224,6 +224,8 @@ export class GaugeProperty {
     options: any;
     readonly: boolean;
     text: string;               // Text property (used by button)
+    icon?: string;              // Optional Material icon (used by button)
+    image?: string;             // Optional image resource (used by button)
 }
 
 export interface PermissionRoles {
