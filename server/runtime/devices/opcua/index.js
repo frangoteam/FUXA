@@ -485,7 +485,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     var _createSubscription = function () {
         if (the_session) {
             const parameters = {
-                requestedPublishingInterval: data.polling || 100,
+                requestedPublishingInterval: data.polling || 500,
                 requestedLifetimeCount: 600,
                 requestedMaxKeepAliveCount: 10,
                 maxNotificationsPerPublish: 0,
