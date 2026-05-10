@@ -1,6 +1,6 @@
 
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { Observable, Subject, firstValueFrom } from 'rxjs';
+import { Observable, Subject, firstValueFrom, of } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project';
@@ -195,6 +195,50 @@ export class ProjectService {
                 }
             });
         }
+    }
+
+    exportAlarms() {
+        const name = this.projectData.name || 'fuxa';
+        let filename = `${name}-alarms.json`;
+        if (this.getProjectName()) {
+            filename = `${this.getProjectName()}-alarms.json`;
+        }
+        const alarms = <Alarm[]>JSON.parse(JSON.stringify(this.getAlarms()));
+        const content = JSON.stringify(alarms, null, 2);
+        let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        FileSaver.saveAs(blob, filename);
+    }
+
+    importAlarms(alarms: Alarm[]): Observable<boolean> {
+        if (!Array.isArray(alarms)) {
+            return of(false);
+        }
+
+        const validAlarms = alarms.filter(alarm => alarm?.name);
+        if (!validAlarms.length) {
+            return of(true);
+        }
+
+        return new Observable<boolean>(observer => {
+            let pending = validAlarms.length;
+            let failed = false;
+            validAlarms.forEach(alarm => {
+                this.setAlarm(alarm, null).subscribe(() => {
+                    pending--;
+                    if (pending === 0) {
+                        observer.next(!failed);
+                        observer.complete();
+                    }
+                }, err => {
+                    failed = true;
+                    pending--;
+                    if (pending === 0) {
+                        observer.next(false);
+                        observer.complete();
+                    }
+                });
+            });
+        });
     }
 
     reload() {
@@ -497,7 +541,7 @@ export class ProjectService {
     /**
      * save the alarm to project
      */
-    setAlarm(alarm: Alarm, old: Alarm) {
+    setAlarm(alarm: Alarm, old?: Alarm) {
         return new Observable((observer) => {
             if (!this.projectData.alarms) {
                 this.projectData.alarms = [];
@@ -515,7 +559,7 @@ export class ProjectService {
                 this.projectData.alarms.push(alarm);
             }
             this.storage.setServerProjectData(ProjectDataCmdType.SetAlarm, alarm, this.projectData).subscribe(result => {
-                if (old && old.name && old.name !== alarm.name) {
+                if (old?.name && old.name !== alarm.name) {
                     this.removeAlarm(old).subscribe(result => {
                         observer.next(null);
                     });

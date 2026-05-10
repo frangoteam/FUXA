@@ -34,6 +34,7 @@ import { GraphConfigComponent } from './editor/graph-config/graph-config.compone
 import { CardConfigComponent } from './editor/card-config/card-config.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
+import { AlarmImportDialogComponent } from './alarms/alarm-list/alarm-import-dialog/alarm-import-dialog.component';
 import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.component';
 import { NotificationListComponent } from './notifications/notification-list/notification-list.component';
 import { NotificationPropertyComponent } from './notifications/notification-property/notification-property.component';
@@ -346,6 +347,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         GraphConfigComponent,
         CardConfigComponent,
         AlarmListComponent,
+        AlarmImportDialogComponent,
         AlarmViewComponent,
         AlarmPropertyComponent,
         NotificationListComponent,
