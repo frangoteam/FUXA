@@ -146,8 +146,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private loadVariableMapping(variablesMapped?: any) {
+    public loadVariableMapping(variablesMapped?: any) {
         try {
+            this.plainVariableMapping = {};
             if (variablesMapped) {
                 this.variablesMapping = variablesMapped;
             }
