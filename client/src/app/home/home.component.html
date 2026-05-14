@@ -6,52 +6,77 @@
 	<mat-sidenav #matsidenav *ngIf="showNavigation && showSidenav" class="sidenav" [mode]="showSidenav">
 		<app-sidenav #sidenav [sidenav]="matsidenav" (goToPage)="onGoToPage($event)" (goToLink)="onGoToLink($event)"></app-sidenav>
 	</mat-sidenav>
-	<mat-sidenav-content [style.background-color]="backgroudColor" (click)="checkToCloseSideNav()">
-		<div *ngIf="showNavigation" class="header" [style.background-color]="layoutHeader.bkcolor" [style.color]="layoutHeader.fgcolor">
+	<mat-sidenav-content
+		[style.--header-height]="layoutHeader.height + 'px'"
+		[style.--header-button-height]="layoutHeader.buttonHeight + 'px'"
+		[style.background-color]="backgroudColor"
+		(click)="checkToCloseSideNav()">
+		<div *ngIf="showNavigation"
+			 class="header"
+			 [style.--header-height]="layoutHeader.height + 'px'"
+			 [style.--header-button-height]="layoutHeader.buttonHeight + 'px'"
+			 [style.background-color]="layoutHeader.bkcolor"
+			 [style.color]="layoutHeader.fgcolor">
 			<div *ngIf="showSidenav && showSidenav !== 'side'" class="header-menu">
 				<button mat-icon-button
 					(click)="$event.stopPropagation(); (matsidenav.opened) ? matsidenav.close() : matsidenav.open()">
 					<mat-icon aria-label="Menu">menu</mat-icon>
 				</button>
 			</div>
-			<div #header class="header-items-button" [style.textAlign]="layoutHeader.itemsAnchor">
+			<div #header
+				 class="header-items-button"
+				 [style.textAlign]="layoutHeader.itemsAnchor"
+				 [style.justifyContent]="layoutHeader.itemsAnchor === 'right' ? 'flex-end' : layoutHeader.itemsAnchor">
 				<ng-container *ngFor="let item of layoutHeader.items; let i = index" [ngSwitch]="item.type">
 					<ng-container *ngSwitchCase="'button'">
 						<button mat-raised-button
 								[id]="item.id"
+								[style.--header-item-button-height]="item.height ? item.height + 'px' : null"
 								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor"
 								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
 								[style.fontFamily]="layoutHeader.fontFamily"
 								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
 								[style.marginLeft.px]="item.marginLeft"
 								[style.marginRight.px]="item.marginRight">
-							<mat-icon *ngIf="item.icon"
-									  style="font-size: 1.5rem; height: 1.5rem; width: 1.5rem;">
-								{{item.icon}}
-							</mat-icon>
+							<img *ngIf="item.image; else headerButtonIcon" class="header-item-button-image" [src]="item.image" alt="">
+							<ng-template #headerButtonIcon>
+								<mat-icon *ngIf="item.icon"
+										  class="header-item-icon">
+									{{item.icon}}
+								</mat-icon>
+							</ng-template>
 							{{ item.text ?? item.type }}
 						</button>
 					</ng-container>
 					<ng-container *ngSwitchCase="'label'">
 						<button mat-button
 								[id]="item.id"
+								[style.--header-item-button-height]="item.height ? item.height + 'px' : null"
 								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor"
 								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
 								[style.fontFamily]="layoutHeader.fontFamily"
 								[style.fontSize]="layoutHeader.fontSize + 'px !important'"
 								[style.marginLeft.px]="item.marginLeft"
 								[style.marginRight.px]="item.marginRight">
+							<img *ngIf="item.image; else headerLabelIcon" class="header-item-label-image" [src]="item.image" alt="">
+							<ng-template #headerLabelIcon>
+								<mat-icon *ngIf="item.icon" class="header-item-icon">{{item.icon}}</mat-icon>
+							</ng-template>
 							{{ item.text ?? item.type }}
 						</button>
 					</ng-container>
 					<ng-container *ngSwitchCase="'image'">
 						<button mat-icon-button
 								[id]="item.id"
+								[style.--header-item-button-height]="item.height ? item.height + 'px' : null"
 								[style.background-color]="item.bkcolor ?? layoutHeader.bkcolor"
 								[style.color]="item.fgcolor ?? layoutHeader.fgcolor"
 								[style.marginLeft.px]="item.marginLeft"
 								[style.marginRight.px]="item.marginRight">
-							<mat-icon>{{ item.icon }}</mat-icon>
+							<img *ngIf="item.image; else headerImageIcon" class="header-item-image" [src]="item.image" alt="">
+							<ng-template #headerImageIcon>
+								<mat-icon class="header-item-icon">{{ item.icon }}</mat-icon>
+							</ng-template>
 						</button>
 					</ng-container>
 				</ng-container>
@@ -113,7 +138,11 @@
 				</div>
 			</div>
 		</div>
-		<div id="container"  [ngClass]="showNavigation?'home-container-nav':'home-container'" #container (click)="checkToCloseSideNav()">
+		<div id="container"
+			 [ngClass]="showNavigation?'home-container-nav':'home-container'"
+			 [style.top.px]="showNavigation ? layoutHeader.height : 0"
+			 #container
+			 (click)="checkToCloseSideNav()">
 			<ng-container *ngIf="!showHomeLink && homeView">
 				<ng-container [ngSwitch]="homeView.type">
 					<ng-container *ngSwitchCase="cardViewType">

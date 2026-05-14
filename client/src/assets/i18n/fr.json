@@ -61,6 +61,8 @@
   "dlg.layout-lbl-infos": "Mode de notification d'informations",
   "dlg.layout-lbl-font": "Famille de police",
   "dlg.layout-lbl-font-size": "Taille de police",
+  "dlg.layout-lbl-height": "Hauteur",
+  "dlg.layout-lbl-button-height": "Hauteur bouton",
   "dlg.layout-lbl-anchor": "Direction",
   "dlg.layout-lbl-margin-left": "Marge gauche",
   "dlg.layout-lbl-margin-right": "Marge droite",

@@ -61,6 +61,8 @@
     "dlg.layout-lbl-infos": "Läge för info-notis",
     "dlg.layout-lbl-font": "Typsnitt",
     "dlg.layout-lbl-font-size": "Teckenstorlek",
+    "dlg.layout-lbl-height": "Höjd",
+    "dlg.layout-lbl-button-height": "Knapphöjd",
     "dlg.layout-lbl-anchor": "Riktning",
     "dlg.layout-lbl-margin-left": "Vänstermarginal",
     "dlg.layout-lbl-margin-right": "Högermarginal",

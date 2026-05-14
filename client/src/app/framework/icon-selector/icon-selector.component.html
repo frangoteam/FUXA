@@ -6,8 +6,15 @@
     [ngStyle]="{ width: width, height: height }"
     #iconsel>
     <mat-select-trigger>
-        <mat-icon>{{iconsel.value}}</mat-icon>
+        <img *ngIf="image; else iconTrigger" class="icon-selector-image" [src]="image" alt="">
+        <ng-template #iconTrigger>
+            <mat-icon>{{iconsel.value}}</mat-icon>
+        </ng-template>
     </mat-select-trigger>
+    <mat-option *ngIf="allowImage" [value]="'image'" (click)="imagefile.value = '';imagefile.click();">
+        {{ imageLabel | translate }}
+        <input #imagefile type="file" style="display: none;" (change)="onImageSelected($event)" accept="image/png|jpg|svg" />
+    </mat-option>
     <mat-option>
         <div class="my-form-field">
             <input

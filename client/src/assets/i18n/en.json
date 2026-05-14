@@ -61,6 +61,8 @@
     "dlg.layout-lbl-infos": "Info notification mode",
     "dlg.layout-lbl-font": "Font family",
     "dlg.layout-lbl-font-size": "Font size",
+    "dlg.layout-lbl-height": "Height",
+    "dlg.layout-lbl-button-height": "Button height",
     "dlg.layout-lbl-anchor": "Direction",
     "dlg.layout-lbl-margin-left": "Margin left",
     "dlg.layout-lbl-margin-right": "Margin right",

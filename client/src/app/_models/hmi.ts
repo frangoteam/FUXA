@@ -127,6 +127,8 @@ export class HeaderSettings {
     infos: NotificationModeType;
     bkcolor = '#ffffff';
     fgcolor = '#000000';
+    height = 46;
+    buttonHeight = 36;
     fontFamily: string;
     fontSize = 13;
     items: HeaderItem[];
@@ -145,6 +147,7 @@ export interface HeaderItem {
     fgcolor: string;
     marginLeft: number;
     marginRight: number;
+    height?: number;
     property: GaugeProperty;
     status: GaugeStatus;
     element: HTMLElement;
