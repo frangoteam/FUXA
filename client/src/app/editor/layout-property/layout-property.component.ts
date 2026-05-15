@@ -275,6 +275,19 @@ export class LayoutPropertyComponent implements OnInit, OnDestroy {
         this.dialogRef.close();
     }
 
+    onOkClick(): void {
+        this.normalizeHeaderSize('height');
+        this.normalizeHeaderSize('buttonHeight');
+        this.dialogRef.close(this.data);
+    }
+
+    private normalizeHeaderSize(property: 'height' | 'buttonHeight'): void {
+        const value = this.data.layout.header?.[property];
+        if (value === null || value === undefined || `${value}` === '') {
+            delete (this.data.layout.header as any)[property];
+        }
+    }
+
     toggleSubMenu(item: NaviItem) {
         if (item.id && item.children?.length) {
             if (this.expandedItems.has(item.id)) {

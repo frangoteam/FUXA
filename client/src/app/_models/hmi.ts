@@ -122,11 +122,16 @@ export class NaviItem {
 }
 
 export class HeaderSettings {
+    static readonly DefaultHeight = 46;
+    static readonly DefaultButtonHeight = 36;
+
     title: string;
     alarms: NotificationModeType;
     infos: NotificationModeType;
     bkcolor = '#ffffff';
     fgcolor = '#000000';
+    height = HeaderSettings.DefaultHeight;
+    buttonHeight = HeaderSettings.DefaultButtonHeight;
     fontFamily: string;
     fontSize = 13;
     items: HeaderItem[];
@@ -145,6 +150,7 @@ export interface HeaderItem {
     fgcolor: string;
     marginLeft: number;
     marginRight: number;
+    height?: number;
     property: GaugeProperty;
     status: GaugeStatus;
     element: HTMLElement;

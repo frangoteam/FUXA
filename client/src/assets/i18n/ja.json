@@ -61,6 +61,8 @@
     "dlg.layout-lbl-infos": "情報通知モード",
     "dlg.layout-lbl-font": "フォントファミリー",
     "dlg.layout-lbl-font-size": "フォントサイズ",
+    "dlg.layout-lbl-height": "高さ",
+    "dlg.layout-lbl-button-height": "ボタンの高さ",
     "dlg.layout-lbl-anchor": "方向",
     "dlg.layout-lbl-margin-left": "左マージン",
     "dlg.layout-lbl-margin-right": "右マージン",

@@ -58,6 +58,8 @@
     "dlg.layout-lbl-infos": "Info-Benachrichtigungsmodus",
     "dlg.layout-lbl-font": "Schriftart",
     "dlg.layout-lbl-font-size": "Schriftgröße",
+    "dlg.layout-lbl-height": "Höhe",
+    "dlg.layout-lbl-button-height": "Button-Höhe",
     "dlg.layout-lbl-anchor": "Richtung",
     "dlg.layout-lbl-margin-left": "Linker Rand",
     "dlg.layout-lbl-margin-right": "Rechter Rand",

@@ -92,6 +92,9 @@ export class SetupComponent {
         }
         let dialogRef = this.dialog.open(LayoutPropertyComponent, {
             position: { top: '60px' },
+            width: '80vw',
+            minWidth: '950px',
+            maxWidth: 'none',
             data: <ILayoutPropertyData>{ layout: templayout, views: hmi.views, securityEnabled: this.projectService.isSecurityEnabled() }
         });
         dialogRef.afterClosed().subscribe(result => {

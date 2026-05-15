@@ -28,6 +28,12 @@
         font-size: 22px;
         line-height: 22px;
     }
+
+    .icon-selector-image {
+        max-height: 24px;
+        max-width: 24px;
+        vertical-align: middle;
+    }
 }
 
 ::ng-deep .icon-selector-panel .mat-pseudo-checkbox,
