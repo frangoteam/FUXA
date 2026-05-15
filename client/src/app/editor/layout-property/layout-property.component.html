@@ -223,8 +223,8 @@
             <mat-tab label="{{'dlg.layout-header' | translate}}">
                 <div class="tab-container">
                     <div class="header-layout"
-                         [style.--header-height]="data.layout.header.height + 'px'"
-                         [style.--header-button-height]="data.layout.header.buttonHeight + 'px'"
+                         [style.--header-height]="data.layout.header.height ? data.layout.header.height + 'px' : null"
+                         [style.--header-button-height]="data.layout.header.buttonHeight ? data.layout.header.buttonHeight + 'px' : null"
                          [style.background-color]="data.layout.header.bkcolor"
                          [style.color]="data.layout.header.fgcolor">
                         <div class="header-menu">
@@ -479,6 +479,6 @@
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button [mat-dialog-close]="">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>
 </div>

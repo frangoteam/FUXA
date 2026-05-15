@@ -38,54 +38,66 @@
         display: flex;
         z-index: 9999 !important;
         box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2) !important;
-        height: var(--header-height, 46px);
+        --default-header-height: 46px;
+        --default-header-button-height: 36px;
+        height: var(--header-height, var(--default-header-height));
         padding-left: 4px;
         padding-right: 10px;
         background-color: rgba(255, 255, 255, 1);
-        line-height: var(--header-height, 46px);
+        line-height: var(--header-height, var(--default-header-height));
+        --effective-header-button-height: var(--header-item-button-height, var(--header-button-height, var(--default-header-button-height)));
+        --header-button-icon-size: calc(var(--effective-header-button-height) - 8px);
+        --header-item-icon-size: calc(var(--effective-header-button-height) - 12px);
+        --header-label-icon-size: calc(var(--effective-header-button-height) - 14px);
 
         button[mat-button],
         button[mat-raised-button],
         button[mat-icon-button] {
-            height: var(--header-item-button-height, var(--header-button-height, 36px));
-            min-height: var(--header-item-button-height, var(--header-button-height, 36px));
+            --effective-header-button-height: var(--header-item-button-height, var(--header-button-height, var(--default-header-button-height)));
+            --header-button-icon-size: calc(var(--effective-header-button-height) - 8px);
+            --header-item-icon-size: calc(var(--effective-header-button-height) - 12px);
+            --header-label-icon-size: calc(var(--effective-header-button-height) - 14px);
+            height: var(--effective-header-button-height);
+            min-height: var(--effective-header-button-height);
             line-height: normal;
         }
 
         button[mat-icon-button] {
-            width: var(--header-item-button-height, var(--header-button-height, 36px));
+            width: var(--effective-header-button-height);
             padding: 0;
         }
 
         ::ng-deep .mat-mdc-icon-button {
-            --mdc-icon-button-state-layer-size: var(--header-item-button-height, var(--header-button-height, 36px));
-            width: var(--header-item-button-height, var(--header-button-height, 36px));
-            height: var(--header-item-button-height, var(--header-button-height, 36px));
+            --effective-header-button-height: var(--header-item-button-height, var(--header-button-height, var(--default-header-button-height)));
+            --header-button-icon-size: calc(var(--effective-header-button-height) - 8px);
+            --mdc-icon-button-state-layer-size: var(--effective-header-button-height);
+            width: var(--effective-header-button-height);
+            height: var(--effective-header-button-height);
             padding: 0;
-            line-height: var(--header-item-button-height, var(--header-button-height, 36px));
+            line-height: var(--effective-header-button-height);
         }
 
         ::ng-deep .mat-mdc-icon-button .mat-mdc-button-touch-target {
-            width: var(--header-item-button-height, var(--header-button-height, 36px));
-            height: var(--header-item-button-height, var(--header-button-height, 36px));
+            width: var(--effective-header-button-height);
+            height: var(--effective-header-button-height);
         }
 
         ::ng-deep .mat-mdc-icon-button mat-icon {
-            width: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 8px);
-            height: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 8px);
-            font-size: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 8px);
-            line-height: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 8px);
+            width: var(--header-button-icon-size);
+            height: var(--header-button-icon-size);
+            font-size: var(--header-button-icon-size);
+            line-height: var(--header-button-icon-size);
         }
 
         .header-items-button {
             flex: 1;
             align-items: center;
             display: flex;
-            line-height: var(--header-height, 46px);
+            line-height: var(--header-height, var(--default-header-height));
 
             .header-item-image {
-                max-height: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 8px);
-                max-width: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 8px);
+                max-height: var(--header-button-icon-size);
+                max-width: var(--header-button-icon-size);
                 vertical-align: middle;
             }
 
@@ -99,22 +111,22 @@
             }
 
             .header-item-button-image {
-                max-height: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 12px);
-                max-width: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 8px);
+                max-height: var(--header-item-icon-size);
+                max-width: var(--header-button-icon-size);
                 object-fit: contain;
             }
 
             .header-item-label-image {
-                max-height: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 14px);
-                max-width: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 10px);
+                max-height: var(--header-label-icon-size);
+                max-width: calc(var(--effective-header-button-height) - 10px);
                 object-fit: contain;
             }
 
             .header-item-icon {
-                width: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 12px);
-                height: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 12px);
-                font-size: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 12px);
-                line-height: calc(var(--header-item-button-height, var(--header-button-height, 36px)) - 12px);
+                width: var(--header-item-icon-size);
+                height: var(--header-item-icon-size);
+                font-size: var(--header-item-icon-size);
+                line-height: var(--header-item-icon-size);
             }
 
             ::ng-deep .mat-mdc-button,
@@ -134,12 +146,12 @@
         .header-menu {
             display: flex;
             align-items: center;
-            height: var(--header-height, 46px);
+            height: var(--header-height, var(--default-header-height));
             margin-right: 8px;
             margin-left: 8px;
 
             mat-icon {
-                line-height: calc(var(--header-button-height, 36px) - 8px);
+                line-height: var(--header-button-icon-size);
             }
         }
     }
@@ -147,8 +159,8 @@
     .header-login {
         display: flex;
         align-items: center;
-        height: var(--header-height, 46px);
-        line-height: var(--header-height, 46px);
+        height: var(--header-height, var(--default-header-height));
+        line-height: var(--header-height, var(--default-header-height));
         border-left-width: 1px;
         border-left-style: solid;
         padding-left: 10px;
@@ -157,7 +169,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            height: var(--header-height, 46px);
+            height: var(--header-height, var(--default-header-height));
             max-width: 140px;
         }
         .primary {
@@ -196,20 +208,20 @@
         padding-right: 10px;
         display: flex;
         align-items: center;
-        height: var(--header-height, 46px);
+        height: var(--header-height, var(--default-header-height));
         gap: 4px;
     }
 
     .header-button {
         float: right;
-        line-height: var(--header-height, 46px);
+        line-height: var(--header-height, var(--default-header-height));
         text-align: right;
         margin-right: 10px;
     }
 
     .header-notify-button {
         display: flex;
-        line-height: var(--header-height, 46px);
+        line-height: var(--header-height, var(--default-header-height));
         text-align: right;
         margin-left: 10px;
         margin-right: 10px;
@@ -217,16 +229,16 @@
         align-items: center;
 
         mat-icon {
-            font-size: calc(var(--header-button-height, 36px) - 8px);
-            width: calc(var(--header-button-height, 36px) - 8px);
-            height: calc(var(--header-button-height, 36px) - 8px);
-            line-height: calc(var(--header-button-height, 36px) - 8px);
+            font-size: var(--header-button-icon-size);
+            width: var(--header-button-icon-size);
+            height: var(--header-button-icon-size);
+            line-height: var(--header-button-icon-size);
         }
 
         .alarm-button, .info-button {
             display: flex;
             align-items: center;
-            height: var(--header-height, 46px);
+            height: var(--header-height, var(--default-header-height));
             margin-right: 20px;
         }
 
@@ -305,7 +317,7 @@
     }
 
     #alarms-panel.is-full-active {
-        top: var(--header-height, 46px);
+        top: var(--header-height, var(--default-header-height));
         height: 100%;
         transition:  top 300ms;
         z-index: 999;

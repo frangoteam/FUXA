@@ -7,14 +7,14 @@
 		<app-sidenav #sidenav [sidenav]="matsidenav" (goToPage)="onGoToPage($event)" (goToLink)="onGoToLink($event)"></app-sidenav>
 	</mat-sidenav>
 	<mat-sidenav-content
-		[style.--header-height]="layoutHeader.height + 'px'"
-		[style.--header-button-height]="layoutHeader.buttonHeight + 'px'"
+		[style.--header-height]="layoutHeader.height ? layoutHeader.height + 'px' : null"
+		[style.--header-button-height]="layoutHeader.buttonHeight ? layoutHeader.buttonHeight + 'px' : null"
 		[style.background-color]="backgroudColor"
 		(click)="checkToCloseSideNav()">
 		<div *ngIf="showNavigation"
 			 class="header"
-			 [style.--header-height]="layoutHeader.height + 'px'"
-			 [style.--header-button-height]="layoutHeader.buttonHeight + 'px'"
+			 [style.--header-height]="layoutHeader.height ? layoutHeader.height + 'px' : null"
+			 [style.--header-button-height]="layoutHeader.buttonHeight ? layoutHeader.buttonHeight + 'px' : null"
 			 [style.background-color]="layoutHeader.bkcolor"
 			 [style.color]="layoutHeader.fgcolor">
 			<div *ngIf="showSidenav && showSidenav !== 'side'" class="header-menu">
@@ -140,7 +140,7 @@
 		</div>
 		<div id="container"
 			 [ngClass]="showNavigation?'home-container-nav':'home-container'"
-			 [style.top.px]="showNavigation ? layoutHeader.height : 0"
+			 [style.top.px]="showNavigation ? (layoutHeader.height || defaultHeaderHeight) : 0"
 			 #container
 			 (click)="checkToCloseSideNav()">
 			<ng-container *ngIf="!showHomeLink && homeView">

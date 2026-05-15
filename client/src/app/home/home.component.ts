@@ -82,6 +82,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private destroy$ = new Subject<void>();
     loggedUser$: Observable<User>;
     language$: Observable<LanguageConfiguration>;
+    readonly defaultHeaderHeight = HeaderSettings.DefaultHeight;
 
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
