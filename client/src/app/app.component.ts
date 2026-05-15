@@ -154,7 +154,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	isHidden() {
 		const urlEnd = this.location.path();
-		if (!urlEnd || urlEnd.startsWith('/home') || urlEnd === '/lab') {
+		if (!urlEnd || urlEnd.startsWith('/home') || urlEnd === '/lab' || urlEnd.startsWith('/ar')) {
 			return true;
 		}
 		return false;
@@ -165,12 +165,15 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (route.startsWith('/view')) {
             return 'work-void';
         }
+		if (route.startsWith('/ar')) {
+            return 'work-void';
+        }
 		return (this.isHidden()) ? 'work-home' : 'work-editor';
 	}
 
     showDevNavigation() {
         const route = this.location.path();
-        if (route.startsWith('/view')) {
+        if (route.startsWith('/view') || route.startsWith('/ar')) {
             return false;
         }
         return this.showdev;

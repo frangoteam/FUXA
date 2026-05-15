@@ -238,6 +238,7 @@ import { TagPropertyRedisScanComponent } from './device/tag-property/tag-propert
 import { OnboardingWizardComponent } from './editor/onboarding-wizard/onboarding-wizard.component';
 import { PluginsListComponent } from './plugins/plugins-list/plugins-list.component';
 import { SectionMessageDialogComponent } from './editor/section-message-dialog/section-message-dialog.component';
+import { ArViewComponent } from './ar/ar-view/ar-view.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -424,7 +425,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyRedisScanComponent,
         OnboardingWizardComponent,
         PluginsListComponent,
-        SectionMessageDialogComponent
+        SectionMessageDialogComponent,
+        ArViewComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         FormsModule,

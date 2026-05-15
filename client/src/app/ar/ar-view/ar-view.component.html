@@ -1,0 +1,43 @@
+<div class="ar-shell">
+    <video #video class="ar-video" autoplay muted playsinline></video>
+
+    <div class="ar-topbar">
+        <div>
+            <div class="ar-title">FUXA AR</div>
+            <div class="ar-status" *ngIf="isCameraActive && detectorAvailable">
+                Camera active - marker scan supported
+            </div>
+            <div class="ar-status" *ngIf="isCameraActive && !detectorAvailable">
+                Camera active - marker scan unavailable in this browser
+            </div>
+            <div class="ar-status" *ngIf="!isCameraActive && !cameraError">
+                Starting camera...
+            </div>
+        </div>
+    </div>
+
+    <div class="ar-error" *ngIf="cameraError">
+        {{cameraError}}
+    </div>
+
+    <div class="ar-message" *ngIf="activeMarker.id">
+        Marker detected: {{activeMarker.id}}
+    </div>
+
+    <div class="ar-message" *ngIf="isCameraActive && !detectorAvailable">
+        QR detection is not available in this browser.
+    </div>
+</div>
+<div class="ar-marker-card" *ngIf="activeMarker.visible">
+    <div class="ar-marker-title">{{ activeMarker.data?.title }}</div>
+
+    <div class="ar-tag-row" *ngFor="let tag of activeMarker.data?.tags">
+        <span>{{ tag.name }}</span>
+        <strong>{{ tag.value }}</strong>
+    </div>
+</div>
+<div class="ar-debug">
+    <div *ngFor="let line of debugLines">
+        {{ line }}
+    </div>
+</div>
