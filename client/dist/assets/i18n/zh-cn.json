@@ -61,6 +61,8 @@
     "dlg.layout-lbl-infos": "信息通知模式",
     "dlg.layout-lbl-font": "字体族",
     "dlg.layout-lbl-font-size": "字体大小",
+    "dlg.layout-lbl-height": "高度",
+    "dlg.layout-lbl-button-height": "按钮高度",
     "dlg.layout-lbl-anchor": "方向",
     "dlg.layout-lbl-margin-left": "左边距",
     "dlg.layout-lbl-margin-right": "右边距",
