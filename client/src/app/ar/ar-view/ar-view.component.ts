@@ -1,9 +1,16 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
+
+import { View } from '../../_models/hmi';
+import { ProjectService } from '../../_services/project.service';
+import { GaugesManager } from '../../gauges/gauges.component';
+import { ArViewService, ArVisibleMarker } from './ar-view.service';
 
 @Component({
     selector: 'app-ar',
     templateUrl: './ar-view.component.html',
-    styleUrls: ['./ar-view.component.scss']
+    styleUrls: ['./ar-view.component.scss'],
+    providers: [ArViewService]
 })
 export class ArViewComponent implements AfterViewInit, OnDestroy {
     @ViewChild('video', { static: false }) videoRef: ElementRef<HTMLVideoElement>;
@@ -11,62 +18,62 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
     cameraError = '';
     detectorAvailable = false;
     isCameraActive = false;
+    activeMarkerId = '';
+    debugEnabled = true;
+    debugLines: string[] = [];
 
     private detector: BarcodeDetectorLike;
-    private readonly markerTtlMs = 1500;
     private stream: MediaStream;
-
     private scanTimer?: ReturnType<typeof setTimeout>;
     private scanStopped = false;
     private readonly scanIntervalMs = 700;
+    private hmiLoadSubscription: Subscription;
+    private pendingMarkerId = '';
 
-    readonly demoMarkers: Record<string, DemoArMarker> = {
-        'FUXA-AR': {
-            title: 'Demo Machine',
-            tags: [
-                { name: 'Temperature', value: '23.5 °C' },
-                { name: 'Pressure', value: '1.2 bar' },
-                { name: 'Status', value: 'Running' }
-            ]
-        }
-    };
-    activeMarker: ActiveMarkerState = {
-        id: '',
-        visible: false,
-        lastSeen: 0
-    };
+    constructor(
+        public arViewService: ArViewService,
+        public gaugesManager: GaugesManager,
+        public projectService: ProjectService
+    ) { }
 
-    debugLines: string[] = [];
-    private debug(message: string, data?: any): void {
-        const value = data !== undefined ? `${message}: ${JSON.stringify(data)}` : message;
-        this.debugLines = [value, ...this.debugLines].slice(0, 12);
-        console.log(message, data ?? '');
+    get visibleMarkers(): ArVisibleMarker[] {
+        return this.arViewService.visibleMarkers;
     }
 
     ngAfterViewInit(): void {
+        this.hmiLoadSubscription = this.projectService.onLoadHmi.subscribe(() => {
+            if (this.pendingMarkerId && this.arViewService.detectMarker(this.pendingMarkerId)) {
+                this.activeMarkerId = this.pendingMarkerId;
+                this.addDebugLine(`pending marker mapped marker=${this.pendingMarkerId}`);
+                this.pendingMarkerId = '';
+            }
+            this.addDebugLine(`ar enabled=${this.arViewService.debugState.arEnabled} markers=${this.arViewService.debugState.configuredMarkers}`);
+        });
         this.startCamera();
     }
 
     ngOnDestroy(): void {
         this.stopScanLoop();
         this.stopCamera();
+        this.arViewService.clear();
+        if (this.hmiLoadSubscription) {
+            this.hmiLoadSubscription.unsubscribe();
+        }
+    }
+
+    getMarkerView(viewId: string): View {
+        return this.projectService.getViewFromId(viewId);
     }
 
     private async startCamera(): Promise<void> {
         try {
-            this.debug('secureContext', window.isSecureContext);
-            this.debug('getUserMedia', !!navigator.mediaDevices?.getUserMedia);
-            this.debug('BarcodeDetector', 'BarcodeDetector' in window);
-
             if (!window.isSecureContext) {
                 this.cameraError = 'Camera requires HTTPS or localhost.';
-                this.debug('error', this.cameraError);
                 return;
             }
 
             if (!navigator.mediaDevices?.getUserMedia) {
                 this.cameraError = 'Camera API not available in this browser.';
-                this.debug('error', this.cameraError);
                 return;
             }
 
@@ -77,32 +84,19 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
                 audio: false
             });
 
-            this.debug('camera stream created');
-
             const video = this.videoRef?.nativeElement;
             if (!video) {
-                this.debug('video element missing');
                 return;
             }
 
             video.srcObject = this.stream;
             await video.play();
 
-            this.debug('video started', {
-                width: video.videoWidth,
-                height: video.videoHeight,
-                readyState: video.readyState
-            });
-
             this.isCameraActive = true;
-
             this.initDetector();
             this.startScanLoop();
-            this.debug('detectorAvailable', this.detectorAvailable);
-
         } catch (err) {
             this.cameraError = 'Camera access failed. Use HTTPS or localhost and allow camera permission.';
-            this.debug('camera error', String(err));
             console.error('AR camera error', err);
         }
     }
@@ -114,7 +108,6 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
 
     private initDetector(): void {
         const detectorCtor = (window as any).BarcodeDetector as BarcodeDetectorConstructorLike;
-
         this.detectorAvailable = !!detectorCtor;
 
         if (!this.detectorAvailable) {
@@ -149,55 +142,44 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
 
     private async scan(): Promise<void> {
         if (this.scanStopped || !this.detector || !this.videoRef?.nativeElement) {
-            this.debug('scan skipped', {
-                detector: !!this.detector,
-                video: !!this.videoRef?.nativeElement
-            });
             return;
         }
 
         try {
-            const results = await this.detector.detect(this.videoRef.nativeElement);
-
-            this.debug('scan results', results?.map(item => item.rawValue));
+            const results = await this.scanBarcodeMarkers();
 
             if (results?.length) {
-                const markerId = results[0].rawValue;
-                const marker = this.demoMarkers[markerId];
-                if (marker) {
-                    this.activeMarker = {
-                        id: markerId,
-                        visible: true,
-                        lastSeen: Date.now(),
-                        data: marker
-                    };
+                const markerId = (results[0].rawValue || '').trim();
+                let mapped = this.arViewService.detectMarker(markerId);
+                if (!mapped) {
+                    this.arViewService.refreshProjectMapping();
+                    mapped = this.arViewService.detectMarker(markerId);
                 }
-                this.debug('marker detected', markerId);
+                if (mapped) {
+                    this.activeMarkerId = markerId;
+                } else {
+                    this.pendingMarkerId = markerId;
+                }
+                const marker = this.visibleMarkers.find(item => item.id === markerId);
+                this.addDebugLine(`detected marker=${markerId} mapped=${mapped} view=${marker?.label || '-'}`);
+                if (!mapped) {
+                    this.addDebugLine(`known markers=${this.arViewService.getKnownMarkerIds().join(',') || '-'}`);
+                }
             }
-            this.updateMarkerVisibility();
+
+            this.arViewService.updateMarkerVisibility().forEach(event => {
+                this.addDebugLine(`removed marker=${event.markerId} view=${event.viewId || '-'}`);
+            });
         } catch (err) {
-            this.debug('scan error', String(err));
+            this.addDebugLine(`scan error=${String(err)}`);
             console.warn('AR marker scan error', err);
         }
+
         this.scheduleNextScan();
     }
 
-    private updateMarkerVisibility(): void {
-        if (!this.activeMarker?.visible) {
-            return;
-        }
-
-        if (Date.now() - this.activeMarker.lastSeen > this.markerTtlMs) {
-            this.clearActiveMarker();
-        }
-    }
-
-    private clearActiveMarker(): void {
-        this.activeMarker = {
-            id: '',
-            visible: false,
-            lastSeen: 0
-        };
+    private scanBarcodeMarkers(): Promise<DetectedBarcodeLike[]> {
+        return this.detector.detect(this.videoRef.nativeElement);
     }
 
     private stopScanLoop(): void {
@@ -207,6 +189,17 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
             clearTimeout(this.scanTimer);
             this.scanTimer = undefined;
         }
+    }
+
+    private addDebugLine(message: string): void {
+        if (!this.debugEnabled) {
+            return;
+        }
+        const line = `${new Date().toLocaleTimeString()} ${message}`;
+        if (this.debugLines[0] === line) {
+            return;
+        }
+        this.debugLines = [line, ...this.debugLines].slice(0, 8);
     }
 }
 
@@ -221,20 +214,4 @@ interface DetectedBarcodeLike {
 
 interface BarcodeDetectorConstructorLike {
     new(options?: { formats?: string[] }): BarcodeDetectorLike;
-}
-
-interface DemoArMarker {
-    title: string;
-    tags: DemoArTag[];
-}
-
-interface DemoArTag {
-    name: string;
-    value: string;
-}
-interface ActiveMarkerState {
-    id: string;
-    visible: boolean;
-    lastSeen: number;
-    data?: DemoArMarker;
 }

@@ -25,6 +25,7 @@ import * as FileSaver from 'file-saver';
 import { Report } from '../_models/report';
 import { MapsLocation } from '../_models/maps';
 import { ClientAccess } from '../_models/client-access';
+import { ArMarker, ArSettings } from '../_models/ar';
 
 @Injectable()
 export class ProjectService {
@@ -968,6 +969,48 @@ export class ProjectService {
             console.error(err);
             this.notifySaveError(err);
         });
+    }
+    //#endregion
+
+    //#region AR
+    getArSettings(): ArSettings {
+        if (!this.projectData) {
+            return new ArSettings();
+        }
+        if (!this.projectData.ar) {
+            this.projectData.ar = new ArSettings();
+        }
+        return this.projectData.ar;
+    }
+
+    setArSettings(arSettings: ArSettings): Subject<boolean> {
+        this.projectData.ar = arSettings;
+        return this.save();
+    }
+
+    getArMarkers(): ArMarker[] {
+        return this.getArSettings().markers || [];
+    }
+
+    setArMarker(marker: ArMarker, previousMarker?: ArMarker): Subject<boolean> {
+        const arSettings = this.getArSettings();
+        arSettings.enabled = true;
+        if (!arSettings.markers) {
+            arSettings.markers = [];
+        }
+        const markerIndex = arSettings.markers.findIndex(item => item.id === (previousMarker?.id || marker.id));
+        if (markerIndex !== -1) {
+            arSettings.markers[markerIndex] = marker;
+        } else {
+            arSettings.markers.push(marker);
+        }
+        return this.setArSettings(arSettings);
+    }
+
+    removeArMarker(marker: ArMarker): Subject<boolean> {
+        const arSettings = this.getArSettings();
+        arSettings.markers = (arSettings.markers || []).filter(item => item.id !== marker.id);
+        return this.setArSettings(arSettings);
     }
     //#endregion
 

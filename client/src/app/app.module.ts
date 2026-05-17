@@ -238,6 +238,8 @@ import { TagPropertyRedisScanComponent } from './device/tag-property/tag-propert
 import { OnboardingWizardComponent } from './editor/onboarding-wizard/onboarding-wizard.component';
 import { PluginsListComponent } from './plugins/plugins-list/plugins-list.component';
 import { SectionMessageDialogComponent } from './editor/section-message-dialog/section-message-dialog.component';
+import { ArMarkerListComponent } from './ar/ar-marker-list/ar-marker-list.component';
+import { ArMarkerPropertyComponent } from './ar/ar-marker-property/ar-marker-property.component';
 import { ArViewComponent } from './ar/ar-view/ar-view.component';
 
 export function createTranslateLoader(http: HttpClient) {
@@ -426,6 +428,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         OnboardingWizardComponent,
         PluginsListComponent,
         SectionMessageDialogComponent,
+        ArMarkerListComponent,
+        ArMarkerPropertyComponent,
         ArViewComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,

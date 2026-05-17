@@ -86,88 +86,23 @@
     border-color: rgba(255, 120, 120, 0.65);
 }
 
-.ar-card {
+.ar-debug-lines {
     position: absolute;
-    z-index: 2;
-    width: min(330px, calc(100vw - 24px));
-    max-height: min(420px, calc(100vh - 96px));
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    z-index: 9;
     overflow: hidden;
-    transform: translate(-8%, -8%);
-    border: 1px solid rgba(255, 255, 255, 0.24);
-    border-radius: 6px;
-    background: rgba(18, 24, 31, 0.88);
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.38);
-    backdrop-filter: blur(8px);
-}
-
-.ar-card header {
-    padding: 10px 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-    background: rgba(49, 96, 134, 0.78);
-}
-
-.ar-card header span,
-.ar-card header small {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.ar-card header span {
-    font-size: 15px;
-    font-weight: 600;
-}
-
-.ar-card header small {
-    margin-top: 2px;
-    min-height: 14px;
-    color: rgba(255, 255, 255, 0.72);
+    padding: 6px 8px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.68);
+    color: #9df0b2;
     font-size: 11px;
+    line-height: 1.35;
 }
 
-.ar-tag {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 10px;
-    align-items: center;
-    min-height: 48px;
-    padding: 9px 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.ar-tag:last-child {
-    border-bottom: none;
-}
-
-.ar-tag strong,
-.ar-tag span {
-    display: block;
+.ar-debug-lines div {
     overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.ar-tag strong {
-    color: #fff;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.ar-tag span {
-    margin-top: 2px;
-    color: rgba(255, 255, 255, 0.62);
-    font-size: 11px;
-}
-
-.ar-value {
-    min-width: 72px;
-    max-width: 132px;
-    overflow: hidden;
-    color: #ffffff;
-    font-size: 20px;
-    font-weight: 600;
-    text-align: right;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -182,7 +117,7 @@
         width: 100%;
     }
 
-    .ar-card {
+    .ar-marker-card {
         left: 12px !important;
         right: 12px;
         width: auto;
@@ -190,28 +125,14 @@
     }
 }
 
-.ar-debug {
-    position: absolute;
-    left: 8px;
-    right: 8px;
-    bottom: 8px;
-    max-height: 40vh;
-    overflow: auto;
-    padding: 8px;
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.75);
-    color: #00ff7f;
-    font-size: 11px;
-    font-family: monospace;
-    pointer-events: auto;
-    z-index: 10;
-}
-
 .ar-marker-card {
     position: absolute;
     left: 50%;
     top: 50%;
     min-width: 220px;
+    max-width: min(520px, calc(100vw - 32px));
+    max-height: min(520px, calc(100vh - 32px));
+    overflow: auto;
     padding: 14px 16px;
     border-radius: 10px;
     transform: translate(-50%, -50%);
@@ -225,8 +146,22 @@
     opacity: 0.75;
 }
 
-.ar-marker-value {
-    margin-top: 6px;
-    font-size: 22px;
-    font-weight: 500;
+.ar-marker-view {
+    margin-top: 10px;
+    min-width: 300px;
+    min-height: 220px;
+}
+
+.ar-marker-view app-fuxa-view {
+    display: block;
+    min-width: 300px;
+    min-height: 220px;
+    background: #fff;
+    color: #000;
+}
+
+.ar-marker-missing {
+    margin-top: 10px;
+    color: #ffcc66;
+    font-size: 12px;
 }
