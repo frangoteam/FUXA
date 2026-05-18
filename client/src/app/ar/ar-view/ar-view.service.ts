@@ -1,8 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 
-import { ArMarker } from '../../_models/ar';
-import { View, ViewType } from '../../_models/hmi';
 import { ProjectService } from '../../_services/project.service';
 
 export interface ArVisibleMarker {
@@ -24,7 +22,6 @@ export class ArViewService implements OnDestroy {
     private readonly markerTtlMs = 3000;
     private readonly markerViewMap = new Map<string, ArVisibleMarker>();
     private loadSubscription: Subscription;
-    private lastSelectedView: View;
 
     constructor(private projectService: ProjectService) {
         this.loadMarkerMappings();
@@ -49,12 +46,6 @@ export class ArViewService implements OnDestroy {
                 type: view.type,
                 svgLength: view.svgcontent?.length || 0
             })),
-            selectedView: this.lastSelectedView ? {
-                id: this.lastSelectedView.id,
-                name: this.lastSelectedView.name,
-                type: this.lastSelectedView.type,
-                svgLength: this.lastSelectedView.svgcontent?.length || 0
-            } : null,
             mappings: Array.from(this.markerViewMap.values()).map(marker => ({
                 id: marker.id,
                 label: marker.label,
@@ -126,8 +117,7 @@ export class ArViewService implements OnDestroy {
         }
 
         const arSettings = this.projectService.getArSettings();
-        const configuredMarkers = arSettings?.enabled ? arSettings.markers?.filter(marker => marker.id && marker.viewId) || [] : [];
-        const markers = configuredMarkers.length ? configuredMarkers : this.getDefaultMarkers();
+        const markers = arSettings?.markers?.filter(marker => marker.id && marker.viewId) || [];
 
         if (!markers.length) {
             this.markerViewMap.clear();
@@ -150,24 +140,6 @@ export class ArViewService implements OnDestroy {
         });
         this.markerViewMap.clear();
         nextMarkerViewMap.forEach((marker, markerId) => this.markerViewMap.set(markerId, marker));
-    }
-
-    private getDefaultMarkers(): ArMarker[] {
-        this.lastSelectedView = this.getFirstRenderableView();
-        if (!this.lastSelectedView?.id) {
-            return [];
-        }
-        return [{
-            id: 'FUXA-AR',
-            label: this.lastSelectedView.name || 'Demo Machine',
-            viewId: this.lastSelectedView.id,
-            ttlMs: this.markerTtlMs
-        }];
-    }
-
-    private getFirstRenderableView(): View {
-        const views = this.projectService.getHmi()?.views || [];
-        return views.find(view => view.type === ViewType.svg && !!view.svgcontent) || views[0];
     }
 
     private normalizeMarkerId(markerId: string): string {

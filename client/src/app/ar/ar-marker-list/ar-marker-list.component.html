@@ -3,12 +3,6 @@
     {{'ar.markers-list-title' | translate}}
 </div>
 <div class="work-panel">
-    <div class="toolbar">
-        <div class="my-form-field enabled-field">
-            <span>{{'ar.markers-list-enabled' | translate}}</span>
-            <mat-slide-toggle color="primary" [checked]="arSettings?.enabled" (change)="onToggleEnabled()"></mat-slide-toggle>
-        </div>
-    </div>
     <div class="container">
         <mat-table #table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="select">
@@ -42,7 +36,11 @@
             </ng-container>
 
             <ng-container matColumnDef="download">
-                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-header-cell *matHeaderCellDef>
+                    <button mat-icon-button (click)="onDownloadAllMarkers()" [disabled]="!dataSource.data.length" matTooltip="{{'ar.markers-list-download-all' | translate}}" class="remove">
+                        <mat-icon>download</mat-icon>
+                    </button>
+                </mat-header-cell>
                 <mat-cell *matCellDef="let element">
                     <button mat-icon-button (click)="$event.stopPropagation();onDownloadMarker(element)" matTooltip="{{'ar.markers-list-download' | translate}}" class="remove">
                         <mat-icon>file_download</mat-icon>

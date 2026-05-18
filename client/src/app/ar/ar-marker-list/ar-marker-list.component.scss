@@ -30,21 +30,9 @@
         overflow: hidden;
     }
 
-    .toolbar {
-        height: 48px;
-        display: flex;
-        align-items: center;
-        padding: 0 16px;
-        border-bottom: 1px solid rgb(81, 81, 81);
-    }
-
-    .enabled-field {
-        margin: 0;
-    }
-
     .container {
         position: absolute;
-        top: 49px;
+        top: 0;
         left: 0;
         right: 0;
         bottom: 0;
@@ -105,4 +93,5 @@
         z-index: 11;
         background-color: var(--workPanelBackground);
     }
+
 }

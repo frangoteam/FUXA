@@ -1686,12 +1686,12 @@
     "maps.location-property-marker-color": "Color",
 
     "ar.markers-list-title": "AR marker settings",
-    "ar.markers-list-enabled": "Enable AR markers",
     "ar.markers-list-id": "Marker ID",
     "ar.markers-list-label": "Label",
     "ar.markers-list-view": "View",
     "ar.markers-list-ttl": "TTL ms",
     "ar.markers-list-download": "Download QR marker",
+    "ar.markers-list-download-all": "Download all QR markers",
     "ar.marker-property-title": "AR marker settings",
     "ar.marker-property-id": "Marker ID",
     "ar.marker-property-label": "Label",

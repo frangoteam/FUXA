@@ -168,6 +168,9 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
             }
 
             this.arViewService.updateMarkerVisibility().forEach(event => {
+                if (this.activeMarkerId === event.markerId) {
+                    this.activeMarkerId = '';
+                }
                 this.addDebugLine(`removed marker=${event.markerId} view=${event.viewId || '-'}`);
             });
         } catch (err) {

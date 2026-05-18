@@ -10,4 +10,4 @@ export interface ArMarker {
     ttlMs?: number;
 }
 
-export const AR_MARKER_PREFIX = 'AR';
+export const AR_MARKER_PREFIX = 'ar_';

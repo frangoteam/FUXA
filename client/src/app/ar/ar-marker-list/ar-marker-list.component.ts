@@ -9,7 +9,7 @@ import { ArMarker, ArSettings } from '../../_models/ar';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 import { ProjectService } from '../../_services/project.service';
 import { ArMarkerPropertyComponent } from '../ar-marker-property/ar-marker-property.component';
-import { createQrSvg } from '../ar-marker-property/qr-code-generator';
+import { createQrSvg, createQrSvgDataUrl } from '../ar-marker-property/qr-code-generator';
 
 @Component({
     selector: 'app-ar-marker-list',
@@ -48,11 +48,6 @@ export class ArMarkerListComponent implements OnInit, AfterViewInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    onToggleEnabled() {
-        this.arSettings.enabled = !this.arSettings.enabled;
-        this.projectService.setArSettings(this.arSettings).subscribe(() => this.loadMarkers());
-    }
-
     onAddMarker() {
         this.editMarker();
     }
@@ -80,13 +75,38 @@ export class ArMarkerListComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onDownloadMarker(marker: ArMarker) {
         const svg = createQrSvg(marker.id);
-        const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${this.getMarkerFileName(marker)}.svg`;
-        link.click();
-        URL.revokeObjectURL(url);
+        this.downloadSvg(svg, `${this.getMarkerFileName(marker)}.svg`);
+    }
+
+    onDownloadAllMarkers() {
+        const markers = this.arSettings?.markers || [];
+        if (!markers.length) {
+            return;
+        }
+
+        const cellWidth = 240;
+        const cellHeight = 280;
+        const qrSize = 180;
+        const columns = 3;
+        const rows = Math.ceil(markers.length / columns);
+        const width = cellWidth * columns;
+        const height = cellHeight * rows;
+        const items = markers.map((marker, index) => {
+            const column = index % columns;
+            const row = Math.floor(index / columns);
+            const x = column * cellWidth + (cellWidth - qrSize) / 2;
+            const y = row * cellHeight + 18;
+            const label = this.escapeSvg(marker.label || marker.id);
+            const view = this.escapeSvg(this.getViewName(marker.viewId) || '');
+            return `
+                <image href="${createQrSvgDataUrl(marker.id)}" x="${x}" y="${y}" width="${qrSize}" height="${qrSize}"/>
+                <text x="${column * cellWidth + cellWidth / 2}" y="${y + qrSize + 26}" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="600">${label}</text>
+                <text x="${column * cellWidth + cellWidth / 2}" y="${y + qrSize + 48}" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#555">${view}</text>
+                <text x="${column * cellWidth + cellWidth / 2}" y="${y + qrSize + 66}" text-anchor="middle" font-family="Arial, sans-serif" font-size="11" fill="#777">${this.escapeSvg(marker.id)}</text>
+            `;
+        }).join('');
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="100%" height="100%" fill="#fff"/>${items}</svg>`;
+        this.downloadSvg(svg, 'ar-markers.svg');
     }
 
     private loadMarkers() {
@@ -117,5 +137,23 @@ export class ArMarkerListComponent implements OnInit, AfterViewInit, OnDestroy {
     private getMarkerFileName(marker: ArMarker): string {
         const label = marker.label || marker.id;
         return `ar-marker-${label}`.replace(/[^a-z0-9._-]+/gi, '-').replace(/^-+|-+$/g, '');
+    }
+
+    private downloadSvg(svg: string, filename: string) {
+        const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+
+    private escapeSvg(value: string): string {
+        return (value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
     }
 }

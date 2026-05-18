@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { AR_MARKER_PREFIX, ArMarker } from '../../_models/ar';
+import { Utils } from '../../_helpers/utils';
 import { View } from '../../_models/hmi';
 import { ProjectService } from '../../_services/project.service';
 import { createQrSvgDataUrl } from './qr-code-generator';
@@ -71,11 +72,12 @@ export class ArMarkerPropertyComponent implements OnInit, OnDestroy {
 
     onOkClick(): void {
         const rawValue = this.formGroup.getRawValue();
-        this.dialogRef.close({
+        const marker = {
             ...this.marker,
             ...rawValue,
             ttlMs: Number(rawValue.ttlMs) || 3000
-        });
+        };
+        this.dialogRef.close(marker);
     }
 
     private isValidMarkerId(): ValidatorFn {
@@ -109,13 +111,10 @@ export class ArMarkerPropertyComponent implements OnInit, OnDestroy {
     }
 
     private createMarkerId(): string {
-        const markerIds = this.data?.markerIds || [];
-        let index = 1;
-        let markerId = `${AR_MARKER_PREFIX}${index}`;
-        while (markerIds.includes(markerId)) {
-            index++;
-            markerId = `${AR_MARKER_PREFIX}${index}`;
-        }
+        let markerId = '';
+        do {
+            markerId = Utils.getShortGUID(AR_MARKER_PREFIX, '');
+        } while (this.data?.markerIds?.includes(markerId));
         return markerId;
     }
 }
