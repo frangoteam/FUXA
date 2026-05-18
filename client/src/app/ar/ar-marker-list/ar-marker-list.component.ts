@@ -6,7 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ArMarker, ArSettings } from '../../_models/ar';
+import { SettingsService } from '../../_services/settings.service';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
+import { SectionMessageDialogComponent } from '../../editor/section-message-dialog/section-message-dialog.component';
 import { ProjectService } from '../../_services/project.service';
 import { ArMarkerPropertyComponent } from '../ar-marker-property/ar-marker-property.component';
 import { createQrSvg, createQrSvgDataUrl } from '../ar-marker-property/qr-code-generator';
@@ -22,6 +24,8 @@ export class ArMarkerListComponent implements OnInit, AfterViewInit, OnDestroy {
     arSettings: ArSettings;
     viewNameMap: { [key: string]: string } = {};
     private destroy$ = new Subject<void>();
+    private sectionMessageHandled = false;
+    private sectionMessageOpened = false;
 
     @ViewChild(MatTable, { static: true }) table: MatTable<ArMarker>;
     @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -29,11 +33,13 @@ export class ArMarkerListComponent implements OnInit, AfterViewInit, OnDestroy {
     constructor(
         private dialog: MatDialog,
         private translateService: TranslateService,
-        private projectService: ProjectService
+        private projectService: ProjectService,
+        private settingsService: SettingsService
     ) { }
 
     ngOnInit() {
         this.loadMarkers();
+        this.openArMarkersNoticeIfNeeded();
         this.projectService.onLoadHmi.pipe(
             takeUntil(this.destroy$)
         ).subscribe(_ => this.loadMarkers());
@@ -155,5 +161,34 @@ export class ArMarkerListComponent implements OnInit, AfterViewInit, OnDestroy {
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;');
+    }
+
+    private openArMarkersNoticeIfNeeded() {
+        if (this.sectionMessageHandled || this.sectionMessageOpened ||
+            this.settingsService.getSettings()?.editorSectionMessages?.hideArMarkersNotice) {
+            this.sectionMessageHandled = true;
+            return;
+        }
+
+        this.sectionMessageOpened = true;
+        const dialogRef = this.dialog.open(SectionMessageDialogComponent, {
+            autoFocus: false,
+            width: '560px',
+            panelClass: 'light-dialog-container',
+            data: {
+                titleKey: 'ar.markers-notice-title',
+                messageKey: 'ar.markers-notice-message',
+                hideLabelKey: 'ar.markers-notice-hide',
+                actionLabelKey: 'ar.markers-notice-open',
+                routePath: '/ar',
+                absoluteUrl: `${window.location.origin}/ar`,
+                settingKey: 'hideArMarkersNotice'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
+            this.sectionMessageOpened = false;
+            this.sectionMessageHandled = true;
+        });
     }
 }
