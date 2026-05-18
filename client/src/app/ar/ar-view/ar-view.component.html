@@ -16,15 +16,14 @@
             <div class="ar-status" *ngIf="debugEnabled">
                 AR markers: {{arViewService.getConfiguredMarkerCount()}}
             </div>
+            <div class="ar-status" *ngIf="debugEnabled">
+                Scanner: {{scannerMode}}
+            </div>
         </div>
     </div>
 
     <div class="ar-error" *ngIf="cameraError">
         {{cameraError}}
-    </div>
-
-    <div class="ar-message" *ngIf="activeMarkerId">
-        Marker detected: {{activeMarkerId}}
     </div>
 
     <div class="ar-message" *ngIf="isCameraActive && !hasConfiguredMarkers">
@@ -40,7 +39,7 @@
     </div>
 
     <div class="ar-marker-card" *ngFor="let marker of visibleMarkers">
-        <div class="ar-marker-title">{{ marker.label }}</div>
+        <!-- <div class="ar-marker-title">{{ marker.label }}</div> -->
 
         <div class="ar-marker-view" *ngIf="getMarkerView(marker.viewId) as markerView; else missingMarkerView">
             <app-fuxa-view
