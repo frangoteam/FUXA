@@ -138,21 +138,22 @@
     max-width: min(520px, calc(100vw - 32px));
     max-height: min(520px, calc(100vh - 32px));
     overflow: auto;
-    padding: 14px 16px;
-    border-radius: 10px;
+    // padding: 14px 16px;
+    // border-radius: 10px;
     transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.75);
-    color: #fff;
+    background: rgba(0, 0, 0, 0.25);
     z-index: 8;
 }
 
 .ar-marker-title {
     font-size: 13px;
     opacity: 0.75;
+    background: rgba(0, 0, 0, 0.25);
+    color: #fff;
 }
 
 .ar-marker-view {
-    margin-top: 10px;
+    // margin-top: 10px;
     min-width: 300px;
     min-height: 220px;
 }
@@ -161,8 +162,6 @@
     display: block;
     min-width: 300px;
     min-height: 220px;
-    background: #fff;
-    color: #000;
 }
 
 .ar-marker-missing {

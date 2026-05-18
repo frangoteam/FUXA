@@ -42,6 +42,7 @@
     "codemirror": "^5.65.12",
     "fecha": "^4.2.3",
     "file-saver": "2.0.5",
+    "html5-qrcode": "^2.3.8",
     "leaflet": "^1.9.4",
     "material-icons": "^1.13.2",
     "moment": "^2.29.4",

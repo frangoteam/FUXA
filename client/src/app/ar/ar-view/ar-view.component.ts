@@ -5,25 +5,26 @@ import { Subscription } from 'rxjs';
 import { View } from '../../_models/hmi';
 import { ProjectService } from '../../_services/project.service';
 import { GaugesManager } from '../../gauges/gauges.component';
+import { ArMarkerScannerMode, ArMarkerScannerService } from './ar-marker-scanner.service';
 import { ArViewService, ArVisibleMarker } from './ar-view.service';
 
 @Component({
     selector: 'app-ar',
     templateUrl: './ar-view.component.html',
     styleUrls: ['./ar-view.component.scss'],
-    providers: [ArViewService]
+    providers: [ArViewService, ArMarkerScannerService]
 })
 export class ArViewComponent implements AfterViewInit, OnDestroy {
     @ViewChild('video', { static: false }) videoRef: ElementRef<HTMLVideoElement>;
 
     cameraError = '';
     detectorAvailable = false;
+    scannerMode: ArMarkerScannerMode = 'none';
     isCameraActive = false;
     activeMarkerId = '';
     debugEnabled = false;
     debugLines: string[] = [];
 
-    private detector: BarcodeDetectorLike;
     private stream: MediaStream;
     private scanTimer?: ReturnType<typeof setTimeout>;
     private scanStopped = false;
@@ -33,9 +34,10 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
 
     constructor(
         public arViewService: ArViewService,
+        private markerScanner: ArMarkerScannerService,
         public gaugesManager: GaugesManager,
         public projectService: ProjectService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
     ) { }
 
     get visibleMarkers(): ArVisibleMarker[] {
@@ -62,6 +64,7 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.stopScanLoop();
+        this.markerScanner.destroy();
         this.stopCamera();
         this.arViewService.clear();
         if (this.hmiLoadSubscription) {
@@ -115,20 +118,13 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
     }
 
     private initDetector(): void {
-        const detectorCtor = (window as any).BarcodeDetector as BarcodeDetectorConstructorLike;
-        this.detectorAvailable = !!detectorCtor;
-
-        if (!this.detectorAvailable) {
-            return;
-        }
-
-        this.detector = new detectorCtor({
-            formats: ['qr_code']
-        });
+        this.scannerMode = this.markerScanner.init();
+        this.detectorAvailable = this.markerScanner.available;
+        this.addDebugLine(`scanner=${this.scannerMode}`);
     }
 
     private startScanLoop(): void {
-        if (!this.detector) {
+        if (!this.markerScanner.available) {
             return;
         }
 
@@ -149,7 +145,7 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
     }
 
     private async scan(): Promise<void> {
-        if (this.scanStopped || !this.detector || !this.videoRef?.nativeElement) {
+        if (this.scanStopped || !this.markerScanner.available || !this.videoRef?.nativeElement) {
             return;
         }
 
@@ -190,7 +186,7 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
     }
 
     private scanBarcodeMarkers(): Promise<DetectedBarcodeLike[]> {
-        return this.detector.detect(this.videoRef.nativeElement);
+        return this.markerScanner.scan(this.videoRef.nativeElement);
     }
 
     private stopScanLoop(): void {
@@ -218,15 +214,6 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
     }
 }
 
-interface BarcodeDetectorLike {
-    detect(source: HTMLVideoElement): Promise<DetectedBarcodeLike[]>;
-}
-
 interface DetectedBarcodeLike {
     rawValue: string;
-    boundingBox?: DOMRectReadOnly;
-}
-
-interface BarcodeDetectorConstructorLike {
-    new(options?: { formats?: string[] }): BarcodeDetectorLike;
 }
