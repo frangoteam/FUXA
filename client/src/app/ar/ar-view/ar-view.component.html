@@ -13,6 +13,9 @@
             <div class="ar-status" *ngIf="!isCameraActive && !cameraError">
                 Starting camera...
             </div>
+            <div class="ar-status" *ngIf="debugEnabled">
+                AR markers: {{arViewService.getConfiguredMarkerCount()}}
+            </div>
         </div>
     </div>
 
@@ -24,7 +27,11 @@
         Marker detected: {{activeMarkerId}}
     </div>
 
-    <div class="ar-message" *ngIf="isCameraActive && !detectorAvailable">
+    <div class="ar-message" *ngIf="isCameraActive && !hasConfiguredMarkers">
+        No AR markers configured.
+    </div>
+
+    <div class="ar-message" *ngIf="isCameraActive && !detectorAvailable && hasConfiguredMarkers">
         QR detection is not available in this browser.
     </div>
 

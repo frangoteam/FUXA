@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { View } from '../../_models/hmi';
@@ -19,7 +20,7 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
     detectorAvailable = false;
     isCameraActive = false;
     activeMarkerId = '';
-    debugEnabled = true;
+    debugEnabled = false;
     debugLines: string[] = [];
 
     private detector: BarcodeDetectorLike;
@@ -33,21 +34,28 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
     constructor(
         public arViewService: ArViewService,
         public gaugesManager: GaugesManager,
-        public projectService: ProjectService
+        public projectService: ProjectService,
+        private route: ActivatedRoute
     ) { }
 
     get visibleMarkers(): ArVisibleMarker[] {
         return this.arViewService.visibleMarkers;
     }
 
+    get hasConfiguredMarkers(): boolean {
+        return this.arViewService.getConfiguredMarkerCount() > 0;
+    }
+
     ngAfterViewInit(): void {
+        this.debugEnabled = this.route.snapshot.queryParamMap.get('debug') === 'true';
+        this.addArStateDebugLine();
         this.hmiLoadSubscription = this.projectService.onLoadHmi.subscribe(() => {
             if (this.pendingMarkerId && this.arViewService.detectMarker(this.pendingMarkerId)) {
                 this.activeMarkerId = this.pendingMarkerId;
                 this.addDebugLine(`pending marker mapped marker=${this.pendingMarkerId}`);
                 this.pendingMarkerId = '';
             }
-            this.addDebugLine(`ar enabled=${this.arViewService.debugState.arEnabled} markers=${this.arViewService.debugState.configuredMarkers}`);
+            this.addArStateDebugLine();
         });
         this.startCamera();
     }
@@ -203,6 +211,10 @@ export class ArViewComponent implements AfterViewInit, OnDestroy {
             return;
         }
         this.debugLines = [line, ...this.debugLines].slice(0, 8);
+    }
+
+    private addArStateDebugLine(): void {
+        this.addDebugLine(`ar configured=${this.arViewService.getConfiguredMarkerCount()} known=${this.arViewService.getKnownMarkerIds().join(',') || '-'}`);
     }
 }
 

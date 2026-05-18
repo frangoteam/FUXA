@@ -66,7 +66,8 @@
 }
 
 .ar-error,
-.ar-empty {
+.ar-empty,
+.ar-message {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -84,6 +85,10 @@
 
 .ar-error {
     border-color: rgba(255, 120, 120, 0.65);
+}
+
+.ar-message {
+    border-color: rgba(140, 190, 255, 0.65);
 }
 
 .ar-debug-lines {

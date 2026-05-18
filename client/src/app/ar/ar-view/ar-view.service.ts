@@ -75,6 +75,11 @@ export class ArViewService implements OnDestroy {
         return Array.from(this.markerViewMap.keys());
     }
 
+    getConfiguredMarkerCount(): number {
+        const arSettings = this.projectService.getArSettings();
+        return arSettings?.markers?.filter(marker => marker.id && marker.viewId).length || 0;
+    }
+
     refreshProjectMapping(): void {
         this.projectService.onRefreshProject();
         this.loadMarkerMappings(true);
