@@ -64,7 +64,8 @@ export class SettingsService {
             dirty = true;
         }
         const nextEditorSectionMessages = new EditorSectionMessagesSettings(settings.editorSectionMessages);
-        if (nextEditorSectionMessages.hideDevicePluginsNotice !== this.appSettings.editorSectionMessages.hideDevicePluginsNotice) {
+        if (nextEditorSectionMessages.hideDevicePluginsNotice !== this.appSettings.editorSectionMessages.hideDevicePluginsNotice ||
+            nextEditorSectionMessages.hideArMarkersNotice !== this.appSettings.editorSectionMessages.hideArMarkersNotice) {
             this.appSettings.editorSectionMessages = nextEditorSectionMessages;
             dirty = true;
         }

@@ -44,10 +44,13 @@ export class AppSettings {
 export class EditorSectionMessagesSettings {
     /** Hide the drivers/plugins notice shown in device connections */
     hideDevicePluginsNotice = false;
+    /** Hide the AR markers notice shown in AR marker configuration */
+    hideArMarkersNotice = false;
 
     constructor(settings: Partial<EditorSectionMessagesSettings> = null) {
         if (settings) {
             this.hideDevicePluginsNotice = !!settings.hideDevicePluginsNotice;
+            this.hideArMarkersNotice = !!settings.hideArMarkersNotice;
         }
     }
 }

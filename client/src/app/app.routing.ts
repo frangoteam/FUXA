@@ -21,6 +21,8 @@ import { LanguageTextListComponent } from './language/language-text-list/languag
 import { NodeRedFlowsComponent } from './integrations/node-red/node-red-flows/node-red-flows.component';
 import { ApiKeysListComponent } from './apikeys/api-keys-list/api-keys-list.component';
 import { PluginsListComponent } from './plugins/plugins-list/plugins-list.component';
+import { ArMarkerListComponent } from './ar/ar-marker-list/ar-marker-list.component';
+import { ArViewComponent } from './ar/ar-view/ar-view.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent},//, canActivate: [AuthGuard] },
@@ -45,6 +47,8 @@ const appRoutes: Routes = [
     { path: 'flows', component: NodeRedFlowsComponent, canActivate: [AuthGuard] },
     { path: 'apikeys', component: ApiKeysListComponent, canActivate: [AuthGuard] },
     { path: 'plugins', component: PluginsListComponent, canActivate: [AuthGuard] },
+    { path: 'arMarkers', component: ArMarkerListComponent, canActivate: [AuthGuard] },
+    { path: 'ar', component: ArViewComponent },
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' }

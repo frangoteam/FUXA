@@ -1,0 +1,57 @@
+<div class="ar-shell">
+    <video #video class="ar-video" autoplay muted playsinline></video>
+
+    <div class="ar-topbar">
+        <div>
+            <div class="ar-title">FUXA AR</div>
+            <div class="ar-status" *ngIf="isCameraActive && detectorAvailable">
+                Camera active - marker scan supported
+            </div>
+            <div class="ar-status" *ngIf="isCameraActive && !detectorAvailable">
+                Camera active - marker scan unavailable in this browser
+            </div>
+            <div class="ar-status" *ngIf="!isCameraActive && !cameraError">
+                Starting camera...
+            </div>
+            <div class="ar-status" *ngIf="debugEnabled">
+                AR markers: {{arViewService.getConfiguredMarkerCount()}}
+            </div>
+            <div class="ar-status" *ngIf="debugEnabled">
+                Scanner: {{scannerMode}}
+            </div>
+        </div>
+    </div>
+
+    <div class="ar-error" *ngIf="cameraError">
+        {{cameraError}}
+    </div>
+
+    <div class="ar-message" *ngIf="isCameraActive && !hasConfiguredMarkers">
+        No AR markers configured.
+    </div>
+
+    <div class="ar-message" *ngIf="isCameraActive && !detectorAvailable && hasConfiguredMarkers">
+        QR detection is not available in this browser.
+    </div>
+
+    <div class="ar-debug-lines" *ngIf="debugEnabled && debugLines.length">
+        <div *ngFor="let line of debugLines">{{ line }}</div>
+    </div>
+
+    <div class="ar-marker-card" *ngFor="let marker of visibleMarkers">
+        <!-- <div class="ar-marker-title">{{ marker.label }}</div> -->
+
+        <div class="ar-marker-view" *ngIf="getMarkerView(marker.viewId) as markerView; else missingMarkerView">
+            <app-fuxa-view
+                [id]="'ar-' + marker.id"
+                [view]="markerView"
+                [hmi]="projectService.getHmi()"
+                [gaugesManager]="gaugesManager"
+                [child]="true">
+            </app-fuxa-view>
+        </div>
+        <ng-template #missingMarkerView>
+            <div class="ar-marker-missing">View not found: {{ marker.viewId }}</div>
+        </ng-template>
+    </div>
+</div>
