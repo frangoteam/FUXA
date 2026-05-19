@@ -51,9 +51,14 @@ ARG INSTALL_ODBC=true
 WORKDIR /usr/src/app/FUXA
 
 # Install ONLY runtime libraries
-RUN apt-get update && apt-get install -y \
-    sqlite3 libsqlite3-0 \
-    $( [ "$INSTALL_ODBC" = "true" ] && echo "unixodbc" ) \
+RUN apt-get update \
+    && apt-get install -y \
+        sqlite3 libsqlite3-0 \
+        $( [ "$INSTALL_ODBC" = "true" ] && echo "unixodbc odbc-mariadb" ) \
+    && if [ "$INSTALL_ODBC" = "true" ]; then \
+        mkdir -p /usr/lib/odbc && \
+        cp /usr/lib/$(uname -m)-linux-gnu/odbc/libmaodbc.so /usr/lib/odbc/libmaodbc.so; \
+    fi \
     && rm -rf /var/lib/apt/lists/*
 
 # 1. Copy Server
