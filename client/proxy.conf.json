@@ -1,4 +1,17 @@
 {
+    "/api": {
+      "target": "http://127.0.0.1:1881",
+      "secure": false,
+      "logLevel": "debug",
+      "changeOrigin": true
+    },
+    "/socket.io": {
+      "target": "http://127.0.0.1:1881",
+      "secure": false,
+      "logLevel": "debug",
+      "changeOrigin": true,
+      "ws": true
+    },
     "/resources": {
       "target": "http://127.0.0.1:1881",
       "secure": false,
