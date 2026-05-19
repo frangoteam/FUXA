@@ -47,7 +47,7 @@
     "sqlite3": "5.1.5",
     "swagger-ui-express": "^5.0.1",
     "winston": "3.7.2",
-    "ws": "8.18.0",
+    "ws": "8.20.1",
     "yamljs": "^0.3.0"
   },
   "overrides": {
