@@ -983,34 +983,51 @@ export class ProjectService {
         return this.projectData.ar;
     }
 
-    setArSettings(arSettings: ArSettings): Subject<boolean> {
-        this.projectData.ar = arSettings;
-        return this.save();
-    }
-
     getArMarkers(): ArMarker[] {
         return this.getArSettings().markers || [];
     }
 
-    setArMarker(marker: ArMarker, previousMarker?: ArMarker): Subject<boolean> {
-        const arSettings = this.getArSettings();
-        arSettings.enabled = true;
-        if (!arSettings.markers) {
-            arSettings.markers = [];
-        }
-        const markerIndex = arSettings.markers.findIndex(item => item.id === (previousMarker?.id || marker.id));
-        if (markerIndex !== -1) {
-            arSettings.markers[markerIndex] = marker;
-        } else {
-            arSettings.markers.push(marker);
-        }
-        return this.setArSettings(arSettings);
+    setArMarker(marker: ArMarker, previousMarker?: ArMarker): Observable<boolean> {
+        return new Observable((observer) => {
+            const arSettings = this.getArSettings();
+            arSettings.enabled = true;
+            if (!arSettings.markers) {
+                arSettings.markers = [];
+            }
+            const markerIndex = arSettings.markers.findIndex(item => item.id === (previousMarker?.id || marker.id));
+            if (markerIndex !== -1) {
+                arSettings.markers[markerIndex] = marker;
+            } else {
+                arSettings.markers.push(marker);
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.SetArMarker, marker, this.projectData).subscribe(result => {
+                if (previousMarker?.id && previousMarker.id !== marker.id) {
+                    this.removeArMarker(previousMarker).subscribe(() => {
+                        observer.next(true);
+                    });
+                } else {
+                    observer.next(true);
+                }
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
     }
 
-    removeArMarker(marker: ArMarker): Subject<boolean> {
-        const arSettings = this.getArSettings();
-        arSettings.markers = (arSettings.markers || []).filter(item => item.id !== marker.id);
-        return this.setArSettings(arSettings);
+    removeArMarker(marker: ArMarker): Observable<boolean> {
+        return new Observable((observer) => {
+            const arSettings = this.getArSettings();
+            arSettings.markers = (arSettings.markers || []).filter(item => item.id !== marker.id);
+            this.storage.setServerProjectData(ProjectDataCmdType.DelArMarker, marker, this.projectData).subscribe(result => {
+                observer.next(true);
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
     }
     //#endregion
 

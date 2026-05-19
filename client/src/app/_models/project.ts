@@ -70,6 +70,8 @@ export enum ProjectDataCmdType {
     DelReport = 'del-report',
     SetMapsLocation = 'set-maps-location',
     DelMapsLocation = 'del-maps-location',
+    SetArMarker = 'set-ar-marker',
+    DelArMarker = 'del-ar-marker',
 }
 
 
