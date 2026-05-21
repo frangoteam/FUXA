@@ -11,7 +11,7 @@ export interface SectionMessageDialogData {
     actionLabelKey?: string;
     routePath?: string;
     absoluteUrl?: string;
-    settingKey: 'hideDevicePluginsNotice';
+    settingKey: 'hideDevicePluginsNotice' | 'hideArMarkersNotice';
 }
 
 @Component({

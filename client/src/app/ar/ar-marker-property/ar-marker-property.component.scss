@@ -1,0 +1,79 @@
+:host {
+    .container {
+        .mat-dialog-content {
+            min-width: 640px;
+            overflow: hidden;
+            padding-bottom: 7px;
+
+            .item-block {
+                display: block;
+
+                span {
+                    width: calc(100% - 5px);
+                }
+            }
+        }
+    }
+
+    input,
+    mat-select {
+        height: 28px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .marker-id-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        input {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        button {
+            flex: 0 0 28px;
+            height: 28px;
+            line-height: 28px;
+        }
+    }
+
+    .property-layout {
+        display: flex;
+        gap: 32px;
+        align-items: flex-start;
+    }
+
+    .property-fields {
+        flex: 0 0 385px;
+        min-width: 0;
+
+        .my-form-field {
+            width: 100%;
+        }
+    }
+
+    .qr-preview {
+        flex: 0 0 190px;
+        text-align: center;
+    }
+
+    .qr-title {
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: var(--formLabelColor);
+    }
+
+    .qr-preview img {
+        width: 180px;
+        height: 180px;
+        border: 1px solid rgba(0, 0, 0, 0.24);
+        background: #fff;
+    }
+
+    .qr-error {
+        color: #d32f2f;
+        font-size: 12px;
+    }
+}

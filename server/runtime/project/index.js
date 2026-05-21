@@ -58,7 +58,7 @@ function init(_settings, log, _runtime) {
  */
 function load() {
     return new Promise(function (resolve, reject) {
-        data = { devices: {}, hmi: { views: [] }, texts: [], alarms: [] };
+        data = { devices: {}, hmi: { views: [] }, texts: [], alarms: [], ar: { enabled: false, markers: [] } };
         // load general data
         prjstorage.getSection(prjstorage.TableType.GENERAL).then(grows => {
             for (var ig = 0; ig < grows.length; ig++) {
@@ -140,6 +140,20 @@ function load() {
                                 callback();
                             }).catch(function (err) {
                                 logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.LOCATIONS}' ${err}`);
+                                callback(err);
+                            });
+                        },
+                        // step 7 get AR markers
+                        function (callback) {
+                            getArMarkers().then(markers => {
+                                if (!data.ar) {
+                                    data.ar = { enabled: false, markers: [] };
+                                }
+                                data.ar.markers = markers || [];
+                                data.ar.enabled = data.ar.enabled || data.ar.markers.length > 0;
+                                callback();
+                            }).catch(function (err) {
+                                logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.ARMARKERS}' ${err}`);
                                 callback(err);
                             });
                         }
@@ -266,6 +280,14 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.LOCATIONS;
                 section.name = value.id;
                 toremove = removeMapsLocation(value);
+            } else if (cmd === ProjectDataCmdType.SetArMarker) {
+                section.table = prjstorage.TableType.ARMARKERS;
+                section.name = value.id;
+                setArMarker(value);
+            } else if (cmd === ProjectDataCmdType.DelArMarker) {
+                section.table = prjstorage.TableType.ARMARKERS;
+                section.name = value.id;
+                toremove = removeArMarker(value);
             } else {
                 logger.error(`prjstorage.setdata failed! '${section.table}'`);
                 reject('prjstorage.failed-to-setdata: Command not found!');
@@ -616,6 +638,47 @@ function removeMapsLocation(location) {
 }
 
 /**
+ * Set or add if not exist (check with marker.id) the AR marker in Project
+ * @param {*} marker
+ */
+function setArMarker(marker) {
+    if (!data.ar) {
+        data.ar = { enabled: false, markers: [] };
+    }
+    if (!data.ar.markers) {
+        data.ar.markers = [];
+    }
+    data.ar.enabled = true;
+    var pos = -1;
+    for (var i = 0; i < data.ar.markers.length; i++) {
+        if (data.ar.markers[i].id === marker.id) {
+            pos = i;
+        }
+    }
+    if (pos >= 0) {
+        data.ar.markers[pos] = marker;
+    } else {
+        data.ar.markers.push(marker);
+    }
+}
+
+/**
+ * Remove the AR marker from Project
+ * @param {*} marker
+ */
+function removeArMarker(marker) {
+    if (data.ar && data.ar.markers) {
+        for (var i = 0; i < data.ar.markers.length; i++) {
+            if (data.ar.markers[i].id === marker.id) {
+                data.ar.markers.splice(i, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
  * Get the project data in accordance with autorization
  */
 function getProject(userId, userPermission) {
@@ -710,6 +773,16 @@ function setProject(prjcontent) {
                         if (locations && locations.length) {
                             for (var i = 0; i < locations.length; i++) {
                                 scs.push({ table: prjstorage.TableType.LOCATIONS, name: locations[i].id, value: locations[i] });
+                            }
+                        }
+                    } else if (key === 'ar') {
+                        var arSettings = Object.assign({}, prjcontent[key]);
+                        var markers = arSettings.markers || [];
+                        delete arSettings.markers;
+                        scs.push({ table: prjstorage.TableType.GENERAL, name: key, value: arSettings });
+                        if (markers && markers.length) {
+                            for (var i = 0; i < markers.length; i++) {
+                                scs.push({ table: prjstorage.TableType.ARMARKERS, name: markers[i].id, value: markers[i] });
                             }
                         }
                     } else {
@@ -909,6 +982,28 @@ function getMapsLocations() {
 }
 
 /**
+ * Get the AR markers
+ */
+function getArMarkers() {
+    return new Promise(function (resolve, reject) {
+        prjstorage.getSection(prjstorage.TableType.ARMARKERS).then(drows => {
+            if (drows.length > 0) {
+                var markers = [];
+                for (var id = 0; id < drows.length; id++) {
+                    markers.push(JSON.parse(drows[id].value));
+                }
+                resolve(markers);
+            } else {
+                resolve();
+            }
+        }).catch(function (err) {
+            logger.error(`project.prjstorage.get-arMarkers failed! '${prjstorage.TableType.ARMARKERS} ${err}'`);
+            reject(err);
+        });
+    });
+}
+
+/**
  * Set the device property
  */
 function setDeviceProperty(query) {
@@ -1090,6 +1185,8 @@ const ProjectDataCmdType = {
     DelReport: 'del-report',
     SetMapsLocation:'set-maps-location',
     DelMapsLocation: 'del-maps-location',
+    SetArMarker: 'set-ar-marker',
+    DelArMarker: 'del-ar-marker',
 }
 
 module.exports = {
@@ -1102,6 +1199,7 @@ module.exports = {
     getNotifications: getNotifications,
     getScripts: getScripts,
     getReports: getReports,
+    getArMarkers: getArMarkers,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
     setProjectData: setProjectData,
