@@ -782,7 +782,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         element.style.backgroundColor = this.view.profile.bkcolor;
     }
 
-    private getView(viewref: string): View {
+    private async getView(viewref: string): Promise<View> {
         let view: View;
         const hmi = this.hmi ?? this.hmiService.hmi;
         for (let i = 0; i < hmi?.views?.length; i++) {
@@ -790,6 +790,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 view = hmi.views[i];
                 break;
             }
+        }
+        if ((view as any)?.lazy) {
+            view = await this.projectService.ensureViewLoaded(view.id);
         }
         return view;
     }
@@ -820,8 +823,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cards = [];
     }
 
-    loadPage(param: any, viewref: string, options: any) {
-        let view: View = this.getView(viewref);
+    async loadPage(param: any, viewref: string, options: any) {
+        let view: View = await this.getView(viewref);
         this.closeAllCards();
         if (view) {
             if (options?.variablesMapping) {
@@ -835,9 +838,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    openDialog(event, viewref: string, options: any = {}) {
+    async openDialog(event, viewref: string, options: any = {}) {
         let dialogData = <FuxaViewDialogData>{
-            view: this.getView(viewref),
+            view: await this.getView(viewref),
             bkColor: 'transparent',
             variablesMapping: options.variablesMapping,
             disableDefaultClose: options.hideClose,
@@ -868,12 +871,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.zIndexCounter;
     }
 
-    onOpenCard(id: string, event: PointerEvent | TouchEvent | any, viewref: string, options: any = {}) {
+    async onOpenCard(id: string, event: PointerEvent | TouchEvent | any, viewref: string, options: any = {}) {
         if (options?.singleCard) {
             this.cards = [];
             this.changeDetector.detectChanges();
         }
-        let view: View = this.getView(viewref);
+        let view: View = await this.getView(viewref);
         if (!view) {
             return;
         }
@@ -1025,9 +1028,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    onMonitor(gaugeSettings: GaugeSettings, event: any, viewref: string, options: any = {}) {
+    async onMonitor(gaugeSettings: GaugeSettings, event: any, viewref: string, options: any = {}) {
         let dialogData = <WebcamPlayerDialogData>{
-            view: this.getView(viewref),
+            view: await this.getView(viewref),
             bkColor: 'transparent',
             gaugesManager: this.gaugesManager,
             ga: gaugeSettings

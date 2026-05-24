@@ -7,7 +7,7 @@ import { EndPointApi } from '../../_helpers/endpointapi';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
 import { AlarmQuery, AlarmBaseType, AlarmsFilter } from '../../_models/alarm';
-import { DaqQuery } from '../../_models/hmi';
+import { DaqQuery, View } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { ToastrService } from 'ngx-toastr';
@@ -36,7 +36,11 @@ export class ResWebApiService implements ResourceStorageService {
     }
 
     getStorageProject(): Observable<any> {
-        return this.http.get<any>(this.endPointConfig + '/api/project', {});
+        return this.http.get<any>(this.endPointConfig + '/api/project', { params: { views: 'lazy' } });
+    }
+
+    getStorageView(id: string): Observable<View> {
+        return this.http.get<View>(this.endPointConfig + `/api/project/view/${encodeURIComponent(id)}`, {});
     }
 
     setServerProject(prj: ProjectData) {

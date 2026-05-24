@@ -21,6 +21,8 @@ export class AppSettings {
     secureOnlyEditor = false;
     /** Broadcast all tags, without check the frontend views */
     broadcastAll = false;
+    /** Load HMI views on demand */
+    lazyViewLoading = false;
     /** Smtp to send mails */
     smtp = new SmtpSettings();
     /** Daq store database */

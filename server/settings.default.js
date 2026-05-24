@@ -60,6 +60,11 @@ module.exports = {
     // if true all configured tags will be send to frontend
     broadcastAll: false,
 
+    // Load HMI views on demand in the frontend.
+    // if false the whole project, including every view, is sent at startup
+    // if true the startup project contains only view metadata and views are loaded when opened
+    lazyViewLoading: false,
+
     // By default, server accepts connections on all IPv4 interfaces.
     // To listen on all IPv6 addresses, set uiHost to "::",
     // The following property can be used to listen on a specific interface. For

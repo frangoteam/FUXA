@@ -406,6 +406,37 @@ export class ProjectService {
         return null;
     }
 
+    async ensureViewLoaded(id: string): Promise<View> {
+        const view = this.getViewFromId(id);
+        if (!view) {
+            return null;
+        }
+        if (!(view as any).lazy) {
+            return view;
+        }
+        const loadedView = await firstValueFrom(this.storage.getStorageView(id));
+        this.mergeLoadedView(loadedView);
+        return loadedView;
+    }
+
+    async ensureViewLoadedByName(name: string): Promise<View> {
+        const id = this.getViewId(name);
+        return id ? this.ensureViewLoaded(id) : null;
+    }
+
+    private mergeLoadedView(view: View) {
+        if (!view) {
+            return;
+        }
+        delete (view as any).lazy;
+        const existingView = this.projectData.hmi.views.find(item => item.id === view.id);
+        if (existingView) {
+            Object.assign(existingView, view);
+        } else {
+            this.projectData.hmi.views.push(view);
+        }
+    }
+
     /**
      * Remove the View from Project
      * Delete from Server
