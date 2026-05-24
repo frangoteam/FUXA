@@ -40,6 +40,13 @@ function isSocketWriteAuthorized(socket) {
     return !!(socket && socket.isAuthenticated);
 }
 
+function isSocketAdminAuthorized(socket) {
+    if (!settings || !settings.secureEnabled) {
+        return true;
+    }
+    return !!(socket && socket.isAuthenticated && api?.authJwt?.haveAdminPermission(socket.userGroups));
+}
+
 function init(_io, _api, _settings, _log, eventsMain) {
     io = _io;
     settings = _settings;
@@ -300,7 +307,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device webapi request and return result
         socket.on(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
             try {
-                if (!isSocketWriteAuthorized(socket)) {
+                if (!isSocketAdminAuthorized(socket)) {
                     logger.warn(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: unauthorized request from ${socket.userId || 'guest'}`);
                     return;
                 }
