@@ -113,12 +113,24 @@ export class AuthService {
         return false;
     }
 
-	setNewToken(token: string) {
+	setNewToken(token: string, userData?: Partial<UserProfile>) {
 		if (!this.currentUser) {
 			return;
 		}
+		if (userData) {
+			this.currentUser.username = userData.username ?? this.currentUser.username;
+			this.currentUser.fullname = userData.fullname ?? this.currentUser.fullname;
+			this.currentUser.groups = userData.groups ?? this.currentUser.groups;
+			this.currentUser.info = userData.info ?? this.currentUser.info;
+			if (this.currentUser.info) {
+				this.currentUser.infoRoles = JSON.parse(this.currentUser.info)?.roles;
+			} else {
+				this.currentUser.infoRoles = null;
+			}
+		}
 		this.currentUser.token = token;
 		this.saveUserToken(this.currentUser);
+		this.currentUser$.next(this.currentUser);
 	}
 
 	// to check by page refresh
@@ -180,8 +192,8 @@ export class AuthService {
 						...(this.currentUser || {}),
 						username: result.data.username || this.currentUser?.username,
 						fullname: result.data.fullname || this.currentUser?.fullname,
-						groups: result.data.groups || this.currentUser?.groups,
-						info: result.data.info || this.currentUser?.info,
+						groups: result.data.groups ?? this.currentUser?.groups,
+						info: result.data.info ?? this.currentUser?.info,
 						token: result.data.token
 					};
 					if (refreshed.info) {
