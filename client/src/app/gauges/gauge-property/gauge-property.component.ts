@@ -10,6 +10,7 @@ import { PropertyType } from './flex-input/flex-input.component';
 import { PermissionData, PermissionDialogComponent } from './permission-dialog/permission-dialog.component';
 import { SettingsService } from '../../_services/settings.service';
 import { Device } from '../../_models/device';
+import { HtmlButtonComponent } from '../controls/html-button/html-button.component';
 
 @Component({
     selector: 'gauge-property',
@@ -137,6 +138,10 @@ export class GaugePropertyComponent implements AfterViewInit {
 
     isTextToShow() {
         return this.data.languageTextEnabled || (this.dialogType === GaugeDialogType.RangeAndText);
+    }
+
+    isButton() {
+        return this.data.settings?.type === HtmlButtonComponent.TypeTag;
     }
 
     isAlarmToShow() {

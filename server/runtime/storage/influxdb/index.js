@@ -112,12 +112,21 @@ function Influx(_settings, _log, _currentStorate) {
             }
             if (influxdbVersion === VERSION_18_FLUX) {
                 const tags = {
-                    id: tag.id,
-                    devicename: deviceName
+                    id: tag.id
+                };
+                const tagName = tag.name || tag.tagref?.name;
+                if (tagName) {
+                    tags.name = tagName;
+                }
+                if (tag.type) {
+                    tags.type = tag.type;
+                }
+                if (deviceName) {
+                    tags.device = deviceName;
                 }
                 const fields = {
                     value: utils.isBoolean(tag.value) ? tag.value * 1 : tag.value
-                }
+                };
                 dataToWrite.push({
                     measurement: tag.id,
                     tags,

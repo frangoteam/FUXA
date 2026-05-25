@@ -135,6 +135,13 @@ try {
         if (!utils.isNullOrUndefined(mysettings.hideEditorOnboarding)) {
             settings.hideEditorOnboarding = mysettings.hideEditorOnboarding;
         }
+        if (mysettings.editorSectionMessages) {
+            settings.editorSectionMessages = Object.assign(
+                {},
+                settings.editorSectionMessages || {},
+                mysettings.editorSectionMessages
+            );
+        }
         if (mysettings.uiPort) {
             settings.uiPort = mysettings.uiPort;
         }
@@ -357,13 +364,15 @@ app.use('/home/:viewName', express.static(settings.httpStatic));
 app.use('/lab', express.static(settings.httpStatic));
 app.use('/editor', express.static(settings.httpStatic));
 app.use('/device', express.static(settings.httpStatic));
+app.use('/plugins', express.static(settings.httpStatic));
 app.use('/rodevice', express.static(settings.httpStatic));
 app.use('/users', express.static(settings.httpStatic));
 app.use('/view', express.static(settings.httpStatic));
 app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
 app.use('/_images', express.static(settings.imagesFileDir));
 app.use('/_widgets', express.static(settings.widgetsFileDir));
-app.use('/snapshots', express.static(settings.webcamSnapShotsDir))
+app.use('/snapshots', express.static(settings.webcamSnapShotsDir));
+app.use('/ar', express.static(settings.httpStatic));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', { flags: 'a' });
 if (runtime.settings.logApiLevel !== 'none') {

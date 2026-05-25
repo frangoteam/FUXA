@@ -1,0 +1,80 @@
+<div class="header-panel">
+    <mat-icon>extension</mat-icon>
+    <span>{{'dlg.plugins-title' | translate}}</span>
+</div>
+
+<div class="work-panel">
+    <div class="container">
+        <div class="intro-panel">
+            <div class="intro-title">{{'dlg.plugins-info' | translate}}</div>
+        </div>
+
+        <div class="cards-grid" *ngIf="plugins.length; else emptyState">
+            <mat-card *ngFor="let plugin of plugins"
+                      class="plugin-card"
+                      [ngClass]="{
+                        'is-installed': isInstalled(plugin),
+                        'is-dynamic': plugin.dinamic,
+                        'is-static': !plugin.dinamic
+                      }">
+                <div class="card-top">
+                    <div class="card-icon">
+                        <mat-icon>{{ getPluginIcon(plugin) }}</mat-icon>
+                    </div>
+                    <div class="card-headline">
+                        <div class="card-type">{{ plugin.type }}</div>
+                        <div class="card-name">{{ plugin.name }}</div>
+                    </div>
+                    <div class="state-badge" [ngClass]="{ 'ready': isInstalled(plugin), 'available': !isInstalled(plugin) }">
+                        <mat-icon>{{ isInstalled(plugin) ? 'check_circle' : 'download' }}</mat-icon>
+                    </div>
+                </div>
+
+                <div class="card-group">{{ 'plugin.group-' + plugin.group | translate }}</div>
+
+                <div class="card-versions">
+                    <div class="version-box">
+                        <span class="version-label">{{'dlg.plugins-version' | translate}}</span>
+                        <span class="version-value">{{ plugin.version || '-' }}</span>
+                    </div>
+                    <div class="version-box current-box">
+                        <span class="version-label">{{'dlg.plugins-current' | translate}}</span>
+                        <span class="version-value">{{ plugin.current || '-' }}</span>
+                    </div>
+                </div>
+
+                <div class="card-status" *ngIf="plugin.status">{{ plugin.status }}</div>
+
+                <div class="card-actions">
+                    <div class="action-spinner">
+                        <mat-spinner *ngIf="plugin.working" diameter="20"></mat-spinner>
+                    </div>
+
+                    <button mat-stroked-button
+                            color="primary"
+                            class="action-button install-button"
+                            (click)="install(plugin)"
+                            [disabled]="isInstallDisabled(plugin)">
+                        <mat-icon>download</mat-icon>
+                        <span>Install</span>
+                    </button>
+
+                    <button mat-stroked-button
+                            class="action-button remove-button"
+                            (click)="remove(plugin)"
+                            [disabled]="isRemoveDisabled(plugin)">
+                        <mat-icon>delete_outline</mat-icon>
+                        <span>Remove</span>
+                    </button>
+                </div>
+            </mat-card>
+        </div>
+
+        <ng-template #emptyState>
+            <div class="empty-state">
+                <mat-icon>extension_off</mat-icon>
+                <span>No plugins available</span>
+            </div>
+        </ng-template>
+    </div>
+</div>

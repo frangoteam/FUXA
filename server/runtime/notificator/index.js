@@ -290,8 +290,9 @@ function NotificatorManager(_runtime) {
                         }
                     } else if (wasActive) {
                         // to reset
-                        for (var i = 0; i < notificationsSubsctiption[stkey].length; i++) {
-                            var notification = notificationsSubsctiption[stkey][i];
+                        var notifications = notificationsSubsctiption[stkey] || [];
+                        for (var i = 0; i < notifications.length; i++) {
+                            var notification = notifications[i];
                             notification.reset();
                             logger.info(`notificator.notify.toreset: ${notification.name} ${stkey}`);
                         }

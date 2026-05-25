@@ -769,9 +769,15 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
-        try { bacnet = require('node-bacnet'); } catch { }
-        if (!bacnet && manager) { try { bacnet = manager.require('node-bacnet'); } catch { } }
-        if (!bacnet) return null;
+        if (!loadBacnetLib(manager)) return null;
         return new BACNETclient(data, logger, events, runtime);
     }
+}
+
+function loadBacnetLib(manager) {
+    if (!bacnet) {
+        try { bacnet = require('node-bacnet'); } catch { }
+        if (!bacnet && manager) { try { bacnet = manager.require('node-bacnet'); } catch { } }
+    }
+    return !!bacnet;
 }

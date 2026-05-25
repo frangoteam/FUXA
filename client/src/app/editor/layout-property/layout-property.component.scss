@@ -2,6 +2,7 @@
     .content {
         min-width: 950px;
         min-height: 700px;
+        box-sizing: border-box;
     }
 
     .tab-container {
@@ -94,19 +95,65 @@
     .header-layout {
         display: flex;
         box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2) !important;
-        height: 46px !important;
-        line-height: 46px;
+        --default-header-height: 46px;
+        --default-header-button-height: 36px;
+        height: var(--header-height, var(--default-header-height));
+        line-height: var(--header-height, var(--default-header-height));
         padding-left: 4px;
         padding-right: 10px;
         background-color: rgba(255, 255, 255, 1);
+        --effective-header-button-height: var(--header-item-button-height, var(--header-button-height, var(--default-header-button-height)));
+        --header-button-icon-size: calc(var(--effective-header-button-height) - 8px);
+        --header-item-icon-size: calc(var(--effective-header-button-height) - 12px);
+        --header-label-icon-size: calc(var(--effective-header-button-height) - 14px);
+
+        button[mat-button],
+        button[mat-raised-button],
+        button[mat-icon-button] {
+            --effective-header-button-height: var(--header-item-button-height, var(--header-button-height, var(--default-header-button-height)));
+            --header-button-icon-size: calc(var(--effective-header-button-height) - 8px);
+            --header-item-icon-size: calc(var(--effective-header-button-height) - 12px);
+            --header-label-icon-size: calc(var(--effective-header-button-height) - 14px);
+            height: var(--effective-header-button-height);
+            min-height: var(--effective-header-button-height);
+            line-height: normal;
+        }
+
+        button[mat-icon-button] {
+            width: var(--effective-header-button-height);
+            padding: 0;
+        }
+
+        ::ng-deep .mat-mdc-icon-button {
+            --effective-header-button-height: var(--header-item-button-height, var(--header-button-height, var(--default-header-button-height)));
+            --header-button-icon-size: calc(var(--effective-header-button-height) - 8px);
+            --mdc-icon-button-state-layer-size: var(--effective-header-button-height);
+            width: var(--effective-header-button-height);
+            height: var(--effective-header-button-height);
+            padding: 0;
+            line-height: var(--effective-header-button-height);
+        }
+
+        ::ng-deep .mat-mdc-icon-button .mat-mdc-button-touch-target {
+            width: var(--effective-header-button-height);
+            height: var(--effective-header-button-height);
+        }
+
+        ::ng-deep .mat-mdc-icon-button mat-icon {
+            width: var(--header-button-icon-size);
+            height: var(--header-button-icon-size);
+            font-size: var(--header-button-icon-size);
+            line-height: var(--header-button-icon-size);
+        }
 
         .header-menu {
             display: flex;
             align-items: center;
-            height: 46px;
+            height: var(--header-height, var(--default-header-height));
+            margin-right: 8px;
 
             mat-icon {
-                line-height: 24px;
+                line-height: var(--header-button-icon-size);
             }
         }
 
@@ -115,12 +162,12 @@
             margin-left: 20px;
             min-width: 200px;
             text-align: right;
-            line-height: 46px
+            line-height: var(--header-height, var(--default-header-height));
         }
 
         .header-login {
             display: flex;
-            line-height: 46px;
+            line-height: var(--header-height, var(--default-header-height));
             align-items: center;
             border-left-width: 1px;
             border-left-style: solid;
@@ -130,7 +177,7 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                height: 46px;
+                height: var(--header-height, var(--default-header-height));
             }
 
             .primary {
@@ -170,7 +217,7 @@
             padding-left: 10px;
             padding-right: 10px;
             display: flex;
-            line-height: 46px;
+            line-height: var(--header-height, var(--default-header-height));
             align-items: center;
             gap: 4px;
 
@@ -184,7 +231,7 @@
 
         .header-notify-button {
             display: flex;
-            line-height: 46px;
+            line-height: var(--header-height, var(--default-header-height));
             text-align: right;
             margin-left: 10px;
             margin-right: 10px;
@@ -192,9 +239,9 @@
             align-items: center;
 
             mat-icon {
-                font-size: 28px;
-                width: 28px;
-                height: 28px;
+                font-size: var(--header-button-icon-size);
+                width: var(--header-button-icon-size);
+                height: var(--header-button-icon-size);
             }
 
             .alarm-button, .info-button {
@@ -206,7 +253,54 @@
             flex: 1;
             align-items: center;
             display: flex;
-            line-height: 46px;
+            line-height: var(--header-height, var(--default-header-height));
+
+            .header-item-image {
+                max-height: var(--header-button-icon-size);
+                max-width: var(--header-button-icon-size);
+                vertical-align: middle;
+            }
+
+            .header-item-button-image,
+            .header-item-label-image,
+            .header-item-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                vertical-align: middle;
+            }
+
+            .header-item-button-image {
+                max-height: var(--header-item-icon-size);
+                max-width: var(--header-button-icon-size);
+                object-fit: contain;
+            }
+
+            .header-item-label-image {
+                max-height: var(--header-label-icon-size);
+                max-width: calc(var(--effective-header-button-height) - 10px);
+                object-fit: contain;
+            }
+
+            .header-item-icon {
+                width: var(--header-item-icon-size);
+                height: var(--header-item-icon-size);
+                font-size: var(--header-item-icon-size);
+                line-height: var(--header-item-icon-size);
+            }
+
+            ::ng-deep .mat-mdc-button,
+            ::ng-deep .mat-mdc-raised-button {
+                line-height: normal;
+            }
+
+            ::ng-deep .mat-mdc-button .mdc-button__label,
+            ::ng-deep .mat-mdc-raised-button .mdc-button__label {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                line-height: normal;
+            }
         }
     }
 
@@ -288,7 +382,12 @@
             .colors {
                 display: block;
                 margin-top: 10px;
-                width: 268px
+                width: 330px;
+            }
+
+            .header-size-input {
+                box-sizing: border-box;
+                width: 65px;
             }
         }
     }

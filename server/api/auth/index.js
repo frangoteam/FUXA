@@ -52,7 +52,7 @@ function buildAccessToken(user) {
 }
 
 function buildRefreshToken(user) {
-    return jwt.sign({ id: user.username, groups: user.groups, type: 'refresh' }, secretCode, { expiresIn: refreshTokenExpiresIn });
+    return jwt.sign({ id: user.username, type: 'refresh' }, secretCode, { expiresIn: refreshTokenExpiresIn });
 }
 
 function setRefreshCookie(res, token) {
@@ -155,20 +155,18 @@ module.exports = {
                     return res.status(401).json({ status: 'error', message: 'Invalid refresh token' });
                 }
 
-                let userData = null;
-                try {
-                    const users = await runtime.users.getUsers({ username: decoded.id });
-                    if (users && users.length) {
-                        userData = users[0];
-                    }
-                } catch (err) {
-                    runtime.logger.error(`api refresh: user lookup failed ${err}`);
+                const users = await runtime.users.getUsers({ username: decoded.id });
+                if (!users || !users.length) {
+                    clearRefreshCookie(res);
+                    return res.status(401).json({ status: 'error', message: 'Invalid refresh token' });
                 }
+
+                const userData = users[0];
 
                 const user = {
                     username: decoded.id,
                     fullname: userData?.fullname,
-                    groups: userData?.groups || decoded.groups,
+                    groups: userData?.groups,
                     info: userData?.info
                 };
 

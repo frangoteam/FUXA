@@ -466,11 +466,17 @@ module.exports = {
     init: function (settings) {
     },
     create: function (data, logger, events, manager, runtime) {
-        try { ads = require('ads-client'); } catch { }
-        if (!ads && manager) { try { snap7 = manager.require('ads-client'); } catch { } }
-        if (!ads) return null;
+        if (!loadAdsLib(manager)) return null;
         return new ADSclient(data, logger, events, runtime);
     }
+}
+
+function loadAdsLib(manager) {
+    if (!ads) {
+        try { ads = require('ads-client'); } catch { }
+        if (!ads && manager) { try { ads = manager.require('ads-client'); } catch { } }
+    }
+    return !!ads;
 }
 
 const Datatypes = {

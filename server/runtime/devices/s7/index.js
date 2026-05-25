@@ -348,7 +348,7 @@ function S7client(_data, _logger, _events, _runtime) {
                         type: items[itemidx].type,
                         daq: items[itemidx].daq,
                         changed: changed,
-                        tagref: items[itemidx]
+                        tagref: data.tags[items[itemidx].id] // <--- Passes full tag config including scaling
                     };
                     someval = true;
                 }
@@ -679,12 +679,18 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
-        try { snap7 = require('node-snap7'); } catch { }
-        if (!snap7 && manager) { try { snap7 = manager.require('node-snap7'); } catch { } }
-        if (snap7) datatypes = require('./datatypes');
-        else return null;
+        if (!loadSnap7Lib(manager)) return null;
+        datatypes = require('./datatypes')(snap7.S7Client ? snap7.S7Client() : snap7);
         return new S7client(data, logger, events, runtime);
     }
+}
+
+function loadSnap7Lib(manager) {
+    if (!snap7) {
+        try { snap7 = require('node-snap7'); } catch { }
+        if (!snap7 && manager) { try { snap7 = manager.require('node-snap7'); } catch { } }
+    }
+    return !!snap7;
 }
 
 function DbItem(dbnum) {

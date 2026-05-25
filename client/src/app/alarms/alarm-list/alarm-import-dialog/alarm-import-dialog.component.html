@@ -1,0 +1,14 @@
+<div>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'alarms.import-title' | translate}}</h1>
+    <mat-icon (click)="onCancel()" class="dialog-close-btn">clear</mat-icon>
+
+    <div mat-dialog-content class="import-dialog-content">
+        {{'alarms.import-conflicts-message' | translate:{total: data.total, conflicts: data.conflicts} }}
+    </div>
+
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onCancel()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button (click)="onCopy()">{{'alarms.import-copy' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onReplace()">{{'alarms.import-replace' | translate}}</button>
+    </div>
+</div>

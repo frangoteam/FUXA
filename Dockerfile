@@ -37,7 +37,8 @@ WORKDIR /usr/src/app/FUXA/odbc
 COPY odbc/ ./
 RUN if [ "$INSTALL_ODBC" = "true" ]; then \
     dos2unix install_odbc_drivers.sh && chmod +x install_odbc_drivers.sh && ./install_odbc_drivers.sh; \
-    fi
+    fi \
+    && mkdir -p /usr/lib/odbc /opt/microsoft
 
 # 3. Copy server source, build, then cleanup
 WORKDIR /usr/src/app/FUXA/server
@@ -51,10 +52,19 @@ ARG INSTALL_ODBC=true
 WORKDIR /usr/src/app/FUXA
 
 # Install ONLY runtime libraries
-RUN apt-get update && apt-get install -y \
-    sqlite3 libsqlite3-0 \
-    $( [ "$INSTALL_ODBC" = "true" ] && echo "unixodbc" ) \
+RUN apt-get update \
+    && apt-get install -y \
+        sqlite3 libsqlite3-0 \
+        $( [ "$INSTALL_ODBC" = "true" ] && echo "unixodbc odbc-mariadb odbc-postgresql libsqliteodbc tdsodbc" ) \
+    && if [ "$INSTALL_ODBC" = "true" ]; then \
+        mkdir -p /usr/lib/odbc && \
+        find /usr/lib -path '*/odbc/*.so' -exec cp {} /usr/lib/odbc/ \; ; \
+    fi \
     && rm -rf /var/lib/apt/lists/*
+
+# Copy MySQL and MSSQL ODBC drivers from builder (not available in Debian repos)
+COPY --from=server-builder /usr/lib/odbc/ /usr/lib/odbc/
+COPY --from=server-builder /opt/microsoft/ /opt/microsoft/
 
 # 1. Copy Server
 COPY --from=server-builder /usr/src/app/FUXA/server ./server

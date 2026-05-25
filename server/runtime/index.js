@@ -40,6 +40,13 @@ function isSocketWriteAuthorized(socket) {
     return !!(socket && socket.isAuthenticated);
 }
 
+function isSocketAdminAuthorized(socket) {
+    if (!settings || !settings.secureEnabled) {
+        return true;
+    }
+    return !!(socket && socket.isAuthenticated && api?.authJwt?.haveAdminPermission(socket.userGroups));
+}
+
 function init(_io, _api, _settings, _log, eventsMain) {
     io = _io;
     settings = _settings;
@@ -152,19 +159,24 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device property
         socket.on(Events.IoEventTypes.DEVICE_PROPERTY, (message) => {
             try {
+                if (!isSocketWriteAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_PROPERTY}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message && message.endpoint && message.type) {
                     devices.getSupportedProperty(message.endpoint, message.type).then(result => {
                         message.result = result;
-                        io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                     }).catch(function (err) {
                         logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: ${err}`);
                         message.error = err;
-                        io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                     });
                 } else {
                     logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: wrong message`);
+                    message = message || {};
                     message.error = 'wrong message';
-                    io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
+                    socket.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: ${err}`);
@@ -192,6 +204,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device browse
         socket.on(Events.IoEventTypes.DEVICE_BROWSE, (message) => {
             try {
+                if (!isSocketAdminAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_BROWSE}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message) {
                     if (message.device) {
                         devices.browseDevice(message.device, message.node, function (nodes) {
@@ -213,6 +229,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device node attribute
         socket.on(Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
             try {
+                if (!isSocketAdminAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message) {
                     if (message.device) {
                         devices.readNodeAttribute(message.device, message.node).then(result => {
@@ -273,6 +293,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask host interfaces
         socket.on(Events.IoEventTypes.HOST_INTERFACES, (message) => {
             try {
+                if (!isSocketAdminAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.HOST_INTERFACES}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message === 'get') {
                     message = {};
                     utils.getHostInterfaces().then(result => {
@@ -295,19 +319,24 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device webapi request and return result
         socket.on(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
             try {
+                if (!isSocketAdminAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message && message.property) {
                     devices.getRequestResult(message.property).then(result => {
                         message.result = result;
-                        io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                     }).catch(function (err) {
                         logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: ${err}`);
                         message.error = err;
-                        io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                     });
                 } else {
                     logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: wrong message`);
+                    message = message || {};
                     message.error = 'wrong message';
-                    io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
+                    socket.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: ${err}`);
@@ -316,6 +345,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device tags configurtions, used for connections that load tags dinamically (webapi)
         socket.on(Events.IoEventTypes.DEVICE_TAGS_REQUEST, (message) => {
             try {
+                if (!isSocketAdminAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_TAGS_REQUEST}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message && message.deviceId) {
                     devices.getDeviceTagsResult(message.deviceId).then(result => {
                         message.result = result;
@@ -419,27 +452,27 @@ function start() {
 
 function stop() {
     return new Promise(function (resolve, reject) {
-        devices.stop().then(function () {
+        Promise.all([
+            devices.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-devices: ' + err);
+            }),
+            alarmsMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-alarms: ' + err);
+            }),
+            notificatorMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-notificatorMgr: ' + err);
+            }),
+            scriptsMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-scriptsMgr: ' + err);
+            }),
+            jobsMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-jobsMgr: ' + err);
+            })
+        ]).then(function () {
+            resolve(true);
         }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-devices: ' + err);
+            reject(err);
         });
-        alarmsMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-alarms: ' + err);
-        });
-        notificatorMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-notificatorMgr: ' + err);
-        });
-        scriptsMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-scriptsMgr: ' + err);
-        });
-        jobsMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-jobsMgr: ' + err);
-        });
-        resolve(true);
     });
 }
 

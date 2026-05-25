@@ -13,6 +13,7 @@ export class MapsLocation {
     showMarkerIcon?: boolean;
     showMarkerValue?: boolean;
     markerIcon?: string;
+    markerImage?: string;
     markerBackground?: string;
     markerColor?: string;
     markerTagValueId?: string;

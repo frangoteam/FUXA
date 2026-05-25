@@ -471,12 +471,21 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     }
 
     /**
-     * Create a session subscription to refresh Tags value
+     * Create a session subscription to refresh Tags value.
+     *
+     * The subscription's `requestedPublishingInterval` follows the device's
+     * polling rate (`data.polling`) so the device-level "update rate" UI
+     * setting actually propagates to the OPC-UA subscription. Falls back to
+     * 100 ms — the OPC-UA protocol minimum in most servers — when the user
+     * hasn't configured a polling rate.
+     *
+     * Previously this was hard-coded to 500 ms regardless of UI input,
+     * capping subscription updates at 2 Hz no matter what the user picked.
      */
     var _createSubscription = function () {
         if (the_session) {
             const parameters = {
-                requestedPublishingInterval: 500,
+                requestedPublishingInterval: data.polling || 500,
                 requestedLifetimeCount: 600,
                 requestedMaxKeepAliveCount: 10,
                 maxNotificationsPerPublish: 0,
@@ -752,9 +761,9 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
 /**
  * Return security and encryption mode supported from server endpoint
  */
-function getEndPoints(endpointUrl) {
+function getEndPoints(endpointUrl, manager) {
     return new Promise(function (resolve, reject) {
-        if (loadOpcUALib()) {
+        if (loadOpcUALib(manager)) {
             let opts = { connectionStrategy: { maxRetry: 1 } };
             let client = opcua.OPCUAClient.create(opts);
             try {
@@ -785,7 +794,7 @@ function getEndPoints(endpointUrl) {
     });
 }
 
-function loadOpcUALib() {
+function loadOpcUALib(manager) {
     if (!opcua) {
         try { opcua = require('node-opcua'); } catch { }
         if (!opcua && manager) { try { opcua = manager.require('node-opcua'); } catch { } }
@@ -798,7 +807,7 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
-        if (!loadOpcUALib()) return null;
+        if (!loadOpcUALib(manager)) return null;
         return new OpcUAclient(data, logger, events, runtime);
     },
     getEndPoints: getEndPoints

@@ -27,7 +27,6 @@ import { LogsViewComponent } from './logs-view/logs-view.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { EditorComponent, DialogLinkProperty } from './editor/editor.component';
 import { LayoutPropertyComponent } from './editor/layout-property/layout-property.component';
-import { PluginsComponent } from './editor/plugins/plugins.component';
 import { AppSettingsComponent } from './editor/app-settings/app-settings.component';
 import { SetupComponent } from './editor/setup/setup.component';
 import { ChartConfigComponent } from './editor/chart-config/chart-config.component';
@@ -35,6 +34,7 @@ import { GraphConfigComponent } from './editor/graph-config/graph-config.compone
 import { CardConfigComponent } from './editor/card-config/card-config.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
+import { AlarmImportDialogComponent } from './alarms/alarm-list/alarm-import-dialog/alarm-import-dialog.component';
 import { AlarmPropertyComponent } from './alarms/alarm-property/alarm-property.component';
 import { NotificationListComponent } from './notifications/notification-list/notification-list.component';
 import { NotificationPropertyComponent } from './notifications/notification-property/notification-property.component';
@@ -236,6 +236,11 @@ import { ApiKeyPropertyComponent } from './apikeys/api-key-property/api-key-prop
 import { TagPropertyEditRedisComponent } from './device/tag-property/tag-property-edit-redis/tag-property-edit-redis.component';
 import { TagPropertyRedisScanComponent } from './device/tag-property/tag-property-edit-redis/tag-property-redis-scan/tag-property-redis-scan.component';
 import { OnboardingWizardComponent } from './editor/onboarding-wizard/onboarding-wizard.component';
+import { PluginsListComponent } from './plugins/plugins-list/plugins-list.component';
+import { SectionMessageDialogComponent } from './editor/section-message-dialog/section-message-dialog.component';
+import { ArMarkerListComponent } from './ar/ar-marker-list/ar-marker-list.component';
+import { ArMarkerPropertyComponent } from './ar/ar-marker-property/ar-marker-property.component';
+import { ArViewComponent } from './ar/ar-view/ar-view.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -274,7 +279,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         DeviceWebapiPropertyDialogComponent,
         LayoutPropertyComponent,
         TagsIdsConfigComponent,
-        PluginsComponent,
         AppSettingsComponent,
         SetupComponent,
         LayoutMenuItemPropertyComponent,
@@ -346,6 +350,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         GraphConfigComponent,
         CardConfigComponent,
         AlarmListComponent,
+        AlarmImportDialogComponent,
         AlarmViewComponent,
         AlarmPropertyComponent,
         NotificationListComponent,
@@ -421,6 +426,11 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyEditRedisComponent,
         TagPropertyRedisScanComponent,
         OnboardingWizardComponent,
+        PluginsListComponent,
+        SectionMessageDialogComponent,
+        ArMarkerListComponent,
+        ArMarkerPropertyComponent,
+        ArViewComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         FormsModule,

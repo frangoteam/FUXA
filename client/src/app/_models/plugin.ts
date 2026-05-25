@@ -7,6 +7,7 @@ export class Plugin {
     pkg: boolean;
     dinamic: boolean;
     group: string;
+    canRemove: boolean;
 }
 
 export enum PluginType {

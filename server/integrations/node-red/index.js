@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 
-function tryRequireNodeRed() {
+function tryRequireNodeRed(runtime) {
     try {
         // Fast check whether the module is resolvable
         require.resolve('node-red');
@@ -13,12 +13,16 @@ function tryRequireNodeRed() {
         // eslint-disable-next-line global-require
         return require('node-red');
     } catch {
-        return null;
+        try {
+            return runtime.plugins.manager.require('node-red');
+        } catch {
+            return null;
+        }
     }
 }
 
 async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger, authJwt, events }) {
-    const RED = tryRequireNodeRed();
+    const RED = tryRequireNodeRed(runtime);
     if (!RED) {
         logger.info('[Node-RED] Package not installed. Skipping Node-RED initialization.');
         // Do not register any /nodered routes; default 404 is fine.

@@ -9,6 +9,11 @@ module.exports = {
     // Hide the editor onboarding wizard when entering editor mode
     hideEditorOnboarding: false,
 
+    // Per-section informational messages for editor areas
+    editorSectionMessages: {
+        hideDevicePluginsNotice: false
+    },
+
     // The tcp port that the FUXA web server is listening on
     uiPort: process.env.PORT || 1881,
 

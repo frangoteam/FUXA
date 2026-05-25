@@ -1,7 +1,8 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Subscription} from 'rxjs';
+import {Subject, Subscription, takeUntil} from 'rxjs';
 import {Router} from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 
 import {DeviceListComponent} from './device-list/device-list.component';
 import {DeviceMapComponent} from './device-map/device-map.component';
@@ -10,6 +11,8 @@ import {ProjectService} from '../_services/project.service';
 import {HmiService} from '../_services/hmi.service';
 import {DEVICE_READONLY} from '../_models/hmi';
 import {Utils} from '../_helpers/utils';
+import { SettingsService } from '../_services/settings.service';
+import { SectionMessageDialogComponent } from '../editor/section-message-dialog/section-message-dialog.component';
 
 @Component({
     selector: 'app-device',
@@ -27,6 +30,9 @@ export class DeviceComponent implements OnInit, OnDestroy {
     private subscriptionDeviceChange: Subscription;
     private subscriptionVariableChange: Subscription;
     private askStatusTimer;
+    private destroy$ = new Subject<void>();
+    private sectionMessageHandled = false;
+    private sectionMessageOpened = false;
 
     devicesViewMode = DeviceViewModeType.devices;
     devicesViewMap = DeviceViewModeType.map;
@@ -39,7 +45,9 @@ export class DeviceComponent implements OnInit, OnDestroy {
 
     constructor(private router: Router,
         private projectService: ProjectService,
-        private hmiService: HmiService) {
+        private hmiService: HmiService,
+        private settingsService: SettingsService,
+        private dialog: MatDialog) {
         if (this.router.url.indexOf(DEVICE_READONLY) >= 0) {
             this.readonly = true;
         }
@@ -61,6 +69,11 @@ export class DeviceComponent implements OnInit, OnDestroy {
             this.hmiService.askDeviceStatus();
         }, 10000);
         this.hmiService.askDeviceStatus();
+        this.settingsService.loaded$.pipe(takeUntil(this.destroy$)).subscribe(loaded => {
+            if (loaded) {
+                this.openPluginsNoticeIfNeeded();
+            }
+        });
     }
 
     ngOnDestroy() {
@@ -81,6 +94,8 @@ export class DeviceComponent implements OnInit, OnDestroy {
             clearInterval(this.askStatusTimer);
             this.askStatusTimer = null;
         } catch { }
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     show(mode: string) {
@@ -212,5 +227,34 @@ export class DeviceComponent implements OnInit, OnDestroy {
         if (input) {
             input.value = '';
         }
+    }
+
+    private openPluginsNoticeIfNeeded() {
+        if (this.readonly || this.sectionMessageHandled || this.sectionMessageOpened ||
+            this.settingsService.getSettings()?.editorSectionMessages?.hideDevicePluginsNotice) {
+            this.sectionMessageHandled = true;
+            return;
+        }
+
+        this.sectionMessageOpened = true;
+        const dialogRef = this.dialog.open(SectionMessageDialogComponent, {
+            autoFocus: false,
+            width: '560px',
+            panelClass: 'light-dialog-container',
+            data: {
+                titleKey: 'device.plugins-notice-title',
+                messageKey: 'device.plugins-notice-message',
+                hideLabelKey: 'device.plugins-notice-hide',
+                actionLabelKey: 'device.plugins-notice-open',
+                routePath: '/plugins',
+                absoluteUrl: `${window.location.origin}/plugins`,
+                settingKey: 'hideDevicePluginsNotice'
+            }
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
+            this.sectionMessageOpened = false;
+            this.sectionMessageHandled = true;
+        });
     }
 }

@@ -17,6 +17,10 @@ export class IconSelectorComponent implements OnInit {
     @Input() filterPlaceholder = 'dlg.headeritem-icons-filter';
     @Input() width = '60px';
     @Input() height = '30px';
+    @Input() image: string;
+    @Input() allowImage = false;
+    @Input() imageLabel = 'dlg.menuitem-image';
+    @Output() imageSelected = new EventEmitter<Event>();
 
     icons$: Observable<string[]>;
     filteredIcons$: Observable<string[]>;
@@ -48,5 +52,11 @@ export class IconSelectorComponent implements OnInit {
         this.value = icon;
         this.valueChange.emit(icon);
         this.selected.emit(icon);
+    }
+
+    onImageSelected(event: Event) {
+        this.value = 'image';
+        this.valueChange.emit(this.value);
+        this.imageSelected.emit(event);
     }
 }

@@ -269,7 +269,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                     mixItemsMap[lastStart].MaxSize = lastAdrSize - lastStart;
                     mixItemsMap[lastStart].Items = getMemoryItems(memory[lastMemAdr].Items, mixItemsMap[lastStart].Start, mixItemsMap[lastStart].MaxSize);
                 }
-                nextAdr = 1 + adr + stepsMap[key].size;
+                nextAdr = adr + stepsMap[key].size;
             } catch (err) {
                 logger.error(`'${data.name}' load error! ${err}`);
             }
@@ -859,12 +859,18 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
-        try { ModbusRTU = require('modbus-serial'); } catch { }
-        if (!ModbusRTU && manager) { try { ModbusRTU = manager.require('modbus-serial'); } catch { } }
-        if (!ModbusRTU) return null;
+        if (!loadModbusLib(manager)) return null;
         return new MODBUSclient(data, logger, events, runtime);
     },
     ModbusTypes: ModbusTypes
+}
+
+function loadModbusLib(manager) {
+    if (!ModbusRTU) {
+        try { ModbusRTU = require('modbus-serial'); } catch { }
+        if (!ModbusRTU && manager) { try { ModbusRTU = manager.require('modbus-serial'); } catch { } }
+    }
+    return !!ModbusRTU;
 }
 
 function MemoryItem(type, offset) {

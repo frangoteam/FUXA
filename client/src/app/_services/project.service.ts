@@ -1,6 +1,6 @@
 
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { Observable, Subject, firstValueFrom } from 'rxjs';
+import { Observable, Subject, firstValueFrom, of } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project';
@@ -25,6 +25,7 @@ import * as FileSaver from 'file-saver';
 import { Report } from '../_models/report';
 import { MapsLocation } from '../_models/maps';
 import { ClientAccess } from '../_models/client-access';
+import { ArMarker, ArSettings } from '../_models/ar';
 
 @Injectable()
 export class ProjectService {
@@ -197,6 +198,50 @@ export class ProjectService {
         }
     }
 
+    exportAlarms() {
+        const name = this.projectData.name || 'fuxa';
+        let filename = `${name}-alarms.json`;
+        if (this.getProjectName()) {
+            filename = `${this.getProjectName()}-alarms.json`;
+        }
+        const alarms = <Alarm[]>JSON.parse(JSON.stringify(this.getAlarms()));
+        const content = JSON.stringify(alarms, null, 2);
+        let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        FileSaver.saveAs(blob, filename);
+    }
+
+    importAlarms(alarms: Alarm[]): Observable<boolean> {
+        if (!Array.isArray(alarms)) {
+            return of(false);
+        }
+
+        const validAlarms = alarms.filter(alarm => alarm?.name);
+        if (!validAlarms.length) {
+            return of(true);
+        }
+
+        return new Observable<boolean>(observer => {
+            let pending = validAlarms.length;
+            let failed = false;
+            validAlarms.forEach(alarm => {
+                this.setAlarm(alarm, null).subscribe(() => {
+                    pending--;
+                    if (pending === 0) {
+                        observer.next(!failed);
+                        observer.complete();
+                    }
+                }, err => {
+                    failed = true;
+                    pending--;
+                    if (pending === 0) {
+                        observer.next(false);
+                        observer.complete();
+                    }
+                });
+            });
+        });
+    }
+
     reload() {
         this.load();
     }
@@ -301,6 +346,9 @@ export class ProjectService {
             Object.assign(existingView, view);
         } else if (!this.projectData.hmi.views.some(v => v.name === view.name)) {
             this.projectData.hmi.views.push(view);
+        } else {
+            console.warn(`View '${view.name}' already exists with a different id. Save skipped.`);
+            return;
         }
         this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData).subscribe(result => {
             if (notify) {
@@ -319,6 +367,9 @@ export class ProjectService {
             Object.assign(existingView, view);
         } else if (!this.projectData.hmi.views.some(v => v.name === view.name)) {
             this.projectData.hmi.views.push(view);
+        } else {
+            console.warn(`View '${view.name}' already exists with a different id. Save skipped.`);
+            return;
         }
         await firstValueFrom(this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData));
         if (notify) {
@@ -491,7 +542,7 @@ export class ProjectService {
     /**
      * save the alarm to project
      */
-    setAlarm(alarm: Alarm, old: Alarm) {
+    setAlarm(alarm: Alarm, old?: Alarm) {
         return new Observable((observer) => {
             if (!this.projectData.alarms) {
                 this.projectData.alarms = [];
@@ -509,7 +560,7 @@ export class ProjectService {
                 this.projectData.alarms.push(alarm);
             }
             this.storage.setServerProjectData(ProjectDataCmdType.SetAlarm, alarm, this.projectData).subscribe(result => {
-                if (old && old.name && old.name !== alarm.name) {
+                if (old?.name && old.name !== alarm.name) {
                     this.removeAlarm(old).subscribe(result => {
                         observer.next(null);
                     });
@@ -917,6 +968,65 @@ export class ProjectService {
         }, err => {
             console.error(err);
             this.notifySaveError(err);
+        });
+    }
+    //#endregion
+
+    //#region AR
+    getArSettings(): ArSettings {
+        if (!this.projectData) {
+            return new ArSettings();
+        }
+        if (!this.projectData.ar) {
+            this.projectData.ar = new ArSettings();
+        }
+        return this.projectData.ar;
+    }
+
+    getArMarkers(): ArMarker[] {
+        return this.getArSettings().markers || [];
+    }
+
+    setArMarker(marker: ArMarker, previousMarker?: ArMarker): Observable<boolean> {
+        return new Observable((observer) => {
+            const arSettings = this.getArSettings();
+            arSettings.enabled = true;
+            if (!arSettings.markers) {
+                arSettings.markers = [];
+            }
+            const markerIndex = arSettings.markers.findIndex(item => item.id === (previousMarker?.id || marker.id));
+            if (markerIndex !== -1) {
+                arSettings.markers[markerIndex] = marker;
+            } else {
+                arSettings.markers.push(marker);
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.SetArMarker, marker, this.projectData).subscribe(result => {
+                if (previousMarker?.id && previousMarker.id !== marker.id) {
+                    this.removeArMarker(previousMarker).subscribe(() => {
+                        observer.next(true);
+                    });
+                } else {
+                    observer.next(true);
+                }
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+
+    removeArMarker(marker: ArMarker): Observable<boolean> {
+        return new Observable((observer) => {
+            const arSettings = this.getArSettings();
+            arSettings.markers = (arSettings.markers || []).filter(item => item.id !== marker.id);
+            this.storage.setServerProjectData(ProjectDataCmdType.DelArMarker, marker, this.projectData).subscribe(result => {
+                observer.next(true);
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
         });
     }
     //#endregion
