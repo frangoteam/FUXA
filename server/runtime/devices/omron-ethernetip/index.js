@@ -12,6 +12,7 @@ const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
 const DEFAULT_PORT = 44818;
+const DEFAULT_READ_TIMEOUT = 5000;
 
 function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
   var runtime = _runtime;
@@ -97,10 +98,13 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
     try {
       var timestamp = Date.now();
       var changed = {};
+      var updated = {};
+      var hasSuccessfulRead = false;
+      var connectionLost = false;
       for (var id in data.tags) {
         var tag = data.tags[id];
         try {
-          var result = await client.readTag(tag.address);
+          var result = await _readTag(tag.address);
           var value = await deviceUtils.tagValueCompose(
             result.value,
             varsValue[id] ? varsValue[id].value : null,
@@ -111,28 +115,42 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
           varsValue[id] = {
             id: id,
             value: value,
-            type: tag.type,
+            type: result.typeName || tag.type,
             daq: tag.daq,
             changed: valueChanged,
             timestamp: timestamp,
           };
+          hasSuccessfulRead = true;
+          updated[id] = varsValue[id];
           if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
             changed[id] = varsValue[id];
           }
           varsValue[id].changed = false;
         } catch (err) {
           logger.error(`'${data.name}' read '${tag.address}' error! ${err && err.message}`);
+          if (err && err.code === 'ETIMEDOUT') {
+            connectionLost = true;
+            break;
+          }
         }
       }
+      if (connectionLost) {
+        _handleConnectionLost();
+        return;
+      }
+      if (!hasSuccessfulRead) {
+        return;
+      }
       lastTimestampValue = timestamp;
-      _emitValues(varsValue);
+      _emitValues(updated);
       if (this.addDaq && !utils.isEmptyObject(changed)) {
         this.addDaq(changed, data.name, data.id);
       }
     } catch (err) {
       logger.error(`'${data.name}' polling error: ${err}`);
+    } finally {
+      _checkWorking(false);
     }
-    _checkWorking(false);
   };
 
   // Load/refresh the tag configuration.
@@ -221,6 +239,38 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
 
   var _emitValues = function (values) {
     events.emit('device-value:changed', { id: data.id, values: values });
+  };
+
+  var _readTag = function (address) {
+    var timeout = _getReadTimeout();
+    var timer;
+    var timeoutPromise = new Promise(function (_, reject) {
+      timer = setTimeout(function () {
+        var err = new Error(`read timeout after ${timeout}ms`);
+        err.code = 'ETIMEDOUT';
+        reject(err);
+      }, timeout);
+    });
+    return Promise.race([client.readTag(address), timeoutPromise]).finally(function () {
+      clearTimeout(timer);
+    });
+  };
+
+  var _getReadTimeout = function () {
+    var timeout = data.property && parseInt(data.property.readTimeout, 10);
+    return timeout > 0 ? timeout : DEFAULT_READ_TIMEOUT;
+  };
+
+  var _handleConnectionLost = function () {
+    connected = false;
+    try {
+      if (client) client.close();
+    } catch (err) {
+      logger.error(`'${data.name}' close after polling failure error! ${err}`);
+    }
+    client = null;
+    _emitStatus('connect-error');
+    _clearVarsValue();
   };
 
   // Guard against overlapping connect/polling cycles.
