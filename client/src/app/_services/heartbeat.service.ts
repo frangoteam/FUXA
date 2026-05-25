@@ -29,7 +29,7 @@ export class HeartbeatService {
 			this.heartbeatSubscription = interval(this.heartbeatInterval).subscribe(() => {
 				this.server.heartbeat(this.activity).subscribe(res => {
 					if (res?.message === 'tokenRefresh' && res?.token) {
-						this.authService.setNewToken(res.token);
+						this.authService.setNewToken(res.token, res.data);
 					} else if (res?.message === 'guest' && res?.token) {
 						this.authService.signOut();
 					}

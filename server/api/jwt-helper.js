@@ -72,27 +72,6 @@ function verifyToken (req, res, next) {
 }
 
 function requireAuth (req, res, next) {
-    // Allow requests from FUXA interface (iframe embedding)
-    // Check for common FUXA referer patterns
-    const referer = req.headers.referer;
-    if (referer) {
-        // Allow if referer is from the same host (to support IP access without specific paths)
-        const requestHost = req.headers.host;
-        if (referer.startsWith(`http://${requestHost}`) || referer.startsWith(`https://${requestHost}`)) {
-            return next();
-        }
-        // Allow if referer contains common FUXA paths or is from the same server
-        const fuxaPatterns = [
-            '/fuxa', '/editor', '/viewer', '/lab', '/home',
-            'localhost:', '127.0.0.1:', '0.0.0.0:'
-        ];
-        const hasFuxaReferer = fuxaPatterns.some(pattern => referer.includes(pattern));
-        if (hasFuxaReferer) {
-            return next();
-        }
-    }
-
-    // For direct access, require authentication
     let token = req.headers['x-access-token'];
 
     if (!token) {
