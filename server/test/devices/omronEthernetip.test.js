@@ -129,13 +129,16 @@ describe('Omron EtherNet/IP device driver', () => {
         expect(device.isConnected()).to.equal(true);
     });
 
-    it('closes the client and marks the device disconnected when reads time out', async () => {
+    it('closes the client and marks the device disconnected when polling remains blocked', async () => {
         const { device } = createDevice({
-            property: { address: '192.168.1.10:44819', readTimeout: 5 },
+            property: { address: '192.168.1.10:44819' },
         });
         MockClient.readTag = () => new Promise(() => {});
 
         await device.connect();
+        device.polling();
+        await device.polling();
+        await device.polling();
         await device.polling();
 
         expect(lastOptions).to.deep.equal({ host: '192.168.1.10', port: 44819 });

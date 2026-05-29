@@ -12,7 +12,6 @@ const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
 const DEFAULT_PORT = 44818;
-const DEFAULT_READ_TIMEOUT = 5000;
 
 function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
   var runtime = _runtime;
@@ -26,6 +25,7 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
   var overloading = 0;
   var varsValue = {}; // tag id -> { id, value, type, daq, changed, timestamp }
   var lastTimestampValue;
+  var connectionVersion = 0;
 
   this.init = function (_type) {
     console.error('Not supported!');
@@ -47,6 +47,7 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
         client.connect().then(
           function () {
             connected = true;
+            connectionVersion++;
             logger.info(`'${data.name}' connected!`, true);
             _emitStatus('connect-ok');
             resolve();
@@ -80,6 +81,7 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
       client = null;
       connected = false;
       working = false;
+      connectionVersion++;
       _emitStatus('connect-off');
       _clearVarsValue();
       resolve(true);
@@ -98,13 +100,15 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
     try {
       var timestamp = Date.now();
       var changed = {};
-      var updated = {};
       var hasSuccessfulRead = false;
-      var connectionLost = false;
+      var pollingConnectionVersion = connectionVersion;
       for (var id in data.tags) {
         var tag = data.tags[id];
         try {
-          var result = await _readTag(tag.address);
+          var result = await client.readTag(tag.address);
+          if (!connected || pollingConnectionVersion !== connectionVersion) {
+            return;
+          }
           var value = await deviceUtils.tagValueCompose(
             result.value,
             varsValue[id] ? varsValue[id].value : null,
@@ -121,28 +125,19 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
             timestamp: timestamp,
           };
           hasSuccessfulRead = true;
-          updated[id] = varsValue[id];
           if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[id], timestamp)) {
             changed[id] = varsValue[id];
           }
           varsValue[id].changed = false;
         } catch (err) {
           logger.error(`'${data.name}' read '${tag.address}' error! ${err && err.message}`);
-          if (err && err.code === 'ETIMEDOUT') {
-            connectionLost = true;
-            break;
-          }
         }
-      }
-      if (connectionLost) {
-        _handleConnectionLost();
-        return;
       }
       if (!hasSuccessfulRead) {
         return;
       }
       lastTimestampValue = timestamp;
-      _emitValues(updated);
+      _emitValues(varsValue);
       if (this.addDaq && !utils.isEmptyObject(changed)) {
         this.addDaq(changed, data.name, data.id);
       }
@@ -241,28 +236,9 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
     events.emit('device-value:changed', { id: data.id, values: values });
   };
 
-  var _readTag = function (address) {
-    var timeout = _getReadTimeout();
-    var timer;
-    var timeoutPromise = new Promise(function (_, reject) {
-      timer = setTimeout(function () {
-        var err = new Error(`read timeout after ${timeout}ms`);
-        err.code = 'ETIMEDOUT';
-        reject(err);
-      }, timeout);
-    });
-    return Promise.race([client.readTag(address), timeoutPromise]).finally(function () {
-      clearTimeout(timer);
-    });
-  };
-
-  var _getReadTimeout = function () {
-    var timeout = data.property && parseInt(data.property.readTimeout, 10);
-    return timeout > 0 ? timeout : DEFAULT_READ_TIMEOUT;
-  };
-
   var _handleConnectionLost = function () {
     connected = false;
+    connectionVersion++;
     try {
       if (client) client.close();
     } catch (err) {
@@ -278,9 +254,13 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
     if (check && working) {
       overloading++;
       logger.warn(`'${data.name}' working overload! ${overloading}`);
-      if (overloading < 3) {
-        return false;
+      if (overloading >= 3) {
+        logger.error(`'${data.name}' polling blocked, reconnecting`);
+        working = false;
+        overloading = 0;
+        _handleConnectionLost();
       }
+      return false;
     }
     working = check;
     overloading = 0;
