@@ -1627,6 +1627,7 @@
     "dlg.app-auth-expiration-1d": "已啟用，權杖將於 1 天內到期,",
     "dlg.app-auth-tooltip": "已啟用：你有一個管理員帳號 'admin/123456'（請不要忘記修改）。需要重新啟動伺服器！",
     "dlg.app-settings-client-broadcast": "廣播至用戶端（前端）所有標籤值",
+    "dlg.app-settings-lazy-view-loading": "Lazy view loading",
 
     "dlg.app-settings-daqstore": "DAQ 儲存",
     "dlg.app-settings-daqstore-type": "資料庫類型",
