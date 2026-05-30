@@ -414,9 +414,14 @@ export class ProjectService {
         if (!(view as any).lazy) {
             return view;
         }
-        const loadedView = await firstValueFrom(this.storage.getStorageView(id));
-        this.mergeLoadedView(loadedView);
-        return loadedView;
+        try {
+            const loadedView = await firstValueFrom(this.storage.getStorageView(id));
+            this.mergeLoadedView(loadedView);
+            return loadedView;
+        } catch (err) {
+            console.warn(`Unable to load view '${id}'.`, err);
+            return null;
+        }
     }
 
     async ensureViewLoadedByName(name: string): Promise<View> {

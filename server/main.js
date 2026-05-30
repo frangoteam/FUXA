@@ -181,6 +181,9 @@ try {
         if (!utils.isNullOrUndefined(mysettings.broadcastAll)) {
             settings.broadcastAll = mysettings.broadcastAll;
         }
+        if (!utils.isNullOrUndefined(mysettings.lazyViewLoading)) {
+            settings.lazyViewLoading = mysettings.lazyViewLoading;
+        }
         if (!utils.isNullOrUndefined(mysettings.logFull)) {
             settings.logFull = mysettings.logFull;
         }
