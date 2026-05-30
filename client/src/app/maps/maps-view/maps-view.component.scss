@@ -73,6 +73,12 @@
     color: var(--bubble-fg);           /* ✔ colore dinamico */
 }
 
+:host ::ng-deep .bubble-image {
+    max-width: 24px;
+    max-height: 24px;
+    display: block;
+}
+
 /* Testo */
 :host ::ng-deep .bubble-text {
     font-size: 12px;

@@ -136,13 +136,16 @@ export class MapsViewComponent implements AfterViewInit, OnDestroy {
             const color = loc.markerColor ?? '#000000';
             const background = loc.markerBackground ?? '#ffffff';
             const icon = loc.markerIcon ? loc.markerIcon : '';
+            const image = loc.markerImage ? loc.markerImage : '';
             const nameHtml = loc.showMarkerName
                                 ? `<div class="bubble-text"
                                         style="color: var(--bubble-fg);">${loc.name}</div>`
                                 : '';
             const iconHtml = loc.showMarkerIcon
-                                ? `<span class="material-icons bubble-icon"
-                                        style="color: var(--bubble-fg);">${icon}</span>`
+                                ? image
+                                    ? `<img class="bubble-image" src="${image}" alt="">`
+                                    : `<span class="material-icons bubble-icon"
+                                            style="color: var(--bubble-fg);">${icon}</span>`
                                 : '';
             const valueHtml = loc.markerTagValueId && loc.showMarkerValue
                                 ? `<div class="bubble-value" id="${valueHtmlId}">##.##</div>`
