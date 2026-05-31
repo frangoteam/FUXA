@@ -1167,25 +1167,34 @@ export class ProjectService {
     }
 
     cleanView(view: View): boolean {
-        if (!view.svgcontent) {
+        try {
+            if (!view || view.type !== ViewType.svg || typeof view.svgcontent !== 'string' || !view.svgcontent) {
+                return false;
+            }
+            if (!view.items || typeof view.items !== 'object') {
+                return false;
+            }
+
+            const idsInSvg = new Set<string>();
+            const re = /id=(?:"|')([^"']+)(?:"|')/g;
+            let m: RegExpExecArray | null;
+            while ((m = re.exec(view.svgcontent)) !== null) {
+                idsInSvg.add(m[1]);
+            }
+
+            let changed = false;
+            for (const key of Object.keys(view.items)) {
+                if (!idsInSvg.has(key)) {
+                    console.warn('GUI item deleted: ', key);
+                    delete view.items[key];
+                    changed = true;
+                }
+            }
+            return changed;
+        } catch (err) {
+            console.warn(`Unable to clean view '${view?.name || view?.id || ''}'.`, err);
             return false;
         }
-        const idsInSvg = new Set<string>();
-        const re = /id=(?:"|')([^"']+)(?:"|')/g;
-        let m: RegExpExecArray | null;
-        while ((m = re.exec(view.svgcontent)) !== null) {
-            idsInSvg.add(m[1]);
-        }
-
-        let changed = false;
-        for (const key of Object.keys(view.items)) {
-            if (!idsInSvg.has(key)) {
-                console.warn('GUI item deleted: ', key);
-                delete view.items[key];
-                changed = true;
-            }
-        }
-        return changed;
     }
 
 
