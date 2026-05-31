@@ -42,6 +42,7 @@ export class ProjectService {
 
     private projectOld = '';
     private ready = false;
+    private loadingViews = new Map<string, Promise<View>>();
     public static MainViewName = 'MainView';
 
     constructor(private resewbApiService: ResWebApiService,
@@ -406,22 +407,34 @@ export class ProjectService {
         return null;
     }
 
+    isViewLazy(view: View): boolean {
+        return !!this.asLazyView(view)?.lazy;
+    }
+
     async ensureViewLoaded(id: string): Promise<View> {
         const view = this.getViewFromId(id);
         if (!view) {
             return null;
         }
-        if (!(view as any).lazy) {
+        if (!this.isViewLazy(view)) {
             return view;
         }
-        try {
-            const loadedView = await firstValueFrom(this.storage.getStorageView(id));
+        if (this.loadingViews.has(id)) {
+            return this.loadingViews.get(id);
+        }
+
+        const loadingView = firstValueFrom(this.storage.getStorageView(id)).then(loadedView => {
             this.mergeLoadedView(loadedView);
-            return loadedView;
-        } catch (err) {
+            return this.getViewFromId(loadedView?.id || id);
+        }).catch(err => {
             console.warn(`Unable to load view '${id}'.`, err);
             return null;
-        }
+        }).finally(() => {
+            this.loadingViews.delete(id);
+        });
+
+        this.loadingViews.set(id, loadingView);
+        return loadingView;
     }
 
     async ensureViewLoadedByName(name: string): Promise<View> {
@@ -433,13 +446,26 @@ export class ProjectService {
         if (!view) {
             return;
         }
-        delete (view as any).lazy;
-        const existingView = this.projectData.hmi.views.find(item => item.id === view.id);
-        if (existingView) {
-            Object.assign(existingView, view);
-        } else {
-            this.projectData.hmi.views.push(view);
+        try {
+            this.markViewLoaded(view);
+            const existingView = this.projectData.hmi.views.find(item => item.id === view.id);
+            if (existingView) {
+                Object.assign(existingView, view);
+                this.markViewLoaded(existingView);
+            } else {
+                this.projectData.hmi.views.push(view);
+            }
+        } catch (err) {
+            console.warn(`Unable to merge view '${view?.id}'.`, err);
         }
+    }
+
+    private markViewLoaded(view: View) {
+        delete this.asLazyView(view).lazy;
+    }
+
+    private asLazyView(view: View): View & { lazy?: boolean } {
+        return view as View & { lazy?: boolean };
     }
 
     /**

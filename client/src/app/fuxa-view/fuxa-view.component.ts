@@ -193,7 +193,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.viewLoaded = true;
             return;
         }
-        if ((view as any)?.lazy) {
+        if (this.projectService.isViewLazy(view)) {
             this.resolveView(view).then(resolvedView => {
                 this.loadResolvedHmi(resolvedView, legacyProfile);
             });
@@ -822,7 +822,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             return null;
         }
         try {
-            if ((view as any)?.lazy) {
+            if (this.projectService.isViewLazy(view)) {
                 view = await this.projectService.ensureViewLoaded(view.id);
             }
         } catch (err) {
