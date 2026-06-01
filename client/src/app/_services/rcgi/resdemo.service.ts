@@ -29,7 +29,7 @@ export class ResDemoService implements ResourceStorageService {
         return this.http.get<any>('./assets/project.demo.fuxap', {});
     }
 
-    getStorageProject(): Observable<any> {
+    getStorageProject(loadFull = false): Observable<any> {
         return new Observable((observer) => {
             let prj = localStorage.getItem(this.getAppId());
             if (prj) {

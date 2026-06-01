@@ -47,7 +47,7 @@ export class ResClientService implements ResourceStorageService {
         return this.http.get<any>('./assets/project.demo.fuxap', {});
     }
 
-    getStorageProject(): Observable<any> {
+    getStorageProject(loadFull = false): Observable<any> {
         return new Observable((observer) => {
             if (this.bridge) {
                 let sprj = this.bridge.loadProject();

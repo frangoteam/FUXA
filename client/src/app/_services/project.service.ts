@@ -84,9 +84,10 @@ export class ProjectService {
         this.reload();
     }
 
-    onRefreshProject(): boolean {
-        this.storage.getStorageProject().subscribe(prj => {
+    onRefreshProject(loadFull = false): boolean {
+        this.storage.getStorageProject(loadFull).subscribe(prj => {
             if (prj) {
+                this.loadingViews.clear();
                 this.projectData = prj;
                 // copy to check before save
                 this.projectOld = JSON.parse(JSON.stringify(this.projectData));
@@ -109,8 +110,8 @@ export class ProjectService {
      * Load Project from Server if enable.
      * From Local Storage, from 'assets' if demo or create a local project
      */
-    private load() {
-        this.storage.getStorageProject().subscribe(prj => {
+    private load(loadFull = false) {
+        this.storage.getStorageProject(loadFull).subscribe(prj => {
             if (!prj && this.appService.isDemoApp) {
                 console.log('create demo');
                 this.setNewProject();
@@ -118,11 +119,13 @@ export class ProjectService {
                 if (!prj && (this.storage as ResClientService).isReady) {
                     this.setNewProject();
                 } else {
+                    this.loadingViews.clear();
                     this.projectData = prj;
                 }
                 this.ready = true;
                 this.notifyToLoadHmi();
             } else {
+                this.loadingViews.clear();
                 this.projectData = prj;
                 // copy to check before save
                 this.projectOld = JSON.parse(JSON.stringify(this.projectData));
@@ -243,8 +246,8 @@ export class ProjectService {
         });
     }
 
-    reload() {
-        this.load();
+    reload(loadFull = false) {
+        this.load(loadFull);
     }
 
     /**
@@ -409,6 +412,10 @@ export class ProjectService {
 
     isViewLazy(view: View): boolean {
         return !!this.asLazyView(view)?.lazy;
+    }
+
+    hasLazyViews(): boolean {
+        return this.getViews().some(view => this.isViewLazy(view));
     }
 
     async ensureViewLoaded(id: string): Promise<View> {
@@ -1229,25 +1236,34 @@ export class ProjectService {
     }
 
     cleanView(view: View): boolean {
-        if (!view.svgcontent) {
+        try {
+            if (!view || view.type !== ViewType.svg || typeof view.svgcontent !== 'string' || !view.svgcontent) {
+                return false;
+            }
+            if (!view.items || typeof view.items !== 'object') {
+                return false;
+            }
+
+            const idsInSvg = new Set<string>();
+            const re = /id=(?:"|')([^"']+)(?:"|')/g;
+            let m: RegExpExecArray | null;
+            while ((m = re.exec(view.svgcontent)) !== null) {
+                idsInSvg.add(m[1]);
+            }
+
+            let changed = false;
+            for (const key of Object.keys(view.items)) {
+                if (!idsInSvg.has(key)) {
+                    console.warn('GUI item deleted: ', key);
+                    delete view.items[key];
+                    changed = true;
+                }
+            }
+            return changed;
+        } catch (err) {
+            console.warn(`Unable to clean view '${view?.name || view?.id || ''}'.`, err);
             return false;
         }
-        const idsInSvg = new Set<string>();
-        const re = /id=(?:"|')([^"']+)(?:"|')/g;
-        let m: RegExpExecArray | null;
-        while ((m = re.exec(view.svgcontent)) !== null) {
-            idsInSvg.add(m[1]);
-        }
-
-        let changed = false;
-        for (const key of Object.keys(view.items)) {
-            if (!idsInSvg.has(key)) {
-                console.warn('GUI item deleted: ', key);
-                delete view.items[key];
-                changed = true;
-            }
-        }
-        return changed;
     }
 
 

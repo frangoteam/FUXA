@@ -21,7 +21,7 @@ export abstract class ResourceStorageService {
 
     public abstract getDemoProject(): Observable<any>;
 
-    public abstract getStorageProject(): Observable<any>;
+    public abstract getStorageProject(loadFull?: boolean): Observable<any>;
 
     public abstract getStorageView(id: string): Observable<View>;
 

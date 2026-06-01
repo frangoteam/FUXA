@@ -35,8 +35,8 @@ export class ResWebApiService implements ResourceStorageService {
         return this.http.get<any>('./assets/project.demo.fuxap', {});
     }
 
-    getStorageProject(): Observable<any> {
-        const options = window.location.pathname.startsWith('/editor') ? {} : { params: { views: 'lazy' } };
+    getStorageProject(loadFull = false): Observable<any> {
+        const options = (loadFull || window.location.pathname.startsWith('/editor')) ? {} : { params: { views: 'lazy' } };
         return this.http.get<any>(this.endPointConfig + '/api/project', options);
     }
 
