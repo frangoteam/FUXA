@@ -95,6 +95,10 @@ const Datatypes = {
      * Int64
      */
     Int64: _gen(8, 'BigInt64BE', 4, 0, true),
+    /**
+     * UInt64
+     */
+    UInt64: _gen(8, 'BigUInt64BE', 4, 0, true),
 
     /**
      * Int16LE
@@ -121,9 +125,13 @@ const Datatypes = {
      */
     Float64LE: _gen(8, 'DoubleLE', 4),
     /**
-     * Int64
+     * Int64LE
      */
     Int64LE: _gen(8, 'BigInt64LE', 4, 0, true),
+    /**
+     * UInt64LE
+     */
+    UInt64LE: _gen(8, 'BigUInt64LE', 4, 0, true),
 
     /**
      * Int32MLE
@@ -137,6 +145,18 @@ const Datatypes = {
      * Float32MLE
      */
     Float32MLE: _gen(4, 'FloatBE', 2, 2),
+    /**
+     * Float64MLE
+     */
+    Float64MLE: _gen(8, 'DoubleBE', 4, 2),
+    /**
+     * Int64MLE
+     */
+    Int64MLE: _gen(8, 'BigInt64BE', 4, 2, true),
+    /**
+     * UInt64MLE
+     */
+    UInt64MLE: _gen(8, 'BigUInt64BE', 4, 2, true),
 
     /**
      * String
