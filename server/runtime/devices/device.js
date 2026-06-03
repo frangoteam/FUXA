@@ -15,6 +15,9 @@ var ODBCclient = require('./odbc');
 var ADSclient = require('./adsclient');
 // var TEMPLATEclient = require('./template');
 var GpioClient = require('./gpio');
+var WebCamClient = require('./webcam');
+var MELSECclient = require('./melsec');
+var REDISclient = require('./redis');
 
 const path = require('path');
 const utils = require('../utils');
@@ -23,6 +26,7 @@ var deviceCloseTimeout = 1000;
 var DEVICE_CHECK_STATUS_INTERVAL = 5000;
 var SERVER_POLLING_INTERVAL = 1000;             // with DAQ enabled, will be saved only changed values in this interval
 var DEVICE_POLLING_INTERVAL = 3000;             // with DAQ enabled, will be saved only changed values in this interval
+var DISABLE_POLLING_INTERVAL = -1;              // disable polling
 
 var fncGetDeviceProperty;
 
@@ -95,12 +99,26 @@ function Device(data, runtime) {
             return null;
         }
         comm = ADSclient.create(data, logger, events, manager, runtime);
-    }
-    else if (data.type === DeviceEnum.GPIO) {
+    } else if (data.type === DeviceEnum.GPIO) {
         if (!GpioClient) {
             return null;
         }
         comm = GpioClient.create(data, logger, events, manager, runtime);
+    } else if (data.type === DeviceEnum.WebCam) {
+        if (!WebCamClient) {
+            return null;
+        }
+        comm = WebCamClient.create(data, logger, events, manager, runtime);
+    } else if (data.type === DeviceEnum.MELSEC) {
+        if (!MELSECclient) {
+            return null;
+        }
+        comm = MELSECclient.create(data, logger, events, manager, runtime);
+    } else if (data.type === DeviceEnum.REDIS) {
+        if (!REDISclient) {
+            return null;
+        }
+        comm = REDISclient.create(data, logger, events, manager, runtime);
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
@@ -208,9 +226,11 @@ function Device(data, runtime) {
             comm.init(MODBUSclient.ModbusTypes.TCP);
         }
         return comm.connect().then(function () {
-            devicePolling = setInterval(function () {
-                self.polling();
-            }, pollingInterval);
+            if (pollingInterval !== DISABLE_POLLING_INTERVAL){
+                devicePolling = setInterval(function () {
+                    self.polling();
+                }, pollingInterval);
+            }
         });
     }
 
@@ -283,6 +303,12 @@ function Device(data, runtime) {
                     reject(err);
                 });
             } else if (data.type === DeviceEnum.ODBC) {
+                comm.browse(path, callback).then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
+            } else if (data.type === DeviceEnum.REDIS) {
                 comm.browse(path, callback).then(function (result) {
                     resolve(result);
                 }).catch(function (err) {
@@ -452,7 +478,7 @@ function getSupportedProperty(endpoint, type, packagerManager) {
     var self = this;
     return new Promise(function (resolve, reject) {
         if (type === DeviceEnum.OPCUA) {
-            OpcUAclient.getEndPoints(endpoint).then(function (result) {
+            OpcUAclient.getEndPoints(endpoint, packagerManager).then(function (result) {
                 resolve(result);
             }).catch(function (err) {
                 reject(err);
@@ -514,6 +540,10 @@ function loadPlugin(type, module) {
         ADSclient = require(module);
     } else if (type === DeviceEnum.GPIO) {
         GpioClient = require(module);
+    } else if (type === DeviceEnum.MELSEC) {
+        MELSECclient = require(module);
+    } else if (type === DeviceEnum.REDIS) {
+        REDISclient = require(module);
     }
 }
 
@@ -553,6 +583,9 @@ var DeviceEnum = {
     ADSclient: 'ADSclient',
     GPIO: 'GPIO',
     internal: 'internal',
+    WebCam: 'WebCam',
+    MELSEC: 'MELSEC',
+    REDIS: 'REDIS',
     // Template: 'template'
 }
 

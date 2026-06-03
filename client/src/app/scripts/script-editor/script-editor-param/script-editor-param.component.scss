@@ -1,0 +1,16 @@
+:host {
+    .dialog-content {
+        width: 400px;
+
+        .my-form-field {
+            display: block;
+        }
+
+        .my-form-field input,
+        .my-form-field mat-select {
+            flex: 1 1 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+}

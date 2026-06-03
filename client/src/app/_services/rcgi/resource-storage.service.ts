@@ -8,6 +8,7 @@ import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { Role } from '../../_models/user';
+import { ApiKey } from '../../_models/apikey';
 
 @Injectable()
 export abstract class ResourceStorageService {
@@ -44,6 +45,12 @@ export abstract class ResourceStorageService {
 
     public abstract getDaqValues(query: DaqQuery): Observable<any>;
 
+    public abstract getSchedulerData(id: string): Observable<any>;
+
+    public abstract setSchedulerData(id: string, data: any): Observable<any>;
+
+    public abstract deleteSchedulerData(id: string): Observable<any>;
+
     public abstract heartbeat(activity: boolean): Observable<any>;
 
     public abstract downloadFile(fileName: string, type: CommanType): Observable<Blob>;
@@ -53,6 +60,12 @@ export abstract class ResourceStorageService {
     public abstract setRoles(roles: Role[]): Observable<any>;
 
     public abstract removeRoles(roles: Role[]): Observable<any>;
+
+    public abstract getApiKeys(): Observable<ApiKey[]>;
+
+    public abstract setApiKeys(roles: ApiKey[]): Observable<any>;
+
+    public abstract removeApiKeys(roles: ApiKey[]): Observable<any>;
 
     public abstract endPointConfig: string;
 

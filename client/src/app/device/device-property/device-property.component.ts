@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { Subscription, delay } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EndPointSettings, HmiService } from '../../_services/hmi.service';
 import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
-import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType, ModbusReuseModeType } from './../../_models/device';
+import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType, ModbusReuseModeType, RedisReadModeType, RedisOptions } from './../../_models/device';
 
 @Component({
 	selector: 'app-device-property',
@@ -28,7 +28,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	deviceType: any = {};
 	showPassword: boolean;
 
-	pollingPlcType = [{text: '200 ms', value: 200},
+	pollingPlcType = [{text: '50 ms', value: 50},
+		              {text: '100 ms', value: 100},
+		              {text: '200 ms', value: 200},
 					  {text: '350 ms', value: 350},
 					  {text: '500 ms', value: 500},
 					  {text: '700 ms', value: 700},
@@ -55,6 +57,8 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 						 {text: '30 min', value: 60000 * 30},
 						 {text: '60 min', value: 60000 * 60}];
 
+    pollingWebCamType = this.pollingWebApiType.concat([{text: 'Disabled', value: -1}]);
+
 	pollingType = this.pollingPlcType;
 
 	isFuxaServer = false;
@@ -74,7 +78,12 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	modbusRtuOptionType = [ModbusOptionType.SerialPort, ModbusOptionType.RTUBufferedPort, ModbusOptionType.AsciiPort];
 	modbusTcpOptionType = [ModbusOptionType.TcpPort, ModbusOptionType.UdpPort, ModbusOptionType.TcpRTUBufferedPort, ModbusOptionType.TelnetPort];
 	modbusReuseModeType = ModbusReuseModeType;
-
+    redisReadModeType = RedisReadModeType;
+    redisReadModeSimple = RedisReadModeType.simple;
+    redisReadModeHash = RedisReadModeType.hash;
+    // redisReadModeCustom = RedisReadModeType.custom;
+	redisOptions = new RedisOptions();
+	writeArgsTooltip = '';
 	result = '';
 	private subscriptionDeviceProperty: Subscription;
 	private subscriptionHostInterfaces: Subscription;
@@ -188,7 +197,16 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
             if (!this.data.device.property.parity) {
                 this.data.device.property.parity = 'None';
             }
+            if (!this.data.device.property.forceFC16) {
+                this.data.device.property.forceFC16 = false;
+            }
         }
+		if (this.data.device.type === DeviceType.REDIS) {
+			const opts = this.data.device?.property?.options;
+			this.redisOptions = (typeof opts === 'string')
+			  ? new RedisOptions()
+			  : (opts || new RedisOptions());
+		}
 		this.subscriptionHostInterfaces = this.hmiService.onHostInterfaces.subscribe(res => {
 			if (res.result) {
 				this.hostInterfaces = res;
@@ -200,7 +218,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			}
 			this.propertyLoading = false;
 		});
-
+		this.writeArgsTooltip = this.translateService.instant('device.property-redis-write-args-tooltip');
 		this.onDeviceTypeChanged();
 	}
 
@@ -226,6 +244,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	onOkClick(): void {
 		this.data.security = this.getSecurity();
+		if (this.data.device.type === DeviceType.REDIS) {
+			this.data.device.property.options = this.redisOptions;
+		}
 	}
 
 	onCheckOpcUaServer() {
@@ -265,9 +286,11 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	onDeviceTypeChanged() {
-		if (this.data.device.type === DeviceType.WebAPI) {
+		if (this.data.device.type === DeviceType.WebAPI ) {
 			this.pollingType = this.pollingWebApiType;
-		} else {
+		} else if (this.data.device.type === DeviceType.WebCam) {
+            this.pollingType = this.pollingWebCamType;
+        } else {
 			this.pollingType = this.pollingPlcType;
 		}
 	}
@@ -362,6 +385,17 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			return false;
 		}
 		return true;
+	}
+
+	onAddWriteKey() {
+		this.redisOptions.customCommand.write.args.push({
+			name: '',
+			value: '',
+		});
+	}
+
+	onRemoveWriteKey(idx: number) {
+		this.redisOptions.customCommand.write.args.splice(idx, 1);
 	}
 
 	private securityModeToString(mode): string {

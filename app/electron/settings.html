@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FUXA Settings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: #424242;
+            color: #FFFFFF;
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        h2 {
+            text-align: center;
+            color: #FFFFFF;
+            margin-top: 0;
+            margin-bottom: 15px;
+            flex-shrink: 0;
+        }
+        .setting-group {
+            flex: 1;
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: #37373D;
+            border-radius: 5px;
+            border: 1px solid rgba(39,39,39,0.42);
+            overflow-y: auto;
+        }
+        .setting-item {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+        select, button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #424242;
+            color: #FFFFFF;
+            max-width: none;
+        }
+        select:focus, button:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+        }
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 10px;
+            width: auto;
+            accent-color: #FFFFFF;
+        }
+        .button-container {
+            flex-shrink: 0;
+            text-align: center;
+            margin-top: auto;
+            padding-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            border-top: 1px solid rgba(39,39,39,0.42);
+            padding-bottom: 10px;
+        }
+        button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            width: auto;
+            min-width: 70px;
+            max-width: 100px;
+        }
+        button.save {
+            background-color: #448AFF;
+            color: #FFFFFF;
+        }
+        button.cancel {
+            background-color: #757575;
+            color: #FFFFFF;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        @media (max-width: 450px) {
+            body {
+                padding: 10px;
+            }
+            h2 {
+                font-size: 16px;
+                margin-bottom: 10px;
+            }
+            .setting-group {
+                padding: 10px;
+            }
+            .setting-item {
+                margin-bottom: 12px;
+            }
+            select, button {
+                font-size: 12px;
+            }
+            button {
+                padding: 6px 8px;
+                min-width: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>FUXA Settings</h2>
+    <div class="setting-group">
+        <div class="setting-item">
+            <label class="checkbox-container">
+                <input type="checkbox" id="autoStartEnabled">
+                Enable Auto Start
+            </label>
+        </div>
+        <div class="setting-item">
+            <label class="checkbox-container">
+                <input type="checkbox" id="fullscreenEnabled">
+                Start in Fullscreen Mode
+            </label>
+        </div>
+        <div class="setting-item">
+            <label class="checkbox-container">
+                <input type="checkbox" id="rightClickEnabled">
+                Enable Right Click
+            </label>
+        </div>
+        <div class="setting-item">
+            <label class="checkbox-container">
+                <input type="checkbox" id="textSelectionEnabled">
+                Enable Text Selection
+            </label>
+        </div>
+        <div class="setting-item">
+            <label for="autoStartProject">Auto Start Project:</label>
+            <select id="autoStartProject" disabled>
+                <option value="">Select a project...</option>
+                <!-- Projects will be populated by JavaScript -->
+            </select>
+        </div>
+    </div>
+    <div class="button-container">
+        <button class="save" onclick="saveSettings()">Save</button>
+        <button class="cancel" onclick="window.close()">Cancel</button>
+    </div>
+    <script>
+        const { ipcRenderer } = require('electron');
+        window.electronAPI = {
+            // Auto-start settings
+            getAutoStartSettings: () => ipcRenderer.invoke('get-auto-start-settings'),
+            setAutoStartSettings: (settings) => ipcRenderer.invoke('set-auto-start-settings', settings),
+            // Fullscreen settings
+            getFullscreenSettings: () => ipcRenderer.invoke('get-fullscreen-settings'),
+            setFullscreenSettings: (settings) => ipcRenderer.invoke('set-fullscreen-settings', settings),
+            // Right-click settings
+            getRightClickSettings: () => ipcRenderer.invoke('get-right-click-settings'),
+            setRightClickSettings: (settings) => ipcRenderer.invoke('set-right-click-settings', settings),
+            // Text selection settings
+            getTextSelectionSettings: () => ipcRenderer.invoke('get-text-selection-settings'),
+            setTextSelectionSettings: (settings) => ipcRenderer.invoke('set-text-selection-settings', settings),
+            getRecentProjects: () => ipcRenderer.invoke('get-recent-projects'),
+            // Project selection (for backward compatibility)
+            selectAction: (action) => ipcRenderer.send('project-action', action),
+            selectProject: (path) => ipcRenderer.send('project-selected', path),
+            cancel: () => ipcRenderer.send('project-action', 'cancel')
+        };
+
+        // Load settings when the page loads
+        async function loadSettings() {
+            try {
+                const [autoStart, fullscreen, rightClick, textSelection, recentProjects] = await Promise.all([
+                    window.electronAPI.getAutoStartSettings(),
+                    window.electronAPI.getFullscreenSettings(),
+                    window.electronAPI.getRightClickSettings(),
+                    window.electronAPI.getTextSelectionSettings(),
+                    window.electronAPI.getRecentProjects()
+                ]);
+
+                document.getElementById('autoStartEnabled').checked = autoStart.enabled;
+                document.getElementById('fullscreenEnabled').checked = fullscreen.enabled;
+                document.getElementById('rightClickEnabled').checked = rightClick.enabled;
+                document.getElementById('textSelectionEnabled').checked = textSelection.enabled;
+
+                const select = document.getElementById('autoStartProject');
+                select.innerHTML = '<option value="">Select a project...</option>';
+
+                recentProjects.forEach(project => {
+                    const option = document.createElement('option');
+                    option.value = project.path;
+                    option.textContent = project.name;
+                    if (autoStart.projectPath === project.path) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+
+                updateProjectSelect();
+            } catch (error) {
+                console.error('Failed to load settings:', error);
+            }
+        }
+
+        // Enable/disable project dropdown based on checkbox
+        document.getElementById('autoStartEnabled').addEventListener('change', updateProjectSelect);
+
+        function updateProjectSelect() {
+            const select = document.getElementById('autoStartProject');
+            const enabled = document.getElementById('autoStartEnabled').checked;
+            select.disabled = !enabled;
+            select.classList.toggle('disabled', !enabled);
+        }
+
+        async function saveSettings() {
+            const enabled = document.getElementById('autoStartEnabled').checked;
+            const projectPath = enabled ? document.getElementById('autoStartProject').value : null;
+            const fullscreenEnabled = document.getElementById('fullscreenEnabled').checked;
+            const rightClickEnabled = document.getElementById('rightClickEnabled').checked;
+            const textSelectionEnabled = document.getElementById('textSelectionEnabled').checked;
+
+            try {
+                await window.electronAPI.setAutoStartSettings({ enabled, projectPath });
+                await window.electronAPI.setFullscreenSettings({ enabled: fullscreenEnabled });
+                await window.electronAPI.setRightClickSettings({ enabled: rightClickEnabled });
+                await window.electronAPI.setTextSelectionSettings({ enabled: textSelectionEnabled });
+                alert('Settings saved successfully!');
+                window.close();
+            } catch (error) {
+                alert('Failed to save settings: ' + error.message);
+            }
+        }
+
+        // Load settings on page load
+        loadSettings();
+    </script>
+</body>
+</html>

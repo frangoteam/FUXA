@@ -1,6 +1,6 @@
 /**
  *  Module to manage the project datastore in a database
- *  Table: 'general', 'views', 'devices', 'chart', 'texts', 'alarms', 'notifications', 'scripts', 'reports', 'locations'
+ *  Table: 'general', 'views', 'devices', 'chart', 'texts', 'alarms', 'notifications', 'scripts', 'reports', 'locations', 'arMarkers'
  */
 
 'use strict';
@@ -12,6 +12,38 @@ var sqlite3 = require('sqlite3').verbose();
 var settings        // Application settings
 var logger;         // Application logger
 var db_prj;         // Database of project
+
+function _run(sql, params = []) {
+    return new Promise((resolve, reject) => {
+        db_prj.run(sql, params, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this);
+            }
+        });
+    });
+}
+
+function _all(sql, params = []) {
+    return new Promise((resolve, reject) => {
+        db_prj.all(sql, params, function (err, rows) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+}
+
+function _ensureValidTable(table) {
+    const tables = Object.values(TableType);
+    if (!tables.includes(table)) {
+        throw new Error(`invalid table '${table}'`);
+    }
+    return table;
+}
 
 /**
  * Init and bind the database resource
@@ -50,6 +82,7 @@ function _bind() {
         sql += "CREATE TABLE if not exists scripts (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists reports (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists locations (name TEXT PRIMARY KEY, value TEXT);";
+        sql += "CREATE TABLE if not exists arMarkers (name TEXT PRIMARY KEY, value TEXT);";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.bind failed! ${err}`);
@@ -83,21 +116,23 @@ function setDefault() {
  * @param {*} sections
  */
 function setSections(sections) {
-    return new Promise(function (resolve, reject) {
-        // prepare query
-        var sql = "";
-        for(var i = 0; i < sections.length; i++) {
-            var value = JSON.stringify(sections[i].value).replace(/\'/g,"''");
-            sql += "INSERT OR REPLACE INTO " + sections[i].table + " (name, value) VALUES('" + sections[i].name + "','"+ value + "');";
-        }
-        db_prj.exec(sql, function (err) {
-            if (err) {
-                logger.error(`prjstorage.set failed! ${err}`);
-                reject();
-            } else {
-                resolve();
+    return new Promise(async function (resolve, reject) {
+        try {
+            await _run('BEGIN TRANSACTION');
+            for (var i = 0; i < sections.length; i++) {
+                var table = _ensureValidTable(sections[i].table);
+                var value = JSON.stringify(sections[i].value);
+                await _run(`INSERT OR REPLACE INTO ${table} (name, value) VALUES(?, ?)`, [sections[i].name, value]);
             }
-        });
+            await _run('COMMIT');
+            resolve();
+        } catch (err) {
+            try {
+                await _run('ROLLBACK');
+            } catch (_) {}
+            logger.error(`prjstorage.set failed! ${err}`);
+            reject();
+        }
     });
 }
 
@@ -108,16 +143,19 @@ function setSections(sections) {
  */
 function setSection(section) {
     return new Promise(function (resolve, reject) {
-        var value = JSON.stringify(section.value).replace(/\'/g,"''");
-        var sql = "INSERT OR REPLACE INTO " + section.table + " (name, value) VALUES('" + section.name + "','"+ value + "');";
-        db_prj.exec(sql, function (err) {
-            if (err) {
+        try {
+            var table = _ensureValidTable(section.table);
+            var value = JSON.stringify(section.value);
+            _run(`INSERT OR REPLACE INTO ${table} (name, value) VALUES(?, ?)`, [section.name, value]).then(function () {
+                resolve();
+            }).catch(function (err) {
                 logger.error(`prjstorage.set failed! ${err}`);
                 reject();
-            } else {
-                resolve();
-            }
-        });
+            });
+        } catch (err) {
+            logger.error(`prjstorage.set failed! ${err}`);
+            reject();
+        }
     });
 }
 
@@ -129,17 +167,18 @@ function setSection(section) {
  */
 function getSection(table, name) {
     return new Promise(function (resolve, reject) {
-        var sql = "SELECT name, value FROM " + table;
-        if (name) {
-            sql += " WHERE name = '" + name + "'";
-        }
-        db_prj.all(sql, function (err, rows) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
+        try {
+            var safeTable = _ensureValidTable(table);
+            var sql = `SELECT name, value FROM ${safeTable}`;
+            var params = [];
+            if (name) {
+                sql += " WHERE name = ?";
+                params.push(name);
             }
-        });
+            _all(sql, params).then(resolve).catch(reject);
+        } catch (err) {
+            reject(err);
+        }
     });
 }
 
@@ -150,14 +189,14 @@ function getSection(table, name) {
  */
 function deleteSection(section) {
     return new Promise(function (resolve, reject) {
-        var sql = "DELETE FROM " + section.table + " WHERE name = '" + section.name + "'";
-        db_prj.run(sql, function (err, rows) {
-            if (err) {
-                reject(err);
-            } else {
+        try {
+            var table = _ensureValidTable(section.table);
+            _run(`DELETE FROM ${table} WHERE name = ?`, [section.name]).then(function () {
                 resolve();
-            }
-        });
+            }).catch(reject);
+        } catch (err) {
+            reject(err);
+        }
     });
 }
 
@@ -185,6 +224,7 @@ function clearAll() {
         sql += "DELETE FROM scripts;";
         sql += "DELETE FROM reports;";
         sql += "DELETE FROM locations;";
+        sql += "DELETE FROM arMarkers;";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.clear failed! ${err}`);
@@ -210,6 +250,7 @@ const TableType = {
     SCRIPTS: 'scripts',
     REPORTS: 'reports',
     LOCATIONS: 'locations',
+    ARMARKERS: 'arMarkers',
 }
 
 module.exports = {

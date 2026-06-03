@@ -4,7 +4,7 @@ import { Observable, lastValueFrom } from 'rxjs';
 
 import { EndPointApi } from '../_helpers/endpointapi';
 import { environment } from '../../environments/environment';
-import { Script, ScriptMode, SystemFunctions } from '../_models/script';
+import { Script, ScriptMode, ScriptParamType, SystemFunctions } from '../_models/script';
 import { ProjectService } from './project.service';
 import { HmiService, ScriptCommandEnum, ScriptCommandMessage } from './hmi.service';
 import { Utils } from '../_helpers/utils';
@@ -86,21 +86,36 @@ export class ScriptService {
                         parameterToAdd += `let ${param.name} = ${param.value};`;
                     } else if (Utils.isObject(param.value)) {
                         parameterToAdd += `let ${param.name} = ${JSON.stringify(param.value)};`;
+                    } else if (param.type === ScriptParamType.value && !param.value) {
+                        parameterToAdd += `let ${param.name} = ${param.value};`;
                     } else {
                         parameterToAdd += `let ${param.name} = '${param.value}';`;
                     }
+                    parameterToAdd += `\n`;
                 });
                 try {
                     const code = `${parameterToAdd}${script.code}`;
                     const asyncText = script.sync ? 'function' : 'async function';
                     const callText = `${asyncText} ${script.name}() {\n${this.addSysFunctions(code)} \n }\n${script.name}.call(this);\n`;
                     const result = eval(callText);
-                    observer.next(result);
+
+                    if (result && typeof result.then === 'function') {
+                        result
+                            .then(res => {
+                                observer.next(res);
+                                observer.complete(); // async case
+                            })
+                            .catch(err => {
+                                console.error(err);
+                                observer.error(err);
+                            });
+                    } else {
+                        observer.next(result);
+                        observer.complete(); // sync case
+                    }
                 } catch (err) {
                     console.error(err);
                     observer.error(err);
-                } finally {
-                    observer.complete();
                 }
             }
         });
@@ -133,6 +148,7 @@ export class ScriptService {
         code = code.replace(/\$setAdapterToDevice\(/g, 'this.$setAdapterToDevice(');
         code = code.replace(/\$resolveAdapterTagId\(/g, 'this.$resolveAdapterTagId(');
         code = code.replace(/\$invokeObject\(/g, 'this.$invokeObject(');
+        code = code.replace(/\$getObject\(/g, 'this.$getObject(');
         code = code.replace(/\$runServerScript\(/g, 'this.$runServerScript(');
         code = code.replace(/\$getHistoricalTags\(/g, 'this.$getHistoricalTags(');
         code = code.replace(/\$sendMessage\(/g, 'this.$sendMessage(');
@@ -218,8 +234,16 @@ export class ScriptService {
         return null;
     }
 
+    public $getObject(gaugeName: string) {
+        const gauge = this.hmiService.getGaugeMapped(gaugeName);
+        return gauge;
+    }
+
     public async $runServerScript(scriptName: string, ...params: any[]) {
         let scriptToRun = Utils.clone(this.projectService.getScripts().find(dataScript => dataScript.name == scriptName));
+        if (!scriptToRun) {
+            return null;
+        }
         scriptToRun.parameters = params;
         return await lastValueFrom(this.runScript(scriptToRun, false));
     }

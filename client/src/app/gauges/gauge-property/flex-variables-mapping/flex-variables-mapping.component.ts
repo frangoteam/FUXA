@@ -6,7 +6,7 @@ import { VariableMapItemType } from '../flex-variable-map/flex-variable-map.comp
 @Component({
     selector: 'flex-variables-mapping',
     templateUrl: './flex-variables-mapping.component.html',
-    styleUrls: ['./flex-variables-mapping.component.css']
+    styleUrls: ['./flex-variables-mapping.component.scss']
 })
 export class FlexVariablesMappingComponent implements OnInit, OnChanges {
     @Input() view: View;

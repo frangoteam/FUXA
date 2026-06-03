@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation } fro
 import { UntypedFormControl } from '@angular/forms';
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { FlexInputComponent } from '../flex-input/flex-input.component';
+import { FlexInputComponent, PropertyType } from '../flex-input/flex-input.component';
 import { GaugeProperty, IPropertyVariable, WidgetProperty } from '../../../_models/hmi';
 import { Device, Tag } from '../../../_models/device';
 import { Utils } from '../../../_helpers/utils';
@@ -25,9 +25,9 @@ export class FlexHeadComponent implements OnInit, OnDestroy {
     @Input() withStaticValue = true;
     @Input() withBitmask = false;
     @ViewChild('flexinput', {static: false}) flexInput: FlexInputComponent;
+    @Input() withProperty: PropertyType | null = null;
 
     variable: any;
-    withProperty = null;
     alarme: any;
     currentTag: Tag = null;
     defaultValue: any;

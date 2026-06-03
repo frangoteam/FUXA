@@ -20,8 +20,7 @@
               class="leftbar-item-type item-icon-maps">
         map
     </mat-icon>
-    <span class="view-item-text"
-          matTooltip="{{item.name}}">
+    <span class="view-item-text">
         {{item.name}}
     </span>
     <mat-icon aria-label="More"
@@ -35,5 +34,6 @@
         <button mat-menu-item (click)="onPropertyView(item)">{{'editor.view-property' | translate}}</button>
         <button mat-menu-item (click)="onCloneView(item)" *ngIf="item.type !== cardViewType && item.type !== mapsViewType">{{'editor.view-clone' | translate}}</button>
         <button mat-menu-item (click)="onExportView(item)" *ngIf="item.type !== cardViewType && item.type !== mapsViewType">{{'editor.view-export' | translate}}</button>
+        <button mat-menu-item (click)="onCleanView(item)" *ngIf="item.type !== cardViewType && item.type !== mapsViewType">{{'editor.view-clean' | translate}}</button>
     </mat-menu>
 </div>

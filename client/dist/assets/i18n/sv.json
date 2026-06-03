@@ -61,6 +61,8 @@
     "dlg.layout-lbl-infos": "Läge för info-notis",
     "dlg.layout-lbl-font": "Typsnitt",
     "dlg.layout-lbl-font-size": "Teckenstorlek",
+    "dlg.layout-lbl-height": "Höjd",
+    "dlg.layout-lbl-button-height": "Knapphöjd",
     "dlg.layout-lbl-anchor": "Riktning",
     "dlg.layout-lbl-margin-left": "Vänstermarginal",
     "dlg.layout-lbl-margin-right": "Högermarginal",
@@ -77,6 +79,11 @@
     "dlg.menuitem-alarms": "Larm vid klick",
     "dlg.menuitem-address": "Länkadress",
     "dlg.menuitem-icons-filter": "Ikonfilter",
+	
+    "dlg.menuitem-submenu": "Undermeny",
+    "dlg.menuitem-add-submenu": "Lägg till undermenyobjekt",
+    "dlg.menuitem-submenu-items": "Undermenyobjekt",
+    "sidenav.new_item": "Nytt undermenyobjekt",
 
     "dlg.headeritem-title": "Headerobjekt",
     "dlg.headeritem-icon": "Ikon",
@@ -291,6 +298,8 @@
     "chart.property-refresh-interval": "Uppdateringsintervall (min.)",
     "chart.property-hide-toolbar": "Dölj verktygsfält",
     "chart.property-thouch-zoom": "Pekzoom",
+    "chart.property-mouse-wheel-scroll": "Mushjulsskroll",
+    "chart.property-mouse-wheel-zoom": "Mushjulszoom",
     "chart.property-load-old-values": "Ladda historik",
     "chart.property-date.format": "Datumformat",
     "chart.property-time.format": "Tidsformat",
@@ -357,7 +366,7 @@
     "graph.property-date-last-range": "Datumintervall",
     "graph.property-date-group": "Grupp",
     "graph.property-offline": "Online",
-    "graph.property-graph-oriantation": "Orientering",
+    "graph.property-graph-orientation": "Orientering",
     "graph.property-ori-vartical": "Vertikal",
     "graph.property-ori-horizontal": "Horisontell",
     "graph.property-decimals": "Decimaler",
@@ -998,6 +1007,8 @@
 
     "device.tag-format": "Format decimaler (2 = #.##)",
     "device.tag-deadband": "Deadband",
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "Skalningsläge / Konvertering",
     "device.tag-scale-mode-undefined": "Ingen skalning",
     "device.tag-scale-mode-undefined-tooltip": "Taggvärde",
@@ -1185,6 +1196,12 @@
     "alarms.list-low": "Låg",
     "alarms.list-info": "Meddelande",
     "alarms.list-actions": "Åtgärder",
+    "alarms.import": "Import Alarms",
+    "alarms.export": "Export Alarms (JSON)",
+    "alarms.import-title": "Import Alarms",
+    "alarms.import-conflicts-message": "{{total}} alarms found. {{conflicts}} already exist. Choose how to import them.",
+    "alarms.import-copy": "Add as copies",
+    "alarms.import-replace": "Replace",
     "alarm.property-title": "Larm",
     "alarm.property-name": "Namn",
     "alarm.property-permission": "Behörighet",
@@ -1594,6 +1611,11 @@
     "dlg.app-settings-daqstore": "DAQ-lagring",
     "dlg.app-settings-daqstore-type": "Databastyp",
     "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-settings-daqstore-token": "Token",
     "dlg.app-settings-daqstore-bucket": "Bucket",
     "dlg.app-settings-daqstore-organization": "Organisation",
@@ -1672,6 +1694,8 @@
     "msg.editor-mode-locked": "Redigeraren är redan öppen!",
     "msg.alarms-clear-success": "Alla larm har annullerats!",
     "msg.import-devices-error": "Import av enheter misslyckades!",
+    "msg.import-alarms-error": "Import alarms failed!",
+    "msg.export-alarms-error": "Export alarms failed!",
     "msg.report-build-forced": "Rapport skickad för skapande",
     "msg.report-build-error": "Skickade rapporten misslyckades!",
     "msg.device-tags-request-result": "Laddar {{value}} av {{current}}",
@@ -1689,3 +1713,4 @@
     "msg.texts-text-remove": "Vill du ta bort texten '{{value}}'?",
     "msg.operation-unauthorized": "Operation obehörig!"
 }
+

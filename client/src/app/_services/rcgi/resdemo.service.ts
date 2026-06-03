@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
@@ -10,6 +10,7 @@ import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { Role } from '../../_models/user';
+import { ApiKey } from '../../_models/apikey';
 
 @Injectable()
 export class ResDemoService implements ResourceStorageService {
@@ -109,6 +110,20 @@ export class ResDemoService implements ResourceStorageService {
         });
     }
 
+    getSchedulerData(id: string): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
+    }
+
+    setSchedulerData(id: string, data: any): Observable<any> {
+        return of(data);
+    }
+
+    deleteSchedulerData(id: string): Observable<any> {
+        return of({ success: true });
+    }
+
     getTagsValues(query: string[], sourceScriptName?: string): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');
@@ -170,6 +185,24 @@ export class ResDemoService implements ResourceStorageService {
     }
 
     removeReportFile(fileName: string): Observable<void> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    getApiKeys(): Observable<ApiKey[]> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    setApiKeys(roles: ApiKey[]): Observable<any> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    removeApiKeys(roles: ApiKey[]): Observable<any> {
         return new Observable(observer => {
             observer.error('Not supported!');
         });

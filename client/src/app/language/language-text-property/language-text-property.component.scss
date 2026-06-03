@@ -1,7 +1,8 @@
 :host {
     .container {
-        .mat-dialog-content
-        {
+        [mat-dialog-content],
+        .mat-dialog-content,
+        .mat-mdc-dialog-content {
             width: 400px;
             min-height: 220px;
             max-height: 400px;
@@ -9,10 +10,16 @@
             padding-bottom: 7px;
 
             .my-form-field {
-                display: block;
-                input,
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
                 span {
-                    width: calc(100% - 5px);
+                    width: 100%;
+                }
+
+                input {
+                    width: 100%;
+                    box-sizing: border-box;
                 }
             }
         }

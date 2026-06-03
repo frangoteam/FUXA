@@ -1,0 +1,170 @@
+
+
+/* -- dialog */
+.dialog-action {
+    float: right;
+    margin: 10px 15px 10px 15px !important;
+
+    button {
+      height: 30px !important;
+    }
+}
+
+.dialog-property .mat-dialog-container {
+    padding-top: 0px;
+}
+
+.dialog-title {
+    display: inline-block !important;
+    cursor: move;
+    width: calc(100% - 50px);
+}
+
+.dialog-close-btn {
+    float: right !important;
+    margin-right: 5px;
+    margin-top: 5px;
+    color: gray !important;
+    cursor: pointer;
+}
+
+.mat-mdc-dialog-content {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    max-height: unset !important;
+}
+
+/* -- menu items */
+.mat-mdc-menu-content .mat-mdc-menu-item {
+  min-height: 32px;
+  height: 32px;
+  line-height: 32px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.mat-mdc-menu-item .mdc-list-item__primary-text {
+  line-height: 32px;
+}
+
+.mat-mdc-menu-item .mat-icon,
+.mat-mdc-menu-item .mdc-checkbox,
+.mat-mdc-menu-item .mdc-radio {
+  align-self: center;
+}
+
+/* -- MAT-TAB -- */
+.mat-mdc-tab .mdc-tab {
+  min-height: 32px;
+  min-width: auto;
+}
+
+.mat-mdc-tab .mdc-tab__content,
+.mat-mdc-tab .mdc-tab__ripple,
+.mat-mdc-tab .mat-mdc-tab-ripple,
+.mat-mdc-tab .mat-mdc-tab-focus-indicator {
+  height: 32px;
+  min-height: 32px;
+}
+
+.mat-mdc-tab .mdc-tab__text-label {
+  font-size: 15px;
+  line-height: 32px;
+  font-weight: 400;
+  display: inline-flex;
+  align-items: center;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.mat-mdc-tab:not(.mdc-tab--stacked) {
+  --mdc-secondary-navigation-tab-container-height: 32px;
+  height: 32px;
+  min-height: 32px;
+}
+
+.mat-mdc-tab-header {
+  position: relative;
+  border-bottom: 1px solid rgb(128, 126, 126);
+}
+
+/* ---- MAT-SELECT ---- */
+:root {
+  --select-option-height: 32px;
+}
+
+.cdk-overlay-container .mat-mdc-select-panel {
+  --mdc-list-list-item-one-line-height: var(--select-option-height);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.cdk-overlay-container .mat-mdc-select-panel :where(.mdc-list-item, .mat-mdc-option) {
+  min-height: var(--select-option-height);
+  height: var(--select-option-height);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.cdk-overlay-container .mat-mdc-select-panel .mdc-list-item__primary-text {
+  line-height: var(--select-option-height);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cdk-overlay-container .mat-mdc-select-panel :where(.mat-pseudo-checkbox, .mat-icon) {
+  align-self: center;
+}
+
+.cdk-overlay-container .mat-mdc-select-panel .mat-mdc-optgroup-label {
+  min-height: calc(var(--select-option-height) - 4px);
+  line-height: calc(var(--select-option-height) - 4px);
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* --- Force 30x30 for icon buttons, including focus ring --- */
+
+/* Base icon-button size + ripple/touch area */
+button.mat-mdc-icon-button,
+a.mat-mdc-icon-button {
+  --mdc-icon-button-size: 30px;               /* button size var */
+  --mdc-icon-button-state-layer-size: 30px;   /* ripple/hover layer */
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure the internal touch target matches 30x30 */
+button.mat-mdc-icon-button .mat-mdc-button-touch-target,
+a.mat-mdc-icon-button .mat-mdc-button-touch-target {
+  width: 30px;
+  height: 30px;
+}
+
+/* Do NOT force 46x46 on the <mat-icon> itself; let MDC center it */
+button.mat-mdc-icon-button mat-icon,
+a.mat-mdc-icon-button mat-icon {
+  font-size: 24px;  /* tweak as needed */
+  line-height: 1;
+  width: auto;
+  height: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fix the focus indicator.
+   We set both size and centering relative to the button center. */
+button.mat-mdc-icon-button .mat-mdc-focus-indicator,
+a.mat-mdc-icon-button .mat-mdc-focus-indicator {
+  width: 30px !important;
+  height: 30px !important;
+  top: calc(50% - 15px) !important;   /* center for 30px */
+  left: calc(50% - 15px) !important;  /* center for 30px */
+  border-radius: 50%;
+}

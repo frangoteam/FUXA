@@ -3,15 +3,17 @@
         .toolbox {
             float: right;
             line-height: 44px;
+            margin-top: 6px;
             button {
                 /* margin-right: 8px; */
                 margin-left: 10px;
             }
         }
 
-        .mat-dialog-content
-        {
-            width: 380px;
+        [mat-dialog-content],
+        .mat-dialog-content,
+        .mat-mdc-dialog-content {
+            width: 430px;
             min-height: 220px;
             max-height: 400px;
             overflow: auto;

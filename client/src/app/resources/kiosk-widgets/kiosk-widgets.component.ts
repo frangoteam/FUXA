@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { KioskWidgetsService } from './kiosk-widgets.service';
 import { map, Observable } from 'rxjs';
 import { ResourceItem, Resources, ResourceType, WidgetsResource } from '../../_models/resources';

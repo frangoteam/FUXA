@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, of } from 'rxjs';
 import { UntypedFormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
@@ -16,7 +16,7 @@ import { Utils } from '../../../../_helpers/utils';
 import { ChartOptions } from '../../../../gui-helpers/ngx-uplot/ngx-uplot.component';
 import { ProjectService } from '../../../../_services/project.service';
 import { SCRIPT_PARAMS_MAP, Script } from '../../../../_models/script';
-import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select';
+import { MatSelectChange as MatSelectChange } from '@angular/material/select';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../../../gui-helpers/confirm-dialog/confirm-dialog.component';
 
 
@@ -49,7 +49,7 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
     autoScala = { enabled: true, min: 0, max: 10 };
     scripts$: Observable<Script[]>;
     property: GaugeChartProperty;
-    eventType = [Utils.getEnumKey(GaugeEventType, GaugeEventType.onLoad)];
+    eventType = [Utils.getEnumKey(GaugeEventType, GaugeEventType.click), Utils.getEnumKey(GaugeEventType, GaugeEventType.onLoad)];
     actionRunScript = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onRunScript);
     selectActionType = {};
 
@@ -91,10 +91,12 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
         if (this.property.options) {
             this.options = Object.assign(this.options, this.property.options);
         }
+        this.normalizeWheelModes();
         this.chartCtrl.setValue(chart);
     }
 
     onChartChanged() {
+        this.normalizeWheelModes();
         if (this.chartCtrl.value) {
             this.property.id = this.chartCtrl.value.id;
         }
@@ -110,6 +112,34 @@ export class ChartPropertyComponent implements OnInit, OnDestroy {
             this.data.settings.property.id = this.chartCtrl.value.id;
         }
         this.onPropChanged.emit(this.data.settings);
+    }
+
+    onMouseWheelScrollChanged() {
+        if (this.options.mouseWheelScroll) {
+            this.options.mouseWheelZoom = false;
+        }
+        this.onChartChanged();
+    }
+
+    onMouseWheelZoomChanged() {
+        if (this.options.mouseWheelZoom) {
+            this.options.mouseWheelScroll = false;
+        }
+        this.onChartChanged();
+    }
+
+    private normalizeWheelModes() {
+        if (Utils.isNullOrUndefined(this.options.staticChart)) {
+            this.options.staticChart = false;
+        }
+        if (this.chartViewValue !== ChartViewType.history) {
+            this.options.mouseWheelScroll = false;
+            this.options.mouseWheelZoom = false;
+            return;
+        }
+        if (this.options.mouseWheelScroll && this.options.mouseWheelZoom) {
+            this.options.mouseWheelZoom = false;
+        }
     }
 
     onEditNewChart() {

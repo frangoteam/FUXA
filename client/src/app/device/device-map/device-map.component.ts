@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, Output, EventEmitter, ElementRef, Input, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
+import { MatTable as MatTable, MatTableDataSource as MatTableDataSource } from '@angular/material/table';
+import { MatPaginator as MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -511,10 +511,15 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                         device.property.adpuTimeout = tempdevice.property.adpuTimeout;
                         device.property.local = tempdevice.property.local;
                         device.property.router = tempdevice.property.router;
+                        if (device.type === DeviceType.MELSEC) {
+                            device.property.ascii = tempdevice.property.ascii;
+                            device.property.octalIO = tempdevice.property.octalIO;
+                        }
                         if (tempdevice.property.connectionOption) {
                             device.property.connectionOption = tempdevice.property.connectionOption;
                         }
-                        device.property.socketReuse = (device.type === DeviceType.ModbusTCP) ? tempdevice.property.socketReuse : null;
+                        device.property.socketReuse = tempdevice.property.socketReuse;
+                        device.property.forceFC16 = tempdevice.property.forceFC16;
                     }
                     this.projectService.setDevice(device, olddevice, result.security);
                 }

@@ -1,10 +1,18 @@
 
 module.exports = {
     // Version to manage update
-    version: 1.2,
+    version: 1.4,
 
     // Standard language (editor)
     language: 'en',
+
+    // Hide the editor onboarding wizard when entering editor mode
+    hideEditorOnboarding: false,
+
+    // Per-section informational messages for editor areas
+    editorSectionMessages: {
+        hideDevicePluginsNotice: false
+    },
 
     // The tcp port that the FUXA web server is listening on
     uiPort: process.env.PORT || 1881,
@@ -24,6 +32,7 @@ module.exports = {
     // - 'common': Less detailed than 'combined', omitting the referrer and user-agent.
     // - 'short': Shorter format that includes the remote address and request details.
     // - 'tiny': Minimalist format, showing just the method, URL, status, response length, and response time.
+	// - 'none': Completely disables HTTP request logging to clean the console for custom debugging scripts and reduce I/O overhead.
     //
     // Default Value:
     // - 'combined': By default, logApiLevel is set to 'combined', providing detailed logs suitable for thorough tracking and analysis.
@@ -40,6 +49,11 @@ module.exports = {
     // DAQ DB to Tokenizer the file and save in archive
     // Default: 24 Hours (1 Day), 0 is disabled only 1 DB file
     daqTokenizer: 24,
+
+    // Logs retention
+    logs: {
+        retention: 'none'
+    },
 
     // Tags value to be broadcast,
     // if false will be send to frontend only the tags bind to current visualized views
@@ -62,7 +76,7 @@ module.exports = {
     // Please use exact origin urls for better and safe CORS (Wild Cards not Recommended)
     // "allowedOrigins": ["https://example.com", "https://dashboard.example.com"]
     // Default: ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*"]
-    "allowedOrigins": ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*","http://localhost:4200"]
+    "allowedOrigins": ["http://localhost", "http://127.0.0.1", "http://192.168.*", "http://10.*", "http://localhost:4200"],
 
 
     // The maximum size of HTTP request that will be accepted by the runtime api.
@@ -86,10 +100,32 @@ module.exports = {
 
     // Used to enable security, authentication and authorization and crypt Token
     //secureEnabled: true,
-    //secretCode: 'frangoteam751',
-    //tokenExpiresIn: '1h'  // '1h'=1hour, 60=60seconds, '1d'=1day
+    //secretCode: '<set-a-strong-random-secret>',
+    //tokenExpiresIn: '1h',  // '1h'=1hour, 60=60seconds, '1d'=1day
+    //enableRefreshCookieAuth: false, // if true, use refresh token HttpOnly cookie flow
+    //refreshTokenExpiresIn: '7d' // '7d'=7days, 12h=12hours, 3600=3600seconds
+
+    // Heartbeat interval in seconds (1-20)
+    heartbeatIntervalSec: 10,
 
     // Enable GPIO in Raspberry
     // To enable only by Raspberry Host
 
+    //Location to output webcam capture
+    webcamSnapShotsDir: '_webcam_snapshots',
+    //cleanup old snapshots Default false
+    webcamSnapShotsCleanup: false,
+    //snapshots retention in days
+    webcamSnapShotsRetain: 7,
+
+    swaggerEnabled: false,
+
+    nodeRedEnabled: false,
+
+    // Node-RED access mode: "secure" (auth required) or "legacy-open" (no auth)
+    nodeRedAuthMode: "secure",
+
+    // Node-RED: allow unsafe stdlib modules in functionGlobalContext
+    // WARNING: Enabling this exposes modules like child_process/net to flows.
+    nodeRedUnsafeModules: false,
 }

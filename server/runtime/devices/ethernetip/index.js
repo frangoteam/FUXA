@@ -28,7 +28,7 @@ function EthernetIPclient(_data, _logger, _events, _runtime) {
      * initialize the device type
      */
     this.init = function (_type) {
-        console.error('Not supported!');
+        console.error('Not supported! (ethernetip.init)');
     }
 
     /**
@@ -372,10 +372,15 @@ module.exports = {
     init: function (settings) {
     },
     create: function (data, logger, events, manager, runtime) {
-        // To use with plugin
-        try { EthernetIp = require('nodepccc'); } catch { }
-        if (!EthernetIp && manager) { try { EthernetIp = manager.require('nodepccc'); } catch { } }
-        if (!EthernetIp) return null;
+        if (!loadEthernetIpLib(manager)) return null;
         return new EthernetIPclient(data, logger, events, runtime);
     }
+}
+
+function loadEthernetIpLib(manager) {
+    if (!EthernetIp) {
+        try { EthernetIp = require('nodepccc'); } catch { }
+        if (!EthernetIp && manager) { try { EthernetIp = manager.require('nodepccc'); } catch { } }
+    }
+    return !!EthernetIp;
 }

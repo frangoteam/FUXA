@@ -1,12 +1,34 @@
 :host {
-    .icons-selector {
-        width: 60px;
-        height: 30px;
+    .header-item-row {
+        display: grid;
+        grid-template-columns: 120px 120px;
+        column-gap: 10px;
+        align-items: end;
+    }
+
+    .type-field {
+        mat-select {
+            width: 120px;
+        }
     }
 
     .field-input-60 {
         input {
             width: 60px;
+        }
+    }
+
+    .field-input-70 {
+        input {
+            box-sizing: border-box;
+            width: 120px;
+        }
+    }
+
+    .color-field {
+        input {
+            box-sizing: border-box;
+            width: 120px;
         }
     }
 }

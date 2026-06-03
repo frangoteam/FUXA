@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatTable as MatTable, MatTableDataSource as MatTableDataSource } from '@angular/material/table';
+import { MatPaginator as MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Subject, timer, empty } from 'rxjs';
 import { takeUntil, switchMap, catchError, delay } from 'rxjs/operators';
@@ -12,13 +12,13 @@ import { FormControl, FormGroup } from '@angular/forms';
 
 import * as moment from 'moment';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { LanguageService } from '../../_services/language.service';
 
 @Component({
     selector: 'app-alarm-view',
     templateUrl: './alarm-view.component.html',
-    styleUrls: ['./alarm-view.component.css']
+    styleUrls: ['./alarm-view.component.scss']
 })
 export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
 

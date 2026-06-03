@@ -73,9 +73,7 @@ function ScriptsManager(_runtime) {
                     const result = await scriptModule.runTestScript(script);
                     resolve(result !== null ? result : `Script OK: ${script.name}`);
                 } else {
-                    if (!script.notLog) {
-                        logger.info(`Run script ${script.name}`);
-                    }
+                    // Removed logging for script execution
                     const result = await scriptModule.runScript(script);
                     resolve(result);
                 }
@@ -90,6 +88,10 @@ function ScriptsManager(_runtime) {
             const st = scriptModule.getScript(_script);
             var admin = (permission === -1 || permission === 255) ? true : false;
             if (runtime.settings.userRole) {
+                admin = admin || permission?.groups === -1 || permission?.groups === 255;
+                if (admin) {
+                    return true;
+                }
                 if (!st.permissionRoles || !st.permissionRoles.enabled) {
                     return true;
                 }
@@ -108,7 +110,7 @@ function ScriptsManager(_runtime) {
     this.isAuthorisedByScriptName = function (scriptName, permission) {
         const script = scriptModule.getScriptByName(scriptName);
         if (!script) {
-            return true;
+            return false;
         }
         return this.isAuthorised(script, permission);
     }
@@ -323,14 +325,18 @@ function ScriptSchedule(script) {
                 if (schedule.type === SchedulerType.date && schedule.date) {
                     var date = new Date(schedule.date);
                     if (schedule.time) {
-                        const [hour, minute, seconds] = schedule.time.split(':');
-                        if (hour) date.setHours(hour);
-                        if (minute) date.setMinutes(minute);
-                        if (seconds) date.setSeconds(seconds);
+                        const [hStr, mStr, sStr] = schedule.time.split(':');
+                        const h = parseInt(hStr, 10);
+                        const m = parseInt(mStr, 10);
+                        const s = sStr != null ? parseInt(sStr, 10) : 0;
+                        if (!Number.isNaN(h)) date.setHours(h);
+                        if (!Number.isNaN(m)) date.setMinutes(m);
+                        if (!Number.isNaN(s)) date.setSeconds(s);
                     }
                     result.push(date);
                 } else {
                     const rule = new nodeSchedule.RecurrenceRule();
+
                     if (!utils.isNullOrUndefined(schedule.hour)) rule.hour = schedule.hour;
                     if (!utils.isNullOrUndefined(schedule.minute)) rule.minute = schedule.minute;
                     if (schedule.days) {

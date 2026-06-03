@@ -13,6 +13,18 @@ var settings        // Application settings
 var logger;         // Application logger
 var db_alarms;      // Database of alarms
 
+function _run(sql, params = []) {
+    return new Promise((resolve, reject) => {
+        db_alarms.run(sql, params, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this);
+            }
+        });
+    });
+}
+
 /**
  * Init and bind the database resource
  * @param {*} _settings 
@@ -135,33 +147,38 @@ function getAlarms() {
  * Set alarm value in database
  */
 function setAlarms(alarms) {
-    return new Promise(function (resolve, reject) {
-        // prepare query
-        if (alarms && alarms.length) {
-            var sql = "";
-            alarms.forEach(alr => {
+    return new Promise(async function (resolve, reject) {
+        if (!alarms || !alarms.length) {
+            resolve();
+            return;
+        }
+        try {
+            await _run('BEGIN TRANSACTION');
+            for (const alr of alarms) {
                 let grp = alr.subproperty.group || '';
                 let status = alr.status || '';
                 let userack = alr.userack || '';
-                //is alarm condition is changed (if it is occured or acknowledged) insert or update record
-                sql += "INSERT OR REPLACE INTO alarms (nametype, type, status, ontime, offtime, acktime) VALUES('" +
-                    alr.getId() + "','" + alr.type + "','" + status + "','" + alr.ontime + "','" + alr.offtime + "','" + alr.acktime + "');" +
-                    "INSERT OR REPLACE INTO chronicle (Sn, nametype, type, status, text, grp, ontime, offtime,  acktime, userack)" +
-                    " VALUES ((SELECT Sn from chronicle WHERE ontime='" + alr.ontime + "' AND nametype='" + alr.getId() + "'),'" +
-                    alr.getId() + "','" + alr.type + "','" + status + "','" + alr.subproperty.text + "','" + grp + "','" + alr.ontime + "','" + alr.offtime + "','" + alr.acktime + "','" + userack + "');";
+                const alarmId = alr.getId();
+                await _run(
+                    "INSERT OR REPLACE INTO alarms (nametype, type, status, ontime, offtime, acktime) VALUES(?, ?, ?, ?, ?, ?)",
+                    [alarmId, alr.type, status, alr.ontime, alr.offtime, alr.acktime]
+                );
+                await _run(
+                    "INSERT OR REPLACE INTO chronicle (Sn, nametype, type, status, text, grp, ontime, offtime, acktime, userack) VALUES ((SELECT Sn from chronicle WHERE ontime = ? AND nametype = ?), ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    [alr.ontime, alarmId, alarmId, alr.type, status, alr.subproperty.text, grp, alr.ontime, alr.offtime, alr.acktime, userack]
+                );
                 if (alr.toremove) {
-                    //is alarm to be removed (if it is ok) delete it from db
-                    sql += "DELETE FROM alarms WHERE nametype = '" + alr.getId() + "';";
+                    await _run("DELETE FROM alarms WHERE nametype = ?", [alarmId]);
                 }
-            });
-            db_alarms.exec(sql, function (err) {
-                if (err) {
-                    logger.error('alarmsstorage.failed-to-set: ' + err);
-                    reject();
-                } else {
-                    resolve();
-                }
-            });
+            }
+            await _run('COMMIT');
+            resolve();
+        } catch (err) {
+            try {
+                await _run('ROLLBACK');
+            } catch (_) {}
+            logger.error('alarmsstorage.failed-to-set: ' + err);
+            reject();
         }
     });
 }
@@ -172,14 +189,12 @@ function setAlarms(alarms) {
 function removeAlarm(alarm) {
     return new Promise(function (resolve, reject) {
         // prepare query
-        var sql = "DELETE FROM alarms WHERE nametype = '" + alarm.getId() + "'";
-        db_alarms.exec(sql, function (err) {
-            if (err) {
-                logger.error('alarmsstorage.failed-to-remove: ' + err);
-                reject();
-            } else {
-                resolve();
-            }
+        var sql = "DELETE FROM alarms WHERE nametype = ?";
+        _run(sql, [alarm.getId()]).then(function () {
+            resolve();
+        }).catch(function (err) {
+            logger.error('alarmsstorage.failed-to-remove: ' + err);
+            reject();
         });
     });
 }

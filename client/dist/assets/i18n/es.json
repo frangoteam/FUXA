@@ -544,6 +544,9 @@
     "device-tag-dialog-title": "Etiqueta seleccionada",
 
     "device.tag-options-title": "Opciones de etiquetas",
+
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-daq-enabled": "Registration Enabled",
     "device.tag-daq-changed": "Guardar valor si cambia",
     "device.tag-daq-interval": "Intervalo para guardar valor (segundos)",
@@ -636,6 +639,12 @@
     "alarms.list-low": "Bajo",
     "alarms.list-info": "Mensaje",
     "alarms.list-actions": "Acciones",
+    "alarms.import": "Importar alarmas",
+    "alarms.export": "Exportar alarmas (JSON)",
+    "alarms.import-title": "Import Alarms",
+    "alarms.import-conflicts-message": "{{total}} alarms found. {{conflicts}} already exist. Choose how to import them.",
+    "alarms.import-copy": "Add as copies",
+    "alarms.import-replace": "Replace",
     "alarm.property-title": "Alarma",
     "alarm.property-name": "Nombre",
     "alarm.property-permission": "Autorizacion",
@@ -736,6 +745,12 @@
     "dlg.app-settings-server-port": "Servidor esta escuchando el puerto",
     "dlg.app-settings-alarms-clear": "Borrar todas las alarmas y el historias",
     "dlg.app-settings-auth-token": "Autenticación con token",
+    "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-auth-disabled": "Deshabilitado",
     "dlg.app-auth-expiration-15m": "Habilitado con token expira en 15 min.",
     "dlg.app-auth-expiration-1h": "Habilitado con token expira en 1 hora.",
@@ -764,6 +779,8 @@
     "msg.user-remove": "¿Le gustaria eliminar el usuario?",
     "msg.project-save-success": "Proyecto guardo exitosamente!",
     "msg.project-save-error": "Proyecto error al guardar!",
+    "msg.import-alarms-error": "Import alarms failed!",
+    "msg.export-alarms-error": "Export alarms failed!",
     "msg.project-format-error": "Proyecto formato incorrecto!",
     "msg.project-save-unauthorized": "Proyecto error al guardar! Desautorizado!",
     "msg.project-save-ask": "¿Quieres abandonar el proyecto?",
@@ -774,3 +791,6 @@
     "msg.editor-mode-locked": "El editor ya esta abierto!",
     "msg.alarms-clear-success": "Todas las alarmas han sido canceladas!"
   }
+
+
+

@@ -22,6 +22,9 @@ const IoEventTypes = {
     HOST_INTERFACES: 'host-interfaces',
     SCRIPT_CONSOLE: 'script-console',
     ALIVE: 'heartbeat',
+    SCHEDULER_UPDATED: 'scheduler:updated',
+    SCHEDULER_ACTIVE: 'scheduler:event-active',
+    SCHEDULER_REMAINING: 'scheduler:remaining-time'
 }
 
 // module.exports = IoEventTypes;

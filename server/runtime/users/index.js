@@ -90,6 +90,7 @@ function removeUsers(username) {
     return new Promise(function (resolve, reject) {
         if (username) {
             usrstorage.removeUser(username).then(() => {
+                usersMap.delete(username);
                 resolve();
             }).catch(function (err) {
                 logger.error(`users.usrstorage-remove-users failed! ${err}`);

@@ -1,0 +1,47 @@
+:host {
+    ::ng-deep .mat-mdc-dialog-content {
+        max-height: none;
+        overflow: hidden;
+    }
+
+    .container {
+        min-width: 520px;
+    }
+
+    .wizard-content {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        min-width: 520px;
+        padding-top: 8px;
+        overflow: hidden;
+    }
+
+    .wizard-text {
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .password-wrap {
+        position: relative;
+    }
+
+    .password-wrap input {
+        width: 100%;
+        padding-right: 34px;
+        box-sizing: border-box;
+    }
+
+    .show-password {
+        position: absolute;
+        bottom: 2px;
+        right: 5px;
+        cursor: pointer;
+    }
+
+    .wizard-hint {
+        display: block;
+        margin-top: 6px;
+        opacity: 0.8;
+    }
+}

@@ -3,7 +3,34 @@
         max-width: 1020px;
         width: 100%;
         min-width: 700px;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        position: relative;
         margin: 0 auto;
+
+        .dialog-close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            float: none !important;
+            margin: 0;
+        }
+
+        [mat-dialog-content],
+        .mat-dialog-content,
+        .mat-mdc-dialog-content {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
+
+        [mat-dialog-actions],
+        .mat-dialog-actions,
+        .mat-mdc-dialog-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
 
         .loading-spinner {
             display: flex;

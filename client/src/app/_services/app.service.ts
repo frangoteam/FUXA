@@ -40,6 +40,10 @@ export class AppService {
         this.onShowLoading.emit(show);
     }
 
+    nodeRedEnabled(): boolean {
+        return this.settingsService.getSettings()?.nodeRedEnabled;
+    }
+
     get isDemoApp() {
         return (environment.type === AppService.APP_DEMO);
     }

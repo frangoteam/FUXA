@@ -10,6 +10,7 @@ import { DaqQuery } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { Role } from '../../_models/user';
+import { ApiKey } from '../../_models/apikey';
 
 @Injectable()
 export class ResClientService implements ResourceStorageService {
@@ -165,6 +166,24 @@ export class ResClientService implements ResourceStorageService {
         });
     }
 
+    getSchedulerData(id: string): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported!');
+        });
+    }
+
+    setSchedulerData(id: string, data: any): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported in client mode!');
+        });
+    }
+
+    deleteSchedulerData(id: string): Observable<any> {
+        return new Observable((observer) => {
+            observer.error('Not supported in client mode!');
+        });
+    }
+
     getTagsValues(query: string[], sourceScriptName?: string): Observable<any> {
         return new Observable((observer) => {
             observer.error('Not supported!');
@@ -226,6 +245,24 @@ export class ResClientService implements ResourceStorageService {
     }
 
     removeReportFile(fileName: string): Observable<void> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    getApiKeys(): Observable<ApiKey[]> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    setApiKeys(roles: ApiKey[]): Observable<any> {
+        return new Observable(observer => {
+            observer.error('Not supported!');
+        });
+    }
+
+    removeApiKeys(roles: ApiKey[]): Observable<any> {
         return new Observable(observer => {
             observer.error('Not supported!');
         });

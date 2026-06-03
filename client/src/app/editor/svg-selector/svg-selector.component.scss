@@ -12,13 +12,16 @@
     .svg-selector-item {
         font-size: 12px;
         line-height: 24px;
+        height: 24px;
         cursor: pointer;
         padding-left: 5px;
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 10px;
 
         .name {
-            display: inline-block;
-            width: 170px;
+            flex: 0 0 160px;
+            min-width: 0;
             font-size: 13px;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -27,13 +30,17 @@
         }
 
         .id {
-            display: inline-block;
-            margin-left: 10px;
+            flex: 1 1 auto;
+            min-width: 0;
             color: darkgray;
-            width: 150px;
+            text-align: right;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
         .edit {
+            flex: 0 0 auto;
             width: 22px;
             height: 22px;
             line-height: 22px;

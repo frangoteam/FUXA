@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
-import { AppSettings, DaqStore, SmtpSettings } from '../_models/settings';
+import { AppSettings, DaqStore, EditorSectionMessagesSettings, SmtpSettings } from '../_models/settings';
 
 @Injectable({
     providedIn: 'root'
@@ -13,6 +14,8 @@ import { AppSettings, DaqStore, SmtpSettings } from '../_models/settings';
 export class SettingsService {
 
     private appSettings = new AppSettings();
+    settings$ = new BehaviorSubject<AppSettings>(this.appSettings);
+    loaded$ = new BehaviorSubject<boolean>(!environment.serverEnabled);
     private endPointConfig: string = EndPointApi.getURL();
 
     private editModeLocked = false;
@@ -32,8 +35,10 @@ export class SettingsService {
         if (environment.serverEnabled) {
             this.http.get<any>(this.endPointConfig + '/api/settings').subscribe(result => {
                 this.setSettings(result);
+                this.loaded$.next(true);
             }, error => {
                 console.error('settings.service err: ' + error);
+                this.loaded$.next(true);
             });
         }
         // this.setLanguage(this.appSettings.language);
@@ -54,12 +59,34 @@ export class SettingsService {
             this.appSettings.uiPort = settings.uiPort;
             dirty = true;
         }
+        if (settings.hideEditorOnboarding !== this.appSettings.hideEditorOnboarding) {
+            this.appSettings.hideEditorOnboarding = !!settings.hideEditorOnboarding;
+            dirty = true;
+        }
+        const nextEditorSectionMessages = new EditorSectionMessagesSettings(settings.editorSectionMessages);
+        if (nextEditorSectionMessages.hideDevicePluginsNotice !== this.appSettings.editorSectionMessages.hideDevicePluginsNotice ||
+            nextEditorSectionMessages.hideArMarkersNotice !== this.appSettings.editorSectionMessages.hideArMarkersNotice) {
+            this.appSettings.editorSectionMessages = nextEditorSectionMessages;
+            dirty = true;
+        }
         if (settings.secureEnabled !== this.appSettings.secureEnabled ||
             settings.tokenExpiresIn !== this.appSettings.tokenExpiresIn ||
-            settings.secureOnlyEditor !== this.appSettings.secureOnlyEditor) {
+            settings.secureOnlyEditor !== this.appSettings.secureOnlyEditor ||
+            settings.enableRefreshCookieAuth !== this.appSettings.enableRefreshCookieAuth ||
+            settings.refreshTokenExpiresIn !== this.appSettings.refreshTokenExpiresIn) {
             this.appSettings.secureEnabled = settings.secureEnabled;
             this.appSettings.tokenExpiresIn = settings.tokenExpiresIn;
             this.appSettings.secureOnlyEditor = settings.secureOnlyEditor;
+            this.appSettings.enableRefreshCookieAuth = settings.enableRefreshCookieAuth;
+            this.appSettings.refreshTokenExpiresIn = settings.refreshTokenExpiresIn;
+            dirty = true;
+        }
+        if (settings.secretCode !== undefined && settings.secretCode !== this.appSettings.secretCode) {
+            this.appSettings.secretCode = settings.secretCode;
+            dirty = true;
+        }
+        if (settings.secretCode !== undefined && settings.secretCode !== this.appSettings.secretCode) {
+            this.appSettings.secretCode = settings.secretCode;
             dirty = true;
         }
         if (settings.broadcastAll !== this.appSettings.broadcastAll) {
@@ -84,9 +111,28 @@ export class SettingsService {
             this.appSettings.alarms.retention = settings.alarms.retention ?? this.appSettings.alarms?.retention;
             dirty = true;
         }
+        if (settings.logs && settings.logs.retention !== this.appSettings.logs?.retention) {
+            this.appSettings.logs.retention = settings.logs.retention ?? this.appSettings.logs?.retention;
+            dirty = true;
+        }
         if (settings.userRole !== this.appSettings.userRole) {
             this.appSettings.userRole = settings.userRole;
             dirty = true;
+        }
+        if (settings.nodeRedEnabled !== this.appSettings.nodeRedEnabled) {
+            this.appSettings.nodeRedEnabled = settings.nodeRedEnabled;
+            dirty = true;
+        }
+        if (settings.nodeRedAuthMode !== undefined && settings.nodeRedAuthMode !== this.appSettings.nodeRedAuthMode) {
+            this.appSettings.nodeRedAuthMode = settings.nodeRedAuthMode;
+            dirty = true;
+        }
+        if (settings.swaggerEnabled !== this.appSettings.swaggerEnabled) {
+            this.appSettings.swaggerEnabled = settings.swaggerEnabled;
+            dirty = true;
+        }
+        if (dirty) {
+            this.settings$.next(this.appSettings);
         }
         return dirty;
     }

@@ -12,7 +12,7 @@ import panzoom from 'panzoom';
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
-  styleUrls: ['./view.component.css']
+  styleUrls: ['./view.component.scss']
 })
 export class ViewComponent implements OnInit, AfterViewInit, OnDestroy {
 

@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { Utils } from '../../../_helpers/utils';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { GraphSource } from '../../../_models/graph';
 

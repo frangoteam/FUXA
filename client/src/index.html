@@ -5,7 +5,45 @@
     <base href="/" />
     <title>FUXA</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+        (function() {
+            // Use actual screen dimensions
+            var screenWidth = window.screen.width * (window.devicePixelRatio || 1);
+            var targetWidth = 768; // Target width for mobile devices (lower = bigger content)
+
+            if (window.screen.width < 768) {
+                var scale = window.screen.width / targetWidth;
+                document.write('<meta name="viewport" content="width=' + targetWidth + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale + ', user-scalable=no, viewport-fit=cover">');
+            } else {
+                document.write('<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">');
+            }
+
+            /* DEBUGGING ONLY
+            var j = JSON.stringify({
+                screenWidth: window.screen.width,
+                innerWidth: window.innerWidth,
+                devicePixelRatio: window.devicePixelRatio,
+                scale: window.visualViewport?.scale,
+                vpWidth: window.visualViewport?.width,
+                vpHeight: window.visualViewport?.height,
+                calculatedScale: window.screen.width / targetWidth
+            })
+            console.log(j)
+            */
+
+            // Reload page on orientation change
+            window.addEventListener('orientationchange', function() {
+                window.location.reload();
+            });
+        })();
+    </script>
+    <style>
+        /* disable pitch html pich zoom. zoom in fuxa svg view still works */
+        html, body {
+            touch-action: manipulation;
+            -webkit-text-size-adjust: none;
+        }
+    </style>
 
     <!-- 1° Load styles -->
     <link rel="stylesheet" href="assets/lib/svgeditor/jquery-plugin.min.css">

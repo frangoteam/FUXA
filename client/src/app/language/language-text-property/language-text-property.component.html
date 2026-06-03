@@ -1,7 +1,7 @@
 <form [formGroup]="formGroup" class="container">
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'text.settings-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div mat-dialog-content>
+    <div mat-dialog-content class="mat-dialog-content">
         <div class="my-form-field">
             <span>{{'text.settings-id' | translate}}</span>
             <input matInput formControlName="name" type="text" pattern="^[a-zA-Z0-9_]+$" (input)="clearNameError()">

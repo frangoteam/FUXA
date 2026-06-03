@@ -1,3 +1,33 @@
+.container {
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+.container [mat-dialog-content],
+.container .mat-dialog-content,
+.container .mat-mdc-dialog-content {
+    flex: 1 1 auto;
+    overflow: auto;
+}
+
+.container [mat-dialog-actions],
+.container .mat-dialog-actions,
+.container .mat-mdc-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.container .dialog-close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    float: none !important;
+    margin: 0;
+}
+
 .lib-image-panel {
     max-width: 900px;
 }

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FuxaServer, TagDaq, TagDeadband, TagDeadbandModeType, TagScale, TagScaleModeType } from '../../_models/device';
 import { Utils} from '../../_helpers/utils';
 import { ProjectService } from '../../_services/project.service';
@@ -54,6 +54,9 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             scaleRead: null,
             scaleReadFunction: null,
             scaleWriteFunction: null,
+            scaleReadExpression: null,
+            scaleWriteExpression: null,
+            unsPath: [null, [this.validateUnsPathUnique()]],
         });
 
         this.formGroup.controls.enabled.valueChanges.subscribe(enabled => {
@@ -84,6 +87,9 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             //let scaleReadParams = { value: [], valid: true };
             let scaleWriteFunction = { value: null, valid: true };
             //let scaleWriteParams = { value: null, valid: true };
+            let scaleReadExpression = { value: null, valid: true };
+            let scaleWriteExpression = { value: null, valid: true };
+            let unsPath = { value: null, valid: true, initialized: false };
             for (let i = 0; i < this.data.tags.length; i++) {
                 if (!this.data.tags[i].daq) {
                     continue;
@@ -126,6 +132,8 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                     scaledLow.value = this.data.tags[i].scale?.scaledLow;
                     scaledHigh.value = this.data.tags[i].scale?.scaledHigh;
                     dateTimeFormat.value = this.data.tags[i].scale?.dateTimeFormat;
+                    scaleReadExpression.value = this.data.tags[i].scale?.readExpression;
+                    scaleWriteExpression.value = this.data.tags[i].scale?.writeExpression;
                 } else if (scaleMode.value !== this.data.tags[i].scale?.mode) {
                     scaleMode.valid = false;
                 }
@@ -146,6 +154,14 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                 if (this.data.tags[i].scaleWriteParams) {
                     const tagParams = JSON.parse(this.data.tags[i].scaleWriteParams) as ScriptParam[];
                     const notValid = this.initializeScriptParams(script, tagParams, this.configedWriteParams);
+                }
+
+                const currentUnsPath = this.normalizeUnsPath(this.data.tags[i].unsPath);
+                if (!unsPath.initialized) {
+                    unsPath.value = currentUnsPath;
+                    unsPath.initialized = true;
+                } else if (unsPath.value !== currentUnsPath) {
+                    unsPath.valid = false;
                 }
             }
             let values = {};
@@ -174,7 +190,9 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                     rawHigh: rawHigh.value,
                     scaledLow: scaledLow.value,
                     scaledHigh: scaledHigh.value,
-                    dateTimeFormat: dateTimeFormat.value
+                    dateTimeFormat: dateTimeFormat.value,
+                    scaleReadExpression: scaleReadExpression.value,
+                    scaleWriteExpression: scaleWriteExpression.value
                 };
             }
             if (scaleReadFunction.valid && scaleReadFunction.value) {
@@ -183,6 +201,9 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
 
             if (scaleWriteFunction.valid && scaleWriteFunction.value) {
                 values = {...values, scaleWriteFunction: scaleWriteFunction.value};
+            }
+            if (unsPath.valid && unsPath.initialized) {
+                values = {...values, unsPath: unsPath.value};
             }
 
             this.formGroup.patchValue(values);
@@ -259,12 +280,15 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
                 rawHigh: this.formGroup.value.rawHigh,
                 scaledLow: this.formGroup.value.scaledLow,
                 scaledHigh: this.formGroup.value.scaledHigh,
-                dateTimeFormat: this.formGroup.value.dateTimeFormat
+                dateTimeFormat: this.formGroup.value.dateTimeFormat,
+                readExpression: this.formGroup.value.scaleReadExpression,
+                writeExpression: this.formGroup.value.scaleWriteExpression
             } : null,
             scaleReadFunction: this.formGroup.value.scaleReadFunction,
             scaleReadParams: readParamsStr,
             scaleWriteFunction: this.formGroup.value.scaleWriteFunction,
-            scaleWriteParams: writeParamsStr
+            scaleWriteParams: writeParamsStr,
+            unsPath: this.normalizeUnsPath(this.formGroup.value.unsPath)
         });
     }
 
@@ -272,19 +296,13 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
         return this.formGroup.invalid || this.paramsInValid();
     }
     paramsInValid() {
-        if (this.formGroup.value.scaleReadFunction) {
-            for (const p of this.configedReadParams[this.formGroup.value.scaleReadFunction]) {
-                if (!p.value) {
-                    return true;
-                }
-            }
+        if (this.formGroup.value.scaleReadFunction &&
+            (this.configedReadParams[this.formGroup.value.scaleReadFunction] ?? []).some(p => !p.value)) {
+          return true;
         }
-        if (this.formGroup.value.scaleWriteFunction) {
-            for (const p of this.configedWriteParams[this.formGroup.value.scaleWriteFunction]) {
-                if (!p.value) {
-                    return true;
-                }
-            }
+        if (this.formGroup.value.scaleWriteFunction &&
+            (this.configedWriteParams[this.formGroup.value.scaleWriteFunction] ?? []).some(p => !p.value)) {
+          return true;
         }
         return false;
     }
@@ -364,6 +382,30 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
         }
         return true;
     }
+
+    private validateUnsPathUnique(): ValidatorFn {
+        return (control: AbstractControl): ValidationErrors | null => {
+            const currentUnsPath = this.normalizeUnsPath(control?.value);
+            if (!currentUnsPath || !this.data?.device?.tags) {
+                return null;
+            }
+            const currentTagIds = new Set((this.data?.tags || []).map(t => t.id));
+            const exists = Object.values(this.data.device.tags).some((tag: any) =>
+                tag &&
+                !currentTagIds.has(tag.id) &&
+                this.normalizeUnsPath(tag.unsPath) === currentUnsPath
+            );
+            return exists ? { unsPathExists: true } : null;
+        };
+    }
+
+    private normalizeUnsPath(value: any): string | null {
+        if (Utils.isNullOrUndefined(value)) {
+            return null;
+        }
+        const normalized = String(value).trim();
+        return normalized.length ? normalized : null;
+    }
 }
 
 export interface TagOptionType {
@@ -375,4 +417,5 @@ export interface TagOptionType {
     scaleReadParams?: string;
     scaleWriteFunction?: string;
     scaleWriteParams?: string;
+    unsPath?: string | null;
 }

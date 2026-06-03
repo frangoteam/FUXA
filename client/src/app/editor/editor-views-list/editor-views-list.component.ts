@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { View, ViewType } from '../../_models/hmi';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfirmDialogComponent, ConfirmDialogData } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { ProjectService } from '../../_services/project.service';
 import { ViewPropertyComponent, ViewPropertyType } from '../view-property/view-property.component';
 import * as FileSaver from 'file-saver';
@@ -139,5 +139,12 @@ export class EditorViewsListComponent {
         let content = JSON.stringify(view);
         let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         FileSaver.saveAs(blob, filename);
+    }
+
+    onCleanView(view: View) {
+       const changed = this.projectService.cleanView(view);
+       if (changed) {
+            this.onSelectView(view);
+       }
     }
 }

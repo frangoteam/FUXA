@@ -1,7 +1,7 @@
-<div style="width: 750px;height: 810px; position: relative" class="dialog-mdsd-main">
-    <h1 mat-dialog-title style="display:inline-block;cursor:move;" mat-dialog-draggable>{{'editor.controls-bag-settings' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">clear</mat-icon>
-    <div class="dialog-mdsd-content">
+<div style="width: 800px;height: 890px; position: relative" class="dialog-mdsd-main">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'editor.controls-bag-settings' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="dialog-mdsd-content">
         <div style="display: block; width: 660px">
             <div style="display: block;">
                 <div class="my-form-field">
@@ -25,7 +25,7 @@
                 <flex-head [data]="data" [property]="property" #flexhead></flex-head>
             </div>
         </div>
-        <div style="width: 750px; height: 660px; position: relative">
+        <div style="width: 750px; height: 690px; position: relative">
             <div style="display: block; height: 360px;">
                 <div class="gauge">
                     <div class="gauge-select">
@@ -50,43 +50,43 @@
                     <div class="field-row">
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-divisions' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="20" [min]="0" [step]="1" [thumbLabel]="true"
-                                [(ngModel)]="optcfg.renderTicks.divisions" (input)="onChangeOptionsTicks('divisions', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [disabled]="!optcfg.ticksEnabled" [max]="20" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.renderTicks.divisions" (ngModelChange)="onChangeOptionsTicks('divisions', $event)">
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-subdivisions' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="20" [min]="0" [step]="1" [thumbLabel]="true"
-                                [(ngModel)]="optcfg.renderTicks.subDivisions" (input)="onChangeOptionsTicks('subDivisions', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [disabled]="!optcfg.ticksEnabled" [max]="20" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.renderTicks.subDivisions" (ngModelChange)="onChangeOptionsTicks('subDivisions', $event)">
                         </div>
                     </div>
                     <div class="field-row">
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-divisions-length' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true"
-                                [(ngModel)]="optcfg.renderTicks.divLength" (input)="onChangeOptionsTicks('divLength', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [disabled]="!optcfg.ticksEnabled" [max]="100" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.renderTicks.divLength" (ngModelChange)="onChangeOptionsTicks('divLength', $event)">
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-subdivisions-length' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true"
-                                [(ngModel)]="optcfg.renderTicks.subLength" (input)="onChangeOptionsTicks('subLength', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [disabled]="!optcfg.ticksEnabled" [max]="100" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.renderTicks.subLength" (ngModelChange)="onChangeOptionsTicks('subLength', $event)">
                         </div>
                     </div>
                     <div class="field-row">
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-divisions-width' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true"
-                                [(ngModel)]="optcfg.renderTicks.divWidth" (input)="onChangeOptionsTicks('divWidth', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [disabled]="!optcfg.ticksEnabled" [max]="100" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.renderTicks.divWidth" (ngModelChange)="onChangeOptionsTicks('divWidth', $event)">
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-subdivisions-width' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true"
-                                [(ngModel)]="optcfg.renderTicks.subWidth" (input)="onChangeOptionsTicks('subWidth', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [disabled]="!optcfg.ticksEnabled" [max]="100" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.renderTicks.subWidth" (ngModelChange)="onChangeOptionsTicks('subWidth', $event)">
                         </div>
                     </div>
                     <div class="field-row">
@@ -95,29 +95,29 @@
                             <input [disabled]="!optcfg.ticksEnabled" [(colorPicker)]="optcfg.renderTicks.divColor" [cpAlphaChannel]="'always'" class="input-color"
                                 [style.background]="optcfg.renderTicks.divColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
                                 [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                                style="width: 121px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsTicks('divColor', $event)" />
+                                style="width: 120px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsTicks('divColor', $event)" />
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 12px;">
                             <span>{{'bag.property-subdivisions-color' | translate}}</span>
                             <input [disabled]="!optcfg.ticksEnabled" [(colorPicker)]="optcfg.renderTicks.subColor" [cpAlphaChannel]="'always'" class="input-color"
                                 [style.background]="optcfg.renderTicks.subColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
                                 [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                                style="width: 121px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsTicks('subColor', $event)" />
+                                style="width: 120px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsTicks('subColor', $event)" />
                         </div>
                     </div>
                     <div class="field-row">
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-divisionfont-size' | translate}}</span>
-                            <mat-slider [disabled]="!optcfg.ticksEnabled" style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true"
-                                [(ngModel)]="optcfg.staticFontSize" (input)="onChangeOptionsLabels('fontSize', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [disabled]="!optcfg.ticksEnabled" [max]="100" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.staticFontSize" (ngModelChange)="onChangeOptionsLabels('fontSize', $event)">
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 12px">
                             <span>{{'bag.property-divisionfont-color' | translate}}</span>
                             <input [(colorPicker)]="optcfg.staticFontColor" [cpDisabled]="!optcfg.ticksEnabled" [cpAlphaChannel]="'always'" class="input-color"
                                 [style.background]="optcfg.staticFontColor" [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true"
                                 [cpCancelButtonClass]="'cpCancelButtonClass'" [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'"
-                                style="width: 121px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsLabels('labelsColor', $event)" />
+                                style="width: 120px" [cpPosition]="'left'" (colorPickerChange)="onChangeOptionsLabels('labelsColor', $event)" />
                         </div>
                     </div>
                     <div class="field-row">
@@ -134,9 +134,9 @@
                     <div class="field-row">
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-current-value' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="optcfg.maxValue" [min]="optcfg.minValue" [step]="1" [thumbLabel]="true" [(ngModel)]="gauge.value"
-                                (input)="onChangeValue($event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [max]="optcfg.maxValue" [min]="optcfg.minValue" [step]="1"
+                                [(ngModel)]="gauge.value" (ngModelChange)="onChangeValue($event)">
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-min' | translate}}</span>
@@ -150,69 +150,69 @@
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-bar-width' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="70" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="optcfg.lineWidth"
-                                (input)="onChangeOptions('lineWidth', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [max]="70" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.lineWidth" (ngModelChange)="onChangeOptions('lineWidth', $event)">
                         </div>
                     </div>
                     <div class="field-row">
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-animation-speed' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="128" [min]="1" [step]="1" [thumbLabel]="true" [(ngModel)]="optcfg.animationSpeed"
-                                (input)="onChangeOptions('animationSpeed', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [max]="128" [min]="1" [step]="1"
+                                [(ngModel)]="optcfg.animationSpeed" (ngModelChange)="onChangeOptions('animationSpeed', $event)">
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-angle' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="50" [min]="-50" [step]="1" [thumbLabel]="true" [(ngModel)]="optcfg.angle"
-                                (input)="onChangeOptions('angle', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [max]="50" [min]="-50" [step]="1"
+                                [(ngModel)]="optcfg.angle" (ngModelChange)="onChangeOptions('angle', $event)">
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-radius' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="100" [min]="50" [step]="1" [thumbLabel]="true" [(ngModel)]="optcfg.radiusScale"
-                                (input)="onChangeOptions('radiusScale', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [max]="100" [min]="50" [step]="1"
+                                [(ngModel)]="optcfg.radiusScale" (ngModelChange)="onChangeOptions('radiusScale', $event)">
                         </div>
                     </div>
                     <div class="field-row">
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-font-size' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="optcfg.fontSize"
-                                (input)="onChangeOptions('fontSize', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [max]="100" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.fontSize" (ngModelChange)="onChangeOptions('fontSize', $event)">
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-textfield-position' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="optcfg.textFilePosition"
-                                (input)="onChangeOptions('textFilePosition', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [max]="100" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.textFilePosition" (ngModelChange)="onChangeOptions('textFilePosition', $event)">
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-format-digits' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="5" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="optcfg.fractionDigits"
-                                (input)="onChangeOptions('fractionDigits', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [max]="5" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.fractionDigits" (ngModelChange)="onChangeOptions('fractionDigits', $event)">
                         </div>
                     </div>
                     <div class="field-row">
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-pointer-length' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="100" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="optcfg.pointer.length"
-                                (input)="onChangeOptionsPointer('pointerLength', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [max]="100" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.pointer.length" (ngModelChange)="onChangeOptionsPointer('pointerLength', $event)">
                         </div>
                         <div class="my-form-field slider-field" style="padding-left: 12px">
                             <span>{{'bag.property-pointer-stroke' | translate}}</span>
-                            <mat-slider style="display:inline-block;" [max]="300" [min]="0" [step]="1" [thumbLabel]="true" [(ngModel)]="optcfg.pointer.strokeWidth"
-                                (input)="onChangeOptionsPointer('pointerStrokeWidth', $event.value)">
-                            </mat-slider>
+                            <input numberOnly type="number" class="number-input"
+                                [max]="300" [min]="0" [step]="1"
+                                [(ngModel)]="optcfg.pointer.strokeWidth" (ngModelChange)="onChangeOptionsPointer('pointerStrokeWidth', $event)">
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 12px">
                             <span>{{'bag.property-pointer-color' | translate}}</span>
                             <input [(colorPicker)]="optcfg.pointer.color" [cpAlphaChannel]="'always'" [style.background]="optcfg.pointer.color" class="input-color"
                                 [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 121px" [cpPosition]="'top'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 120px" [cpPosition]="'top'"
                                 (colorPickerChange)="onChangeOptionsPointer('color', $event)" />
                         </div>
                     </div>
@@ -221,21 +221,21 @@
                             <span>{{'bag.property-color-start' | translate}}</span>
                             <input [(colorPicker)]="optcfg.colorStart" [style.background]="optcfg.colorStart" [cpAlphaChannel]="'always'" class="input-color"
                                 [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 121px" [cpPosition]="'top'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 120px" [cpPosition]="'top'"
                                 (colorPickerChange)="onChangeOptions('colorStart', $event)" />
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 12px">
                             <span>{{'bag.property-color-stop' | translate}}</span>
                             <input [(colorPicker)]="optcfg.colorStop" [style.background]="optcfg.colorStop" [cpAlphaChannel]="'always'" class="input-color"
                                 [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 121px" [cpPosition]="'top'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 120px" [cpPosition]="'top'"
                                 (colorPickerChange)="onChangeOptions('colorStop', $event)" />
                         </div>
                         <div class="my-form-field slider-field color-field" style="padding-left: 12px">
                             <span>{{'bag.property-background' | translate}}</span>
                             <input [(colorPicker)]="optcfg.strokeColor" [style.background]="optcfg.strokeColor" [cpAlphaChannel]="'always'" class="input-color"
                                 [cpPresetColors]="defaultColor" [cpOKButton]="true" [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'"
-                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 121px" [cpPosition]="'top'"
+                                [cpCancelButtonText]="'Cancel'" [cpOKButtonText]="'OK'" [cpOKButtonClass]="'cpOKButtonClass'" style="width: 120px" [cpPosition]="'top'"
                                 (colorPickerChange)="onChangeOptions('strokeColor', $event)" />
                         </div>
                     </div>

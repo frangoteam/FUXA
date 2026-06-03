@@ -7,7 +7,9 @@ const path = require('path');
 var express = require("express");
 const authJwt = require('../jwt-helper');
 const Report = require('../../runtime/jobs/report');
+const fontkit = require('fontkit');
 const os = require('os');
+const { resolveWithin } = require('../path-helper');
 
 var runtime;
 var secureFnc;
@@ -41,16 +43,16 @@ module.exports = {
                 runtime.logger.error("api get resources/images: Unauthorized!");
             } else {
                 try {
-                    var result = {...req.query, ...{ groups: [] }};
+                    var result = { ...req.query, ...{ groups: [] } };
                     var resourcesDirs = getDirectories(runtime.settings.imagesFileDir);
                     for (var i = 0; i < resourcesDirs.length; i++) {
                         var group = { name: resourcesDirs[i], items: [] };
                         var dirPath = path.resolve(runtime.settings.imagesFileDir, resourcesDirs[i]);
-                        var wwwSubDir =  path.join('_images', resourcesDirs[i]);
-                        var files =  getFiles(dirPath, ['.jpg','.jpeg', '.png', '.gif', '.svg']);
+                        var wwwSubDir = path.join('_images', resourcesDirs[i]);
+                        var files = getFiles(dirPath, ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.mp4', '.webm', '.ogg', '.ogv']);
                         for (var x = 0; x < files.length; x++) {
                             var filename = files[x].replace(/\.[^\/.]+$/, '');
-                            group.items.push({ path:  path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep), name: filename });
+                            group.items.push({ path: path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep), name: filename });
                         }
                         result.groups.push(group);
                     }
@@ -62,6 +64,78 @@ module.exports = {
                         res.status(400).json({ error: "unexpected_error", message: err.toString() });
                     }
                     runtime.logger.error("api get resources/images: " + err.message);
+                }
+            }
+        });
+
+        /**
+         * GET Server resources folder content
+         */
+        resourcesApp.get('/api/resources/resources', secureFnc, function (req, res) {
+            try {
+                const resourcesFilter = { fonts: ['ttf'] };
+                const wwwSubDir = '_resources';
+                const result = { ...req.query, ...{ groups: [] } };
+                const group = { name: wwwSubDir, items: [] };
+                var files = getFiles(runtime.settings.resourcesFileDir, ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.pdf', '.ttf', '.mp4', '.webm', '.ogg', '.ogv']);
+                for (var x = 0; x < files.length; x++) {
+                    const fileName = files[x];
+                    const filePath = path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep);
+                    var fileLabel;
+                    if (resourcesFilter.fonts.some(suffix => fileName.endsWith(suffix))) {
+                        const font = fontkit.openSync(filePath);
+                        fileLabel = font.fullName;
+                    }
+
+                    group.items.push({
+                        path: filePath,
+                        name: fileName,
+                        label: fileLabel
+                    });
+                }
+                result.groups.push(group);
+                res.json(result);
+            } catch (err) {
+                if (err.code) {
+                    res.status(400).json({ error: err.code, message: err.message });
+                } else {
+                    res.status(400).json({ error: "unexpected_error", message: err.toString() });
+                }
+                runtime.logger.error("api get resources/resources: " + err.message);
+            }
+        });
+
+        /**
+         * POST remove resource file
+         */
+        resourcesApp.post('/api/resources/remove', secureFnc, function (req, res) {
+            const permission = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post device: Tocken Expired");
+            } else if (!authJwt.haveAdminPermission(permission)) {
+                res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+                runtime.logger.error("api post remove resource: Unauthorized");
+            } else {
+                try {
+                    const resolvedFile = resolveWithin(runtime.settings.resourcesFileDir, req.body.file);
+                    if (!resolvedFile) {
+                        res.status(400).json({ error: "invalid_path", message: "Invalid resource path." });
+                        return;
+                    }
+                    const filePath = resolvedFile.resolvedTarget;
+                    if (fs.existsSync(filePath)) {
+                        fs.unlinkSync(filePath);
+                    }
+                    runtime.logger.info(`resources '${filePath}' deleted!`, true);
+                    res.end();
+                } catch (err) {
+                    if (err && err.code) {
+                        res.status(400).json({ error: err.code, message: err.message });
+                        runtime.logger.error("api remove resource: " + err.message);
+                    } else {
+                        res.status(400).json({ error: "unexpected_error", message: err });
+                        runtime.logger.error("api remove resource: " + err);
+                    }
                 }
             }
         });
@@ -102,8 +176,90 @@ module.exports = {
         });
 
         /**
-         * GET Server widgets folder content
+         * GET Templates
+         * Take from resources storage and reply
          */
+        resourcesApp.get("/api/resources/templates", secureFnc, function (req, res) {
+            const permission = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api get templates: Tocken Expired");
+            } else if (!authJwt.haveAdminPermission(permission)) {
+                res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+                runtime.logger.error("api get templates: Unauthorized!");
+            } else {
+                runtime.resourcesMgr.getTemplates(req.query).then(result => {
+                    // res.header("Access-Control-Allow-Origin", "*");
+                    // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                    if (result) {
+                        result.forEach(template => {
+                            template.content = JSON.parse(template.content);
+                        });
+                        res.json(result);
+                    } else {
+                        res.end();
+                    }
+                }).catch(function (err) {
+                    if (err.code) {
+                        res.status(400).json({ error: err.code, message: err.message });
+                    } else {
+                        res.status(400).json({ error: "unexpected_error", message: err.toString() });
+                    }
+                    runtime.logger.error("api get templates: " + err.message);
+                });
+            }
+        });
+
+        /**
+         * POST template
+         */
+        resourcesApp.post('/api/resources/template', secureFnc, function (req, res) {
+            const permission = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post device: Tocken Expired");
+            } else if (!authJwt.haveAdminPermission(permission)) {
+                res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+                runtime.logger.error("api post template: Unauthorized");
+            } else {
+                runtime.resourcesMgr.setTemplate(req.body.template).then((data) => {
+                    res.end();
+                }).catch(function (err) {
+                    if (err.code) {
+                        res.status(400).json({ error: err.code, message: err.message });
+                    } else {
+                        res.status(400).json({ error: "unexpected_error", message: err.toString() });
+                    }
+                    runtime.logger.error("api post template: " + err.message);
+                });
+            }
+        });
+
+        /**
+         * DELETE template
+         */
+        resourcesApp.delete("/api/resources/templates", secureFnc, function (req, res, next) {
+            const permission = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api delete templates: Tocken Expired");
+            } else if (!authJwt.haveAdminPermission(permission)) {
+                res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+                runtime.logger.error("api delete templates: Unauthorized");
+            } else {
+                runtime.resourcesMgr.removeTemplates(req.query.templates).then((data) => {
+                    res.end();
+                }).catch(function (err) {
+                    if (err.code) {
+                        res.status(400).json({ error: err.code, message: err.message });
+                    } else {
+                        res.status(400).json({ error: "unexpected_error", message: err.toString() });
+                    }
+                    runtime.logger.error("api delete templates: " + err.message);
+                });
+            }
+        });
+
+        /**
+        * GET Server widgets folder content
+        */
         resourcesApp.get('/api/resources/widgets', secureFnc, function (req, res) {
             const permission = checkGroupsFnc(req);
             if (res.statusCode === 403) {
@@ -113,16 +269,19 @@ module.exports = {
                 runtime.logger.error("api get resources/widgets: Unauthorized!");
             } else {
                 try {
-                    var result = {...req.query, ...{ groups: [] }};
+                    var result = { ...req.query, ...{ groups: [] } };
                     var resourcesDirs = getDirectories(runtime.settings.widgetsFileDir);
                     for (var i = 0; i < resourcesDirs.length; i++) {
                         var group = { name: resourcesDirs[i], items: [] };
                         var dirPath = path.resolve(runtime.settings.widgetsFileDir, resourcesDirs[i]);
-                        var wwwSubDir =  path.join('_widgets', resourcesDirs[i]);
-                        var files =  getFiles(dirPath, ['.svg']);
+                        var wwwSubDir = path.join('_widgets', resourcesDirs[i]);
+                        var files = getFilesRecursive(dirPath, ['.svg']);
                         for (var x = 0; x < files.length; x++) {
                             var filename = files[x];
-                            group.items.push({ path:  path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep), name: filename });
+                            group.items.push({
+                                path: path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep),
+                                name: filename
+                            });
                         }
                         result.groups.push(group);
                     }
@@ -151,7 +310,6 @@ module.exports = {
             }
             try {
                 let relPath = req.body?.path;
-                relPath = relPath.replace(new RegExp('\\.\\.\/', 'g'), '');
                 if (!relPath || typeof relPath !== 'string') {
                     return res.status(400).json({ error: "invalid_path", message: "Missing or invalid widget path." });
                 }
@@ -159,12 +317,12 @@ module.exports = {
                 if (process.versions.electron) {
                     basePath = process.env.userDir || path.join(os.homedir(), '.fuxa');
                 }
-                const fullPath = path.resolve(basePath, relPath);
-
-                if (!fullPath.startsWith(basePath)) {
-                    runtime.logger.error("api resources/widgets: security_violation " + fullPath);
+                const resolvedWidget = resolveWithin(basePath, relPath);
+                if (!resolvedWidget) {
+                    runtime.logger.error("api resources/widgets: security_violation " + relPath);
                     return res.status(403).json({ error: 'security_violation', message: 'Invalid path' });
                 }
+                const fullPath = resolvedWidget.resolvedTarget;
 
                 if (!fs.existsSync(fullPath)) {
                     return res.status(404).json({ error: "not_found", message: "Widget file not found." });
@@ -191,15 +349,29 @@ module.exports = {
     }
 }
 
-function getDirectories (pathDir) {
+function getDirectories(pathDir) {
     const directoriesInDIrectory = fs.readdirSync(pathDir, { withFileTypes: true })
         .filter((item) => item.isDirectory())
         .map((item) => item.name);
     return directoriesInDIrectory;
 }
 
-function getFiles (pathDir, extensions) {
+function getFiles(pathDir, extensions) {
     const filesInDIrectory = fs.readdirSync(pathDir)
         .filter((item) => extensions.indexOf(path.extname(item).toLowerCase()) !== -1);
     return filesInDIrectory;
+}
+
+function getFilesRecursive(pathDir, extensions, baseDir = pathDir) {
+    const entries = fs.readdirSync(pathDir, { withFileTypes: true });
+    const files = [];
+    for (const entry of entries) {
+        const entryPath = path.join(pathDir, entry.name);
+        if (entry.isDirectory()) {
+            files.push(...getFilesRecursive(entryPath, extensions, baseDir));
+        } else if (extensions.indexOf(path.extname(entry.name).toLowerCase()) !== -1) {
+            files.push(path.relative(baseDir, entryPath));
+        }
+    }
+    return files;
 }

@@ -18,6 +18,11 @@ import { ReportListComponent } from './reports/report-list/report-list.component
 import { UsersRolesComponent } from './users/users-roles/users-roles.component';
 import { MapsLocationListComponent } from './maps/maps-location-list/maps-location-list.component';
 import { LanguageTextListComponent } from './language/language-text-list/language-text-list.component';
+import { NodeRedFlowsComponent } from './integrations/node-red/node-red-flows/node-red-flows.component';
+import { ApiKeysListComponent } from './apikeys/api-keys-list/api-keys-list.component';
+import { PluginsListComponent } from './plugins/plugins-list/plugins-list.component';
+import { ArMarkerListComponent } from './ar/ar-marker-list/ar-marker-list.component';
+import { ArViewComponent } from './ar/ar-view/ar-view.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent},//, canActivate: [AuthGuard] },
@@ -39,6 +44,11 @@ const appRoutes: Routes = [
     { path: 'events', component: LogsViewComponent, canActivate: [AuthGuard] },
     { path: 'view', component: ViewComponent },
     { path: 'mapsLocations', component: MapsLocationListComponent, canActivate: [AuthGuard] },
+    { path: 'flows', component: NodeRedFlowsComponent, canActivate: [AuthGuard] },
+    { path: 'apikeys', component: ApiKeysListComponent, canActivate: [AuthGuard] },
+    { path: 'plugins', component: PluginsListComponent, canActivate: [AuthGuard] },
+    { path: 'arMarkers', component: ArMarkerListComponent, canActivate: [AuthGuard] },
+    { path: 'ar', component: ArViewComponent },
 
     // otherwise redirect to home
     { path: '**', redirectTo: '' }

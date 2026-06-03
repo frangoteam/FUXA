@@ -29,4 +29,12 @@ export class EndPointApi {
         return protocoll + '://' + path + '/api';
 
     }
+
+    public static resolveUrl = (input?: string) => {
+        if (!input) {
+            return '';
+        }
+        try { return new URL(input, window.location.origin).toString(); }
+        catch { return input.startsWith('/') ? input : '/' + input; }
+    };
 }

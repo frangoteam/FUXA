@@ -506,6 +506,12 @@
     "alarms.list-high": "Високий",
     "alarms.list-low": "Низький",
     "alarms.list-info": "Повідомлення",
+    "alarms.import": "Import Alarms",
+    "alarms.export": "Export Alarms (JSON)",
+    "alarms.import-title": "Import Alarms",
+    "alarms.import-conflicts-message": "{{total}} alarms found. {{conflicts}} already exist. Choose how to import them.",
+    "alarms.import-copy": "Add as copies",
+    "alarms.import-replace": "Replace",
     "alarm.property-title": "Аварійне повідомлення",
     "alarm.property-name": "Імя",
     "alarm.property-permission": "Авторизація",
@@ -578,6 +584,12 @@
     "dlg.app-language-ua": "Ukrainian",
     "dlg.app-settings-server-port": "Порт сервера",
     "dlg.app-settings-auth-token": "Авторизація з токеном",
+    "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-auth-disabled": "Вимкнено",
     "dlg.app-auth-expiration-15m": "Увімкнено. Автоматичний вихід через 15хв.",
     "dlg.app-auth-expiration-1h": "Увімкнено. Автоматичний вихід через 1год.",
@@ -589,6 +601,8 @@
     "msg.alarm-remove": "Видалити аварію ?",
     "msg.text-remove": "Вы действительно  хотете удалить Текст ",
     "msg.alarmproperty-error-exist": "Повідомлення з такою назвою вже існує !",
+    "msg.import-alarms-error": "Import alarms failed!",
+    "msg.export-alarms-error": "Export alarms failed!",
     "msg.alarmproperty-missing-value": "Не всі значення заповненні !",
     "msg.textproperty-error-exist": "Такий Text-ID уже существует вже існує!",
     "msg.textproperty-missing-value": "е всі значення заповненні !",
@@ -610,5 +624,6 @@
     "msg.project-save-ask": "При закритті вікна всі не збережені зміни пропадуть!",
     "msg.login-username-required": "Користувач",
     "msg.login-password-required": "Пароль",
-    "msg.signin-failed": "Не авторизований"
+    "msg.signin-failed": "Не авторизований",
+    "device.tag-uns-path": "UNS Path"
 }

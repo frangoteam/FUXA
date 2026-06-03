@@ -1,6 +1,6 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, Inject, Input, AfterViewInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MAT_DIALOG_DATA as MAT_DIALOG_DATA, MatDialog as MatDialog, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { FlexHeadComponent } from './flex-head/flex-head.component';
 import { FlexEventComponent } from './flex-event/flex-event.component';
 import { FlexActionComponent } from './flex-action/flex-action.component';
@@ -10,6 +10,7 @@ import { PropertyType } from './flex-input/flex-input.component';
 import { PermissionData, PermissionDialogComponent } from './permission-dialog/permission-dialog.component';
 import { SettingsService } from '../../_services/settings.service';
 import { Device } from '../../_models/device';
+import { HtmlButtonComponent } from '../controls/html-button/html-button.component';
 
 @Component({
     selector: 'gauge-property',
@@ -139,6 +140,10 @@ export class GaugePropertyComponent implements AfterViewInit {
         return this.data.languageTextEnabled || (this.dialogType === GaugeDialogType.RangeAndText);
     }
 
+    isButton() {
+        return this.data.settings?.type === HtmlButtonComponent.TypeTag;
+    }
+
     isAlarmToShow() {
         if (this.dialogType === GaugeDialogType.RangeWithAlarm) {
             return true;
@@ -201,7 +206,9 @@ export enum GaugeDialogType {
     Iframe,
     Table,
     Input,
-    Panel
+    Panel,
+    Video,
+    Scheduler
 }
 
 export interface GaugePropertyData {

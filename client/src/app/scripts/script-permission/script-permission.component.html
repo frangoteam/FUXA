@@ -1,8 +1,6 @@
 <div style="width: 350px;">
-    <h1 mat-dialog-title style="display:inline-block;cursor: move;" mat-dialog-draggable>{{'script.permission-title' | translate}}</h1>
-    <mat-icon (click)="onNoClick()" style="float:right;margin-right:-10px;margin-top:-10px;cursor:pointer;color:gray;">
-        clear
-    </mat-icon>
+    <h1 mat-dialog-title class="dialog-title"  mat-dialog-draggable>{{'script.permission-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
         <div class="my-form-field" style="display: block;margin-bottom: 10px;">
             <span style="display:inline-block; width: 70px;">{{'script.permission-enabled' | translate}}</span>

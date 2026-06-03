@@ -1,10 +1,10 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, OnInit, AfterViewInit, ViewChild, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { ChangeDetectorRef } from '@angular/core';
-import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
+import { MatTable as MatTable, MatTableDataSource as MatTableDataSource } from '@angular/material/table';
+import { MatPaginator as MatPaginator } from '@angular/material/paginator';
+import { MatMenuTrigger as MatMenuTrigger } from '@angular/material/menu';
 import { MatSort } from '@angular/material/sort';
 import { SelectionModel } from '@angular/cdk/collections';
 import { TranslateService } from '@ngx-translate/core';
@@ -25,9 +25,11 @@ import { TagPropertyService } from '../tag-property/tag-property.service';
 })
 export class DeviceListComponent implements OnInit, AfterViewInit {
 
-    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'logger', 'options', 'remove'];
+    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'uns', 'logger', 'options', 'remove'];
+    readonly defAllExtColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'quality', 'description', 'warning', 'uns', 'logger', 'options', 'remove'];
     readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'description', 'options', 'remove'];
-    readonly defGpipColumns = ['select', 'name', 'device', 'address', 'direction', 'value', 'timestamp', 'description', 'logger', 'options', 'remove'];
+    readonly defGpipColumns = ['select', 'name', 'device', 'address', 'direction', 'value', 'timestamp', 'description', 'uns', 'logger', 'options', 'remove'];
+    readonly defWebcamColumns = ['select', 'name', 'device', 'address', 'value', 'timestamp', 'description', 'uns', 'logger', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
     readonly defInternalRowWidth = 1200;
@@ -115,14 +117,20 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         if (this.deviceSelected.type === DeviceType.internal) {
             this.displayedColumns = this.defInternalColumns;
             this.tableWidth = this.defInternalRowWidth;
-        } else if(this.deviceSelected.type === DeviceType.GPIO) {
+        } else if (this.deviceSelected.type === DeviceType.GPIO) {
             this.displayedColumns = this.defGpipColumns;
+            this.tableWidth = this.defAllRowWidth;
+        } else if (this.deviceSelected.type === DeviceType.WebCam){
+            this.displayedColumns = this.defWebcamColumns;
+            this.tableWidth = this.defAllRowWidth;
+        } else if (this.deviceSelected.type === DeviceType.REDIS) {
+            this.displayedColumns = this.defAllExtColumns;
             this.tableWidth = this.defAllRowWidth;
         } else {
             this.displayedColumns = this.defAllColumns;
             this.tableWidth = this.defAllRowWidth;
         }
-        this.isWithOptions = (this.deviceSelected.type === this.deviceType.internal) ? false : true;
+        this.isWithOptions = (this.deviceSelected.type === this.deviceType.internal || this.deviceSelected.type === DeviceType.WebCam) ? false : true;
     }
 
     onGoBack() {
@@ -226,6 +234,14 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         }
     }
 
+    onScanRedisTag() {
+        if (this.deviceSelected.type === DeviceType.REDIS) {
+            this.tagPropertyService.scanTagsRedis(this.deviceSelected).subscribe(result => {
+                this.bindToTable(this.deviceSelected.tags);
+            });
+        }
+    }
+
     getTagLabel(tag: Tag) {
         if (this.deviceSelected.type === DeviceType.BACnet || this.deviceSelected.type === DeviceType.WebAPI) {
             return tag.label || tag.name;
@@ -259,7 +275,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     isToEdit(type, tag: Tag) {
         if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.FuxaServer ||
-            type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.ADSclient) {
+            type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.ADSclient ||
+            type === DeviceType.WebCam || type === DeviceType.MELSEC || type === DeviceType.REDIS) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -326,6 +343,27 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             });
             return;
         }
+        if (this.deviceSelected.type === DeviceType.WebCam) {
+            this.tagPropertyService.editTagPropertyWebcam(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
+        if (this.deviceSelected.type === DeviceType.MELSEC) {
+            this.tagPropertyService.editTagPropertyMelsec(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
+        if (this.deviceSelected.type === DeviceType.REDIS) {
+            this.tagPropertyService.editTagPropertyRedis(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
     }
 
     editTagOptions(tags: Tag[]) {
@@ -345,6 +383,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     tags[i].scaleReadParams = tagOption.scaleReadParams;
                     tags[i].scaleWriteFunction = tagOption.scaleWriteFunction;
                     tags[i].scaleWriteParams = tagOption.scaleWriteParams;
+                    tags[i].unsPath = tagOption.unsPath;
                 }
                 this.projectService.setDeviceTags(this.deviceSelected);
             }
@@ -355,9 +394,11 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         let sigs = this.hmiService.getAllSignals();
         for (let id in sigs) {
             if (this.tagsMap[id]) {
-                this.tagsMap[id].value = sigs[id].value;
-                this.tagsMap[id].error = sigs[id].error;
-                this.tagsMap[id].timestamp = sigs[id].timestamp;
+                const signal = sigs[id];
+                this.tagsMap[id].value = signal.value;
+                this.tagsMap[id].error = signal.error;
+                this.tagsMap[id].timestamp = signal.timestamp;
+                this.tagsMap[id].quality = signal.quality;
             }
         }
         this.changeDetector.detectChanges();

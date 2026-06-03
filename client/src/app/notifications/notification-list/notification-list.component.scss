@@ -1,4 +1,7 @@
 :host {
+    display: block;
+    height: 100%;
+
     .header-panel {
         background-color: var(--headerBackground);
         color: var(--headerColor);
@@ -23,6 +26,8 @@
         left: 0px;
         right: 0px;
         bottom: 0px;
+        background-color: var(--mat-table-background-color);
+        overflow: hidden;
     }
 
     .container {
@@ -34,34 +39,37 @@
         top: 0px;
         left:0px;
         right:0px;
+        overflow-y: auto;
     }
-    /*
-    .table {
-        height: 705px;
-    } */
 
     .mat-table {
-        overflow: auto;
-        height: 100%;
+        width: 100%;
+        border-bottom: 1px solid rgb(81, 81, 81);
     }
 
     .mat-row {
         min-height: 40px;
-        height: 43px;
+        height: 43px !important;
     }
 
     .mat-cell {
         font-size: 13px;
     }
 
-    .mat-header-row {
+    .mat-header-row,
+    .mat-mdc-header-row {
         top: 0;
         position: sticky;
-        z-index: 1;
+        z-index: 10;
+        background-color: var(--mat-table-background-color);
     }
 
     .mat-header-cell {
         font-size: 15px;
+        position: sticky;
+        top: 0;
+        z-index: 11;
+        background-color: var(--mat-table-background-color);
     }
 
     .mat-column-select {
@@ -78,7 +86,7 @@
     }
 
     .mat-column-delay {
-        flex: 0 0 60px;
+        flex: 0 0 80px;
     }
 
     .mat-column-interval {

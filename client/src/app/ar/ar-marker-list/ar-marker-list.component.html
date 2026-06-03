@@ -1,0 +1,68 @@
+<div class="header-panel">
+    <mat-icon>view_in_ar</mat-icon>
+    {{'ar.markers-list-title' | translate}}
+</div>
+<div class="work-panel">
+    <div class="container">
+        <mat-table #table [dataSource]="dataSource" matSort>
+            <ng-container matColumnDef="select">
+                <mat-header-cell *matHeaderCellDef>
+                    <button mat-icon-button (click)="onAddMarker()" class="remove">
+                        <mat-icon>add</mat-icon>
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-icon-button (click)="onEditMarker(element)" class="remove">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="id">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>{{'ar.markers-list-id' | translate}}</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{element.id}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="label">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>{{'ar.markers-list-label' | translate}}</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{element.label}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="view">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>{{'ar.markers-list-view' | translate}}</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{getViewName(element.viewId)}}</mat-cell>
+            </ng-container>
+            <ng-container matColumnDef="ttlMs">
+                <mat-header-cell *matHeaderCellDef mat-sort-header>{{'ar.markers-list-ttl' | translate}}</mat-header-cell>
+                <mat-cell *matCellDef="let element">{{element.ttlMs || 3000}}</mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="download">
+                <mat-header-cell *matHeaderCellDef>
+                    <button mat-icon-button (click)="onDownloadAllMarkers()" [disabled]="!dataSource.data.length" matTooltip="{{'ar.markers-list-download-all' | translate}}" class="remove">
+                        <mat-icon>download</mat-icon>
+                    </button>
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-icon-button (click)="$event.stopPropagation();onDownloadMarker(element)" matTooltip="{{'ar.markers-list-download' | translate}}" class="remove">
+                        <mat-icon>file_download</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="remove">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let element">
+                    <button mat-icon-button (click)="$event.stopPropagation();onRemoveMarker(element)" class="remove">
+                        <mat-icon>clear</mat-icon>
+                    </button>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="my-mat-row"></mat-row>
+        </mat-table>
+    </div>
+</div>
+
+<button mat-fab color="primary" (click)="onAddMarker()" class="fab-add">
+    <mat-icon>add</mat-icon>
+</button>

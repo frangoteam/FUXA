@@ -53,14 +53,19 @@ export class SvgUtils {
         const globalSectionRegex = new RegExp(`${SvgUtils.exportStart}([\\s\\S]*?)${SvgUtils.exportEnd}`, 'g');
         const match = globalSectionRegex.exec(scriptContent);
         const renamedVariables: { [key: string]: string } = {};
+        const defaultValues: { [key: string]: string } = {};
         if (match) {
             let globalSection = match[1];
 
-            const globalVarRegex = /(?:var|let|const)\s+(\w+)/g;
+            const globalVarRegex = /(?:var|let|const)\s+(\w+)\s*(?:=\s*([^;]+))?\s*;/g;
             let varMatch;
 
             while ((varMatch = globalVarRegex.exec(globalSection)) !== null) {
                 const varName = varMatch[1];
+                const defaultValue = varMatch[2]?.trim();
+                if (defaultValue) {
+                    defaultValues[varName] = defaultValue;
+                }
                 const varExist = variableDefined?.find(varDef => varDef.originalName === varName);
                 const newVarName = varExist ? varExist.name : varName;
                 renamedVariables[varName] = newVarName;
@@ -77,6 +82,12 @@ export class SvgUtils {
             scriptContent = scriptContent.replace(varNameRegex, newVar);
             const widgetVar = SvgUtils.toWidgetPropertyVariable(originalVar, newVar);
             if (widgetVar) {
+                let defaultVal = defaultValues[originalVar];
+                // Strip quotes from string/color values (e.g., "'#ff0000'" -> "#ff0000")
+                if (defaultVal && (widgetVar.type === 'string' || widgetVar.type === 'color')) {
+                    defaultVal = defaultVal.replace(/^['"`]|['"`]$/g, '');
+                }
+                widgetVar.variableValue = defaultVal;
                 vars.push(widgetVar);
             }
         });
@@ -168,7 +179,8 @@ export class SvgUtils {
                 if (variable.type === 'string' || variable.type === 'color') {
                     gSection = gSection.replace(varRegex, `$1 ${variable.name} = \`${variable.variableValue}\`;`);
                 } else if (variable.type === 'boolean') {
-                    gSection = gSection.replace(varRegex, `$1 ${variable.name} = ${!!variable.variableValue};`);
+                    const boolValue = variable.variableValue.toLowerCase() === 'true' || variable.variableValue === '1';
+                    gSection = gSection.replace(varRegex, `$1 ${variable.name} = ${boolValue};`);
                 } else {
                     gSection = gSection.replace(varRegex, `$1 ${variable.name} = ${variable.variableValue};`);
                 }
@@ -194,8 +206,50 @@ export class SvgUtils {
             return false;
         } else if (variable.type === 'color' && !variable.variableValue) {
             return false;
+        } else if (variable.type === 'boolean') {
+            const val = variable.variableValue?.toLowerCase();
+            return !val || val === 'true' || val === 'false' || val === '1' || val === '0';
         }
         return true;
+    }
+
+    static populateDefaults(scriptContent: string, varsToBind: WidgetPropertyVariable[]): WidgetPropertyVariable[] {
+        if (!varsToBind || !scriptContent) {
+            return varsToBind;
+        }
+
+        // Extract the export section
+        const globalSectionRegex = new RegExp(`${SvgUtils.exportStart}([\\s\\S]*?)${SvgUtils.exportEnd}`, 'g');
+        const match = globalSectionRegex.exec(scriptContent);
+        
+        if (!match) {
+            return varsToBind;
+        }
+
+        const defaultValues: { [key: string]: string } = {};
+        const globalVarRegex = /(?:var|let|const)\s+(\w+)\s*(?:=\s*([^;]+))?\s*;/g;
+        let varMatch;
+
+        while ((varMatch = globalVarRegex.exec(match[1])) !== null) {
+            const varName = varMatch[1];
+            const defaultValue = varMatch[2]?.trim();
+            if (defaultValue) {
+                defaultValues[varName] = defaultValue;
+            }
+        }
+
+        // Apply defaults to variables that are missing variableValue
+        return varsToBind.map(v => {
+            if (!v.variableValue && defaultValues[v.originalName]) {
+                let defaultVal = defaultValues[v.originalName];
+                // Strip quotes from string/color values (e.g., "'#ff0000'" -> "#ff0000")
+                if (defaultVal && (v.type === 'string' || v.type === 'color')) {
+                    defaultVal = defaultVal.replace(/^['"`]|['"`]$/g, '');
+                }
+                v.variableValue = defaultVal;
+            }
+            return v;
+        });
     }
 }
 

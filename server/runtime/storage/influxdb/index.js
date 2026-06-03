@@ -12,6 +12,10 @@ var { InfluxDB, Point, flux } = require('@influxdata/influxdb-client');
 const VERSION_18_FLUX = '1.8-flux';
 const VERSION_20 = '2.0';
 
+function escapeInfluxIdentifier(value) {
+    return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+
 function Influx(_settings, _log, _currentStorate) {
 
     var settings = _settings;               // Application settings
@@ -41,7 +45,7 @@ function Influx(_settings, _log, _currentStorate) {
             }
             try {
                 client = new InfluxDB(clientOptions);
-                writeApi = client.getWriteApi(settings.daqstore.organization, settings.daqstore.bucket, 's');
+                writeApi = client.getWriteApi(settings.daqstore.organization, settings.daqstore.bucket, 'ms');
                 queryApi = client.getQueryApi(settings.daqstore.organization);
                 status = InfluxDBStatusEnum.OPEN;
             } catch (error) {
@@ -108,12 +112,21 @@ function Influx(_settings, _log, _currentStorate) {
             }
             if (influxdbVersion === VERSION_18_FLUX) {
                 const tags = {
-                    id: tag.id,
-                    devicename: deviceName
+                    id: tag.id
+                };
+                const tagName = tag.name || tag.tagref?.name;
+                if (tagName) {
+                    tags.name = tagName;
+                }
+                if (tag.type) {
+                    tags.type = tag.type;
+                }
+                if (deviceName) {
+                    tags.device = deviceName;
                 }
                 const fields = {
                     value: utils.isBoolean(tag.value) ? tag.value * 1 : tag.value
-                }
+                };
                 dataToWrite.push({
                     measurement: tag.id,
                     tags,
@@ -123,7 +136,7 @@ function Influx(_settings, _log, _currentStorate) {
             } else {
                 const point = new Point(tag.id)
                     .tag('id', tag.id)
-                    .tag('name', tag.name || tag.tagref.name)
+                    .tag('name', tag.name || tag.tagref?.name)
                     .tag('type', tag.type)
                     .timestamp(new Date(tag.timestamp || new Date().getTime()));
                 if (deviceName) {
@@ -157,7 +170,8 @@ function Influx(_settings, _log, _currentStorate) {
                 if (influxdbVersion === VERSION_18_FLUX) {
                     fromts *= 1000000;
                     tots *= 1000000;
-                    const query = `SELECT * FROM "${tagid}" WHERE time >= ${fromts} AND time <= ${tots}`;
+                    const measurement = escapeInfluxIdentifier(tagid);
+                    const query = `SELECT * FROM "${measurement}" WHERE time >= ${Number(fromts)} AND time <= ${Number(tots)}`;
                     client.query(query).then((result) => {
                         resolve(result.map(row => {
                             return {
@@ -171,7 +185,7 @@ function Influx(_settings, _log, _currentStorate) {
                         reject(error);
                     });
                 } else {
-                    const query = flux`from(bucket: "${settings.daqstore.bucket}") |> range(start: ${new Date(fromts)}, stop: ${new Date(tots)}) |> filter(fn: (r) => r.id == "${tagid}")`;
+                    const query = flux`from(bucket: ${settings.daqstore.bucket}) |> range(start: ${new Date(fromts)}, stop: ${new Date(tots)}) |> filter(fn: (r) => r.id == ${String(tagid)})`;
                     var result = [];
                     queryApi.queryRows(query, {
                         next(row, tableMeta) {

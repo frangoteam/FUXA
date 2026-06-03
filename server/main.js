@@ -6,13 +6,15 @@ const http = require('http');
 const https = require('https');
 const socketIO = require('socket.io');
 const nopt = require("nopt");
+const schedule = require('node-schedule');
 
 const paths = require('./paths');
 const logger = require('./runtime/logger');
 const utils = require('./runtime/utils');
 var events = require("./runtime/events").create();
-
 const FUXA = require('./fuxa.js');
+const runtime = require('./runtime');
+const authJwt = require('./api/jwt-helper');
 
 const express = require('express');
 const app = express();
@@ -28,12 +30,12 @@ var knownOpts = {
     "userDir": [path]
 };
 var shortHands = {
-    "?":["--help"],
-    "p":["--port"],
-    "u":["--userDir"]
+    "?": ["--help"],
+    "p": ["--port"],
+    "u": ["--userDir"]
 };
 
-nopt.invalidHandler = function(k,v,t) {
+nopt.invalidHandler = function (k, v, t) {
     // TODO: console.log(k,v,t);
 }
 
@@ -54,7 +56,7 @@ if (parsedArgs.help) {
 var rootDir = __dirname;
 var workDir = path.resolve(process.cwd(), '_appdata');
 
-if(process.env.userDir){
+if (process.env.userDir) {
     rootDir = process.env.userDir;
     workDir = path.resolve(process.env.userDir, '_appdata');
 }
@@ -91,6 +93,13 @@ if (fs.existsSync(appSettingsFile)) {
 try {
     // load settings and set some app variable
     var settings = require(settingsFile);
+    // check new settings from default and merge if not defined
+    var defSettings = require(path.join(__dirname, 'settings.default.js'));
+    if (defSettings.version !== settings.version) {
+        logger.warn("Settings are outdated. Missing fields have been merged from defaults. Consider reviewing 'settings.json'.");
+        settings = utils.deepMerge(defSettings, settings);
+    }
+
     settings.workDir = workDir;
     settings.appDir = __dirname;
     settings.packageDir = path.resolve(rootDir, '_pkg');
@@ -100,13 +109,9 @@ try {
     settings.imagesFileDir = path.resolve(rootDir, '_images');
     settings.widgetsFileDir = path.resolve(rootDir, '_widgets');
     settings.reportsDir = path.resolve(rootDir, '_reports');
-
-    // check new settings from default and merge if not defined
-    var defSettings = require(path.join(__dirname, 'settings.default.js'));
-    if (defSettings.version !== settings.version) {
-        logger.warn("Settings aren't up to date! Please check 'settings.json'.");
-        // settings = Object.assign(defSettings, settings);
-    }
+    settings.webcamSnapShotsDir = path.resolve(rootDir, settings.webcamSnapShotsDir);
+    settings.logDir = path.resolve(rootDir, settings.logDir);
+    settings.dbDir = path.resolve(rootDir, settings.dbDir || '_db');
 } catch (err) {
     logger.error('Error loading settings file: ' + settingsFile)
     if (err.code == 'MODULE_NOT_FOUND') {
@@ -127,6 +132,16 @@ try {
         if (mysettings.language) {
             settings.language = mysettings.language;
         }
+        if (!utils.isNullOrUndefined(mysettings.hideEditorOnboarding)) {
+            settings.hideEditorOnboarding = mysettings.hideEditorOnboarding;
+        }
+        if (mysettings.editorSectionMessages) {
+            settings.editorSectionMessages = Object.assign(
+                {},
+                settings.editorSectionMessages || {},
+                mysettings.editorSectionMessages
+            );
+        }
         if (mysettings.uiPort) {
             settings.uiPort = mysettings.uiPort;
         }
@@ -142,6 +157,15 @@ try {
         if (mysettings.tokenExpiresIn) {
             settings.tokenExpiresIn = mysettings.tokenExpiresIn;
         }
+        if (!utils.isNullOrUndefined(mysettings.enableRefreshCookieAuth)) {
+            settings.enableRefreshCookieAuth = mysettings.enableRefreshCookieAuth;
+        }
+        if (mysettings.refreshTokenExpiresIn) {
+            settings.refreshTokenExpiresIn = mysettings.refreshTokenExpiresIn;
+        }
+        if (mysettings.secretCode) {
+            settings.secretCode = mysettings.secretCode;
+        }
         if (mysettings.smtp) {
             settings.smtp = mysettings.smtp;
         }
@@ -150,6 +174,9 @@ try {
         }
         if (mysettings.alarms) {
             settings.alarms = mysettings.alarms;
+        }
+        if (mysettings.logs) {
+            settings.logs = mysettings.logs;
         }
         if (!utils.isNullOrUndefined(mysettings.broadcastAll)) {
             settings.broadcastAll = mysettings.broadcastAll;
@@ -160,9 +187,27 @@ try {
         if (!utils.isNullOrUndefined(mysettings.userRole)) {
             settings.userRole = mysettings.userRole;
         }
+        if (!utils.isNullOrUndefined(mysettings.nodeRedEnabled)) {
+            settings.nodeRedEnabled = mysettings.nodeRedEnabled;
+        }
+        if (!utils.isNullOrUndefined(mysettings.nodeRedAuthMode)) {
+            settings.nodeRedAuthMode = mysettings.nodeRedAuthMode;
+        }
+        if (!utils.isNullOrUndefined(mysettings.swaggerEnabled)) {
+            settings.swaggerEnabled = mysettings.swaggerEnabled;
+        }
+        if (mysettings.nodeRedEnabled === true && utils.isNullOrUndefined(mysettings.nodeRedAuthMode)) {
+            settings.nodeRedAuthMode = 'legacy-open';
+        }
     }
 } catch (err) {
     logger.error('Error loading user settings file: ' + userSettingsFile)
+}
+
+// Ensure secure mode never runs with an empty/static-known JWT secret.
+if (settings.secureEnabled && !settings.secretCode) {
+    settings.secretCode = utils.generateSecretCode();
+    logger.warn('Generated a random JWT secret in memory because secureEnabled=true and secretCode was missing. Persist it in settings for stable sessions across restarts.');
 }
 
 // Check logger
@@ -182,9 +227,6 @@ if (version.indexOf('beta') > 0) {
 }
 
 // Check storage Database dir
-if (!settings.dbDir) {
-    settings.dbDir = path.resolve(rootDir, '_db');
-}
 if (!fs.existsSync(settings.dbDir)) {
     fs.mkdirSync(settings.dbDir);
 }
@@ -210,28 +252,42 @@ if (!fs.existsSync(settings.imagesFileDir)) {
 if (!fs.existsSync(settings.widgetsFileDir)) {
     fs.mkdirSync(settings.widgetsFileDir);
 }
+// Check webcam shots  folder
+if (!fs.existsSync(settings.webcamSnapShotsDir)) {
+    fs.mkdirSync(settings.webcamSnapShotsDir);
+}
 
 // Server settings
 if (settings.https) {
-    server = https.createServer(settings.https, function (req, res) { app(req, res); });
+    server = https.createServer(settings.https, app);
 } else {
-    server = http.createServer(function (req, res) { app(req, res); });
+    server = http.createServer(app);
 }
 server.setMaxListeners(0);
 
 const io = socketIO(server, {
-    pingInterval: 60000, // send ping interval
-    pingTimeout: 120000  // close connection if pong is not received
+    pingInterval: 60000,    // send ping interval
+    pingTimeout: 120000,    // close connection if pong is not received
+    allowEIO3: true,        //Whether to enable compatibility with Socket.IO v2 clients.
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+        credentials: false
+    }
 });
 
 // Check settings value
 var www = path.resolve(__dirname, '../client/dist');
+if (!fs.existsSync(www)) {      // compatibility with docker/npm/electron
+    www = path.resolve(__dirname, './dist');
+}
+
 settings.httpStatic = settings.httpStatic || www;
 
-if (parsedArgs.port !== undefined){
+if (parsedArgs.port !== undefined) {
     settings.uiPort = parsedArgs.port;
 } else {
-    if (settings.uiPort === undefined){
+    if (settings.uiPort === undefined) {
         settings.uiPort = 1881;
     }
 }
@@ -241,12 +297,13 @@ settings.uiHost = settings.uiHost || "0.0.0.0";
 events.once('init-runtime-ok', function () {
     logger.info('FUXA init in  ' + utils.endTime(startTime) + 'ms.');
     startFuxa();
+    initWebcamSnapshotCleanup();
 });
 
 // Init FUXA
 try {
     FUXA.init(server, io, settings, logger, events);
-} catch(err) {
+} catch (err) {
     if (err.code == 'unsupported_version') {
         logger.error('Unsupported version of node.js:', process.version);
         logger.error('FUXA requires node.js v6 or later');
@@ -265,37 +322,40 @@ try {
 
 // Http Server for client UI
 const allowCrossDomain = function (req, res, next) {
-  const origin = req.headers.origin;
-  const allowedOrigins = settings.allowedOrigins || ["*"];
+    const origin = req.headers.origin;
+    const allowedOrigins = settings.allowedOrigins || ["*"];
 
-  const isOriginAllowed = (origin) => {
-    if (!origin) return false;
-    if (allowedOrigins.includes("*")) return true;
+    const isOriginAllowed = (origin) => {
+        if (!origin) return false;
+        if (allowedOrigins.includes("*")) return true;
 
-    // Convert wildcard-style strings to regex
-    return allowedOrigins.some(pattern => {
-      if (!pattern.includes("*")) return pattern === origin;
+        // Convert wildcard-style strings to regex
+        return allowedOrigins.some(pattern => {
+            if (!pattern.includes("*")) return pattern === origin;
 
-      // Escape dots and replace * with regex
-      const regexPattern = new RegExp(
-        "^" + pattern.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$"
-      );
-      return regexPattern.test(origin);
-    });
-  };
+            // Escape dots and replace * with regex
+            const regexPattern = new RegExp(
+                "^" + pattern.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$"
+            );
+            return regexPattern.test(origin);
+        });
+    };
 
-  if (isOriginAllowed(origin)) {
-    res.header('Access-Control-Allow-Origin', origin || '*');
-  }
+    if (isOriginAllowed(origin)) {
+        res.header('Access-Control-Allow-Origin', origin || '*');
+        if (settings.enableRefreshCookieAuth) {
+            res.header('Access-Control-Allow-Credentials', 'true');
+        }
+    }
 
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'x-access-token, x-auth-user, Origin, Content-Type, Accept');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'x-access-token, x-auth-user, Origin, Content-Type, Accept, Skip-Auth, Skip-Error');
 
 
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204); 
-  }
-  next();
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(204);
+    }
+    next();
 };
 app.use(allowCrossDomain);
 app.use('/', express.static(settings.httpStatic));
@@ -304,30 +364,63 @@ app.use('/home/:viewName', express.static(settings.httpStatic));
 app.use('/lab', express.static(settings.httpStatic));
 app.use('/editor', express.static(settings.httpStatic));
 app.use('/device', express.static(settings.httpStatic));
+app.use('/plugins', express.static(settings.httpStatic));
 app.use('/rodevice', express.static(settings.httpStatic));
 app.use('/users', express.static(settings.httpStatic));
 app.use('/view', express.static(settings.httpStatic));
 app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
 app.use('/_images', express.static(settings.imagesFileDir));
 app.use('/_widgets', express.static(settings.widgetsFileDir));
+app.use('/snapshots', express.static(settings.webcamSnapShotsDir));
+app.use('/ar', express.static(settings.httpStatic));
 
-var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', {flags: 'a'});
-app.use(morgan('combined', {
-    stream: accessLogStream,
-    skip: function (req, res) { return res.statusCode < 400 }
-}));
+var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', { flags: 'a' });
+if (runtime.settings.logApiLevel !== 'none') {
+	app.use(morgan('combined', {
+		stream: accessLogStream,
+		skip: function (req, res) { return res.statusCode < 400 }
+	}));
 
-app.use(morgan('dev', {
-    skip: function (req, res) {
-        return res.statusCode < 400
-    }, stream: process.stderr
-}));
+	app.use(morgan('dev', {
+		skip: function (req, res) {
+			return res.statusCode < 400
+		}, stream: process.stderr
+	}));
 
-app.use(morgan('dev', {
-    skip: function (req, res) {
-        return res.statusCode >= 400
-    }, stream: process.stdout
-}));
+	app.use(morgan('dev', {
+		skip: function (req, res) {
+			return res.statusCode >= 400
+		}, stream: process.stdout
+	}));
+}
+
+function mountSwaggerIfEnabled() {
+    const swaggerEnabled = settings.swagger || settings.swaggerEnabled;
+    if (!swaggerEnabled) return;
+
+    let swaggerUi;
+    let YAML;
+    try {
+        swaggerUi = require('swagger-ui-express');
+        YAML = require('yamljs');
+    } catch (err) {
+        if (err && err.code !== 'MODULE_NOT_FOUND') {
+            throw err;
+        }
+        logger.warn('[Swagger] Enabled but optional dependencies are missing; skipping /api-docs. Install swagger-ui-express and yamljs to enable it.');
+        return;
+    }
+
+    const swaggerDocument = YAML.load(path.join(__dirname, 'docs', 'openapi.yaml'));
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
+
+// Swagger API Docs (mounted on main app so it isn't intercepted by optional integrations)
+try {
+    mountSwaggerIfEnabled();
+} catch (err) {
+    logger.warn('Swagger UI failed to initialize', err);
+}
 
 // app.get('/', function (req, res) {
 //     res.sendFile('/index.html');
@@ -340,9 +433,9 @@ app.use(morgan('dev', {
 // })
 
 // set api to listen
-if (settings.disableServer !== false) {
-    app.use('/', FUXA.httpApi);
-}
+// if (settings.disableServer !== false) {
+//     app.use('/', FUXA.httpApi);
+// }
 
 function getListenPath() {
     var port = settings.serverPort;
@@ -359,9 +452,14 @@ function getListenPath() {
     return listenPath;
 }
 
+let mountNodeRedIfInstalled;
+if (settings.nodeRedEnabled) {
+    ({ mountNodeRedIfInstalled } = require('./integrations/node-red'));
+}
+
 // Start FUXA
 function startFuxa() {
-    FUXA.start().then(function () {
+    FUXA.start().then(async () => {
         if (settings.httpStatic) {
             server.on('error', function (err) {
                 if (err.errno === 'EADDRINUSE') {
@@ -376,6 +474,22 @@ function startFuxa() {
                 }
                 process.exit(1);
             });
+
+            // Mount Node-RED if present; never block FUXA if it fails
+            if (settings.nodeRedEnabled && typeof mountNodeRedIfInstalled === 'function') {
+                try {
+                    await mountNodeRedIfInstalled({ app, server, settings, runtime, logger, authJwt, events });
+                } catch (e) {
+                    logger.warn('[Node-RED] Failed to initialize, continuing without it.', e);
+                }
+            } else if (settings.nodeRedEnabled) {
+                logger.warn('[Node-RED] Enabled but integration not available; continuing without it.');
+            }
+
+            if (settings.disableServer !== false) {
+                app.use('/', FUXA.httpApi);
+            }
+
             server.listen(settings.uiPort, settings.uiHost, function () {
                 settings.serverPort = server.address().port;
                 process.title = 'FUXA';
@@ -396,6 +510,51 @@ function startFuxa() {
     });
 }
 
+const initWebcamSnapshotCleanup = () => {
+    if (!settings.webcamSnapShotsCleanup) {
+        return;
+    }
+
+    schedule.scheduleJob('0 1 * * *', cleanupSnapShotsFiles);
+    logger.info('Scheduled webcam snapshot cleanup at 01:00 daily.');
+};
+
+/**
+ * Cleanup Snapshots Files
+ * @description  start on '0 1 * * *'
+ */
+const cleanupSnapShotsFiles = async () => {
+    const { webcamSnapShotsCleanup, webcamSnapShotsDir, webcamSnapShotsRetain } = settings;
+
+    if (!webcamSnapShotsCleanup) {
+        return;
+    }
+
+    try {
+        const now = Date.now();
+        const retentionMillis = webcamSnapShotsRetain * 24 * 60 * 60 * 1000;
+        const files = await fs.promises.readdir(webcamSnapShotsDir);
+        let deletedCount = 0;
+
+        for (const file of files) {
+            const filePath = path.join(webcamSnapShotsDir, file);
+            try {
+                const stat = await fs.promises.stat(filePath);
+                if (stat.mtime && (now - stat.mtimeMs > retentionMillis)) {
+                    await fs.promises.unlink(filePath);
+                    deletedCount++;
+                }
+            } catch (fileErr) {
+                logger.error(`Failed to process snapshot file: ${filePath}`, fileErr);
+            }
+        }
+
+        logger.info(`Snapshot cleanup completed. ${deletedCount} old file(s) deleted.`);
+    } catch (err) {
+        logger.error('Error during webcam snapshot cleanup', err);
+    }
+};
+
 // Don't wait any more
 setTimeout(() => {
     events.emit('init-runtime-ok');
@@ -410,7 +569,7 @@ process.on('uncaughtException', function (err) {
 });
 
 process.on('SIGINT', function () {
-    FUXA.stop().then(function() {
+    FUXA.stop().then(function () {
         process.exit();
     });
     logger.info('FUXA end!');

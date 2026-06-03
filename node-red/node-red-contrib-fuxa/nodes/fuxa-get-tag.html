@@ -1,0 +1,44 @@
+<script type="text/javascript">
+    RED.nodes.registerType('get-tag',{
+        category: 'FUXA',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value:""},
+            tag: {value:"", required:true}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "white-globe.png",
+        label: function() {
+            return this.name||this.tag||"get tag";
+        },
+        oneditprepare: function() {
+            $.getJSON('/nodered/fuxa/devices', function(data) {
+                var datalist = $('#fuxa-tags');
+                datalist.empty();
+                data.forEach(function(device) {
+                    device.tags.forEach(function(tag) {
+                        datalist.append('<option value="' + tag.name + '">' + device.name + ' - ' + tag.name + '</option>');
+                    });
+                });
+            });
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="get-tag">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-tag"><i class="fa fa-tag"></i> Tag</label>
+        <input type="text" id="node-input-tag" list="fuxa-tags" placeholder="Tag Name">
+        <datalist id="fuxa-tags"></datalist>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="get-tag">
+    <p>Get the value of a FUXA tag.</p>
+    <p>The tag value is set to <code>msg.payload</code>.</p>
+</script>

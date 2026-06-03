@@ -1,6 +1,6 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 import { EndPointApi } from '../_helpers/endpointapi';
 import { Plugin } from '../_models/plugin';
@@ -43,7 +43,7 @@ export class PluginService {
         return new Observable((observer) => {
             if (environment.serverEnabled) {
                 let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-                this.http.delete<any>(this.endPointConfig + '/api/plugins', { headers: header, params: {param:  plugin.name} }).subscribe(result => {
+                this.http.delete<any>(this.endPointConfig + '/api/plugins', { headers: header, params: { param: plugin.name } }).subscribe(result => {
                     observer.next(null);
                     this.onPluginsChanged.emit();
                 }, err => {
@@ -54,5 +54,20 @@ export class PluginService {
                 observer.next(null);
             }
         });
+    }
+
+    hasPlugin$(needle: string, requireEnabled = false): Observable<boolean> {
+        const n = needle.toLowerCase();
+        return this.getPlugins().pipe(
+            map(list => list.some(p => {
+                const name = (p.name ?? '').toLowerCase();
+                const matches = name.includes(n);
+                return requireEnabled ? (matches && p.current) : matches;
+            }))
+        );
+    }
+
+    hasNodeRed$(requireEnabled = false): Observable<boolean> {
+        return this.hasPlugin$('node-red', requireEnabled);
     }
 }

@@ -1,5 +1,8 @@
-<div style="width: 100%;position: relative;padding-bottom: 40px">
-    <div style="margin-top: 20px;margin-bottom: 20px;">
+<div>
+    <h1 mat-dialog-title class="dialog-title" style="height: 40px;" mat-dialog-draggable></h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+
+    <div mat-dialog-content>
         {{ msgToConfirm }}
     </div>
 

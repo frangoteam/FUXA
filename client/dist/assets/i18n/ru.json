@@ -254,7 +254,7 @@
     "graph.property-date-last-range": "Диапазон времени",
     "graph.property-date-group": "Группа",
     "graph.property-offline": "Онлайн",
-    "graph.property-graph-oriantation": "Ориентация",
+    "graph.property-graph-orientation": "Ориентация",
     "graph.property-ori-vartical": "Вертикальная",
     "graph.property-ori-horizontal": "Горизонтальная",
     "graph.property-decimals": "Десятичные",
@@ -782,6 +782,9 @@
     "device-tag-dialog-title": "Выбор тега",
 
     "device.tag-options-title": "Свойства тегов",
+
+
+    "device.tag-uns-path": "UNS Path",
     "device.tag-daq-enabled": "Регистрация включена",
     "device.tag-daq-changed": "Сохранять значения по изменению",
     "device.tag-daq-interval": "Интервал сохранения значений (сек.)",
@@ -900,6 +903,12 @@
     "alarms.list-low": "Низкая",
     "alarms.list-info": "Сообщение",
     "alarms.list-actions": "Действие",
+    "alarms.import": "Import Alarms",
+    "alarms.export": "Export Alarms (JSON)",
+    "alarms.import-title": "Import Alarms",
+    "alarms.import-conflicts-message": "{{total}} alarms found. {{conflicts}} already exist. Choose how to import them.",
+    "alarms.import-copy": "Add as copies",
+    "alarms.import-replace": "Replace",
     "alarm.property-title": "Оповещение",
     "alarm.property-name": "Название",
     "alarm.property-permission": "Доступ",
@@ -1170,6 +1179,11 @@
     "dlg.app-settings-daqstore": "Хранилище данных",
     "dlg.app-settings-daqstore-type": "СУБД",
     "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-settings-daqstore-token": "Token",
     "dlg.app-settings-daqstore-bucket": "Bucket",
     "dlg.app-settings-daqstore-organization": "Организация",
@@ -1222,7 +1236,12 @@
     "msg.editor-mode-locked": "Редактор уже открыт!",
     "msg.alarms-clear-success": "Все Оповещения были отменены!",
     "msg.import-devices-error": "Ошибка импорта устройств!",
+    "msg.import-alarms-error": "Import alarms failed!",
+    "msg.export-alarms-error": "Export alarms failed!",
     "msg.report-build-forced": "Send to build Report successful",
     "msg.report-build-error": "Send to build Report failed!",
     "msg.device-tags-request-result": "Загружено {{value}} из {{current}}"
 }
+
+
+

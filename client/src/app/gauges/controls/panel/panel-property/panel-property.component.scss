@@ -11,8 +11,11 @@
         width: 100%;
     }
 
-    .section-item-block input, span, mat-select {
+    .section-item-block input, span {
         width:calc(100% - 15px);
+    }
+    .section-item-block mat-select {
+        width:calc(100% - 8px);
     }
 
     .item-device-tag {

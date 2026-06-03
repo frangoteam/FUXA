@@ -1,0 +1,24 @@
+.error {
+    display: block;
+    font-size: 12px;
+}
+
+.message-error {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 10px;
+    border-left: 3px solid #d32f2f;
+    border-radius: 2px;
+    background-color: #fdecea;
+    color: #b71c1c;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    box-sizing: border-box;
+}
+
+.show-password {
+    bottom: 2px;
+    right: 0px;
+    position: absolute;
+}

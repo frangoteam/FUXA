@@ -551,6 +551,12 @@
     "alarms.list-high": "Alto",
     "alarms.list-low": "Baixo",
     "alarms.list-info": "Mensagem",
+    "alarms.import": "Import Alarms",
+    "alarms.export": "Export Alarms (JSON)",
+    "alarms.import-title": "Import Alarms",
+    "alarms.import-conflicts-message": "{{total}} alarms found. {{conflicts}} already exist. Choose how to import them.",
+    "alarms.import-copy": "Add as copies",
+    "alarms.import-replace": "Replace",
     "alarm.property-title": "Alarme",
     "alarm.property-name": "Nome",
     "alarm.property-permission": "Autorização",
@@ -625,6 +631,12 @@
     "dlg.app-language-zh-cn": "Chinês",
     "dlg.app-settings-server-port": "Servidor está à escuta no porto",
     "dlg.app-settings-auth-token": "Autentificar com Token",
+    "dlg.app-settings-daqstore-url": "URL",
+    "dlg.app-settings-daqstore-configurl": "Config URL",
+    "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
+
+    "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
+    "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-auth-disabled": "Desativado",
     "dlg.app-auth-expiration-15m": "Ativar token com expiração em 15 minutos.",
     "dlg.app-auth-expiration-1h": "Ativar token com expiração em 1 horas.",
@@ -635,6 +647,8 @@
     "msg.alarm-remove": "Quer remover o Alarme ",
     "msg.text-remove": "Quer remover o Texto? ",
     "msg.alarmproperty-error-exist": "nome do Alarm já existe!",
+    "msg.import-alarms-error": "Import alarms failed!",
+    "msg.export-alarms-error": "Export alarms failed!",
     "msg.alarmproperty-missing-value": "Alguns valores estão a faltar!",
     "msg.textproperty-error-exist": "Text-ID já existe!",
     "msg.textproperty-missing-value": "Alguns valores estão a faltar!",
@@ -656,5 +670,6 @@
     "msg.project-save-ask": "De certeza que quer sair do Projeto?",
     "msg.login-username-required": "Entra o Utilizador",
     "msg.login-password-required": "Entra uma palavra-passe",
-    "msg.signin-failed": "Não autorizado"
+    "msg.signin-failed": "Não autorizado",
+    "device.tag-uns-path": "UNS Path"
 }

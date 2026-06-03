@@ -2,7 +2,7 @@
       class="container">
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'notification.property-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div mat-dialog-content>
+    <div mat-dialog-content class="dialog-content">
         <div class="my-form-field item-block">
             <span>*{{'notification.property-name' | translate}}</span>
             <input formControlName="name" type="text">
@@ -31,6 +31,13 @@
                 <span>{{'notification.property-enabled' | translate}}</span>
                 <mat-slide-toggle color="primary" formControlName="enabled" style="vertical-align: middle;"></mat-slide-toggle>
             </div>
+        </div>
+        <div class="my-form-field block mt10" *ngIf="formGroup.value.type === notificationAlarm">
+            <span>{{'notification.property-mode' | translate}}</span>
+            <mat-select formControlName="mode" style="width: 207px">
+                <mat-option [value]="notificationModeAll">{{'notification.property-mode-alarm-all' | translate}}</mat-option>
+                <mat-option [value]="notificationModeSingle">{{'notification.property-mode-alarm-single' | translate}}</mat-option>
+            </mat-select>
         </div>
         <div class="my-form-field block mt10" *ngIf="formGroup.value.type === notificationAlarm">
             <span>{{'notification.property-priority' | translate}}</span>

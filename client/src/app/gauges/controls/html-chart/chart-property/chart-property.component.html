@@ -68,6 +68,24 @@
                                     <span>{{'chart.property-thouch-zoom' | translate}}</span>
                                     <mat-slide-toggle color="primary" [(ngModel)]="options.thouchZoom" (change)="onChartChanged()"></mat-slide-toggle>
                                 </div>
+                                <div class="my-form-field inbk ml10 tac">
+                                    <span>{{'chart.property-mouse-wheel-scroll' | translate}}</span>
+                                    <mat-slide-toggle color="primary"
+                                        [(ngModel)]="options.mouseWheelScroll"
+                                        [disabled]="options.mouseWheelZoom"
+                                        (change)="onMouseWheelScrollChanged()"></mat-slide-toggle>
+                                </div>
+                                <div class="my-form-field inbk ml10 tac">
+                                    <span>{{'chart.property-mouse-wheel-zoom' | translate}}</span>
+                                    <mat-slide-toggle color="primary"
+                                        [(ngModel)]="options.mouseWheelZoom"
+                                        [disabled]="options.mouseWheelScroll"
+                                        (change)="onMouseWheelZoomChanged()"></mat-slide-toggle>
+                                </div>
+                                <div class="my-form-field inbk ml10 tac">
+                                    <span>{{'chart.property-static-chart' | translate}}</span>
+                                    <mat-slide-toggle color="primary" [(ngModel)]="options.staticChart" (change)="onChartChanged()"></mat-slide-toggle>
+                                </div>
                             </ng-container>
                         </div>
                     </ng-container>
@@ -79,6 +97,10 @@
                         <div class="my-form-field inbk ml20 tac" style="max-width: 100px;">
                             <span>{{'chart.property-load-old-values' | translate}}</span>
                             <mat-slide-toggle color="primary" [(ngModel)]="options.loadOldValues" (change)="onChartChanged()"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field inbk ml10 tac">
+                            <span>{{'chart.property-static-chart' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="options.staticChart" (change)="onChartChanged()"></mat-slide-toggle>
                         </div>
                     </ng-container>
                     <div class="element-property-header">

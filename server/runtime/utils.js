@@ -1,5 +1,26 @@
 const os = require('os');
-const ip = require('ip');
+const crypto = require('crypto');
+
+function ipv4ToInt(address) {
+    return address.split('.').reduce((result, octet) => {
+        return ((result << 8) + Number(octet)) >>> 0;
+    }, 0);
+}
+
+function intToIpv4(value) {
+    return [
+        (value >>> 24) & 255,
+        (value >>> 16) & 255,
+        (value >>> 8) & 255,
+        value & 255
+    ].join('.');
+}
+
+function getBroadcastAddress(address, netmask) {
+    const addressInt = ipv4ToInt(address);
+    const netmaskInt = ipv4ToInt(netmask);
+    return intToIpv4((addressInt | (~netmaskInt >>> 0)) >>> 0);
+}
 
 'use strict';
 var utils = module.exports = {
@@ -68,7 +89,7 @@ var utils = module.exports = {
                         nics.push({
                             name: ifname,
                             address: iface.address,
-                            broadcast: ip.subnet(iface.address, iface.netmask).broadcastAddress
+                            broadcast: getBroadcastAddress(iface.address, iface.netmask)
                         });
                     });
                 });
@@ -338,5 +359,32 @@ var utils = module.exports = {
             }
             return val;
         }
+    },
+
+    deepMerge: function(source, target) {
+        for (const key in source) {
+            if (!Object.prototype.hasOwnProperty.call(target, key)) {
+                target[key] = source[key];
+            } else {
+                const sourceVal = source[key];
+                const targetVal = target[key];
+
+                if (
+                    typeof sourceVal === 'object' &&
+                    sourceVal !== null &&
+                    !Array.isArray(sourceVal) &&
+                    typeof targetVal === 'object' &&
+                    targetVal !== null &&
+                    !Array.isArray(targetVal)
+                ) {
+                    deepMerge(sourceVal, targetVal);
+                }
+            }
+        }
+        return target;
+    },
+
+    generateSecretCode: function(byteLength = 32) {
+        return crypto.randomBytes(byteLength).toString('hex');
     }
 }

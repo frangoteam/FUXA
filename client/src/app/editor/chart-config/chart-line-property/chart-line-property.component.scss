@@ -1,6 +1,6 @@
 :host {
     .container {
-        width: 340px;
+        width: 400px;
     }
 
     .block-input {
@@ -9,6 +9,14 @@
 
         input {
             width: calc(100% - 5px);
+        }
+    }
+
+    .partial-input {
+        width: 150px;
+
+        input {
+            width: calc(100% - 7px);
         }
     }
 

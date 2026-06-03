@@ -7,6 +7,7 @@ const authJwt = require('../jwt-helper');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { normalizeRelativePath, resolveWithin } = require('../path-helper');
 
 var runtime;
 var secureFnc;
@@ -190,7 +191,16 @@ module.exports = {
          * POST Upload file resource
          * images will be in media file saved
          */
-        prjApp.post('/api/upload', function (req, res) {
+        prjApp.post('/api/upload', secureFnc, function (req, res) {
+            const permission = checkGroupsFnc(req);
+            if (res.statusCode === 403) {
+                runtime.logger.error("api get device: Tocken Expired");
+                return;
+            } else if (!authJwt.haveAdminPermission(permission)) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api get device: Unauthorized");
+                return;
+            }
             const file = req.body.resource;
             const destination = req.body.destination;
             try {
@@ -198,30 +208,53 @@ module.exports = {
                 let encoding = {};
                 // let basedata = file.data.replace(/^data:.*,/, '');
                 // let basedata = file.data.replace(/^data:image\/png;base64,/, "");
-                let fileName = file.name.replace(new RegExp('../', 'g'), '');
-                let fullPath = file.fullPath || file.name;
-                fullPath = fullPath.replace(/(\.\.[/\\])/g, '');
-                fullPath = path.normalize(fullPath).replace(/^(\.\.[/\\])+/, '');
+                const rawFileName = typeof file.name === 'string' ? file.name : '';
+                const safeFileName = normalizeRelativePath(rawFileName);
+                const safeFullPath = normalizeRelativePath(file.fullPath || rawFileName);
+                const relativePath = safeFullPath || safeFileName;
+                if (!relativePath) {
+                    res.status(400).json({error:"invalid_path", message: "Invalid upload path."});
+                    return;
+                }
 
                 if (file.type !== 'svg') {
                     basedata = file.data.replace(/^data:.*,/, '');
                     encoding = {encoding: 'base64'};
                 }
-                let filePath = path.join(runtime.settings.uploadFileDir, fullPath || fileName);
+                const resolvedUpload = resolveWithin(runtime.settings.uploadFileDir, relativePath);
+                if (!resolvedUpload) {
+                    res.status(400).json({error:"invalid_path", message: "Invalid upload path."});
+                    return;
+                }
+                let filePath = resolvedUpload.resolvedTarget;
                 if (destination) {
-                    let destinationDir = path.resolve(runtime.settings.appDir, `_${destination}`);
-                    if (process.versions.electron) {
-                        const userDataDir = process.env.userDir || path.join(os.homedir(), '.fuxa');
-                        destinationDir = path.join(userDataDir, `_${destination}`);
+                    const baseDir = process.versions.electron
+                        ? (process.env.userDir || path.join(os.homedir(), '.fuxa'))
+                        : runtime.settings.appDir;
+                    const normalizedDestination = normalizeRelativePath(destination);
+                    if (!normalizedDestination) {
+                        res.status(400).json({error:"invalid_destination", message: "Invalid destination path."});
+                        return;
                     }
-                    filePath = path.join(destinationDir, fullPath || fileName);
+                    const resolvedDestination = resolveWithin(baseDir, `_${normalizedDestination}`);
+                    if (!resolvedDestination) {
+                        res.status(400).json({error:"invalid_destination", message: "Invalid destination path."});
+                        return;
+                    }
+                    const destinationDir = resolvedDestination.resolvedTarget;
+                    const resolvedFile = resolveWithin(destinationDir, relativePath);
+                    if (!resolvedFile) {
+                        res.status(400).json({error:"invalid_path", message: "Invalid upload path."});
+                        return;
+                    }
+                    filePath = resolvedFile.resolvedTarget;
                     const dir = path.dirname(filePath);
                     if (!fs.existsSync(dir)) {
                         fs.mkdirSync(dir, { recursive: true });
                     }
                 }
                 fs.writeFileSync(filePath, basedata, encoding);
-                let result = {'location': '/' + runtime.settings.httpUploadFileStatic + '/' + fullPath || fileName };
+                let result = {'location': '/' + runtime.settings.httpUploadFileStatic + '/' + relativePath };
                 res.json(result);
             } catch (err) {
                 if (err && err.code) {

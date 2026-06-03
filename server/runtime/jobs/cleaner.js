@@ -22,7 +22,8 @@ function Cleaner(_runtime) {
                     resolve(true);
                 } else {
                     const clearFncs = [await runtime.daqStorage.checkRetention(),
-                                       await runtime.alarmsMgr.checkRetention()];
+                                       await runtime.alarmsMgr.checkRetention(),
+                                       await cleanupLogs(runtime.settings, runtime.logger)];
 
                     Promise.all(clearFncs).then(values => {
                         lastExecuted = currentTime;
@@ -59,6 +60,38 @@ function inTimeToExecute(hour) {
     return (hour >= timeRange.from && hour <= timeRange.to);
 }
 
+const cleanupLogs = async (settings, logger) => {
+    const { logs, logDir } = settings;
+
+    if (!logs || logs.retention === 'none') {
+        return;
+    }
+
+    try {
+        const retentionLimit = utils.getRetentionLimit(logs.retention);
+        const files = await fs.promises.readdir(logDir);
+        let deletedCount = 0;
+
+        for (const file of files) {
+            const filePath = path.join(logDir, file);
+            try {
+                const stat = await fs.promises.stat(filePath);
+                if (stat.mtimeMs < retentionLimit.getTime()) {
+                    await fs.promises.unlink(filePath);
+                    deletedCount++;
+                }
+            } catch (fileErr) {
+                // ignore errors for individual files
+            }
+        }
+
+        if (deletedCount > 0) {
+            logger.info(`Logs cleanup completed. ${deletedCount} old file(s) deleted.`);
+        }
+    } catch (err) {
+        logger.error('Error during logs cleanup', err);
+    }
+};
 
 const ReportDateRangeType = {
     none: 'none',

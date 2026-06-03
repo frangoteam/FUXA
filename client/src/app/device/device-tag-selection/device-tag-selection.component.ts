@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, OnInit, ViewChild, Inject, OnDestroy } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MAT_DIALOG_DATA as MAT_DIALOG_DATA, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
+import { MatPaginator as MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
+import { MatTable as MatTable, MatTableDataSource as MatTableDataSource } from '@angular/material/table';
 import { Device, DeviceType, TAG_PREFIX, Tag } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -166,6 +166,18 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
             });
         } else if (device.type === DeviceType.GPIO) {
             this.tagPropertyService.editTagPropertyGpio(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        } else if (device.type === DeviceType.WebCam) {
+            this.tagPropertyService.editTagPropertyWebcam(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        } else if (device.type === DeviceType.MELSEC) {
+            this.tagPropertyService.editTagPropertyMelsec(device, newTag, true).subscribe(result => {
+                this.loadDevicesTags(newTag, device.name);
+            });
+        } else if (device.type === DeviceType.REDIS) {
+            this.tagPropertyService.editTagPropertyRedis(device, newTag, true).subscribe(_ => {
                 this.loadDevicesTags(newTag, device.name);
             });
         }

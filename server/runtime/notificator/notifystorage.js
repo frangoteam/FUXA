@@ -13,6 +13,18 @@ var settings            // Application settings
 var logger;             // Application logger
 var db_notifications;   // Database of notifications
 
+function _run(sql, params = []) {
+    return new Promise((resolve, reject) => {
+        db_notifications.run(sql, params, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this);
+            }
+        });
+    });
+}
+
 /**
  * Init and bind the database resource
  * @param {*} _settings 
@@ -120,23 +132,24 @@ function getNotifications() {
  */
 function setNotification(notification) {
     return new Promise(function (resolve, reject) {
-        // prepare query
         if (notification) {
-            var sql = "";
-            //is notification is changed insert or update record
-            // sql += "INSERT OR REPLACE INTO notifications (id, name, type, ontime, notifytime, notifytype) VALUES('" + notification.id + "','" + 
-            //         notification.type + "','" + notification.name + "','" + notification.ontime + "','" + notification.notifytime + "','" + notification.notifytype + "');";
-            sql += "INSERT OR REPLACE INTO chronicle (id, name, type, receiver, text, notifytime, notifytype) VALUES('" +
-                notification.id + "','" + notification.name + "','" + notification.type + "','" + notification.receiver + "','" + 
-                notification.text + "','" + notification.notifytime + "','" + notification.notifytype + "');";
-            db_notifications.exec(sql, function (err) {
-                if (err) {
-                    logger.error('notifystorage.failed-to-set: ' + err);
-                    reject();
-                } else {
-                    resolve();
-                }
+            const sql = "INSERT OR REPLACE INTO chronicle (id, name, type, receiver, text, notifytime, notifytype) VALUES(?, ?, ?, ?, ?, ?, ?)";
+            _run(sql, [
+                notification.id,
+                notification.name,
+                notification.type,
+                notification.receiver,
+                notification.text,
+                notification.notifytime,
+                notification.notifytype
+            ]).then(function () {
+                resolve();
+            }).catch(function (err) {
+                logger.error('notifystorage.failed-to-set: ' + err);
+                reject();
             });
+        } else {
+            resolve();
         }
     });
 }
@@ -156,14 +169,12 @@ function close() {
  function removeNotification(notification) {
     return new Promise(function (resolve, reject) {
         // prepare query
-        var sql = "DELETE FROM notifications WHERE id = '" + notification.id + "'";
-        db_notifications.exec(sql, function (err) {
-            if (err) {
-                logger.error('notificationsstorage.failed-to-remove: ' + err);
-                reject();
-            } else {
-                resolve();
-            }
+        var sql = "DELETE FROM notifications WHERE id = ?";
+        _run(sql, [notification.id]).then(function () {
+            resolve();
+        }).catch(function (err) {
+            logger.error('notificationsstorage.failed-to-remove: ' + err);
+            reject();
         });
     });
 }

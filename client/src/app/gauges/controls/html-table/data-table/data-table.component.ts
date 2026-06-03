@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
-import { MatLegacyRow as MatRow, MatLegacyTable as MatTable, MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
-import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu';
+import { MatRow as MatRow, MatTable as MatTable, MatTableDataSource as MatTableDataSource } from '@angular/material/table';
+import { MatPaginator as MatPaginator } from '@angular/material/paginator';
+import { MatMenuTrigger as MatMenuTrigger } from '@angular/material/menu';
 import { MatSort } from '@angular/material/sort';
 import { Utils } from '../../../../_helpers/utils';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog } from '@angular/material/dialog';
 
 import { TranslateService } from '@ngx-translate/core';
 
@@ -24,6 +24,7 @@ import { ReportColumnsType, ReportFile, ReportsFilter } from '../../../../_model
 import * as FileSaver from 'file-saver';
 import { CommandService } from '../../../../_services/command.service';
 import { LanguageService } from '../../../../_services/language.service';
+import { GaugeBaseComponent } from '../../../gauge-base/gauge-base.component';
 
 declare const numeral: any;
 @Component({
@@ -65,6 +66,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     private lastDaqQuery = new DaqQuery();
     private destroy$ = new Subject<void>();
     private historyDateformat = '';
+    private historyTimeInterval = 1;
     addValueInterval = 0;
     private pauseMemoryValue: TableMapValueDictionary = {};
     setOfSourceTableData = false;
@@ -72,6 +74,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     events: GaugeEvent[];
     eventSelectionType = Utils.getEnumKey(GaugeEventType, GaugeEventType.select);
     dataFilter: TableFilter | AlarmsFilter | ReportsFilter;
+    private lastRenderedSignature = '';
 
     constructor(
         private dataService: DataConverterService,
@@ -206,13 +209,14 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.type === TableType.data && this.tagsMap[variableId]) {
             this.tagsMap[variableId].value = variableValue;
             this.tagsMap[variableId].cells.forEach((cell: TableCellData) => {
-                cell.stringValue = Utils.formatValue(this.tagsMap[variableId].value, cell.valueFormat);
+                const rawValue = GaugeBaseComponent.maskedShiftedValue(variableValue, cell.bitmask);
+                cell.stringValue = Utils.formatValue(rawValue?.toString(), cell.valueFormat);
             });
             // update timestamp of all timestamp cells
             this.tagsMap[variableId].rows.forEach((rowIndex: number) => {
                 if (this.timestampMap[rowIndex]) {
                     this.timestampMap[rowIndex].forEach((cell: TableCellData) => {
-                        cell.stringValue = format(new Date(dt * 1e3), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                        cell.stringValue = format(new Date(dt * 1e3), cell.valueFormat || 'YYYY-MM-DD HH:mm:ss');
                     });
                 }
             });
@@ -229,7 +233,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     setValues(values: { dt: number; value: string }[][]) {
         const rounder = { H: 3600000, m: 60000, s: 1000 };
-        const roundIndex = rounder[this.historyDateformat?.[this.historyDateformat?.length - 1]] ?? 1;
+        const roundFormatIndex = rounder[this.historyDateformat?.[this.historyDateformat?.length - 1]] ?? 1;
+        const roundIndex = roundFormatIndex * this.historyTimeInterval;
 
         const timestampsSet = new Set<number>();
         const mergedMap = new Map<number, Record<string, string>>(); // timestamp -> { columnId: value }
@@ -269,14 +274,15 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 row[colId] = { stringValue: '' };
 
                 if (column.type === TableCellType.timestamp) {
-                    row[colId].stringValue = format(new Date(t), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                    row[colId].stringValue = format(new Date(t), column.valueFormat || 'YYYY-MM-DD HH:mm:ss');
                     row[colId].rowIndex = t;
                 } else if (column.type === TableCellType.device) {
                     row[colId].stringValue = column.exname;
                 } else if (column.type === TableCellType.variable) {
                     const val = mergedMap.get(t)?.[colId] ?? null;
                     if (Utils.isNumeric(val)) {
-                        row[colId].stringValue = Utils.formatValue(val, column.valueFormat);
+                        const rawValue = GaugeBaseComponent.maskedShiftedValue(val, column.bitmask);
+                        row[colId].stringValue = Utils.formatValue(rawValue?.toString(), column.valueFormat);
                     } else {
                         row[colId].stringValue = val ?? '';
                     }
@@ -327,6 +333,11 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             rows.push(alarm);
         });
+        const nextSignature = this.getTableSignature(rows);
+        if (nextSignature === this.lastRenderedSignature) {
+            return;
+        }
+        this.lastRenderedSignature = nextSignature;
         this.dataSource.data = rows;
     }
 
@@ -341,7 +352,28 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             };
             rows.push(report);
         });
+        const nextSignature = this.getTableSignature(rows);
+        if (nextSignature === this.lastRenderedSignature) {
+            return;
+        }
+        this.lastRenderedSignature = nextSignature;
         this.dataSource.data = rows;
+    }
+
+    trackByRow(index: number, row: any): string | number {
+        if (row?.name?.stringValue || row?.ontime?.stringValue) {
+            return `${row?.name?.stringValue || ''}|${row?.ontime?.stringValue || ''}|${row?.fileName || ''}`;
+        }
+        if (row?.fileName) {
+            return row.fileName;
+        }
+        if (this.displayedColumns?.length) {
+            const firstCell = row?.[this.displayedColumns[0]];
+            if (firstCell?.rowIndex !== undefined) {
+                return firstCell.rowIndex;
+            }
+        }
+        return index;
     }
 
     isSelectable(): boolean {
@@ -364,6 +396,9 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     private runScript(event: GaugeEvent, selected: MatRow) {
         if (event.actparam) {
             let torun = Utils.clone(this.projectService.getScripts().find(dataScript => dataScript.id == event.actparam));
+            if (!torun) {
+                return;
+            }
             torun.parameters = <ScriptParam[]>Utils.clone(event.actoptions[SCRIPT_PARAMS_MAP]);
             torun.parameters.forEach(param => {
                 if (Utils.isNullOrUndefined(param.value)) {
@@ -377,7 +412,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    addRowDataToTable(dt: number, tagId: string, value: any) {
+    addRowDataToTable(dt: number, tagId: string, value: string) {
         let row = {};
         let timestapColumnId = null;
         let valueColumnId = null;
@@ -387,14 +422,14 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             row[column.id] = <TableCellData>{ stringValue: '' };
             if (column.type === TableCellType.timestamp) {
                 timestapColumnId = column.id;
-                row[column.id].stringValue = format(new Date(dt), column.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                row[column.id].stringValue = format(new Date(dt), column.valueFormat || 'YYYY-MM-DD HH:mm:ss');
                 row[column.id].timestamp = dt;
             } else if (column.variableId === tagId) {
-                const tempValue = value;
-                if (Utils.isNumeric(tempValue)) {
-                    row[column.id].stringValue = Utils.formatValue(tempValue, column.valueFormat);
+                if (Utils.isNumeric(value)) {
+                    const rawValue = GaugeBaseComponent.maskedShiftedValue(value, column.bitmask);
+                    row[column.id].stringValue = Utils.formatValue(rawValue?.toString(), column.valueFormat);
                 } else {
-                    row[column.id].stringValue = tempValue;
+                    row[column.id].stringValue = value;
                 }
                 valueColumnId = column.id;
             } else if (column.type === TableCellType.device) {
@@ -500,9 +535,14 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dataSource.sortingDataAccessor = (data, sortHeaderId) => data[sortHeaderId].stringValue;
     }
 
+    private getTableSignature(rows: any[]): string {
+        return rows.map((row) => JSON.stringify(row)).join('|');
+    }
+
     private loadData() {
         // columns
         let columnIds = [];
+        this.lastRenderedSignature = '';
         this.columnsStyle = {};
         const columns = this.isAlarmsType() ? this.tableOptions.alarmsColumns : this.isReportsType() ? this.tableOptions.reportsColumns : this.tableOptions.columns;
         columns.forEach(cn => {
@@ -514,6 +554,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
                 if (cn.type === TableCellType.timestamp) {
                     this.historyDateformat = cn.valueFormat;
+                    this.historyTimeInterval = cn.timeInterval || 1;
                 }
             }
         });
@@ -549,7 +590,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         } else if (cell.type === TableCellType.timestamp) {
             if (this.isEditor) {
-                cell.stringValue = format(new Date(0), cell.valueFormat || 'YYYY-MM-DDTHH:mm:ss');
+                cell.stringValue = format(new Date(0), cell.valueFormat || 'YYYY-MM-DD HH:mm:ss');
             }
             this.addTimestampToMap(cell);
         } else if (cell.type === TableCellType.label) {

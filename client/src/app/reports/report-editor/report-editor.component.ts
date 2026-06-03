@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog, MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Report, ReportDateRangeType, ReportIntervalType, ReportItem, ReportItemAlarms, ReportItemChart, ReportItemTable, ReportItemText, ReportItemType, ReportSchedulingType } from '../../_models/report';
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -128,9 +128,11 @@ export class ReportEditorComponent implements OnInit, AfterViewInit, OnDestroy {
             const pdfDocGenerator = pdfMake.createPdf(content);
             pdfDocGenerator.getDataUrl((dataUrl) => {
                 const targetIframe = document.querySelector('iframe');
-                targetIframe.src = dataUrl;
-                targetIframe.style.width = '100%';
-                targetIframe.style.height = '100%';
+                if (targetIframe) {
+                    targetIframe.src = dataUrl;
+                    targetIframe.style.width = '100%';
+                    targetIframe.style.height = '100%';
+                }
             });
         });
     }

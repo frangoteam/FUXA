@@ -1,0 +1,68 @@
+:host {
+    .confirmation-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, .4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .confirmation-dialog {
+        width: 520px;
+        max-width: calc(100vw - 32px);
+        background: #1e1f24;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .6);
+        padding: 16px 20px;
+    }
+
+    .dialog-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .warning-icon {
+        font-size: 28px;
+        color: #ffb74d;
+    }
+
+    .dialog-content {
+        margin: 12px 0 8px;
+    }
+
+    .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .cancel-btn {
+    }
+
+    .confirm-btn {
+    }
+}
+
+.scheduler-confirm-panel {
+    .mat-mdc-dialog-container {
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .mat-mdc-dialog-surface {
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+
+    .mat-dialog-container {
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+}

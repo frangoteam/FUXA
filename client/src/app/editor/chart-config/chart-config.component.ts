@@ -1,7 +1,7 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { MatLegacySelectionList as MatSelectionList } from '@angular/material/legacy-list';
+import { MatDialog as MatDialog, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
+import { MatSelectionList as MatSelectionList } from '@angular/material/list';
 
 import { TranslateService } from '@ngx-translate/core';
 import { ProjectService } from '../../_services/project.service';
@@ -18,7 +18,7 @@ import { EditPlaceholderComponent } from '../../gui-helpers/edit-placeholder/edi
 @Component({
   selector: 'app-chart-config',
   templateUrl: './chart-config.component.html',
-  styleUrls: ['./chart-config.component.css']
+  styleUrls: ['./chart-config.component.scss']
 })
 export class ChartConfigComponent implements OnInit {
 
@@ -31,7 +31,8 @@ export class ChartConfigComponent implements OnInit {
     lineColor = Utils.lineColor;
 
     lineInterpolationType = [{ text: 'chart.config-interpo-linear', value: 0 }, { text: 'chart.config-interpo-stepAfter', value: 1 },
-                    { text: 'chart.config-interpo-stepBefore', value: 2 }, { text: 'chart.config-interpo-spline', value: 3 }];
+                    { text: 'chart.config-interpo-stepBefore', value: 2 }, { text: 'chart.config-interpo-spline', value: 3 },
+                    { text: 'chart.config-interpo-none', value: 4 }];
 
     constructor(
         public dialog: MatDialog,

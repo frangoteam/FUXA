@@ -8,6 +8,22 @@ var runtime;
 var secureFnc;
 var checkGroupsFnc;
 
+function sanitizeUser(user) {
+    if (!user || typeof user !== 'object') {
+        return user;
+    }
+    const sanitized = Object.assign({}, user);
+    delete sanitized.password;
+    return sanitized;
+}
+
+function sanitizeUsers(users) {
+    if (Array.isArray(users)) {
+        return users.map(sanitizeUser);
+    }
+    return sanitizeUser(users);
+}
+
 module.exports = {
     init: function (_runtime, _secureFnc, _checkGroupsFnc) {
         runtime = _runtime;
@@ -40,7 +56,7 @@ module.exports = {
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     if (result) {
-                        res.json(result);
+                        res.json(sanitizeUsers(result));
                     } else {
                         res.end();
                     }

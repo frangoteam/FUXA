@@ -7,6 +7,7 @@ export class Plugin {
     pkg: boolean;
     dinamic: boolean;
     group: string;
+    canRemove: boolean;
 }
 
 export enum PluginType {
@@ -15,9 +16,12 @@ export enum PluginType {
     Modbus = 'Modbus',
     Raspberry = 'Raspberry',
     SiemensS7 = 'SiemensS7',
-    EthernetIP = 'EthernetIP'
+    EthernetIP = 'EthernetIP',
+    MELSEC = 'MELSEC',
+    REDIS = 'REDIS'
 }
 
 export enum PluginGroupType {
-    Chart = 'Chart'
+    Chart = 'Chart',
+    Service = 'Service'
 }

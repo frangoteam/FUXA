@@ -262,6 +262,17 @@ export class Utils {
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
 
+    static toFiniteNumber(value: unknown): number | null {
+        if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+        if (typeof value !== 'string') return null;
+
+        const s = value.trim();
+        if (s === '') return null;
+
+        const n = Number(s);
+        return Number.isFinite(n) ? n : null;
+    }
+
     static Boolify(arg) {
         var BoolArray = [true, false, 'true', 'false', 1, 0];
         if (BoolArray.indexOf(arg) === -1) {
@@ -663,9 +674,14 @@ export class Utils {
 
     static isValidUrl(url: string): boolean {
         try {
+            // Check if it's an absolute URL
             new URL(url);
             return true;
         } catch (error) {
+            // Check if it's a relative URL (starts with / or is a valid relative path)
+            if (url.startsWith('/') || (!url.includes('://') && url.length > 0)) {
+                return true;
+            }
             return false;
         }
     }

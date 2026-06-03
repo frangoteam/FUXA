@@ -29,6 +29,12 @@ export class ActionPropertyService {
             text = this.translateService.instant(GaugeActionsType.anticlockwise);
         } else if (type === Utils.getEnumKey(GaugeActionsType, GaugeActionsType.blink)) {
             text = this.translateService.instant(GaugeActionsType.blink);
+        } else if (type === Utils.getEnumKey(GaugeActionsType, GaugeActionsType.start)) {
+            text = this.translateService.instant(GaugeActionsType.start);
+        } else if (type === Utils.getEnumKey(GaugeActionsType, GaugeActionsType.pause)) {
+            text = this.translateService.instant(GaugeActionsType.pause);
+        } else if (type === Utils.getEnumKey(GaugeActionsType, GaugeActionsType.reset)) {
+            text = this.translateService.instant(GaugeActionsType.reset);
         }
         return text;
     }

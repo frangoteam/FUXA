@@ -1,8 +1,8 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
 /* eslint-disable @angular-eslint/component-selector */
 import { Component, Inject, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorRef, ElementRef } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
-import { combineLatest, interval, merge, Observable, of, Subject, Subscription, timer } from 'rxjs';
+import { MatDialog as MatDialog, MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { interval, Observable, Subject, Subscription } from 'rxjs';
 import { MatSidenav } from '@angular/material/sidenav';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -24,7 +24,7 @@ import { AlarmStatus, AlarmActionsType } from '../_models/alarm';
 import { GridsterConfig } from 'angular-gridster2';
 
 import panzoom from 'panzoom';
-import { filter, map, startWith, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
 import { User } from '../_models/user';
 import { UserInfo } from '../users/user-edit/user-edit.component';
@@ -69,7 +69,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     showNavigation = true;
     viewAsAlarms = LinkType.alarms;
     alarmPanelWidth = '100%';
-    serverErrorBanner$: Observable<boolean>;
     cardViewType = ViewType.cards;
     mapsViewType = ViewType.maps;
     gridOptions = <GridsterConfig>new GridOptions();
@@ -83,6 +82,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private destroy$ = new Subject<void>();
     loggedUser$: Observable<User>;
     language$: Observable<LanguageConfiguration>;
+    readonly defaultHeaderHeight = HeaderSettings.DefaultHeight;
 
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
@@ -117,23 +117,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.onGoToPage(this.projectService.getViewId(viewToGo.viewName), viewToGo.force);
             });
             this.subscriptionOpen = this.hmiService.onOpen.subscribe((viewToOpen: ScriptOpenCard) => {
-                this.fuxaview.onOpenCard(null, null, this.projectService.getViewId(viewToOpen.viewName), viewToOpen.options);
+                const viewId = this.projectService.getViewId(viewToOpen.viewName);
+                this.fuxaview.onOpenCard(viewId, null, viewId, viewToOpen.options);
             });
-
-            this.serverErrorBanner$ = combineLatest([
-                this.hmiService.onServerConnection$,
-                this.authService.currentUser$
-            ]).pipe(
-                switchMap(([connectionStatus, userProfile]) =>
-                    merge(
-                        of(false),
-                        timer(20000).pipe(map(() => (this.securityEnabled && !userProfile) ? false : true)),
-                    ).pipe (
-                        startWith(false),
-                    )
-                ),
-                takeUntil(this.destroy$)
-            );
 
             this.language$ = this.languageService.languageConfig$;
             this.loggedUser$ = this.authService.currentUser$;
@@ -208,11 +194,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    onGoToPage(viewId: string, force: boolean = false) {
+    onGoToPage(viewId: string, force: boolean = false, options: any = {}) {
         if (viewId === this.viewAsAlarms) {
             this.onAlarmsShowMode('expand');
             this.checkToCloseSideNav();
-        } else if (!this.homeView || viewId !== this.homeView?.id || force || this.fuxaview?.view?.id !== viewId) {
+        } else if (!this.homeView || viewId !== this.homeView?.id || force || this.fuxaview?.view?.id !== viewId || this.hasPageOptions(options)) {
             const view = this.hmi.views.find(x => x.id === viewId);
             this.setIframe();
             this.showHomeLink = false;
@@ -224,6 +210,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (this.homeView.type !== this.cardViewType && this.homeView.type !== this.mapsViewType) {
                     this.checkZoom();
                     this.fuxaview.hmi.layout = this.hmi.layout;
+                    this.applyPageOptions(options);
                     this.fuxaview.loadHmi(this.homeView);
                 } else if (this.cardsview) {
                     this.cardsview.reload();
@@ -232,6 +219,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.onAlarmsShowMode('close');
             this.checkToCloseSideNav();
         }
+    }
+
+    private hasPageOptions(options: any): boolean {
+        return !!(options?.variablesMapping || options?.sourceDeviceId);
+    }
+
+    private applyPageOptions(options: any = {}) {
+        if (!this.fuxaview) {
+            return;
+        }
+        this.fuxaview.sourceDeviceId = options?.sourceDeviceId;
+        this.fuxaview.loadVariableMapping(options?.variablesMapping ?? []);
     }
 
     onGoToLink(event: string) {
@@ -511,17 +510,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         ev: Event,
         events: GaugeEvent[]
     ) {
-        let fuxaviewRef = this.fuxaview ?? this.cardsview.getFuxaView(0);
+        const homeEvents = events.filter(event => event.action === 'onpage');
+        homeEvents.forEach(event => {
+            this.onGoToPage(event.actparam, this.hasPageOptions(event.actoptions), event.actoptions);
+        });
+        const fuxaViewEvents = events.filter(event => event.action !== 'onpage');
+        let fuxaviewRef = this.fuxaview ?? this.cardsview?.getFuxaView(0);
         if (!fuxaviewRef) {
             return;
         }
-        const homeEvents = events.filter(event => event.action === 'onpage');
-        homeEvents.forEach(event => {
-            this.onGoToPage(event.actparam);
-        });
-        const fuxaViewEvents = events.filter(event => event.action !== 'onpage');
         if (fuxaViewEvents.length > 0) {
-            fuxaviewRef.runEvents(fuxaviewRef, ga, ev, events);
+            fuxaviewRef.runEvents(fuxaviewRef, ga, ev, fuxaViewEvents);
         }
     }
 

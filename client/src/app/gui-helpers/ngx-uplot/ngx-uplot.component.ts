@@ -8,6 +8,31 @@ import { ChartLineZone } from '../../_models/chart';
 declare const uPlot: any;
 declare const placement: any;
 
+interface WheelScaleLike {
+    min: unknown;
+    max: unknown;
+}
+
+interface WheelDataBounds {
+    min: number;
+    max: number;
+    span: number;
+}
+
+interface WheelUplotLike {
+    over?: HTMLElement | null;
+    scales?: { x?: WheelScaleLike };
+    data?: unknown[][];
+    setScale: (scale: 'x', limits: { min: number; max: number }) => void;
+}
+
+type WheelMode = 'scroll' | 'zoom';
+
+const WHEEL_PAN_STEP = 0.1;            // pan by 10% of current visible x-range per wheel step.
+const WHEEL_PAN_FAST_STEP = 0.3;       // pan by 30% when shift is pressed.
+const WHEEL_ZOOM_SENSITIVITY = 0.0015; // exponential zoom sensitivity (higher = faster zooming).
+const WHEEL_MIN_RANGE_DIVISOR = 1e4;   // prevent over-zoom: min range = current range / divisor.
+
 @Component({
     selector: 'ngx-uplot',
     templateUrl: './ngx-uplot.component.html',
@@ -18,13 +43,14 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
     @Input() public id: string;
     @Input() public options: NgxOptions;
     @ViewChild('graph', {static: true}) public graph: ElementRef;
-
+    @Input() onChartClick: (x: number, y: number ) => void;
 
     readonly lineInterpolations = {
         linear: 0,
         stepAfter: 1,
         stepBefore: 2,
         spline: 3,
+        none: 4
     };
 
     rawData = false;
@@ -154,7 +180,6 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.options = this.defOptions;
-        //this.options.cursor = { drag: { x: true, y: true } };
         this.uplot = new uPlot(this.defOptions, this.sampleData, this.graph.nativeElement);
     }
 
@@ -198,7 +223,22 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             }
         }
         let opt = this.options || this.defOptions;
-        opt.cursor = this.defOptions.cursor;
+        const isStaticChart = !!this.options?.staticChart;
+        opt.cursor = {
+            ...this.defOptions.cursor,
+            ...opt.cursor,
+            drag: {
+                ...opt.cursor?.drag,
+                setScale: !isStaticChart,
+                x: !isStaticChart,
+                y: false,
+            }
+        };
+        opt.cursor.bind = this.getScaledCursorBind(opt.cursor.bind);
+        opt.select = {
+            ...opt.select,
+            show: !isStaticChart
+        };
         if (this.uplot) {
             this.uplot.destroy();
         }
@@ -239,8 +279,143 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         if (this.options.thouchZoom) {
             opt.plugins.push(this.touchZoomPlugin(opt));
         }
+        const wheelMode: WheelMode | null = this.options.mouseWheelZoom ? 'zoom' : (this.options.mouseWheelScroll ? 'scroll' : null);
+        if (wheelMode) {
+            opt.plugins.push(this.mouseWheelPlugin(wheelMode));
+        }
         this.uplot = new uPlot(opt, this.data, this.graph.nativeElement);
+        const over = this.uplot.root.querySelector('.u-over');
+        if (over) {
+            over.addEventListener('click', e => {
+                if (this.onChartClick) {
+                    const coords = this.getDataCoordsFromEvent(e);
+                    if (coords) {
+                        this.onChartClick(coords.x, coords.y);
+                    }
+                }
+            });
+            over.addEventListener('touchstart', e => {
+                if (this.onChartClick) {
+                    const coords = this.getDataCoordsFromEvent(e);
+                    if (coords) {
+                        this.onChartClick(coords.x, coords.y);
+                    }
+                }
+            });
+        }
+    }
 
+
+    private getDataCoordsFromEvent(e: MouseEvent | TouchEvent): { x: number, y: number } | null {
+        const over = this.uplot?.root?.querySelector('.u-over');
+        if (!over || !this.uplot) return null;
+
+        const clientX = (e instanceof TouchEvent) ? e.touches[0].clientX : e.clientX;
+        const clientY = (e instanceof TouchEvent) ? e.touches[0].clientY : e.clientY;
+        const point = this.getRelativeClientPoint(over, clientX, clientY);
+
+        const x = this.uplot.posToVal(point.left, 'x');
+        const yScaleKey = this.uplot.series[1]?.scale ?? 'y';
+        const y = this.uplot.posToVal(point.top, yScaleKey);
+
+        return { x, y };
+    }
+
+    private getElementScale(target: HTMLElement): { x: number, y: number } {
+        const rect = target.getBoundingClientRect();
+        // `rect` is post-transform size; offset/client sizes are pre-transform. Their ratio is the active CSS scale.
+        const baseWidth = target.offsetWidth || target.clientWidth || rect.width || 1;
+        const baseHeight = target.offsetHeight || target.clientHeight || rect.height || 1;
+        const rawScaleX = rect.width / baseWidth;
+        const rawScaleY = rect.height / baseHeight;
+        const x = Number.isFinite(rawScaleX) && rawScaleX > 0 ? rawScaleX : 1;
+        const y = Number.isFinite(rawScaleY) && rawScaleY > 0 ? rawScaleY : 1;
+        return { x, y };
+    }
+
+    private getRelativeClientPoint(target: HTMLElement, clientX: number, clientY: number): { left: number, top: number, rect: DOMRect } {
+        const rect = target.getBoundingClientRect();
+        const scale = this.getElementScale(target);
+        return {
+            left: (clientX - rect.left) / scale.x,
+            top: (clientY - rect.top) / scale.y,
+            rect
+        };
+    }
+
+    private createScaledMouseEvent(event: MouseEvent, referenceElement: HTMLElement, clampToBounds: boolean = false): MouseEvent {
+        // Re-map event coordinates from transformed viewport space back to uPlot's unscaled local space.
+        const point = this.getRelativeClientPoint(referenceElement, event.clientX, event.clientY);
+        let left = point.left;
+        let top = point.top;
+        if (clampToBounds) {
+            const maxX = referenceElement.offsetWidth || referenceElement.clientWidth || left;
+            const maxY = referenceElement.offsetHeight || referenceElement.clientHeight || top;
+            left = Math.max(0, Math.min(maxX, left));
+            top = Math.max(0, Math.min(maxY, top));
+        }
+        const adjustedClientX = point.rect.left + left;
+        const adjustedClientY = point.rect.top + top;
+        return new Proxy(event, {
+            get(target, property) {
+                if (property === 'clientX') {
+                    return adjustedClientX;
+                }
+                if (property === 'clientY') {
+                    return adjustedClientY;
+                }
+                const value = Reflect.get(target, property, target);
+                return typeof value === 'function' ? value.bind(target) : value;
+            }
+        }) as MouseEvent;
+    }
+
+    private getScaledCursorBind(bind: any = {}) {
+        if (bind?.__fuxaScaled) {
+            return bind;
+        }
+
+        const eventNames = ['mousedown', 'mouseup', 'click', 'dblclick', 'mousemove', 'mouseleave', 'mouseenter'];
+        const passthroughFactory = (_self: unknown, _target: EventTarget, handler: (event: MouseEvent) => void) => handler;
+        const primaryButtonFactory = (_self: unknown, _target: EventTarget, handler: (event: MouseEvent) => void) => (event: MouseEvent) => {
+            if (event.button === 0) {
+                handler(event);
+            }
+        };
+        const defaultFactories = {
+            mousedown: primaryButtonFactory,
+            mouseup: primaryButtonFactory,
+            click: primaryButtonFactory,
+            dblclick: primaryButtonFactory,
+            mousemove: passthroughFactory,
+            mouseleave: passthroughFactory,
+            mouseenter: passthroughFactory
+        };
+        // Clamp drag/click paths to avoid oversized selections when pointer is outside plot bounds.
+        const clampEvents = new Set(['mousedown', 'mouseup', 'mousemove', 'click', 'dblclick']);
+        const scaledBind = { ...bind };
+
+        eventNames.forEach(eventName => {
+            const currentFactory = (bind?.[eventName] || defaultFactories[eventName] || passthroughFactory) as
+                ((_self: unknown, _target: EventTarget, handler: (event: MouseEvent) => void) => ((event: MouseEvent) => void) | undefined | null);
+            scaledBind[eventName] = (self: { over?: EventTarget | null }, target: EventTarget, handler: (event: MouseEvent) => void) => {
+                const listener = currentFactory(self, target, handler);
+                if (!listener) {
+                    return listener;
+                }
+                return (event: MouseEvent) => {
+                    const referenceElement = self?.over as HTMLElement;
+                    if (!event || !referenceElement) {
+                        listener(event);
+                        return;
+                    }
+                    listener(this.createScaledMouseEvent(event, referenceElement, clampEvents.has(eventName)));
+                };
+            };
+        });
+
+        Object.defineProperty(scaledBind, '__fuxaScaled', { value: true, enumerable: false });
+        return scaledBind;
     }
 
     setOptions(options: Options) {
@@ -256,6 +431,10 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             attribute.paths = uPlot.paths.stepped({ align: -1 });
         } else if (attribute.lineInterpolation === this.lineInterpolations.spline) {
             attribute.paths = uPlot.paths.spline();
+        } else if (attribute.lineInterpolation === this.lineInterpolations.none) {
+            attribute.points = { show: true, size: attribute.width ?? 5, width: 1, stroke: attribute.stroke, fill: attribute.fill };
+            attribute.stroke = null;
+            attribute.fill = null;
         }
         this.uplot.addSeries(attribute, index);
         this.uplot.setData(this.data);
@@ -352,29 +531,89 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                 setSize: u => {
                     syncBounds();
                 },
-                setCursor: u => {
-                    const { left, top, idx } = u.cursor;
-                    const x = u.data[0][idx];
-                    const anchor = { left: left + bLeft, top: top + bTop };
-                    const time = this.fmtDate(new Date(x * 1e3));
-                    const xdiv = `<div class="ut-head">${u.series[0].label}: ${this.rawData ? x : time}</div>`;
-                    let series = '';
-                    for (let i = 1; i < u.series.length; i++) {
-                        let value = '';
-                        try {
-                            var ydx = this._proximityIndex(u, i, idx, x);
-                            if (!isNaN(u.data[i][ydx])) {
-                                value = u.data[i][ydx];
-                            }
-                        } catch { }
-                        series = series + `<div class="ut-serie"><div class="ut-marker" style="border-color: ${u.series[i]._stroke}"></div>${u.series[i].label}: <div class="ut-value">${value}</div></div>`;
-                    }
-                    overlay.innerHTML = xdiv + series;// + `${x},${y} at ${Math.round(left)},${Math.round(top)}`;
-                    placement(overlay, anchor, 'right', 'start', { bound });
-                }
+                setCursor: (u: any) => {
+                    this.paintLegendCuror(u, overlay, bLeft, bTop, bound);
+                },
+                setSeries: (u: any) => {
+                    this.paintLegendMarkers(u);
+                },
+                setData: (u: any) => {
+                    this.paintLegendMarkers(u);
+                },
             }
         };
     }
+
+    paintLegendCuror = (u: any, overlay, bLeft, bTop, bound) => {
+        const { left, top, idx } = u.cursor;
+        const x = u.data[0][idx];
+        // uPlot cursor coords are unscaled; overlay is positioned in viewport space, so re-apply element scale.
+        const scale = this.getElementScale(bound as HTMLElement);
+        const anchor = { left: left * scale.x + bLeft, top: top * scale.y + bTop };
+        const time = this.fmtDate(new Date(x * 1e3));
+        const xdiv = `<div class="ut-head">${u.series[0].label}: ${this.rawData ? x : time}</div>`;
+        let series = '';
+        for (let i = 1; i < u.series.length; i++) {
+            let value = '';
+            try {
+                var ydx = this._proximityIndex(u, i, idx, x);
+                if (!isNaN(u.data[i][ydx])) {
+                    value = u.data[i][ydx];
+                }
+            } catch { }
+            var strokeColor = u.series[i]._stroke;
+            var fillColor = u.series[i]._fill;
+            if (u.series[i].lineInterpolation === this.lineInterpolations.none) {
+                strokeColor = u.series[i].points._stroke;
+                fillColor = u.series[i].points._fill;
+            }
+            series = series + `<div class="ut-serie"><div class="ut-marker" style="background: ${fillColor};border-color: ${strokeColor}"></div>${u.series[i].label}: <div class="ut-value">${value}</div></div>`;
+        }
+        overlay.innerHTML = xdiv + series;// + `${x},${y} at ${Math.round(left)},${Math.round(top)}`;
+        placement(overlay, anchor, 'right', 'start', { bound });
+    };
+
+    paintLegendMarkers = (u: any) => {
+        const legend = u.root.querySelector('.u-legend') as HTMLElement | null;
+        if (!legend) {
+            return;
+        }
+
+        const rows = legend.querySelectorAll('.u-series');
+
+        for (let i = 1; i < u.series.length && i < rows.length; i++) {
+            if (u.series[i].lineInterpolation !== this.lineInterpolations?.none) {
+                continue;
+            }
+
+            if (!u.series[i].points) {
+                continue;
+            }
+
+            const row = rows[i] as HTMLElement;
+            const swatch = row.firstElementChild as HTMLElement | null;
+            if (!swatch) {
+                continue;
+            }
+            const markers = row.querySelectorAll('.u-marker');
+            if (!markers || markers.length !== 1) {
+                continue;
+            }
+            const marker = markers[0] as HTMLElement;
+            let strokeColor = u.series[i]._stroke;
+            let fillColor   = u.series[i]._fill;
+
+            strokeColor = u.series[i].points._stroke ?? strokeColor;
+            fillColor   = u.series[i].points._fill   ?? fillColor;
+
+            if (fillColor) {
+                marker.style.background  = String(fillColor);
+            }
+            if (strokeColor) {
+                marker.style.border = `2px solid ${strokeColor}`;
+            }
+        }
+    };
 
     getColorForValue(ranges: ChartLineZone[], value: number): string {
         // Sort ranges by the min value (just in case)
@@ -605,7 +844,6 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
             over.addEventListener('touchstart', function(e) {
                 rect = over.getBoundingClientRect();
-
                 storePos(fr, e);
 
                 oxRange = u.scales.x.max - u.scales.x.min;
@@ -631,6 +869,103 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             }
         };
     }
+
+    // Creates a single wheel handler plugin and dispatches behavior by selected mode.
+    private mouseWheelPlugin(mode: WheelMode) {
+        let over: HTMLElement | null = null;
+        let onWheel: ((event: WheelEvent) => void) | null = null;
+        return {
+            hooks: {
+                init: (u: unknown) => {
+                    // Runtime type guard for uPlot-like object used by wheel interactions.
+                    const wheelPlot = (typeof u === 'object' && u !== null) ? (u as WheelUplotLike) : null;
+                    const target = wheelPlot?.over;
+                    if (!wheelPlot || typeof wheelPlot.setScale !== 'function' || !target) {
+                        return;
+                    }
+                    over = target;
+                    onWheel = (event: WheelEvent) => {
+                        const scale = this.normalizeFiniteRange(wheelPlot.scales?.x?.min, wheelPlot.scales?.x?.max);
+                        if (!scale) {
+                            return;
+                        }
+                        // Pick dominant wheel axis; sign is inverted by request.
+                        const rawDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+                        const delta = Number.isFinite(rawDelta) ? -rawDelta : 0;
+                        if (!delta) {
+                            return;
+                        }
+                        event.preventDefault();
+
+                        const xData = Array.isArray(wheelPlot.data?.[0]) ? wheelPlot.data[0] : null;
+                        // Time-series data is ordered, so first/last points define data bounds.
+                        const bounds = xData?.length
+                            ? this.normalizeFiniteRange(xData[0], xData[xData.length - 1])
+                            : null;
+
+                        if (mode === 'scroll') {
+                            const stepRatio = event.shiftKey ? WHEEL_PAN_FAST_STEP : WHEEL_PAN_STEP;
+                            const step = scale.span * stepRatio * Math.sign(delta);
+                            const next = this.clampXWindowToData(scale.min + step, scale.max + step, bounds);
+                            wheelPlot.setScale('x', next);
+                            return;
+                        }
+
+                        const rect = target.getBoundingClientRect();
+                        if (!rect.width) {
+                            return;
+                        }
+                        const anchorPct = Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width));
+                        // Keep the point under cursor stable while zooming.
+                        const anchor = scale.min + (scale.span * anchorPct);
+                        const zoomFactor = Math.exp(-delta * WHEEL_ZOOM_SENSITIVITY);
+                        let newRange = scale.span * zoomFactor;
+                        const minRange = Math.max(1e-6, scale.span / WHEEL_MIN_RANGE_DIVISOR);
+                        newRange = Math.max(minRange, newRange);
+                        if (bounds) {
+                            newRange = Math.min(bounds.span, newRange);
+                        }
+
+                        const min = anchor - ((anchor - scale.min) * (newRange / scale.span));
+                        const next = this.clampXWindowToData(min, min + newRange, bounds);
+                        wheelPlot.setScale('x', next);
+                    };
+                    over.addEventListener('wheel', onWheel, { passive: false });
+                },
+                destroy: () => {
+                    if (over && onWheel) {
+                        over.removeEventListener('wheel', onWheel);
+                    }
+                    over = null;
+                    onWheel = null;
+                }
+            }
+        };
+    }
+
+    // Shared finite-range validator/converter used for both scale ranges and data bounds.
+    private normalizeFiniteRange(minValue: unknown, maxValue: unknown): WheelDataBounds | null {
+        const min = Number(minValue);
+        const max = Number(maxValue);
+        if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
+            return null;
+        }
+        return { min, max, span: max - min };
+    }
+
+    // Constrains the requested x-window to available data bounds while preserving its width.
+    private clampXWindowToData(min: number, max: number, bounds: WheelDataBounds | null): { min: number, max: number } {
+        if (!bounds) {
+            return { min, max };
+        }
+        const range = max - min;
+        if (range <= 0 || range > bounds.span) {
+            return { min, max };
+        }
+        // Clamp window start into [dataMin, dataMax - range] and preserve the current window width.
+        const clampedMin = Math.min(Math.max(min, bounds.min), bounds.max - range);
+        return { min: clampedMin, max: clampedMin + range };
+    }
 }
 
 export interface NgxOptions extends Options {
@@ -640,6 +975,9 @@ export interface NgxOptions extends Options {
     dateFormat?: string;
     timeFormat?: string;
     thouchZoom?: boolean;
+    mouseWheelScroll?: boolean;
+    mouseWheelZoom?: boolean;
+    staticChart?: boolean;
 }
 
 export interface ChartOptions extends NgxOptions {

@@ -1,5 +1,5 @@
 import { Component, AfterViewInit, OnDestroy } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
 import { ResourceGroup, Resources, ResourceType } from '../../_models/resources';
@@ -52,5 +52,9 @@ export class LibImagesComponent implements AfterViewInit, OnDestroy {
 
     onNoClick(): void {
         this.dialogRef.close();
+    }
+
+    isVideo(path: string): boolean {
+        return this.resourcesService.isVideo(path);
     }
 }

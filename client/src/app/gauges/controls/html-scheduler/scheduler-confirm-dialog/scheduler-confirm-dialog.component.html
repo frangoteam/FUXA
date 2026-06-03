@@ -1,0 +1,17 @@
+<div class="confirmation-dialog">
+    <div class="dialog-header">
+        <span class="material-icons warning-icon">{{ data.icon || 'event' }}</span>
+        <h3>{{ data.title }}</h3>
+    </div>
+    <div class="dialog-content">
+        <div [innerHTML]="data.message"></div>
+    </div>
+    <div class="dialog-actions">
+        <button type="button" class="cancel-btn" *ngIf="data.showCancel !== false" (click)="onCancel()">
+            {{ 'dlg.cancel' | translate }}
+        </button>
+        <button type="button" class="confirm-btn" (click)="onConfirm()">
+            {{ data.confirmText || ('dlg.ok' | translate) }}
+        </button>
+    </div>
+</div>

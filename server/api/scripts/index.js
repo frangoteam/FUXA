@@ -32,15 +32,19 @@ module.exports = {
          */
          scriptsApp.post("/api/runscript", secureFnc, function (req, res, next) {
             const permission = checkGroupsFnc(req);
+            const script = req.body?.params?.script;
             if (res.statusCode === 403) {
                 runtime.logger.error("api post runscript: Tocken Expired");
                 //runtime.settings.secureEnabled
-            } else if (!runtime.scriptsMgr.isAuthorised(req.body.params.script, permission)) {
+            } else if (script?.test && (!req.isAuthenticated || !authJwt.haveAdminPermission(permission))) {
+                res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
+                runtime.logger.error("api post runscript: Unauthorized test mode");
+            } else if (!runtime.scriptsMgr.isAuthorised(script, permission)) {
                 res.status(400).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api post runscript: Unauthorized");
             } else {
                 //req.body.params.script.parameters.permission = groups;
-                runtime.scriptsMgr.runScript(req.body.params.script, req.body.params.toLogEvent).then(function (result) {
+                runtime.scriptsMgr.runScript(script, req.body.params.toLogEvent).then(function (result) {
                     res.json(result);
                 }).catch(function (err) {
                     if (err.code) {

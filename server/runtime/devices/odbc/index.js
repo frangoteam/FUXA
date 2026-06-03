@@ -24,7 +24,7 @@ function ODBCclient(_data, _logger, _events) {
      * initialize the device type 
      */
     this.init = function (_type) {
-        console.error('Not supported!');
+        console.error('Not supported! (odbc.init)');
     }
 
     /**
@@ -165,14 +165,14 @@ function ODBCclient(_data, _logger, _events) {
      * Return Tags values array { id: <name>, value: <value> }
      */
     this.getValues = function () {
-        console.error('Not supported!');
+        console.error('Not supported! (odbc.getValues)');
     }
 
     /**
      * Return Tag value { id: <name>, value: <value>, ts: <lastTimestampValue> }
      */
     this.getValue = function (tagid) {
-        console.error('Not supported!');
+        console.error(`Not supported! (odbc.getValue) (TagID: ${tagid})`);
     }
 
     /**
@@ -186,14 +186,14 @@ function ODBCclient(_data, _logger, _events) {
      * Return Tag property to show in frontend
      */
     this.getTagProperty = function (tagid) {
-        console.error('Not supported!');
+        console.error(`Not supported! (odbc.getTagProperty) (TagID: ${tagid})`);
     }
 
     /**
      * Set the Tag value to device
      */
     this.setValue = function (tagid, value) {
-        console.error('Not supported!');
+        console.error(`Not supported! (odbc.setValue) (TagID: ${tagid}, Value: ${value})`);
     }
 
     /**
@@ -263,12 +263,12 @@ function ODBCclient(_data, _logger, _events) {
  * Return tables list
  */
 function getTables(endpoint, fncGetProperty, packagerManager) {
-    return new Promise( async function (resolve, reject) {
-        if (loadOdbcLib(packagerManager)) { 
+    return new Promise(async function (resolve, reject) {
+        if (loadOdbcLib(packagerManager)) {
             var connection;
             try {
                 var security
-                await fncGetProperty({query: 'security', name: endpoint.id}).then((result, error) => {
+                await fncGetProperty({ query: 'security', name: endpoint.id }).then((result, error) => {
                     if (result) {
                         security = utils.JsonTryToParse(result.value);
                     }
@@ -286,7 +286,12 @@ function getTables(endpoint, fncGetProperty, packagerManager) {
                     loginTimeout: 10,
                 }
                 connection = await odbc.connect(connectionConfig)
-                var tables = await connection.tables(null, 'dbo', null, null);
+                var tables = [];
+
+                try {
+                    tables = await connection.tables(null, 'dbo', null, null);
+                } catch (err) { }
+
                 if (tables.length <= 0) {
                     tables = await connection.tables(null, null, null, null);
                 }

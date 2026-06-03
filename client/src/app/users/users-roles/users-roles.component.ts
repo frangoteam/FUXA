@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { Role } from '../../_models/user';
-import { MatLegacyDialog as MatDialog} from '@angular/material/legacy-dialog';
+import { MatDialog as MatDialog} from '@angular/material/dialog';
 import { UsersRoleEditComponent } from '../users-role-edit/users-role-edit.component';
 import { MatSort } from '@angular/material/sort';
 import { UserService } from '../../_services/user.service';

@@ -1,11 +1,13 @@
-<div>
+<div class="dialog-mdsd-main">
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'dlg.menuitem-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div mat-dialog-content>
-        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+    <div mat-dialog-content class="dialog-mdsd-content content">
+        <div class="my-form-field block mb10">
             <span>{{'dlg.menuitem-icon' | translate}}</span>
             <mat-select [(value)]="data.item.icon"
-                        style="width: 60px; height: 30px"
+                        panelClass="icon-grid-panel"
+                        panelWidth="310px"
+                        style="width: 60px; height: 40px"
                         #iconsel>
                 <mat-select-trigger>
                     <mat-icon>{{iconsel.value}}</mat-icon>
@@ -27,18 +29,18 @@
                             autocomplete="off"/>
                     </div>
                 </mat-option>
-                <mat-option *ngFor="let icon of filteredIcons$ | async" [value]="icon" (click)="data.item.image = ''" style="display: inline-block !important;">
+                <mat-option *ngFor="let icon of filteredIcons$ | async" [value]="icon" (click)="data.item.image = ''" style="display: inline-block !important; width: 18px;">
                     <mat-icon class="">{{ icon }}</mat-icon>
                 </mat-option>
             </mat-select>
         </div>
-        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+        <div class="my-form-field block mb10" style="min-width: 300px;">
             <span>{{'dlg.menuitem-text' | translate}}</span>
-            <input [(ngModel)]="data.item.text" type="text" style="width: 300px">
+            <input [(ngModel)]="data.item.text" type="text" style="width: calc(100% - 7px)">
         </div>
-        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+        <div class="my-form-field block mb10">
             <span>{{'dlg.menuitem-view' | translate}}</span>
-            <mat-select [(value)]="data.item.view" style="width: 300px">
+            <mat-select [(value)]="data.item.view">
                 <mat-option *ngFor="let view of data.views" [value]="view.id">
                     {{ view.name }}
                 </mat-option>
@@ -47,13 +49,46 @@
                 <!-- <mat-option [value]="events">[{{'dlg.menuitem-events' | translate}}]</mat-option> -->
             </mat-select>
         </div>
-        <div *ngIf="data.item.view === '[link]'" class="my-form-field" style="display: block;margin-bottom: 10px;">
+        <div *ngIf="data.item.view === '[link]'" class="my-form-field block mb10">
             <span>{{'dlg.menuitem-address' | translate}}</span>
             <input [(ngModel)]="data.item.link" type="text" style="width: 300px">
         </div>
-        <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+        <div class="my-form-field block mb10">
             <span>{{'dlg.useraccess-groups' | translate}}</span>
             <sel-options #seloptions [selected]="selected" [options]="options"></sel-options>
+        </div>
+        <!-- Submeu -->
+        <div class="my-form-field block mb10 submenu-header">
+            <button mat-icon-button (click)="onAddChild()">
+                <mat-icon aria-label="Add">control_point</mat-icon>
+            </button>
+            <span>{{'dlg.menuitem-add-submenu' | translate}}</span>
+        </div>
+        <!-- List submenu -->
+        <div *ngIf="data.item.children?.length" style="max-height: 200px;">
+            <div *ngFor="let child of data.item.children; let i = index" class="submenu-item">
+                <div class="my-form-field inbk mr10">
+                    <span>{{'dlg.menuitem-text' | translate}}</span>
+                    <input [(ngModel)]="child.text" type="text" style="width: 200px">
+                </div>
+                <div class="my-form-field inbk mr10">
+                    <span>{{'dlg.menuitem-view' | translate}}</span>
+                    <mat-select [(value)]="child.view" style="width: 200px">
+                        <mat-option *ngFor="let view of data.views" [value]="view.id">
+                            {{ view.name }}
+                        </mat-option>
+                        <mat-option [value]="linkAddress">[{{'dlg.menuitem-link' | translate}}]</mat-option>
+                        <mat-option [value]="linkAlarms">[{{'dlg.menuitem-alarms' | translate}}]</mat-option>
+                    </mat-select>
+                </div>
+                <div *ngIf="child.view === '[link]'" class="my-form-field inbk mr10">
+                    <span>{{'dlg.menuitem-address' | translate}}</span>
+                    <input [(ngModel)]="child.link" type="text" style="width: 200px">
+                </div>
+                <button mat-icon-button (click)="onDeleteChild(i)">
+                    <mat-icon>clear</mat-icon>
+                </button>
+            </div>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">

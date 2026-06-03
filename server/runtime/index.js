@@ -9,12 +9,16 @@ var events = Events.create();
 var devices = require('./devices');
 var project = require('./project');
 var users = require('./users');
+var apiKeys = require('./apikeys');
 var alarms = require('./alarms');
 var notificator = require('./notificator');
 var scripts = require('./scripts');
 var plugins = require('./plugins');
 var utils = require('./utils');
+const jwt = require('jsonwebtoken');
 const daqstorage = require('./storage/daqstorage');
+const schedulerStorage = require('./scheduler/scheduler-storage');
+const schedulerService = require('./scheduler/scheduler-service');
 var jobs = require('./jobs');
 
 var api;
@@ -28,6 +32,20 @@ var jobsMgr;
 var tagsSubscription = new Map();
 var socketPool = new Map();
 var socketMutex = new Map();
+
+function isSocketWriteAuthorized(socket) {
+    if (!settings || !settings.secureEnabled) {
+        return true;
+    }
+    return !!(socket && socket.isAuthenticated);
+}
+
+function isSocketAdminAuthorized(socket) {
+    if (!settings || !settings.secureEnabled) {
+        return true;
+    }
+    return !!(socket && socket.isAuthenticated && api?.authJwt?.haveAdminPermission(socket.userGroups));
+}
 
 function init(_io, _api, _settings, _log, eventsMain) {
     io = _io;
@@ -47,6 +65,15 @@ function init(_io, _api, _settings, _log, eventsMain) {
 
     daqstorage.init(settings, logger, runtime);
 
+    // Initialize scheduler services
+    schedulerStorage.init(settings, logger, runtime).then(() => {
+        return schedulerService.init(settings, logger, runtime);
+    }).then(() => {
+        logger.info('runtime init scheduler services successful!', true);
+    }).catch(err => {
+        logger.error('runtime.failed-to-init scheduler services: ' + err);
+    });
+
     plugins.init(settings, logger).then(result => {
         logger.info('runtime init plugins successful!', true);
         events.emit('init-plugins-ok');
@@ -54,6 +81,11 @@ function init(_io, _api, _settings, _log, eventsMain) {
         logger.error('runtime.failed-to-init plugins');
     });
 
+    apiKeys.init(settings, logger).then(() => {
+        logger.info('runtime init apiKeys successful!', true);
+    }).catch(err => {
+        logger.error('runtime.failed-to-init apiKeys: ' + err);
+    });
 
     users.init(settings, logger).then(result => {
         logger.info('runtime init users successful!', true);
@@ -85,24 +117,27 @@ function init(_io, _api, _settings, _log, eventsMain) {
         logger.info(`socket.io client connected ${socket.id}`);
         socket.tagsClientSubscriptions = [];
         // check authorizations
-        if (settings.secureEnabled && !settings.secureOnlyEditor) {
-            var token = socket.handshake.query.token;
-            if (!socket.handshake.query.token || socket.handshake.query.token === 'null') {
-                token = api.authJwt.getGuestToken();
-            }
+        const query = (socket && socket.handshake && socket.handshake.query) ? socket.handshake.query : {};
+        var token = query.token;
+        if (!query.token || query.token === 'null') {
+            token = api.authJwt.getGuestToken();
+        }
+        socket.userId = null;
+        socket.userGroups = null;
+        socket.isAuthenticated = !settings.secureEnabled;
+        if (settings.secureEnabled) {
             try {
-                const authenticated = await api.authJwt.verify(token);
-                if (!authenticated && token !== api.authJwt.getGuestToken()) {
-                    logger.error(`Token is missing!`);
-                    socket.disconnect();
-                } else {
-                    logger.info(`Client connected with ${token === api.authJwt.getGuestToken() ? 'guest access' : 'authenticated token'}`);
+                const decoded = jwt.verify(token, api.authJwt.secretCode);
+                socket.userId = decoded.id;
+                socket.userGroups = decoded.groups;
+                socket.isAuthenticated = decoded.id && decoded.id !== 'guest';
+                if (!settings.secureOnlyEditor) {
+                    logger.info(`Client connected with ${socket.isAuthenticated ? 'authenticated token' : 'guest access'}`);
                 }
             } catch (error) {
                 logger.error(`Token error: ${error}`);
-                if (token !== api.authJwt.getGuestToken()) {
-                    socket.disconnect();
-                }
+                socket.disconnect();
+                return;
             }
         }
 
@@ -124,19 +159,24 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device property
         socket.on(Events.IoEventTypes.DEVICE_PROPERTY, (message) => {
             try {
+                if (!isSocketWriteAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_PROPERTY}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message && message.endpoint && message.type) {
                     devices.getSupportedProperty(message.endpoint, message.type).then(result => {
                         message.result = result;
-                        io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                     }).catch(function (err) {
                         logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: ${err}`);
                         message.error = err;
-                        io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                     });
                 } else {
                     logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: wrong message`);
+                    message = message || {};
                     message.error = 'wrong message';
-                    io.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
+                    socket.emit(Events.IoEventTypes.DEVICE_PROPERTY, message);
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_PROPERTY}: ${err}`);
@@ -148,9 +188,13 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 if (message === 'get') {
                     var adevs = devices.getDevicesValues();
                     for (var id in adevs) {
-                        updateDeviceValues({ id: id, values: adevs[id] });
+                        updateDeviceValues({ id: id, values: adevs[id] || {} });
                     }
                 } else if (message.cmd === 'set' && message.var) {
+                    if (!isSocketWriteAuthorized(socket)) {
+                        logger.warn(`${Events.IoEventTypes.DEVICE_VALUES}: unauthorized write attempt from ${socket.userId || 'guest'}`);
+                        return;
+                    }
                     devices.setDeviceValue(message.var.source, message.var.id, message.var.value, message.fnc);
                 }
             } catch (err) {
@@ -160,6 +204,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device browse
         socket.on(Events.IoEventTypes.DEVICE_BROWSE, (message) => {
             try {
+                if (!isSocketAdminAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_BROWSE}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message) {
                     if (message.device) {
                         devices.browseDevice(message.device, message.node, function (nodes) {
@@ -181,6 +229,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device node attribute
         socket.on(Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
             try {
+                if (!isSocketAdminAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message) {
                     if (message.device) {
                         devices.readNodeAttribute(message.device, message.node).then(result => {
@@ -241,6 +293,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask host interfaces
         socket.on(Events.IoEventTypes.HOST_INTERFACES, (message) => {
             try {
+                if (!isSocketAdminAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.HOST_INTERFACES}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message === 'get') {
                     message = {};
                     utils.getHostInterfaces().then(result => {
@@ -263,19 +319,24 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device webapi request and return result
         socket.on(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, (message) => {
             try {
+                if (!isSocketAdminAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message && message.property) {
                     devices.getRequestResult(message.property).then(result => {
                         message.result = result;
-                        io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                     }).catch(function (err) {
                         logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: ${err}`);
                         message.error = err;
-                        io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                     });
                 } else {
                     logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: wrong message`);
+                    message = message || {};
                     message.error = 'wrong message';
-                    io.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
+                    socket.emit(Events.IoEventTypes.DEVICE_WEBAPI_REQUEST, message);
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_WEBAPI_REQUEST}: ${err}`);
@@ -284,6 +345,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device tags configurtions, used for connections that load tags dinamically (webapi)
         socket.on(Events.IoEventTypes.DEVICE_TAGS_REQUEST, (message) => {
             try {
+                if (!isSocketAdminAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_TAGS_REQUEST}: unauthorized request from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 if (message && message.deviceId) {
                     devices.getDeviceTagsResult(message.deviceId).then(result => {
                         message.result = result;
@@ -308,7 +373,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 if (message.sendLastValue) {
                     var adevs = devices.getDevicesValues();
                     for (var id in adevs) {
-                        updateDeviceValues({ id: id, values: adevs[id] });
+                        updateDeviceValues({ id: id, values: adevs[id] || {}});
                     }
                 }
             } catch (err) {
@@ -323,6 +388,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
         });
         socket.on(Events.IoEventTypes.DEVICE_ENABLE, (message) => {
             try {
+                if (!isSocketWriteAuthorized(socket)) {
+                    logger.warn(`${Events.IoEventTypes.DEVICE_ENABLE}: unauthorized enable attempt from ${socket.userId || 'guest'}`);
+                    return;
+                }
                 devices.enableDevice(message.deviceName, message.enable);
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_ENABLE}: ${err}`);
@@ -332,7 +401,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
 
     setInterval(() => {
         io.emit(Events.IoEventTypes.ALIVE, { message: 'FUXA server is alive!' });
-    }, 10000);
+    }, (settings.heartbeatIntervalSec || 10) * 1000);
 }
 
 function start() {
@@ -383,27 +452,27 @@ function start() {
 
 function stop() {
     return new Promise(function (resolve, reject) {
-        devices.stop().then(function () {
+        Promise.all([
+            devices.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-devices: ' + err);
+            }),
+            alarmsMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-alarms: ' + err);
+            }),
+            notificatorMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-notificatorMgr: ' + err);
+            }),
+            scriptsMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-scriptsMgr: ' + err);
+            }),
+            jobsMgr.stop().catch(function (err) {
+                logger.error('runtime.failed-to-stop-jobsMgr: ' + err);
+            })
+        ]).then(function () {
+            resolve(true);
         }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-devices: ' + err);
+            reject(err);
         });
-        alarmsMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-alarms: ' + err);
-        });
-        notificatorMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-notificatorMgr: ' + err);
-        });
-        scriptsMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-scriptsMgr: ' + err);
-        });
-        jobsMgr.stop().then(function () {
-        }).catch(function (err) {
-            logger.error('runtime.failed-to-stop-jobsMgr: ' + err);
-        });
-        resolve(true);
     });
 }
 
@@ -484,7 +553,7 @@ function updateDeviceValues(event) {
     try {
         //!TOFIX
         if (settings.broadcastAll === false) {
-            Object.values(io.sockets.sockets).forEach((socket) => {
+            Array.from(io.sockets.sockets.values()).forEach((socket) => {
                 const tags = Object.values(event.values).filter((tag) => {
                     return socket.tagsClientSubscriptions.includes(tag.id);
                 });
@@ -505,6 +574,7 @@ function updateDeviceValues(event) {
             }
         });
     } catch (err) {
+        logger.error('Error updating device values: ' + err.message);
     }
 }
 
@@ -512,7 +582,8 @@ function tagsToSend(tags) {
     return Object.values(tags).map(tag => ({
         id: tag.id,
         value: tag.value,
-        timestamp: tag.timestamp
+        timestamp: tag.timestamp,
+        quality: tag.quality
     }));
 }
 
@@ -671,6 +742,8 @@ var runtime = module.exports = {
     get settings() { return settings },
     get devices() { return devices },
     get daqStorage() { return daqstorage },
+    get schedulerStorage() { return schedulerStorage },
+    get schedulerService() { return schedulerService },
     get alarmsMgr() { return alarmsMgr },
     get notificatorMgr() { return notificatorMgr },
     get scriptsMgr() { return scriptsMgr },
@@ -680,5 +753,6 @@ var runtime = module.exports = {
     checkPermissionEnabled: checkPermissionEnabled,
     checkPermission: checkPermission,
     get socketPool() { return socketPool },
-    get socketMutex() {return socketMutex }
+    get socketMutex() {return socketMutex },
+    get apiKeys() { return apiKeys }
 }

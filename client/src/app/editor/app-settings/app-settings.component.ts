@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 
 import { SettingsService } from '../../_services/settings.service';
 import { DiagnoseService } from '../../_services/diagnose.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
-import { AlarmsRetentionType, AppSettings, DaqStore, DaqStoreRetentionType, DaqStoreType, MailMessage, SmtpSettings, StoreCredentials } from '../../_models/settings';
+import { AlarmsRetentionType, AppSettings, DaqStore, DaqStoreRetentionType, DaqStoreType, MailMessage, SmtpSettings, StoreCredentials, LogsSettings, AlarmsSettings } from '../../_models/settings';
 import { Utils } from '../../_helpers/utils';
 
 @Component({
     selector: 'app-app-settings',
     templateUrl: './app-settings.component.html',
-    styleUrls: ['./app-settings.component.css']
+    styleUrls: ['./app-settings.component.scss']
 })
 export class AppSettingsComponent implements OnInit {
 
@@ -28,6 +28,8 @@ export class AppSettingsComponent implements OnInit {
 		{ text: 'dlg.app-language-tr', value: 'tr' },
 		{ text: 'dlg.app-language-ua', value: 'ua' },
 		{ text: 'dlg.app-language-zh-cn', value: 'zh-cn' },
+		{ text: 'dlg.app-language-ja', value: 'ja' },
+		{ text: 'dlg.app-language-zh-tw', value: 'zh-tw' },
 	];
 
     authType = [
@@ -38,7 +40,15 @@ export class AppSettingsComponent implements OnInit {
 		{ text: 'dlg.app-auth-expiration-1d', value: '1d' }
 	];
 
+    nodeRedAuthModeType = [
+        { text: 'dlg.app-settings-node-red-auth-secure', value: 'secure' },
+        { text: 'dlg.app-settings-node-red-auth-legacy', value: 'legacy-open' }
+    ];
+
     settings = new AppSettings();
+    originalNodeRedEnabled = false;
+    originalSwaggerEnabled = false;
+    originalSecureEnabled = false;
     authentication = '';
     authenticationTooltip = '';
     smtpTesting = false;
@@ -48,6 +58,7 @@ export class AppSettingsComponent implements OnInit {
     daqstoreType = DaqStoreType;
     retationType = DaqStoreRetentionType;
     alarmsRetationType = AlarmsRetentionType;
+    logsRetationType = DaqStoreRetentionType;
     influxDB18 = Utils.getEnumKey(DaqStoreType, DaqStoreType.influxDB18);
 
     constructor(private settingsService: SettingsService,
@@ -59,16 +70,20 @@ export class AppSettingsComponent implements OnInit {
     ngOnInit() {
         this.settings = JSON.parse(JSON.stringify(this.settingsService.getSettings()));
         for (let i = 0; i < this.languageType.length; i++) {
-            this.translateService.get(this.languageType[i].text).subscribe((txt: string) => { this.languageType[i].text = txt; });
+            this.languageType[i].text = this.translateService.instant(this.languageType[i].text);
         }
         for (let i = 0; i < this.authType.length; i++) {
-            this.translateService.get(this.authType[i].text).subscribe((txt: string) => { this.authType[i].text = txt; });
+            this.authType[i].text = this.translateService.instant(this.authType[i].text);
+        }
+        for (let i = 0; i < this.nodeRedAuthModeType.length; i++) {
+            this.nodeRedAuthModeType[i].text = this.translateService.instant(this.nodeRedAuthModeType[i].text);
         }
         this.translateService.get('dlg.app-auth-tooltip').subscribe((txt: string) => { this.authenticationTooltip = txt; });
 
         if (this.settings.secureEnabled) {
             this.authentication = this.settings.tokenExpiresIn;
         }
+        this.originalSecureEnabled = this.settings.secureEnabled;
         if (Utils.isNullOrUndefined(this.settings.broadcastAll)) {
             this.settings.broadcastAll = true;
         }
@@ -82,6 +97,24 @@ export class AppSettingsComponent implements OnInit {
         if (!this.settings.daqstore.credentials) {
             this.settings.daqstore.credentials = new StoreCredentials();
         }
+        if (!this.settings.alarms) {
+            this.settings.alarms = new AlarmsSettings();
+        }
+        if (!this.settings.logs) {
+            this.settings.logs = new LogsSettings();
+        }
+        if (Utils.isNullOrUndefined(this.settings.nodeRedEnabled)) {
+            this.settings.nodeRedEnabled = false;
+        }
+        this.originalNodeRedEnabled = this.settings.nodeRedEnabled;
+        if (Utils.isNullOrUndefined(this.settings.nodeRedAuthMode)) {
+            this.settings.nodeRedAuthMode = 'secure';
+        }
+
+        if (Utils.isNullOrUndefined(this.settings.swaggerEnabled)) {
+            this.settings.swaggerEnabled = false;
+        }
+        this.originalSwaggerEnabled = this.settings.swaggerEnabled;
     }
 
     onNoClick() {
@@ -89,6 +122,11 @@ export class AppSettingsComponent implements OnInit {
     }
 
     onOkClick() {
+        if (this.authentication && !this.originalSecureEnabled && (!this.settings.secretCode || !this.settings.secretCode.length)) {
+            let msg = this.translateService.instant('msg.secret-code-required');
+            this.notifyError(msg);
+            return;
+        }
         this.settings.secureEnabled = (this.authentication) ? true : false;
         this.settings.tokenExpiresIn = this.authentication;
         if (this.settingsService.setSettings(this.settings)) {
