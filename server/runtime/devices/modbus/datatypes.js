@@ -18,36 +18,35 @@ function _gen(bytes, bFn, WordLen, swapType, toCast = false) {
 }
 
 function _swap(buffer, swapType, offset = 0) {
-    if (swapType !== 2) return;
-
-    const len = buffer.length - offset;
-
-    if (len >= 8) {
-        // 64-bit: swap 2-word pairs (16-bit words)
-        // es: [w0 w1 w2 w3] → [w1 w0 w3 w2]
+    if (swapType == 2) {
+        // MLE: swap bytes within each 16-bit word, every 4 bytes
+        for (var i = 0; i < buffer.length - offset; i += 4) {
+            var temp = buffer[offset + i + 0];
+            buffer[offset + i + 0] = buffer[offset + i + 2]; buffer[offset + i + 2] = temp;
+            temp = buffer[offset + i + 1];
+            buffer[offset + i + 1] = buffer[offset + i + 3]; buffer[offset + i + 3] = temp;
+        }
+    } else if (swapType == 3) {
+        // MBE: swap 16-bit words between the two halves of the 64-bit value
         for (let i = 0; i < 4; i += 2) {
             const i1 = offset + i;
             const i2 = offset + i + 4;
-
-            // swap 2 bytes (16-bit word)
-            const t0 = buffer[i1];
-            const t1 = buffer[i1 + 1];
-            buffer[i1] = buffer[i2];
-            buffer[i1 + 1] = buffer[i2 + 1];
-            buffer[i2] = t0;
-            buffer[i2 + 1] = t1;
+            const t0 = buffer[i1], t1 = buffer[i1 + 1];
+            buffer[i1] = buffer[i2]; buffer[i1 + 1] = buffer[i2 + 1];
+            buffer[i2] = t0; buffer[i2 + 1] = t1;
         }
-    } else if (len >= 4) {
-        // 32-bit: swap the two 16-bit words
-        const i1 = offset;
-        const i2 = offset + 2;
-
-        const t0 = buffer[i1];
-        const t1 = buffer[i1 + 1];
-        buffer[i1] = buffer[i2];
-        buffer[i1 + 1] = buffer[i2 + 1];
-        buffer[i2] = t0;
-        buffer[i2 + 1] = t1;
+    } else if (swapType == 4) {
+        // MLE 64-bit: reverse all 4 words [w0,w1,w2,w3] -> [w3,w2,w1,w0] then read BE
+        const w = [
+            [buffer[offset+0], buffer[offset+1]],
+            [buffer[offset+2], buffer[offset+3]],
+            [buffer[offset+4], buffer[offset+5]],
+            [buffer[offset+6], buffer[offset+7]],
+        ];
+        buffer[offset+0] = w[3][0]; buffer[offset+1] = w[3][1];
+        buffer[offset+2] = w[2][0]; buffer[offset+3] = w[2][1];
+        buffer[offset+4] = w[1][0]; buffer[offset+5] = w[1][1];
+        buffer[offset+6] = w[0][0]; buffer[offset+7] = w[0][1];
     }
 }
 
@@ -152,11 +151,19 @@ const Datatypes = {
     /**
      * Int64MLE
      */
-    Int64MLE: _gen(8, 'BigInt64BE', 4, 2, true),
+    Int64MLE: _gen(8, 'BigInt64BE', 4, 4, true),
     /**
      * UInt64MLE
      */
-    UInt64MLE: _gen(8, 'BigUInt64BE', 4, 2, true),
+    UInt64MLE: _gen(8, 'BigUInt64BE', 4, 4, true),
+    /**
+     * Int64MBE
+     */
+    Int64MBE: _gen(8, 'BigInt64BE', 4, 3, true),
+    /**
+     * UInt64MBE
+     */
+    UInt64MBE: _gen(8, 'BigUInt64BE', 4, 3, true),
 
     /**
      * String
