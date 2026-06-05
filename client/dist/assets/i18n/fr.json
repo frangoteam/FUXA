@@ -1626,6 +1626,7 @@
   "dlg.app-auth-expiration-1d": "Activé avec l'expiration des jetons dans 1 jour.",
   "dlg.app-auth-tooltip": "Activé : vous disposez d'un compte administrateur «Admin / 123456». (N'oubliez pas de le changer). Redémarrage serveur requis !",
   "dlg.app-settings-client-broadcast": "Diffuser vers le client (frontend) toutes les valeurs des tags",
+  "dlg.app-settings-lazy-view-loading": "Lazy view loading",
 
   "dlg.app-settings-daqstore": "Stockage DAQ",
   "dlg.app-settings-daqstore-type": "Type de base de données",

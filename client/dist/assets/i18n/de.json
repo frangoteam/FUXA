@@ -1246,6 +1246,7 @@
     "dlg.app-auth-expiration-1d": "Aktiviert mit Token-Ablauf in 1 Tag.",
     "dlg.app-auth-tooltip": "Aktiviert: Sie haben ein Administratorkonto 'admin/123456' (vergessen Sie nicht, es zu ändern). Ein Server-Neustart ist erforderlich!",
     "dlg.app-settings-client-broadcast": "Alle Werte der Tags an den Client (Frontend) senden",
+    "dlg.app-settings-lazy-view-loading": "Lazy View Loading",
 
     "dlg.app-settings-daqstore": "DAQ-Speicher",
     "dlg.app-settings-daqstore-type": "Datenbanktyp",
