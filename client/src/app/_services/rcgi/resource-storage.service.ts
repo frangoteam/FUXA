@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { Device } from '../../_models/device';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { AlarmBaseType, AlarmQuery, AlarmsFilter } from '../../_models/alarm';
-import { DaqQuery } from '../../_models/hmi';
+import { DaqQuery, View } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { Role } from '../../_models/user';
@@ -21,7 +21,9 @@ export abstract class ResourceStorageService {
 
     public abstract getDemoProject(): Observable<any>;
 
-    public abstract getStorageProject(): Observable<any>;
+    public abstract getStorageProject(loadFull?: boolean): Observable<any>;
+
+    public abstract getStorageView(id: string): Observable<View>;
 
     public abstract setServerProject(prj: ProjectData);
 

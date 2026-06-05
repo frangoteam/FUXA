@@ -39,6 +39,13 @@
                                 <input autocomplete="off" [(ngModel)]="settings.secretCode" style="width: 320px" type="password">
                             </div>
                             <div class="my-form-field block mt15 system-input">
+                                <span>{{'dlg.app-settings-lazy-view-loading' | translate}}</span>
+                                <mat-select [(value)]="settings.lazyViewLoading">
+                                    <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>
+                                    <mat-option [value]="false">{{'general.disabled' | translate}}</mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="my-form-field block mt15 system-input">
                                 <span>{{'dlg.app-settings-client-broadcast' | translate}}</span>
                                 <mat-select [(value)]="settings.broadcastAll">
                                     <mat-option [value]="true">{{'general.enabled' | translate}}</mat-option>

@@ -6,6 +6,7 @@ import { Hmi, View, CardWidget, CardWidgetType, ViewType } from '../_models/hmi'
 import { GridsterConfig, GridsterItem, GridType, CompactType, GridsterItemComponentInterface } from 'angular-gridster2';
 import { Utils } from '../_helpers/utils';
 import { FuxaViewComponent } from '../fuxa-view/fuxa-view.component';
+import { ProjectService } from '../_services/project.service';
 
 @Component({
     selector: 'app-cards-view',
@@ -30,7 +31,8 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
     private loadOk = false;
 
     constructor(private renderer: Renderer2,
-                private changeDetector: ChangeDetectorRef) {
+                private changeDetector: ChangeDetectorRef,
+                private projectService: ProjectService) {
         this.gridOptions = <GridsterConfig> new GridOptions();
         this.gridOptions.itemChangeCallback = this.itemChange;
         this.gridOptions.itemResizeCallback = CardsViewComponent.itemResizeTrigger;
@@ -94,16 +96,19 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
         let content: any = null;
         let background = '';
         let item: GridsterItem = { x: x, y: y, cols: cols, rows: rows, card: card, content: content, background: background };
-        item.initCallback = (item, itemComponent) => {
+        item.initCallback = async (item, itemComponent) => {
             if (card) {
                 if (card.type === this.cardType.view) {
-                    let views = this.hmi.views.filter((v) => v.name === card.data);
-                    if (views && views.length) {
-                        if (views[0].svgcontent) {
-                            item.content = views[0];//.svgcontent.replace('<title>Layer 1</title>', '');
+                    let view = await this.projectService.ensureViewLoadedByName(card.data);
+                    if (!view && this.hmi?.views) {
+                        view = this.hmi.views.find((v) => v.name === card.data);
+                    }
+                    if (view) {
+                        if (view.svgcontent) {
+                            item.content = view;//.svgcontent.replace('<title>Layer 1</title>', '');
                         }
-                        if (views[0].profile.bkcolor) {
-                            item.background = views[0].profile.bkcolor;
+                        if (view.profile.bkcolor) {
+                            item.background = view.profile.bkcolor;
                         }
                     }
                 } else if (card.type === this.cardType.alarms) {

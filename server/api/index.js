@@ -247,6 +247,9 @@ function mergeUserSettings(settings) {
         );
     }
     runtime.settings.broadcastAll = settings.broadcastAll;
+    if (!utils.isNullOrUndefined(settings.lazyViewLoading)) {
+        runtime.settings.lazyViewLoading = settings.lazyViewLoading;
+    }
     runtime.settings.secureEnabled = settings.secureEnabled;
     runtime.settings.logFull = settings.logFull;
     runtime.settings.userRole = settings.userRole;

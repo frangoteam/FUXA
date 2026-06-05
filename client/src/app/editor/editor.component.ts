@@ -186,7 +186,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
         let hmi = this.projectService.getHmi();
         if (hmi) {
-            this.loadHmi(true);
+            if (this.projectService.hasLazyViews()) {
+                this.projectService.reload(true);
+            } else {
+                this.loadHmi(true);
+            }
         }
         this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
             this.loadHmi();

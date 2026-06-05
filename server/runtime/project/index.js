@@ -681,10 +681,22 @@ function removeArMarker(marker) {
 /**
  * Get the project data in accordance with autorization
  */
-function getProject(userId, userPermission) {
+function getProject(userId, userPermission, options) {
     return new Promise(function (resolve, reject) {
-        const pdata = _filterProjectPermission(userPermission);
+        const pdata = _filterProjectPermission(userPermission, options);
         resolve(pdata);
+    });
+}
+
+function getProjectView(viewId, userPermission) {
+    return new Promise(function (resolve, reject) {
+        const pdata = _filterProjectPermission(userPermission, { viewId: viewId });
+        const view = pdata?.hmi?.views?.[0];
+        if (view) {
+            resolve(view);
+        } else {
+            resolve(null);
+        }
     });
 }
 
@@ -1033,8 +1045,11 @@ function getProjectDemo() {
     return JSON.parse(fs.readFileSync(demoProject, 'utf8'));;
 }
 
-function _filterProjectPermission(userPermission) {
+function _filterProjectPermission(userPermission, options = {}) {
     var result = JSON.parse(JSON.stringify(data));// = { devices: {}, hmi: { views: [] } };
+    if (options.viewId && result.hmi?.views) {
+        result.hmi.views = result.hmi.views.filter(view => view.id === options.viewId || view.name === options.viewId);
+    }
     const projectPermission = runtime.checkPermission(userPermission, false);
     if (!projectPermission.show || !projectPermission.enabled) {   // is admin or secure disabled
         // from device remove the not used (no permission)
@@ -1106,7 +1121,20 @@ function _filterProjectPermission(userPermission) {
             }
         }
     }
+    if (options.lazyViews && result.hmi?.views) {
+        result.hmi.views = result.hmi.views.map(view => _toLazyView(view));
+    }
     return result;
+}
+
+function _toLazyView(view) {
+    return {
+        id: view.id,
+        name: view.name,
+        type: view.type,
+        profile: view.profile,
+        lazy: true
+    };
 }
 
 function _mergeDefaultConfig() {
@@ -1204,6 +1232,7 @@ module.exports = {
     setDeviceProperty: setDeviceProperty,
     setProjectData: setProjectData,
     getProject: getProject,
+    getProjectView: getProjectView,
     setProject: setProject,
     getProjectDemo: getProjectDemo,
     ProjectDataCmdType, ProjectDataCmdType,
