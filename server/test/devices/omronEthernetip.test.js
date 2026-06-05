@@ -115,6 +115,18 @@ describe('Omron EtherNet/IP device driver', () => {
         expect(emitted[0].values.tag1.type).to.equal('DINT');
     });
 
+    it('propagates connect errors with details', async () => {
+        const { device } = createDevice();
+        MockClient.prototype.connect = () => Promise.reject(new Error('connect detail'));
+
+        try {
+            await device.connect();
+            throw new Error('connect should have failed');
+        } catch (err) {
+            expect(err.message).to.equal('connect detail');
+        }
+    });
+
     it('does not refresh lastReadTimestamp or emit stale values when reads fail', async () => {
         const { device, events } = createDevice();
         let valueEvents = 0;
@@ -127,6 +139,45 @@ describe('Omron EtherNet/IP device driver', () => {
         expect(device.lastReadTimestamp()).to.equal(undefined);
         expect(valueEvents).to.equal(0);
         expect(device.isConnected()).to.equal(true);
+    });
+
+    it('stops the active polling loop when overload recovery closes the client mid-cycle', async () => {
+        const { device } = createDevice({
+            tags: {
+                tag1: {
+                    id: 'tag1',
+                    name: 'Tag 1',
+                    address: 'GlobalTag1',
+                    type: 'number',
+                    daq: { enabled: false },
+                },
+                tag2: {
+                    id: 'tag2',
+                    name: 'Tag 2',
+                    address: 'GlobalTag2',
+                    type: 'number',
+                    daq: { enabled: false },
+                },
+            },
+        });
+        let readCount = 0;
+        MockClient.readTag = async () => {
+            readCount++;
+            if (readCount === 1) {
+                await device.polling();
+                await device.polling();
+                await device.polling();
+                return { value: '42', typeName: 'DINT' };
+            }
+            throw new Error('second tag should not be read after recovery closes the client');
+        };
+
+        await device.connect();
+        await device.polling();
+
+        expect(readCount).to.equal(1);
+        expect(device.getStatus()).to.equal('connect-error');
+        expect(device.isConnected()).to.equal(false);
     });
 
     it('closes the client and marks the device disconnected when polling remains blocked', async () => {

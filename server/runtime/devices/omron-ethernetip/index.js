@@ -35,10 +35,11 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
   this.connect = function () {
     return new Promise(function (resolve, reject) {
       if (!data.property || !data.property.address) {
-        logger.error(`'${data.name}' missing connection address!`);
+        var missingAddressError = new Error('missing connection address');
+        logger.error(`'${data.name}' ${missingAddressError.message}!`);
         _emitStatus('connect-failed');
         _clearVarsValue();
-        return reject();
+        return reject(missingAddressError);
       }
       try {
         var target = _parseAddress(data.property.address);
@@ -57,7 +58,7 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
             logger.error(`'${data.name}' connect failed! ${err && err.message}`);
             _emitStatus('connect-error');
             _clearVarsValue();
-            reject();
+            reject(err);
           }
         );
       } catch (err) {
@@ -65,7 +66,7 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
         logger.error(`'${data.name}' try to connect error! ${err}`);
         _emitStatus('connect-error');
         _clearVarsValue();
-        reject();
+        reject(err);
       }
     });
   };
@@ -105,6 +106,9 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
       for (var id in data.tags) {
         var tag = data.tags[id];
         try {
+          if (!client || !connected || pollingConnectionVersion !== connectionVersion) {
+            return;
+          }
           var result = await client.readTag(tag.address);
           if (!connected || pollingConnectionVersion !== connectionVersion) {
             return;
@@ -132,6 +136,9 @@ function OmronEthernetIPClient(_data, _logger, _events, _runtime) {
         } catch (err) {
           logger.error(`'${data.name}' read '${tag.address}' error! ${err && err.message}`);
         }
+      }
+      if (!connected || pollingConnectionVersion !== connectionVersion) {
+        return;
       }
       if (!hasSuccessfulRead) {
         return;
