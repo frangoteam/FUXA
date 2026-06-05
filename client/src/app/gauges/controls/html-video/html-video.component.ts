@@ -124,6 +124,9 @@ export class HtmlVideoComponent extends GaugeBaseComponent {
             if (gaugeSettings.property?.options?.showControls) {
                 video.setAttribute('controls', '');
             }
+            if (gaugeSettings.property?.options?.loop) {
+                video.loop = true;
+            }
             const source = document.createElement('source');
             source.src = videoSrc;
             if (hasVideo) {
