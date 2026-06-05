@@ -10,6 +10,7 @@ var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var EthernetIPclient = require('./ethernetip');
+var OmronEthernetIPclient = require('./omron-ethernetip');
 var FuxaServer = require('./fuxaserver');
 var ODBCclient = require('./odbc');
 var ADSclient = require('./adsclient');
@@ -84,6 +85,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = EthernetIPclient.create(data, logger, events, manager, runtime);
+    } else if (data.type === DeviceEnum.OmronEthernetIP) {
+        if (!OmronEthernetIPclient) {
+            return null;
+        }
+        comm = OmronEthernetIPclient.create(data, logger, events, manager, runtime);
     } else if (data.type === DeviceEnum.FuxaServer) {
         if (!FuxaServer) {
             return null;
@@ -532,6 +538,8 @@ function loadPlugin(type, module) {
         MQTTclient = require(module);
     } else if (type === DeviceEnum.EthernetIP) {
         EthernetIPclient = require(module);
+    } else if (type === DeviceEnum.OmronEthernetIP) {
+        OmronEthernetIPclient = require(module);
     } else if (type === DeviceEnum.FuxaServer) {
         FuxaServer = require(module);
     } else if (type === DeviceEnum.ODBC) {
@@ -578,6 +586,7 @@ var DeviceEnum = {
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
     EthernetIP: 'EthernetIP',
+    OmronEthernetIP: 'OmronEthernetIP',
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
     ADSclient: 'ADSclient',
