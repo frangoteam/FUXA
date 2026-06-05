@@ -89,9 +89,9 @@ function init(_server, _runtime) {
 
             apiApp.use((err, req, res, next) => {
                 if (err?.type === 'entity.too.large') {
-                    return res.status(413).json({
-                        message: `The submitted content exceeds the maximum allowed size (${maxApiRequestSize})`
-                    });
+                    const msg = `The submitted content exceeds the maximum allowed size (${maxApiRequestSize})`;
+                    runtime.logger.error(`api request rejected: ${msg}`);
+                    return res.status(413).json({ message: msg });
                 }
                 next(err);
             });
