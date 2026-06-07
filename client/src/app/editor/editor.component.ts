@@ -430,15 +430,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param ele gauge element
      */
     private searchGaugeSettings(ele): GaugeSettings {
-        if (ele) {
-            if (this.currentView) {
-                if (this.currentView.items[ele.id]) {
-                    return this.currentView.items[ele.id];
-                }
+        if (ele?.id) {
+            const currentGaugeSettings = this.currentView?.items?.[ele.id];
+            if (currentGaugeSettings) {
+                return currentGaugeSettings;
             }
-            for (var i = 0; i < this.hmi.views.length; i++) {
-                if (this.hmi.views[i].items[ele.id]) {
-                    return this.hmi.views[i].items[ele.id];
+            for (const view of this.hmi?.views ?? []) {
+                const gaugeSettings = view?.items?.[ele.id];
+                if (gaugeSettings) {
+                    return gaugeSettings;
                 }
             }
             return this.gaugesManager.createSettings(ele.id, ele.type);

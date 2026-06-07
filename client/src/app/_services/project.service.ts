@@ -43,6 +43,7 @@ export class ProjectService {
     private projectOld = '';
     private ready = false;
     private loadingViews = new Map<string, Promise<View>>();
+    private projectLoadRequestId = 0;
     public static MainViewName = 'MainView';
 
     constructor(private resewbApiService: ResWebApiService,
@@ -85,7 +86,11 @@ export class ProjectService {
     }
 
     onRefreshProject(loadFull = false): boolean {
+        const requestId = ++this.projectLoadRequestId;
         this.storage.getStorageProject(loadFull).subscribe(prj => {
+            if (requestId !== this.projectLoadRequestId) {
+                return;
+            }
             if (prj) {
                 this.loadingViews.clear();
                 this.projectData = prj;
@@ -100,7 +105,9 @@ export class ProjectService {
                 // this.notifySaveError(msg);
             }
         }, err => {
-            console.error('FUXA onRefreshProject error', err);
+            if (requestId === this.projectLoadRequestId) {
+                console.error('FUXA onRefreshProject error', err);
+            }
         });
         return true;
     }
@@ -111,7 +118,11 @@ export class ProjectService {
      * From Local Storage, from 'assets' if demo or create a local project
      */
     private load(loadFull = false) {
+        const requestId = ++this.projectLoadRequestId;
         this.storage.getStorageProject(loadFull).subscribe(prj => {
+            if (requestId !== this.projectLoadRequestId) {
+                return;
+            }
             if (!prj && this.appService.isDemoApp) {
                 console.log('create demo');
                 this.setNewProject();
@@ -133,7 +144,9 @@ export class ProjectService {
                 this.notifyToLoadHmi();
             }
         }, err => {
-            console.error('FUXA load error', err);
+            if (requestId === this.projectLoadRequestId) {
+                console.error('FUXA load error', err);
+            }
         });
     }
 
