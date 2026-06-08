@@ -4,6 +4,8 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
     selector: '[numberOnly]'
 })
 export class NumberOnlyDirective {
+    // Allow only non-negative integers: digits 0-9
+    private regex = new RegExp(/^[0-9]+$/g);
     // Allow key codes for special events. Reflect :
     // Backspace, tab, end, home
     private specialKeys: Array<string> = ['Backspace', 'Delete', 'Tab', 'End', 'Home', 'ArrowLeft', 'ArrowRight'];
@@ -18,6 +20,12 @@ export class NumberOnlyDirective {
             event.stopPropagation();
             return;
         }
+        // Prevent any key that is not a digit (blocks '-', '.', 'e', letters, etc.)
+        const current: string = this.el.nativeElement.value;
+        const next: string = current.concat(event.key);
+        if (next && !String(next).match(this.regex)) {
+            event.preventDefault();
+        }
     }
 }
 
@@ -26,7 +34,7 @@ export class NumberOnlyDirective {
 })
 export class NumberOrNullOnlyDirective {
     // Allow decimal numbers and negative values
-    private regex = new RegExp(/^-?[0-9]+(\.[0-9]*){0,1}$/g);///^-?[0-9]+(\.[0-9]*){0,1}$/g);
+    private regex = new RegExp(/^-?[0-9]+(\.[0-9]*){0,1}$/g);
     // Allow key codes for special events. Reflect :
     // Backspace, tab, end, home
     private specialKeys: Array<string> = ['Backspace', 'Delete', 'Tab', 'End', 'Home', 'ArrowLeft', 'ArrowRight'];
