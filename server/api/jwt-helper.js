@@ -26,12 +26,25 @@ function init(_secureEnabled, _secretCode, _tokenExpires) {
  */
 function verify (token) {
     return new Promise ((resolve, reject) => {
-        jwt.verify(token, secretCode, (err, decoded) => {
+        jwt.verify(token, secretCode, (err) => {
             if (err) {
                 console.error(`verify token error: ${err}`);
                 reject(false);
             } else {
                 resolve(true);
+            }
+        });
+    });
+}
+
+function verifyAndDecode(token) {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, secretCode, (err, decoded) => {
+            if (err) {
+                console.error(`verify token error: ${err}`);
+                reject(false);
+            } else {
+                resolve(decoded);
             }
         });
     });
@@ -140,6 +153,7 @@ function getTokenExpiresIn() {
 module.exports = {
     init: init,
     verify: verify,
+    verifyAndDecode: verifyAndDecode,
     verifyToken: verifyToken,
     requireAuth: requireAuth,
     getNewTokenFromRequest: getNewTokenFromRequest,
