@@ -27,6 +27,18 @@ function _run(sql, params = []) {
     });
 }
 
+function _all(sql, params = []) {
+    return new Promise((resolve, reject) => {
+        db_usr.all(sql, params, function (err, rows) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+}
+
 /**
  * Init and bind the database resource
  * @param {*} _settings
@@ -230,19 +242,41 @@ function setRoles(roles) {
 /**
  * Remove roles from database
  */
-function removeRoles(roles) {
-    return new Promise(async function (resolve, reject) {
-        try {
-            const sql = "DELETE FROM roles WHERE name = ?";
-            for (const role of roles) {
-                await _run(sql, [role.id]);
+async function removeRoles(roles) {
+    const roleIds = new Set(roles.map(role => role.id));
+
+    try {
+        const users = await _all("SELECT username, info FROM users");
+        for (const user of users) {
+            if (!user.info) {
+                continue;
             }
-            resolve();
-        } catch (err) {
-            logger.error(`usrstorage.remove role failed! ${err}`);
-            reject();
+            let info;
+            try {
+                info = JSON.parse(user.info);
+            } catch (err) {
+                logger.warn(`usrstorage.remove role skipped invalid user info for ${user.username}`);
+                continue;
+            }
+            if (!Array.isArray(info.roles)) {
+                continue;
+            }
+            const filteredRoles = info.roles.filter(roleId => !roleIds.has(roleId));
+            if (filteredRoles.length !== info.roles.length) {
+                info.roles = filteredRoles;
+                user.info = JSON.stringify(info);
+                await _run("UPDATE users SET info = ? WHERE username = ?", [user.info, user.username]);
+            }
         }
-    });
+
+        const sql = "DELETE FROM roles WHERE name = ?";
+        for (const role of roles) {
+            await _run(sql, [role.id]);
+        }
+    } catch (err) {
+        logger.error(`usrstorage.remove role failed! ${err}`);
+        throw err;
+    }
 }
 
 /**

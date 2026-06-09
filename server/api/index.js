@@ -106,16 +106,12 @@ function init(_server, _runtime) {
             /**
              * GET Server setting data
              */
-            apiApp.get('/api/settings', function (req, res) {
+            apiApp.get('/api/settings', authMiddleware, function (req, res) {
                 if (runtime.settings) {
-                    let tosend = JSON.parse(JSON.stringify(runtime.settings));
-                    delete tosend.secretCode;
-                    if (tosend.smtp) {
-                        delete tosend.smtp.password;
-                    }
-                    if (tosend.daqstore?.credentials) {
-                        delete tosend.daqstore.credentials;
-                    }
+                    const permission = verifyGroups(req);
+                    const tosend = authJwt.haveAdminPermission(permission)
+                        ? getSanitizedSettings(runtime.settings)
+                        : getPublicSettings(runtime.settings);
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     res.json(tosend);
@@ -232,6 +228,32 @@ function init(_server, _runtime) {
     });
 }
 
+function getPublicSettings(settings) {
+    const tosend = getSanitizedSettings(settings);
+    if (tosend.smtp) {
+        delete tosend.smtp.host;
+        delete tosend.smtp.port;
+        delete tosend.smtp.username;
+    }
+    if (tosend.daqstore) {
+        delete tosend.daqstore.url;
+        delete tosend.daqstore.host;
+    }
+    return tosend;
+}
+
+function getSanitizedSettings(settings) {
+    const tosend = JSON.parse(JSON.stringify(settings));
+    delete tosend.secretCode;
+    if (tosend.smtp) {
+        delete tosend.smtp.password;
+    }
+    if (tosend.daqstore?.credentials) {
+        delete tosend.daqstore.credentials;
+    }
+    return tosend;
+}
+
 function mergeUserSettings(settings) {
     if (settings.language) {
         runtime.settings.language = settings.language;
@@ -342,5 +364,7 @@ module.exports = {
 
     get apiApp() { return apiApp; },
     get server() { return server; },
-    get authJwt() { return authJwt; }
+    get authJwt() { return authJwt; },
+    _getPublicSettings: getPublicSettings,
+    _getSanitizedSettings: getSanitizedSettings
 };
