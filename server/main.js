@@ -7,6 +7,7 @@ const https = require('https');
 const socketIO = require('socket.io');
 const nopt = require("nopt");
 const schedule = require('node-schedule');
+const jwt = require('jsonwebtoken');
 
 const paths = require('./paths');
 const logger = require('./runtime/logger');
@@ -360,6 +361,44 @@ const allowCrossDomain = function (req, res, next) {
     }
     next();
 };
+
+function getCookieValue(req, name) {
+    const cookieHeader = req.headers.cookie;
+    if (!cookieHeader) {
+        return null;
+    }
+    const cookies = cookieHeader.split(';');
+    for (const cookie of cookies) {
+        const [key, ...rest] = cookie.trim().split('=');
+        if (key === name) {
+            return decodeURIComponent(rest.join('='));
+        }
+    }
+    return null;
+}
+
+function snapshotAuth(req, res, next) {
+    if (!settings.secureEnabled) {
+        return next();
+    }
+
+    const token = req.query?.token || req.headers['x-access-token'] || getCookieValue(req, 'fuxa_access');
+    if (!token || token === 'null') {
+        return res.status(401).end();
+    }
+
+    try {
+        const decoded = jwt.verify(token, authJwt.secretCode);
+        if (!decoded?.id || authJwt.isGuestUser(decoded.id, decoded.groups)) {
+            return res.status(401).end();
+        }
+        res.header('Cache-Control', 'no-store');
+        return next();
+    } catch {
+        return res.status(401).end();
+    }
+}
+
 app.use(allowCrossDomain);
 app.use('/', express.static(settings.httpStatic));
 app.use('/home', express.static(settings.httpStatic));
@@ -374,7 +413,7 @@ app.use('/view', express.static(settings.httpStatic));
 app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
 app.use('/_images', express.static(settings.imagesFileDir));
 app.use('/_widgets', express.static(settings.widgetsFileDir));
-app.use('/snapshots', express.static(settings.webcamSnapShotsDir));
+app.use('/snapshots', snapshotAuth, express.static(settings.webcamSnapShotsDir));
 app.use('/ar', express.static(settings.httpStatic));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', { flags: 'a' });
