@@ -16,7 +16,7 @@
         "electron-builder": "^26.3.5"
     },
     "dependencies": {
-        "sqlite3": "5.1.5"
+        "sqlite3": "6.0.1"
     },
     "build": {
         "appId": "com.frangoteam.fuxa",
