@@ -145,6 +145,17 @@ function removeRoles(roles) {
     return new Promise(function (resolve, reject) {
         if (roles && roles.length) {
             usrstorage.removeRoles(roles).then(() => {
+                const roleIds = new Set(roles.map(role => role.id));
+                for (const [username, user] of usersMap) {
+                    if (Array.isArray(user.info?.roles)) {
+                        usersMap.set(username, {
+                            info: Object.assign({}, user.info, {
+                                roles: user.info.roles.filter(roleId => !roleIds.has(roleId))
+                            }),
+                            groups: user.groups
+                        });
+                    }
+                }
                 resolve();
             }).catch(function (err) {
                 logger.error(`users.usrstorage-remove-role failed! ${err}`);
