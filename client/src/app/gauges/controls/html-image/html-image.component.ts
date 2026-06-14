@@ -100,7 +100,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                     image.style['height'] = '100%';
                     image.style['border'] = 'none';
                     if (gaugeSettings.property && gaugeSettings.property.address) {
-                        image.setAttribute('src', gaugeSettings.property.address);
+                        image.setAttribute('src', HtmlImageComponent.withSnapshotAuth(gaugeSettings.property.address));
                     }
                     svgImageContainer.appendChild(image);
                 }
@@ -261,7 +261,30 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         let element = SVG.adopt(svgele.node);
         let img = Utils.searchTreeTagName(element.node, 'IMG');
         if (img) {
-            img.setAttribute('src', `/snapshots${sig.value}?${new Date().getTime()}`);
+            img.setAttribute('src', HtmlImageComponent.withSnapshotAuth(`/snapshots${sig.value}`));
+        }
+    }
+
+    private static withSnapshotAuth(src: string): string {
+        if (!src || !src.startsWith('/snapshots')) {
+            return src;
+        }
+
+        const separator = src.indexOf('?') === -1 ? '?' : '&';
+        const cacheBuster = `t=${new Date().getTime()}`;
+        const token = (window as any).fuxaAccessToken || HtmlImageComponent.getStoredAccessToken();
+        if (!token) {
+            return `${src}${separator}${cacheBuster}`;
+        }
+        return `${src}${separator}token=${encodeURIComponent(token)}&${cacheBuster}`;
+    }
+
+    private static getStoredAccessToken(): string {
+        try {
+            const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            return currentUser?.token || null;
+        } catch {
+            return null;
         }
     }
 }

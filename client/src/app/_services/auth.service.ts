@@ -35,6 +35,7 @@ export class AuthService {
 				}
 			}
 		}
+		this.publishAccessToken(this.currentUser?.token);
 		this.currentUser$.next(this.currentUser);
 
 		if (this.useRefreshCookieAuth) {
@@ -68,6 +69,7 @@ export class AuthService {
 							this.currentUser.infoRoles = JSON.parse(this.currentUser.info)?.roles;
 						}
 						this.saveUserToken(this.currentUser);
+						this.publishAccessToken(this.currentUser.token);
 						this.currentUser$.next(this.currentUser);
 					}
 					observer.next(null);
@@ -106,6 +108,10 @@ export class AuthService {
 		return this.currentUser?.token;
 	}
 
+	private publishAccessToken(token: string = null) {
+		(window as any).fuxaAccessToken = token || null;
+	}
+
     isAdmin(): boolean {
         if (this.currentUser && UserGroups.ADMINMASK.indexOf(this.currentUser.groups) !== -1) {
             return true;
@@ -130,6 +136,7 @@ export class AuthService {
 		}
 		this.currentUser.token = token;
 		this.saveUserToken(this.currentUser);
+		this.publishAccessToken(token);
 		this.currentUser$.next(this.currentUser);
 	}
 
@@ -157,6 +164,7 @@ export class AuthService {
 		const result = !!this.currentUser;
 		this.currentUser = null;
 		sessionStorage.removeItem('currentUser');
+		this.publishAccessToken(null);
 		this.currentUser$.next(this.currentUser);
 		return result;
 	}
@@ -201,6 +209,7 @@ export class AuthService {
 					}
 					this.currentUser = refreshed;
 					this.saveUserToken(this.currentUser);
+					this.publishAccessToken(this.currentUser.token);
 					this.currentUser$.next(this.currentUser);
 				}
 			},
