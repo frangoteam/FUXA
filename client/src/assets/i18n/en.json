@@ -860,6 +860,7 @@
     "shapes.action-rotate": "Rotate",
     "shapes.action-move": "Move",
     "shapes.action-refreshImage": "Refresh image",
+    "shapes.action-loadImage": "Load image",
 
     "shapes.event-click": "Click",
     "shapes.event-dblclick": "DoubleClick",
@@ -1327,6 +1328,7 @@
     "gauges.property-action-toX" : "To position X",
     "gauges.property-action-toY" : "To position Y",
     "gauges.property-action-duration" : "Duration",
+    "gauges.property-action-image-url": "Image URL",
     "gauges.property-events-mapping-from": "Context variable",
     "gauges.property-map-variable": "Add context variable to bind",
     "gauges.property-head-remove-mapvariable": "Remove the bind",

@@ -41,6 +41,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         rotate: GaugeActionsType.rotate,
         move: GaugeActionsType.move,
         refreshImage: GaugeActionsType.refreshImage,
+        loadImage: GaugeActionsType.loadImage,
     };
 
     constructor() {
@@ -163,7 +164,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         if (sig.value && ga.property.actions) {
             ga.property.actions.forEach(act => {
                 //process refresh image only
-                if (act.variableId === sig.id && this.actionsType[act.type] === GaugeActionsType.refreshImage) {
+                if (act.variableId === sig.id && this.actionsType[act.type] === this.actionsType.refreshImage) {
                     this.actionRefreshImage(act, svgele, sig, gaugeStatus);
                     return;
                 }
@@ -208,7 +209,11 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                     if (ga.property.actions) {
                         ga.property.actions.forEach(act => {
                             if (act.variableId === sig.id) {
-                                ShapesComponent.processAction(act, svgele, value, gaugeStatus, propertyColor);
+                                if (this.actionsType[act.type] === this.actionsType.loadImage) {
+                                    HtmlImageComponent.actionLoadImage(act, svgele, value);
+                                } else {
+                                    ShapesComponent.processAction(act, svgele, value, gaugeStatus, propertyColor);
+                                }
                             }
                         });
                     }
@@ -262,6 +267,23 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         let img = Utils.searchTreeTagName(element.node, 'IMG');
         if (img) {
             img.setAttribute('src', HtmlImageComponent.withSnapshotAuth(`/snapshots${sig.value}`));
+        }
+    }
+
+    static actionLoadImage(act: GaugeAction, svgele: any, value: number) {
+        const actionValue = GaugeBaseComponent.checkBitmask(act.bitmask, value);
+        const url = act.options?.url;
+        if (!url || act.range.min > actionValue || act.range.max < actionValue) {
+            return;
+        }
+        let element = SVG.adopt(svgele.node);
+        let img = Utils.searchTreeTagName(element.node, 'IMG');
+        if (!img) {
+            return;
+        }
+        if (img.getAttribute('data-load-image-url') !== url) {
+            img.setAttribute('src', HtmlImageComponent.withSnapshotAuth(url));
+            img.setAttribute('data-load-image-url', url);
         }
     }
 
