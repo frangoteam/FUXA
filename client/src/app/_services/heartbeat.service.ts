@@ -27,7 +27,9 @@ export class HeartbeatService {
 		if (this.server) {
 			this.stopHeartbeatPolling();
 			this.heartbeatSubscription = interval(this.heartbeatInterval).subscribe(() => {
-				this.server.heartbeat(this.activity).subscribe(res => {
+				const activitySinceLastHeartbeat = this.activity;
+				this.activity = false;
+				this.server.heartbeat(activitySinceLastHeartbeat).subscribe(res => {
 					if (res?.message === 'tokenRefresh' && res?.token) {
 						this.authService.setNewToken(res.token, res.data);
 					} else if (res?.message === 'guest' && res?.token) {
@@ -51,6 +53,7 @@ export class HeartbeatService {
 	}
 
 	setActivity(activity: boolean) {
+		console.log(`HeartbeatService: setActivity(${activity})`);
 		this.activity = activity;
 	}
 }
