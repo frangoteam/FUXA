@@ -324,6 +324,7 @@ export enum GaugeActionsType {
     move = 'shapes.action-move',
     monitor = 'shapes.action-monitor',
     refreshImage = 'shapes.action-refreshImage',
+    loadImage = 'shapes.action-loadImage',
     start = 'shapes.action-start',
     pause = 'shapes.action-pause',
     reset = 'shapes.action-reset',
@@ -355,6 +356,10 @@ export class GaugeActionMove {
     toX = 0;
     toY = 0;
     duration = 100;
+}
+
+export class GaugeActionLoadImage {
+    url: '';
 }
 
 export class GaugePropertyColor {
