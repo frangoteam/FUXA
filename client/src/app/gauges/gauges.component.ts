@@ -42,6 +42,13 @@ import { HtmlVideoComponent } from './controls/html-video/html-video.component';
 @Injectable()
 export class GaugesManager {
 
+    private static readonly SvgShapeElements = 'path, rect, circle, ellipse, line, polyline, polygon, text, image, use';
+    private static readonly ShapeTypeTags = [
+        ShapesComponent.TypeTag,
+        ProcEngComponent.TypeTag,
+        ApeShapesComponent.TypeTag
+    ];
+
     @Output() onchange: EventEmitter<Variable> = new EventEmitter();
     @Output() onevent: EventEmitter<Event> = new EventEmitter();
 
@@ -64,9 +71,8 @@ export class GaugesManager {
     // list of gauges with input
     static GaugeWithProperty = [HtmlInputComponent.prefix, HtmlSelectComponent.prefix, HtmlSwitchComponent.prefix];
     // list of gauges tags to check who as events like mouse click
-    static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ShapesComponent.TypeTag, ProcEngComponent.TypeTag,
-    ApeShapesComponent.TypeTag, HtmlImageComponent.TypeTag, HtmlInputComponent.TypeTag, PanelComponent.TypeTag, HtmlSelectComponent.TypeTag,
-    HtmlSwitchComponent.TypeTag];
+    static GaugeWithEvents = [HtmlButtonComponent.TypeTag, GaugeSemaphoreComponent.TypeTag, ...GaugesManager.ShapeTypeTags,
+    HtmlImageComponent.TypeTag, HtmlInputComponent.TypeTag, PanelComponent.TypeTag, HtmlSelectComponent.TypeTag, HtmlSwitchComponent.TypeTag];
     // list of gauges tags to check who as events like mouse click
     static GaugeWithActions = [ApeShapesComponent, PipeComponent, ProcEngComponent, ShapesComponent, HtmlButtonComponent, HtmlSelectComponent,
         ValueComponent, HtmlInputComponent, GaugeSemaphoreComponent, HtmlImageComponent, PanelComponent, HtmlVideoComponent];
@@ -156,6 +162,23 @@ export class GaugesManager {
             }
         }
         return false;
+    }
+
+    private setShapePointerEvents(ga: GaugeSettings, element: Element) {
+        if (!GaugesManager.isShapeType(ga.type) || !element) {
+            return;
+        }
+
+        if (element.matches(GaugesManager.SvgShapeElements)) {
+            element.setAttribute('pointer-events', 'all');
+        }
+        element.querySelectorAll(GaugesManager.SvgShapeElements).forEach(shapeElement => {
+            shapeElement.setAttribute('pointer-events', 'all');
+        });
+    }
+
+    private static isShapeType(type: string): boolean {
+        return !!type && GaugesManager.ShapeTypeTags.some(typeTag => type.startsWith(typeTag));
     }
 
     /**
@@ -293,6 +316,7 @@ export class GaugesManager {
             let ele = document.getElementById(ga.id);
             if (ele) {
                 ele.style.cursor = 'pointer';
+                this.setShapePointerEvents(ga, ele);
             }
         }
         let htmlEvents = this.getHtmlEvents(ga);
@@ -738,9 +762,23 @@ export class GaugesManager {
                     HtmlInputComponent.initElementColor(bkcolor, color, elems[i]);
                 } else if (type.startsWith(HtmlSelectComponent.TypeTag)) {
                     HtmlSelectComponent.initElementColor(bkcolor, color, elems[i]);
+                } else if (GaugesManager.isShapeType(type)) {
+                    GaugesManager.setSvgShapeColor(elems[i], 'fill', bkcolor);
+                    GaugesManager.setSvgShapeColor(elems[i], 'stroke', color);
                 }
             }
         }
+    }
+
+    private static setSvgShapeColor(element: Element, attribute: 'fill' | 'stroke', color: string) {
+        if (!color) {
+            return;
+        }
+
+        element.setAttribute(attribute, color);
+        element.querySelectorAll(`[${attribute}]`).forEach(child => {
+            child.setAttribute(attribute, color);
+        });
     }
 
 

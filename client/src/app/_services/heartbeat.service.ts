@@ -53,7 +53,6 @@ export class HeartbeatService {
 	}
 
 	setActivity(activity: boolean) {
-		console.log(`HeartbeatService: setActivity(${activity})`);
 		this.activity = activity;
 	}
 }
