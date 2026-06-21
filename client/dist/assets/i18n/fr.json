@@ -701,6 +701,8 @@
 
   "editor.tools-zoom-title": "Outil zoom [Ctrl + Haut / Bas]",
   "editor.tools-grid-title": "Afficher/Masquer la grille",
+  "editor.tools-movestep-title": "Pas de déplacement",
+  "editor.tools-movestep-custom": "Personnalisé",
   "editor.tools-undo-title": "Annuler [Z]",
   "editor.tools-redo-title": "Refaire [y]",
   "editor.tools-clone-title": "Dupliquer [d]",

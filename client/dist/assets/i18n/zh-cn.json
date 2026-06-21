@@ -701,6 +701,8 @@
 
     "editor.tools-zoom-title": "缩放工具[Ctrl+上/下]",
     "editor.tools-grid-title": "显示隐藏网格",
+    "editor.tools-movestep-title": "移动步长",
+    "editor.tools-movestep-custom": "自定义",
     "editor.tools-undo-title": "撤销 [Z]",
     "editor.tools-redo-title": "重做 [Y]",
     "editor.tools-clone-title": "复制元素 [D]",

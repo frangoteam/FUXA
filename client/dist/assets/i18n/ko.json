@@ -340,6 +340,8 @@
     "editor.tools-launch-title": "현재 뷰 실행",
     "editor.tools-zoom-title": "확대 도구 [Ctrl+Up/Down]",
     "editor.tools-grid-title": "격자 보이기/숨기기",
+    "editor.tools-movestep-title": "이동 간격",
+    "editor.tools-movestep-custom": "사용자 지정",
     "editor.tools-undo-title": "실행취소 [Z]",
     "editor.tools-redo-title": "되돌리기 [Y]",
     "editor.tools-clone-title": "개체 복사 [D]",
