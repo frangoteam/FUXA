@@ -340,6 +340,8 @@
     "editor.tools-launch-title": "Iniciar vista actual",
     "editor.tools-zoom-title": "Herramienta de zoom [Ctrl + Arriba / Abajo]",
     "editor.tools-grid-title": "Mostrar Ocultar cuadrícula",
+    "editor.tools-movestep-title": "Paso de movimiento",
+    "editor.tools-movestep-custom": "Personalizado",
     "editor.tools-undo-title": "Deshacer [Z]",
     "editor.tools-redo-title": "Rehacer [Y]",
     "editor.tools-clone-title": "Elemento duplicado [D]",

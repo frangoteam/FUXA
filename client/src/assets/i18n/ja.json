@@ -718,6 +718,8 @@
 
     "editor.tools-zoom-title": "ズームツール [Ctrl+Up/Down]",
     "editor.tools-grid-title": "グリッドの表示/非表示",
+    "editor.tools-movestep-title": "移動ステップ",
+    "editor.tools-movestep-custom": "カスタム",
     "editor.tools-undo-title": "元に戻す [Z]" ,
     "editor.tools-redo-title": "やり直し [Y]",
     "editor.tools-clone-title": "要素の複製 [D]",

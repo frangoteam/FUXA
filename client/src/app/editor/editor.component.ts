@@ -91,6 +91,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     imagefile: string;
     ctrlInitParams: any;
     gridOn = false;
+    moveStep = 1;
+    readonly moveStepOptions = [1, 2, 3, 5, 10];
     isAnySelected = false;
     selectedElement: SelElement = new SelElement();
     panelsState: PanelsStateType = {
@@ -282,6 +284,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             );
 
             this.winRef.nativeWindow.svgEditor.init();
+            this.winRef.nativeWindow.svgEditor.setMoveStep(this.moveStep);
             $(initContextmenu);
 
         } catch (err) {
@@ -845,6 +848,22 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.gridOn = this.gridOn = !this.gridOn;
         this.winRef.nativeWindow.svgEditor.clickExtension('view_grid');
         this.winRef.nativeWindow.svgEditor.enableGridSnapping(this.gridOn);
+    }
+
+    onMoveStepChange(step: number | string) {
+        const parsedStep = Number(step);
+        if (!Number.isInteger(parsedStep) || parsedStep < 1) {
+            return;
+        }
+        this.moveStep = parsedStep;
+        this.winRef.nativeWindow.svgEditor.setMoveStep(parsedStep);
+    }
+
+    onCustomMoveStepEnter(event: KeyboardEvent, step: string, menuTrigger: any) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.onMoveStepChange(step);
+        setTimeout(() => menuTrigger.closeMenu());
     }
 
     /**

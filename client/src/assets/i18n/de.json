@@ -580,6 +580,8 @@
 
     "editor.tools-zoom-title": "Zoom-Werkzeug [Strg+Auf/Ab]",
     "editor.tools-grid-title": "Raster einblenden/ausblenden",
+    "editor.tools-movestep-title": "Bewegungsschritt",
+    "editor.tools-movestep-custom": "Benutzerdefiniert",
     "editor.tools-undo-title": "Rückgängig [Z]",
     "editor.tools-redo-title": "Wiederherstellen [Y]",
     "editor.tools-clone-title": "Element duplizieren [D]",
