@@ -311,6 +311,8 @@
 	"editor.tools-launch-title": "Mevcut görünüme geç",
 	"editor.tools-zoom-title": "Yakınlaştırma Aracı [Ctrl+Yukarı/Aşağı]",
 	"editor.tools-grid-title": "Kılavuz çizgilerini göster/gizle",
+	"editor.tools-movestep-title": "Hareket adımı",
+	"editor.tools-movestep-custom": "Özel",
 	"editor.tools-undo-title": "Geri al [Z]",
 	"editor.tools-redo-title": "Tekrarla [Y]",
 	"editor.tools-clone-title": "Öğeyi Çoğalt [D]",

@@ -250,6 +250,43 @@
     line-height: 34px;
 }
 
+.move-step-btn {
+    height: 34px;
+    min-width: 60px !important;
+    padding: 0 3px !important;
+    line-height: 34px;
+    color: inherit;
+}
+
+.move-step-btn mat-icon {
+    margin-right: 3px;
+    vertical-align: middle;
+}
+
+.move-step-custom {
+    display: flex;
+    align-items: center;
+    height: 48px;
+    gap: 3px;
+    padding: 0 16px;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+.move-step-custom input {
+    width: 38px;
+    box-sizing: border-box;
+}
+
+::ng-deep .move-step-menu {
+    min-width: 180px !important;
+    max-width: 180px !important;
+}
+
+::ng-deep .move-step-menu .mat-mdc-menu-item-text {
+    margin-left: 8px;
+}
+
 .main-btn .to-top {
     display: inline-block;    ;
     height: 34px;
