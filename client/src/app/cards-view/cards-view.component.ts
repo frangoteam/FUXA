@@ -119,6 +119,7 @@ export class CardsViewComponent implements OnInit, AfterViewInit {
                 }
                 this.itemChange(item, itemComponent);
                 this.changeDetector.detectChanges();
+                this.gridOptions.itemResizeCallback?.(item, itemComponent)
             }
         };
         this.dashboard.push(item);
