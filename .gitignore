@@ -66,13 +66,13 @@ typings/
 *.code-workspace
 
 #appdata
-_appdata/
+#_appdata/
 
 # logs
 _logs/
 
 # database
-_db/
+# _db/
 
 # ex.packages
 _pkg/
@@ -84,7 +84,7 @@ _reports/
 _certificates/
 
 # appdata
-server/_appdata
+# server/_appdata
 #server/package-lock.json
 #client/package-lock.json
 
