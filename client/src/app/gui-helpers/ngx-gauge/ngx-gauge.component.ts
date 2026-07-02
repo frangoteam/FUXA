@@ -7,6 +7,15 @@ import { Subject, interval, take, takeUntil } from 'rxjs';
 declare const Gauge: any;
 declare const Donut: any;
 
+// In Electron (nodeIntegration: true), gauge.js detects module.exports and skips setting window globals.
+// Fall back to require() to get the CommonJS export directly.
+function getGaugeClasses(): { Gauge: any, Donut: any } {
+    if (typeof Gauge !== 'undefined') {
+        return { Gauge, Donut };
+    }
+    return require('../../../assets/lib/gauge/gauge.js');
+}
+
 @Component({
     selector: 'ngx-gauge',
     templateUrl: './ngx-gauge.component.html',
@@ -131,14 +140,15 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
 
     init(type: GaugeType) {
         this.type = type;
+        const { Gauge: GaugeClass, Donut: DonutClass } = getGaugeClasses();
         if (type === GaugeType.Gauge) {
-            this.gauge = new Gauge(this.canvas.nativeElement);
+            this.gauge = new GaugeClass(this.canvas.nativeElement);
             this.gauge.setTextField(this.gaugetext.nativeElement);
         } else if (type === GaugeType.Zones) {
-            this.gauge = new Gauge(this.canvas.nativeElement);
+            this.gauge = new GaugeClass(this.canvas.nativeElement);
             this.gauge.setTextField(this.gaugetext.nativeElement);
         } else if (type === GaugeType.Donut) {
-            this.gauge = new Donut(this.canvas.nativeElement);
+            this.gauge = new DonutClass(this.canvas.nativeElement);
             this.gauge.setTextField(this.gaugetext.nativeElement);
         }
         const value = Number(this.options.minValue) + 1;
