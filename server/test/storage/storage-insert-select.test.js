@@ -3,10 +3,29 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const sqlite3 = require('sqlite3').verbose();
 
 const prjstorage = require('../../runtime/project/prjstorage');
 const apiKeysStorage = require('../../runtime/apikeys/apikeysStorage');
 const alarmstorage = require('../../runtime/alarms/alarmstorage');
+
+function runSql(db, sql, params = []) {
+    return new Promise((resolve, reject) => {
+        db.run(sql, params, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(this);
+            }
+        });
+    });
+}
+
+function closeDb(db) {
+    return new Promise((resolve, reject) => {
+        db.close(err => err ? reject(err) : resolve());
+    });
+}
 
 function makeLogger() {
     return {
@@ -120,6 +139,7 @@ describe('Storage insert/select regression', () => {
                 offtime: 0,
                 acktime: 0,
                 userack: '',
+                value: 42,
                 toremove: false,
                 subproperty: { group: 'default', text: 'High temperature' }
             };
@@ -134,6 +154,36 @@ describe('Storage insert/select regression', () => {
             const history = await alarmstorage.getAlarmsHistory(0, Number.MAX_SAFE_INTEGER);
             expect(history.length).to.be.greaterThan(0);
             expect(history[0].nametype).to.equal('dev1.tag1');
+            expect(history[0].value).to.equal('42');
+        });
+
+        it('migrates old chronicle schema without value column', async () => {
+            alarmstorage.close();
+            const dbfile = path.join(workDir, 'alarms.fuxap.db');
+            fs.unlinkSync(dbfile);
+            const db = new sqlite3.Database(dbfile);
+            await runSql(db, 'CREATE TABLE alarms (nametype TEXT PRIMARY KEY, type TEXT, status TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER)');
+            await runSql(db, 'CREATE TABLE chronicle (Sn INTEGER, nametype TEXT, type TEXT, status TEXT, text TEXT, grp TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER, userack TEXT, PRIMARY KEY(Sn AUTOINCREMENT))');
+            await closeDb(db);
+
+            await alarmstorage.init({ workDir }, makeLogger());
+
+            const alarm = {
+                getId: () => 'dev1.tag2',
+                type: 'analog',
+                status: 'active',
+                ontime: 1710000001000,
+                offtime: 0,
+                acktime: 0,
+                userack: '',
+                value: 73,
+                toremove: false,
+                subproperty: { group: 'default', text: 'Pressure %d' }
+            };
+
+            await alarmstorage.setAlarms([alarm]);
+            const history = await alarmstorage.getAlarmsHistory(0, Number.MAX_SAFE_INTEGER);
+            expect(history.find(row => row.nametype === 'dev1.tag2').value).to.equal('73');
         });
     });
 });

@@ -197,6 +197,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
         ).subscribe(result => {
             if (result) {
                 result.forEach(alr => {
+                    alr.text = this.formatAlarmText(alr.text, alr.value);
                     alr.status = this.getStatus(alr.status);
                     alr.type = this.getPriority(alr.type);
                 });

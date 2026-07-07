@@ -54,14 +54,38 @@ function _bind() {
         });
         // prepare query
         var sql = "CREATE TABLE if not exists alarms (nametype TEXT PRIMARY KEY, type TEXT, status TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER);";
-        sql += "CREATE TABLE if not exists chronicle (Sn INTEGER, nametype TEXT, type TEXT, status TEXT, text TEXT, grp TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER, userack TEXT, PRIMARY KEY(Sn AUTOINCREMENT));";
+        sql += "CREATE TABLE if not exists chronicle (Sn INTEGER, nametype TEXT, type TEXT, status TEXT, text TEXT, grp TEXT, ontime INTEGER, offtime INTEGER, acktime INTEGER, userack TEXT, value TEXT, PRIMARY KEY(Sn AUTOINCREMENT));";
         db_alarms.exec(sql, function (err) {
             if (err) {
                 logger.error('alarmsstorage.failed-to-bind: ' + err);
                 reject();
             } else {
-                resolve(dbfileExist);
+                _ensureColumn('chronicle', 'value', 'TEXT').then(() => {
+                    resolve(dbfileExist);
+                }).catch(reject);
             }
+        });
+    });
+}
+
+function _ensureColumn(table, column, definition) {
+    return new Promise((resolve, reject) => {
+        db_alarms.all(`PRAGMA table_info(${table})`, function (err, rows) {
+            if (err) {
+                reject(err);
+                return;
+            }
+            if (rows.some(row => row.name === column)) {
+                resolve();
+                return;
+            }
+            db_alarms.run(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`, function (alterErr) {
+                if (alterErr) {
+                    reject(alterErr);
+                } else {
+                    resolve();
+                }
+            });
         });
     });
 }
@@ -164,8 +188,8 @@ function setAlarms(alarms) {
                     [alarmId, alr.type, status, alr.ontime, alr.offtime, alr.acktime]
                 );
                 await _run(
-                    "INSERT OR REPLACE INTO chronicle (Sn, nametype, type, status, text, grp, ontime, offtime, acktime, userack) VALUES ((SELECT Sn from chronicle WHERE ontime = ? AND nametype = ?), ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    [alr.ontime, alarmId, alarmId, alr.type, status, alr.subproperty.text, grp, alr.ontime, alr.offtime, alr.acktime, userack]
+                    "INSERT OR REPLACE INTO chronicle (Sn, nametype, type, status, text, grp, ontime, offtime, acktime, userack, value) VALUES ((SELECT Sn from chronicle WHERE ontime = ? AND nametype = ?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    [alr.ontime, alarmId, alarmId, alr.type, status, alr.subproperty.text, grp, alr.ontime, alr.offtime, alr.acktime, userack, alr.value]
                 );
                 if (alr.toremove) {
                     await _run("DELETE FROM alarms WHERE nametype = ?", [alarmId]);
