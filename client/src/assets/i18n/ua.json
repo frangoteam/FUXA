@@ -314,6 +314,7 @@
     "shapes.action-clockwise": "Повернути за годинниковою стрілкою",
     "shapes.action-anticlockwise": "Повернути проти годинникової стрілки",
     "shapes.action-downup": "Вверх і вниз",
+    "shapes.action-moveByTags": "Move by tags",
 
     "pipe.property-props": "Властивості",
     "pipe.property-border-width": "Ширина границі",
@@ -467,6 +468,13 @@
     "gauges.property-actions": "Дії",
     "gauges.property-action-type": "Тип",
     "gauges.property-action-param": "Id Дії",
+    "gauges.property-action-duration": "Duration",
+    "gauges.property-action-tagX": "Position X tag",
+    "gauges.property-action-tagY": "Position Y tag",
+    "gauges.property-action-value-min": "Value min",
+    "gauges.property-action-value-max": "Value max",
+    "gauges.property-action-position-min": "Position min",
+    "gauges.property-action-position-max": "Position max",
     "gauges.property-events-mapping-from": "Змінні для переназначення",
 
     "bag.property-ticks": "Ticks",

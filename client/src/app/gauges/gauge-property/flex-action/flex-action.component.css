@@ -47,3 +47,35 @@
 ::ng-deep .input-slider span {
     font-size: 14px !important;
 }
+
+.move-by-tags {
+    display: block;
+}
+
+.move-by-tags-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.move-by-tags-row mat-slide-toggle {
+    min-width: 48px;
+}
+
+.move-by-tags-head {
+    align-items: flex-end;
+}
+
+.move-by-tags-scale {
+    margin-left: 58px;
+}
+
+.move-by-tags-scale input {
+    width: 70px;
+}
+
+.move-by-tags-scale.disabled {
+    opacity: 0.45;
+    pointer-events: none;
+}

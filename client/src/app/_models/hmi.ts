@@ -322,6 +322,7 @@ export enum GaugeActionsType {
     downup = 'shapes.action-downup',
     rotate = 'shapes.action-rotate',
     move = 'shapes.action-move',
+    moveByTags = 'shapes.action-moveByTags',
     monitor = 'shapes.action-monitor',
     refreshImage = 'shapes.action-refreshImage',
     loadImage = 'shapes.action-loadImage',
@@ -355,6 +356,22 @@ export class GaugeActionRotate {
 export class GaugeActionMove {
     toX = 0;
     toY = 0;
+    duration = 100;
+}
+
+export class GaugeActionMoveByTags {
+    variableXId: string;
+    variableYId: string;
+    enableX = true;
+    enableY = true;
+    valueXMin = 0;
+    valueXMax = 100;
+    positionXMin = 0;
+    positionXMax = 100;
+    valueYMin = 0;
+    valueYMax = 100;
+    positionYMin = 0;
+    positionYMax = 100;
     duration = 100;
 }
 

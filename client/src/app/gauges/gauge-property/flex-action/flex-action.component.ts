@@ -3,7 +3,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../../_helpers/utils';
 
-import { GaugeProperty, GaugeAction, GaugeRangeProperty, GaugeActionsType, GaugeActionBlink, GaugeActionRotate, GaugeActionMove, GaugeActionLoadImage } from '../../../_models/hmi';
+import { GaugeProperty, GaugeAction, GaugeRangeProperty, GaugeActionsType, GaugeActionBlink, GaugeActionRotate, GaugeActionMove, GaugeActionMoveByTags, GaugeActionLoadImage } from '../../../_models/hmi';
 
 @Component({
     selector: 'flex-action',
@@ -21,6 +21,7 @@ export class FlexActionComponent implements OnInit {
     actionBlink = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.blink);
     actionRotate = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.rotate);
     actionMove = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.move);
+    actionMoveByTags = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.moveByTags);
     actionLoadImage = Object.keys(GaugeActionsType).find(key => GaugeActionsType[key] === GaugeActionsType.loadImage);
     itemtype: any;
     slideView = true;
@@ -32,6 +33,11 @@ export class FlexActionComponent implements OnInit {
         if (this.property) {
             this.actions = this.property.actions;
         }
+        this.actions?.forEach(act => {
+            if (this.isMoveByTags(act)) {
+                this.ensureMoveByTagsOptions(act);
+            }
+        });
         if (!this.actions || this.actions.length <= 0) {
             this.onAddAction();
         }
@@ -48,7 +54,7 @@ export class FlexActionComponent implements OnInit {
         if (this.actions) {
             result = [];
             this.actions.forEach(act => {
-                if (act.variableId) {
+                if (act.variableId || this.isMoveByTagsConfigured(act)) {
                     result.push(act);
                 }
             });
@@ -76,6 +82,15 @@ export class FlexActionComponent implements OnInit {
         this.actions[index].bitmask = event.bitmask;
     }
 
+    setMoveByTagsVariable(item: GaugeAction, axis: 'x' | 'y', event) {
+        this.ensureMoveByTagsOptions(item);
+        if (axis === 'x') {
+            item.options.variableXId = event.variableId;
+        } else {
+            item.options.variableYId = event.variableId;
+        }
+    }
+
     private addAction(ga: GaugeAction) {
         if (!this.actions) {
             this.actions = [];
@@ -90,8 +105,27 @@ export class FlexActionComponent implements OnInit {
             ga.options = new GaugeActionRotate();
         } else if (type === this.actionMove && typeof(ga.options) !== typeof(GaugeActionMove)) {
             ga.options = new GaugeActionMove();
+        } else if (type === this.actionMoveByTags) {
+            this.ensureMoveByTagsOptions(ga);
         } else if (type === this.actionLoadImage && typeof(ga.options) !== typeof(GaugeActionLoadImage)) {
             ga.options = new GaugeActionLoadImage();
         }
+    }
+
+    isMoveByTags(item: GaugeAction): boolean {
+        return item?.type === this.actionMoveByTags;
+    }
+
+    private ensureMoveByTagsOptions(ga: GaugeAction) {
+        if (!ga.options || !('enableX' in ga.options) || !('enableY' in ga.options)) {
+            ga.options = Object.assign(new GaugeActionMoveByTags(), ga.options || {});
+            return;
+        }
+        ga.options = Object.assign(new GaugeActionMoveByTags(), ga.options);
+    }
+
+    private isMoveByTagsConfigured(act: GaugeAction): boolean {
+        return this.isMoveByTags(act) &&
+            ((act.options?.enableX && act.options?.variableXId) || (act.options?.enableY && act.options?.variableYId));
     }
 }
