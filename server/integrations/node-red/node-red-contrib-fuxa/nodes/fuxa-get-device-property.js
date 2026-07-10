@@ -6,6 +6,11 @@ module.exports = function(RED) {
 
         this.on('input', async function(msg) {
             try {
+                if (!fuxa || typeof fuxa.getDeviceProperty !== 'function') {
+                    node.error('FUXA getDeviceProperty not available', msg);
+                    return;
+                }
+
                 var deviceName = config.deviceName || msg.deviceName;
                 var property = config.property || msg.property;
 

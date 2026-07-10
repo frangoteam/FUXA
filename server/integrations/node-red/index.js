@@ -62,6 +62,17 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
                 getDaq: require(path.join(settings.appDir, 'runtime/storage/daqstorage')).getNodeValues,
                 getTagId: require(path.join(settings.appDir, 'runtime/devices')).getTagId,
                 getHistoricalTags: require(path.join(settings.appDir, 'runtime/devices')).getHistoricalTags,
+                getDeviceProperty: (deviceName, property) => {
+                    const deviceProperty = require(path.join(settings.appDir, 'runtime/devices')).getDeviceProperty(deviceName);
+                    return deviceProperty ? deviceProperty[property] : undefined;
+                },
+                setDeviceProperty: (deviceName, property, value) => {
+                    const devices = require(path.join(settings.appDir, 'runtime/devices'));
+                    const deviceProperty = devices.getDeviceProperty(deviceName);
+                    if (!deviceProperty) return null;
+                    deviceProperty[property] = value;
+                    return devices.setDeviceProperty(deviceName, deviceProperty);
+                },
                 emit: events.emit.bind(events),
                 on: events.on.bind(events),
                 removeListener: events.removeListener.bind(events),
