@@ -314,6 +314,8 @@
     "editor.tools-launch-title": "Iniciar a Atual Visualização",
     "editor.tools-zoom-title": "Ferramenta Zoom [Ctrl+Up/Down]",
     "editor.tools-grid-title": "Mostrar Ocultar Rede",
+    "editor.tools-movestep-title": "Passo de movimento",
+    "editor.tools-movestep-custom": "Personalizado",
     "editor.tools-undo-title": "Desfazer [Z]",
     "editor.tools-redo-title": "Refazer [Y]",
     "editor.tools-clone-title": "Duplicar Elemento [D]",

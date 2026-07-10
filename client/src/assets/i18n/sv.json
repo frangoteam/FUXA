@@ -700,6 +700,8 @@
 
     "editor.tools-zoom-title": "Zoomverktyg [Ctrl+Upp/Ner]",
     "editor.tools-grid-title": "Visa/Dölj rutnät",
+    "editor.tools-movestep-title": "Förflyttningssteg",
+    "editor.tools-movestep-custom": "Anpassat",
     "editor.tools-undo-title": "Ångra [Z]",
     "editor.tools-redo-title": "Gör om [Y]",
     "editor.tools-clone-title": "Duplicera element [D]",

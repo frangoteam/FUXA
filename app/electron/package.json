@@ -12,11 +12,11 @@
     "author": "frangoteam",
     "license": "MIT",
     "devDependencies": {
-        "electron": "^39.2.6",
-        "electron-builder": "^26.3.5"
+        "electron": "39.8.10",
+        "electron-builder": "25.1.8"
     },
     "dependencies": {
-        "sqlite3": "5.1.5"
+        "sqlite3": "5.1.7"
     },
     "build": {
         "appId": "com.frangoteam.fuxa",

@@ -50,6 +50,23 @@ function init(_server, _runtime) {
             apiApp.use(bodyParser.urlencoded({limit:maxApiRequestSize, extended: true}));
             authJwt.init(runtime.settings.secureEnabled, runtime.settings.secretCode, runtime.settings.tokenExpiresIn);
             const authMiddleware = verifyApiOrToken(runtime);
+
+            const authLimiter = rateLimit({
+                windowMs: runtime.settings.authRateLimitWindowMs || 5 * 60 * 1000,
+                max: runtime.settings.authRateLimitMax || 100,
+                skip: (req) => req.path !== '/api/signin' && req.path !== '/api/refresh'
+            });
+
+            const limiter = rateLimit({
+                windowMs: runtime.settings.apiRateLimitWindowMs || 5 * 60 * 1000,
+                max: runtime.settings.apiRateLimitMax || 1000,
+                skip: (req) => req.path === '/api/version'
+            });
+
+            // Apply before route handlers so sub-routers are covered too.
+            apiApp.use(authLimiter);
+            apiApp.use(limiter);
+
             prjApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(prjApi.app());
             usersApi.init(runtime, authMiddleware, verifyGroups);
@@ -77,16 +94,6 @@ function init(_server, _runtime) {
             apiKeysApi.init(runtime, authMiddleware, verifyGroups);
             apiApp.use(apiKeysApi.app());
 
-            const limiter = rateLimit({
-                windowMs: 5 * 60 * 1000, // 5 minutes
-                max: 100, // limit each IP to 100 requests per windowMs
-                // Keep lightweight health/version checks unthrottled
-                skip: (req) => req.path === '/api/version'
-            });
-
-            //  apply to all requests
-            apiApp.use(limiter);
-
             apiApp.use((err, req, res, next) => {
                 if (err?.type === 'entity.too.large') {
                     return res.status(413).json({
@@ -106,16 +113,12 @@ function init(_server, _runtime) {
             /**
              * GET Server setting data
              */
-            apiApp.get('/api/settings', function (req, res) {
+            apiApp.get('/api/settings', authMiddleware, function (req, res) {
                 if (runtime.settings) {
-                    let tosend = JSON.parse(JSON.stringify(runtime.settings));
-                    delete tosend.secretCode;
-                    if (tosend.smtp) {
-                        delete tosend.smtp.password;
-                    }
-                    if (tosend.daqstore?.credentials) {
-                        delete tosend.daqstore.credentials;
-                    }
+                    const permission = verifyGroups(req);
+                    const tosend = authJwt.haveAdminPermission(permission)
+                        ? getSanitizedSettings(runtime.settings)
+                        : getPublicSettings(runtime.settings);
                     // res.header("Access-Control-Allow-Origin", "*");
                     // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     res.json(tosend);
@@ -232,6 +235,32 @@ function init(_server, _runtime) {
     });
 }
 
+function getPublicSettings(settings) {
+    const tosend = getSanitizedSettings(settings);
+    if (tosend.smtp) {
+        delete tosend.smtp.host;
+        delete tosend.smtp.port;
+        delete tosend.smtp.username;
+    }
+    if (tosend.daqstore) {
+        delete tosend.daqstore.url;
+        delete tosend.daqstore.host;
+    }
+    return tosend;
+}
+
+function getSanitizedSettings(settings) {
+    const tosend = JSON.parse(JSON.stringify(settings));
+    delete tosend.secretCode;
+    if (tosend.smtp) {
+        delete tosend.smtp.password;
+    }
+    if (tosend.daqstore?.credentials) {
+        delete tosend.daqstore.credentials;
+    }
+    return tosend;
+}
+
 function mergeUserSettings(settings) {
     if (settings.language) {
         runtime.settings.language = settings.language;
@@ -249,6 +278,18 @@ function mergeUserSettings(settings) {
     runtime.settings.broadcastAll = settings.broadcastAll;
     if (!utils.isNullOrUndefined(settings.lazyViewLoading)) {
         runtime.settings.lazyViewLoading = settings.lazyViewLoading;
+    }
+    if (!utils.isNullOrUndefined(settings.apiRateLimitWindowMs)) {
+        runtime.settings.apiRateLimitWindowMs = settings.apiRateLimitWindowMs;
+    }
+    if (!utils.isNullOrUndefined(settings.apiRateLimitMax)) {
+        runtime.settings.apiRateLimitMax = settings.apiRateLimitMax;
+    }
+    if (!utils.isNullOrUndefined(settings.authRateLimitWindowMs)) {
+        runtime.settings.authRateLimitWindowMs = settings.authRateLimitWindowMs;
+    }
+    if (!utils.isNullOrUndefined(settings.authRateLimitMax)) {
+        runtime.settings.authRateLimitMax = settings.authRateLimitMax;
     }
     runtime.settings.secureEnabled = settings.secureEnabled;
     runtime.settings.logFull = settings.logFull;
@@ -342,5 +383,7 @@ module.exports = {
 
     get apiApp() { return apiApp; },
     get server() { return server; },
-    get authJwt() { return authJwt; }
+    get authJwt() { return authJwt; },
+    _getPublicSettings: getPublicSettings,
+    _getSanitizedSettings: getSanitizedSettings
 };

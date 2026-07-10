@@ -28,6 +28,7 @@ updates:
           - "*"
 
     ignore:
+      - dependency-name: "jsonata"
       - dependency-name: "electron-builder"
       - dependency-name: "electron"
       - dependency-name: "webpack"
