@@ -680,7 +680,7 @@ module.exports = {
     },
     create: function (data, logger, events, manager, runtime) {
         if (!loadSnap7Lib(manager)) return null;
-        datatypes = require('./datatypes')(snap7.S7Client ? snap7.S7Client() : snap7);
+        datatypes = require('./datatypes')(snap7.S7Client ? new snap7.S7Client() : snap7);
         return new S7client(data, logger, events, runtime);
     }
 }
