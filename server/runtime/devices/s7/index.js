@@ -478,7 +478,7 @@ function S7client(_data, _logger, _events, _runtime) {
     var _readVars = function (vars) {
         return new Promise((resolve, reject) => {
             s7client.ReadMultiVars(vars, (err, res) => {
-                if (err) return _getErr(err);
+                if (err) return reject(_getErr(err));
                 let errs = [];
                 res = vars.map((v, i) => {
                     let value = null;
@@ -487,8 +487,7 @@ function S7client(_data, _logger, _events, _runtime) {
                     } else {
                         try {
                             if (v.type === 'BOOL') {
-                                // check the full byte and send all bit if there is a change
-                                value = datatypes['BYTE'].parser(res[i].Data);//, v.Start, -1);
+                                value = datatypes['BYTE'].parser(res[i].Data);
                             } else {
                                 value = datatypes[v.type].parser(res[i].Data);
                             }
@@ -525,7 +524,7 @@ function S7client(_data, _logger, _events, _runtime) {
             }
             let buffer = datatypes[v.type].formatter(v.value)
             s7client.DBWrite(DBNr, offset, end - offset, buffer, (err, res) => {
-                if (err) return _getErr(err);
+                if (err) return reject(_getErr(err));
                 resolve(changed);
             });
         });
@@ -553,7 +552,7 @@ function S7client(_data, _logger, _events, _runtime) {
         }));
         return new Promise((resolve, reject) => {
             s7client.WriteMultiVars(toWrite, (err, res) => {
-                if (err) return _getErr(err);
+                if (err) return reject(_getErr(err));
                 let errs = [];
 
                 res = vars.map((v, i) => {
