@@ -416,12 +416,7 @@ function S7client(_data, _logger, _events, _runtime) {
         if (check && working) {
             overloading++;
             logger.warn(`'${data.name}' working (connection || polling) overload! ${overloading}`);
-            // !The driver don't give the break connection
-            if (overloading >= 3) {
-                s7client.Disconnect();
-            } else {
-                return false;
-            }
+            return false;
         }
         working = check;
         overloading = 0;
