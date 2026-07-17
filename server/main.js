@@ -17,6 +17,8 @@ const FUXA = require('./fuxa.js');
 const runtime = require('./runtime');
 const authJwt = require('./api/jwt-helper');
 
+const BASE_PATH = (process.env.BASE_PATH || '').replace(/\/+$/, '');
+
 const express = require('express');
 const app = express();
 
@@ -277,7 +279,8 @@ const io = socketIO(server, {
         origin: "*",
         methods: ["GET", "POST"],
         credentials: false
-    }
+    },
+    path: BASE_PATH + '/socket.io',
 });
 
 // Check settings value
@@ -287,6 +290,16 @@ if (!fs.existsSync(www)) {      // compatibility with docker/npm/electron
 }
 
 settings.httpStatic = settings.httpStatic || www;
+
+// here, if a BASE_PATH is set, I push it in the base html, at runtime
+try {
+    const indexHtml = path.join(settings.httpStatic, 'index.html');
+    const desiredBase = (BASE_PATH || '') + '/';
+    fs.writeFileSync(indexHtml, fs.readFileSync(indexHtml, 'utf8')
+        .replace(/<base href="[^"]*"\s*\/?>/, `<base href="${desiredBase}" />`));
+} catch (err) {
+    logger.warn('Could not set <base href> from BASE_PATH, if working under a reverse proxy check your BASE_PATH env var: ' + err);
+}
 
 if (parsedArgs.port !== undefined) {
     settings.uiPort = parsedArgs.port;
@@ -400,21 +413,21 @@ function snapshotAuth(req, res, next) {
 }
 
 app.use(allowCrossDomain);
-app.use('/', express.static(settings.httpStatic));
-app.use('/home', express.static(settings.httpStatic));
-app.use('/home/:viewName', express.static(settings.httpStatic));
-app.use('/lab', express.static(settings.httpStatic));
-app.use('/editor', express.static(settings.httpStatic));
-app.use('/device', express.static(settings.httpStatic));
-app.use('/plugins', express.static(settings.httpStatic));
-app.use('/rodevice', express.static(settings.httpStatic));
-app.use('/users', express.static(settings.httpStatic));
-app.use('/view', express.static(settings.httpStatic));
-app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
-app.use('/_images', express.static(settings.imagesFileDir));
-app.use('/_widgets', express.static(settings.widgetsFileDir));
-app.use('/snapshots', snapshotAuth, express.static(settings.webcamSnapShotsDir));
-app.use('/ar', express.static(settings.httpStatic));
+app.use(BASE_PATH + '/', express.static(settings.httpStatic));
+app.use(BASE_PATH + '/home', express.static(settings.httpStatic));
+app.use(BASE_PATH + '/home/:viewName', express.static(settings.httpStatic));
+app.use(BASE_PATH + '/lab', express.static(settings.httpStatic));
+app.use(BASE_PATH + '/editor', express.static(settings.httpStatic));
+app.use(BASE_PATH + '/device', express.static(settings.httpStatic));
+app.use(BASE_PATH + '/plugins', express.static(settings.httpStatic));
+app.use(BASE_PATH + '/rodevice', express.static(settings.httpStatic));
+app.use(BASE_PATH + '/users', express.static(settings.httpStatic));
+app.use(BASE_PATH + '/view', express.static(settings.httpStatic));
+app.use(BASE_PATH + '/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
+app.use(BASE_PATH + '/_images', express.static(settings.imagesFileDir));
+app.use(BASE_PATH + '/_widgets', express.static(settings.widgetsFileDir));
+app.use(BASE_PATH + '/snapshots', snapshotAuth, express.static(settings.webcamSnapShotsDir));
+app.use(BASE_PATH + '/ar', express.static(settings.httpStatic));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', { flags: 'a' });
 if (runtime.settings.logApiLevel !== 'none') {
@@ -485,9 +498,10 @@ function getListenPath() {
         port = settings.uiPort;
     }
 
+    var listenBasePath = BASE_PATH ? ('/' + BASE_PATH) : '';
     var listenPath = 'http' + (settings.https ? 's' : '') + '://' +
         (settings.uiHost == '::' ? 'localhost' : (settings.uiHost == '0.0.0.0' ? '127.0.0.1' : settings.uiHost)) +
-        ':' + port;
+        ':' + port + listenBasePath;
     if (settings.httpStatic) {
         listenPath += '/';
     }
@@ -529,7 +543,7 @@ function startFuxa() {
             }
 
             if (settings.disableServer !== false) {
-                app.use('/', FUXA.httpApi);
+                app.use(BASE_PATH + '/', FUXA.httpApi);
             }
 
             server.listen(settings.uiPort, settings.uiHost, function () {
