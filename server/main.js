@@ -291,14 +291,31 @@ if (!fs.existsSync(www)) {      // compatibility with docker/npm/electron
 
 settings.httpStatic = settings.httpStatic || www;
 
-// here, if a BASE_PATH is set, I push it in the base html, at runtime
-try {
-    const indexHtml = path.join(settings.httpStatic, 'index.html');
-    const desiredBase = (BASE_PATH || '') + '/';
-    fs.writeFileSync(indexHtml, fs.readFileSync(indexHtml, 'utf8')
-        .replace(/<base href="[^"]*"\s*\/?>/, `<base href="${desiredBase}" />`));
-} catch (err) {
-    logger.warn('Could not set <base href> from BASE_PATH, if working under a reverse proxy check your BASE_PATH env var: ' + err);
+if (BASE_PATH) {
+    // here, if a BASE_PATH is set, I push it in the base html, at runtime
+    try {
+        const indexHtml = path.join(settings.httpStatic, 'index.html');
+        const desiredBase = (BASE_PATH || '') + '/';
+        fs.writeFileSync(indexHtml, fs.readFileSync(indexHtml, 'utf8')
+            .replace(/<base href="[^"]*"\s*\/?>/, `<base href="${desiredBase}" />`));
+    } catch (err) {
+        logger.warn('Could not set <base href> from BASE_PATH, if working under a reverse proxy check your BASE_PATH env var: ' + err);
+    }
+    // and edit the references in .css files
+    const rewriteAssets = (dir) => {
+        for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+            const full = path.join(dir, e.name);
+            if (e.isDirectory()) { rewriteAssets(full); }
+            else if (/\.(js|css)$/.test(e.name)) {
+                const src = fs.readFileSync(full, 'utf8');
+                // this regex is idempotent, to avoid more than one substitution
+                const out = src.replace(/(["'(])\/assets\//g, `$1${BASE_PATH}/assets/`);
+                if (out !== src) { fs.writeFileSync(full, out); }
+            }
+        }
+    };
+    try { rewriteAssets(settings.httpStatic); }
+    catch (err) { logger.warn('asset base-path rewrite failed: ' + err); }
 }
 
 if (parsedArgs.port !== undefined) {
