@@ -316,6 +316,7 @@ if (BASE_PATH) {
     };
     try { rewriteAssets(settings.httpStatic); }
     catch (err) { logger.warn('asset base-path rewrite failed: ' + err); }
+    // the favicon is handled directly in the index.html that angular uses
 }
 
 if (parsedArgs.port !== undefined) {
