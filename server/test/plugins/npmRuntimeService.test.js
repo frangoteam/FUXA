@@ -55,4 +55,33 @@ describe('npm runtime service', () => {
         expect(fs.existsSync(paths.runtimeDir)).to.equal(true);
         expect(fs.existsSync(paths.runtimePackageJson)).to.equal(true);
     });
+
+    it('lists a local package installed as a Linux symlink', function () {
+        if (process.platform === 'win32') this.skip();
+        const source = path.join(tempDir, 'source-linux-plugin');
+        const link = path.join(tempDir, 'node_modules', 'linux-local-plugin');
+        fs.mkdirSync(source, { recursive: true });
+        fs.mkdirSync(path.dirname(link), { recursive: true });
+        fs.writeFileSync(path.join(source, 'package.json'), JSON.stringify({
+            name: 'linux-local-plugin', version: '1.0.0'
+        }));
+        fs.symlinkSync(source, link, 'dir');
+
+        expect(listInstalledPackages(tempDir)['linux-local-plugin']).to.equal('1.0.0');
+    });
+
+    it('lists a local package installed as a Windows junction', function () {
+        if (process.platform !== 'win32') this.skip();
+        const source = path.join(tempDir, 'source-windows-plugin');
+        const link = path.join(tempDir, 'node_modules', 'windows-local-plugin');
+        fs.mkdirSync(source, { recursive: true });
+        fs.mkdirSync(path.dirname(link), { recursive: true });
+        fs.writeFileSync(path.join(source, 'package.json'), JSON.stringify({
+            name: 'windows-local-plugin', version: '1.0.0'
+        }));
+        // npm uses a junction for local `file:` dependencies on Windows.
+        fs.symlinkSync(source, link, 'junction');
+
+        expect(listInstalledPackages(tempDir)['windows-local-plugin']).to.equal('1.0.0');
+    });
 });

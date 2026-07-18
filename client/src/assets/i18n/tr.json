@@ -440,6 +440,8 @@
 	"device.property-method": "Metod",
 	"device.property-format": "Format",
 	"device.property-url": "URL",
+	"device.property-plum-econext-gateway": "PLUM ecoNEXT Ağ Geçidi",
+	"device.property-http-timeout": "HTTP zaman aşımı",
 	"device.property-webapi-result": "Talebin sonucu",
 
 	"device.not-webapi-result": "WebAPI talebini yapılandır",

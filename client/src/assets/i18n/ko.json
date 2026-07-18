@@ -487,6 +487,8 @@
     "device.property-method": "방법",
     "device.property-format": "형식",
     "device.property-url": "URL (http://[server]:[port])",
+    "device.property-plum-econext-gateway": "PLUM ecoNEXT 게이트웨이",
+    "device.property-http-timeout": "HTTP 시간 초과",
     "device.property-webapi-result": "요청 결과",
     "device.not-webapi-result": "구성 WebAPI 결과",
     "device.property-show": "장치 속성 보이기",

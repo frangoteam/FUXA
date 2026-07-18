@@ -915,6 +915,8 @@
     "device.property-format": "格式",
     "device.property-internal": "僅限前端",
     "device.property-url": "URL（http://[伺服器]:[連接埠]）",
+    "device.property-plum-econext-gateway": "PLUM ecoNEXT 閘道",
+    "device.property-http-timeout": "HTTP 逾時",
     "device.property-webapi-result": "請求的結果",
     "device.property-ads-target": "目標 AmsNetId（例如 192.168.1.10.1.1:851）",
     "device.property-ads-local": "本地 AmsNetId（例如 192.168.1.10.1.1:32750）",

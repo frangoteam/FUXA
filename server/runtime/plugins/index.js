@@ -293,6 +293,16 @@ function createDefaultPlugins() {
     registry['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '2.149.0', PluginGroupType.connectionDevice, true);
     registry['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.19', PluginGroupType.connectionDevice, true);
     registry['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4', PluginGroupType.connectionDevice, true);
+    registry['fuxa-plugin-plum-econext-gateway'] = new Plugin(
+        'fuxa-plugin-plum-econext-gateway',
+        'fuxa-plugin-plum-econext-gateway',
+        'PlumEconextGateway',
+        '0.1.0',
+        PluginGroupType.connectionDevice,
+        true,
+        'plum-econext-gateway',
+        'PLUM ecoNEXT Gateway'
+    );
     registry['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.9', PluginGroupType.connectionDevice, true);
     registry['ads-client'] = new Plugin('ads-client', './adsclient', 'ADSclient', '2.1.0', PluginGroupType.connectionDevice, true);
     registry['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.17', PluginGroupType.connectionDevice, true);
@@ -318,7 +328,9 @@ module.exports = {
     get manager() { return manager },
 };
 
-function Plugin(name, module, type, version, group, dinamic) {
+function Plugin(name, module, type, version, group, dinamic, id, displayName) {
+    this.id = id || name;
+    this.displayName = displayName || name;
     this.name = name;
     this.module = module;
     this.type = type;

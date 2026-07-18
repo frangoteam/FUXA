@@ -15,6 +15,7 @@
     "url": "https://github.com/frangoteam/FUXA.git"
   },
   "dependencies": {
+    "fuxa-plugin-plum-econext-gateway": "file:integrations/plum-econext-gateway",
     "@influxdata/influxdb-client": "1.25.0",
     "@questdb/nodejs-client": "^3.0.0",
     "@tdengine/rest": "3.0.2",

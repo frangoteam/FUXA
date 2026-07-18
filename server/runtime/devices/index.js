@@ -434,8 +434,13 @@ function isWoking() {
  */
 async function setDeviceValue(deviceid, sigid, value, fnc) {
     if (activeDevices[deviceid]) {
-        await activeDevices[deviceid].setValue(sigid, value, fnc);
+        return await activeDevices[deviceid].setValue(sigid, value, fnc);
     }
+    return false;
+}
+
+function getLastWriteResult(deviceid) {
+    return activeDevices[deviceid]?.getLastWriteResult?.() || null;
 }
 
 /**
@@ -557,6 +562,7 @@ var devices = module.exports = {
     getTagValue: getTagValue,
     setTagValue: setTagValue,
     setDeviceValue: setDeviceValue,
+    getLastWriteResult: getLastWriteResult,
     getDeviceIdFromTag: getDeviceIdFromTag,
     browseDevice: browseDevice,
     readNodeAttribute: readNodeAttribute,

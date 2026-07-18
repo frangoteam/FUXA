@@ -914,6 +914,8 @@
   "device.property-format": "Format",
   "device.property-internal": "Frontend uniquement",
   "device.property-url": "URL (http: // [serveur]: [port])",
+  "device.property-plum-econext-gateway": "Passerelle PLUM ecoNEXT",
+  "device.property-http-timeout": "Délai d’attente HTTP",
   "device.property-webapi-result": "Résultat de la demande",
   "device.property-ads-target": "Target AmsNetId (e.g. 192.168.1.10.1.1:851)",
   "device.property-ads-local": "Local AmsNetId (e.g. 192.168.1.10.1.1:32750)",

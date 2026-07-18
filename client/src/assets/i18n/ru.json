@@ -719,6 +719,8 @@
     "device.property-format": "Формат",
     "device.property-internal": "Только интерфейс",
     "device.property-url": "URL (http://[server]:[port])",
+    "device.property-plum-econext-gateway": "Шлюз PLUM ecoNEXT",
+    "device.property-http-timeout": "Тайм-аут HTTP",
     "device.property-webapi-result": "Результат запроса",
     "device.not-webapi-result": "Настроить результат WebAPI",
     "device.property-show": "Отобразить свойство устройства",

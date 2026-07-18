@@ -131,6 +131,6 @@ export class PluginsListComponent implements OnInit, OnDestroy {
         if (!!a.dinamic !== !!b.dinamic) {
             return a.dinamic ? -1 : 1;
         }
-        return `${a.group}-${a.name}`.localeCompare(`${b.group}-${b.name}`);
+        return `${a.group}-${a.displayName || a.name}`.localeCompare(`${b.group}-${b.displayName || b.name}`);
     }
 }

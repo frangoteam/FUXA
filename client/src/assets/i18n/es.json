@@ -487,6 +487,8 @@
     "device.property-method": "Metodo",
     "device.property-format": "Formato",
     "device.property-url": "URL (http://[servidor]:[puerto])",
+    "device.property-plum-econext-gateway": "Puerta de enlace PLUM ecoNEXT",
+    "device.property-http-timeout": "Tiempo de espera HTTP",
     "device.property-webapi-result": "Resultado de la solicitud",
     "device.not-webapi-result": "Configurar resultado de la WebAPI",
     "device.property-show": "Mostrar las propiedades del dispositivo",

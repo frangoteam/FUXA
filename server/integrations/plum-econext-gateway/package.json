@@ -1,0 +1,14 @@
+{
+  "name": "fuxa-plugin-plum-econext-gateway",
+  "version": "0.1.0",
+  "description": "FUXA device plugin for PLUM ecoNEXT Gateway and PLUM ecoMAX controllers",
+  "main": "index.js",
+  "license": "MIT",
+  "keywords": ["fuxa", "scada", "plum", "ecomax", "econext"],
+  "dependencies": {
+    "axios": "^1.16.1"
+  },
+  "peerDependencies": {
+    "axios": ">=1.6.0"
+  }
+}

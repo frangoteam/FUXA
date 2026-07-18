@@ -15,13 +15,14 @@ function listInstalledPackages(baseDir) {
 
     const entries = fs.readdirSync(nodeModulesDir, { withFileTypes: true });
     entries.forEach((entry) => {
-        if (!entry.isDirectory()) {
+        // npm installs local `file:` dependencies as symlinks/junctions.
+        if (!entry.isDirectory() && !entry.isSymbolicLink()) {
             return;
         }
         if (entry.name.startsWith('@')) {
             const scopeDir = path.join(nodeModulesDir, entry.name);
             fs.readdirSync(scopeDir, { withFileTypes: true }).forEach((scopedEntry) => {
-                if (!scopedEntry.isDirectory()) {
+                if (!scopedEntry.isDirectory() && !scopedEntry.isSymbolicLink()) {
                     return;
                 }
                 _readPackageInfo(path.join(scopeDir, scopedEntry.name), packages);
@@ -41,13 +42,13 @@ function listLegacyPackages(packageDir) {
     }
     const entries = fs.readdirSync(packageDir, { withFileTypes: true });
     entries.forEach((entry) => {
-        if (!entry.isDirectory() || entry.name === 'runtime') {
+        if ((!entry.isDirectory() && !entry.isSymbolicLink()) || entry.name === 'runtime') {
             return;
         }
         if (entry.name.startsWith('@')) {
             const scopeDir = path.join(packageDir, entry.name);
             fs.readdirSync(scopeDir, { withFileTypes: true }).forEach((scopedEntry) => {
-                if (!scopedEntry.isDirectory()) {
+                if (!scopedEntry.isDirectory() && !scopedEntry.isSymbolicLink()) {
                     return;
                 }
                 _readPackageInfo(path.join(scopeDir, scopedEntry.name), packages);

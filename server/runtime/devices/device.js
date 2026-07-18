@@ -7,6 +7,8 @@ var S7client = require('./s7');
 var OpcUAclient = require('./opcua');
 var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
+// Loaded dynamically when the PLUM ecoNEXT plugin package is installed.
+var PlumEconextGatewayClient = null;
 var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var EthernetIPclient = require('./ethernetip');
@@ -69,6 +71,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = BACNETclient.create(data, logger, events, manager, runtime);
+    } else if (data.type === DeviceEnum.PlumEconextGateway) {
+        if (!PlumEconextGatewayClient) {
+            return null;
+        }
+        comm = PlumEconextGatewayClient.create(data, logger, events, runtime);
     } else if (data.type === DeviceEnum.WebAPI) {
         if (!HTTPclient) {
             return null;
@@ -285,6 +292,12 @@ function Device(data, runtime) {
         return await comm.setValue(id, value);
     }
 
+    // Optional diagnostic details exposed by integrations that can return a
+    // richer write acknowledgement (for example an HTTP gateway response).
+    this.getLastWriteResult = function () {
+        return comm.getLastWriteResult ? comm.getLastWriteResult() : null;
+    }
+
     /**
      * Call Device to return browser result Tags/Nodes (only OPCUA)
      */
@@ -296,7 +309,7 @@ function Device(data, runtime) {
                 }).catch(function (err) {
                     reject(err);
                 });
-            } else if (data.type === DeviceEnum.BACnet) {
+            } else if (data.type === DeviceEnum.BACnet || data.type === DeviceEnum.PlumEconextGateway) {
                 comm.browse(path).then(function (result) {
                     resolve(result);
                 }).catch(function (err) {
@@ -532,6 +545,8 @@ function loadPlugin(type, module) {
         MODBUSclient = require(module);
     } else if (type === DeviceEnum.BACnet) {
         BACNETclient = require(module);
+    } else if (type === DeviceEnum.PlumEconextGateway) {
+        PlumEconextGatewayClient = require(module);
     } else if (type === DeviceEnum.WebAPI) {
         HTTPclient = require(module);
     } else if (type === DeviceEnum.MQTTclient) {
@@ -583,6 +598,7 @@ var DeviceEnum = {
     ModbusRTU: 'ModbusRTU',
     ModbusTCP: 'ModbusTCP',
     BACnet: 'BACnet',
+    PlumEconextGateway: 'PlumEconextGateway',
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
     EthernetIP: 'EthernetIP',

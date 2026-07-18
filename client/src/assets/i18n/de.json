@@ -759,6 +759,8 @@
     "device.property-format": "Format",
     "device.property-internal": "Nur Frontend",
     "device.property-url": "URL (http://[server]:[port])",
+    "device.property-plum-econext-gateway": "PLUM ecoNEXT Gateway",
+    "device.property-http-timeout": "HTTP-Zeitüberschreitung",
     "device.property-webapi-result": "Ergebnis der Anfrage",
     "device.not-webapi-result": "WebAPI-Ergebnis konfigurieren",
     "device.property-show": "Geräteeigenschaft anzeigen",

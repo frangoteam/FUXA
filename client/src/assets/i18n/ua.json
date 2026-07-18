@@ -413,6 +413,8 @@
     "device.property-method": "Метод",
     "device.property-format": "Формат",
     "device.property-url": "URL",
+    "device.property-plum-econext-gateway": "Шлюз PLUM ecoNEXT",
+    "device.property-http-timeout": "Тайм-аут HTTP",
     "device.property-webapi-result": "Результат запиту",
     "device.not-webapi-result": "Конфігурація WebAPI результату",
     "device.property-show": "Показати властивості пристрою",

@@ -23,7 +23,7 @@
                     </div>
                     <div class="card-headline">
                         <div class="card-type">{{ plugin.type }}</div>
-                        <div class="card-name">{{ plugin.name }}</div>
+                        <div class="card-name">{{ plugin.displayName || plugin.name }}</div>
                     </div>
                     <div class="state-badge" [ngClass]="{ 'ready': isInstalled(plugin), 'available': !isInstalled(plugin) }">
                         <mat-icon>{{ isInstalled(plugin) ? 'check_circle' : 'download' }}</mat-icon>

@@ -1,0 +1,72 @@
+:host {
+    display: block;
+}
+
+.tag-editor {
+    padding: 16px;
+    width: 400px;
+    max-width: 100%;
+    max-height: none !important;
+    overflow: visible !important;
+    box-sizing: border-box;
+}
+.tag-editor .item-block { display: block; }
+.tag-editor .item-block mat-select,
+.tag-editor .item-block input,
+.tag-editor .item-block span { width: calc(100% - 5px); }
+.value-editor { margin-top: 20px; display: grid; gap: 10px; }
+.value-editor mat-form-field { margin-top: 8px; }
+.write-message { min-height: 20px; }
+.write-log {
+    height: 78px;
+    max-height: 78px;
+    overflow: auto;
+    padding: 6px;
+    border: 1px solid rgba(127, 127, 127, .45);
+    border-radius: 3px;
+    background: rgba(127, 127, 127, .08);
+    font-size: 11px;
+}
+.write-log-title { margin-bottom: 4px; font-weight: 600; }
+.write-log-empty { opacity: .7; }
+.write-log-entry { padding: 3px 0; border-top: 1px solid rgba(127, 127, 127, .2); }
+.write-log-entry:first-of-type { border-top: 0; }
+.write-log-time { margin-right: 6px; opacity: .75; }
+.write-log-error { color: #d32f2f; }
+.write-log pre { margin: 3px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 10px; }
+.browse-content { width: 100%; max-height: 68vh; padding: 0 12px; box-sizing: border-box; }
+.tree-wrapper { width: 100%; overflow: auto; }
+.parameter-search { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0 2px; }
+.parameter-search mat-form-field {
+    flex: 1;
+    min-width: 0;
+    --mat-form-field-container-height: 45px;
+    --mat-form-field-container-vertical-padding: 10px;
+}
+:host ::ng-deep .parameter-search .mat-mdc-form-field-infix {
+    min-height: 45px;
+    padding-top: 11px;
+    padding-bottom: 8px;
+}
+:host ::ng-deep .parameter-search .mat-mdc-form-field,
+:host ::ng-deep .parameter-search .mat-mdc-floating-label,
+:host ::ng-deep .parameter-search input.mat-mdc-input-element,
+:host ::ng-deep .parameter-search input.mat-mdc-input-element::placeholder,
+:host ::ng-deep .parameter-search .mat-mdc-select-trigger,
+:host ::ng-deep .parameter-search .mat-mdc-select-value,
+:host ::ng-deep .parameter-search .mat-mdc-select-value-text {
+    font-size: 16px !important;
+}
+.parameter-search .sort-field { max-width: 165px; }
+.parameter-search button {
+    height: 45px;
+    min-height: 45px;
+    margin-top: 0;
+    flex: 0 0 auto;
+}
+
+@media (max-width: 650px) {
+    .parameter-search { flex-wrap: wrap; }
+    .parameter-search .sort-field { max-width: none; }
+    .parameter-search button { margin-top: 0; width: 100%; }
+}
