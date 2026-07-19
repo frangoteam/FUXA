@@ -3,8 +3,8 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const axios = require('axios');
-// Resolve through node_modules to verify the same package path used by FUXA.
-const driver = require('fuxa-plugin-plum-econext-gateway');
+// Test the bundled source without installing this optional plugin globally.
+const driver = require('../../integrations/plum-econext-gateway');
 
 describe('PLUM ecoNEXT Gateway device plugin', function () {
     let getStub;

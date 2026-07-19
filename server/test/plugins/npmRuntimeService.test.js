@@ -56,6 +56,28 @@ describe('npm runtime service', () => {
         expect(fs.existsSync(paths.runtimePackageJson)).to.equal(true);
     });
 
+    it('installs and removes a bundled plugin only when requested', async function () {
+        this.timeout(20000);
+        const source = path.join(tempDir, 'bundled-plugin');
+        fs.mkdirSync(source, { recursive: true });
+        fs.writeFileSync(path.join(source, 'package.json'), JSON.stringify({
+            name: 'bundled-local-plugin',
+            version: '1.0.0',
+            main: 'index.js',
+        }));
+        fs.writeFileSync(path.join(source, 'index.js'), 'module.exports = { installed: true };');
+
+        const service = createRuntimeService({ packageDir: path.join(tempDir, '_pkg') });
+        expect(service.getInstalledPackages()).not.to.have.property('bundled-local-plugin');
+
+        const version = await service.installPackage('bundled-local-plugin', '1.0.0', source);
+        expect(version).to.equal('1.0.0');
+        expect(service.require('bundled-local-plugin').installed).to.equal(true);
+
+        await service.uninstallPackage('bundled-local-plugin');
+        expect(service.getInstalledPackages()).not.to.have.property('bundled-local-plugin');
+    });
+
     it('lists a local package installed as a Linux symlink', function () {
         if (process.platform === 'win32') this.skip();
         const source = path.join(tempDir, 'source-linux-plugin');

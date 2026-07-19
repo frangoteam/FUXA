@@ -18,5 +18,7 @@ describe('PLUM ecoNEXT Gateway plugin registration', function () {
             type: 'PlumEconextGateway',
             group: 'connection-device'
         });
+        expect(registered.dinamic).to.equal(true);
+        expect(registered.installSource).to.match(/[\\/]integrations[\\/]plum-econext-gateway$/);
     });
 });
