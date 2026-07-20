@@ -191,23 +191,12 @@ export class ShapesComponent extends GaugeBaseComponent {
     }
 
     static addActionSignals(res: string[], act: GaugeAction) {
-        if (ShapesComponent.actionsType[act.type] === ShapesComponent.actionsType.moveByTags) {
-            if (act.options?.enableX && act.options?.variableXId) {
-                res.push(act.options.variableXId);
-            }
-            if (act.options?.enableY && act.options?.variableYId) {
-                res.push(act.options.variableYId);
-            }
-        } else if (act.variableId) {
+        if (act.variableId) {
             res.push(act.variableId);
         }
     }
 
     static isActionSignal(act: GaugeAction, signalId: string): boolean {
-        if (ShapesComponent.actionsType[act.type] === ShapesComponent.actionsType.moveByTags) {
-            return (act.options?.enableX && act.options?.variableXId === signalId) ||
-                (act.options?.enableY && act.options?.variableYId === signalId);
-        }
         return act.variableId === signalId;
     }
 
@@ -217,30 +206,29 @@ export class ShapesComponent extends GaugeBaseComponent {
         let targetX = current.x;
         let targetY = current.y;
 
-        if (act.options?.enableX) {
+        if (act.options?.axis === 'x') {
             targetX = ShapesComponent.getScaledMoveTagValue(
-                act.options.variableXId,
+                act.variableId,
                 signalId,
                 value,
                 gaugeStatus,
                 current.x,
-                act.options.valueXMin,
-                act.options.valueXMax,
-                act.options.positionXMin,
-                act.options.positionXMax
+                act.options.valueMin,
+                act.options.valueMax,
+                act.options.positionMin,
+                act.options.positionMax
             );
-        }
-        if (act.options?.enableY) {
+        } else {
             targetY = ShapesComponent.getScaledMoveTagValue(
-                act.options.variableYId,
+                act.variableId,
                 signalId,
                 value,
                 gaugeStatus,
                 current.y,
-                act.options.valueYMin,
-                act.options.valueYMax,
-                act.options.positionYMin,
-                act.options.positionYMax
+                act.options.valueMin,
+                act.options.valueMax,
+                act.options.positionMin,
+                act.options.positionMax
             );
         }
         element.animate(act.options?.duration || 500).ease('-').move(targetX, targetY);

@@ -360,18 +360,11 @@ export class GaugeActionMove {
 }
 
 export class GaugeActionMoveByTags {
-    variableXId: string;
-    variableYId: string;
-    enableX = true;
-    enableY = true;
-    valueXMin = 0;
-    valueXMax = 100;
-    positionXMin = 0;
-    positionXMax = 100;
-    valueYMin = 0;
-    valueYMax = 100;
-    positionYMin = 0;
-    positionYMax = 100;
+    axis: 'x' | 'y' = 'x';
+    valueMin = 0;
+    valueMax = 100;
+    positionMin = 0;
+    positionMax = 100;
     duration = 100;
 }
 

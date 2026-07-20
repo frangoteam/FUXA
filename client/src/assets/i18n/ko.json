@@ -597,6 +597,7 @@
     "gauges.property-action-duration": "지속 시간",
     "gauges.property-action-tagX": "위치 X 태그",
     "gauges.property-action-tagY": "위치 Y 태그",
+    "gauges.property-action-axis": "축",
     "gauges.property-action-value-min": "값 min",
     "gauges.property-action-value-max": "값 max",
     "gauges.property-action-position-min": "위치 min",

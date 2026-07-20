@@ -1,11 +1,12 @@
 <div *ngFor="let item of actions; index as i" class="item">
-    <flex-variable *ngIf="!isMoveByTags(item)" class="item-head" [data]="data" (onchange)="setVariable(i, $event)" [variableId]="item.variableId" [withStaticValue]="false"
-    [withBitmask]="withBitmask" [bitmask]="item.bitmask">
+    <flex-variable class="item-head" [data]="data" (onchange)="setVariable(i, $event)" [variableId]="item.variableId" [withStaticValue]="false"
+    [withBitmask]="withBitmask && !isMoveByTags(item)" [bitmask]="item.bitmask">
     </flex-variable>
     <div class="action-content">
         <div *ngIf="slideView && !isMoveByTags(item)" class="item-range">
             <range-number [range]="item.range"></range-number>
         </div>
+        <div *ngIf="slideView && isMoveByTags(item)" class="item-range item-range-placeholder"></div>
         <div class="my-form-field" style="width: 278px;">
             <span>{{'gauges.property-action-type' | translate}}</span>
             <mat-select [(value)]="item.type" (selectionChange)="onCheckActionType(item.type, item)">
@@ -74,58 +75,31 @@
                 <div class="my-form-field mr10">
                     <span>{{'gauges.property-action-duration' | translate}}</span>
                     <input numberOnly [(ngModel)]="item.options.duration" type="number" style="width: 70px">
-                </div>                
+                </div>
             </div>
             <div *ngSwitchCase="actionMoveByTags" class="action-params move-by-tags">
-                <div class="move-by-tags-row move-by-tags-head">
-                    <mat-slide-toggle color="primary" [(ngModel)]="item.options.enableX">{{'general-x' | translate}}</mat-slide-toggle>
-                    <flex-variable [data]="data" (onchange)="setMoveByTagsVariable(item, 'x', $event)" [variableId]="item.options.variableXId"
-                        [tagLabel]="'gauges.property-action-tagX'"
-                        [withStaticValue]="false" [readonly]="!item.options.enableX">
-                    </flex-variable>
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-axis' | translate}}</span>
+                    <mat-select [(value)]="item.options.axis" style="width: 80px">
+                        <mat-option value="x">{{'general-x' | translate}}</mat-option>
+                        <mat-option value="y">{{'general-y' | translate}}</mat-option>
+                    </mat-select>
                 </div>
-                <div class="move-by-tags-row move-by-tags-scale" [class.disabled]="!item.options.enableX">
-                    <div class="my-form-field">
-                        <span>{{'gauges.property-action-value-min' | translate}}</span>
-                        <input numberOnly [(ngModel)]="item.options.valueXMin" type="number">
-                    </div>
-                    <div class="my-form-field">
-                        <span>{{'gauges.property-action-value-max' | translate}}</span>
-                        <input numberOnly [(ngModel)]="item.options.valueXMax" type="number">
-                    </div>
-                    <div class="my-form-field">
-                        <span>{{'gauges.property-action-position-min' | translate}}</span>
-                        <input numberOnly [(ngModel)]="item.options.positionXMin" type="number">
-                    </div>
-                    <div class="my-form-field">
-                        <span>{{'gauges.property-action-position-max' | translate}}</span>
-                        <input numberOnly [(ngModel)]="item.options.positionXMax" type="number">
-                    </div>
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-value-min' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.valueMin" type="number" style="width: 70px">
                 </div>
-                <div class="move-by-tags-row move-by-tags-head">
-                    <mat-slide-toggle color="primary" [(ngModel)]="item.options.enableY">{{'general-y' | translate}}</mat-slide-toggle>
-                    <flex-variable [data]="data" (onchange)="setMoveByTagsVariable(item, 'y', $event)" [variableId]="item.options.variableYId"
-                        [tagLabel]="'gauges.property-action-tagY'"
-                        [withStaticValue]="false" [readonly]="!item.options.enableY">
-                    </flex-variable>
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-value-max' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.valueMax" type="number" style="width: 70px">
                 </div>
-                <div class="move-by-tags-row move-by-tags-scale" [class.disabled]="!item.options.enableY">
-                    <div class="my-form-field">
-                        <span>{{'gauges.property-action-value-min' | translate}}</span>
-                        <input numberOnly [(ngModel)]="item.options.valueYMin" type="number">
-                    </div>
-                    <div class="my-form-field">
-                        <span>{{'gauges.property-action-value-max' | translate}}</span>
-                        <input numberOnly [(ngModel)]="item.options.valueYMax" type="number">
-                    </div>
-                    <div class="my-form-field">
-                        <span>{{'gauges.property-action-position-min' | translate}}</span>
-                        <input numberOnly [(ngModel)]="item.options.positionYMin" type="number">
-                    </div>
-                    <div class="my-form-field">
-                        <span>{{'gauges.property-action-position-max' | translate}}</span>
-                        <input numberOnly [(ngModel)]="item.options.positionYMax" type="number">
-                    </div>
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-position-min' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.positionMin" type="number" style="width: 70px">
+                </div>
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-position-max' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.positionMax" type="number" style="width: 70px">
                 </div>
                 <div class="my-form-field mr10">
                     <span>{{'gauges.property-action-duration' | translate}}</span>

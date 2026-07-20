@@ -1159,6 +1159,7 @@
     "gauges.property-action-duration" : "持續時間",
     "gauges.property-action-tagX" : "位置 X 標籤",
     "gauges.property-action-tagY" : "位置 Y 標籤",
+    "gauges.property-action-axis" : "軸",
     "gauges.property-action-value-min" : "值最小值",
     "gauges.property-action-value-max" : "值最大值",
     "gauges.property-action-position-min" : "位置最小值",

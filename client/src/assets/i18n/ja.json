@@ -1193,6 +1193,7 @@
     "gauges.property-action-duration" : "持続時間",
     "gauges.property-action-tagX" : "位置 X タグ",
     "gauges.property-action-tagY" : "位置 Y タグ",
+    "gauges.property-action-axis" : "軸",
     "gauges.property-action-value-min" : "値 Min",
     "gauges.property-action-value-max" : "値 Max",
     "gauges.property-action-position-min" : "位置 Min",

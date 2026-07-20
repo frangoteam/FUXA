@@ -512,6 +512,7 @@
 	"gauges.property-action-duration": "Süre",
 	"gauges.property-action-tagX": "Konum X tag",
 	"gauges.property-action-tagY": "Konum Y tag",
+	"gauges.property-action-axis": "Eksen",
 	"gauges.property-action-value-min": "Değer min",
 	"gauges.property-action-value-max": "Değer max",
 	"gauges.property-action-position-min": "Konum min",

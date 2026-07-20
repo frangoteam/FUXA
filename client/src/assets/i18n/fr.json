@@ -1158,6 +1158,7 @@
   "gauges.property-action-duration" : "Durée",
   "gauges.property-action-tagX" : "Tag position X",
   "gauges.property-action-tagY" : "Tag position Y",
+  "gauges.property-action-axis" : "Axe",
   "gauges.property-action-value-min" : "Valeur min",
   "gauges.property-action-value-max" : "Valeur max",
   "gauges.property-action-position-min" : "Position min",

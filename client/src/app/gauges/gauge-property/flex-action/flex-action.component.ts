@@ -54,7 +54,7 @@ export class FlexActionComponent implements OnInit {
         if (this.actions) {
             result = [];
             this.actions.forEach(act => {
-                if (act.variableId || this.isMoveByTagsConfigured(act)) {
+                if (act.variableId) {
                     result.push(act);
                 }
             });
@@ -79,16 +79,7 @@ export class FlexActionComponent implements OnInit {
 
     setVariable(index, event) {
         this.actions[index].variableId = event.variableId;
-        this.actions[index].bitmask = event.bitmask;
-    }
-
-    setMoveByTagsVariable(item: GaugeAction, axis: 'x' | 'y', event) {
-        this.ensureMoveByTagsOptions(item);
-        if (axis === 'x') {
-            item.options.variableXId = event.variableId;
-        } else {
-            item.options.variableYId = event.variableId;
-        }
+        this.actions[index].bitmask = this.isMoveByTags(this.actions[index]) ? null : event.bitmask;
     }
 
     private addAction(ga: GaugeAction) {
@@ -107,6 +98,7 @@ export class FlexActionComponent implements OnInit {
             ga.options = new GaugeActionMove();
         } else if (type === this.actionMoveByTags) {
             this.ensureMoveByTagsOptions(ga);
+            ga.bitmask = null;
         } else if (type === this.actionLoadImage && typeof(ga.options) !== typeof(GaugeActionLoadImage)) {
             ga.options = new GaugeActionLoadImage();
         }
@@ -117,15 +109,10 @@ export class FlexActionComponent implements OnInit {
     }
 
     private ensureMoveByTagsOptions(ga: GaugeAction) {
-        if (!ga.options || !('enableX' in ga.options) || !('enableY' in ga.options)) {
-            ga.options = Object.assign(new GaugeActionMoveByTags(), ga.options || {});
-            return;
+        ga.options = Object.assign(new GaugeActionMoveByTags(), ga.options || {});
+        if (ga.options.axis !== 'y') {
+            ga.options.axis = 'x';
         }
-        ga.options = Object.assign(new GaugeActionMoveByTags(), ga.options);
-    }
-
-    private isMoveByTagsConfigured(act: GaugeAction): boolean {
-        return this.isMoveByTags(act) &&
-            ((act.options?.enableX && act.options?.variableXId) || (act.options?.enableY && act.options?.variableYId));
+        ga.bitmask = null;
     }
 }
