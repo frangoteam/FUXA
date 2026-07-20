@@ -13,10 +13,10 @@
     "license": "MIT",
     "devDependencies": {
         "electron": "39.8.10",
-        "electron-builder": "25.1.8"
+        "electron-builder": "26.15.3"
     },
     "dependencies": {
-        "sqlite3": "5.1.7"
+        "sqlite3": "6.0.1"
     },
     "build": {
         "appId": "com.frangoteam.fuxa",
