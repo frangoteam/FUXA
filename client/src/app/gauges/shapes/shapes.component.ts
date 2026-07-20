@@ -19,7 +19,7 @@ export class ShapesComponent extends GaugeBaseComponent {
 
     static actionsType = { hide: GaugeActionsType.hide, show: GaugeActionsType.show, blink: GaugeActionsType.blink, stop: GaugeActionsType.stop,
                         clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise, rotate : GaugeActionsType.rotate,
-                        move: GaugeActionsType.move };
+                        move: GaugeActionsType.move, moveByTags: GaugeActionsType.moveByTags };
 
     constructor() {
         super();
@@ -36,7 +36,7 @@ export class ShapesComponent extends GaugeBaseComponent {
         }
         if (pro.actions && pro.actions.length) {
             pro.actions.forEach(act => {
-                res.push(act.variableId);
+                ShapesComponent.addActionSignals(res, act);
             });
         }
         return res;
@@ -86,8 +86,8 @@ export class ShapesComponent extends GaugeBaseComponent {
                     // check actions
                     if (ga.property.actions) {
                         ga.property.actions.forEach(act => {
-                            if (act.variableId === sig.id) {
-                                ShapesComponent.processAction(act, svgele, value, gaugeStatus, propertyColor);
+                            if (ShapesComponent.isActionSignal(act, sig.id)) {
+                                ShapesComponent.processAction(act, svgele, value, gaugeStatus, propertyColor, sig.id);
                             }
                         });
                     }
@@ -98,7 +98,7 @@ export class ShapesComponent extends GaugeBaseComponent {
         }
     }
 
-    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus, propertyColor?: GaugePropertyColor) {
+    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus, propertyColor?: GaugePropertyColor, signalId?: string) {
         let actValue = GaugeBaseComponent.checkBitmask(act.bitmask, value);
         if (this.actionsType[act.type] === this.actionsType.hide) {
             if (act.range.min <= actValue && act.range.max >= actValue) {
@@ -118,6 +118,8 @@ export class ShapesComponent extends GaugeBaseComponent {
             ShapesComponent.rotateShape(act, svgele, actValue);
         } else if (ShapesComponent.actionsType[act.type] === ShapesComponent.actionsType.move) {
             ShapesComponent.moveShape(act, svgele, actValue);
+        } else if (ShapesComponent.actionsType[act.type] === ShapesComponent.actionsType.moveByTags) {
+            ShapesComponent.moveShapeByTags(act, svgele, value, signalId, gaugeStatus);
         } else {
             if (act.range.min <= actValue && act.range.max >= actValue) {
                 var element = SVG.adopt(svgele.node);
@@ -186,5 +188,79 @@ export class ShapesComponent extends GaugeBaseComponent {
         if (act.range.min <= actValue && act.range.max >= actValue) {
             element.animate(act.options.duration || 500).ease('-').move(act.options.toX, act.options.toY);
         }
+    }
+
+    static addActionSignals(res: string[], act: GaugeAction) {
+        if (act.variableId) {
+            res.push(act.variableId);
+        }
+    }
+
+    static isActionSignal(act: GaugeAction, signalId: string): boolean {
+        return act.variableId === signalId;
+    }
+
+    static moveShapeByTags(act: GaugeAction, svgele: any, value: any, signalId: string, gaugeStatus: GaugeStatus) {
+        let element = SVG.adopt(svgele.node);
+        const current = ShapesComponent.getElementPosition(element);
+        let targetX = current.x;
+        let targetY = current.y;
+
+        if (act.options?.axis === 'x') {
+            targetX = ShapesComponent.getScaledMoveTagValue(
+                act.variableId,
+                signalId,
+                value,
+                gaugeStatus,
+                current.x,
+                act.options.valueMin,
+                act.options.valueMax,
+                act.options.positionMin,
+                act.options.positionMax
+            );
+        } else {
+            targetY = ShapesComponent.getScaledMoveTagValue(
+                act.variableId,
+                signalId,
+                value,
+                gaugeStatus,
+                current.y,
+                act.options.valueMin,
+                act.options.valueMax,
+                act.options.positionMin,
+                act.options.positionMax
+            );
+        }
+        element.animate(act.options?.duration || 500).ease('-').move(targetX, targetY);
+    }
+
+    private static getScaledMoveTagValue(variableId: string, signalId: string, value: any, gaugeStatus: GaugeStatus, fallback: number,
+                                        valueMin: any, valueMax: any, positionMin: any, positionMax: any): number {
+        const rawValue = variableId === signalId ? value : gaugeStatus.variablesValue[variableId];
+        const tagValue = parseFloat(rawValue);
+        const tagMin = parseFloat(valueMin);
+        const tagMax = parseFloat(valueMax);
+        const pixelMin = parseFloat(positionMin);
+        const pixelMax = parseFloat(positionMax);
+        if ([tagValue, tagMin, tagMax, pixelMin, pixelMax].some(item => Number.isNaN(item))) {
+            return fallback;
+        }
+        if (tagMax === tagMin) {
+            return pixelMin;
+        }
+
+        const lower = Math.min(tagMin, tagMax);
+        const upper = Math.max(tagMin, tagMax);
+        const clampedValue = Math.min(Math.max(tagValue, lower), upper);
+        const ratio = (clampedValue - tagMin) / (tagMax - tagMin);
+        return pixelMin + (ratio * (pixelMax - pixelMin));
+    }
+
+    private static getElementPosition(element: any): { x: number, y: number } {
+        if (typeof element.x === 'function' && typeof element.y === 'function') {
+            return { x: element.x(), y: element.y() };
+        }
+        const box = element.bbox();
+        return { x: box.x, y: box.y };
     }
 }

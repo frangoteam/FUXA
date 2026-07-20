@@ -40,6 +40,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         anticlockwise: GaugeActionsType.anticlockwise,
         rotate: GaugeActionsType.rotate,
         move: GaugeActionsType.move,
+        moveByTags: GaugeActionsType.moveByTags,
         refreshImage: GaugeActionsType.refreshImage,
         loadImage: GaugeActionsType.loadImage,
     };
@@ -134,7 +135,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         }
         if (pro.actions && pro.actions.length) {
             pro.actions.forEach(act => {
-                res.push(act.variableId);
+                ShapesComponent.addActionSignals(res, act);
             });
         }
         pro.varsToBind?.forEach((varToBind: WidgetPropertyVariable) => {
@@ -208,11 +209,11 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                     // check actions
                     if (ga.property.actions) {
                         ga.property.actions.forEach(act => {
-                            if (act.variableId === sig.id) {
+                            if (ShapesComponent.isActionSignal(act, sig.id)) {
                                 if (this.actionsType[act.type] === this.actionsType.loadImage) {
                                     HtmlImageComponent.actionLoadImage(act, svgele, value);
                                 } else {
-                                    ShapesComponent.processAction(act, svgele, value, gaugeStatus, propertyColor);
+                                    ShapesComponent.processAction(act, svgele, value, gaugeStatus, propertyColor, sig.id);
                                 }
                             }
                         });
