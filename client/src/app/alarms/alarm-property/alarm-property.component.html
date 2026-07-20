@@ -46,7 +46,7 @@
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-timedelay' | translate}}</span>
-                            <input numberOnly [(ngModel)]="data.alarm.highhigh.timedelay" style="width: 158px" type="number">
+                            <input numberOnly [allowNegative]="false" [allowDecimal]="false" [(ngModel)]="data.alarm.highhigh.timedelay" style="width: 158px" type="number">
                         </div>
                     </div>
                     <div style="display: block;">
@@ -95,7 +95,7 @@
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-timedelay' | translate}}</span>
-                            <input numberOnly [(ngModel)]="data.alarm.high.timedelay" style="width: 158px" type="number">
+                            <input numberOnly [allowNegative]="false" [allowDecimal]="false" [(ngModel)]="data.alarm.high.timedelay" style="width: 158px" type="number">
                         </div>
                     </div>
                     <div style="display: block;">
@@ -144,7 +144,7 @@
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-timedelay' | translate}}</span>
-                            <input numberOnly [(ngModel)]="data.alarm.low.timedelay" style="width: 158px" type="number">
+                            <input numberOnly [allowNegative]="false" [allowDecimal]="false" [(ngModel)]="data.alarm.low.timedelay" style="width: 158px" type="number">
                         </div>
                     </div>
                     <div style="display: block;">
@@ -193,7 +193,7 @@
                         </div>
                         <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
                             <span>{{'alarm.property-timedelay' | translate}}</span>
-                            <input numberOnly [(ngModel)]="data.alarm.info.timedelay" style="width: 158px" type="number">
+                            <input numberOnly [allowNegative]="false" [allowDecimal]="false" [(ngModel)]="data.alarm.info.timedelay" style="width: 158px" type="number">
                         </div>
                     </div>
                     <div style="display: block;">
@@ -241,7 +241,7 @@
                                 </div>
                                 <div class="my-form-field" style="display: inline-block;">
                                     <span>{{'alarm.property-timedelay' | translate}}</span>
-                                    <input numberOnly [(ngModel)]="item.timedelay" style="width: 145px" type="number">
+                                    <input numberOnly [allowNegative]="false" [allowDecimal]="false" [(ngModel)]="item.timedelay" style="width: 145px" type="number">
                                 </div>
                             </div>
                             <div class="block mb5">
