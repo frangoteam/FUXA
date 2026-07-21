@@ -122,7 +122,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     updateAlarmsList(alr: AlarmBaseType[]) {
         if (this.showType === AlarmShowType.alarms) {
             alr.forEach(alr => {
-                alr.text = this.languageService.getTranslation(alr.text) ?? alr.text;
+                alr.text = this.formatAlarmText(alr.text, alr.value);
                 alr.group = this.languageService.getTranslation(alr.group) ?? alr.group;
                 alr.status = this.getStatus(alr.status);
                 alr.type = this.getPriority(alr.type);
@@ -197,6 +197,7 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
         ).subscribe(result => {
             if (result) {
                 result.forEach(alr => {
+                    alr.text = this.formatAlarmText(alr.text, alr.value);
                     alr.status = this.getStatus(alr.status);
                     alr.type = this.getPriority(alr.type);
                 });
@@ -204,6 +205,14 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
             }
 		    this.alarmsLoading = false;
         });
+    }
+
+    private formatAlarmText(text: string, value: any): string {
+        const translatedText = this.languageService.getTranslation(text) ?? text;
+        if (translatedText && value !== undefined && value !== null) {
+            return translatedText.split('%d').join(String(value));
+        }
+        return translatedText;
     }
 }
 
