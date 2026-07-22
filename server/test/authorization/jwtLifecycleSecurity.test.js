@@ -3,6 +3,7 @@
 const http = require('http');
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 const apiIndex = require('../../api');
 const authApi = require('../../api/auth');
@@ -58,6 +59,61 @@ describe('Security - JWT lifecycle', () => {
     before(async () => {
         const chai = await import('chai');
         expect = chai.expect;
+    });
+
+    it('returns the same signin failure response for unknown users and bad passwords', async () => {
+        const passwordHash = bcrypt.hashSync('correct-password', 4);
+        const runtime = {
+            project: {},
+            users: {
+                findOne(credentials) {
+                    if (credentials.username === 'admin') {
+                        return Promise.resolve([
+                            {
+                                username: 'admin',
+                                fullname: 'Administrator',
+                                password: passwordHash,
+                                groups: -1,
+                                info: '{}'
+                            }
+                        ]);
+                    }
+                    return Promise.resolve([]);
+                }
+            },
+            logger: {
+                error() {},
+                info() {}
+            }
+        };
+
+        authApi.init(runtime, SECRET, '1h', false, '7d');
+        const app = express();
+        app.use(express.json());
+        app.use(authApi.app());
+        const server = await listen(app);
+
+        try {
+            const headers = { 'Content-Type': 'application/json' };
+            const existingUser = await request(server, {
+                method: 'POST',
+                path: '/api/signin',
+                headers,
+                body: JSON.stringify({ username: 'admin', password: 'wrong-password' })
+            });
+            const unknownUser = await request(server, {
+                method: 'POST',
+                path: '/api/signin',
+                headers,
+                body: JSON.stringify({ username: 'user_does_not_exist_999', password: 'wrong-password' })
+            });
+
+            expect(existingUser.statusCode).to.equal(401);
+            expect(unknownUser.statusCode).to.equal(401);
+            expect(unknownUser.json).to.deep.equal(existingUser.json);
+        } finally {
+            await new Promise((resolve) => server.close(resolve));
+        }
     });
 
     it('rejects refresh cookies for deleted users instead of reusing token groups', async () => {

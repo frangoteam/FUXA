@@ -73,6 +73,10 @@ function clearRefreshCookie(res) {
     res.clearCookie(refreshCookieName, { path: '/api/refresh' });
 }
 
+function sendInvalidSignInResponse(res) {
+    res.status(401).json({ status: 'error', message: 'Invalid email/password!!!', data: null });
+}
+
 module.exports = {
     init: function (_runtime, _secretCode, _tokenExpires, _enableRefreshCookieAuth, _refreshTokenExpires) {
         runtime = _runtime;
@@ -119,12 +123,12 @@ module.exports = {
                         });
                         runtime.logger.info('api-signin: ' + userInfo[0].username + ' ' + userInfo[0].fullname + ' ' + userInfo[0].groups);
                     } else {
-                        res.status(401).json({ status: 'error', message: 'Invalid email/password!!!', data: null });
+                        sendInvalidSignInResponse(res);
                         runtime.logger.error('api post signin: Invalid email/password!!!');
                     }
                 } else {
-                    res.status(404).end();
-                    runtime.logger.error('api post signin: Not Found!');
+                    sendInvalidSignInResponse(res);
+                    runtime.logger.error('api post signin: Invalid email/password!!!');
                 }
             }).catch(function (err) {
                 if (err.code) {
