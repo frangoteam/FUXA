@@ -211,14 +211,14 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 if (message) {
                     if (message.device) {
                         devices.browseDevice(message.device, message.node, function (nodes) {
-                            io.emit(Events.IoEventTypes.DEVICE_BROWSE, nodes);
+                            socket.emit(Events.IoEventTypes.DEVICE_BROWSE, nodes);
                         }).then(result => {
                             message.result = result;
-                            io.emit(Events.IoEventTypes.DEVICE_BROWSE, message);
+                            socket.emit(Events.IoEventTypes.DEVICE_BROWSE, message);
                         }).catch(function (err) {
                             logger.error(`${Events.IoEventTypes.DEVICE_BROWSE}: ${err}`);
                             message.error = err;
-                            io.emit(Events.IoEventTypes.DEVICE_BROWSE, message);
+                            socket.emit(Events.IoEventTypes.DEVICE_BROWSE, message);
                         });
                     }
                 }
@@ -236,11 +236,11 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 if (message) {
                     if (message.device) {
                         devices.readNodeAttribute(message.device, message.node).then(result => {
-                            io.emit(Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE, message);
+                            socket.emit(Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE, message);
                         }).catch(function (err) {
                             logger.error(`${Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE}: ${err}`);
                             message.error = err;
-                            io.emit(Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE, message);
+                            socket.emit(Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE, message);
                         });
                     }
                 }
@@ -301,16 +301,16 @@ function init(_io, _api, _settings, _log, eventsMain) {
                     message = {};
                     utils.getHostInterfaces().then(result => {
                         message.result = result;
-                        io.emit(Events.IoEventTypes.HOST_INTERFACES, message);
+                        socket.emit(Events.IoEventTypes.HOST_INTERFACES, message);
                     }).catch(function (err) {
                         logger.error(`${Events.IoEventTypes.HOST_INTERFACES}: ${err}`);
                         message.error = err;
-                        io.emit(Events.IoEventTypes.HOST_INTERFACES, message);
+                        socket.emit(Events.IoEventTypes.HOST_INTERFACES, message);
                     });
                 } else {
                     logger.error(`${Events.IoEventTypes.HOST_INTERFACES}: wrong message`);
                     message.error = 'wrong message';
-                    io.emit(Events.IoEventTypes.HOST_INTERFACES, message);
+                    socket.emit(Events.IoEventTypes.HOST_INTERFACES, message);
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.HOST_INTERFACES}: ${err}`);
@@ -352,16 +352,16 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 if (message && message.deviceId) {
                     devices.getDeviceTagsResult(message.deviceId).then(result => {
                         message.result = result;
-                        io.emit(Events.IoEventTypes.DEVICE_TAGS_REQUEST, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_TAGS_REQUEST, message);
                     }).catch(function (err) {
                         logger.error(`${Events.IoEventTypes.DEVICE_TAGS_REQUEST}: ${err}`);
                         message.error = err;
-                        io.emit(Events.IoEventTypes.DEVICE_TAGS_REQUEST, message);
+                        socket.emit(Events.IoEventTypes.DEVICE_TAGS_REQUEST, message);
                     });
                 } else {
                     logger.error(`${Events.IoEventTypes.DEVICE_TAGS_REQUEST}: wrong message`);
                     message.error = 'wrong message';
-                    io.emit(Events.IoEventTypes.DEVICE_TAGS_REQUEST, message);
+                    socket.emit(Events.IoEventTypes.DEVICE_TAGS_REQUEST, message);
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_TAGS_REQUEST}: ${err}`);
