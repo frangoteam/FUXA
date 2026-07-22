@@ -35,4 +35,13 @@ describe('Security - Socket.IO admin response scoping', () => {
             expect(handler).to.contain(`socket.emit(Events.IoEventTypes.${eventName}`);
         });
     });
+
+    it('does not accept client-published device status updates', () => {
+        const handler = getHandlerSource('DEVICE_STATUS');
+
+        expect(handler).to.contain("message === 'get'");
+        expect(handler).to.contain('socket.emit(Events.IoEventTypes.DEVICE_STATUS');
+        expect(handler).to.not.contain('updateDeviceStatus(message)');
+        expect(handler).to.contain('rejected client status update');
+    });
 });

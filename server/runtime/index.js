@@ -150,10 +150,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
             if (message === 'get') {
                 var adevs = devices.getDevicesStatus();
                 for (var id in adevs) {
-                    updateDeviceStatus({ id: id, status: adevs[id] });
+                    socket.emit(Events.IoEventTypes.DEVICE_STATUS, { id: id, status: adevs[id] });
                 }
             } else {
-                updateDeviceStatus(message);
+                logger.warn(`${Events.IoEventTypes.DEVICE_STATUS}: rejected client status update from ${socket.userId || 'guest'}`);
             }
         });
         // client ask device property
