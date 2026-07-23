@@ -416,12 +416,7 @@ function S7client(_data, _logger, _events, _runtime) {
         if (check && working) {
             overloading++;
             logger.warn(`'${data.name}' working (connection || polling) overload! ${overloading}`);
-            // !The driver don't give the break connection
-            if (overloading >= 3) {
-                s7client.Disconnect();
-            } else {
-                return false;
-            }
+            return false;
         }
         working = check;
         overloading = 0;
@@ -478,7 +473,7 @@ function S7client(_data, _logger, _events, _runtime) {
     var _readVars = function (vars) {
         return new Promise((resolve, reject) => {
             s7client.ReadMultiVars(vars, (err, res) => {
-                if (err) return _getErr(err);
+                if (err) return reject(_getErr(err));
                 let errs = [];
                 res = vars.map((v, i) => {
                     let value = null;
@@ -487,8 +482,7 @@ function S7client(_data, _logger, _events, _runtime) {
                     } else {
                         try {
                             if (v.type === 'BOOL') {
-                                // check the full byte and send all bit if there is a change
-                                value = datatypes['BYTE'].parser(res[i].Data);//, v.Start, -1);
+                                value = datatypes['BYTE'].parser(res[i].Data);
                             } else {
                                 value = datatypes[v.type].parser(res[i].Data);
                             }
@@ -525,7 +519,7 @@ function S7client(_data, _logger, _events, _runtime) {
             }
             let buffer = datatypes[v.type].formatter(v.value)
             s7client.DBWrite(DBNr, offset, end - offset, buffer, (err, res) => {
-                if (err) return _getErr(err);
+                if (err) return reject(_getErr(err));
                 resolve(changed);
             });
         });
@@ -553,7 +547,7 @@ function S7client(_data, _logger, _events, _runtime) {
         }));
         return new Promise((resolve, reject) => {
             s7client.WriteMultiVars(toWrite, (err, res) => {
-                if (err) return _getErr(err);
+                if (err) return reject(_getErr(err));
                 let errs = [];
 
                 res = vars.map((v, i) => {
@@ -680,7 +674,7 @@ module.exports = {
     },
     create: function (data, logger, events, manager, runtime) {
         if (!loadSnap7Lib(manager)) return null;
-        datatypes = require('./datatypes')(snap7.S7Client ? snap7.S7Client() : snap7);
+        datatypes = require('./datatypes')(snap7.S7Client ? new snap7.S7Client() : snap7);
         return new S7client(data, logger, events, runtime);
     }
 }
