@@ -35,7 +35,7 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "1.10.1",
     "mqtt": "4.3.7",
-    "node-red": "^4.1.10",
+    "node-red": "^5.0.1",
     "node-schedule": "2.1.1",
     "nodemailer": "^8.0.8",
     "nopt": "5.0.0",
@@ -43,7 +43,7 @@
     "pg": "^8.18.0",
     "serialport": "12.0.0",
     "socket.io": "^4.8.3",
-    "sqlite3": "^5.1.7",
+    "sqlite3": "^6.0.1",
     "swagger-ui-express": "^5.0.1",
     "winston": "3.7.2",
     "ws": "^8.21.0",
@@ -59,7 +59,7 @@
     "tar": "^7.5.15"
   },
   "devDependencies": {
-    "@mapbox/node-pre-gyp": "^1.0.0",
+    "@mapbox/node-pre-gyp": "^2.0.3",
     "@types/express": "5.0.0",
     "chai": "^5.1.2",
     "mocha": "^10.8.2",
