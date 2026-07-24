@@ -275,3 +275,9 @@ WantedBy=default.target
 ```
 
 `systemctl enable --user fuxa-electron-startup.service` 
+
+**Under a reverse proxy**
+
+When working under a reverse proxy, you can specify a custom BASE_PATH with trailing slashes
+
+> e.g. to serve at `foo.bar/fuxa` you can set the env variable BASE_PATH=/fuxa
