@@ -18,6 +18,9 @@
     "dependencies": {
         "sqlite3": "5.1.7"
     },
+    "overrides": {
+        "tar": "7.5.20"
+    },
     "build": {
         "appId": "com.frangoteam.fuxa",
         "productName": "FUXA",
