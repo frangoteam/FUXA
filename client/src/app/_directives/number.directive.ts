@@ -1,11 +1,22 @@
-import { Directive, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
 @Directive({
     selector: '[numberOnly]'
 })
 export class NumberOnlyDirective {
-    // Allow key codes for special events. Reflect :
-    // Backspace, tab, end, home
+    /**
+     * When false, the minus sign is blocked so users cannot enter negative values.
+     * Defaults to true to preserve the existing permissive behaviour across all current usages.
+     * Set to false on fields where only non-negative integers are valid (e.g. time delay).
+     */
+    @Input() allowNegative = true;
+    /**
+     * When false, the decimal point is blocked so users cannot enter fractional values.
+     * Defaults to true to preserve the existing permissive behaviour across all current usages.
+     * Set to false on fields where only whole numbers are valid (e.g. time delay).
+     */
+    @Input() allowDecimal = true;
+
     private specialKeys: Array<string> = ['Backspace', 'Delete', 'Tab', 'End', 'Home', 'ArrowLeft', 'ArrowRight'];
 
     constructor(private el: ElementRef) {
@@ -13,10 +24,35 @@ export class NumberOnlyDirective {
 
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent) {
-        // Allow Backspace, tab, end, and home keys
+        // Always allow navigation/editing keys
         if (this.specialKeys.indexOf(event.key) !== -1) {
             event.stopPropagation();
             return;
+        }
+
+        const current: string = this.el.nativeElement.value;
+
+        // Handle minus sign
+        if (event.key === '-') {
+            if (this.allowNegative && !current.startsWith('-')) {
+                return;
+            }
+            event.preventDefault();
+            return;
+        }
+
+        // Handle decimal point
+        if (event.key === '.') {
+            if (this.allowDecimal && !current.includes('.')) {
+                return;
+            }
+            event.preventDefault();
+            return;
+        }
+
+        // Block anything that is not a digit
+        if (!/^[0-9]$/.test(event.key)) {
+            event.preventDefault();
         }
     }
 }
@@ -26,16 +62,13 @@ export class NumberOnlyDirective {
 })
 export class NumberOrNullOnlyDirective {
     // Allow decimal numbers and negative values
-    private regex = new RegExp(/^-?[0-9]+(\.[0-9]*){0,1}$/g);///^-?[0-9]+(\.[0-9]*){0,1}$/g);
-    // Allow key codes for special events. Reflect :
-    // Backspace, tab, end, home
+    private regex = new RegExp(/^-?[0-9]+(\.[0-9]*){0,1}$/g);
     private specialKeys: Array<string> = ['Backspace', 'Delete', 'Tab', 'End', 'Home', 'ArrowLeft', 'ArrowRight'];
 
     constructor(private el: ElementRef) {
     }
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent) {
-        // Allow Backspace, tab, end, and home keys
         if (this.specialKeys.indexOf(event.key) !== -1) {
             event.stopPropagation();
             return;
