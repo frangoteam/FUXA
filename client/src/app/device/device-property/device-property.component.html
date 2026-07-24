@@ -118,6 +118,20 @@
                             placeholder="{{'device.property-adpu-timeout-ph' | translate}}" class="adpu" type="number">
                     </div>
                 </div>
+                <div *ngSwitchCase="deviceType.PlumEconextGateway">
+                    <!-- Address of the REST service exposed by econext-gateway. -->
+                    <div class="my-form-field block mb10">
+                        <span>{{'device.property-plum-econext-gateway' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.address"
+                            placeholder="http://192.168.1.10:8000" style="width: 350px" type="text"
+                            (click)="onAddressChanged()">
+                    </div>
+                    <div class="my-form-field block">
+                        <span>{{'device.property-http-timeout' | translate}} (ms)</span>
+                        <input numberOnly [(ngModel)]="data.device.property.timeout"
+                            placeholder="5000" style="width: 100px" type="text">
+                    </div>
+                </div>
                 <div *ngSwitchCase="deviceType.SiemensS7">
                     <div class="my-form-field" style="display: block;margin-bottom: 10px;">
                         <span>{{'device.property-address-s7' | translate}}</span>

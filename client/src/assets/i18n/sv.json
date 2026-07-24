@@ -913,6 +913,8 @@
     "device.property-format": "Format",
     "device.property-internal": "Endast frontend",
     "device.property-url": "URL (http://[server]:[port])",
+    "device.property-plum-econext-gateway": "PLUM ecoNEXT Gateway",
+    "device.property-http-timeout": "HTTP-tidsgräns",
     "device.property-webapi-result": "Resultat av förfrågan",
     "device.not-webapi-result": "Konfigurera WebAPI-resultat",
     "device.property-show": "Visa anslutningsegenskaper",

@@ -188,6 +188,7 @@ import { TagPropertyEditModbusComponent } from './device/tag-property/tag-proper
 import { TagPropertyEditInternalComponent } from './device/tag-property/tag-property-edit-internal/tag-property-edit-internal.component';
 import { TagPropertyEditOpcuaComponent } from './device/tag-property/tag-property-edit-opcua/tag-property-edit-opcua.component';
 import { TagPropertyEditBacnetComponent } from './device/tag-property/tag-property-edit-bacnet/tag-property-edit-bacnet.component';
+import { TagPropertyEditPlumEconetComponent } from './device/tag-property/tag-property-edit-plum-econext/tag-property-edit-plum-econext.component';
 import { TagPropertyEditWebapiComponent } from './device/tag-property/tag-property-edit-webapi/tag-property-edit-webapi.component';
 import { TagPropertyEditEthernetipComponent } from './device/tag-property/tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
 import { ViewPropertyComponent } from './editor/view-property/view-property.component';
@@ -268,6 +269,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyEditInternalComponent,
         TagPropertyEditOpcuaComponent,
         TagPropertyEditBacnetComponent,
+        TagPropertyEditPlumEconetComponent,
         TagPropertyEditWebapiComponent,
         TagPropertyEditEthernetipComponent,
         TagPropertyEditADSclientComponent,

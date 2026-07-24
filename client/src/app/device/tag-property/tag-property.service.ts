@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog as MatDialog } from '@angular/material/dialog';
-import { Device, TAG_PREFIX, Tag, ServerTagType } from '../../_models/device';
+import { Device, DeviceType, TAG_PREFIX, Tag, ServerTagType } from '../../_models/device';
 import { Utils } from '../../_helpers/utils';
 import { TagPropertyEditS7Component } from './tag-property-edit-s7/tag-property-edit-s7.component';
 import { Observable, map } from 'rxjs';
@@ -11,6 +11,7 @@ import { TagPropertyEditInternalComponent, TagPropertyInternalData } from './tag
 import { TagPropertyEditOpcuaComponent, TagPropertyOpcUaData } from './tag-property-edit-opcua/tag-property-edit-opcua.component';
 import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 import { TagPropertyBacNetData, TagPropertyEditBacnetComponent } from './tag-property-edit-bacnet/tag-property-edit-bacnet.component';
+import { TagPropertyEditPlumEconetComponent, TagPropertyPlumEconextData } from './tag-property-edit-plum-econext/tag-property-edit-plum-econext.component';
 import { TagPropertyEditWebapiComponent, TagPropertyWebApiData } from './tag-property-edit-webapi/tag-property-edit-webapi.component';
 import { TagPropertyEditEthernetipComponent, TagPropertyEthernetIpData } from './tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
 import { TagPropertyEditADSclientComponent } from './tag-property-edit-adsclient/tag-property-edit-adsclient.component';
@@ -296,6 +297,41 @@ export class TagPropertyService {
                 return result;
             })
         );
+    }
+
+    public editTagPropertyPlumEconext(device: Device, tagsMap?: any, tag?: Tag): Observable<any> {
+        const dialogRef = this.dialog.open(TagPropertyEditPlumEconetComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            width: '700px',
+            maxWidth: '92vw',
+            maxHeight: '88vh',
+            data: <TagPropertyPlumEconextData>{ device, tag }
+        });
+        return dialogRef.componentInstance.result.pipe(map(result => {
+            if (result?.tag && result.tagProperty) {
+                result.tag.name = result.tagProperty.tagName;
+                result.tag.label = result.tagProperty.tagName;
+                result.tag.type = result.tagProperty.tagType;
+                result.tag.description = result.tagProperty.tagDescription;
+                result.tag.options = result.tag.options || {};
+                result.tag.options.gatewayName = result.tagProperty.gatewayName;
+            }
+            result?.nodes?.forEach((node: Node) => {
+                const tag = new Tag(Utils.getGUID(TAG_PREFIX));
+                tag.name = node.todefine?.gatewayName || node.text;
+                tag.label = tag.name;
+                tag.type = node.type;
+                tag.address = node.id;
+                tag.memaddress = node.parent?.id;
+                tag.options = node.todefine;
+                this.checkToAdd(tag, result.device);
+                if (tagsMap) tagsMap[tag.id] = tag;
+            });
+            this.projectService.setDeviceTags(device);
+            dialogRef.close();
+            return result;
+        }));
     }
 
     public editTagPropertyWebapi(device: Device, tagsMap?: any): Observable<any> {
