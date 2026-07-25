@@ -35,6 +35,10 @@
     width: 240px;
 }
 
+.item-range-placeholder {
+    height: 1px;
+}
+
 .action-params {
     display: inline-block;
     padding-top: 5px;
@@ -46,4 +50,8 @@
 }
 ::ng-deep .input-slider span {
     font-size: 14px !important;
+}
+
+.move-by-tags {
+    display: inline-block;
 }

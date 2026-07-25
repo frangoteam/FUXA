@@ -218,6 +218,7 @@ module.exports = {
 const ReportIntervalType = {
     min5: 'min5',
     min10: 'min10',
+    min15: 'min15',
     min30: 'min30',
     hour: 'hour',
     day: 'day',

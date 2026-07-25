@@ -26,7 +26,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
 
     static actionsType = { stop: GaugeActionsType.stop, clockwise: GaugeActionsType.clockwise, anticlockwise: GaugeActionsType.anticlockwise,
                         downup: GaugeActionsType.downup, hide: GaugeActionsType.hide, show: GaugeActionsType.show, rotate : GaugeActionsType.rotate,
-                        move: GaugeActionsType.move  };
+                        move: GaugeActionsType.move, moveByTags: GaugeActionsType.moveByTags  };
 
     constructor() {
         super();
@@ -42,7 +42,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         }
         if (pro.actions) {
             pro.actions.forEach(act => {
-                res.push(act.variableId);
+                ShapesComponent.addActionSignals(res, act);
             });
         }
         return res;
@@ -97,8 +97,8 @@ export class ApeShapesComponent extends GaugeBaseComponent {
                     // check actions
                     if (ga.property.actions) {
                         ga.property.actions.forEach(act => {
-                            if (act.variableId === sig.id) {
-                                ApeShapesComponent.processAction(act, svgele, value, gaugeStatus);
+                            if (ShapesComponent.isActionSignal(act, sig.id)) {
+                                ApeShapesComponent.processAction(act, svgele, value, gaugeStatus, sig.id);
                             }
                         });
                     }
@@ -109,7 +109,7 @@ export class ApeShapesComponent extends GaugeBaseComponent {
         }
     }
 
-    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus) {
+    static processAction(act: GaugeAction, svgele: any, value: any, gaugeStatus: GaugeStatus, signalId?: string) {
         let actValue = GaugeBaseComponent.checkBitmask(act.bitmask, value);
         if (this.actionsType[act.type] === this.actionsType.hide) {
             if (act.range.min <= actValue && act.range.max >= actValue) {
@@ -126,6 +126,8 @@ export class ApeShapesComponent extends GaugeBaseComponent {
             ShapesComponent.rotateShape(act, svgele, actValue);
         } else if (ShapesComponent.actionsType[act.type] === ShapesComponent.actionsType.move) {
             ShapesComponent.moveShape(act, svgele, actValue);
+        } else if (ShapesComponent.actionsType[act.type] === ShapesComponent.actionsType.moveByTags) {
+            ShapesComponent.moveShapeByTags(act, svgele, value, signalId, gaugeStatus);
         } else {
             if (act.range.min <= actValue && act.range.max >= actValue) {
                 var element = SVG.adopt(svgele.node);

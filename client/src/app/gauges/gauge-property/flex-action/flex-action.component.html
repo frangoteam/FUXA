@@ -1,11 +1,12 @@
 <div *ngFor="let item of actions; index as i" class="item">
     <flex-variable class="item-head" [data]="data" (onchange)="setVariable(i, $event)" [variableId]="item.variableId" [withStaticValue]="false"
-    [withBitmask]="withBitmask" [bitmask]="item.bitmask">
+    [withBitmask]="withBitmask && !isMoveByTags(item)" [bitmask]="item.bitmask">
     </flex-variable>
     <div class="action-content">
-        <div *ngIf="slideView" class="item-range">
+        <div *ngIf="slideView && !isMoveByTags(item)" class="item-range">
             <range-number [range]="item.range"></range-number>
         </div>
+        <div *ngIf="slideView && isMoveByTags(item)" class="item-range item-range-placeholder"></div>
         <div class="my-form-field" style="width: 278px;">
             <span>{{'gauges.property-action-type' | translate}}</span>
             <mat-select [(value)]="item.type" (selectionChange)="onCheckActionType(item.type, item)">
@@ -74,7 +75,36 @@
                 <div class="my-form-field mr10">
                     <span>{{'gauges.property-action-duration' | translate}}</span>
                     <input numberOnly [(ngModel)]="item.options.duration" type="number" style="width: 70px">
-                </div>                
+                </div>
+            </div>
+            <div *ngSwitchCase="actionMoveByTags" class="action-params move-by-tags">
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-axis' | translate}}</span>
+                    <mat-select [(value)]="item.options.axis" style="width: 80px">
+                        <mat-option value="x">{{'general-x' | translate}}</mat-option>
+                        <mat-option value="y">{{'general-y' | translate}}</mat-option>
+                    </mat-select>
+                </div>
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-value-min' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.valueMin" type="number" style="width: 70px">
+                </div>
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-value-max' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.valueMax" type="number" style="width: 70px">
+                </div>
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-position-min' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.positionMin" type="number" style="width: 70px">
+                </div>
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-position-max' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.positionMax" type="number" style="width: 70px">
+                </div>
+                <div class="my-form-field mr10">
+                    <span>{{'gauges.property-action-duration' | translate}}</span>
+                    <input numberOnly [(ngModel)]="item.options.duration" type="number" style="width: 70px">
+                </div>
             </div>
             <div *ngSwitchCase="actionLoadImage" class="action-params">
                 <div class="my-form-field">
