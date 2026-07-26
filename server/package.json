@@ -35,7 +35,7 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "1.10.1",
     "mqtt": "4.3.7",
-    "node-red": "^4.1.10",
+    "node-red": "^5.0.1",
     "node-schedule": "2.1.1",
     "nodemailer": "^8.0.8",
     "nopt": "5.0.0",
