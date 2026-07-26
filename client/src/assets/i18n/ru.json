@@ -640,6 +640,9 @@
     "slider.property-slider-color": "Цвет соединителя",
     "slider.property-slider-background": "Базовый цвет",
     "slider.property-slider-handle": "Цвет указателя",
+    "slider.property-slider-width": "Ширина полосы",
+    "slider.property-handle-width": "Ширина указателя",
+    "slider.property-handle-height": "Высота указателя",
 
     "html-switch.property-off-value": "Значение Выкл",
     "html-switch.property-on-value": "Значение Вкл",

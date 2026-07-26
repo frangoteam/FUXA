@@ -845,6 +845,9 @@
     "slider.property-slider-color": "接続色",
     "slider.property-slider-background": "ベースカラー",
     "slider.property-slider-handle": "ポインターカラー",
+    "slider.property-slider-width": "バーの幅",
+    "slider.property-handle-width": "ポインター幅",
+    "slider.property-handle-height": "ポインター高さ",
 
     "html-switch.property-off-value": "オフ値",
     "html-switch.property-on-value": "オン値",

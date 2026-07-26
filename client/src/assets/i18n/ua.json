@@ -357,6 +357,9 @@
     "slider.property-slider-color": "Колір вмісту",
     "slider.property-slider-background": "Базовий колір",
     "slider.property-slider-handle": "Колір вказівника",
+    "slider.property-slider-width": "Ширина панелі",
+    "slider.property-handle-width": "Ширина вказівника",
+    "slider.property-handle-height": "Висота вказівника",
 
     "html-switch.property-off-value": "Значення OFF",
     "html-switch.property-on-value": "Значення ON",

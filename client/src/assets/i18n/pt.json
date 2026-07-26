@@ -387,6 +387,9 @@
     "slider.property-slider-color": "Cor Ligação",
     "slider.property-slider-background": "Cor Base",
     "slider.property-slider-handle": "Apontador da Cor",
+    "slider.property-slider-width": "Largura da barra",
+    "slider.property-handle-width": "Largura do ponteiro",
+    "slider.property-handle-height": "Altura do ponteiro",
 
     "html-switch.property-off-value": "Valor Desligado",
     "html-switch.property-on-value": "Valor Ligado",

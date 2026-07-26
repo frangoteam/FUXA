@@ -822,6 +822,9 @@
     "slider.property-slider-color": "Färg för koppling",
     "slider.property-slider-background": "Basfärg",
     "slider.property-slider-handle": "Pekarfärg",
+    "slider.property-slider-width": "Stapeltjocklek",
+    "slider.property-handle-width": "Pekarbredd",
+    "slider.property-handle-height": "Pekarhöjd",
 
     "html-switch.property-off-value": "Av-värde",
     "html-switch.property-on-value": "På-värde",

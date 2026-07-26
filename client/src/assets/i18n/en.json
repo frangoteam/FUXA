@@ -945,6 +945,9 @@
     "slider.property-slider-color": "Connect color",
     "slider.property-slider-background": "Base color",
     "slider.property-slider-handle": "Pointer color",
+    "slider.property-slider-width": "Bar width",
+    "slider.property-handle-width": "Pointer width",
+    "slider.property-handle-height": "Pointer height",
 
     "html-switch.property-off-value": "Off Value",
     "html-switch.property-on-value": "On Value",

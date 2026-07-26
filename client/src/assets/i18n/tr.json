@@ -382,6 +382,9 @@
 	"slider.property-slider-color": "Bağlantı rengi",
 	"slider.property-slider-background": "Zemin rengi",
 	"slider.property-slider-handle": "Çubuk rengi",
+	"slider.property-slider-width": "Bar genişliği",
+	"slider.property-handle-width": "İşaretçi genişliği",
+	"slider.property-handle-height": "İşaretçi yüksekliği",
 
 	"html-switch.property-off-value": "Off Değeri",
 	"html-switch.property-on-value": "On Değeri",

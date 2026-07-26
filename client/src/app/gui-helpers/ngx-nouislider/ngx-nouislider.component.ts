@@ -1,13 +1,12 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, Input } from '@angular/core';
 
 declare const noUiSlider: any;
-declare const wNumb: any;
 
 export class NgxNouisliderOptions {
     orientation = 'vertical';//'horizontal';
     direction = 'ltr';
     fontFamily = 'Sans-serif';
-    shape = { baseColor: '#cdcdcd', connectColor: '#262c3b', handleColor: '#3f4964' };
+    shape = { baseColor: '#cdcdcd', connectColor: '#262c3b', handleColor: '#3f4964', barWidth: 18, handleWidth: 0, handleHeight: 0 };
     marker = { color: '#222222', subWidth: 5, subHeight: 1, fontSize: 18, divHeight: 2, divWidth: 12 };
     range = { min: 0, max: 100 };
     step = 1;
@@ -38,6 +37,7 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit, OnDestroy 
 
     ngOnInit() {
         this.options = Object.assign(this.defOptions, this.options);
+        this.options.shape = Object.assign({}, this.defOptions.shape, this.options.shape);
     }
 
     ngAfterViewInit() {
@@ -70,9 +70,12 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     setOptions(options: any): boolean {
+        options = Object.assign({}, this.defOptions, options);
+        options.shape = Object.assign({}, this.defOptions.shape, options.shape);
         let toInit = false;
         if (this.options.orientation !== options.orientation || JSON.stringify(this.options.range) !== JSON.stringify(options.range) ||
-            JSON.stringify(this.options.pips) !== JSON.stringify(options.pips) || JSON.stringify(this.options.marker) !== JSON.stringify(options.marker) ||
+            JSON.stringify(this.options.pips) !== JSON.stringify(options.pips) || JSON.stringify(this.options.shape) !== JSON.stringify(options.shape) ||
+            JSON.stringify(this.options.marker) !== JSON.stringify(options.marker) ||
             JSON.stringify(this.options.tooltip) !== JSON.stringify(options.tooltip)) {
             toInit = true;
         }
@@ -94,14 +97,17 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit, OnDestroy 
     init() {
         if (this.options.orientation === 'vertical') {
             this.slider.nativeElement.style.height = this.size.h + 'px';
-            this.slider.nativeElement.style.width =  null;
+            this.slider.nativeElement.style.width = this.getBarWidth() + 'px';
         } else {
             this.slider.nativeElement.style.width = this.size.w + 'px';
-            this.slider.nativeElement.style.height =  null;
+            this.slider.nativeElement.style.height = this.getBarWidth() + 'px';
         }
-        let tooltip = [false];
+        let tooltip: any[] = [false];
         if (this.options.tooltip.type === 'hide' || this.options.tooltip.type === 'show') {
-            tooltip =  [wNumb({decimals: this.options.tooltip.decimals})];
+            tooltip = [{
+                to: (value: number) => Number(value).toFixed(this.options.tooltip.decimals),
+                from: Number
+            }];
         }
         if (this.uiSlider) {
             this.uiSlider.off();
@@ -124,6 +130,7 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit, OnDestroy 
             marker: this.options.marker,
 
         });
+        this.applyShapeSize();
         // tooltip
         if (this.options.tooltip.type === 'show') {
             var tp = this.uiSlider.target.getElementsByClassName('noUi-tooltip');
@@ -150,6 +157,49 @@ export class NgxNouisliderComponent implements OnInit, AfterViewInit, OnDestroy 
                 self.onUpdate(values[handle]);
             }
         });
+    }
+
+    getBarWidth(): number {
+        const width = Number(this.options?.shape?.barWidth);
+        return Number.isFinite(width) && width > 0 ? width : this.defOptions.shape.barWidth;
+    }
+
+    getHandleWidth(): number {
+        const width = Number(this.options?.shape?.handleWidth);
+        const defaultWidth = this.options.orientation === 'vertical' ? 28 : 34;
+        return Number.isFinite(width) && width > 0 ? width : defaultWidth;
+    }
+
+    getHandleHeight(): number {
+        const height = Number(this.options?.shape?.handleHeight);
+        const defaultHeight = this.options.orientation === 'vertical' ? 34 : 28;
+        return Number.isFinite(height) && height > 0 ? height : defaultHeight;
+    }
+
+    applyShapeSize() {
+        const barWidth = this.getBarWidth();
+        const handleWidth = this.getHandleWidth();
+        const handleHeight = this.getHandleHeight();
+        const target = this.slider.nativeElement;
+        const handles = target.getElementsByClassName('noUi-handle');
+
+        if (this.options.orientation === 'vertical') {
+            target.style.width = barWidth + 'px';
+            Array.from(handles).forEach((handle: HTMLElement) => {
+                handle.style.width = handleWidth + 'px';
+                handle.style.height = handleHeight + 'px';
+                handle.style.right = ((barWidth - handleWidth) / 2) + 'px';
+                handle.style.bottom = (-handleHeight / 2) + 'px';
+            });
+        } else {
+            target.style.height = barWidth + 'px';
+            Array.from(handles).forEach((handle: HTMLElement) => {
+                handle.style.width = handleWidth + 'px';
+                handle.style.height = handleHeight + 'px';
+                handle.style.right = (-handleWidth / 2) + 'px';
+                handle.style.top = ((barWidth - handleHeight) / 2) + 'px';
+            });
+        }
     }
 
     resetWorkingTimeout()

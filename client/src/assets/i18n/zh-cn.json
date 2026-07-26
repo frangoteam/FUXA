@@ -825,6 +825,9 @@
     "slider.property-slider-color": "连接颜色",
     "slider.property-slider-background": "底色",
     "slider.property-slider-handle": "指针颜色",
+    "slider.property-slider-width": "条形宽度",
+    "slider.property-handle-width": "指针宽度",
+    "slider.property-handle-height": "指针高度",
 
     "html-switch.property-off-value": "关闭值",
     "html-switch.property-on-value": "开启值",
