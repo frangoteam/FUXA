@@ -287,7 +287,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask alarms status
         socket.on(Events.IoEventTypes.ALARMS_STATUS, (message) => {
             if (message === 'get') {
-                updateAlarmsStatus();
+                updateAlarmsStatus(socket);
             }
         });
         // client ask host interfaces
@@ -608,15 +608,37 @@ function updateDeviceStatus(event) {
 /**
  * Transmit the alarms status to all frontend
  */
-function updateAlarmsStatus() {
+function getSocketPermission(socket) {
+    if (!settings || !settings.secureEnabled) {
+        return -1;
+    }
+    if (settings.userRole && socket?.userId !== 'admin') {
+        return users.getUserCache(socket?.userId);
+    }
+    return socket?.userGroups;
+}
+
+function updateAlarmsStatus(socket) {
     try {
-        alarmsMgr.getAlarmsStatus().then(function (result) {
-            io.emit(Events.IoEventTypes.ALARMS_STATUS, result);
-        }).catch(function (err) {
-            if (err) {
-                logger.error('runtime.failed-to-update-alarms: ' + err);
-            }
-        });
+        if (socket) {
+            alarmsMgr.getAlarmsStatus(getSocketPermission(socket)).then(function (result) {
+                socket.emit(Events.IoEventTypes.ALARMS_STATUS, result);
+            }).catch(function (err) {
+                if (err) {
+                    logger.error('runtime.failed-to-update-alarms: ' + err);
+                }
+            });
+        } else {
+            Array.from(io.sockets.sockets.values()).forEach((clientSocket) => {
+                alarmsMgr.getAlarmsStatus(getSocketPermission(clientSocket)).then(function (result) {
+                    clientSocket.emit(Events.IoEventTypes.ALARMS_STATUS, result);
+                }).catch(function (err) {
+                    if (err) {
+                        logger.error('runtime.failed-to-update-alarms: ' + err);
+                    }
+                });
+            });
+        }
     } catch (err) {
         logger.error('runtime.failed-to-update-alarms: ' + err);
     }
