@@ -1313,6 +1313,7 @@
     "gauges.property-input-maxlength": "Max length",
     "gauges.property-input-readonly": "Readonly",
     "gauges.property-icon": "Icon",
+    "gauges.property-icon-none": "No icon",
     "gauges.property-icons-filter": "Icons Filter",
 
     "gauges.property-update-enabled": "Enable update",
