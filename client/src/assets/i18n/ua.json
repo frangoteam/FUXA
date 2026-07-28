@@ -636,5 +636,6 @@
     "msg.login-username-required": "Користувач",
     "msg.login-password-required": "Пароль",
     "msg.signin-failed": "Не авторизований",
-    "device.tag-uns-path": "UNS Path"
+    "device.tag-uns-path": "UNS Path",
+    "gauges.property-icon-none": "Без значка"
 }

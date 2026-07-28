@@ -798,7 +798,8 @@
     "msg.signin-failed": "권한 없음",
     "msg.get-project-void": "프로젝트가 발견되지 않았습니다.!",
     "msg.editor-mode-locked": "편집자가 이미 열려있습니다!",
-    "msg.alarms-clear-success": "모든 알림이 취소되었습니다!"
+    "msg.alarms-clear-success": "모든 알림이 취소되었습니다!",
+    "gauges.property-icon-none": "아이콘 없음"
 }
 
 

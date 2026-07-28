@@ -1778,6 +1778,7 @@
     "msg.maps-location-name-exist": "マップ位置名が既に存在します！",
     "msg.text-name-exist": "テキスト名が既に存在します！",
     "msg.texts-text-remove": "テキスト '{{value}}' を削除しますか？",
-    "msg.operation-unauthorized": "操作が許可されていません！"
+    "msg.operation-unauthorized": "操作が許可されていません！",
+    "gauges.property-icon-none": "アイコンなし"
 }
 

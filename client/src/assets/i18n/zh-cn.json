@@ -1745,7 +1745,8 @@
     "msg.maps-location-name-exist": "位置名称已经存在！",
     "msg.text-name-exist": "文本名称已经存在！",
     "msg.texts-text-remove": "您是否想删除文本'{{value}}'?",
-    "msg.operation-unauthorized": "操作未经授权！"
+    "msg.operation-unauthorized": "操作未经授权！",
+    "gauges.property-icon-none": "无图标"
 }
 
 
