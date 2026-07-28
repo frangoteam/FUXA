@@ -16,6 +16,9 @@ function S7client(_data, _logger, _events, _runtime) {
     var data = JSON.parse(JSON.stringify(_data));                   // Current Device data { id, name, tags, enabled, ... }
     var logger = _logger;               // Logger
     var s7client = new snap7.S7Client();// Client node-S7
+    if (!datatypes) {
+        datatypes = require('./datatypes')(s7client);
+    }
     var working = false;                // Working flag to manage overloading polling and connection
     var events = _events;               // Events to commit change to runtime
     var lastStatus = '';                // Last Device status
@@ -674,7 +677,6 @@ module.exports = {
     },
     create: function (data, logger, events, manager, runtime) {
         if (!loadSnap7Lib(manager)) return null;
-        datatypes = require('./datatypes')(snap7.S7Client ? new snap7.S7Client() : snap7);
         return new S7client(data, logger, events, runtime);
     }
 }
