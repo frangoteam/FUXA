@@ -698,5 +698,6 @@
 	"msg.login-username-required": "Kullanıcı adı girin",
 	"msg.login-password-required": "Şifre girin",
 	"msg.signin-failed": "Yetkisiz giriş.",
-    "device.tag-uns-path": "UNS Path"
+    "device.tag-uns-path": "UNS Path",
+    "gauges.property-icon-none": "Simge yok"
 }

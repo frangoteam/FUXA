@@ -1335,7 +1335,8 @@
     "msg.export-alarms-error": "Alarme exportieren fehlgeschlagen!",
     "msg.report-build-forced": "Senden zum Erstellen des Berichts erfolgreich",
     "msg.report-build-error": "Senden zum Erstellen des Berichts fehlgeschlagen!",
-    "msg.device-tags-request-result": "Lade {{value}} von {{current}}"
+    "msg.device-tags-request-result": "Lade {{value}} von {{current}}",
+    "gauges.property-icon-none": "Kein Symbol"
 }
 
 

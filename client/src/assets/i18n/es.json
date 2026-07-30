@@ -803,7 +803,8 @@
     "msg.signin-failed": "Desautorizado",
     "msg.get-project-void": "Proyecto no encontrado!",
     "msg.editor-mode-locked": "El editor ya esta abierto!",
-    "msg.alarms-clear-success": "Todas las alarmas han sido canceladas!"
+    "msg.alarms-clear-success": "Todas las alarmas han sido canceladas!",
+    "gauges.property-icon-none": "Sin icono"
   }
 
 

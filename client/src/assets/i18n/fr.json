@@ -1746,7 +1746,8 @@
   "msg.maps-location-name-exist": "Le nom de l'emplacement sur la carte existe déjà !",
   "msg.text-name-exist": "Le nom du texte existe déjà !",
   "msg.texts-text-remove": "Souhaitez-vous supprimer le texte '{{value}}' ?",
-  "msg.operation-unauthorized": "Opération non autorisée !"
+  "msg.operation-unauthorized": "Opération non autorisée !",
+    "gauges.property-icon-none": "Aucune icône"
 }
 
 

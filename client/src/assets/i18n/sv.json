@@ -1724,6 +1724,7 @@
     "msg.maps-location-name-exist": "Kartplatsnamnet finns redan!",
     "msg.text-name-exist": "Textnamnet finns redan!",
     "msg.texts-text-remove": "Vill du ta bort texten '{{value}}'?",
-    "msg.operation-unauthorized": "Operation obehörig!"
+    "msg.operation-unauthorized": "Operation obehörig!",
+    "gauges.property-icon-none": "Ingen ikon"
 }
 
