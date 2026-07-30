@@ -43,7 +43,7 @@ export class ScriptService {
         const api: any = {};
 
         for (const fn of systemFunctions.functions) {
-            if (clientAccess.scriptSystemFunctions.includes(fn.name)) {
+            if (clientAccess?.scriptSystemFunctions?.includes(fn.name)) {
                 const methodName = fn.name.replace('$', '');
                 if (typeof this[fn.name] === 'function') {
                     api[methodName] = this[fn.name].bind(this);
