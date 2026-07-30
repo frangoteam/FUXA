@@ -14,7 +14,7 @@ import { Define } from '../../../../_helpers/define';
 @Component({
     selector: 'app-slider-property',
     templateUrl: './slider-property.component.html',
-    styleUrls: ['./slider-property.component.css']
+    styleUrls: ['./slider-property.component.scss']
 })
 export class SliderPropertyComponent implements OnInit, AfterViewInit {
 
@@ -48,6 +48,14 @@ export class SliderPropertyComponent implements OnInit, AfterViewInit {
         this.options = <NgxNouisliderOptions>this.property.options;
         if (!this.options) {
             this.options = new NgxNouisliderOptions();
+        }
+        this.options = Object.assign(new NgxNouisliderOptions(), this.options);
+        this.options.shape = Object.assign({}, new NgxNouisliderOptions().shape, this.options.shape);
+        if (!this.options.shape.handleWidth) {
+            this.options.shape.handleWidth = this.options.orientation === 'vertical' ? 28 : 34;
+        }
+        if (!this.options.shape.handleHeight) {
+            this.options.shape.handleHeight = this.options.orientation === 'vertical' ? 34 : 28;
         }
     }
 

@@ -823,6 +823,9 @@
   "slider.property-slider-color": "Couleur curseur",
   "slider.property-slider-background": "Couleur de base",
   "slider.property-slider-handle": "Couleur du pointeur",
+  "slider.property-slider-width": "Largeur de la barre",
+  "slider.property-handle-width": "Largeur du pointeur",
+  "slider.property-handle-height": "Hauteur du pointeur",
 
   "html-switch.property-off-value": "Valeur HORS",
   "html-switch.property-on-value": "Valeur EN",

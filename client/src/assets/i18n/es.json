@@ -421,6 +421,9 @@
     "slider.property-slider-color": "Conectar color",
     "slider.property-slider-background": "Color de base",
     "slider.property-slider-handle": "Color del puntero",
+    "slider.property-slider-width": "Ancho de barra",
+    "slider.property-handle-width": "Ancho del puntero",
+    "slider.property-handle-height": "Altura del puntero",
 
     "html-switch.property-off-value": "Desactivado Valor",
     "html-switch.property-on-value": "Activado Valor",

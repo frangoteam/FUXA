@@ -825,6 +825,9 @@
     "slider.property-slider-color": "連接顏色",
     "slider.property-slider-background": "底色",
     "slider.property-slider-handle": "指標顏色",
+    "slider.property-slider-width": "條形寬度",
+    "slider.property-handle-width": "指標寬度",
+    "slider.property-handle-height": "指標高度",
 
     "html-switch.property-off-value": "關閉值",
     "html-switch.property-on-value": "開啟值",

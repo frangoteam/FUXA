@@ -677,6 +677,9 @@
     "slider.property-slider-color": "Farbe verbinden",
     "slider.property-slider-background": "Grundfarbe",
     "slider.property-slider-handle": "Zeigerfarbe",
+    "slider.property-slider-width": "Balkenbreite",
+    "slider.property-handle-width": "Zeigerbreite",
+    "slider.property-handle-height": "Zeigerhöhe",
 
     "html-switch.property-off-value": "Wert Aus",
     "html-switch.property-on-value": "Wert Ein",
