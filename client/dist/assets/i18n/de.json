@@ -677,6 +677,9 @@
     "slider.property-slider-color": "Farbe verbinden",
     "slider.property-slider-background": "Grundfarbe",
     "slider.property-slider-handle": "Zeigerfarbe",
+    "slider.property-slider-width": "Balkenbreite",
+    "slider.property-handle-width": "Zeigerbreite",
+    "slider.property-handle-height": "Zeigerhöhe",
 
     "html-switch.property-off-value": "Wert Aus",
     "html-switch.property-on-value": "Wert Ein",
@@ -1332,7 +1335,8 @@
     "msg.export-alarms-error": "Alarme exportieren fehlgeschlagen!",
     "msg.report-build-forced": "Senden zum Erstellen des Berichts erfolgreich",
     "msg.report-build-error": "Senden zum Erstellen des Berichts fehlgeschlagen!",
-    "msg.device-tags-request-result": "Lade {{value}} von {{current}}"
+    "msg.device-tags-request-result": "Lade {{value}} von {{current}}",
+    "gauges.property-icon-none": "Kein Symbol"
 }
 
 

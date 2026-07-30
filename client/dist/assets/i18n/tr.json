@@ -382,6 +382,9 @@
 	"slider.property-slider-color": "Bağlantı rengi",
 	"slider.property-slider-background": "Zemin rengi",
 	"slider.property-slider-handle": "Çubuk rengi",
+	"slider.property-slider-width": "Bar genişliği",
+	"slider.property-handle-width": "İşaretçi genişliği",
+	"slider.property-handle-height": "İşaretçi yüksekliği",
 
 	"html-switch.property-off-value": "Off Değeri",
 	"html-switch.property-on-value": "On Değeri",
@@ -695,5 +698,6 @@
 	"msg.login-username-required": "Kullanıcı adı girin",
 	"msg.login-password-required": "Şifre girin",
 	"msg.signin-failed": "Yetkisiz giriş.",
-    "device.tag-uns-path": "UNS Path"
+    "device.tag-uns-path": "UNS Path",
+    "gauges.property-icon-none": "Simge yok"
 }

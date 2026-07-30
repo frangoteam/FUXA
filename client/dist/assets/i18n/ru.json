@@ -640,6 +640,9 @@
     "slider.property-slider-color": "Цвет соединителя",
     "slider.property-slider-background": "Базовый цвет",
     "slider.property-slider-handle": "Цвет указателя",
+    "slider.property-slider-width": "Ширина полосы",
+    "slider.property-handle-width": "Ширина указателя",
+    "slider.property-handle-height": "Высота указателя",
 
     "html-switch.property-off-value": "Значение Выкл",
     "html-switch.property-on-value": "Значение Вкл",
@@ -1251,7 +1254,8 @@
     "msg.export-alarms-error": "Export alarms failed!",
     "msg.report-build-forced": "Send to build Report successful",
     "msg.report-build-error": "Send to build Report failed!",
-    "msg.device-tags-request-result": "Загружено {{value}} из {{current}}"
+    "msg.device-tags-request-result": "Загружено {{value}} из {{current}}",
+    "gauges.property-icon-none": "Без значка"
 }
 
 
