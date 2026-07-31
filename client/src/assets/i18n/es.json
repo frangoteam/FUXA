@@ -830,7 +830,7 @@
         "no-instances": "Aún no hay instancias",
         "delete": "Eliminar",
         "deleting": "Eliminando...",
-        "delete-confirm": "¿Eliminar receta \"{name}\"?",
+        "delete-confirm": "¿Eliminar receta \"{{name}}\"?",
         "property-settings-title": "Configuración de receta",
         "property-data": "Datos",
         "property-recipe": "Receta",

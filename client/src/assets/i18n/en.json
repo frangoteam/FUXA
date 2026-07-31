@@ -2029,7 +2029,7 @@
         "no-instances": "No instances yet",
         "delete": "Delete",
         "deleting": "Deleting...",
-        "delete-confirm": "Delete recipe \"{name}\"?",
+        "delete-confirm": "Delete recipe \"{{name}}\"?",
         "property-settings-title": "Recipe settings",
         "property-data": "Data",
         "property-recipe": "Recipe",
