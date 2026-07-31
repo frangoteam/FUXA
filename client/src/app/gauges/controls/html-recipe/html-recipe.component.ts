@@ -1,7 +1,7 @@
 import { Component, Input, ViewContainerRef, ComponentFactoryResolver, ComponentRef, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog as MatDialog } from '@angular/material/dialog';
 import { GaugeBaseComponent } from '../../gauge-base/gauge-base.component';
-import { GaugeSettings, Variable, GaugeStatus } from '../../../_models/hmi';
+import { GaugeSettings } from '../../../_models/hmi';
 import { Utils } from '../../../_helpers/utils';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { RecipeService } from '../../../_services/recipe.service';
