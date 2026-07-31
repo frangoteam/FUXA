@@ -224,6 +224,8 @@
     "editor.controls-shape-settings": "Opciones de forma",
     "editor.controls-html-switch-settings": "Opciones de switch",
   "editor.controls-switch": "Switch",
+  "editor.controls-recipe": "Receta",
+  "editor.controls-recipe-settings": "Configuración de receta",
 
     "editor.layout-settings": "Opciones de diseño",
 
@@ -744,6 +746,7 @@
     "dlg.setup-layout": "Layout",
     "dlg.setup-plugins": "Plugins",
     "dlg.setup-scripts": "Codigos",
+    "dlg.setup-recipes": "Recetas",
     "dlg.setup-settings": "Configuración",
     "dlg.app-settings-title": "Configuración",
     "dlg.app-settings-system": "Sistema",
@@ -804,8 +807,68 @@
     "msg.get-project-void": "Proyecto no encontrado!",
     "msg.editor-mode-locked": "El editor ya esta abierto!",
     "msg.alarms-clear-success": "Todas las alarmas han sido canceladas!",
-    "gauges.property-icon-none": "Sin icono"
+    "gauges.property-icon-none": "Sin icono",
+
+    "recipe": {
+        "loading": "Cargando...",
+        "retry": "Reintentar",
+        "select-recipe": "Seleccionar receta",
+        "tag": "Tag",
+        "type": "Tipo",
+        "value": "Valor",
+        "sending": "Enviando...",
+        "new": "Nueva",
+        "save": "Guardar",
+        "saving": "Guardando...",
+        "download": "Descargar",
+        "downloading": "Descargando...",
+        "upload": "Subir",
+        "uploading": "Subiendo...",
+        "no-recipes": "No hay recetas",
+        "no-type": "No hay tipo de receta configurado",
+        "no-instance": "Seleccionar instancia",
+        "no-instances": "Aún no hay instancias",
+        "delete": "Eliminar",
+        "deleting": "Eliminando...",
+        "delete-confirm": "¿Eliminar receta \"{name}\"?",
+        "property-settings-title": "Configuración de receta",
+        "property-data": "Datos",
+        "property-recipe": "Receta",
+        "property-select-recipe": "Seleccionar receta",
+        "property-behavior": "Comportamiento",
+        "property-readonly": "Solo lectura",
+        "property-appearance": "Apariencia",
+        "property-background": "Fondo",
+        "property-text": "Texto",
+        "property-border": "Borde",
+        "property-accent": "Acento",
+        "property-authorization": "Autorización",
+        "property-visible-actions": "Acciones visibles",
+        "loading-recipes": "Cargando recetas...",
+        "no-recipe-selected": "Ninguna receta seleccionada"
+    },
+
+    "recipes": {
+        "title": "Recetas",
+        "new-recipe": "Nueva",
+        "edit-recipe": "Editar Receta",
+        "delete-confirm": "¿Eliminar receta \"{name}\"?",
+        "delete-success": "Receta eliminada",
+        "import-success": "Importada \"{name}\" ({count} entradas)",
+        "export-success": "Receta exportada",
+        "download": "Descargar",
+        "upload": "Subir",
+        "progress": "Progreso",
+        "cancel": "Cancelar",
+        "close": "Cerrar",
+        "save": "Guardar",
+        "name": "Nombre",
+        "description": "Descripción",
+        "entries": "Entradas",
+        "no-recipes": "No hay recetas",
+        "running": "Ejecución en curso",
+        "completed": "Ejecución completada",
+        "failed": "Ejecución fallida"
+    }
   }
-
-
 
