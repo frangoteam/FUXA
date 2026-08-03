@@ -223,7 +223,7 @@ module.exports = {
                         return;
                     }
                     if (!data.entries || data.entries.length === 0) {
-                        res.status(400).json({ error: 'No entries to download' });
+                        res.status(400).json({ error: 'No entries to upload' });
                         return;
                     }
                     if (runtime.recipeService.isRecipeRunning(id)) {
