@@ -247,6 +247,19 @@ describe('recipe-service', () => {
                 expect(completeCall.args[1].errors[0].error).to.include('Temp');
             });
 
+            it('should treat a false boolean write result as a successful write', async () => {
+                runtime.devices.setTagValue = sandbox.stub().resolves(false);
+
+                await recipeService.downloadRecipe('r_test123');
+
+                const completeCall = runtime.io.emit.getCalls().find(c =>
+                    c.args[0] === 'recipe:download-complete'
+                );
+                expect(completeCall).to.exist;
+                expect(completeCall.args[1].successCount).to.equal(3);
+                expect(completeCall.args[1].errorCount).to.equal(0);
+            });
+
             it('should emit error event if recipe is not found', async () => {
                 runtime.recipeStorage.getRecipeData.resolves(null);
 
@@ -331,6 +344,21 @@ describe('recipe-service', () => {
                 expect(completeCall.args[1].successCount).to.equal(0);
                 expect(completeCall.args[1].errorCount).to.equal(3);
                 expect(completeCall.args[1].errors[0].error).to.include('Read failed for tag');
+            });
+
+            it('should treat a false boolean value as a successful read and persist', async () => {
+                runtime.devices.getTagValue = sandbox.stub().resolves(false);
+
+                await recipeService.uploadRecipe('r_test123');
+
+                expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
+
+                const completeCall = runtime.io.emit.getCalls().find(c =>
+                    c.args[0] === 'recipe:upload-complete'
+                );
+                expect(completeCall).to.exist;
+                expect(completeCall.args[1].successCount).to.equal(3);
+                expect(completeCall.args[1].errorCount).to.equal(0);
             });
 
             it('should persist if at least one entry succeeded', async () => {
