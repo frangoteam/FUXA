@@ -296,6 +296,62 @@ describe('recipe-service', () => {
                 await new Promise(resolve => setTimeout(resolve, 100));
                 expect(recipeService.isRecipeRunning('r_test123')).to.be.false;
             });
+
+            it('should stop the first run when cancelled and immediately re-run', async () => {
+                // Gate writes: the first run pauses on write 1, the re-run on write 2
+                let releaseFirstWrite;
+                let releaseSecondWrite;
+                let firstWriteStarted;
+                let secondWriteStarted;
+                const firstWriteGate = new Promise(resolve => { releaseFirstWrite = resolve; });
+                const secondWriteGate = new Promise(resolve => { releaseSecondWrite = resolve; });
+                const firstWriteStartedPromise = new Promise(resolve => { firstWriteStarted = resolve; });
+                const secondWriteStartedPromise = new Promise(resolve => { secondWriteStarted = resolve; });
+
+                runtime.devices.setTagValue = sandbox.stub();
+                let writeCalls = 0;
+                runtime.devices.setTagValue.callsFake(() => {
+                    writeCalls++;
+                    if (writeCalls === 1) {
+                        firstWriteStarted();
+                        return firstWriteGate;
+                    }
+                    if (writeCalls === 2) {
+                        secondWriteStarted();
+                        return secondWriteGate;
+                    }
+                    return Promise.resolve({});
+                });
+
+                // Start the first run and wait until it is in-flight on its first write
+                const firstRun = recipeService.downloadRecipe('r_test123').catch(() => {});
+                await firstWriteStartedPromise;
+
+                // Cancel, then immediately start a second run of the same recipe
+                recipeService.cancelRecipe('r_test123');
+                const secondRun = recipeService.downloadRecipe('r_test123').catch(() => {});
+                await secondWriteStartedPromise;
+
+                // Release the first run's pending write: it must NOT continue once
+                // the second run re-added the running state
+                releaseFirstWrite({});
+                await firstRun;
+
+                expect(writeCalls).to.equal(2);
+
+                // Let the second run finish normally
+                releaseSecondWrite({});
+                await secondRun;
+
+                expect(writeCalls).to.equal(4);
+                expect(recipeService.isRecipeRunning('r_test123')).to.be.false;
+
+                const completeCalls = runtime.io.emit.getCalls().filter(c =>
+                    c.args[0] === 'recipe:download-complete'
+                );
+                expect(completeCalls).to.have.length(2);
+                expect(completeCalls[1].args[1].successCount).to.equal(3);
+            });
         });
 
         describe('uploadRecipe', () => {
@@ -376,18 +432,40 @@ describe('recipe-service', () => {
         });
 
         describe('cancelRecipe', () => {
-            it('should cancel a running recipe', async () => {
-                // Fire download (it will start and add to runningRecipes)
+            it('should cancel a running recipe and break the loop', async () => {
+                // Gate the first write so the cancel happens mid-loop
+                let releaseFirstWrite;
+                let firstWriteStarted;
+                const firstWriteGate = new Promise(resolve => { releaseFirstWrite = resolve; });
+                const firstWriteStartedPromise = new Promise(resolve => { firstWriteStarted = resolve; });
+
+                runtime.devices.setTagValue = sandbox.stub();
+                let writeCalls = 0;
+                runtime.devices.setTagValue.callsFake(() => {
+                    writeCalls++;
+                    if (writeCalls === 1) {
+                        firstWriteStarted();
+                        return firstWriteGate;
+                    }
+                    return Promise.resolve({});
+                });
+
                 const downloadPromise = recipeService.downloadRecipe('r_test123').catch(() => {});
 
-                // Cancel immediately after the first microtask
-                await new Promise(resolve => setTimeout(resolve, 10));
+                // Wait until the loop is in-flight on its first write
+                await firstWriteStartedPromise;
                 recipeService.cancelRecipe('r_test123');
 
                 expect(recipeService.isRecipeRunning('r_test123')).to.be.false;
 
-                // Wait for download to finish its cleanup
+                // Release the pending write: the loop must break, not continue to entry 2
+                releaseFirstWrite({});
                 await downloadPromise;
+
+                expect(writeCalls).to.equal(1);
+                expect(runtime.io.emit.getCalls().some(c =>
+                    c.args[0] === 'recipe:cancel-confirmed'
+                )).to.be.true;
             });
 
             it('should be a no-op for non-running recipe', () => {

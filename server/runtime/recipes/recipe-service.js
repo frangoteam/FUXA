@@ -9,7 +9,8 @@ const Events = require('../events');
 var settings;
 var logger;
 var runtime;
-const runningRecipes = new Set();
+const runningRecipes = new Map();
+const recipeGeneration = new Map();
 
 /**
  * Initialize the recipe service with runtime dependencies.
@@ -128,7 +129,9 @@ async function downloadRecipe(recipeId) {
         throw new Error('Recipe execution already in progress');
     }
 
-    runningRecipes.add(recipeId);
+    var gen = (recipeGeneration.get(recipeId) || 0) + 1;
+    recipeGeneration.set(recipeId, gen);
+    runningRecipes.set(recipeId, gen);
 
     try {
         var data = await runtime.recipeStorage.getRecipeData(recipeId);
@@ -143,7 +146,7 @@ async function downloadRecipe(recipeId) {
         var total = entries.length;
 
         for (var i = 0; i < entries.length; i++) {
-            if (!runningRecipes.has(recipeId)) {
+            if (runningRecipes.get(recipeId) !== gen) {
                 _emitProgress(Events.IoEventTypes.RECIPE_CANCELED, { recipeId });
                 break;
             }
@@ -214,7 +217,9 @@ async function downloadRecipe(recipeId) {
         });
         throw err;
     } finally {
-        runningRecipes.delete(recipeId);
+        if (runningRecipes.get(recipeId) === gen) {
+            runningRecipes.delete(recipeId);
+        }
     }
 }
 
@@ -228,7 +233,9 @@ async function uploadRecipe(recipeId) {
         throw new Error('Recipe execution already in progress');
     }
 
-    runningRecipes.add(recipeId);
+    var gen = (recipeGeneration.get(recipeId) || 0) + 1;
+    recipeGeneration.set(recipeId, gen);
+    runningRecipes.set(recipeId, gen);
 
     try {
         var data = await runtime.recipeStorage.getRecipeData(recipeId);
@@ -244,7 +251,7 @@ async function uploadRecipe(recipeId) {
         var total = entries.length;
 
         for (var i = 0; i < entries.length; i++) {
-            if (!runningRecipes.has(recipeId)) {
+            if (runningRecipes.get(recipeId) !== gen) {
                 _emitProgress(Events.IoEventTypes.RECIPE_CANCELED, { recipeId });
                 break;
             }
@@ -320,12 +327,14 @@ async function uploadRecipe(recipeId) {
         });
         throw err;
     } finally {
-        runningRecipes.delete(recipeId);
+        if (runningRecipes.get(recipeId) === gen) {
+            runningRecipes.delete(recipeId);
+        }
     }
 }
 
 /**
- * Cancel a recipe execution by removing it from the running set.
+ * Cancel a recipe execution by removing it from the running map.
  * @param {string} recipeId - Recipe ID
  */
 function cancelRecipe(recipeId) {
