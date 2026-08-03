@@ -63,7 +63,7 @@ function coerceValue(value, tagType) {
     }
 
     // Integer family
-    if (type === 'int' || type === 'dint' || type === 'int16' || type === 'int32' || type === 'number') {
+    if (type === 'int' || type === 'dint' || type === 'int16' || type === 'int32') {
         if (typeof value === 'number') {
             return value;
         }
@@ -75,7 +75,7 @@ function coerceValue(value, tagType) {
     }
 
     // Float/Real family
-    if (type === 'real' || type === 'float' || type === 'double') {
+    if (type === 'real' || type === 'float' || type === 'double' || type === 'number') {
         if (typeof value === 'number') {
             return value;
         }

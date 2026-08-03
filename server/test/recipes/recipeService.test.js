@@ -86,6 +86,10 @@ describe('recipe-service', () => {
                 expect(recipeService.coerceValue('1.5', 'double')).to.equal(1.5);
             });
 
+            it('should coerce "3.14" to 3.14 for number type', () => {
+                expect(recipeService.coerceValue('3.14', 'number')).to.equal(3.14);
+            });
+
             it('should return original value if not a valid float', () => {
                 const result = recipeService.coerceValue('not-a-number', 'real');
                 expect(result).to.equal('not-a-number');
