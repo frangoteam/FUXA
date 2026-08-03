@@ -180,7 +180,9 @@ module.exports = {
                     }
 
                     // Fire and forget — do NOT await
-                    runtime.recipeService.downloadRecipe(id);
+                    runtime.recipeService.downloadRecipe(id).catch(err => {
+                        runtime.logger.error('recipe download failed: ' + err);
+                    });
 
                     res.status(202).json({
                         result: "started",
@@ -230,7 +232,9 @@ module.exports = {
                     }
 
                     // Fire and forget — do NOT await
-                    runtime.recipeService.uploadRecipe(id);
+                    runtime.recipeService.uploadRecipe(id).catch(err => {
+                        runtime.logger.error('recipe upload failed: ' + err);
+                    });
 
                     res.status(202).json({
                         result: "started",
