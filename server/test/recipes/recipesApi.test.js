@@ -582,6 +582,23 @@ describe('Recipes API', () => {
             expect(res.body.entriesCount).to.equal(1);
         });
 
+        it('should strip formula-injection guard prefix on CSV import', async () => {
+            // Round-trip of an export where _quoteCSVField prefixed "'" to values
+            // starting with -, +, = or @ (e.g. negative numbers, formulas)
+            const csvPayload = 'tagId,tagName,tagType,value\nt1,Temp,real,\'-5.5\nt2,Pres,real,\'+100\n';
+
+            const res = await postRequest(server, '/api/recipes/import', {
+                file: csvPayload,
+                format: 'csv'
+            });
+
+            expect(res.statusCode).to.equal(200);
+            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
+            const saved = runtime.recipeStorage.setRecipeData.getCall(0).args[1];
+            expect(saved.entries[0].value).to.equal('-5.5');
+            expect(saved.entries[1].value).to.equal('+100');
+        });
+
         it('should return 400 for invalid JSON syntax', async () => {
             const res = await postRequest(server, '/api/recipes/import', {
                 file: '{invalid json}',

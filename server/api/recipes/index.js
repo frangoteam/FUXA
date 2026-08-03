@@ -459,10 +459,15 @@ function _importCsv(content, name, desc) {
 
         var entry = { id: 'e_' + crypto.randomBytes(4).toString('hex') };
         for (var j = 0; j < header.length && j < fields.length; j++) {
-            if (header[j] === 'tagid') entry.tagId = fields[j];
-            else if (header[j] === 'tagname') entry.tagName = fields[j];
-            else if (header[j] === 'tagtype') entry.tagType = fields[j];
-            else if (header[j] === 'value') entry.value = fields[j];
+            var fieldValue = fields[j];
+            // Strip the formula-injection guard prefix added by _quoteCSVField on export
+            if (fieldValue.length > 0 && fieldValue[0] === "'") {
+                fieldValue = fieldValue.substring(1);
+            }
+            if (header[j] === 'tagid') entry.tagId = fieldValue;
+            else if (header[j] === 'tagname') entry.tagName = fieldValue;
+            else if (header[j] === 'tagtype') entry.tagType = fieldValue;
+            else if (header[j] === 'value') entry.value = fieldValue;
         }
         entries.push(entry);
     }

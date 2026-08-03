@@ -10,7 +10,7 @@ var settings;
 var logger;
 var runtime;
 const runningRecipes = new Map();
-const recipeGeneration = new Map();
+let nextGen = 0;
 
 /**
  * Initialize the recipe service with runtime dependencies.
@@ -129,8 +129,7 @@ async function downloadRecipe(recipeId) {
         throw new Error('Recipe execution already in progress');
     }
 
-    var gen = (recipeGeneration.get(recipeId) || 0) + 1;
-    recipeGeneration.set(recipeId, gen);
+    var gen = ++nextGen;
     runningRecipes.set(recipeId, gen);
 
     try {
@@ -219,7 +218,6 @@ async function downloadRecipe(recipeId) {
     } finally {
         if (runningRecipes.get(recipeId) === gen) {
             runningRecipes.delete(recipeId);
-            recipeGeneration.delete(recipeId);
         }
     }
 }
@@ -234,8 +232,7 @@ async function uploadRecipe(recipeId) {
         throw new Error('Recipe execution already in progress');
     }
 
-    var gen = (recipeGeneration.get(recipeId) || 0) + 1;
-    recipeGeneration.set(recipeId, gen);
+    var gen = ++nextGen;
     runningRecipes.set(recipeId, gen);
 
     try {
@@ -330,7 +327,6 @@ async function uploadRecipe(recipeId) {
     } finally {
         if (runningRecipes.get(recipeId) === gen) {
             runningRecipes.delete(recipeId);
-            recipeGeneration.delete(recipeId);
         }
     }
 }
