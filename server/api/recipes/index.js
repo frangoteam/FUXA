@@ -529,6 +529,10 @@ function _parseCSVLine(line) {
 function _quoteCSVField(field) {
     if (field === null || field === undefined) return '';
     var str = String(field);
+    // Neutralize Excel formula injection (CSV cells interpreted as formulas)
+    if (/^[=+\-@]/.test(str)) {
+        str = "'" + str;
+    }
     return '"' + str.replace(/"/g, '""') + '"';
 }
 

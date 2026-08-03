@@ -219,6 +219,7 @@ async function downloadRecipe(recipeId) {
     } finally {
         if (runningRecipes.get(recipeId) === gen) {
             runningRecipes.delete(recipeId);
+            recipeGeneration.delete(recipeId);
         }
     }
 }
@@ -329,6 +330,7 @@ async function uploadRecipe(recipeId) {
     } finally {
         if (runningRecipes.get(recipeId) === gen) {
             runningRecipes.delete(recipeId);
+            recipeGeneration.delete(recipeId);
         }
     }
 }

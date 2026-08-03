@@ -109,7 +109,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
         const recipeId = item.id;
         const recipeName = item.data?.name || recipeId;
 
-        this.dialog.open(RecipeProgressComponent, {
+        const progressDialog = this.dialog.open(RecipeProgressComponent, {
             width: '600px',
             disableClose: true,
             data: {
@@ -123,6 +123,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
         this.recipeService.downloadRecipe(recipeId).subscribe(res => {
             // Dialog is already open, progress comes via Socket.IO
         }, err => {
+            progressDialog.close();
             this.toastr.error(err.error?.error || 'Error starting download');
         });
     }
@@ -131,7 +132,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
         const recipeId = item.id;
         const recipeName = item.data?.name || recipeId;
 
-        this.dialog.open(RecipeProgressComponent, {
+        const progressDialog = this.dialog.open(RecipeProgressComponent, {
             width: '600px',
             disableClose: true,
             data: {
@@ -145,6 +146,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
         this.recipeService.uploadRecipe(recipeId).subscribe(res => {
             // Progress via Socket.IO
         }, err => {
+            progressDialog.close();
             this.toastr.error(err.error?.error || 'Error starting upload');
         });
     }
