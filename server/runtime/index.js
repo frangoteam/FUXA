@@ -19,6 +19,8 @@ const jwt = require('jsonwebtoken');
 const daqstorage = require('./storage/daqstorage');
 const schedulerStorage = require('./scheduler/scheduler-storage');
 const schedulerService = require('./scheduler/scheduler-service');
+const recipeStorage = require('./recipes/recipe-storage');
+const recipeService = require('./recipes/recipe-service');
 var jobs = require('./jobs');
 
 var api;
@@ -72,6 +74,15 @@ function init(_io, _api, _settings, _log, eventsMain) {
         logger.info('runtime init scheduler services successful!', true);
     }).catch(err => {
         logger.error('runtime.failed-to-init scheduler services: ' + err);
+    });
+
+    // Initialize recipe services
+    recipeStorage.init(settings, logger, runtime).then(() => {
+        return recipeService.init(settings, logger, runtime);
+    }).then(() => {
+        logger.info('runtime init recipes successful!', true);
+    }).catch(err => {
+        logger.error('runtime.failed-to-init recipes: ' + err);
     });
 
     plugins.init(settings, logger).then(result => {
@@ -744,6 +755,8 @@ var runtime = module.exports = {
     get daqStorage() { return daqstorage },
     get schedulerStorage() { return schedulerStorage },
     get schedulerService() { return schedulerService },
+    get recipeStorage() { return recipeStorage },
+    get recipeService() { return recipeService },
     get alarmsMgr() { return alarmsMgr },
     get notificatorMgr() { return notificatorMgr },
     get scriptsMgr() { return scriptsMgr },
