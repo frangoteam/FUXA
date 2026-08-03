@@ -1,0 +1,37 @@
+.recipe-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 500px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.entries-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.entries-header h3 {
+    margin: 0;
+}
+
+.entries-table {
+    width: 100%;
+}
+
+.compact-field {
+    width: 100%;
+    margin: 0;
+}
+
+.no-entries {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+    font-style: italic;
+}

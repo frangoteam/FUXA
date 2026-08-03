@@ -1,0 +1,46 @@
+.tag-browser-container {
+    min-width: 500px;
+    min-height: 300px;
+}
+
+.filter-field {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.browser-layout {
+    display: flex;
+    gap: 16px;
+    height: 350px;
+}
+
+.device-list {
+    flex: 1;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow-y: auto;
+}
+
+.device-list h3, .tag-list h3 {
+    margin: 8px 12px;
+    font-size: 14px;
+    color: #666;
+}
+
+.tag-list {
+    flex: 2;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    overflow-y: auto;
+}
+
+.selected {
+    background-color: #e3f2fd;
+}
+
+.empty-hint {
+    padding: 20px;
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}

@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>Select Tag</h2>
+
+<mat-dialog-content>
+    <div class="tag-browser-container">
+        <mat-form-field appearance="fill" class="filter-field">
+            <mat-label>Filter tags</mat-label>
+            <input matInput [(ngModel)]="filterText" placeholder="Search by name or ID" />
+        </mat-form-field>
+
+        <div class="browser-layout">
+            <div class="device-list">
+                <h3>Devices</h3>
+                <mat-nav-list dense>
+                    <mat-list-item *ngFor="let device of devices"
+                        [class.selected]="selectedDevice === device"
+                        (click)="onDeviceSelect(device)">
+                        <span matListItemTitle>{{ device.name }}</span>
+                    </mat-list-item>
+                </mat-nav-list>
+                <div *ngIf="devices.length === 0" class="empty-hint">No devices found</div>
+            </div>
+
+            <div class="tag-list">
+                <h3>Tags</h3>
+                <mat-nav-list dense *ngIf="selectedDevice">
+                    <mat-list-item *ngFor="let tag of getFilteredTags()" (click)="onTagSelect(tag)">
+                        <span matListItemTitle>{{ tag.name }}</span>
+                        <span matListItemLine>{{ tag.id }} ({{ tag.type }})</span>
+                    </mat-list-item>
+                </mat-nav-list>
+                <div *ngIf="!selectedDevice" class="empty-hint">Select a device</div>
+                <div *ngIf="selectedDevice && getFilteredTags().length === 0" class="empty-hint">No tags match filter</div>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">Cancel</button>
+</mat-dialog-actions>
