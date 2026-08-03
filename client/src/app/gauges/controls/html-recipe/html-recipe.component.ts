@@ -81,6 +81,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
     private subscriptionUploadProgress!: Subscription;
     private subscriptionUploadComplete!: Subscription;
     private subscriptionUploadError!: Subscription;
+    private subscriptionCanceled!: Subscription;
 
     constructor(private recipeService: RecipeService, private hmiService: HmiService, private dialog: MatDialog,
         private authService: AuthService, private translateService: TranslateService) { }
@@ -231,6 +232,15 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
                 this.progress = null;
                 this.error = event.error || 'Upload failed';
             });
+
+        this.subscriptionCanceled = this.hmiService.onRecipeCanceled
+            .subscribe((event: any) => {
+                if (event.recipeId !== this.currentInstanceId) return;
+                this.downloading = false;
+                this.uploading = false;
+                this.progressMode = null;
+                this.progress = null;
+            });
     }
 
     /** Tear down all progress subscriptions */
@@ -241,6 +251,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
         this._safeUnsubscribe(this.subscriptionUploadProgress);
         this._safeUnsubscribe(this.subscriptionUploadComplete);
         this._safeUnsubscribe(this.subscriptionUploadError);
+        this._safeUnsubscribe(this.subscriptionCanceled);
     }
 
     /** Safely unsubscribe from an RxJS subscription */

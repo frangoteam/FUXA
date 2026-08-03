@@ -417,7 +417,6 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 }
                 if (message && message.recipeId) {
                     runtime.recipeService.cancelRecipe(message.recipeId);
-                    socket.emit(Events.IoEventTypes.RECIPE_CANCELED, { recipeId: message.recipeId });
                 }
             } catch (err) {
                 logger.error('recipe:cancel-execution: ' + err);

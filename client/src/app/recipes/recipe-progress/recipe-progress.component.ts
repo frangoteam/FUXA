@@ -70,6 +70,14 @@ export class RecipeProgressComponent implements OnInit, OnDestroy {
                 this.errorCount = this.totalEntries;
             })
         );
+
+        this.subscription.add(
+            this.hmiService.onRecipeCanceled.subscribe((event: any) => {
+                if (event.recipeId !== recipeId) return;
+                this.completed = true;
+                this.dialogRef.close();
+            })
+        );
     }
 
     ngOnDestroy() {
@@ -78,7 +86,6 @@ export class RecipeProgressComponent implements OnInit, OnDestroy {
 
     onCancel() {
         this.hmiService.cancelRecipeExecution(this.data.recipeId);
-        this.dialogRef.close();
     }
 
     onClose() {
