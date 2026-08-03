@@ -461,7 +461,8 @@ function _importCsv(content, name, desc) {
         for (var j = 0; j < header.length && j < fields.length; j++) {
             var fieldValue = fields[j];
             // Strip the formula-injection guard prefix added by _quoteCSVField on export
-            if (fieldValue.length > 0 && fieldValue[0] === "'") {
+            // (only when it was actually applied: leading "'" followed by =, +, - or @)
+            if (fieldValue.length > 1 && fieldValue[0] === "'" && /^[=+\-@]/.test(fieldValue[1])) {
                 fieldValue = fieldValue.substring(1);
             }
             if (header[j] === 'tagid') entry.tagId = fieldValue;
