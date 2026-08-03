@@ -398,8 +398,9 @@ function _validateRecipeData(data) {
 
         // value must be coercible if provided
         if (entry.value !== undefined && entry.value !== null && entry.value !== '') {
+            var passThrough = (tagTypeLower === 'string' || tagTypeLower === 'word');
             var coerced = runtime.recipeService.coerceValue(entry.value, entry.tagType);
-            if (coerced === entry.value && typeof entry.value === 'string' && entry.value !== '') {
+            if (!passThrough && coerced === entry.value && typeof entry.value === 'string' && entry.value !== '') {
                 return { valid: false, error: "Invalid recipe data: value '" + entry.value + "' cannot be coerced to type '" + entry.tagType + "'" };
             }
         }

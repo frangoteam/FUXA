@@ -313,6 +313,20 @@ describe('Recipes API', () => {
             expect(res.statusCode).to.equal(400);
             expect(res.body.error).to.include('cannot be coerced');
         });
+
+        it('should accept string/word values for string and word tagTypes', async () => {
+            const res = await postRequest(server, '/api/recipes', {
+                name: 'Test',
+                entries: [
+                    { tagId: 't1', tagName: 'T1', tagType: 'string', value: 'hello world' },
+                    { tagId: 't2', tagName: 'T2', tagType: 'word', value: 'recipe-code' }
+                ]
+            });
+
+            expect(res.statusCode).to.equal(200);
+            expect(res.body.id).to.exist;
+            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
+        });
     });
 
     describe('DELETE /api/recipes', () => {
