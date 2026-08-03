@@ -30,7 +30,8 @@ const IoEventTypes = {
     RECIPE_DOWNLOAD_ERROR: 'recipe:download-error',
     RECIPE_UPLOAD_PROGRESS: 'recipe:upload-progress',
     RECIPE_UPLOAD_COMPLETE: 'recipe:upload-complete',
-    RECIPE_UPLOAD_ERROR: 'recipe:upload-error'
+    RECIPE_UPLOAD_ERROR: 'recipe:upload-error',
+    RECIPE_CANCELED: 'recipe:cancel-confirmed'
 }
 
 // module.exports = IoEventTypes;

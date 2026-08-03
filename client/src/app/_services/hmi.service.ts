@@ -41,6 +41,7 @@ export class HmiService {
     @Output() onRecipeUploadProgress: EventEmitter<any> = new EventEmitter();
     @Output() onRecipeUploadComplete: EventEmitter<any> = new EventEmitter();
     @Output() onRecipeUploadError: EventEmitter<any> = new EventEmitter();
+    @Output() onRecipeCanceled: EventEmitter<any> = new EventEmitter();
 
     onServerConnection$ = new BehaviorSubject<boolean>(false);
 
@@ -342,6 +343,9 @@ export class HmiService {
         this.socket.on(IoEventTypes.RECIPE_UPLOAD_ERROR, (message) => {
             this.onRecipeUploadError.emit(message);
         });
+        this.socket.on(IoEventTypes.RECIPE_CANCELED, (message) => {
+            this.onRecipeCanceled.emit(message);
+        });
         this.askDeviceValues();
         this.askAlarmsStatus();
     }
@@ -506,7 +510,7 @@ export class HmiService {
      */
     public cancelRecipeExecution(recipeId: string) {
         if (this.socket) {
-            this.socket.emit('recipe:cancel-execution', { recipeId });
+            this.socket.emit(IoEventTypes.RECIPE_CANCEL, { recipeId });
         }
     }
     //#endregion
@@ -796,7 +800,9 @@ export enum IoEventTypes {
     RECIPE_DOWNLOAD_ERROR = 'recipe:download-error',
     RECIPE_UPLOAD_PROGRESS = 'recipe:upload-progress',
     RECIPE_UPLOAD_COMPLETE = 'recipe:upload-complete',
-    RECIPE_UPLOAD_ERROR = 'recipe:upload-error'
+    RECIPE_UPLOAD_ERROR = 'recipe:upload-error',
+    RECIPE_CANCEL = 'recipe:cancel-execution',
+    RECIPE_CANCELED = 'recipe:cancel-confirmed'
 }
 
 export const ScriptCommandEnum = {

@@ -144,6 +144,7 @@ async function downloadRecipe(recipeId) {
 
         for (var i = 0; i < entries.length; i++) {
             if (!runningRecipes.has(recipeId)) {
+                _emitProgress(Events.IoEventTypes.RECIPE_CANCELED, { recipeId });
                 break;
             }
 
@@ -241,6 +242,7 @@ async function uploadRecipe(recipeId) {
 
         for (var i = 0; i < entries.length; i++) {
             if (!runningRecipes.has(recipeId)) {
+                _emitProgress(Events.IoEventTypes.RECIPE_CANCELED, { recipeId });
                 break;
             }
 

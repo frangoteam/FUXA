@@ -408,6 +408,21 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 logger.error(`${Events.IoEventTypes.DEVICE_ENABLE}: ${err}`);
             }
         });
+        // client cancel recipe execution
+        socket.on('recipe:cancel-execution', (message) => {
+            try {
+                if (!isSocketWriteAuthorized(socket)) {
+                    logger.warn('recipe:cancel-execution: unauthorized request from ' + (socket.userId || 'guest'));
+                    return;
+                }
+                if (message && message.recipeId) {
+                    runtime.recipeService.cancelRecipe(message.recipeId);
+                    socket.emit(Events.IoEventTypes.RECIPE_CANCELED, { recipeId: message.recipeId });
+                }
+            } catch (err) {
+                logger.error('recipe:cancel-execution: ' + err);
+            }
+        });
     });
 
     setInterval(() => {
