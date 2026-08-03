@@ -223,21 +223,18 @@ function getDeviceValue(deviceid, sigid) {
  * @param {*} fully, struct with timestamp
  */
  function getTagValue(sigid, fully) {
-     try {
-        let deviceid = getDeviceIdFromTag(sigid)
-        if (activeDevices[deviceid]) {
-            let result = activeDevices[deviceid].getValue(sigid);
-            if (fully) {
-                return result;
-            } else if (result) {
-                return result.value;
-            }
-        }
-    } catch (err) {
-        console.error(err);
-    }
-    return null;
-}
+     let deviceid = getDeviceIdFromTag(sigid);
+     if (!deviceid || !activeDevices[deviceid]) {
+         throw new Error('Tag not found or device inactive: ' + sigid);
+     }
+     let result = activeDevices[deviceid].getValue(sigid);
+     if (fully) {
+         return result;
+     } else if (result) {
+         return result.value;
+     }
+     return null;
+ }
 
 /**
  * Get the Device Tag Id
@@ -269,15 +266,11 @@ function getTagId(tagName, deviceName) {
  * @param {*} value
  */
 async function setTagValue(tagid, value) {
-    try {
-        let deviceid = getDeviceIdFromTag(tagid)
-        if (activeDevices[deviceid]) {
-            return  await activeDevices[deviceid].setValue(tagid, value);
-        }
-    } catch (err) {
-        console.error(err);
+    let deviceid = getDeviceIdFromTag(tagid);
+    if (!deviceid || !activeDevices[deviceid]) {
+        throw new Error('Tag not found or device inactive: ' + tagid);
     }
-    return null;
+    return await activeDevices[deviceid].setValue(tagid, value);
 }
 
 /**

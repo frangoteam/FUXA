@@ -163,7 +163,10 @@ async function downloadRecipe(recipeId) {
 
             try {
                 var coerced = coerceValue(entry.value, entry.tagType);
-                await runtime.devices.setTagValue(entry.tagId, coerced);
+                var result = await runtime.devices.setTagValue(entry.tagId, coerced);
+                if (result === null || result === undefined || result === false) {
+                    throw new Error('Write failed for tag ' + (entry.tagName || entry.tagId));
+                }
 
                 _emitProgress(Events.IoEventTypes.RECIPE_DOWNLOAD_PROGRESS, {
                     recipeId: recipeId,
@@ -261,6 +264,9 @@ async function uploadRecipe(recipeId) {
 
             try {
                 var value = await runtime.devices.getTagValue(entry.tagId);
+                if (value === null || value === undefined || value === false) {
+                    throw new Error('Read failed for tag ' + (entry.tagName || entry.tagId));
+                }
                 entry.value = value;
 
                 _emitProgress(Events.IoEventTypes.RECIPE_UPLOAD_PROGRESS, {

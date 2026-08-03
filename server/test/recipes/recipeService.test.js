@@ -228,6 +228,21 @@ describe('recipe-service', () => {
                 expect(completeCall.args[1].errors[0].error).to.equal('Write timeout');
             });
 
+            it('should report an error when a write fails silently (resolves null)', async () => {
+                runtime.devices.setTagValue = sandbox.stub().resolves(null);
+
+                await recipeService.downloadRecipe('r_test123');
+
+                const completeCall = runtime.io.emit.getCalls().find(c =>
+                    c.args[0] === 'recipe:download-complete'
+                );
+                expect(completeCall).to.exist;
+                expect(completeCall.args[1].successCount).to.equal(0);
+                expect(completeCall.args[1].errorCount).to.equal(3);
+                expect(completeCall.args[1].errors[0].error).to.include('Write failed for tag');
+                expect(completeCall.args[1].errors[0].error).to.include('Temp');
+            });
+
             it('should emit error event if recipe is not found', async () => {
                 runtime.recipeStorage.getRecipeData.resolves(null);
 
@@ -296,6 +311,22 @@ describe('recipe-service', () => {
                 expect(completeCall).to.exist;
                 expect(completeCall.args[1].successCount).to.equal(0);
                 expect(completeCall.args[1].errorCount).to.equal(3);
+            });
+
+            it('should report an error and not persist when a read returns null', async () => {
+                runtime.devices.getTagValue = sandbox.stub().resolves(null);
+
+                await recipeService.uploadRecipe('r_test123');
+
+                expect(runtime.recipeStorage.setRecipeData.called).to.be.false;
+
+                const completeCall = runtime.io.emit.getCalls().find(c =>
+                    c.args[0] === 'recipe:upload-complete'
+                );
+                expect(completeCall).to.exist;
+                expect(completeCall.args[1].successCount).to.equal(0);
+                expect(completeCall.args[1].errorCount).to.equal(3);
+                expect(completeCall.args[1].errors[0].error).to.include('Read failed for tag');
             });
 
             it('should persist if at least one entry succeeded', async () => {
