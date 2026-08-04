@@ -208,6 +208,19 @@ async function downloadRecipe(recipeId) {
                 });
                 errorCount++;
             }
+
+            // Re-check after this entry's device op: a cancel or a superseding
+            // run may have landed while setTagValue was in flight. Without this,
+            // a cancel during the FINAL entry's write is never observed (the loop
+            // exits naturally and canceled stays false), so a 1-entry recipe's
+            // normal cancel path would still emit DOWNLOAD_COMPLETE.
+            if (runningRecipes.get(recipeId) !== gen) {
+                if (!runningRecipes.has(recipeId)) {
+                    _emitProgress(Events.IoEventTypes.RECIPE_CANCELED, { recipeId });
+                }
+                canceled = true;
+                break;
+            }
         }
 
         if (!canceled) {
@@ -320,6 +333,20 @@ async function uploadRecipe(recipeId) {
                     error: err.message
                 });
                 errorCount++;
+            }
+
+            // Re-check after this entry's device op: a cancel or a superseding
+            // run may have landed while getTagValue was in flight. Without this,
+            // a cancel during the FINAL entry's read is never observed (the loop
+            // exits naturally and canceled stays false), so a 1-entry recipe's
+            // normal cancel path would still persist the recipe and emit
+            // UPLOAD_COMPLETE.
+            if (runningRecipes.get(recipeId) !== gen) {
+                if (!runningRecipes.has(recipeId)) {
+                    _emitProgress(Events.IoEventTypes.RECIPE_CANCELED, { recipeId });
+                }
+                canceled = true;
+                break;
             }
         }
 

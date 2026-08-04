@@ -360,6 +360,42 @@ describe('recipe-service', () => {
                 );
                 expect(cancelCalls).to.have.length(0);
             });
+
+            it('should treat a cancel during the FINAL entry write as a cancel (no COMPLETE)', async () => {
+                // 1-entry recipe: the single device write IS the final entry op,
+                // and it is exactly where the user clicks Cancel.
+                recipeData.entries = [
+                    { id: 'e_001', tagId: 't1', tagName: 'Temp', tagType: 'real', value: '25.5' }
+                ];
+
+                let releaseWrite;
+                let writeStarted;
+                const writeGate = new Promise(resolve => { releaseWrite = resolve; });
+                const writeStartedPromise = new Promise(resolve => { writeStarted = resolve; });
+
+                runtime.devices.setTagValue = sandbox.stub().callsFake(() => {
+                    writeStarted();
+                    return writeGate;
+                });
+
+                const downloadPromise = recipeService.downloadRecipe('r_test123').catch(() => {});
+                await writeStartedPromise;
+
+                // Cancel while the final (only) entry write is still in flight
+                recipeService.cancelRecipe('r_test123');
+                releaseWrite({});
+                await downloadPromise;
+
+                // The loop must observe the cancel after the in-flight write and
+                // emit CANCELED, never DOWNLOAD_COMPLETE.
+                expect(runtime.io.emit.getCalls().some(c =>
+                    c.args[0] === 'recipe:download-complete'
+                )).to.be.false;
+                expect(runtime.io.emit.getCalls().some(c =>
+                    c.args[0] === 'recipe:cancel-confirmed'
+                )).to.be.true;
+                expect(recipeService.isRecipeRunning('r_test123')).to.be.false;
+            });
         });
 
         describe('uploadRecipe', () => {
@@ -532,6 +568,44 @@ describe('recipe-service', () => {
                     c.args[0] === 'recipe:cancel-confirmed'
                 );
                 expect(cancelCalls).to.have.length(0);
+            });
+
+            it('should NOT persist or emit COMPLETE when a cancel lands during the FINAL entry read', async () => {
+                // 1-entry recipe: the single device read IS the final entry op,
+                // and it is exactly where the user clicks Cancel.
+                recipeData.entries = [
+                    { id: 'e_001', tagId: 't1', tagName: 'Temp', tagType: 'real', value: '25.5' }
+                ];
+
+                let releaseRead;
+                let readStarted;
+                const readGate = new Promise(resolve => { releaseRead = resolve; });
+                const readStartedPromise = new Promise(resolve => { readStarted = resolve; });
+
+                runtime.devices.getTagValue = sandbox.stub().callsFake(() => {
+                    readStarted();
+                    return readGate;
+                });
+
+                const uploadPromise = recipeService.uploadRecipe('r_test123').catch(() => {});
+                await readStartedPromise;
+
+                // Cancel while the final (only) entry read is still in flight
+                recipeService.cancelRecipe('r_test123');
+                releaseRead(99);
+                await uploadPromise;
+
+                // The loop must observe the cancel after the in-flight read:
+                // successCount is 1 but the run was cancelled, so the recipe must
+                // NOT be persisted and no UPLOAD_COMPLETE may be emitted.
+                expect(runtime.recipeStorage.setRecipeData.called).to.be.false;
+                expect(runtime.io.emit.getCalls().some(c =>
+                    c.args[0] === 'recipe:upload-complete'
+                )).to.be.false;
+                expect(runtime.io.emit.getCalls().some(c =>
+                    c.args[0] === 'recipe:cancel-confirmed'
+                )).to.be.true;
+                expect(recipeService.isRecipeRunning('r_test123')).to.be.false;
             });
         });
 
