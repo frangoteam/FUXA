@@ -338,6 +338,13 @@ module.exports = {
                     return;
                 }
 
+                // Normalize: strip a leading UTF-8 BOM (Windows/Excel/Notepad
+                // export) so format auto-detection and JSON parsing see the real
+                // first character instead of failing on the invisible BOM.
+                if (typeof content === 'string' && content.charCodeAt(0) === 0xFEFF) {
+                    content = content.substring(1);
+                }
+
                 var format = req.body.format;
                 if (!format) {
                     var trimmed = (typeof content === 'string') ? content.trim() : '';

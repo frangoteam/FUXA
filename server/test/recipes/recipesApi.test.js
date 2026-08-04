@@ -582,6 +582,23 @@ describe('Recipes API', () => {
             expect(res.body.entriesCount).to.equal(1);
         });
 
+        it('should auto-detect JSON format when content has a UTF-8 BOM', async () => {
+            const bomJson = '\uFEFF' + JSON.stringify({
+                name: 'BOM Imported',
+                entries: [{ tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }]
+            });
+
+            // No format — must route to JSON (not CSV) and parse despite the BOM
+            const res = await postRequest(server, '/api/recipes/import', {
+                file: bomJson
+            });
+
+            expect(res.statusCode).to.equal(200);
+            expect(res.body.name).to.equal('BOM Imported');
+            expect(res.body.entriesCount).to.equal(1);
+            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
+        });
+
         it('should strip formula-injection guard prefix on CSV import', async () => {
             // Round-trip of an export where _quoteCSVField prefixed "'" to values
             // starting with -, +, = or @ (e.g. negative numbers, formulas)
