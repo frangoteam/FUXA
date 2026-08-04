@@ -49,7 +49,9 @@ module.exports = {
                         var group = { name: resourcesDirs[i], items: [] };
                         var dirPath = path.resolve(runtime.settings.imagesFileDir, resourcesDirs[i]);
                         var wwwSubDir = path.join('_images', resourcesDirs[i]);
-                        var files = getFiles(dirPath, ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.mp4', '.webm', '.ogg', '.ogv']);
+                        // Recurse so nested assets under each group appear in the editor picker
+                        // (relative path kept in name/path to avoid collisions).
+                        var files = getFilesRecursive(dirPath, ['.jpg', '.jpeg', '.png', '.gif', '.svg', '.mp4', '.webm', '.ogg', '.ogv']);
                         for (var x = 0; x < files.length; x++) {
                             var filename = files[x].replace(/\.[^\/.]+$/, '');
                             group.items.push({ path: path.join(wwwSubDir, files[x]).split(path.sep).join(path.posix.sep), name: filename });
