@@ -17,6 +17,7 @@ export class RecipeProgressComponent implements OnInit, OnDestroy {
     completed = false;
     successCount = 0;
     errorCount = 0;
+    errorMessage = '';
     private subscription: Subscription = new Subscription();
 
     constructor(
@@ -68,6 +69,7 @@ export class RecipeProgressComponent implements OnInit, OnDestroy {
                 if (event.recipeId !== recipeId) return;
                 this.completed = true;
                 this.errorCount = this.totalEntries;
+                this.errorMessage = event?.error || '';
             })
         );
 

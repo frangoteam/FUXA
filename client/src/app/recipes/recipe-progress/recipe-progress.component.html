@@ -12,6 +12,7 @@
         <div class="status-summary" *ngIf="completed">
             <span class="success" *ngIf="successCount > 0">{{ successCount }} succeeded</span>
             <span class="error" *ngIf="errorCount > 0"> {{ errorCount }} failed</span>
+            <span class="error-message" *ngIf="errorMessage">{{ errorMessage }}</span>
         </div>
 
         <div class="entries-progress">
