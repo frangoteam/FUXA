@@ -291,31 +291,40 @@ if (!fs.existsSync(www)) {      // compatibility with docker/npm/electron
 
 settings.httpStatic = settings.httpStatic || www;
 
+// In-memory BASE_PATH, rewrites the in-memory copy to work with read-only deployments
+let indexHtmlCache = null;
+const rewrittenAssets = new Map(); // request path -> { content, type }
+
 if (BASE_PATH) {
     // here, if a BASE_PATH is set, I push it in the base html, at runtime
     try {
-        const indexHtml = path.join(settings.httpStatic, 'index.html');
+        const indexHtmlPath = path.join(settings.httpStatic, 'index.html');
         const desiredBase = (BASE_PATH || '') + '/';
-        fs.writeFileSync(indexHtml, fs.readFileSync(indexHtml, 'utf8')
-            .replace(/<base href="[^"]*"\s*\/?>/, `<base href="${desiredBase}" />`));
+        const withBase = fs.readFileSync(indexHtmlPath, 'utf8')
+            .replace(/<base href="[^"]*"\s*\/?>/, `<base href="${desiredBase}" />`);
+        // hook for any runtime code that wants BASE_PATH without parsing <base>
+        const bootstrap = `<script>window.__BASE_PATH__=${JSON.stringify(BASE_PATH)};</script>`;
+        indexHtmlCache = withBase.replace('</head>', `${bootstrap}</head>`);
     } catch (err) {
-        logger.warn('Could not set <base href> from BASE_PATH, if working under a reverse proxy check your BASE_PATH env var: ' + err);
+        logger.warn('Could not prepare <base href> from BASE_PATH, if working under a reverse proxy check your BASE_PATH env var: ' + err);
     }
-    // and edit the references in .css files
-    const rewriteAssets = (dir) => {
+    // and edit the references in .css/.js files, in memory only
+    const collectAssets = (dir) => {
         for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
             const full = path.join(dir, e.name);
-            if (e.isDirectory()) { rewriteAssets(full); }
+            if (e.isDirectory()) { collectAssets(full); }
             else if (/\.(js|css)$/.test(e.name)) {
                 const src = fs.readFileSync(full, 'utf8');
-                // this regex is idempotent, to avoid more than one substitution
                 const out = src.replace(/(["'(])\/assets\//g, `$1${BASE_PATH}/assets/`);
-                if (out !== src) { fs.writeFileSync(full, out); }
+                if (out !== src) {
+                    const reqPath = BASE_PATH + '/' + path.relative(settings.httpStatic, full).split(path.sep).join('/');
+                    rewrittenAssets.set(reqPath, { content: out, type: e.name.endsWith('.css') ? 'text/css' : 'application/javascript' });
+                }
             }
         }
     };
-    try { rewriteAssets(settings.httpStatic); }
-    catch (err) { logger.warn('asset base-path rewrite failed: ' + err); }
+    try { collectAssets(settings.httpStatic); }
+    catch (err) { logger.warn('asset base-path rewrite (in-memory) failed: ' + err); }
     // the favicon is handled directly in the index.html that angular uses
 }
 
@@ -430,22 +439,44 @@ function snapshotAuth(req, res, next) {
     }
 }
 
+// All the calls that are directly parsed as static http are mapped here
+const SHELL_ROUTES = [
+    '/',
+    '/home',
+    '/home/:viewName',
+    '/lab',
+    '/editor',
+    '/device',
+    '/plugins',
+    '/rodevice',
+    '/users',
+    '/view',
+    '/ar'
+];
+
 app.use(allowCrossDomain);
-app.use(BASE_PATH + '/', express.static(settings.httpStatic));
-app.use(BASE_PATH + '/home', express.static(settings.httpStatic));
-app.use(BASE_PATH + '/home/:viewName', express.static(settings.httpStatic));
-app.use(BASE_PATH + '/lab', express.static(settings.httpStatic));
-app.use(BASE_PATH + '/editor', express.static(settings.httpStatic));
-app.use(BASE_PATH + '/device', express.static(settings.httpStatic));
-app.use(BASE_PATH + '/plugins', express.static(settings.httpStatic));
-app.use(BASE_PATH + '/rodevice', express.static(settings.httpStatic));
-app.use(BASE_PATH + '/users', express.static(settings.httpStatic));
-app.use(BASE_PATH + '/view', express.static(settings.httpStatic));
+
+if (indexHtmlCache) {
+    const serveShell = (req, res) => res.type('html').send(indexHtmlCache);
+    for (const shellPath of SHELL_ROUTES) {
+        app.get(BASE_PATH + shellPath, serveShell);
+    }
+}
+if (rewrittenAssets.size) {
+    app.use((req, res, next) => {
+        const rewritten = rewrittenAssets.get(req.path);
+        rewritten ? res.type(rewritten.type).send(rewritten.content) : next();
+    });
+}
+
+for (const shellPath of SHELL_ROUTES) {
+    app.use(BASE_PATH + shellPath, express.static(settings.httpStatic));
+}
+// while paths that have to serve non-angular paths are here
 app.use(BASE_PATH + '/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
 app.use(BASE_PATH + '/_images', express.static(settings.imagesFileDir));
 app.use(BASE_PATH + '/_widgets', express.static(settings.widgetsFileDir));
 app.use(BASE_PATH + '/snapshots', snapshotAuth, express.static(settings.webcamSnapShotsDir));
-app.use(BASE_PATH + '/ar', express.static(settings.httpStatic));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', { flags: 'a' });
 if (runtime.settings.logApiLevel !== 'none') {
