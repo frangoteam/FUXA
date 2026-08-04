@@ -265,10 +265,10 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
         }
     }
 
-    /** Sanitize entries: coerce null/undefined to defaults per tagType */
+    /** Sanitize entries: coerce null/undefined/empty-string to defaults per tagType */
     private _sanitizeEntries(entries: RecipeEntry[]): RecipeEntry[] {
         return entries.map(e => {
-            if (e.value === null || e.value === undefined) {
+            if (e.value === null || e.value === undefined || e.value === '') {
                 const t = (e.tagType || '').toLowerCase();
                 if (['bool', 'boolean'].includes(t)) {
                     e.value = false;

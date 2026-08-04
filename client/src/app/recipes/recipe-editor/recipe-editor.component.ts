@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class RecipeEditorComponent implements OnInit {
     recipeName = '';
     recipeDescription = '';
-    displayedColumns: string[] = ['tagName', 'tagId', 'tagType', 'actions'];
+    displayedColumns: string[] = ['tagName', 'tagId', 'tagType', 'value', 'actions'];
     dataSource = new MatTableDataSource<any>([]);
     saving = false;
     isNew: boolean;
@@ -66,6 +66,40 @@ export class RecipeEditorComponent implements OnInit {
         this.dataSource.data = this.dataSource.data.filter(e => e !== entry);
     }
 
+    /**
+     * Map a tag type to an HTML input type so numeric tags get a number input.
+     * @param tagType - Entry tag type (case-insensitive)
+     */
+    getInputType(tagType: string): string {
+        const t = (tagType || '').toLowerCase();
+        return this._isNumericType(t) ? 'number' : 'text';
+    }
+
+    /**
+     * Coerce an empty entry value to a type-appropriate default so recipes
+     * never write a literal '' to numeric/bool tags. Numeric tags default to
+     * 0, bool tags to false; string tags keep '' (a valid string value).
+     * @param entry - The entry being sanitized
+     */
+    private _sanitizeValue(entry: any): any {
+        const value = entry.value;
+        if (value === null || value === undefined || value === '') {
+            const t = (entry.tagType || '').toLowerCase();
+            if (t === 'bool' || t === 'boolean') {
+                return false;
+            }
+            if (this._isNumericType(t)) {
+                return 0;
+            }
+            return '';
+        }
+        return value;
+    }
+
+    private _isNumericType(tagType: string): boolean {
+        return ['int', 'dint', 'int16', 'int32', 'real', 'float', 'double', 'byte', 'number'].indexOf(tagType) !== -1;
+    }
+
     onSave() {
         if (!this.recipeName || this.recipeName.trim() === '') {
             this.toastr.error('Name is required');
@@ -77,9 +111,10 @@ export class RecipeEditorComponent implements OnInit {
         }
 
         this.saving = true;
+        const entries = this.dataSource.data.map(e => ({ ...e, value: this._sanitizeValue(e) }));
         const recipeData: any = {
             name: this.recipeName.trim(),
-            entries: this.dataSource.data
+            entries: entries
         };
         if (this.recipeDescription) {
             recipeData.description = this.recipeDescription.trim();

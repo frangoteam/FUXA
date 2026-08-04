@@ -29,6 +29,14 @@
     margin: 0;
 }
 
+.value-input {
+    width: 90px;
+    padding: 4px 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
 .no-entries {
     text-align: center;
     padding: 20px;
