@@ -182,12 +182,14 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
     private _subscribeToProgressEvents() {
         this.subscriptionDownloadProgress = this.hmiService.onRecipeDownloadProgress
             .subscribe((event: RecipeProgressEvent) => {
+                if (event.recipeId !== this.currentInstanceId) return;
                 if (this.progressMode !== 'download') return;
                 this.progress = { current: event.index + 1, total: event.total, errors: [] };
             });
 
         this.subscriptionDownloadComplete = this.hmiService.onRecipeDownloadComplete
             .subscribe((event: RecipeCompleteEvent) => {
+                if (event.recipeId !== this.currentInstanceId) return;
                 if (this.progressMode !== 'download') return;
                 this.downloading = false;
                 this.progressMode = null;
@@ -199,6 +201,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
         this.subscriptionDownloadError = this.hmiService.onRecipeDownloadError
             .subscribe((event: any) => {
+                if (event.recipeId !== this.currentInstanceId) return;
                 if (this.progressMode !== 'download') return;
                 this.downloading = false;
                 this.progressMode = null;
@@ -208,12 +211,14 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
         this.subscriptionUploadProgress = this.hmiService.onRecipeUploadProgress
             .subscribe((event: RecipeProgressEvent) => {
+                if (event.recipeId !== this.currentInstanceId) return;
                 if (this.progressMode !== 'upload') return;
                 this.progress = { current: event.index + 1, total: event.total, errors: [] };
             });
 
         this.subscriptionUploadComplete = this.hmiService.onRecipeUploadComplete
             .subscribe((event: RecipeCompleteEvent) => {
+                if (event.recipeId !== this.currentInstanceId) return;
                 if (this.progressMode !== 'upload') return;
                 this.uploading = false;
                 this.progressMode = null;
@@ -226,6 +231,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
         this.subscriptionUploadError = this.hmiService.onRecipeUploadError
             .subscribe((event: any) => {
+                if (event.recipeId !== this.currentInstanceId) return;
                 if (this.progressMode !== 'upload') return;
                 this.uploading = false;
                 this.progressMode = null;
