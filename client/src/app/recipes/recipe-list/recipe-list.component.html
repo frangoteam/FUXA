@@ -44,6 +44,13 @@
                         <mat-icon>more_vert</mat-icon>
                     </button>
                     <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="onDownloadRecipe(recipe)">
+                            <mat-icon>arrow_downward</mat-icon> {{ 'recipes.download' | translate }}
+                        </button>
+                        <button mat-menu-item (click)="onUploadRecipe(recipe)">
+                            <mat-icon>arrow_upward</mat-icon> {{ 'recipes.upload' | translate }}
+                        </button>
+                        <mat-divider></mat-divider>
                         <button mat-menu-item (click)="onEditRecipe(recipe)">
                             <mat-icon>edit</mat-icon> {{ 'Edit' }}
                         </button>
