@@ -2067,6 +2067,13 @@
         "no-recipes": "No recipes found",
         "running": "Execution in progress",
         "completed": "Execution completed",
-        "failed": "Execution failed"
+        "failed": "Execution failed",
+        "import": "Import",
+        "edit": "Edit",
+        "export": "Export",
+        "add-entry": "Add Entry",
+        "tag-name": "Tag Name",
+        "succeeded-count": "{{count}} succeeded",
+        "failed-count": "{{count}} failed"
     }
 }

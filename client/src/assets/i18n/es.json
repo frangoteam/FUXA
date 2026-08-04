@@ -868,7 +868,14 @@
         "no-recipes": "No hay recetas",
         "running": "Ejecución en curso",
         "completed": "Ejecución completada",
-        "failed": "Ejecución fallida"
+        "failed": "Ejecución fallida",
+        "import": "Importar",
+        "edit": "Editar",
+        "export": "Exportar",
+        "add-entry": "Añadir entrada",
+        "tag-name": "Nombre de etiqueta",
+        "succeeded-count": "{{count}} correctas",
+        "failed-count": "{{count}} fallidas"
     }
   }
 

@@ -10,8 +10,8 @@
         </div>
 
         <div class="status-summary" *ngIf="completed">
-            <span class="success" *ngIf="successCount > 0">{{ successCount }} succeeded</span>
-            <span class="error" *ngIf="errorCount > 0"> {{ errorCount }} failed</span>
+            <span class="success" *ngIf="successCount > 0">{{ 'recipes.succeeded-count' | translate: { count: successCount } }}</span>
+            <span class="error" *ngIf="errorCount > 0"> {{ 'recipes.failed-count' | translate: { count: errorCount } }}</span>
             <span class="error-message" *ngIf="errorMessage">{{ errorMessage }}</span>
         </div>
 

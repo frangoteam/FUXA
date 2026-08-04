@@ -8,7 +8,7 @@
             <span class="toolbar-spacer"></span>
             <button mat-stroked-button (click)="fileInput.click()">
                 <mat-icon>file_upload</mat-icon>
-                {{'Import'}}
+                {{ 'recipes.import' | translate }}
             </button>
             <input #fileInput type="file" accept=".json,.csv" (change)="onImportRecipe($event)" style="display:none" />
         </div>
@@ -52,14 +52,14 @@
                         </button>
                         <mat-divider></mat-divider>
                         <button mat-menu-item (click)="onEditRecipe(recipe)">
-                            <mat-icon>edit</mat-icon> {{ 'Edit' }}
+                            <mat-icon>edit</mat-icon> {{ 'recipes.edit' | translate }}
                         </button>
                         <button mat-menu-item [matMenuTriggerFor]="exportMenu">
-                            <mat-icon>file_download</mat-icon> {{ 'Export' }}
+                            <mat-icon>file_download</mat-icon> {{ 'recipes.export' | translate }}
                         </button>
                         <mat-divider></mat-divider>
                         <button mat-menu-item color="warn" (click)="onDeleteRecipe(recipe)">
-                            <mat-icon>delete</mat-icon> {{ 'Delete' }}
+                            <mat-icon>delete</mat-icon> {{ 'recipe.delete' | translate }}
                         </button>
                     </mat-menu>
                     <mat-menu #exportMenu="matMenu">

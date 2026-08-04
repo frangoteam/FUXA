@@ -15,13 +15,13 @@
         <div class="entries-header">
             <h3>{{ 'recipes.entries' | translate }}</h3>
             <button mat-stroked-button color="primary" (click)="onAddEntry()">
-                Add Entry
+                {{ 'recipes.add-entry' | translate }}
             </button>
         </div>
 
         <table mat-table [dataSource]="dataSource" class="entries-table">
             <ng-container matColumnDef="tagName">
-                <th mat-header-cell *matHeaderCellDef>Tag Name</th>
+                <th mat-header-cell *matHeaderCellDef>{{ 'recipes.tag-name' | translate }}</th>
                 <td mat-cell *matCellDef="let entry">{{ entry.tagName }}</td>
             </ng-container>
 
