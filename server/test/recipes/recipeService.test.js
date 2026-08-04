@@ -346,11 +346,19 @@ describe('recipe-service', () => {
                 expect(writeCalls).to.equal(4);
                 expect(recipeService.isRecipeRunning('r_test123')).to.be.false;
 
+                // The superseded first run must not emit COMPLETE or CANCELED to
+                // the new owner — only the second run completes. This suppresses
+                // stale events that would otherwise flip the client dialog back.
                 const completeCalls = runtime.io.emit.getCalls().filter(c =>
                     c.args[0] === 'recipe:download-complete'
                 );
-                expect(completeCalls).to.have.length(2);
-                expect(completeCalls[1].args[1].successCount).to.equal(3);
+                expect(completeCalls).to.have.length(1);
+                expect(completeCalls[0].args[1].successCount).to.equal(3);
+
+                const cancelCalls = runtime.io.emit.getCalls().filter(c =>
+                    c.args[0] === 'recipe:cancel-confirmed'
+                );
+                expect(cancelCalls).to.have.length(0);
             });
         });
 
@@ -428,6 +436,68 @@ describe('recipe-service', () => {
                 // setRecipeData should be called (successCount === 1 > 0)
                 expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
                 expect(runtime.recipeStorage.setRecipeData.calledWith('r_test123')).to.be.true;
+            });
+
+            it('should stop the first upload when cancelled and immediately re-run (no stale events)', async () => {
+                let releaseFirstRead;
+                let releaseSecondRead;
+                let firstReadStarted;
+                let secondReadStarted;
+                const firstReadGate = new Promise(resolve => { releaseFirstRead = resolve; });
+                const secondReadGate = new Promise(resolve => { releaseSecondRead = resolve; });
+                const firstReadStartedPromise = new Promise(resolve => { firstReadStarted = resolve; });
+                const secondReadStartedPromise = new Promise(resolve => { secondReadStarted = resolve; });
+
+                runtime.devices.getTagValue = sandbox.stub();
+                let readCalls = 0;
+                runtime.devices.getTagValue.callsFake(() => {
+                    readCalls++;
+                    if (readCalls === 1) {
+                        firstReadStarted();
+                        return firstReadGate;
+                    }
+                    if (readCalls === 2) {
+                        secondReadStarted();
+                        return secondReadGate;
+                    }
+                    return Promise.resolve(7);
+                });
+
+                // Start the first upload and wait until it is in-flight on its first read
+                const firstRun = recipeService.uploadRecipe('r_test123').catch(() => {});
+                await firstReadStartedPromise;
+
+                // Cancel, then immediately start a second upload of the same recipe
+                recipeService.cancelRecipe('r_test123');
+                const secondRun = recipeService.uploadRecipe('r_test123').catch(() => {});
+                await secondReadStartedPromise;
+
+                // Release the first run's pending read: it must NOT continue once
+                // the second run re-added the running state
+                releaseFirstRead(42);
+                await firstRun;
+
+                expect(readCalls).to.equal(2);
+
+                // Let the second run finish normally
+                releaseSecondRead(42);
+                await secondRun;
+
+                expect(readCalls).to.equal(4);
+                expect(recipeService.isRecipeRunning('r_test123')).to.be.false;
+
+                // Only the second run may emit COMPLETE; the superseded first run
+                // must not emit COMPLETE or CANCELED to the new owner
+                const completeCalls = runtime.io.emit.getCalls().filter(c =>
+                    c.args[0] === 'recipe:upload-complete'
+                );
+                expect(completeCalls).to.have.length(1);
+                expect(completeCalls[0].args[1].successCount).to.equal(3);
+
+                const cancelCalls = runtime.io.emit.getCalls().filter(c =>
+                    c.args[0] === 'recipe:cancel-confirmed'
+                );
+                expect(cancelCalls).to.have.length(0);
             });
         });
 

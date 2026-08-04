@@ -143,10 +143,17 @@ async function downloadRecipe(recipeId) {
         var errorCount = 0;
         var errors = [];
         var total = entries.length;
+        var canceled = false;
 
         for (var i = 0; i < entries.length; i++) {
             if (runningRecipes.get(recipeId) !== gen) {
-                _emitProgress(Events.IoEventTypes.RECIPE_CANCELED, { recipeId });
+                // This run was canceled or superseded by a newer run. Emit the
+                // cancel confirmation ONLY when no successor owns the slot;
+                // otherwise the successor must stay in control of the dialog.
+                if (!runningRecipes.has(recipeId)) {
+                    _emitProgress(Events.IoEventTypes.RECIPE_CANCELED, { recipeId });
+                }
+                canceled = true;
                 break;
             }
 
@@ -203,12 +210,14 @@ async function downloadRecipe(recipeId) {
             }
         }
 
-        _emitProgress(Events.IoEventTypes.RECIPE_DOWNLOAD_COMPLETE, {
-            recipeId: recipeId,
-            successCount: successCount,
-            errorCount: errorCount,
-            errors: errors
-        });
+        if (!canceled) {
+            _emitProgress(Events.IoEventTypes.RECIPE_DOWNLOAD_COMPLETE, {
+                recipeId: recipeId,
+                successCount: successCount,
+                errorCount: errorCount,
+                errors: errors
+            });
+        }
     } catch (err) {
         _emitProgress(Events.IoEventTypes.RECIPE_DOWNLOAD_ERROR, {
             recipeId: recipeId,
@@ -247,10 +256,17 @@ async function uploadRecipe(recipeId) {
         var errorCount = 0;
         var errors = [];
         var total = entries.length;
+        var canceled = false;
 
         for (var i = 0; i < entries.length; i++) {
             if (runningRecipes.get(recipeId) !== gen) {
-                _emitProgress(Events.IoEventTypes.RECIPE_CANCELED, { recipeId });
+                // This run was canceled or superseded by a newer run. Emit the
+                // cancel confirmation ONLY when no successor owns the slot;
+                // otherwise the successor must stay in control of the dialog.
+                if (!runningRecipes.has(recipeId)) {
+                    _emitProgress(Events.IoEventTypes.RECIPE_CANCELED, { recipeId });
+                }
+                canceled = true;
                 break;
             }
 
@@ -312,12 +328,14 @@ async function uploadRecipe(recipeId) {
             await runtime.recipeStorage.setRecipeData(recipeId, updatedData);
         }
 
-        _emitProgress(Events.IoEventTypes.RECIPE_UPLOAD_COMPLETE, {
-            recipeId: recipeId,
-            successCount: successCount,
-            errorCount: errorCount,
-            errors: errors
-        });
+        if (!canceled) {
+            _emitProgress(Events.IoEventTypes.RECIPE_UPLOAD_COMPLETE, {
+                recipeId: recipeId,
+                successCount: successCount,
+                errorCount: errorCount,
+                errors: errors
+            });
+        }
     } catch (err) {
         _emitProgress(Events.IoEventTypes.RECIPE_UPLOAD_ERROR, {
             recipeId: recipeId,
