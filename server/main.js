@@ -547,7 +547,7 @@ function getListenPath() {
         port = settings.uiPort;
     }
 
-    var listenBasePath = BASE_PATH ? ('/' + BASE_PATH) : '';
+    var listenBasePath = BASE_PATH || '';
     var listenPath = 'http' + (settings.https ? 's' : '') + '://' +
         (settings.uiHost == '::' ? 'localhost' : (settings.uiHost == '0.0.0.0' ? '127.0.0.1' : settings.uiHost)) +
         ':' + port + listenBasePath;
