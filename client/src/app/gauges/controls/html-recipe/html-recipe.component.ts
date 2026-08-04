@@ -578,13 +578,11 @@ export class HtmlRecipeComponent extends GaugeBaseComponent {
         viewContainerRef: ViewContainerRef,
         isview: boolean
     ): HtmlRecipeViewComponent | null {
-        console.log('[RecipeWidget] initElement called for', gab.id, 'type:', gab.type, 'property:', JSON.stringify(gab.property));
         const ele = document.getElementById(gab.id);
         if (!ele) {
             console.warn('[RecipeWidget] SVG element NOT FOUND for id', gab.id);
             return null;
         }
-        console.log('[RecipeWidget] SVG element found', ele.tagName, ele.id, 'children:', ele.children.length);
 
         ele?.setAttribute('data-name', gab.name);
 
@@ -603,7 +601,6 @@ export class HtmlRecipeComponent extends GaugeBaseComponent {
             console.warn('[RecipeWidget] container div D-OXC_ NOT FOUND inside', gab.id, 'prefix:', this.prefixD);
             return null;
         }
-        console.log('[RecipeWidget] container div found', htmlRecipe.id);
 
         const factory = resolver.resolveComponentFactory(HtmlRecipeViewComponent);
         const componentRef: ComponentRef<HtmlRecipeViewComponent> = viewContainerRef.createComponent(factory);
@@ -642,7 +639,6 @@ export class HtmlRecipeComponent extends GaugeBaseComponent {
 
         (componentRef.instance as any)['myComRef'] = componentRef;
         (componentRef.instance as any)['name'] = gab.name;
-        console.log('[RecipeWidget] component created, typeId:', gab.property.recipeId, 'readonly:', gab.property.readonly);
         return componentRef.instance;
     }
 
