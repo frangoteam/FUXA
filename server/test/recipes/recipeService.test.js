@@ -438,6 +438,40 @@ describe('recipe-service', () => {
                 expect(runtime.recipeStorage.setRecipeData.calledWith('r_test123')).to.be.true;
             });
 
+            it('should NOT persist partial data when cancelled mid-upload', async () => {
+                let releaseFirstRead;
+                let firstReadStarted;
+                const firstReadGate = new Promise(resolve => { releaseFirstRead = resolve; });
+                const firstReadStartedPromise = new Promise(resolve => { firstReadStarted = resolve; });
+
+                runtime.devices.getTagValue = sandbox.stub();
+                let readCalls = 0;
+                runtime.devices.getTagValue.callsFake(() => {
+                    readCalls++;
+                    if (readCalls === 1) {
+                        firstReadStarted();
+                        return firstReadGate;
+                    }
+                    return Promise.resolve(7);
+                });
+
+                const uploadPromise = recipeService.uploadRecipe('r_test123').catch(() => {});
+                await firstReadStartedPromise;
+
+                recipeService.cancelRecipe('r_test123');
+
+                // Release the pending read: entry 1 succeeds, then the loop breaks on cancel
+                releaseFirstRead(99);
+                await uploadPromise;
+
+                // successCount === 1 but the run was cancelled, so the partial
+                // recipe must NOT be persisted and no COMPLETE may be emitted
+                expect(runtime.recipeStorage.setRecipeData.called).to.be.false;
+                expect(runtime.io.emit.getCalls().some(c => c.args[0] === 'recipe:upload-complete')).to.be.false;
+                // Cancel confirmation emitted (no successor owns the slot)
+                expect(runtime.io.emit.getCalls().some(c => c.args[0] === 'recipe:cancel-confirmed')).to.be.true;
+            });
+
             it('should stop the first upload when cancelled and immediately re-run (no stale events)', async () => {
                 let releaseFirstRead;
                 let releaseSecondRead;

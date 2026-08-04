@@ -323,8 +323,10 @@ async function uploadRecipe(recipeId) {
             }
         }
 
-        // Persist only if at least one entry succeeded
-        if (successCount > 0) {
+        // Persist updated values only when the loop ran to natural completion
+        // (not when it was canceled or superseded) AND at least one entry
+        // succeeded — otherwise a cancel would persist a half-mixed recipe.
+        if (!canceled && successCount > 0) {
             await runtime.recipeStorage.setRecipeData(recipeId, updatedData);
         }
 
