@@ -75,6 +75,12 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
     /** Tracks the current execution direction for progress filtering */
     private progressMode: 'download' | 'upload' | null = null;
 
+    /** Id of the instance captured when the last download/upload started.
+     *  Event handlers filter against this value instead of the live
+     *  selection, so navigating to another instance mid-run can never orphan
+     *  the run's terminal events and leave the widget stuck. */
+    private runInstanceId: string = '';
+
     private subscriptionDownloadProgress!: Subscription;
     private subscriptionDownloadComplete!: Subscription;
     private subscriptionDownloadError!: Subscription;
@@ -138,7 +144,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
                 }
             },
             error: () => {
-                this.error = 'Failed to load instances';
+                this.error = this.translateService.instant('recipe.load-instances-failed');
                 this.loading = false;
             }
         });
@@ -148,6 +154,16 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
     private _selectInstance(id: string) {
         const idx = this.instances.findIndex(r => r.id === id);
         if (idx < 0) return;
+
+        // Navigating to a different instance while a run is in flight clears the
+        // progress UI so the widget can never stay stuck downloading/uploading.
+        if (id !== this.currentInstanceId && (this.downloading || this.uploading || this.progressMode)) {
+            this.downloading = false;
+            this.uploading = false;
+            this.progressMode = null;
+            this.progress = null;
+            this.runInstanceId = '';
+        }
 
         this.currentIndex = idx;
         this.currentInstanceId = id;
@@ -182,66 +198,66 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
     private _subscribeToProgressEvents() {
         this.subscriptionDownloadProgress = this.hmiService.onRecipeDownloadProgress
             .subscribe((event: RecipeProgressEvent) => {
-                if (event.recipeId !== this.currentInstanceId) return;
+                if (event.recipeId !== this.runInstanceId) return;
                 if (this.progressMode !== 'download') return;
                 this.progress = { current: event.index + 1, total: event.total, errors: [] };
             });
 
         this.subscriptionDownloadComplete = this.hmiService.onRecipeDownloadComplete
             .subscribe((event: RecipeCompleteEvent) => {
-                if (event.recipeId !== this.currentInstanceId) return;
+                if (event.recipeId !== this.runInstanceId) return;
                 if (this.progressMode !== 'download') return;
                 this.downloading = false;
                 this.progressMode = null;
                 this.progress = null;
                 if (event.errorCount > 0) {
-                    this.error = `Download completed with ${event.errorCount} error(s)`;
+                    this.error = this.translateService.instant('recipe.download-completed-errors', { count: event.errorCount });
                 }
             });
 
         this.subscriptionDownloadError = this.hmiService.onRecipeDownloadError
             .subscribe((event: any) => {
-                if (event.recipeId !== this.currentInstanceId) return;
+                if (event.recipeId !== this.runInstanceId) return;
                 if (this.progressMode !== 'download') return;
                 this.downloading = false;
                 this.progressMode = null;
                 this.progress = null;
-                this.error = event.error || 'Download failed';
+                this.error = event.error || this.translateService.instant('recipe.download-failed');
             });
 
         this.subscriptionUploadProgress = this.hmiService.onRecipeUploadProgress
             .subscribe((event: RecipeProgressEvent) => {
-                if (event.recipeId !== this.currentInstanceId) return;
+                if (event.recipeId !== this.runInstanceId) return;
                 if (this.progressMode !== 'upload') return;
                 this.progress = { current: event.index + 1, total: event.total, errors: [] };
             });
 
         this.subscriptionUploadComplete = this.hmiService.onRecipeUploadComplete
             .subscribe((event: RecipeCompleteEvent) => {
-                if (event.recipeId !== this.currentInstanceId) return;
+                if (event.recipeId !== this.runInstanceId) return;
                 if (this.progressMode !== 'upload') return;
                 this.uploading = false;
                 this.progressMode = null;
                 this.progress = null;
                 if (event.errorCount > 0) {
-                    this.error = `Upload completed with ${event.errorCount} error(s)`;
+                    this.error = this.translateService.instant('recipe.upload-completed-errors', { count: event.errorCount });
                 }
                 setTimeout(() => this.loadInstances(), 1000);
             });
 
         this.subscriptionUploadError = this.hmiService.onRecipeUploadError
             .subscribe((event: any) => {
-                if (event.recipeId !== this.currentInstanceId) return;
+                if (event.recipeId !== this.runInstanceId) return;
                 if (this.progressMode !== 'upload') return;
                 this.uploading = false;
                 this.progressMode = null;
                 this.progress = null;
-                this.error = event.error || 'Upload failed';
+                this.error = event.error || this.translateService.instant('recipe.upload-failed');
             });
 
         this.subscriptionCanceled = this.hmiService.onRecipeCanceled
             .subscribe((event: any) => {
-                if (event.recipeId !== this.currentInstanceId) return;
+                if (event.recipeId !== this.runInstanceId) return;
                 this.downloading = false;
                 this.uploading = false;
                 this.progressMode = null;
@@ -329,7 +345,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
                 this.loadInstances();
             },
             error: (err) => {
-                this.error = err?.error?.error || 'Save failed';
+                this.error = err?.error?.error || this.translateService.instant('recipe.save-failed');
                 this.saving = false;
             }
         });
@@ -356,7 +372,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
             },
             error: (err) => {
                 this.deleting = false;
-                this.error = err?.error?.error || 'Delete failed';
+                this.error = err?.error?.error || this.translateService.instant('recipe.delete-failed');
             }
         });
     }
@@ -385,6 +401,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
                 this.saving = false;
                 this.recipeService.downloadRecipe(this.currentInstanceId).subscribe({
                     next: (result) => {
+                        this.runInstanceId = this.currentInstanceId;
                         this.progressMode = 'download';
                         this.downloading = true;
                         this.progress = { current: 0, total: result.totalEntries || this.entries.length, errors: [] };
@@ -392,12 +409,12 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
                     error: (err) => {
                         this.downloading = false;
                         this.progress = null;
-                        this.error = err?.error?.error || 'Download failed';
+                        this.error = err?.error?.error || this.translateService.instant('recipe.download-failed');
                     }
                 });
             },
             error: (err) => {
-                this.error = err?.error?.error || 'Save before download failed';
+                this.error = err?.error?.error || this.translateService.instant('recipe.save-before-download-failed');
                 this.saving = false;
             }
         });
@@ -413,6 +430,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
         this.error = '';
         this.recipeService.uploadRecipe(this.currentInstanceId).subscribe({
             next: (result) => {
+                this.runInstanceId = this.currentInstanceId;
                 this.progressMode = 'upload';
                 this.uploading = true;
                 this.progress = { current: 0, total: result.totalEntries || this.entries.length, errors: [] };
@@ -420,7 +438,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
             error: (err) => {
                 this.uploading = false;
                 this.progress = null;
-                this.error = err?.error?.error || 'Upload failed';
+                this.error = err?.error?.error || this.translateService.instant('recipe.upload-failed');
             }
         });
     }
@@ -443,7 +461,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
                 },
                 error: () => {
                     this.loading = false;
-                    this.error = 'Recipe type not available';
+                    this.error = this.translateService.instant('recipe.instance-not-available');
                 }
             });
             return;
@@ -476,7 +494,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
             this.recipeService.saveRecipe({
                 typeId: this.typeId,
-                name: result.name.trim() || ('Instance ' + (this.instances.length + 1)),
+                name: result.name.trim() || this.translateService.instant('recipe.instance-name', { index: this.instances.length + 1 }),
                 description: result.description.trim(),
                 entries
             }).subscribe({
@@ -488,7 +506,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
                     }
                 },
                 error: (err) => {
-                    this.error = err?.error?.error || 'Failed to create instance';
+                    this.error = err?.error?.error || this.translateService.instant('recipe.create-failed');
                     this.saving = false;
                 }
             });

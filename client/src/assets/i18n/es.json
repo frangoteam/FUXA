@@ -845,7 +845,18 @@
         "property-authorization": "Autorización",
         "property-visible-actions": "Acciones visibles",
         "loading-recipes": "Cargando recetas...",
-        "no-recipe-selected": "Ninguna receta seleccionada"
+        "no-recipe-selected": "Ninguna receta seleccionada",
+        "load-instances-failed": "No se pudieron cargar las instancias",
+        "save-failed": "Error al guardar",
+        "delete-failed": "Error al eliminar",
+        "download-failed": "Error al descargar",
+        "upload-failed": "Error al subir",
+        "save-before-download-failed": "Error al guardar antes de descargar",
+        "instance-not-available": "Tipo de receta no disponible",
+        "create-failed": "No se pudo crear la instancia",
+        "download-completed-errors": "Descarga completada con {{count}} error(es)",
+        "upload-completed-errors": "Subida completada con {{count}} error(es)",
+        "instance-name": "Instancia {{index}}"
     },
 
     "recipes": {

@@ -2044,7 +2044,18 @@
         "property-authorization": "Authorization",
         "property-visible-actions": "Visible actions",
         "loading-recipes": "Loading recipes...",
-        "no-recipe-selected": "No recipe selected"
+        "no-recipe-selected": "No recipe selected",
+        "load-instances-failed": "Failed to load instances",
+        "save-failed": "Save failed",
+        "delete-failed": "Delete failed",
+        "download-failed": "Download failed",
+        "upload-failed": "Upload failed",
+        "save-before-download-failed": "Save before download failed",
+        "instance-not-available": "Recipe type not available",
+        "create-failed": "Failed to create instance",
+        "download-completed-errors": "Download completed with {{count}} error(s)",
+        "upload-completed-errors": "Upload completed with {{count}} error(s)",
+        "instance-name": "Instance {{index}}"
     },
 
     "recipes": {
