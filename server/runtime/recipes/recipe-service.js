@@ -34,6 +34,9 @@ function init(_settings, _log, _runtime) {
 /**
  * Coerce a value to the correct JavaScript type based on tagType.
  * Pure function — no dependencies on runtime state.
+ * Empty string maps to the type's neutral default for numeric/bool families
+ * (0 / false) so a download never writes a literal '' to a numeric/bool tag;
+ * string tags may legitimately be empty and keep ''.
  * @param {*} value - The value to coerce
  * @param {string} tagType - The tag type (case-insensitive)
  * @returns {*} Coerced value, or original if coercion not possible
@@ -48,6 +51,11 @@ function coerceValue(value, tagType) {
 
     // Boolean family
     if (type === 'bool' || type === 'boolean') {
+        if (value === '') {
+            // Empty string is not a legal bool value: map to the neutral
+            // default so a download never writes a literal '' to a bool tag.
+            return false;
+        }
         if (typeof value === 'boolean') {
             return value;
         }
@@ -65,6 +73,9 @@ function coerceValue(value, tagType) {
 
     // Integer family
     if (type === 'int' || type === 'dint' || type === 'int16' || type === 'int32') {
+        if (value === '') {
+            return 0;
+        }
         if (typeof value === 'number') {
             return value;
         }
@@ -77,6 +88,9 @@ function coerceValue(value, tagType) {
 
     // Float/Real family
     if (type === 'real' || type === 'float' || type === 'double' || type === 'number') {
+        if (value === '') {
+            return 0;
+        }
         if (typeof value === 'number') {
             return value;
         }
@@ -89,6 +103,9 @@ function coerceValue(value, tagType) {
 
     // Byte type (clamped 0-255)
     if (type === 'byte') {
+        if (value === '') {
+            return 0;
+        }
         if (typeof value === 'number' && Number.isInteger(value)) {
             return Math.max(0, Math.min(255, value));
         }

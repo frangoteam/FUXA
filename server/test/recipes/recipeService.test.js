@@ -125,6 +125,31 @@ describe('recipe-service', () => {
             });
         });
 
+        describe('Empty string defaults', () => {
+            it('should map empty string to 0 for numeric families', () => {
+                expect(recipeService.coerceValue('', 'int')).to.equal(0);
+                expect(recipeService.coerceValue('', 'dint')).to.equal(0);
+                expect(recipeService.coerceValue('', 'int16')).to.equal(0);
+                expect(recipeService.coerceValue('', 'int32')).to.equal(0);
+                expect(recipeService.coerceValue('', 'number')).to.equal(0);
+                expect(recipeService.coerceValue('', 'real')).to.equal(0);
+                expect(recipeService.coerceValue('', 'float')).to.equal(0);
+                expect(recipeService.coerceValue('', 'double')).to.equal(0);
+                expect(recipeService.coerceValue('', 'byte')).to.equal(0);
+                expect(recipeService.coerceValue('', 'BOOLEAN')).to.not.equal('');
+            });
+
+            it('should map empty string to false for bool/boolean', () => {
+                expect(recipeService.coerceValue('', 'bool')).to.equal(false);
+                expect(recipeService.coerceValue('', 'boolean')).to.equal(false);
+            });
+
+            it('should keep empty string valid for string tags', () => {
+                expect(recipeService.coerceValue('', 'string')).to.equal('');
+                expect(recipeService.coerceValue('', 'word')).to.equal('');
+            });
+        });
+
         describe('Edge cases', () => {
             it('should pass through null unchanged for any tagType', () => {
                 expect(recipeService.coerceValue(null, 'int')).to.equal(null);
@@ -395,6 +420,22 @@ describe('recipe-service', () => {
                     c.args[0] === 'recipe:cancel-confirmed'
                 )).to.be.true;
                 expect(recipeService.isRecipeRunning('r_test123')).to.be.false;
+            });
+
+            it('should write 0/false instead of a literal empty string for numeric/bool entries', async () => {
+                recipeData.entries = [
+                    { id: 'e_001', tagId: 'ti', tagName: 'Num', tagType: 'int', value: '' },
+                    { id: 'e_002', tagId: 'tb', tagName: 'Flag', tagType: 'bool', value: '' },
+                    { id: 'e_003', tagId: 'ts', tagName: 'Note', tagType: 'string', value: '' }
+                ];
+
+                await recipeService.downloadRecipe('r_test123');
+
+                expect(runtime.devices.setTagValue.callCount).to.equal(3);
+                expect(runtime.devices.setTagValue.getCall(0).args).to.deep.equal(['ti', 0]);
+                expect(runtime.devices.setTagValue.getCall(1).args).to.deep.equal(['tb', false]);
+                // String tags may legitimately be empty and pass through unchanged
+                expect(runtime.devices.setTagValue.getCall(2).args).to.deep.equal(['ts', '']);
             });
         });
 

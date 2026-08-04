@@ -431,12 +431,18 @@ function _validateRecipeData(data) {
             return { valid: false, error: 'Invalid recipe data: entry ' + i + ' has invalid tagType "' + entry.tagType + '"' };
         }
 
-        // value must be coercible if provided
-        if (entry.value !== undefined && entry.value !== null && entry.value !== '') {
+        // value must be coercible if provided; empty string for numeric/bool
+        // tags is not a legal stored value, so coerce it to the type's neutral
+        // default (0 / false) in place. String tags may legitimately be empty.
+        if (entry.value !== undefined && entry.value !== null) {
             var passThrough = (tagTypeLower === 'string' || tagTypeLower === 'word');
-            var coerced = runtime.recipeService.coerceValue(entry.value, entry.tagType);
-            if (!passThrough && coerced === entry.value && typeof entry.value === 'string' && entry.value !== '') {
-                return { valid: false, error: "Invalid recipe data: value '" + entry.value + "' cannot be coerced to type '" + entry.tagType + "'" };
+            if (!passThrough && entry.value === '') {
+                entry.value = runtime.recipeService.coerceValue('', entry.tagType);
+            } else {
+                var coerced = runtime.recipeService.coerceValue(entry.value, entry.tagType);
+                if (!passThrough && coerced === entry.value && typeof entry.value === 'string' && entry.value !== '') {
+                    return { valid: false, error: "Invalid recipe data: value '" + entry.value + "' cannot be coerced to type '" + entry.tagType + "'" };
+                }
             }
         }
     }

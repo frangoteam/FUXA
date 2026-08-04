@@ -327,6 +327,39 @@ describe('Recipes API', () => {
             expect(res.body.id).to.exist;
             expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
         });
+
+        it('should coerce an empty string value to 0 for a numeric tag on POST', async () => {
+            const res = await postRequest(server, '/api/recipes', {
+                name: 'Empty Numeric',
+                entries: [{ tagId: 't1', tagName: 'T1', tagType: 'int', value: '' }]
+            });
+
+            expect(res.statusCode).to.equal(200);
+            const saved = runtime.recipeStorage.setRecipeData.getCall(0).args[1];
+            expect(saved.entries[0].value).to.equal(0);
+        });
+
+        it('should coerce an empty string value to false for a bool tag on POST', async () => {
+            const res = await postRequest(server, '/api/recipes', {
+                name: 'Empty Bool',
+                entries: [{ tagId: 't1', tagName: 'T1', tagType: 'bool', value: '' }]
+            });
+
+            expect(res.statusCode).to.equal(200);
+            const saved = runtime.recipeStorage.setRecipeData.getCall(0).args[1];
+            expect(saved.entries[0].value).to.equal(false);
+        });
+
+        it('should keep an empty string value valid for a string tag on POST', async () => {
+            const res = await postRequest(server, '/api/recipes', {
+                name: 'Empty String',
+                entries: [{ tagId: 't1', tagName: 'T1', tagType: 'string', value: '' }]
+            });
+
+            expect(res.statusCode).to.equal(200);
+            const saved = runtime.recipeStorage.setRecipeData.getCall(0).args[1];
+            expect(saved.entries[0].value).to.equal('');
+        });
     });
 
     describe('DELETE /api/recipes', () => {
@@ -614,6 +647,22 @@ describe('Recipes API', () => {
             const saved = runtime.recipeStorage.setRecipeData.getCall(0).args[1];
             expect(saved.entries[0].value).to.equal('-5.5');
             expect(saved.entries[1].value).to.equal('+100');
+        });
+
+        it('should store 0 for an empty value cell when importing CSV for a numeric tag', async () => {
+            // A hand-made CSV with an empty value cell on an int row must be
+            // coerced to 0 on store, never kept as a literal '' that a download
+            // would later write to the device.
+            const csvPayload = 'tagId,tagName,tagType,value\nt1,Temp,int,\n';
+
+            const res = await postRequest(server, '/api/recipes/import', {
+                file: csvPayload,
+                format: 'csv'
+            });
+
+            expect(res.statusCode).to.equal(200);
+            const saved = runtime.recipeStorage.setRecipeData.getCall(0).args[1];
+            expect(saved.entries[0].value).to.equal(0);
         });
 
         it('should return 400 for invalid JSON syntax', async () => {
