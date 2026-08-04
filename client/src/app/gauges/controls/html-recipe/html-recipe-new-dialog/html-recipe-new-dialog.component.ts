@@ -21,7 +21,9 @@ export class HtmlRecipeNewDialogComponent {
         private dialogRef: MatDialogRef<HtmlRecipeNewDialogComponent>
     ) {
         this.dialogName = data.name || 'New Recipe';
-        this.dialogDescription = data.description || 'New Recipe';
+        // The description default must be empty, not "New Recipe" — otherwise
+        // the dialog persists the name literal into the description field too.
+        this.dialogDescription = data.description || '';
     }
 
     onCancel(): void {
