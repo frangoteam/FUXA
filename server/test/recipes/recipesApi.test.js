@@ -616,4 +616,67 @@ describe('Recipes API', () => {
             expect(res.body.error).to.include('Missing file or data');
         });
     });
+
+    describe('TOCTOU double-start', () => {
+        it('should return 409 when the start rejects with already-in-progress', async () => {
+            runtime.recipeStorage.getRecipeData.resolves({
+                id: 'r_test',
+                name: 'Test',
+                entries: [{ id: 'e_001', tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }]
+            });
+            // Pre-check passes, but the underlying claim rejects immediately:
+            // the route must turn that into a definitive 409, not a silent 202.
+            runtime.recipeService.isRecipeRunning.returns(false);
+            runtime.recipeService.downloadRecipe.rejects(new Error('Recipe execution already in progress'));
+
+            const res = await postRequest(server, '/api/recipes/download', { id: 'r_test' });
+
+            expect(res.statusCode).to.equal(409);
+            expect(res.body.error).to.include('already in progress');
+        });
+
+        it('should start once and give a concurrent second start a definitive error', async () => {
+            // Wire the REAL recipe service so the running-slot claim and the
+            // concurrent "already in progress" rejection are genuinely exercised.
+            const realService = require('../../runtime/recipes/recipe-service');
+            realService.init(null, null, runtime);
+            runtime.recipeService = {
+                isRecipeRunning: (id) => realService.isRecipeRunning(id),
+                downloadRecipe: (id) => realService.downloadRecipe(id),
+                uploadRecipe: (id) => realService.uploadRecipe(id),
+                coerceValue: realService.coerceValue
+            };
+            runtime.io = { emit: sandbox.spy() };
+            runtime.devices = { setTagValue: sandbox.stub().resolves({}), getTagValue: sandbox.stub().resolves(42) };
+
+            runtime.recipeStorage.getRecipeData.resolves({
+                id: 'r_touctou',
+                name: 'Race',
+                entries: [{ id: 'e_001', tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }]
+            });
+
+            // Hold the first download's write open so its running slot stays
+            // claimed while the concurrent second request is processed.
+            let releaseWrite;
+            const gate = new Promise(resolve => { releaseWrite = resolve; });
+            runtime.devices.setTagValue = sandbox.stub().callsFake(() => gate);
+
+            const [r1, r2] = await Promise.all([
+                postRequest(server, '/api/recipes/download', { id: 'r_touctou' }),
+                postRequest(server, '/api/recipes/download', { id: 'r_touctou' })
+            ]);
+
+            const statuses = [r1.statusCode, r2.statusCode].sort();
+            // Exactly one success + a definitive error for the loser (no hung dialog) —
+            // the loser may be caught by the pre-check (400) or the claim (409).
+            expect(statuses).to.deep.equal([202, 400]);
+            const errRes = r1.statusCode === 202 ? r2 : r1;
+            expect(errRes.body.error).to.include('already in progress');
+
+            // Release the winner's write so it completes — no stuck running state
+            releaseWrite({});
+            await new Promise(resolve => setTimeout(resolve, 30));
+            expect(realService.isRecipeRunning('r_touctou')).to.be.false;
+        });
+    });
 });

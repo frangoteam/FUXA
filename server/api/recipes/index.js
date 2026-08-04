@@ -165,7 +165,7 @@ module.exports = {
                 }
                 var id = req.body.id;
 
-                _handlePromise(runtime.recipeStorage.getRecipeData(id), res, function(data) {
+                _handlePromise(runtime.recipeStorage.getRecipeData(id), res, async function(data) {
                     if (!data) {
                         res.status(400).json({ error: 'Recipe not found' });
                         return;
@@ -179,10 +179,26 @@ module.exports = {
                         return;
                     }
 
-                    // Fire and forget — do NOT await
+                    // TOCTOU guard: two concurrent starts can both pass the
+                    // isRecipeRunning pre-check before either reserves the running
+                    // slot (the slot is claimed synchronously inside downloadRecipe).
+                    // The loser's promise rejects immediately with "already in
+                    // progress". Yield one microtask so the loser's rejection is
+                    // observed BEFORE responding: the loser answers 409 instead of
+                    // silently returning 202 and hanging its progress dialog.
+                    var startError = null;
                     runtime.recipeService.downloadRecipe(id).catch(err => {
                         runtime.logger.error('recipe download failed: ' + err);
+                        if (err && err.message === 'Recipe execution already in progress') {
+                            startError = err.message;
+                        }
                     });
+
+                    await Promise.resolve();
+                    if (startError) {
+                        res.status(409).json({ error: startError });
+                        return;
+                    }
 
                     res.status(202).json({
                         result: "started",
@@ -217,7 +233,7 @@ module.exports = {
                 }
                 var id = req.body.id;
 
-                _handlePromise(runtime.recipeStorage.getRecipeData(id), res, function(data) {
+                _handlePromise(runtime.recipeStorage.getRecipeData(id), res, async function(data) {
                     if (!data) {
                         res.status(400).json({ error: 'Recipe not found' });
                         return;
@@ -231,10 +247,22 @@ module.exports = {
                         return;
                     }
 
-                    // Fire and forget — do NOT await
+                    // TOCTOU guard (see download): yield one microtask so an
+                    // immediately-rejected start ("already in progress") answers
+                    // 409 to the losing caller instead of a silent 202.
+                    var startError = null;
                     runtime.recipeService.uploadRecipe(id).catch(err => {
                         runtime.logger.error('recipe upload failed: ' + err);
+                        if (err && err.message === 'Recipe execution already in progress') {
+                            startError = err.message;
+                        }
                     });
+
+                    await Promise.resolve();
+                    if (startError) {
+                        res.status(409).json({ error: startError });
+                        return;
+                    }
 
                     res.status(202).json({
                         result: "started",
