@@ -19,7 +19,9 @@ export class IconSelectorComponent implements OnInit {
     @Input() height = '30px';
     @Input() image: string;
     @Input() allowImage = false;
+    @Input() allowClear = true;
     @Input() imageLabel = 'dlg.menuitem-image';
+    @Input() clearLabel = 'gauges.property-icon-none';
     @Output() imageSelected = new EventEmitter<Event>();
 
     icons$: Observable<string[]>;
@@ -52,6 +54,13 @@ export class IconSelectorComponent implements OnInit {
         this.value = icon;
         this.valueChange.emit(icon);
         this.selected.emit(icon);
+    }
+
+    onClear() {
+        this.value = '';
+        this.image = undefined;
+        this.valueChange.emit('');
+        this.selected.emit('');
     }
 
     onImageSelected(event: Event) {

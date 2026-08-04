@@ -822,6 +822,9 @@
     "slider.property-slider-color": "Färg för koppling",
     "slider.property-slider-background": "Basfärg",
     "slider.property-slider-handle": "Pekarfärg",
+    "slider.property-slider-width": "Stapeltjocklek",
+    "slider.property-handle-width": "Pekarbredd",
+    "slider.property-handle-height": "Pekarhöjd",
 
     "html-switch.property-off-value": "Av-värde",
     "html-switch.property-on-value": "På-värde",
@@ -1721,6 +1724,7 @@
     "msg.maps-location-name-exist": "Kartplatsnamnet finns redan!",
     "msg.text-name-exist": "Textnamnet finns redan!",
     "msg.texts-text-remove": "Vill du ta bort texten '{{value}}'?",
-    "msg.operation-unauthorized": "Operation obehörig!"
+    "msg.operation-unauthorized": "Operation obehörig!",
+    "gauges.property-icon-none": "Ingen ikon"
 }
 

@@ -4,6 +4,98 @@
 const fs = require('fs');
 const path = require('path');
 
+const BLOCKED_DEVICE_PROPERTY_KEYS = new Set([
+    '__proto__',
+    'prototype',
+    'constructor',
+    'password',
+    'pass',
+    'secret',
+    'token',
+    'apikey',
+    'api_key',
+    'privatekey',
+    'private_key',
+    'certificate',
+    'cert',
+    'key',
+]);
+
+const READABLE_DEVICE_PROPERTY_KEYS = new Set([
+    'address',
+    'baudRate',
+    'broker',
+    'clientId',
+    'cycle',
+    'dataBits',
+    'endpoint',
+    'namespace',
+    'parity',
+    'polling',
+    'port',
+    'rack',
+    'slot',
+    'station',
+    'stopBits',
+    'timeout',
+    'topic',
+    'unitId',
+]);
+
+const WRITABLE_DEVICE_PROPERTY_KEYS = new Set([
+    'cycle',
+    'polling',
+    'timeout',
+]);
+
+function normalizeDevicePropertyKey(property) {
+    if (typeof property !== 'string') {
+        return null;
+    }
+    const key = property.trim();
+    if (!key || key.includes('.') || key.includes('[') || key.includes(']')) {
+        return null;
+    }
+    return key;
+}
+
+function assertAllowedDeviceProperty(property, allowedKeys, action) {
+    const key = normalizeDevicePropertyKey(property);
+    if (!key || BLOCKED_DEVICE_PROPERTY_KEYS.has(key.toLowerCase()) || !allowedKeys.has(key)) {
+        throw new Error(`Device property '${property}' is not ${action}`);
+    }
+    return key;
+}
+
+function isSafeDevicePropertyValue(value) {
+    return value === null || ['string', 'number', 'boolean'].includes(typeof value);
+}
+
+function createDevicePropertyHelpers(devices) {
+    return {
+        getDeviceProperty(deviceName, property) {
+            const key = assertAllowedDeviceProperty(property, READABLE_DEVICE_PROPERTY_KEYS, 'readable');
+            const deviceProperty = devices.getDeviceProperty(deviceName);
+            if (!deviceProperty || !Object.prototype.hasOwnProperty.call(deviceProperty, key)) {
+                return undefined;
+            }
+            return deviceProperty[key];
+        },
+        setDeviceProperty(deviceName, property, value) {
+            const key = assertAllowedDeviceProperty(property, WRITABLE_DEVICE_PROPERTY_KEYS, 'writable');
+            if (!isSafeDevicePropertyValue(value)) {
+                throw new Error(`Device property '${property}' value must be a scalar`);
+            }
+
+            const deviceProperty = devices.getDeviceProperty(deviceName);
+            if (!deviceProperty) return null;
+
+            deviceProperty[key] = value;
+            return devices.setDeviceProperty(deviceName, deviceProperty);
+        },
+    };
+}
+
 function tryRequireNodeRed(runtime) {
     try {
         // Fast check whether the module is resolvable
@@ -127,6 +219,9 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
         fs.mkdirSync(userDir, { recursive: true });
     }
 
+    const devices = require(path.join(settings.appDir, 'runtime/devices'));
+    const devicePropertyHelpers = createDevicePropertyHelpers(devices);
+
     // Minimal Node-RED settings; extend only what is really needed
     const redSettings = {
         httpAdminRoot: '/nodered/',
@@ -149,11 +244,13 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
             // Expose essential FUXA runtime helpers
             fuxa: {
                 runtime,
-                getTag: require(path.join(settings.appDir, 'runtime/devices')).getTagValue,
-                setTag: require(path.join(settings.appDir, 'runtime/devices')).setTagValue,
+                getTag: devices.getTagValue,
+                setTag: devices.setTagValue,
                 getDaq: require(path.join(settings.appDir, 'runtime/storage/daqstorage')).getNodeValues,
-                getTagId: require(path.join(settings.appDir, 'runtime/devices')).getTagId,
-                getHistoricalTags: require(path.join(settings.appDir, 'runtime/devices')).getHistoricalTags,
+                getTagId: devices.getTagId,
+                getHistoricalTags: devices.getHistoricalTags,
+                getDeviceProperty: devicePropertyHelpers.getDeviceProperty,
+                setDeviceProperty: devicePropertyHelpers.setDeviceProperty,
                 emit: events.emit.bind(events),
                 on: events.on.bind(events),
                 removeListener: events.removeListener.bind(events),
@@ -293,4 +390,4 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
     logger.info('[Node-RED] Started at /nodered');
 }
 
-module.exports = { mountNodeRedIfInstalled, createNodeRedAuthMiddleware };
+module.exports = { mountNodeRedIfInstalled, createNodeRedAuthMiddleware, createDevicePropertyHelpers };

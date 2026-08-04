@@ -3,7 +3,8 @@
 	</mat-progress-bar>
 </div>
 <mat-sidenav-container class="sidenav-container" [hasBackdrop]="false">
-	<mat-sidenav #matsidenav *ngIf="showNavigation && showSidenav" class="sidenav" [mode]="showSidenav">
+	<mat-sidenav #matsidenav *ngIf="showNavigation && showSidenav" class="sidenav" [mode]="showSidenav"
+		[disableClose]="showSidenav === 'side'">
 		<app-sidenav #sidenav [sidenav]="matsidenav" (goToPage)="onGoToPage($event)" (goToLink)="onGoToLink($event)"></app-sidenav>
 	</mat-sidenav>
 	<mat-sidenav-content

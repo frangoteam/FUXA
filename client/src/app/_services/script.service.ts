@@ -43,7 +43,7 @@ export class ScriptService {
         const api: any = {};
 
         for (const fn of systemFunctions.functions) {
-            if (clientAccess.scriptSystemFunctions.includes(fn.name)) {
+            if (clientAccess?.scriptSystemFunctions?.includes(fn.name)) {
                 const methodName = fn.name.replace('$', '');
                 if (typeof this[fn.name] === 'function') {
                     api[methodName] = this[fn.name].bind(this);
@@ -96,7 +96,7 @@ export class ScriptService {
                 try {
                     const code = `${parameterToAdd}${script.code}`;
                     const asyncText = script.sync ? 'function' : 'async function';
-                    const callText = `${asyncText} ${script.name}() {\n${this.addSysFunctions(code)} \n }\n${script.name}.call(this);\n`;
+                    const callText = `${asyncText} ${script.name}() {\n${this.addSysFunctions(code, script.name)} \n }\n${script.name}.call(this);\n`;
                     const result = eval(callText);
 
                     if (result && typeof result.then === 'function') {
@@ -127,15 +127,16 @@ export class ScriptService {
         }
         try {
             const asyncText = script.sync ? '' : 'async';
-            const asyncScript = `(${asyncText} () => { ${this.addSysFunctions(script.code)} \n})();`;
+            const asyncScript = `(${asyncText} () => { ${this.addSysFunctions(script.code, script.name)} \n})();`;
             eval(asyncScript);
         } catch (err) {
             console.error(err);
         }
     }
 
-    private addSysFunctions(scriptCode: string): string {
-        let code = scriptCode.replace(/\$getTag\(/g, 'await this.$getTag(');
+    private addSysFunctions(scriptCode: string, sourceScriptName?: string): string {
+        const sourceScriptNameParam = JSON.stringify(sourceScriptName || null);
+        let code = scriptCode.replace(/\$getTag\(/g, `await this.$getTagForScript(${sourceScriptNameParam}, `);
         code = code.replace(/\$setTag\(/g, 'this.$setTag(');
         code = code.replace(/\$getTagId\(/g, 'this.$getTagId(');
         code = code.replace(/\$getTagDaqSettings\(/g, 'await this.$getTagDaqSettings(');
@@ -160,11 +161,15 @@ export class ScriptService {
 
     /* get Tag value from server, check authorization of source script */
     public async $getTag(id: string) {
+        const sourceScriptName = this.extractUserFunctionBeforeScriptService();
+        return this.$getTagForScript(sourceScriptName, id);
+    }
+
+    public async $getTagForScript(sourceScriptName: string | null, id: string) {
         let tag: TagDevice = this.projectService.getTagFromId(id, true);
         if (tag?.deviceType === DeviceType.internal) {
             return tag.value;
         }
-        const sourceScriptName = this.extractUserFunctionBeforeScriptService();
         let values = await this.projectService.getTagsValues([id], sourceScriptName);
         return values[0]?.value;
     }

@@ -845,6 +845,9 @@
     "slider.property-slider-color": "接続色",
     "slider.property-slider-background": "ベースカラー",
     "slider.property-slider-handle": "ポインターカラー",
+    "slider.property-slider-width": "バーの幅",
+    "slider.property-handle-width": "ポインター幅",
+    "slider.property-handle-height": "ポインター高さ",
 
     "html-switch.property-off-value": "オフ値",
     "html-switch.property-on-value": "オン値",
@@ -1778,6 +1781,7 @@
     "msg.maps-location-name-exist": "マップ位置名が既に存在します！",
     "msg.text-name-exist": "テキスト名が既に存在します！",
     "msg.texts-text-remove": "テキスト '{{value}}' を削除しますか？",
-    "msg.operation-unauthorized": "操作が許可されていません！"
+    "msg.operation-unauthorized": "操作が許可されていません！",
+    "gauges.property-icon-none": "アイコンなし"
 }
 

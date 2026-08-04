@@ -421,6 +421,9 @@
     "slider.property-slider-color": "커넥트 색",
     "slider.property-slider-background": "베이스 색",
     "slider.property-slider-handle": "포인터 색",
+    "slider.property-slider-width": "막대 너비",
+    "slider.property-handle-width": "포인터 너비",
+    "slider.property-handle-height": "포인터 높이",
 
     "html-switch.property-off-value": "Off 값",
     "html-switch.property-on-value": "On 값",
@@ -798,7 +801,8 @@
     "msg.signin-failed": "권한 없음",
     "msg.get-project-void": "프로젝트가 발견되지 않았습니다.!",
     "msg.editor-mode-locked": "편집자가 이미 열려있습니다!",
-    "msg.alarms-clear-success": "모든 알림이 취소되었습니다!"
+    "msg.alarms-clear-success": "모든 알림이 취소되었습니다!",
+    "gauges.property-icon-none": "아이콘 없음"
 }
 
 
