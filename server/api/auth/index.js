@@ -7,6 +7,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authJwt = require('../jwt-helper');
 
+// In order to work under a reverse proxy, I import the BASE PATH
+const BASE_PATH = (process.env.BASE_PATH || '').replace(/\/+$/, '');
+
 var runtime;
 var secretCode;
 var tokenExpiresIn;
@@ -61,7 +64,7 @@ function setRefreshCookie(res, token) {
         httpOnly: true,
         sameSite: 'lax',
         secure: !!runtime?.settings?.https,
-        path: '/api/refresh'
+        path: BASE_PATH + '/api/refresh'
     };
     if (maxAge) {
         options.maxAge = maxAge;
@@ -70,7 +73,9 @@ function setRefreshCookie(res, token) {
 }
 
 function clearRefreshCookie(res) {
-    res.clearCookie(refreshCookieName, { path: '/api/refresh' });
+    res.clearCookie(refreshCookieName, {
+        path: BASE_PATH + '/api/refresh'
+    });
 }
 
 function sendInvalidSignInResponse(res) {
