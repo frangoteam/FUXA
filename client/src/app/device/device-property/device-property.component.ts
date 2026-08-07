@@ -286,8 +286,12 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	onDeviceTypeChanged() {
-		if (this.data.device.type === DeviceType.WebAPI ) {
+		if (this.data.device.type === DeviceType.WebAPI || this.data.device.type === DeviceType.PlumEconextGateway) {
 			this.pollingType = this.pollingWebApiType;
+			if (this.data.device.type === DeviceType.PlumEconextGateway && !this.data.device.polling) {
+				// ecoNEXT recommends clients poll every 5-10 seconds.
+				this.data.device.polling = 5000;
+			}
 		} else if (this.data.device.type === DeviceType.WebCam) {
             this.pollingType = this.pollingWebCamType;
         } else {

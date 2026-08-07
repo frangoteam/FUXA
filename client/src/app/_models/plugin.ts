@@ -1,4 +1,6 @@
 export class Plugin {
+    id: string;
+    displayName: string;
     name: string;
     type: PluginType | PluginGroupType;
     version: string;

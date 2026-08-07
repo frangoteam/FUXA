@@ -1,0 +1,85 @@
+<div>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>
+        <ng-container *ngIf="data.tag; else browseTitle">{{'device.tag-property-title' | translate}}</ng-container>
+        <ng-template #browseTitle>{{'device.browsetag-property-title' | translate}} — {{'device.property-plum-econext-gateway' | translate}}</ng-template>
+    </h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <form [formGroup]="formGroup" *ngIf="data.tag" class="tag-editor" mat-dialog-content>
+        <div class="my-form-field item-block">
+            <span>{{'device.tag-property-device' | translate}}</span>
+            <input formControlName="deviceName" type="text" readonly>
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>Gateway parameter name</span>
+            <input formControlName="gatewayName" type="text" readonly>
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>Gateway parameter index</span>
+            <input formControlName="tagAddress" type="text" readonly>
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>FUXA tag name</span>
+            <input formControlName="tagName" type="text">
+            <span *ngIf="formGroup.controls.tagName.errors?.name" class="form-input-error">{{formGroup.controls.tagName.errors?.name}}</span>
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.tag-property-type' | translate}}</span>
+            <mat-select formControlName="tagType">
+                <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">{{type.value}}</mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.tag-property-description' | translate}}</span>
+            <input formControlName="tagDescription" type="text">
+        </div>
+        <div class="value-editor">
+            <div><strong>Current value:</strong> {{currentValue ?? '—'}}</div>
+            <div><strong>Access:</strong> {{data.tag.options?.writable ? 'read/write' : 'read-only'}}</div>
+            <div *ngIf="data.tag.options?.min != null || data.tag.options?.max != null">
+                <strong>Range:</strong> {{data.tag.options?.min ?? '—'}} – {{data.tag.options?.max ?? '—'}}
+            </div>
+            <mat-form-field appearance="fill">
+                <mat-label>New value</mat-label>
+                <input matInput [(ngModel)]="manualValue" [ngModelOptions]="{standalone: true}"
+                       [disabled]="!data.tag.options?.writable">
+            </mat-form-field>
+            <button mat-raised-button color="accent" type="button"
+                    [disabled]="!data.tag.options?.writable" (click)="writeValue()">
+                Write to controller
+            </button>
+            <div class="write-message" *ngIf="writeMessage">{{writeMessage}}</div>
+            <div class="write-log" *ngIf="writeLogVisible">
+                <div class="write-log-title">Controller response log</div>
+                <div class="write-log-empty" *ngIf="!writeLog.length">Waiting for controller response...</div>
+                <div class="write-log-entry" *ngFor="let entry of writeLog" [class.write-log-error]="!entry.success">
+                    <span class="write-log-time">{{entry.time}}</span>
+                    <span>{{entry.message}}</span>
+                    <pre *ngIf="entry.details">{{entry.details | json}}</pre>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div mat-dialog-content *ngIf="!data.tag" class="browse-content">
+        <div class="parameter-search">
+            <mat-form-field appearance="outline">
+                <mat-label>Search by index or name</mat-label>
+                <input matInput [(ngModel)]="searchText" (keyup.enter)="search()" placeholder="e.g. 103 or HDWTSetPoint">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="sort-field">
+                <mat-label>Index order</mat-label>
+                <mat-select [(value)]="sortDirection" (selectionChange)="search()">
+                    <mat-option value="asc">Lowest first</mat-option>
+                    <mat-option value="desc">Highest first</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <button mat-raised-button color="primary" type="button" (click)="search()">Search</button>
+        </div>
+        <div class="tree-wrapper">
+            <ngx-treetable #treetable [config]="config" (expand)="queryNext($event)"></ngx-treetable>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [disabled]="data.tag && formGroup?.invalid">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

@@ -40,7 +40,7 @@ export class Device {
         id: 'Device id, GUID',
         name: 'Device name',
         enabled: 'Enabled',
-        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | ADSclient | Gpio | WebCam | MELSEC | REDIS',
+        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | PlumEconextGateway | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | ADSclient | Gpio | WebCam | MELSEC | REDIS',
         polling: 'Polling interval in millisec., check changed value after ask value, by OPCUA there is a monitor',
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
@@ -189,6 +189,8 @@ export class DeviceNetProperty {
     method: string;
     /** Data format flag used for WebAPI (CSV/JSON) */
     format: string;
+    /** HTTP timeout used by REST based device drivers. */
+    timeout?: number;
     /** Connection option used for Modbus RTU/TCP, Redis for readMode */
     connectionOption: string;
     /** Delay used for Modbus RTU/TCP delay between frame*/
@@ -240,6 +242,7 @@ export enum DeviceType {
     SiemensS7 = 'SiemensS7',
     OPCUA = 'OPCUA',
     BACnet = 'BACnet',
+    PlumEconextGateway = 'PlumEconextGateway',
     ModbusRTU = 'ModbusRTU',
     ModbusTCP = 'ModbusTCP',
     WebAPI = 'WebAPI',

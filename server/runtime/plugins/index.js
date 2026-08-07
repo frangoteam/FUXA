@@ -151,7 +151,11 @@ async function addPlugin(plugin, options) {
     const needsRuntimeInstall = normalized.pkg || normalized.dynamicPackage || !isInstalled;
 
     if (needsRuntimeInstall && !isInstalled) {
-        normalized.current = await manager.installPackage(normalized.name, normalized.version);
+        normalized.current = await manager.installPackage(
+            normalized.name,
+            normalized.version,
+            normalized.installSource
+        );
         normalized.pkg = true;
     } else if (current) {
         normalized.current = current.current;
@@ -159,7 +163,10 @@ async function addPlugin(plugin, options) {
     }
 
     if (normalized.group !== PluginGroupType.service && normalized.module && normalized.type) {
-        await device.loadPlugin(normalized.type, normalized.module);
+        const modulePath = normalized.module.startsWith('.')
+            ? normalized.module
+            : manager.resolve(normalized.module);
+        await device.loadPlugin(normalized.type, modulePath);
     }
     plugins[normalized.name] = normalized;
     if (addOptions.refreshInstalled !== false) {
@@ -256,7 +263,7 @@ function _normalizePlugin(plugin) {
     }
     if (plugin.name && plugins[plugin.name]) {
         const knownPlugin = plugins[plugin.name];
-        return Object.assign(new Plugin(
+        const normalized = Object.assign(new Plugin(
             knownPlugin.name,
             knownPlugin.module,
             knownPlugin.type,
@@ -264,6 +271,10 @@ function _normalizePlugin(plugin) {
             plugin.group || knownPlugin.group,
             true
         ), knownPlugin, plugin);
+        // Installation sources are server-controlled metadata. Do not allow a
+        // client request to replace the path of a known bundled plugin.
+        normalized.installSource = knownPlugin.installSource;
+        return normalized;
     }
     if (plugin.name) {
         const customPlugin = new Plugin(
@@ -293,6 +304,22 @@ function createDefaultPlugins() {
     registry['node-opcua'] = new Plugin('node-opcua', './opcua', 'OPCUA', '2.149.0', PluginGroupType.connectionDevice, true);
     registry['modbus-serial'] = new Plugin('modbus-serial', './modbus', 'Modbus', '8.0.19', PluginGroupType.connectionDevice, true);
     registry['node-bacnet'] = new Plugin('node-bacnet', './bacnet', 'BACnet', '0.2.4', PluginGroupType.connectionDevice, true);
+    registry['fuxa-plugin-plum-econext-gateway'] = new Plugin(
+        'fuxa-plugin-plum-econext-gateway',
+        'fuxa-plugin-plum-econext-gateway',
+        'PlumEconextGateway',
+        '0.1.0',
+        PluginGroupType.connectionDevice,
+        true,
+        'plum-econext-gateway',
+        'PLUM ecoNEXT Gateway'
+    );
+    // The source ships with FUXA, but installation is explicitly selected by
+    // the user in Plugin Manager. It is not a server dependency.
+    registry['fuxa-plugin-plum-econext-gateway'].installSource = path.resolve(
+        __dirname,
+        '../../integrations/plum-econext-gateway'
+    );
     registry['node-snap7'] = new Plugin('node-snap7', './s7', 'SiemensS7', '1.0.9', PluginGroupType.connectionDevice, true);
     registry['ads-client'] = new Plugin('ads-client', './adsclient', 'ADSclient', '2.1.0', PluginGroupType.connectionDevice, true);
     registry['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.17', PluginGroupType.connectionDevice, true);
@@ -318,7 +345,9 @@ module.exports = {
     get manager() { return manager },
 };
 
-function Plugin(name, module, type, version, group, dinamic) {
+function Plugin(name, module, type, version, group, dinamic, id, displayName) {
+    this.id = id || name;
+    this.displayName = displayName || name;
     this.name = name;
     this.module = module;
     this.type = type;
@@ -330,4 +359,5 @@ function Plugin(name, module, type, version, group, dinamic) {
     this.dynamicPackage = false;
     this.custom = false;
     this.canRemove = false;
+    this.installSource = '';
 }

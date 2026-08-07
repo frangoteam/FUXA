@@ -183,9 +183,9 @@ function init(_io, _api, _settings, _log, eventsMain) {
             }
         });
         // client ask device values
-        socket.on(Events.IoEventTypes.DEVICE_VALUES, (message) => {
+        socket.on(Events.IoEventTypes.DEVICE_VALUES, async (message, acknowledge) => {
             try {
-                if (message === 'get') {
+                if (message === 'get' || message?.cmd === 'get') {
                     var adevs = devices.getDevicesValues();
                     for (var id in adevs) {
                         updateDeviceValues({ id: id, values: adevs[id] || {} });
@@ -193,12 +193,22 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 } else if (message.cmd === 'set' && message.var) {
                     if (!isSocketWriteAuthorized(socket)) {
                         logger.warn(`${Events.IoEventTypes.DEVICE_VALUES}: unauthorized write attempt from ${socket.userId || 'guest'}`);
+                        if (acknowledge) acknowledge({ success: false, error: 'Write not authorized' });
                         return;
                     }
-                    devices.setDeviceValue(message.var.source, message.var.id, message.var.value, message.fnc);
+                    const success = await devices.setDeviceValue(message.var.source, message.var.id, message.var.value, message.fnc);
+                    if (acknowledge) acknowledge({
+                        success: success === true,
+                        details: devices.getLastWriteResult(message.var.source)
+                    });
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DEVICE_VALUES}: ${err}`);
+                if (acknowledge) acknowledge({
+                    success: false,
+                    error: err?.message || String(err),
+                    details: message?.var?.source ? devices.getLastWriteResult(message.var.source) : null
+                });
             }
         });
         // client ask device browse
