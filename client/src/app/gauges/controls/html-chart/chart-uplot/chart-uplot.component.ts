@@ -631,7 +631,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         let always = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.always);
         let bottom = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.bottom);
         let follow = Utils.getEnumKey(ChartLegendMode, ChartLegendMode.follow);
-        this.options.legend = { show: (this.options.legendMode === always || this.options.legendMode === bottom), width: 1 };
+        this.options.legend = { show: (this.options.legendMode === always || this.options.legendMode === bottom), markers: { width: 1 } };
         this.options.tooltip = { show: (this.options.legendMode === always || this.options.legendMode === follow) };
         // Axes label
         if (this.options.axisLabelX) { this.options.axes[0].label = this.options.axisLabelX; }

@@ -164,7 +164,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         class: 'my-chart',
         width: 800,
         height: 600,
-        legend: { show: true, width: 1 },
+        legend: { show: true, markers: { width: 1 } },
         scales: {
             x: {
                 time: true,

@@ -55,7 +55,7 @@
     "rxjs": "^7.8.0",
     "socket.io-client": "4.8.1",
     "tslib": "^2.5.0",
-    "uplot": "1.6.24",
+    "uplot": "1.6.32",
     "xgplayer": "3.0.13",
     "xgplayer-flv.js": "3.0.13",
     "xgplayer-hls.js": "3.0.13",
