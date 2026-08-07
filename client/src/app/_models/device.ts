@@ -268,24 +268,37 @@ export enum TagType {
 
 export enum ModbusTagType {
     Bool = 'Bool',
+    // --- 16-bit ---
     Int16 = 'Int16',
     UInt16 = 'UInt16',
+    Int16LE = 'Int16LE',
+    UInt16LE = 'UInt16LE',
+    // --- 32-bit ---
     Int32 = 'Int32',
     UInt32 = 'UInt32',
     Float32 = 'Float32',
-    Float64 = 'Float64',
-    Int64 = 'Int64',
-    Int16LE = 'Int16LE',
-    UInt16LE = 'UInt16LE',
     Int32LE = 'Int32LE',
     UInt32LE = 'UInt32LE',
     Float32LE = 'Float32LE',
-    Float64LE = 'Float64LE',
-    Float64MLE = 'Float64MLE',
-    Int64LE = 'Int64LE',
-    Float32MLE = 'Float32MLE',
     Int32MLE = 'Int32MLE',
-    UInt32MLE = 'UInt32MLE'
+    UInt32MLE = 'UInt32MLE',
+    Float32MLE = 'Float32MLE',
+    Int32MBE = 'Int32MBE',
+    UInt32MBE = 'UInt32MBE',
+    Float32MBE = 'Float32MBE',
+    // --- 64-bit ---
+    Int64 = 'Int64',
+    UInt64 = 'UInt64',
+    Float64 = 'Float64',
+    Int64LE = 'Int64LE',
+    UInt64LE = 'UInt64LE',
+    Float64LE = 'Float64LE',
+    Int64MBE = 'Int64MBE',
+    UInt64MBE = 'UInt64MBE',
+    Float64MBE = 'Float64MBE',
+    Int64MLE = 'Int64MLE',
+    UInt64MLE = 'UInt64MLE',
+    Float64MLE = 'Float64MLE'
     // String = 'String'
 }
 
