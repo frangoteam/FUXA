@@ -67,16 +67,21 @@ function AlarmsManager(_runtime) {
     /**
      * Return the alarms status (active/passive alarms count), { highhigh: <count>, high: <count>, low: <count>, info: <count> }
      */
-    this.getAlarmsStatus = function () {
+    this.getAlarmsStatus = function (permission) {
         return new Promise(function (resolve, reject) {
             alarmstorage.getAlarms().then(function (alrs) {
                 var result = { highhigh: 0, high: 0, low: 0, info: 0, actions: [] };
                 if (alrs) {
                     Object.values(alrs).forEach(alr => {
-                        result[alr.type]++;
+                        if (!_canShowAlarmStatus(alr, permission)) {
+                            return;
+                        }
+                        if (Object.prototype.hasOwnProperty.call(result, alr.type)) {
+                            result[alr.type]++;
+                        }
                         if (alr.type === AlarmsTypes.ACTION && !alr.offtime) {
                             var action = actionsProperty[alr.nametype];
-                            if (action.subproperty) {
+                            if (action && action.subproperty) {
                                 if (action.subproperty.type === ActionsTypes.POPUP || action.subproperty.type === ActionsTypes.SET_VIEW || action.subproperty.type === ActionsTypes.TOAST_MESSAGE) {
                                     result.actions.push({ type: action.subproperty.type, params: action.subproperty.actparam, options: action.subproperty.actoptions });
                                 }
@@ -357,6 +362,7 @@ function AlarmsManager(_runtime) {
         return new Promise(function (resolve, reject) {
             alarms = {};
             alarmsProperty = {};
+            actionsProperty = {};
             runtime.project.getAlarms().then(function (result) {
                 var alarmsFound = 0;
                 if (result) {
@@ -524,6 +530,18 @@ function AlarmsManager(_runtime) {
             }
         }
         return available;
+    }
+
+    var _canShowAlarmStatus = function (alarm, permission) {
+        var property = null;
+        if (alarm.type === AlarmsTypes.ACTION) {
+            property = actionsProperty[alarm.nametype]?.tagproperty;
+        } else if (alarm.nametype) {
+            var alarmName = alarm.nametype.split(SEPARATOR)[0];
+            property = alarmsProperty[alarmName]?.property;
+        }
+        var alrPermission = property ? runtime.checkPermission(permission, property) : { show: true, enabled: true };
+        return !!alrPermission.show;
     }
 
     var _formatDateTime = function (dt) {
