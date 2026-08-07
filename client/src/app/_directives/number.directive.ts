@@ -83,6 +83,9 @@ export class NonNegativeIntegerOnlyDirective {
 
     @HostListener('keydown', ['$event'])
     onKeyDown(event: KeyboardEvent) {
+        if (event.ctrlKey || event.metaKey) {
+            return;
+        }
         // Always allow navigation/editing keys
         if (this.specialKeys.indexOf(event.key) !== -1) {
             event.stopPropagation();
@@ -98,23 +101,12 @@ export class NonNegativeIntegerOnlyDirective {
 
     @HostListener('paste', ['$event'])
     onPaste(event: ClipboardEvent) {
-        event.preventDefault();
         const pasted = event.clipboardData?.getData('text') ?? '';
         // Reject the paste entirely if the value is not a non-negative integer.
         // We do not silently strip characters (e.g. pasting "-5" should not
         // become "5") — invalid input is discarded as a whole.
-        if (/^[0-9]+$/.test(pasted)) {
-            const input = this.el.nativeElement as HTMLInputElement;
-            try {
-                const start = input.selectionStart ?? input.value.length;
-                const end = input.selectionEnd ?? input.value.length;
-                input.value = input.value.slice(0, start) + pasted + input.value.slice(end);
-                input.selectionStart = input.selectionEnd = start + pasted.length;
-            } catch {
-                input.value = input.value + pasted;
-            }
-            // Notify Angular/ngModel that the value changed
-            input.dispatchEvent(new Event('input', { bubbles: true }));
+        if (!/^[0-9]+$/.test(pasted)) {
+            event.preventDefault();
         }
     }
 
