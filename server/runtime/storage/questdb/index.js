@@ -68,11 +68,11 @@ function QuestDB(_settings, _log, _currentStorage) {
                     let line = sender
                         .table(tableName)
                         .symbol('tag_id', row.tagid)
-                        .symbol('device_id', row.deviceId)
-                        .stringColumn('device_name', row.deviceName);
+                        .symbol('device_id', row.deviceId);
                     if (!utils.isNullOrUndefined(row.unsPath)) {
                         line = line.symbol('uns_path', row.unsPath);
                     }
+                    line = line.stringColumn('device_name', row.deviceName);
 
                     if (!utils.isNullOrUndefined(parsedValue.numberValue)) {
                         line = line.floatColumn('number_value', parsedValue.numberValue);

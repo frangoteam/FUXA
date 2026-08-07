@@ -7,6 +7,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const authJwt = require('../jwt-helper');
 
+// In order to work under a reverse proxy, I import the BASE PATH
+const BASE_PATH = (process.env.BASE_PATH || '').replace(/\/+$/, '');
+
 var runtime;
 var secretCode;
 var tokenExpiresIn;
@@ -52,7 +55,7 @@ function buildAccessToken(user) {
 }
 
 function buildRefreshToken(user) {
-    return jwt.sign({ id: user.username, groups: user.groups, type: 'refresh' }, secretCode, { expiresIn: refreshTokenExpiresIn });
+    return jwt.sign({ id: user.username, type: 'refresh' }, secretCode, { expiresIn: refreshTokenExpiresIn });
 }
 
 function setRefreshCookie(res, token) {
@@ -61,7 +64,7 @@ function setRefreshCookie(res, token) {
         httpOnly: true,
         sameSite: 'lax',
         secure: !!runtime?.settings?.https,
-        path: '/api/refresh'
+        path: BASE_PATH + '/api/refresh'
     };
     if (maxAge) {
         options.maxAge = maxAge;
@@ -70,7 +73,13 @@ function setRefreshCookie(res, token) {
 }
 
 function clearRefreshCookie(res) {
-    res.clearCookie(refreshCookieName, { path: '/api/refresh' });
+    res.clearCookie(refreshCookieName, {
+        path: BASE_PATH + '/api/refresh'
+    });
+}
+
+function sendInvalidSignInResponse(res) {
+    res.status(401).json({ status: 'error', message: 'Invalid email/password!!!', data: null });
 }
 
 module.exports = {
@@ -119,12 +128,12 @@ module.exports = {
                         });
                         runtime.logger.info('api-signin: ' + userInfo[0].username + ' ' + userInfo[0].fullname + ' ' + userInfo[0].groups);
                     } else {
-                        res.status(401).json({ status: 'error', message: 'Invalid email/password!!!', data: null });
+                        sendInvalidSignInResponse(res);
                         runtime.logger.error('api post signin: Invalid email/password!!!');
                     }
                 } else {
-                    res.status(404).end();
-                    runtime.logger.error('api post signin: Not Found!');
+                    sendInvalidSignInResponse(res);
+                    runtime.logger.error('api post signin: Invalid email/password!!!');
                 }
             }).catch(function (err) {
                 if (err.code) {
@@ -155,20 +164,18 @@ module.exports = {
                     return res.status(401).json({ status: 'error', message: 'Invalid refresh token' });
                 }
 
-                let userData = null;
-                try {
-                    const users = await runtime.users.getUsers({ username: decoded.id });
-                    if (users && users.length) {
-                        userData = users[0];
-                    }
-                } catch (err) {
-                    runtime.logger.error(`api refresh: user lookup failed ${err}`);
+                const users = await runtime.users.getUsers({ username: decoded.id });
+                if (!users || !users.length) {
+                    clearRefreshCookie(res);
+                    return res.status(401).json({ status: 'error', message: 'Invalid refresh token' });
                 }
+
+                const userData = users[0];
 
                 const user = {
                     username: decoded.id,
                     fullname: userData?.fullname,
-                    groups: userData?.groups || decoded.groups,
+                    groups: userData?.groups,
                     info: userData?.info
                 };
 

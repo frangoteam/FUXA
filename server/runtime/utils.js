@@ -1,6 +1,26 @@
 const os = require('os');
-const ip = require('ip');
 const crypto = require('crypto');
+
+function ipv4ToInt(address) {
+    return address.split('.').reduce((result, octet) => {
+        return ((result << 8) + Number(octet)) >>> 0;
+    }, 0);
+}
+
+function intToIpv4(value) {
+    return [
+        (value >>> 24) & 255,
+        (value >>> 16) & 255,
+        (value >>> 8) & 255,
+        value & 255
+    ].join('.');
+}
+
+function getBroadcastAddress(address, netmask) {
+    const addressInt = ipv4ToInt(address);
+    const netmaskInt = ipv4ToInt(netmask);
+    return intToIpv4((addressInt | (~netmaskInt >>> 0)) >>> 0);
+}
 
 'use strict';
 var utils = module.exports = {
@@ -69,7 +89,7 @@ var utils = module.exports = {
                         nics.push({
                             name: ifname,
                             address: iface.address,
-                            broadcast: ip.subnet(iface.address, iface.netmask).broadcastAddress
+                            broadcast: getBroadcastAddress(iface.address, iface.netmask)
                         });
                     });
                 });

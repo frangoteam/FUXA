@@ -7,6 +7,7 @@ const https = require('https');
 const socketIO = require('socket.io');
 const nopt = require("nopt");
 const schedule = require('node-schedule');
+const jwt = require('jsonwebtoken');
 
 const paths = require('./paths');
 const logger = require('./runtime/logger');
@@ -15,6 +16,8 @@ var events = require("./runtime/events").create();
 const FUXA = require('./fuxa.js');
 const runtime = require('./runtime');
 const authJwt = require('./api/jwt-helper');
+
+const BASE_PATH = (process.env.BASE_PATH || '').replace(/\/+$/, '');
 
 const express = require('express');
 const app = express();
@@ -135,6 +138,13 @@ try {
         if (!utils.isNullOrUndefined(mysettings.hideEditorOnboarding)) {
             settings.hideEditorOnboarding = mysettings.hideEditorOnboarding;
         }
+        if (mysettings.editorSectionMessages) {
+            settings.editorSectionMessages = Object.assign(
+                {},
+                settings.editorSectionMessages || {},
+                mysettings.editorSectionMessages
+            );
+        }
         if (mysettings.uiPort) {
             settings.uiPort = mysettings.uiPort;
         }
@@ -173,6 +183,9 @@ try {
         }
         if (!utils.isNullOrUndefined(mysettings.broadcastAll)) {
             settings.broadcastAll = mysettings.broadcastAll;
+        }
+        if (!utils.isNullOrUndefined(mysettings.lazyViewLoading)) {
+            settings.lazyViewLoading = mysettings.lazyViewLoading;
         }
         if (!utils.isNullOrUndefined(mysettings.logFull)) {
             settings.logFull = mysettings.logFull;
@@ -261,12 +274,13 @@ server.setMaxListeners(0);
 const io = socketIO(server, {
     pingInterval: 60000,    // send ping interval
     pingTimeout: 120000,    // close connection if pong is not received
-    allowEIO3: true,        //Whether to enable compatibility with Socket.IO v2 clients.
+    allowEIO3: true,        // Whether to enable compatibility with Socket.IO v2 clients.
     cors: {
         origin: "*",
         methods: ["GET", "POST"],
         credentials: false
-    }
+    },
+    path: BASE_PATH + '/socket.io',
 });
 
 // Check settings value
@@ -276,6 +290,43 @@ if (!fs.existsSync(www)) {      // compatibility with docker/npm/electron
 }
 
 settings.httpStatic = settings.httpStatic || www;
+
+// In-memory BASE_PATH, rewrites the in-memory copy to work with read-only deployments
+let indexHtmlCache = null;
+const rewrittenAssets = new Map(); // request path -> { content, type }
+
+if (BASE_PATH) {
+    // here, if a BASE_PATH is set, I push it in the base html, at runtime
+    try {
+        const indexHtmlPath = path.join(settings.httpStatic, 'index.html');
+        const desiredBase = (BASE_PATH || '') + '/';
+        const withBase = fs.readFileSync(indexHtmlPath, 'utf8')
+            .replace(/<base href="[^"]*"\s*\/?>/, `<base href="${desiredBase}" />`);
+        // hook for any runtime code that wants BASE_PATH without parsing <base>
+        const bootstrap = `<script>window.__BASE_PATH__=${JSON.stringify(BASE_PATH)};</script>`;
+        indexHtmlCache = withBase.replace('</head>', `${bootstrap}</head>`);
+    } catch (err) {
+        logger.warn('Could not prepare <base href> from BASE_PATH, if working under a reverse proxy check your BASE_PATH env var: ' + err);
+    }
+    // and edit the references in .css/.js files, in memory only
+    const collectAssets = (dir) => {
+        for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+            const full = path.join(dir, e.name);
+            if (e.isDirectory()) { collectAssets(full); }
+            else if (/\.(js|css)$/.test(e.name)) {
+                const src = fs.readFileSync(full, 'utf8');
+                const out = src.replace(/(["'(])\/assets\//g, `$1${BASE_PATH}/assets/`);
+                if (out !== src) {
+                    const reqPath = BASE_PATH + '/' + path.relative(settings.httpStatic, full).split(path.sep).join('/');
+                    rewrittenAssets.set(reqPath, { content: out, type: e.name.endsWith('.css') ? 'text/css' : 'application/javascript' });
+                }
+            }
+        }
+    };
+    try { collectAssets(settings.httpStatic); }
+    catch (err) { logger.warn('asset base-path rewrite (in-memory) failed: ' + err); }
+    // the favicon is handled directly in the index.html that angular uses
+}
 
 if (parsedArgs.port !== undefined) {
     settings.uiPort = parsedArgs.port;
@@ -350,20 +401,82 @@ const allowCrossDomain = function (req, res, next) {
     }
     next();
 };
+
+function getCookieValue(req, name) {
+    const cookieHeader = req.headers.cookie;
+    if (!cookieHeader) {
+        return null;
+    }
+    const cookies = cookieHeader.split(';');
+    for (const cookie of cookies) {
+        const [key, ...rest] = cookie.trim().split('=');
+        if (key === name) {
+            return decodeURIComponent(rest.join('='));
+        }
+    }
+    return null;
+}
+
+function snapshotAuth(req, res, next) {
+    if (!settings.secureEnabled) {
+        return next();
+    }
+
+    const token = req.query?.token || req.headers['x-access-token'] || getCookieValue(req, 'fuxa_access');
+    if (!token || token === 'null') {
+        return res.status(401).end();
+    }
+
+    try {
+        const decoded = jwt.verify(token, authJwt.secretCode);
+        if (!decoded?.id || authJwt.isGuestUser(decoded.id, decoded.groups)) {
+            return res.status(401).end();
+        }
+        res.header('Cache-Control', 'no-store');
+        return next();
+    } catch {
+        return res.status(401).end();
+    }
+}
+
+// All the calls that are directly parsed as static http are mapped here
+const SHELL_ROUTES = [
+    '/',
+    '/home',
+    '/home/:viewName',
+    '/lab',
+    '/editor',
+    '/device',
+    '/plugins',
+    '/rodevice',
+    '/users',
+    '/view',
+    '/ar'
+];
+
 app.use(allowCrossDomain);
-app.use('/', express.static(settings.httpStatic));
-app.use('/home', express.static(settings.httpStatic));
-app.use('/home/:viewName', express.static(settings.httpStatic));
-app.use('/lab', express.static(settings.httpStatic));
-app.use('/editor', express.static(settings.httpStatic));
-app.use('/device', express.static(settings.httpStatic));
-app.use('/rodevice', express.static(settings.httpStatic));
-app.use('/users', express.static(settings.httpStatic));
-app.use('/view', express.static(settings.httpStatic));
-app.use('/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
-app.use('/_images', express.static(settings.imagesFileDir));
-app.use('/_widgets', express.static(settings.widgetsFileDir));
-app.use('/snapshots', express.static(settings.webcamSnapShotsDir))
+
+if (indexHtmlCache) {
+    const serveShell = (req, res) => res.type('html').send(indexHtmlCache);
+    for (const shellPath of SHELL_ROUTES) {
+        app.get(BASE_PATH + shellPath, serveShell);
+    }
+}
+if (rewrittenAssets.size) {
+    app.use((req, res, next) => {
+        const rewritten = rewrittenAssets.get(req.path);
+        rewritten ? res.type(rewritten.type).send(rewritten.content) : next();
+    });
+}
+
+for (const shellPath of SHELL_ROUTES) {
+    app.use(BASE_PATH + shellPath, express.static(settings.httpStatic));
+}
+// while paths that have to serve non-angular paths are here
+app.use(BASE_PATH + '/' + settings.httpUploadFileStatic, express.static(settings.uploadFileDir));
+app.use(BASE_PATH + '/_images', express.static(settings.imagesFileDir));
+app.use(BASE_PATH + '/_widgets', express.static(settings.widgetsFileDir));
+app.use(BASE_PATH + '/snapshots', snapshotAuth, express.static(settings.webcamSnapShotsDir));
 
 var accessLogStream = fs.createWriteStream(settings.logDir + '/api.log', { flags: 'a' });
 if (runtime.settings.logApiLevel !== 'none') {
@@ -434,9 +547,10 @@ function getListenPath() {
         port = settings.uiPort;
     }
 
+    var listenBasePath = BASE_PATH || '';
     var listenPath = 'http' + (settings.https ? 's' : '') + '://' +
         (settings.uiHost == '::' ? 'localhost' : (settings.uiHost == '0.0.0.0' ? '127.0.0.1' : settings.uiHost)) +
-        ':' + port;
+        ':' + port + listenBasePath;
     if (settings.httpStatic) {
         listenPath += '/';
     }
@@ -478,7 +592,7 @@ function startFuxa() {
             }
 
             if (settings.disableServer !== false) {
-                app.use('/', FUXA.httpApi);
+                app.use(BASE_PATH + '/', FUXA.httpApi);
             }
 
             server.listen(settings.uiPort, settings.uiHost, function () {

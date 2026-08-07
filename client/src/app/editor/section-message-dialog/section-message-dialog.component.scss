@@ -1,0 +1,29 @@
+:host {
+    ::ng-deep .mat-mdc-dialog-content {
+        max-height: none;
+        overflow: hidden;
+    }
+
+    .container {
+        min-width: 520px;
+    }
+
+    .dialog-content {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-width: 520px;
+        padding-top: 8px;
+        overflow: hidden;
+    }
+
+    .dialog-text {
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    .dialog-link {
+        font-weight: 500;
+        word-break: break-all;
+    }
+}

@@ -35,7 +35,8 @@ module.exports = {
          */
         prjApp.get("/api/project", secureFnc, function(req, res) {
             const permission = checkGroupsFnc(req);
-            runtime.project.getProject(req.userId, permission).then(result => {
+            const options = { lazyViews: runtime.settings.lazyViewLoading === true && req.query?.views === 'lazy' };
+            runtime.project.getProject(req.userId, permission, options).then(result => {
                 // res.header("Access-Control-Allow-Origin", "*");
                 // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 if (result) {
@@ -53,6 +54,32 @@ module.exports = {
                 } else {
                     res.status(400).json({error:"unexpected_error", message: err});
                     runtime.logger.error("api get project: " + err);
+                }
+            });
+        });
+
+        /**
+         * GET Project view data
+         * Take one full view from project storage and reply
+         */
+        prjApp.get("/api/project/view/:id", secureFnc, function(req, res) {
+            const permission = checkGroupsFnc(req);
+            runtime.project.getProjectView(req.params.id, permission).then(result => {
+                if (result) {
+                    res.json(result);
+                } else {
+                    res.status(404).end();
+                    runtime.logger.error("api get project view: Not Found!");
+                }
+            }).catch(function(err) {
+                if (err && err.code) {
+                    if (err.code !== 'ERR_HTTP_HEADERS_SENT') {
+                        res.status(400).json({error:err.code, message: err.message});
+                        runtime.logger.error("api get project view: " + err.message);
+                    }
+                } else {
+                    res.status(400).json({error:"unexpected_error", message: err});
+                    runtime.logger.error("api get project view: " + err);
                 }
             });
         });

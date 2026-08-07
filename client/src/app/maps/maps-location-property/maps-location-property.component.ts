@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA as MAT_DIALOG_DATA, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -6,10 +6,9 @@ import { ProjectService } from '../../_services/project.service';
 import { MapsLocation, MAPSLOCATION_PREFIX } from '../../_models/maps';
 import { Utils } from '../../_helpers/utils';
 import { GaugeAction, GaugeRangeProperty, View, ViewType } from '../../_models/hmi';
-import { BehaviorSubject, combineLatest, map, Observable, of } from 'rxjs';
-import { Define } from '../../_helpers/define';
 import { FlexDeviceTagValueType } from '../../gauges/gauge-property/flex-device-tag/flex-device-tag.component';
 import { FlexActionsStandaloneComponent } from '../../gauges/gauge-property/flex-actions-standalone/flex-actions-standalone.component';
+import { UploadFile } from '../../_models/project';
 
 @Component({
     selector: 'app-maps-location-property',
@@ -22,10 +21,6 @@ export class MapsLocationPropertyComponent implements OnInit {
     formGroup: UntypedFormGroup;
     views: View[] = [];
     actions: GaugeAction[] = [];
-    filteredIcons$: Observable<string[]>;
-    filterText = '';
-    private filterTextSubject = new BehaviorSubject<string>('');
-    icons$: Observable<string[]>;
     defaultColor = Utils.defaultColor;
     @ViewChild('flexActionsStandalone', { static: false }) flexActionsStandalone: FlexActionsStandaloneComponent;
 
@@ -34,23 +29,9 @@ export class MapsLocationPropertyComponent implements OnInit {
         private fb: UntypedFormBuilder,
         private translateService: TranslateService,
         private projectService: ProjectService,
+        private cdr: ChangeDetectorRef,
         @Inject(MAT_DIALOG_DATA) public data: MapsLocation) {
             this.location = this.data ?? new MapsLocation(Utils.getGUID(MAPSLOCATION_PREFIX));
-
-        this.icons$ = of(Define.MaterialIconsRegular).pipe(
-            map((data: string) => data.split('\n')),
-            map(lines => lines.map(line => line.split(' ')[0])),
-            map(names => names.filter(name => !!name))
-        );
-
-        this.filteredIcons$ = combineLatest([
-            this.icons$,
-            this.filterTextSubject.asObservable()
-        ]).pipe(
-            map(([icons, filterText]) =>
-                icons.filter(icon => icon.toLowerCase().includes(filterText.toLowerCase()))
-            )
-        );
     }
 
     ngOnInit() {
@@ -68,6 +49,7 @@ export class MapsLocationPropertyComponent implements OnInit {
             showMarkerIcon: [this.location.showMarkerIcon],
             showMarkerValue: [this.location.showMarkerValue],
             markerIcon: [this.location.markerIcon],
+            markerImage: [this.location.markerImage],
             markerBackground: [this.location.markerBackground ?? '#ffffff'],
             markerColor: [this.location.markerColor ?? '#000000'],
             markerTagValueId: [this.location.markerTagValueId]
@@ -98,8 +80,33 @@ export class MapsLocationPropertyComponent implements OnInit {
         };
     }
 
-    onFilterChange() {
-        this.filterTextSubject.next(this.filterText);
+    onMarkerIconSelected() {
+        this.formGroup.get('markerImage')?.setValue('');
+    }
+
+    onSetMarkerImage(event) {
+        if (event.target.files) {
+            let filename = event.target.files[0].name;
+            let fileToUpload = { type: filename.split('.').pop().toLowerCase(), name: filename.split('/').pop(), data: null };
+            let reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    fileToUpload.data = reader.result;
+                    this.projectService.uploadFile(fileToUpload).subscribe((result: UploadFile) => {
+                        this.formGroup.get('markerImage')?.setValue(result.location);
+                        this.formGroup.get('markerIcon')?.setValue('image');
+                        this.cdr.detectChanges();
+                    });
+                } catch (err) {
+                    console.error(err);
+                }
+            };
+            if (fileToUpload.type === 'svg') {
+                reader.readAsText(event.target.files[0]);
+            } else {
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
     }
 
     onTagChanged(tag: FlexDeviceTagValueType) {

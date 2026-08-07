@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../../_models/project';
 import { ResourceStorageService } from './resource-storage.service';
 import { AlarmBaseType, AlarmQuery, AlarmsFilter } from '../../_models/alarm';
-import { DaqQuery } from '../../_models/hmi';
+import { DaqQuery, View } from '../../_models/hmi';
 import { CommanType } from '../command.service';
 import { Report, ReportFile, ReportsQuery } from '../../_models/report';
 import { Role } from '../../_models/user';
@@ -29,7 +29,7 @@ export class ResDemoService implements ResourceStorageService {
         return this.http.get<any>('./assets/project.demo.fuxap', {});
     }
 
-    getStorageProject(): Observable<any> {
+    getStorageProject(loadFull = false): Observable<any> {
         return new Observable((observer) => {
             let prj = localStorage.getItem(this.getAppId());
             if (prj) {
@@ -42,6 +42,22 @@ export class ResDemoService implements ResourceStorageService {
                     observer.error(err);
                 });
             }
+        });
+    }
+
+    getStorageView(id: string): Observable<View> {
+        return new Observable((observer) => {
+            this.getStorageProject().subscribe(prj => {
+                const view = prj?.hmi?.views?.find((item: View) => item.id === id || item.name === id);
+                if (view) {
+                    observer.next(view);
+                    observer.complete();
+                } else {
+                    observer.error('View not found');
+                }
+            }, err => {
+                observer.error(err);
+            });
         });
     }
 

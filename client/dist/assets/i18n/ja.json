@@ -61,6 +61,8 @@
     "dlg.layout-lbl-infos": "情報通知モード",
     "dlg.layout-lbl-font": "フォントファミリー",
     "dlg.layout-lbl-font-size": "フォントサイズ",
+    "dlg.layout-lbl-height": "高さ",
+    "dlg.layout-lbl-button-height": "ボタンの高さ",
     "dlg.layout-lbl-anchor": "方向",
     "dlg.layout-lbl-margin-left": "左マージン",
     "dlg.layout-lbl-margin-right": "右マージン",
@@ -426,6 +428,8 @@
     "video.property-data": "データ",
     "video.property-address": "アドレス",
     "video.property-controls": "コントロールを表示",
+
+    "video.property-loop": "ループ",
     "video.property-image": "初期画像",
     "video.property-image-placeholder": "初期画像を選択",
 
@@ -714,6 +718,8 @@
 
     "editor.tools-zoom-title": "ズームツール [Ctrl+Up/Down]",
     "editor.tools-grid-title": "グリッドの表示/非表示",
+    "editor.tools-movestep-title": "移動ステップ",
+    "editor.tools-movestep-custom": "カスタム",
     "editor.tools-undo-title": "元に戻す [Z]" ,
     "editor.tools-redo-title": "やり直し [Y]",
     "editor.tools-clone-title": "要素の複製 [D]",
@@ -756,6 +762,7 @@
     "shapes.action-downup": "上下",
     "shapes.action-rotate": "回転",
     "shapes.action-move": "移動",
+    "shapes.action-moveByTags": "タグで移動",
     "shapes.action-refreshImage": "画像更新",
 
     "shapes.event-click": "クリック",
@@ -838,6 +845,9 @@
     "slider.property-slider-color": "接続色",
     "slider.property-slider-background": "ベースカラー",
     "slider.property-slider-handle": "ポインターカラー",
+    "slider.property-slider-width": "バーの幅",
+    "slider.property-handle-width": "ポインター幅",
+    "slider.property-handle-height": "ポインター高さ",
 
     "html-switch.property-off-value": "オフ値",
     "html-switch.property-on-value": "オン値",
@@ -1184,6 +1194,13 @@
     "gauges.property-action-toX" : "X位置へ",
     "gauges.property-action-toY" : "Y位置へ",
     "gauges.property-action-duration" : "持続時間",
+    "gauges.property-action-tagX" : "位置 X タグ",
+    "gauges.property-action-tagY" : "位置 Y タグ",
+    "gauges.property-action-axis" : "軸",
+    "gauges.property-action-value-min" : "値 Min",
+    "gauges.property-action-value-max" : "値 Max",
+    "gauges.property-action-position-min" : "位置 Min",
+    "gauges.property-action-position-max" : "位置 Max",
     "gauges.property-events-mapping-from": "コンテキスト変数",
     "gauges.property-map-variable": "バインドするコンテキスト変数を追加",
     "gauges.property-head-remove-mapvariable": "バインドを削除",
@@ -1235,6 +1252,12 @@
     "alarms.list-low": "Low",
     "alarms.list-info": "メッセージ",
     "alarms.list-actions": "アクション",
+    "alarms.import": "Import Alarms",
+    "alarms.export": "Export Alarms (JSON)",
+    "alarms.import-title": "Import Alarms",
+    "alarms.import-conflicts-message": "{{total}} alarms found. {{conflicts}} already exist. Choose how to import them.",
+    "alarms.import-copy": "Add as copies",
+    "alarms.import-replace": "Replace",
     "alarm.property-title": "アラーム",
     "alarm.property-name": "名前",
     "alarm.property-permission": "認証",
@@ -1740,6 +1763,8 @@
     "msg.editor-mode-locked": "エディターは既に開いています！",
     "msg.alarms-clear-success": "全てのアラームがキャンセルされました！",
     "msg.import-devices-error": "デバイスのインポートに失敗しました！",
+    "msg.import-alarms-error": "Import alarms failed!",
+    "msg.export-alarms-error": "Export alarms failed!",
     "msg.report-build-forced": "ビルドレポートの送信に成功しました",
     "msg.report-build-error": "ビルドレポート送信に失敗しました！",
     "msg.device-tags-request-result": "{{current}}件中{{value}}件を読み込み",
@@ -1756,6 +1781,7 @@
     "msg.maps-location-name-exist": "マップ位置名が既に存在します！",
     "msg.text-name-exist": "テキスト名が既に存在します！",
     "msg.texts-text-remove": "テキスト '{{value}}' を削除しますか？",
-    "msg.operation-unauthorized": "操作が許可されていません！"
+    "msg.operation-unauthorized": "操作が許可されていません！",
+    "gauges.property-icon-none": "アイコンなし"
 }
 

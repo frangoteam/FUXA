@@ -10,6 +10,7 @@ import { Script } from './script';
 import { Report } from './report';
 import { MapsLocation } from './maps';
 import { ClientAccess } from './client-access';
+import { ArSettings } from './ar';
 
 export class ProjectData {
     version = '1.01';
@@ -43,6 +44,8 @@ export class ProjectData {
     mapsLocations: MapsLocation[] = [];
     /** ClientAccess */
     clientAccess = new ClientAccess();
+    /** Browser AR marker to view/card mappings */
+    ar?: ArSettings = new ArSettings();
 }
 
 export enum ProjectDataCmdType {
@@ -67,6 +70,8 @@ export enum ProjectDataCmdType {
     DelReport = 'del-report',
     SetMapsLocation = 'set-maps-location',
     DelMapsLocation = 'del-maps-location',
+    SetArMarker = 'set-ar-marker',
+    DelArMarker = 'del-ar-marker',
 }
 
 

@@ -1,6 +1,6 @@
 /**
  *  Module to manage the project datastore in a database
- *  Table: 'general', 'views', 'devices', 'chart', 'texts', 'alarms', 'notifications', 'scripts', 'reports', 'locations'
+ *  Table: 'general', 'views', 'devices', 'chart', 'texts', 'alarms', 'notifications', 'scripts', 'reports', 'locations', 'arMarkers'
  */
 
 'use strict';
@@ -82,6 +82,7 @@ function _bind() {
         sql += "CREATE TABLE if not exists scripts (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists reports (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists locations (name TEXT PRIMARY KEY, value TEXT);";
+        sql += "CREATE TABLE if not exists arMarkers (name TEXT PRIMARY KEY, value TEXT);";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.bind failed! ${err}`);
@@ -223,6 +224,7 @@ function clearAll() {
         sql += "DELETE FROM scripts;";
         sql += "DELETE FROM reports;";
         sql += "DELETE FROM locations;";
+        sql += "DELETE FROM arMarkers;";
         db_prj.exec(sql, function (err) {
             if (err) {
                 logger.error(`prjstorage.clear failed! ${err}`);
@@ -248,6 +250,7 @@ const TableType = {
     SCRIPTS: 'scripts',
     REPORTS: 'reports',
     LOCATIONS: 'locations',
+    ARMARKERS: 'arMarkers',
 }
 
 module.exports = {

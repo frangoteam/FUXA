@@ -692,6 +692,24 @@
                                 <mat-icon aria-label="Show Hide Grid" *ngIf="!gridOn">grid_on</mat-icon>
                                 <mat-icon aria-label="Show Hide Grid" *ngIf="gridOn">grid_off</mat-icon>
                             </button>
+                            <button mat-button [matMenuTriggerFor]="moveStepMenu" #moveStepTrigger="matMenuTrigger"
+                                matTooltip="{{'editor.tools-movestep-title' | translate}}" class="move-step-btn">
+                                <mat-icon aria-hidden="true">swap_horiz</mat-icon>
+                                <span>{{moveStep}} px</span>
+                            </button>
+                            <mat-menu #moveStepMenu="matMenu" class="move-step-menu">
+                                <button mat-menu-item *ngFor="let step of moveStepOptions" (click)="onMoveStepChange(step)">
+                                    <mat-icon>{{moveStep === step ? 'check' : ''}}</mat-icon>
+                                    <span>{{step}} px</span>
+                                </button>
+                                <div class="move-step-custom" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+                                    <span>{{'editor.tools-movestep-custom' | translate}}</span>
+                                    <input #customMoveStep type="number" min="1" step="1" [value]="moveStep"
+                                        (change)="onMoveStepChange(customMoveStep.value)"
+                                        (keydown.enter)="onCustomMoveStepEnter($event, customMoveStep.value, moveStepTrigger)" />
+                                    <span>px</span>
+                                </div>
+                            </mat-menu>
                             <div id="history_panel">
                                 <button mat-button id="tool_undo" matTooltip="{{'editor.tools-undo-title' | translate}}" class="main-btn">
                                     <mat-icon aria-label="Undo [Z]">undo</mat-icon>

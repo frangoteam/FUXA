@@ -91,6 +91,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     imagefile: string;
     ctrlInitParams: any;
     gridOn = false;
+    moveStep = 1;
+    readonly moveStepOptions = [1, 2, 3, 5, 10];
     isAnySelected = false;
     selectedElement: SelElement = new SelElement();
     panelsState: PanelsStateType = {
@@ -186,7 +188,11 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         });
         let hmi = this.projectService.getHmi();
         if (hmi) {
-            this.loadHmi(true);
+            if (this.projectService.hasLazyViews()) {
+                this.projectService.reload(true);
+            } else {
+                this.loadHmi(true);
+            }
         }
         this.subscriptionLoad = this.projectService.onLoadHmi.subscribe(load => {
             this.loadHmi();
@@ -278,6 +284,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             );
 
             this.winRef.nativeWindow.svgEditor.init();
+            this.winRef.nativeWindow.svgEditor.setMoveStep(this.moveStep);
             $(initContextmenu);
 
         } catch (err) {
@@ -426,15 +433,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param ele gauge element
      */
     private searchGaugeSettings(ele): GaugeSettings {
-        if (ele) {
-            if (this.currentView) {
-                if (this.currentView.items[ele.id]) {
-                    return this.currentView.items[ele.id];
-                }
+        if (ele?.id) {
+            const currentGaugeSettings = this.currentView?.items?.[ele.id];
+            if (currentGaugeSettings) {
+                return currentGaugeSettings;
             }
-            for (var i = 0; i < this.hmi.views.length; i++) {
-                if (this.hmi.views[i].items[ele.id]) {
-                    return this.hmi.views[i].items[ele.id];
+            for (const view of this.hmi?.views ?? []) {
+                const gaugeSettings = view?.items?.[ele.id];
+                if (gaugeSettings) {
+                    return gaugeSettings;
                 }
             }
             return this.gaugesManager.createSettings(ele.id, ele.type);
@@ -841,6 +848,22 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.gridOn = this.gridOn = !this.gridOn;
         this.winRef.nativeWindow.svgEditor.clickExtension('view_grid');
         this.winRef.nativeWindow.svgEditor.enableGridSnapping(this.gridOn);
+    }
+
+    onMoveStepChange(step: number | string) {
+        const parsedStep = Number(step);
+        if (!Number.isInteger(parsedStep) || parsedStep < 1) {
+            return;
+        }
+        this.moveStep = parsedStep;
+        this.winRef.nativeWindow.svgEditor.setMoveStep(parsedStep);
+    }
+
+    onCustomMoveStepEnter(event: KeyboardEvent, step: string, menuTrigger: any) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.onMoveStepChange(step);
+        setTimeout(() => menuTrigger.closeMenu());
     }
 
     /**

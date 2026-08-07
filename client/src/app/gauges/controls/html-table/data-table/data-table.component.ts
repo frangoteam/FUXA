@@ -315,7 +315,7 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
                 type: { stringValue: this.priorityText[alr.type] },
                 name: { stringValue: alr.name },
                 status: { stringValue: this.statusText[alr.status] },
-                text: { stringValue: this.languageService.getTranslation(alr.text) ?? alr.text },
+                text: { stringValue: this.formatAlarmText(alr.text, alr.value) },
                 group: { stringValue: this.languageService.getTranslation(alr.group) ?? alr.group },
                 ontime: { stringValue: format(new Date(alr.ontime), 'YYYY.MM.DD HH:mm:ss') },
                 color: alr.color,
@@ -339,6 +339,14 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.lastRenderedSignature = nextSignature;
         this.dataSource.data = rows;
+    }
+
+    private formatAlarmText(text: string, value: any): string {
+        const translatedText = this.languageService.getTranslation(text) ?? text;
+        if (translatedText && value !== undefined && value !== null) {
+            return translatedText.split('%d').join(String(value));
+        }
+        return translatedText;
     }
 
     updateReportsTable(reports: ReportFile[]) {

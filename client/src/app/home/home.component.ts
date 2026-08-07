@@ -82,6 +82,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private destroy$ = new Subject<void>();
     loggedUser$: Observable<User>;
     language$: Observable<LanguageConfiguration>;
+    readonly defaultHeaderHeight = HeaderSettings.DefaultHeight;
 
     constructor(private projectService: ProjectService,
         private changeDetector: ChangeDetectorRef,
@@ -193,12 +194,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         });
     }
 
-    onGoToPage(viewId: string, force: boolean = false) {
+    async onGoToPage(viewId: string, force: boolean = false, options: any = {}) {
         if (viewId === this.viewAsAlarms) {
             this.onAlarmsShowMode('expand');
             this.checkToCloseSideNav();
-        } else if (!this.homeView || viewId !== this.homeView?.id || force || this.fuxaview?.view?.id !== viewId) {
-            const view = this.hmi.views.find(x => x.id === viewId);
+        } else if (!this.homeView || viewId !== this.homeView?.id || force || this.fuxaview?.view?.id !== viewId || this.hasPageOptions(options)) {
+            const view = await this.projectService.ensureViewLoaded(viewId);
             this.setIframe();
             this.showHomeLink = false;
             this.changeDetector.detectChanges();
@@ -209,6 +210,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (this.homeView.type !== this.cardViewType && this.homeView.type !== this.mapsViewType) {
                     this.checkZoom();
                     this.fuxaview.hmi.layout = this.hmi.layout;
+                    this.applyPageOptions(options);
                     this.fuxaview.loadHmi(this.homeView);
                 } else if (this.cardsview) {
                     this.cardsview.reload();
@@ -217,6 +219,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.onAlarmsShowMode('close');
             this.checkToCloseSideNav();
         }
+    }
+
+    private hasPageOptions(options: any): boolean {
+        return !!(options?.variablesMapping || options?.sourceDeviceId);
+    }
+
+    private applyPageOptions(options: any = {}) {
+        if (!this.fuxaview) {
+            return;
+        }
+        this.fuxaview.sourceDeviceId = options?.sourceDeviceId;
+        this.fuxaview.loadVariableMapping(options?.variablesMapping ?? []);
     }
 
     onGoToLink(event: string) {
@@ -360,7 +374,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.router.navigate([destination]);//, this.ID]);
     }
 
-    private loadHmi() {
+    private async loadHmi() {
         let hmi = this.projectService.getHmi();
         if (hmi) {
             this.hmi = hmi;
@@ -377,6 +391,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             if (startView) {
                 viewToShow = startView;
             }
+            viewToShow = await this.projectService.ensureViewLoaded(viewToShow.id);
             this.homeView = viewToShow;
             this.setBackground();
             // check sidenav
@@ -496,17 +511,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         ev: Event,
         events: GaugeEvent[]
     ) {
-        let fuxaviewRef = this.fuxaview ?? this.cardsview.getFuxaView(0);
+        const homeEvents = events.filter(event => event.action === 'onpage');
+        homeEvents.forEach(event => {
+            this.onGoToPage(event.actparam, this.hasPageOptions(event.actoptions), event.actoptions);
+        });
+        const fuxaViewEvents = events.filter(event => event.action !== 'onpage');
+        let fuxaviewRef = this.fuxaview ?? this.cardsview?.getFuxaView(0);
         if (!fuxaviewRef) {
             return;
         }
-        const homeEvents = events.filter(event => event.action === 'onpage');
-        homeEvents.forEach(event => {
-            this.onGoToPage(event.actparam);
-        });
-        const fuxaViewEvents = events.filter(event => event.action !== 'onpage');
         if (fuxaViewEvents.length > 0) {
-            fuxaviewRef.runEvents(fuxaviewRef, ga, ev, events);
+            fuxaviewRef.runEvents(fuxaviewRef, ga, ev, fuxaViewEvents);
         }
     }
 

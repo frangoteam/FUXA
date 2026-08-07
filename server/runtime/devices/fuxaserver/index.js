@@ -77,6 +77,7 @@ function FuxaServer(_data, _logger, _events) {
     this.load = function (_data) {
         varsValue = [];
         data = JSON.parse(JSON.stringify(_data));
+        data.tags = data.tags || {};
         tagsMap = {};
         var count = Object.keys(data.tags).length;
         connectionTags = [];

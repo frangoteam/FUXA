@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ChangeDetectorR
 import { DOCUMENT, Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subject, Subscription, combineLatest, fromEvent, interval, map, merge, of, startWith, switchMap, takeUntil, tap, timer } from 'rxjs';
+import { Observable, Subject, Subscription, combineLatest, fromEvent, map, merge, of, startWith, switchMap, takeUntil, timer } from 'rxjs';
 
 import { environment } from '../environments/environment';
 
@@ -54,17 +54,13 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.heartbeatService.startHeartbeatPolling();
 
 		// capture events for the token refresh
-		const inactivityDuration = 1 * 60 * 1000;
 		const activity$ = merge(
 			fromEvent(document, 'click'),
 			fromEvent(document, 'touchstart')
 		);
 		activity$.pipe(
-			tap(() => this.heartbeatService.setActivity(true)),
-			switchMap(() => interval(inactivityDuration))
-		).subscribe(() => {
-			this.heartbeatService.setActivity(false);
-		});
+			takeUntil(this.destroy$)
+		).subscribe(() => this.heartbeatService.setActivity(true));
 
 
 		this.serverErrorBanner$ = combineLatest([
@@ -154,7 +150,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	isHidden() {
 		const urlEnd = this.location.path();
-		if (!urlEnd || urlEnd.startsWith('/home') || urlEnd === '/lab') {
+		if (!urlEnd || urlEnd.startsWith('/home') || urlEnd === '/lab' || this.isArViewRoute(urlEnd)) {
 			return true;
 		}
 		return false;
@@ -165,15 +161,22 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (route.startsWith('/view')) {
             return 'work-void';
         }
+		if (this.isArViewRoute(route)) {
+            return 'work-void';
+        }
 		return (this.isHidden()) ? 'work-home' : 'work-editor';
 	}
 
     showDevNavigation() {
         const route = this.location.path();
-        if (route.startsWith('/view')) {
+        if (route.startsWith('/view') || this.isArViewRoute(route)) {
             return false;
         }
         return this.showdev;
+    }
+
+    private isArViewRoute(route: string): boolean {
+        return route === '/ar' || route.startsWith('/ar?');
     }
 
 	onGoTo(goto) {

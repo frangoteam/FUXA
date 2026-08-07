@@ -140,6 +140,7 @@ export interface AlarmBaseType {
     bkcolor: string;
     color: string;
     toack: boolean;
+    value: any;
 }
 
 export enum AlarmActionsType {

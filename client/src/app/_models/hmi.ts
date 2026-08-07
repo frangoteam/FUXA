@@ -122,11 +122,16 @@ export class NaviItem {
 }
 
 export class HeaderSettings {
+    static readonly DefaultHeight = 46;
+    static readonly DefaultButtonHeight = 36;
+
     title: string;
     alarms: NotificationModeType;
     infos: NotificationModeType;
     bkcolor = '#ffffff';
     fgcolor = '#000000';
+    height = HeaderSettings.DefaultHeight;
+    buttonHeight = HeaderSettings.DefaultButtonHeight;
     fontFamily: string;
     fontSize = 13;
     items: HeaderItem[];
@@ -145,6 +150,7 @@ export interface HeaderItem {
     fgcolor: string;
     marginLeft: number;
     marginRight: number;
+    height?: number;
     property: GaugeProperty;
     status: GaugeStatus;
     element: HTMLElement;
@@ -224,6 +230,8 @@ export class GaugeProperty {
     options: any;
     readonly: boolean;
     text: string;               // Text property (used by button)
+    icon?: string;              // Optional Material icon (used by button)
+    image?: string;             // Optional image resource (used by button)
 }
 
 export interface PermissionRoles {
@@ -314,8 +322,10 @@ export enum GaugeActionsType {
     downup = 'shapes.action-downup',
     rotate = 'shapes.action-rotate',
     move = 'shapes.action-move',
+    moveByTags = 'shapes.action-moveByTags',
     monitor = 'shapes.action-monitor',
     refreshImage = 'shapes.action-refreshImage',
+    loadImage = 'shapes.action-loadImage',
     start = 'shapes.action-start',
     pause = 'shapes.action-pause',
     reset = 'shapes.action-reset',
@@ -347,6 +357,19 @@ export class GaugeActionMove {
     toX = 0;
     toY = 0;
     duration = 100;
+}
+
+export class GaugeActionMoveByTags {
+    axis: 'x' | 'y' = 'x';
+    valueMin = 0;
+    valueMax = 100;
+    positionMin = 0;
+    positionMax = 100;
+    duration = 100;
+}
+
+export class GaugeActionLoadImage {
+    url: '';
 }
 
 export class GaugePropertyColor {
@@ -762,5 +785,6 @@ export interface VideoOptions {
     address: string;
     initImage?: string;
     showControls?: boolean;
+    loop?: boolean;
 }
 

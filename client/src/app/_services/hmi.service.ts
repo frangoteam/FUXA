@@ -195,7 +195,12 @@ export class HmiService {
         this.socket?.close();
         this.socketToken = normalizedToken;
         const query = normalizedToken ? { token: normalizedToken } : {};
-        this.socket = io(this.endPointConfig, { query });
+        const socketUrl = new URL(this.endPointConfig, location.origin);
+        const socketPath = socketUrl.pathname.replace(/\/+$/, '') + '/socket.io';
+        this.socket = io(socketUrl.origin, {
+            path: socketPath,
+            query
+        });
         this.socket.on('connect', () => {
             this.onServerConnection$.next(true);
             this.tagsSubscribe();

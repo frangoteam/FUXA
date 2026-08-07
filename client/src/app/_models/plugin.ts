@@ -7,6 +7,7 @@ export class Plugin {
     pkg: boolean;
     dinamic: boolean;
     group: string;
+    canRemove: boolean;
 }
 
 export enum PluginType {
@@ -16,6 +17,7 @@ export enum PluginType {
     Raspberry = 'Raspberry',
     SiemensS7 = 'SiemensS7',
     EthernetIP = 'EthernetIP',
+    OmronEthernetIP = 'OmronEthernetIP',
     MELSEC = 'MELSEC',
     REDIS = 'REDIS'
 }

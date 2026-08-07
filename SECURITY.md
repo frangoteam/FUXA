@@ -22,6 +22,17 @@ Certain features such as server-side scripting, automation logic, or device inte
 
 Security reports should focus on **unintended access, privilege escalation, authentication bypass, or data exposure**.
 
+## Out of Scope
+
+The following configurations are considered insecure by design and are out of scope for vulnerability reports:
+
+- Deployments with `secureEnabled=false`
+- Deployments where authentication and authorization are intentionally disabled
+- Scenarios requiring the administrator to explicitly disable security features
+- Reports demonstrating access to functionality that is intentionally exposed when security is disabled
+
+When `secureEnabled=false`, FUXA operates in an unsecured mode intended only for trusted environments. Behavior resulting from the absence of authentication or authorization in this mode is not considered a security vulnerability.
+
 ---
 
 ## Supported Versions

@@ -6,7 +6,7 @@ import { environment } from '../../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { ToastrService } from 'ngx-toastr';
-import { AppSettings, DaqStore, SmtpSettings } from '../_models/settings';
+import { AppSettings, DaqStore, EditorSectionMessagesSettings, SmtpSettings } from '../_models/settings';
 
 @Injectable({
     providedIn: 'root'
@@ -63,6 +63,12 @@ export class SettingsService {
             this.appSettings.hideEditorOnboarding = !!settings.hideEditorOnboarding;
             dirty = true;
         }
+        const nextEditorSectionMessages = new EditorSectionMessagesSettings(settings.editorSectionMessages);
+        if (nextEditorSectionMessages.hideDevicePluginsNotice !== this.appSettings.editorSectionMessages.hideDevicePluginsNotice ||
+            nextEditorSectionMessages.hideArMarkersNotice !== this.appSettings.editorSectionMessages.hideArMarkersNotice) {
+            this.appSettings.editorSectionMessages = nextEditorSectionMessages;
+            dirty = true;
+        }
         if (settings.secureEnabled !== this.appSettings.secureEnabled ||
             settings.tokenExpiresIn !== this.appSettings.tokenExpiresIn ||
             settings.secureOnlyEditor !== this.appSettings.secureOnlyEditor ||
@@ -85,6 +91,10 @@ export class SettingsService {
         }
         if (settings.broadcastAll !== this.appSettings.broadcastAll) {
             this.appSettings.broadcastAll = settings.broadcastAll;
+            dirty = true;
+        }
+        if (settings.lazyViewLoading !== this.appSettings.lazyViewLoading) {
+            this.appSettings.lazyViewLoading = settings.lazyViewLoading;
             dirty = true;
         }
         if (settings.smtp && !(settings.smtp.host === this.appSettings.smtp.host && settings.smtp.port === this.appSettings.smtp.port &&

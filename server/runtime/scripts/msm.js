@@ -58,7 +58,7 @@ function MyScriptsModule(_events, _logger) {
     this.runScript = function (_script) {
         if (scriptsModule) {
             var paramValues = _script.parameters.map(p => utils.isNullOrUndefined(p.value) ? p : p.value);
-            if (!_script.name) {
+            if (_script.id) {
                 _script = Object.values(scriptsMap).find(s => s.id === _script.id);
             }
             try {

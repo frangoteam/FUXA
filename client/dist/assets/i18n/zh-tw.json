@@ -61,6 +61,8 @@
     "dlg.layout-lbl-infos": "資訊通知模式",
     "dlg.layout-lbl-font": "字型族",
     "dlg.layout-lbl-font-size": "字型大小",
+    "dlg.layout-lbl-height": "高度",
+    "dlg.layout-lbl-button-height": "按鈕高度",
     "dlg.layout-lbl-anchor": "方向",
     "dlg.layout-lbl-margin-left": "左邊距",
     "dlg.layout-lbl-margin-right": "右邊距",
@@ -699,6 +701,8 @@
 
     "editor.tools-zoom-title": "縮放工具[Ctrl+上/下]",
     "editor.tools-grid-title": "顯示/隱藏網格",
+    "editor.tools-movestep-title": "移動步長",
+    "editor.tools-movestep-custom": "自訂",
     "editor.tools-undo-title": "復原 [Z]",
     "editor.tools-redo-title": "重做 [Y]",
     "editor.tools-clone-title": "複製元素 [D]",
@@ -740,6 +744,7 @@
     "shapes.action-refreshImage": "更新影像",
 
     "shapes.action-move": "移動",
+    "shapes.action-moveByTags": "依標籤移動",
     "shapes.event-click": "點擊",
     "shapes.event-dblclick": "雙擊",
     "shapes.event-mouseup": "滑鼠放開",
@@ -820,6 +825,9 @@
     "slider.property-slider-color": "連接顏色",
     "slider.property-slider-background": "底色",
     "slider.property-slider-handle": "指標顏色",
+    "slider.property-slider-width": "條形寬度",
+    "slider.property-handle-width": "指標寬度",
+    "slider.property-handle-height": "指標高度",
 
     "html-switch.property-off-value": "關閉值",
     "html-switch.property-on-value": "開啟值",
@@ -1152,6 +1160,13 @@
     "gauges.property-action-toX" : "至位置 X",
     "gauges.property-action-toY" : "至位置 Y",
     "gauges.property-action-duration" : "持續時間",
+    "gauges.property-action-tagX" : "位置 X 標籤",
+    "gauges.property-action-tagY" : "位置 Y 標籤",
+    "gauges.property-action-axis" : "軸",
+    "gauges.property-action-value-min" : "值最小值",
+    "gauges.property-action-value-max" : "值最大值",
+    "gauges.property-action-position-min" : "位置最小值",
+    "gauges.property-action-position-max" : "位置最大值",
     "gauges.property-events-mapping-from": "情境變數",
     "gauges.property-map-variable": "新增情境變數以進行繫結",
     "gauges.property-head-remove-mapvariable": "刪除繫結",
@@ -1203,6 +1218,12 @@
     "alarms.list-low": "低",
     "alarms.list-info": "資訊",
     "alarms.list-actions": "動作",
+    "alarms.import": "Import Alarms",
+    "alarms.export": "Export Alarms (JSON)",
+    "alarms.import-title": "Import Alarms",
+    "alarms.import-conflicts-message": "{{total}} alarms found. {{conflicts}} already exist. Choose how to import them.",
+    "alarms.import-copy": "Add as copies",
+    "alarms.import-replace": "Replace",
     "alarm.property-title": "警報",
     "alarm.property-name": "名稱",
     "alarm.property-permission": "授權",
@@ -1619,6 +1640,7 @@
     "dlg.app-auth-expiration-1d": "已啟用，權杖將於 1 天內到期,",
     "dlg.app-auth-tooltip": "已啟用：你有一個管理員帳號 'admin/123456'（請不要忘記修改）。需要重新啟動伺服器！",
     "dlg.app-settings-client-broadcast": "廣播至用戶端（前端）所有標籤值",
+    "dlg.app-settings-lazy-view-loading": "Lazy view loading",
 
     "dlg.app-settings-daqstore": "DAQ 儲存",
     "dlg.app-settings-daqstore-type": "資料庫類型",
@@ -1707,6 +1729,8 @@
     "msg.editor-mode-locked": "編輯器已開啟！",
     "msg.alarms-clear-success": "所有警報已被清除！",
     "msg.import-devices-error": "匯入裝置失敗！",
+    "msg.import-alarms-error": "Import alarms failed!",
+    "msg.export-alarms-error": "Export alarms failed!",
     "msg.report-build-forced": "已成功觸發建置報告傳送",
     "msg.report-build-error": "觸發建置報告傳送失敗！",
     "msg.device-tags-request-result": "載入 {{current}} / {{value}}",
@@ -1723,7 +1747,8 @@
     "msg.maps-location-name-exist": "位置名稱已存在！",
     "msg.text-name-exist": "文字名稱已存在！",
     "msg.texts-text-remove": "您是否要刪除文字 '{{value}}'？",
-    "msg.operation-unauthorized": "操作未授權！"
+    "msg.operation-unauthorized": "操作未授權！",
+    "gauges.property-icon-none": "無圖示"
 }
 
 

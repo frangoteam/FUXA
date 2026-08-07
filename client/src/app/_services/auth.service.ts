@@ -35,6 +35,7 @@ export class AuthService {
 				}
 			}
 		}
+		this.publishAccessToken(this.currentUser?.token);
 		this.currentUser$.next(this.currentUser);
 
 		if (this.useRefreshCookieAuth) {
@@ -68,6 +69,7 @@ export class AuthService {
 							this.currentUser.infoRoles = JSON.parse(this.currentUser.info)?.roles;
 						}
 						this.saveUserToken(this.currentUser);
+						this.publishAccessToken(this.currentUser.token);
 						this.currentUser$.next(this.currentUser);
 					}
 					observer.next(null);
@@ -106,6 +108,10 @@ export class AuthService {
 		return this.currentUser?.token;
 	}
 
+	private publishAccessToken(token: string = null) {
+		(window as any).fuxaAccessToken = token || null;
+	}
+
     isAdmin(): boolean {
         if (this.currentUser && UserGroups.ADMINMASK.indexOf(this.currentUser.groups) !== -1) {
             return true;
@@ -113,12 +119,25 @@ export class AuthService {
         return false;
     }
 
-	setNewToken(token: string) {
+	setNewToken(token: string, userData?: Partial<UserProfile>) {
 		if (!this.currentUser) {
 			return;
 		}
+		if (userData) {
+			this.currentUser.username = userData.username ?? this.currentUser.username;
+			this.currentUser.fullname = userData.fullname ?? this.currentUser.fullname;
+			this.currentUser.groups = userData.groups ?? this.currentUser.groups;
+			this.currentUser.info = userData.info ?? this.currentUser.info;
+			if (this.currentUser.info) {
+				this.currentUser.infoRoles = JSON.parse(this.currentUser.info)?.roles;
+			} else {
+				this.currentUser.infoRoles = null;
+			}
+		}
 		this.currentUser.token = token;
 		this.saveUserToken(this.currentUser);
+		this.publishAccessToken(token);
+		this.currentUser$.next(this.currentUser);
 	}
 
 	// to check by page refresh
@@ -145,6 +164,7 @@ export class AuthService {
 		const result = !!this.currentUser;
 		this.currentUser = null;
 		sessionStorage.removeItem('currentUser');
+		this.publishAccessToken(null);
 		this.currentUser$.next(this.currentUser);
 		return result;
 	}
@@ -180,8 +200,8 @@ export class AuthService {
 						...(this.currentUser || {}),
 						username: result.data.username || this.currentUser?.username,
 						fullname: result.data.fullname || this.currentUser?.fullname,
-						groups: result.data.groups || this.currentUser?.groups,
-						info: result.data.info || this.currentUser?.info,
+						groups: result.data.groups ?? this.currentUser?.groups,
+						info: result.data.info ?? this.currentUser?.info,
 						token: result.data.token
 					};
 					if (refreshed.info) {
@@ -189,6 +209,7 @@ export class AuthService {
 					}
 					this.currentUser = refreshed;
 					this.saveUserToken(this.currentUser);
+					this.publishAccessToken(this.currentUser.token);
 					this.currentUser$.next(this.currentUser);
 				}
 			},

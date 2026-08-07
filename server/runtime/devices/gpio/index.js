@@ -287,10 +287,17 @@ module.exports = {
         
     },
     create: function (data, logger, events, manager, runtime) {
-        // To use with plugin
-        try { Gpio = require('onoff').Gpio; } catch { }
-        if (!Gpio && manager) { try { Gpio = manager.require('onoff').Gpio; } catch { } }
-        if (!Gpio) return null;
+        if (!loadGpioLib(manager)) return null;
         return new GpioClient(data, logger, events, runtime);
     }
+}
+
+function loadGpioLib(manager) {
+    if (!Gpio) {
+        let gpioModule = null;
+        try { gpioModule = require('onoff'); } catch { }
+        if (!gpioModule && manager) { try { gpioModule = manager.require('onoff'); } catch { } }
+        Gpio = gpioModule ? gpioModule.Gpio : null;
+    }
+    return !!Gpio;
 }

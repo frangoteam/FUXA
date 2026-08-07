@@ -1,0 +1,19 @@
+<div class="container">
+    <h1 mat-dialog-title class="dialog-title pointer-move" mat-dialog-draggable>{{ data.titleKey | translate }}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="dialog-content">
+        <p class="dialog-text">{{ data.messageKey | translate }}</p>
+        <a class="dialog-link" [href]="data.absoluteUrl" (click)="$event.preventDefault(); openSection()">
+            {{ data.absoluteUrl }}
+        </a>
+        <mat-checkbox color="primary" [(ngModel)]="hideMessage">
+            {{ data.hideLabelKey | translate }}
+        </mat-checkbox>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{ 'dlg.close' | translate }}</button>
+        <button mat-raised-button color="primary" (click)="openSection()">
+            {{ data.actionLabelKey | translate }}
+        </button>
+    </div>
+</div>

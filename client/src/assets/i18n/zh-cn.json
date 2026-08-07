@@ -61,6 +61,8 @@
     "dlg.layout-lbl-infos": "信息通知模式",
     "dlg.layout-lbl-font": "字体族",
     "dlg.layout-lbl-font-size": "字体大小",
+    "dlg.layout-lbl-height": "高度",
+    "dlg.layout-lbl-button-height": "按钮高度",
     "dlg.layout-lbl-anchor": "方向",
     "dlg.layout-lbl-margin-left": "左边距",
     "dlg.layout-lbl-margin-right": "右边距",
@@ -699,6 +701,8 @@
 
     "editor.tools-zoom-title": "缩放工具[Ctrl+上/下]",
     "editor.tools-grid-title": "显示隐藏网格",
+    "editor.tools-movestep-title": "移动步长",
+    "editor.tools-movestep-custom": "自定义",
     "editor.tools-undo-title": "撤销 [Z]",
     "editor.tools-redo-title": "重做 [Y]",
     "editor.tools-clone-title": "复制元素 [D]",
@@ -740,6 +744,7 @@
     "shapes.action-refreshImage": "更新图像",
 
     "shapes.action-move": "移动",
+    "shapes.action-moveByTags": "按标签移动",
     "shapes.event-click": "点击",
     "shapes.event-dblclick": "双击",
     "shapes.event-mouseup": "鼠标松开",
@@ -820,6 +825,9 @@
     "slider.property-slider-color": "连接颜色",
     "slider.property-slider-background": "底色",
     "slider.property-slider-handle": "指针颜色",
+    "slider.property-slider-width": "条形宽度",
+    "slider.property-handle-width": "指针宽度",
+    "slider.property-handle-height": "指针高度",
 
     "html-switch.property-off-value": "关闭值",
     "html-switch.property-on-value": "开启值",
@@ -1154,6 +1162,13 @@
     "gauges.property-action-toX" : "到位置X",
     "gauges.property-action-toY" : "到位置Y",
     "gauges.property-action-duration" : "持续时间",
+    "gauges.property-action-tagX" : "位置 X 标签",
+    "gauges.property-action-tagY" : "位置 Y 标签",
+    "gauges.property-action-axis" : "轴",
+    "gauges.property-action-value-min" : "值最小值",
+    "gauges.property-action-value-max" : "值最大值",
+    "gauges.property-action-position-min" : "位置最小值",
+    "gauges.property-action-position-max" : "位置最大值",
     "gauges.property-events-mapping-from": "上下文变量",
     "gauges.property-map-variable": "添加上下文变量进行绑定",
     "gauges.property-head-remove-mapvariable": "删除绑定",
@@ -1205,6 +1220,12 @@
     "alarms.list-low": "低",
     "alarms.list-info": "信息",
     "alarms.list-actions": "行动",
+    "alarms.import": "Import Alarms",
+    "alarms.export": "Export Alarms (JSON)",
+    "alarms.import-title": "Import Alarms",
+    "alarms.import-conflicts-message": "{{total}} alarms found. {{conflicts}} already exist. Choose how to import them.",
+    "alarms.import-copy": "Add as copies",
+    "alarms.import-replace": "Replace",
     "alarm.property-title": "报警",
     "alarm.property-name": "名称",
     "alarm.property-permission": "授权",
@@ -1709,6 +1730,8 @@
     "msg.editor-mode-locked": "编辑器已经打开!",
     "msg.alarms-clear-success": "所有警报已被取消！",
     "msg.import-devices-error": "导入设备失败！",
+    "msg.import-alarms-error": "Import alarms failed!",
+    "msg.export-alarms-error": "Export alarms failed!",
     "msg.report-build-forced": "发送构建报告成功",
     "msg.report-build-error": "发送构建报告失败！",
     "msg.device-tags-request-result": "加载 {{current}} / {{value}}",
@@ -1725,7 +1748,8 @@
     "msg.maps-location-name-exist": "位置名称已经存在！",
     "msg.text-name-exist": "文本名称已经存在！",
     "msg.texts-text-remove": "您是否想删除文本'{{value}}'?",
-    "msg.operation-unauthorized": "操作未经授权！"
+    "msg.operation-unauthorized": "操作未经授权！",
+    "gauges.property-icon-none": "无图标"
 }
 
 

@@ -9,6 +9,11 @@ module.exports = {
     // Hide the editor onboarding wizard when entering editor mode
     hideEditorOnboarding: false,
 
+    // Per-section informational messages for editor areas
+    editorSectionMessages: {
+        hideDevicePluginsNotice: false
+    },
+
     // The tcp port that the FUXA web server is listening on
     uiPort: process.env.PORT || 1881,
 
@@ -55,6 +60,11 @@ module.exports = {
     // if true all configured tags will be send to frontend
     broadcastAll: false,
 
+    // Load HMI views on demand in the frontend.
+    // if false the whole project, including every view, is sent at startup
+    // if true the startup project contains only view metadata and views are loaded when opened
+    lazyViewLoading: false,
+
     // By default, server accepts connections on all IPv4 interfaces.
     // To listen on all IPv6 addresses, set uiHost to "::",
     // The following property can be used to listen on a specific interface. For
@@ -77,6 +87,14 @@ module.exports = {
     // The maximum size of HTTP request that will be accepted by the runtime api.
     // Default: 100mb
     //apiMaxLength: '100mb',
+
+    // API rate limiting.
+    // apiRateLimit* is intentionally generous for HMI/SCADA workloads and clients
+    // behind the same proxy/NAT. authRateLimit* applies only to signin/refresh.
+    apiRateLimitWindowMs: 5 * 60 * 1000,
+    apiRateLimitMax: 1000,
+    authRateLimitWindowMs: 5 * 60 * 1000,
+    authRateLimitMax: 100,
 
     // Used to disable the server API used for Backend communication (Standalone application)
     // disable to use only the Editor

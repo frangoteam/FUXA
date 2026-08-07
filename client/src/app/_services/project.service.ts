@@ -1,6 +1,6 @@
 
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { Observable, Subject, firstValueFrom } from 'rxjs';
+import { Observable, Subject, firstValueFrom, of } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { ProjectData, ProjectDataCmdType, UploadFile } from '../_models/project';
@@ -25,6 +25,7 @@ import * as FileSaver from 'file-saver';
 import { Report } from '../_models/report';
 import { MapsLocation } from '../_models/maps';
 import { ClientAccess } from '../_models/client-access';
+import { ArMarker, ArSettings } from '../_models/ar';
 
 @Injectable()
 export class ProjectService {
@@ -41,6 +42,8 @@ export class ProjectService {
 
     private projectOld = '';
     private ready = false;
+    private loadingViews = new Map<string, Promise<View>>();
+    private projectLoadRequestId = 0;
     public static MainViewName = 'MainView';
 
     constructor(private resewbApiService: ResWebApiService,
@@ -82,9 +85,14 @@ export class ProjectService {
         this.reload();
     }
 
-    onRefreshProject(): boolean {
-        this.storage.getStorageProject().subscribe(prj => {
+    onRefreshProject(loadFull = false): boolean {
+        const requestId = ++this.projectLoadRequestId;
+        this.storage.getStorageProject(loadFull).subscribe(prj => {
+            if (requestId !== this.projectLoadRequestId) {
+                return;
+            }
             if (prj) {
+                this.loadingViews.clear();
                 this.projectData = prj;
                 // copy to check before save
                 this.projectOld = JSON.parse(JSON.stringify(this.projectData));
@@ -97,7 +105,9 @@ export class ProjectService {
                 // this.notifySaveError(msg);
             }
         }, err => {
-            console.error('FUXA onRefreshProject error', err);
+            if (requestId === this.projectLoadRequestId) {
+                console.error('FUXA onRefreshProject error', err);
+            }
         });
         return true;
     }
@@ -107,8 +117,12 @@ export class ProjectService {
      * Load Project from Server if enable.
      * From Local Storage, from 'assets' if demo or create a local project
      */
-    private load() {
-        this.storage.getStorageProject().subscribe(prj => {
+    private load(loadFull = false) {
+        const requestId = ++this.projectLoadRequestId;
+        this.storage.getStorageProject(loadFull).subscribe(prj => {
+            if (requestId !== this.projectLoadRequestId) {
+                return;
+            }
             if (!prj && this.appService.isDemoApp) {
                 console.log('create demo');
                 this.setNewProject();
@@ -116,11 +130,13 @@ export class ProjectService {
                 if (!prj && (this.storage as ResClientService).isReady) {
                     this.setNewProject();
                 } else {
+                    this.loadingViews.clear();
                     this.projectData = prj;
                 }
                 this.ready = true;
                 this.notifyToLoadHmi();
             } else {
+                this.loadingViews.clear();
                 this.projectData = prj;
                 // copy to check before save
                 this.projectOld = JSON.parse(JSON.stringify(this.projectData));
@@ -128,7 +144,9 @@ export class ProjectService {
                 this.notifyToLoadHmi();
             }
         }, err => {
-            console.error('FUXA load error', err);
+            if (requestId === this.projectLoadRequestId) {
+                console.error('FUXA load error', err);
+            }
         });
     }
 
@@ -197,8 +215,52 @@ export class ProjectService {
         }
     }
 
-    reload() {
-        this.load();
+    exportAlarms() {
+        const name = this.projectData.name || 'fuxa';
+        let filename = `${name}-alarms.json`;
+        if (this.getProjectName()) {
+            filename = `${this.getProjectName()}-alarms.json`;
+        }
+        const alarms = <Alarm[]>JSON.parse(JSON.stringify(this.getAlarms()));
+        const content = JSON.stringify(alarms, null, 2);
+        let blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+        FileSaver.saveAs(blob, filename);
+    }
+
+    importAlarms(alarms: Alarm[]): Observable<boolean> {
+        if (!Array.isArray(alarms)) {
+            return of(false);
+        }
+
+        const validAlarms = alarms.filter(alarm => alarm?.name);
+        if (!validAlarms.length) {
+            return of(true);
+        }
+
+        return new Observable<boolean>(observer => {
+            let pending = validAlarms.length;
+            let failed = false;
+            validAlarms.forEach(alarm => {
+                this.setAlarm(alarm, null).subscribe(() => {
+                    pending--;
+                    if (pending === 0) {
+                        observer.next(!failed);
+                        observer.complete();
+                    }
+                }, err => {
+                    failed = true;
+                    pending--;
+                    if (pending === 0) {
+                        observer.next(false);
+                        observer.complete();
+                    }
+                });
+            });
+        });
+    }
+
+    reload(loadFull = false) {
+        this.load(loadFull);
     }
 
     /**
@@ -301,6 +363,9 @@ export class ProjectService {
             Object.assign(existingView, view);
         } else if (!this.projectData.hmi.views.some(v => v.name === view.name)) {
             this.projectData.hmi.views.push(view);
+        } else {
+            console.warn(`View '${view.name}' already exists with a different id. Save skipped.`);
+            return;
         }
         this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData).subscribe(result => {
             if (notify) {
@@ -319,6 +384,9 @@ export class ProjectService {
             Object.assign(existingView, view);
         } else if (!this.projectData.hmi.views.some(v => v.name === view.name)) {
             this.projectData.hmi.views.push(view);
+        } else {
+            console.warn(`View '${view.name}' already exists with a different id. Save skipped.`);
+            return;
         }
         await firstValueFrom(this.storage.setServerProjectData(ProjectDataCmdType.SetView, view, this.projectData));
         if (notify) {
@@ -353,6 +421,71 @@ export class ProjectService {
             }
         }
         return null;
+    }
+
+    isViewLazy(view: View): boolean {
+        return !!this.asLazyView(view)?.lazy;
+    }
+
+    hasLazyViews(): boolean {
+        return this.getViews().some(view => this.isViewLazy(view));
+    }
+
+    async ensureViewLoaded(id: string): Promise<View> {
+        const view = this.getViewFromId(id);
+        if (!view) {
+            return null;
+        }
+        if (!this.isViewLazy(view)) {
+            return view;
+        }
+        if (this.loadingViews.has(id)) {
+            return this.loadingViews.get(id);
+        }
+
+        const loadingView = firstValueFrom(this.storage.getStorageView(id)).then(loadedView => {
+            this.mergeLoadedView(loadedView);
+            return this.getViewFromId(loadedView?.id || id);
+        }).catch(err => {
+            console.warn(`Unable to load view '${id}'.`, err);
+            return null;
+        }).finally(() => {
+            this.loadingViews.delete(id);
+        });
+
+        this.loadingViews.set(id, loadingView);
+        return loadingView;
+    }
+
+    async ensureViewLoadedByName(name: string): Promise<View> {
+        const id = this.getViewId(name);
+        return id ? this.ensureViewLoaded(id) : null;
+    }
+
+    private mergeLoadedView(view: View) {
+        if (!view) {
+            return;
+        }
+        try {
+            this.markViewLoaded(view);
+            const existingView = this.projectData.hmi.views.find(item => item.id === view.id);
+            if (existingView) {
+                Object.assign(existingView, view);
+                this.markViewLoaded(existingView);
+            } else {
+                this.projectData.hmi.views.push(view);
+            }
+        } catch (err) {
+            console.warn(`Unable to merge view '${view?.id}'.`, err);
+        }
+    }
+
+    private markViewLoaded(view: View) {
+        delete this.asLazyView(view).lazy;
+    }
+
+    private asLazyView(view: View): View & { lazy?: boolean } {
+        return view as View & { lazy?: boolean };
     }
 
     /**
@@ -491,7 +624,7 @@ export class ProjectService {
     /**
      * save the alarm to project
      */
-    setAlarm(alarm: Alarm, old: Alarm) {
+    setAlarm(alarm: Alarm, old?: Alarm) {
         return new Observable((observer) => {
             if (!this.projectData.alarms) {
                 this.projectData.alarms = [];
@@ -509,7 +642,7 @@ export class ProjectService {
                 this.projectData.alarms.push(alarm);
             }
             this.storage.setServerProjectData(ProjectDataCmdType.SetAlarm, alarm, this.projectData).subscribe(result => {
-                if (old && old.name && old.name !== alarm.name) {
+                if (old?.name && old.name !== alarm.name) {
                     this.removeAlarm(old).subscribe(result => {
                         observer.next(null);
                     });
@@ -921,6 +1054,65 @@ export class ProjectService {
     }
     //#endregion
 
+    //#region AR
+    getArSettings(): ArSettings {
+        if (!this.projectData) {
+            return new ArSettings();
+        }
+        if (!this.projectData.ar) {
+            this.projectData.ar = new ArSettings();
+        }
+        return this.projectData.ar;
+    }
+
+    getArMarkers(): ArMarker[] {
+        return this.getArSettings().markers || [];
+    }
+
+    setArMarker(marker: ArMarker, previousMarker?: ArMarker): Observable<boolean> {
+        return new Observable((observer) => {
+            const arSettings = this.getArSettings();
+            arSettings.enabled = true;
+            if (!arSettings.markers) {
+                arSettings.markers = [];
+            }
+            const markerIndex = arSettings.markers.findIndex(item => item.id === (previousMarker?.id || marker.id));
+            if (markerIndex !== -1) {
+                arSettings.markers[markerIndex] = marker;
+            } else {
+                arSettings.markers.push(marker);
+            }
+            this.storage.setServerProjectData(ProjectDataCmdType.SetArMarker, marker, this.projectData).subscribe(result => {
+                if (previousMarker?.id && previousMarker.id !== marker.id) {
+                    this.removeArMarker(previousMarker).subscribe(() => {
+                        observer.next(true);
+                    });
+                } else {
+                    observer.next(true);
+                }
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+
+    removeArMarker(marker: ArMarker): Observable<boolean> {
+        return new Observable((observer) => {
+            const arSettings = this.getArSettings();
+            arSettings.markers = (arSettings.markers || []).filter(item => item.id !== marker.id);
+            this.storage.setServerProjectData(ProjectDataCmdType.DelArMarker, marker, this.projectData).subscribe(result => {
+                observer.next(true);
+            }, err => {
+                console.error(err);
+                this.notifySaveError(err);
+                observer.error(err);
+            });
+        });
+    }
+    //#endregion
+
     //#region Notify
 
     public notifyToLoadHmi() {
@@ -1057,25 +1249,34 @@ export class ProjectService {
     }
 
     cleanView(view: View): boolean {
-        if (!view.svgcontent) {
+        try {
+            if (!view || view.type !== ViewType.svg || typeof view.svgcontent !== 'string' || !view.svgcontent) {
+                return false;
+            }
+            if (!view.items || typeof view.items !== 'object') {
+                return false;
+            }
+
+            const idsInSvg = new Set<string>();
+            const re = /id=(?:"|')([^"']+)(?:"|')/g;
+            let m: RegExpExecArray | null;
+            while ((m = re.exec(view.svgcontent)) !== null) {
+                idsInSvg.add(m[1]);
+            }
+
+            let changed = false;
+            for (const key of Object.keys(view.items)) {
+                if (!idsInSvg.has(key)) {
+                    console.warn('GUI item deleted: ', key);
+                    delete view.items[key];
+                    changed = true;
+                }
+            }
+            return changed;
+        } catch (err) {
+            console.warn(`Unable to clean view '${view?.name || view?.id || ''}'.`, err);
             return false;
         }
-        const idsInSvg = new Set<string>();
-        const re = /id=(?:"|')([^"']+)(?:"|')/g;
-        let m: RegExpExecArray | null;
-        while ((m = re.exec(view.svgcontent)) !== null) {
-            idsInSvg.add(m[1]);
-        }
-
-        let changed = false;
-        for (const key of Object.keys(view.items)) {
-            if (!idsInSvg.has(key)) {
-                console.warn('GUI item deleted: ', key);
-                delete view.items[key];
-                changed = true;
-            }
-        }
-        return changed;
     }
 
 
