@@ -105,8 +105,6 @@ export class NonNegativeIntegerOnlyDirective {
         // become "5") — invalid input is discarded as a whole.
         if (/^[0-9]+$/.test(pasted)) {
             const input = this.el.nativeElement as HTMLInputElement;
-            // type="number" inputs do not support selectionStart/selectionEnd in all
-            // environments — fall back to appending to the full value safely.
             try {
                 const start = input.selectionStart ?? input.value.length;
                 const end = input.selectionEnd ?? input.value.length;
@@ -115,6 +113,8 @@ export class NonNegativeIntegerOnlyDirective {
             } catch {
                 input.value = input.value + pasted;
             }
+            // Notify Angular/ngModel that the value changed
+            input.dispatchEvent(new Event('input', { bubbles: true }));
         }
     }
 
@@ -126,9 +126,11 @@ export class NonNegativeIntegerOnlyDirective {
         const parsed = parseInt(raw, 10);
         if (isNaN(parsed) || parsed < 0) {
             input.value = '0';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
         } else if (raw !== String(parsed)) {
             // Strip any decimal portion the browser may have inserted
             input.value = String(parsed);
+            input.dispatchEvent(new Event('input', { bubbles: true }));
         }
     }
 }
