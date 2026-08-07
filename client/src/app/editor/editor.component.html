@@ -40,6 +40,9 @@
         <div *ngSwitchCase="gaugeDialogType.Scheduler">
             <app-scheduler-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-scheduler-property>
         </div>
+        <div *ngSwitchCase="gaugeDialogType.Recipe">
+            <app-recipe-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-recipe-property>
+        </div>
     </div>
 </mat-drawer>
 <div id="svg_editor_container">
@@ -206,6 +209,10 @@
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-scheduler' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-scheduler')}"
                                 (click)="setMode('own_ctrl-scheduler')">
                                 <span class="material-icon-tool material-icons" style="font-size: 23px;">schedule</span>
+                            </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-recipe' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-recipe')}"
+                                (click)="setMode('own_ctrl-recipe')">
+                                <span class="material-icon-tool material-icons" style="font-size: 23px;">bookmarks</span>
                             </div>
                         </div>
                     </mat-expansion-panel>

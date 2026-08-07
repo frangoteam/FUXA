@@ -1,0 +1,84 @@
+<div class="header-panel">
+    <mat-icon>menu_book</mat-icon>
+    {{'recipes.title' | translate}}
+</div>
+<div class="work-panel">
+    <div class="container">
+        <div class="toolbar-row" *ngIf="!loading">
+            <span class="toolbar-spacer"></span>
+            <button mat-stroked-button (click)="fileInput.click()">
+                <mat-icon>file_upload</mat-icon>
+                {{ 'recipes.import' | translate }}
+            </button>
+            <input #fileInput type="file" accept=".json,.csv" (change)="onImportRecipe($event)" style="display:none" />
+        </div>
+
+        <div *ngIf="loading" class="loading-spinner">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
+
+        <mat-table #table [dataSource]="dataSource" matSort class="mat-table" *ngIf="!loading">
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+                <mat-header-cell *matHeaderCellDef mat-sort-header> {{'recipes.name' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let recipe"> {{ recipe.data?.name || recipe.id }} </mat-cell>
+            </ng-container>
+
+            <!-- Description Column -->
+            <ng-container matColumnDef="description">
+                <mat-header-cell *matHeaderCellDef> {{'recipes.description' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let recipe"> {{ recipe.data?.description || '-' }} </mat-cell>
+            </ng-container>
+
+            <!-- Entries Column -->
+            <ng-container matColumnDef="entries">
+                <mat-header-cell *matHeaderCellDef> {{'recipes.entries' | translate}} </mat-header-cell>
+                <mat-cell *matCellDef="let recipe"> {{ recipe.data?.entries?.length || 0 }} </mat-cell>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+                <mat-header-cell *matHeaderCellDef></mat-header-cell>
+                <mat-cell *matCellDef="let recipe">
+                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="onDownloadRecipe(recipe)">
+                            <mat-icon>arrow_downward</mat-icon> {{ 'recipes.download' | translate }}
+                        </button>
+                        <button mat-menu-item (click)="onUploadRecipe(recipe)">
+                            <mat-icon>arrow_upward</mat-icon> {{ 'recipes.upload' | translate }}
+                        </button>
+                        <mat-divider></mat-divider>
+                        <button mat-menu-item (click)="onEditRecipe(recipe)">
+                            <mat-icon>edit</mat-icon> {{ 'recipes.edit' | translate }}
+                        </button>
+                        <button mat-menu-item [matMenuTriggerFor]="exportMenu">
+                            <mat-icon>file_download</mat-icon> {{ 'recipes.export' | translate }}
+                        </button>
+                        <mat-divider></mat-divider>
+                        <button mat-menu-item color="warn" (click)="onDeleteRecipe(recipe)">
+                            <mat-icon>delete</mat-icon> {{ 'recipe.delete' | translate }}
+                        </button>
+                    </mat-menu>
+                    <mat-menu #exportMenu="matMenu">
+                        <button mat-menu-item (click)="onExportRecipe(recipe, 'json')">JSON</button>
+                        <button mat-menu-item (click)="onExportRecipe(recipe, 'csv')">CSV</button>
+                    </mat-menu>
+                </mat-cell>
+            </ng-container>
+
+            <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+            <mat-row *matRowDef="let row; columns: displayedColumns;" class="mat-row"></mat-row>
+        </mat-table>
+
+        <div *ngIf="!loading && dataSource.data.length === 0" class="empty-state">
+            <mat-icon>menu_book</mat-icon>
+            <p>{{'recipes.no-recipes' | translate}}</p>
+        </div>
+    </div>
+</div>
+<button mat-fab color="primary" (click)="onAddRecipe()" class="fab-add">
+    <mat-icon>add</mat-icon>
+</button>

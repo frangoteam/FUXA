@@ -1,0 +1,24 @@
+<div class="newrecipe-dialog">
+    <div class="dialog-header">
+        <mat-icon>add</mat-icon>
+        <h3>{{'recipe.new' | translate}}</h3>
+    </div>
+    <div class="dialog-content">
+        <mat-form-field appearance="outline" class="dialog-field full-width">
+            <mat-label>{{'recipes.name' | translate}}</mat-label>
+            <input matInput [(ngModel)]="dialogName" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="dialog-field full-width">
+            <mat-label>{{'recipes.description' | translate}}</mat-label>
+            <input matInput [(ngModel)]="dialogDescription" />
+        </mat-form-field>
+    </div>
+    <div class="dialog-actions">
+        <button type="button" mat-stroked-button (click)="onCancel()">
+            {{'dlg.cancel' | translate}}
+        </button>
+        <button type="button" mat-stroked-button color="primary" (click)="onSave()">
+            {{'recipe.save' | translate}}
+        </button>
+    </div>
+</div>

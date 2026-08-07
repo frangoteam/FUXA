@@ -43,6 +43,7 @@ import { ResourcesService } from '../_services/resources.service';
 import { InputPropertyComponent } from '../gauges/controls/html-input/input-property/input-property.component';
 import { SettingsService } from '../_services/settings.service';
 import { OnboardingWizardComponent } from './onboarding-wizard/onboarding-wizard.component';
+import { RecipePropertyComponent } from '../gauges/controls/html-recipe/recipe-property/recipe-property.component';
 
 declare var Gauge: any;
 
@@ -1425,6 +1426,20 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 withEvents: eventsSupported,
                 withActions: actionsSupported,
                 languageTextEnabled: !!this.isSelectedElementToEnableLanguageTextSettings()
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
+        } else if (dlgType === GaugeDialogType.Recipe) {
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings,
+                withEvents: false,
+                withActions: false,
+                withBitmask: false,
+                languageTextEnabled: false
             };
             if (!this.sidePanel.opened) {
                 this.sidePanel.toggle();

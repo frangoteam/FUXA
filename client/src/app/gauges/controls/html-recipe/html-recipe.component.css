@@ -1,0 +1,391 @@
+:host {
+    display: block;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.recipe-widget {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
+    font-size: 12px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navigation header with prev/next */
+.recipe-nav-header {
+    display: flex;
+    align-items: center;
+    padding: 2px 4px;
+    gap: 2px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+    min-height: 32px;
+}
+
+.nav-btn {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 0;
+    font-family: inherit;
+}
+
+.nav-btn:hover:not([disabled]) {
+    background: rgba(128, 128, 128, 0.15);
+}
+
+.nav-btn[disabled] {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.nav-btn .material-icons {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    color: inherit;
+}
+
+.nav-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+    padding: 0 4px;
+}
+
+.nav-title {
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    line-height: 1.3;
+}
+
+.nav-count {
+    font-size: 10px;
+    opacity: 0.6;
+    line-height: 1.2;
+}
+
+/* Empty state new button */
+.empty-new-btn {
+    margin-top: 8px;
+    font-size: 11px;
+    line-height: 28px;
+}
+
+/* Loading state */
+.recipe-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 8px;
+    opacity: 0.7;
+}
+
+/* Error state */
+.recipe-error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    color: #d32f2f;
+}
+
+.recipe-error .error-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.recipe-error .error-text {
+    flex: 1;
+    font-size: 11px;
+}
+
+.recipe-error .retry-btn {
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+}
+
+/* Content */
+.recipe-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 4px;
+    gap: 4px;
+}
+
+/* Recipe selector */
+.recipe-selector-row {
+    padding: 2px 4px;
+}
+
+.recipe-select {
+    width: 100%;
+    font-size: 12px;
+}
+
+.recipe-select ::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0;
+}
+
+.recipe-select ::ng-deep .mat-form-field-infix {
+    border-top: 0;
+    padding: 0.3em 0;
+}
+
+.recipe-select ::ng-deep .mat-select-value-text {
+    font-size: 12px;
+}
+
+.recipe-select ::ng-deep .mat-form-field-outline {
+    background: transparent;
+}
+
+/* Header */
+.recipe-header {
+    padding: 2px 4px 4px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+.recipe-title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recipe-description {
+    margin: 2px 0 0;
+    font-size: 10px;
+    opacity: 0.7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Entries table */
+.recipe-entries {
+    flex: 1;
+    overflow: auto;
+    min-height: 0;
+}
+
+.entries-header {
+    display: flex;
+    padding: 3px 4px;
+    font-weight: 500;
+    font-size: 10px;
+    opacity: 0.6;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+    position: sticky;
+    top: 0;
+    background: inherit;
+    z-index: 1;
+}
+
+.entries-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.entry-row {
+    display: flex;
+    align-items: center;
+    padding: 2px 4px;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.08);
+    min-height: 24px;
+}
+
+.entry-row:hover {
+    background: rgba(128, 128, 128, 0.05);
+}
+
+.col-tag {
+    flex: 2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 4px;
+}
+
+.col-type {
+    flex: 1;
+    text-align: center;
+    padding: 0 4px;
+}
+
+.col-value {
+    flex: 1.5;
+    text-align: right;
+}
+
+.type-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.value-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 2px 4px;
+    border: 1px solid;
+    border-color: inherit;
+    border-radius: 3px;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    text-align: right;
+    background: transparent;
+    outline: none;
+    transition: border-color 0.2s;
+    color: inherit;
+}
+
+.value-input:focus {
+    border-width: 2px;
+}
+
+.value-text {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    opacity: 0.8;
+}
+
+/* Progress */
+.recipe-progress {
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.progress-text {
+    font-size: 10px;
+    text-align: center;
+    opacity: 0.7;
+}
+
+.progress-errors {
+    max-height: 40px;
+    overflow-y: auto;
+}
+
+.error-item {
+    display: block;
+    font-size: 9px;
+    color: #d32f2f;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Actions */
+.recipe-actions {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-top: 1px solid rgba(128, 128, 128, 0.2);
+}
+
+/* Native buttons that follow the widget colors, not the app theme.
+   We avoid mat-stroked-button on purpose: Material MDC buttons derive their
+   label color from the global theme (white in dark theme), which becomes
+   invisible on the light widget background. Native buttons with currentColor
+   make the widget self-contained regardless of editor/runtime theme. */
+.btn-action,
+.empty-new-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 12px;
+    font-family: Roboto, 'Helvetica Neue', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 28px;
+    height: 28px;
+    min-width: 0;
+    color: inherit;
+    background: transparent;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    cursor: pointer;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btn-action:hover:not([disabled]),
+.empty-new-btn:hover:not([disabled]) {
+    background: rgba(128, 128, 128, 0.15);
+}
+
+.btn-action[disabled],
+.empty-new-btn[disabled] {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.btn-action .material-icons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    color: inherit;
+    flex-shrink: 0;
+}
+
+/* Empty state */
+.recipe-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 4px;
+    opacity: 0.85;
+    min-height: 0;
+}
+
+.recipe-empty .material-icons {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.recipe-empty span:last-child {
+    font-size: 10px;
+}

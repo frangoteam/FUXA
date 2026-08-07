@@ -1,0 +1,70 @@
+<h2 mat-dialog-title>{{ (isNew ? 'recipes.new-recipe' : 'recipes.edit-recipe') | translate }}</h2>
+
+<mat-dialog-content>
+    <div class="recipe-form">
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>{{ 'recipes.name' | translate }}</mat-label>
+            <input matInput [(ngModel)]="recipeName" maxlength="128" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>{{ 'recipes.description' | translate }}</mat-label>
+            <textarea matInput [(ngModel)]="recipeDescription" maxlength="512" rows="2"></textarea>
+        </mat-form-field>
+
+        <div class="entries-header">
+            <h3>{{ 'recipes.entries' | translate }}</h3>
+            <button mat-stroked-button color="primary" (click)="onAddEntry()">
+                {{ 'recipes.add-entry' | translate }}
+            </button>
+        </div>
+
+        <table mat-table [dataSource]="dataSource" class="entries-table">
+            <ng-container matColumnDef="tagName">
+                <th mat-header-cell *matHeaderCellDef>{{ 'recipes.tag-name' | translate }}</th>
+                <td mat-cell *matCellDef="let entry">{{ entry.tagName }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="tagId">
+                <th mat-header-cell *matHeaderCellDef>Tag ID</th>
+                <td mat-cell *matCellDef="let entry">{{ entry.tagId }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="tagType">
+                <th mat-header-cell *matHeaderCellDef>Type</th>
+                <td mat-cell *matCellDef="let entry">{{ entry.tagType }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef>{{ 'recipe.value' | translate }}</th>
+                <td mat-cell *matCellDef="let entry">
+                    <input matInput class="value-input" [type]="getInputType(entry.tagType)"
+                        [(ngModel)]="entry.value" />
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let entry">
+                    <button mat-icon-button color="warn" (click)="onRemoveEntry(entry)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <div *ngIf="dataSource.data.length === 0" class="no-entries">
+            No entries. Click "Add Entry" to select a tag.
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()">{{ 'recipes.cancel' | translate }}</button>
+    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="saving">
+        {{ 'recipes.save' | translate }}
+    </button>
+</mat-dialog-actions>

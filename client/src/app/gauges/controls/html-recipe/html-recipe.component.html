@@ -1,0 +1,122 @@
+<div class="recipe-widget" [style.backgroundColor]="backgroundColor" [style.color]="textColor" [style.borderColor]="borderColor" [style.border]="borderWidth + 'px solid ' + borderColor">
+    <!-- Loading state -->
+    <div *ngIf="loading" class="recipe-loading">
+        <mat-spinner diameter="24"></mat-spinner>
+        <span>{{'recipe.loading' | translate}}</span>
+    </div>
+
+    <!-- Error state -->
+    <div *ngIf="error && !loading" class="recipe-error">
+        <span class="material-icons error-icon">error_outline</span>
+        <span class="error-text">{{error}}</span>
+        <button type="button" class="nav-btn retry-btn" (click)="loadInstances()" [attr.title]="'recipe.retry' | translate">
+            <span class="material-icons">refresh</span>
+        </button>
+    </div>
+
+    <!-- No type configured -->
+    <div *ngIf="!loading && !error && !typeId" class="recipe-empty">
+        <span class="material-icons">settings</span>
+        <span>{{'recipe.no-type' | translate}}</span>
+    </div>
+
+    <!-- Recipe content (type is configured) -->
+    <div *ngIf="!loading && !error && typeId" class="recipe-content">
+        <!-- Navigation header with prev/next (only when instances exist) -->
+        <div class="recipe-nav-header" *ngIf="instances.length > 0">
+            <button type="button" class="nav-btn" (click)="onPrev()" [disabled]="currentIndex < 1">
+                <span class="material-icons">chevron_left</span>
+            </button>
+            <div class="nav-info">
+                <span class="nav-title">{{ currentInstance?.name || ('recipe.no-instance' | translate) }}</span>
+                <span class="nav-count">{{ currentIndex + 1 }} / {{ instances.length }}</span>
+            </div>
+            <button type="button" class="nav-btn" (click)="onNext()" [disabled]="currentIndex >= instances.length - 1">
+                <span class="material-icons">chevron_right</span>
+            </button>
+        </div>
+
+        <!-- Empty state when no instances exist -->
+        <div *ngIf="instances.length === 0 && !currentInstance" class="recipe-empty">
+            <span class="material-icons">menu_book</span>
+            <span>{{'recipe.no-instances' | translate}}</span>
+            <button *ngIf="!readonly && permission.show && isActionVisible('new')" type="button" class="btn-action" (click)="onNew()" [disabled]="!permission.enabled">
+                {{'recipe.new' | translate}}
+            </button>
+        </div>
+
+        <!-- Instance description -->
+        <div class="recipe-header" *ngIf="currentInstance?.description">
+            <p class="recipe-description">{{currentInstance.description}}</p>
+        </div>
+
+        <!-- Entries table (editable) -->
+        <div class="recipe-entries" *ngIf="entries.length > 0">
+            <div class="entries-header">
+                <span class="col-tag">{{'recipe.tag' | translate}}</span>
+                <span class="col-type">{{'recipe.type' | translate}}</span>
+                <span class="col-value">{{'recipe.value' | translate}}</span>
+            </div>
+            <div class="entries-body">
+                <div *ngFor="let entry of entries; let i = index" class="entry-row">
+                    <span class="col-tag" [attr.title]="entry.tagId">{{entry.tagName}}</span>
+                    <span class="col-type">
+                        <span class="type-badge" [style.backgroundColor]="getTagTypeColor(entry.tagType)">{{entry.tagType}}</span>
+                    </span>
+                    <span class="col-value">
+                        <input *ngIf="!readonly"
+                               class="value-input"
+                               [(ngModel)]="entry.value"
+                               [type]="isNumericType(entry.tagType) ? 'number' : (isStringType(entry.tagType) ? 'text' : 'text')"
+                               [style.borderColor]="accentColor" />
+                        <span *ngIf="readonly" class="value-text">{{entry.value !== null && entry.value !== undefined ? entry.value : '-'}}</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress -->
+        <div *ngIf="progress" class="recipe-progress">
+            <mat-progress-bar mode="indeterminate" [style.backgroundColor]="accentColor"></mat-progress-bar>
+            <span class="progress-text">{{'recipe.sending' | translate}}...</span>
+            <div *ngIf="progress.errors.length > 0" class="progress-errors">
+                <span *ngFor="let err of progress.errors" class="error-item">{{err}}</span>
+            </div>
+        </div>
+
+        <!-- Action buttons (editable mode) -->
+        <div *ngIf="!readonly && currentInstance && permission.show" class="recipe-actions">
+            <button *ngIf="isActionVisible('new')" type="button" class="btn-action" (click)="onNew()" [disabled]="saving || deleting || downloading || uploading || !permission.enabled">
+                <span class="material-icons">add</span>
+                {{'recipe.new' | translate}}
+            </button>
+            <button *ngIf="isActionVisible('delete')" type="button" class="btn-action" (click)="onDelete()" [disabled]="deleting || saving || downloading || uploading || !permission.enabled">
+                <span class="material-icons">delete</span>
+                {{deleting ? ('recipe.deleting' | translate) : ('recipe.delete' | translate)}}
+            </button>
+            <button *ngIf="isActionVisible('save')" type="button" class="btn-action" (click)="onSave()" [disabled]="saving || deleting || downloading || uploading || !permission.enabled">
+                <span class="material-icons">save</span>
+                {{saving ? ('recipe.saving' | translate) : ('recipe.save' | translate)}}
+            </button>
+            <button *ngIf="isActionVisible('download')" type="button" class="btn-action" (click)="onDownload()" [disabled]="saving || deleting || downloading || uploading || !permission.enabled">
+                <span class="material-icons">arrow_downward</span>
+                {{downloading ? ('recipe.downloading' | translate) : ('recipe.download' | translate)}}
+            </button>
+            <button *ngIf="isActionVisible('upload')" type="button" class="btn-action" (click)="onUpload()" [disabled]="saving || deleting || downloading || uploading || !permission.enabled">
+                <span class="material-icons">arrow_upward</span>
+                {{uploading ? ('recipe.uploading' | translate) : ('recipe.upload' | translate)}}
+            </button>
+        </div>
+        <!-- Action buttons (read-only mode) -->
+        <div *ngIf="readonly && currentInstance && permission.show" class="recipe-actions">
+            <button *ngIf="isActionVisible('download')" type="button" class="btn-action" (click)="onDownload()" [disabled]="downloading || !permission.enabled">
+                <span class="material-icons">arrow_downward</span>
+                {{downloading ? ('recipe.downloading' | translate) : ('recipe.download' | translate)}}
+            </button>
+            <button *ngIf="isActionVisible('upload')" type="button" class="btn-action" (click)="onUpload()" [disabled]="uploading || !permission.enabled">
+                <span class="material-icons">arrow_upward</span>
+                {{uploading ? ('recipe.uploading' | translate) : ('recipe.upload' | translate)}}
+            </button>
+        </div>
+    </div>
+</div>

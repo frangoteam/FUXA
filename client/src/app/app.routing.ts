@@ -23,6 +23,7 @@ import { ApiKeysListComponent } from './apikeys/api-keys-list/api-keys-list.comp
 import { PluginsListComponent } from './plugins/plugins-list/plugins-list.component';
 import { ArMarkerListComponent } from './ar/ar-marker-list/ar-marker-list.component';
 import { ArViewComponent } from './ar/ar-view/ar-view.component';
+import { RecipeListComponent } from './recipes/recipe-list/recipe-list.component';
 
 const appRoutes: Routes = [
     { path: '', component: HomeComponent},//, canActivate: [AuthGuard] },
@@ -38,6 +39,7 @@ const appRoutes: Routes = [
     { path: 'messages', component: AlarmListComponent, canActivate: [AuthGuard] },
     { path: 'notifications', component: NotificationListComponent, canActivate: [AuthGuard] },
     { path: 'scripts', component: ScriptListComponent, canActivate: [AuthGuard] },
+    { path: 'recipes', component: RecipeListComponent, canActivate: [AuthGuard] },
     { path: 'reports', component: ReportListComponent, canActivate: [AuthGuard] },
     { path: 'language', component: LanguageTextListComponent, canActivate: [AuthGuard] },
     { path: 'logs', component: LogsViewComponent, canActivate: [AuthGuard] },
