@@ -13,8 +13,6 @@ function fireKey(el: HTMLInputElement, key: string, currentValue = ''): boolean 
 }
 
 function firePaste(el: HTMLInputElement, text: string): boolean {
-    // ClipboardEvent/DataTransfer not available in jsdom — use a plain Event
-    // with a manually attached clipboardData mock
     const event = new Event('paste', { bubbles: true, cancelable: true }) as any;
     event.clipboardData = { getData: (_: string) => text };
     let prevented = false;
@@ -58,7 +56,6 @@ describe('NumberOnlyDirective — original behaviour fully preserved (no regress
         expect(fireKey(input, 'Tab')).toBe(false);
     });
 
-    // Original numberOnly is a no-op for all non-nav keys — must stay that way
     it('should NOT block minus sign (original permissive behaviour)', () => {
         expect(fireKey(input, '-', '')).toBe(false);
     });
@@ -104,11 +101,8 @@ describe('NonNegativeIntegerOnlyDirective — fix for issue #1865', () => {
         expect(fireKey(input, 'Tab')).toBe(false);
     });
 
-    it('should BLOCK minus sign on empty field', () => {
+    it('should BLOCK minus sign — core fix for #1865', () => {
         expect(fireKey(input, '-', '')).toBe(true);
-    });
-
-    it('should BLOCK minus sign when field has value', () => {
         expect(fireKey(input, '-', '10')).toBe(true);
     });
 
@@ -117,60 +111,49 @@ describe('NonNegativeIntegerOnlyDirective — fix for issue #1865', () => {
         expect(fireKey(input, '.', '3')).toBe(true);
     });
 
-    it('should BLOCK letter e', () => {
+    it('should BLOCK letter e and E', () => {
         expect(fireKey(input, 'e', '')).toBe(true);
-    });
-
-    it('should BLOCK letter E', () => {
         expect(fireKey(input, 'E', '')).toBe(true);
     });
 
-    it('should BLOCK plus sign', () => {
+    it('should BLOCK plus sign, letters and space', () => {
         expect(fireKey(input, '+', '')).toBe(true);
-    });
-
-    it('should BLOCK arbitrary letters', () => {
         expect(fireKey(input, 'a', '')).toBe(true);
-    });
-
-    it('should BLOCK space', () => {
         expect(fireKey(input, ' ', '')).toBe(true);
     });
 
     // --- paste ---
-    // All paste events call preventDefault() — the directive fully controls insertion.
-    // Valid non-negative integers are inserted; anything else is rejected entirely
-    // (not silently stripped — pasting "-5" does NOT become "5").
-    it('should allow paste of valid non-negative integer', () => {
-        expect(firePaste(input, '30')).toBe(true); // preventDefault always fires
-    });
-
-    it('should reject paste of negative value entirely — "-5" must not become "5"', () => {
+    it('should prevent default on all paste events', () => {
+        expect(firePaste(input, '30')).toBe(true);
         expect(firePaste(input, '-5')).toBe(true);
-    });
-
-    it('should reject paste of decimal value entirely', () => {
         expect(firePaste(input, '3.14')).toBe(true);
     });
 
+    it('should reject paste of negative value entirely — "-5" must not become "5"', () => {
+        input.value = '';
+        firePaste(input, '-5');
+        expect(input.value).toBe('');
+    });
+
+    it('should reject paste of decimal value entirely', () => {
+        input.value = '';
+        firePaste(input, '3.14');
+        expect(input.value).toBe('');
+    });
+
     it('should reject paste of mixed text entirely', () => {
-        expect(firePaste(input, 'abc-5')).toBe(true);
+        input.value = '';
+        firePaste(input, 'abc-5');
+        expect(input.value).toBe('');
     });
 
-    it('should reject paste of negative decimal entirely', () => {
-        expect(firePaste(input, '-3.14')).toBe(true);
-    });
-
-    // --- input (browser spinner / programmatic change) ---
-    it('should clamp negative value from browser spinner to 0', () => {
+    // --- input (browser spinner) ---
+    it('should clamp negative spinner value to 0', () => {
         expect(fireInput(input, '-1')).toBe('0');
-    });
-
-    it('should clamp negative value to 0', () => {
         expect(fireInput(input, '-100')).toBe('0');
     });
 
-    it('should strip decimal portion from spinner', () => {
+    it('should strip decimal from spinner', () => {
         expect(fireInput(input, '3.7')).toBe('3');
     });
 
@@ -178,16 +161,13 @@ describe('NonNegativeIntegerOnlyDirective — fix for issue #1865', () => {
         expect(fireInput(input, '42')).toBe('42');
     });
 
-    it('should clamp NaN / empty to 0', () => {
+    it('should clamp NaN to 0', () => {
         expect(fireInput(input, 'abc')).toBe('0');
     });
 
-    // --- min and step attributes ---
-    it('should have min="0" attribute set', () => {
+    // --- attributes ---
+    it('should have min="0" and step="1" attributes', () => {
         expect(input.getAttribute('min')).toBe('0');
-    });
-
-    it('should have step="1" attribute set', () => {
         expect(input.getAttribute('step')).toBe('1');
     });
 });
