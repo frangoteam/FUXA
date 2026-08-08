@@ -200,6 +200,7 @@ export class DeviceNetProperty {
     /** MELSEC */
     ascii?: boolean;
     octalIO?: boolean;
+    timeout?: number;
 
     static descriptor = {
         address: 'Device address (IP)',
