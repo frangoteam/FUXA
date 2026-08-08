@@ -44,7 +44,7 @@ function MQTTclient(_data, _logger, _events, _runtime) {
                     if (_checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
                         options = getConnectionOptions(data.property)
-                        options.connectTimeout = 10 * 1000;
+                        options.connectTimeout = data.property.timeout || 10_000;
                         if (getProperty) {
                             var result = await getProperty({ query: 'security', name: data.id });
                             if (result && result.value && result.value !== 'null') {
@@ -232,7 +232,7 @@ function MQTTclient(_data, _logger, _events, _runtime) {
      * Return the timestamp of last read tag operation on polling
      * @returns
      */
-     this.lastReadTimestamp = () => {
+    this.lastReadTimestamp = () => {
         return lastTimestampValue;
     }
 
@@ -461,7 +461,7 @@ function MQTTclient(_data, _logger, _events, _runtime) {
     /**
      * Return the Topics to publish that have value changed and clear value changed flag of all Topics
      */
-     var _checkVarsChanged = async () => {
+    var _checkVarsChanged = async () => {
         const timestamp = new Date().getTime();
         var result = {};
         for (var id in data.tags) {
