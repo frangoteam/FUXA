@@ -1,6 +1,6 @@
 /**
  *  Module to manage the project datastore in a database
- *  Table: 'general', 'views', 'devices', 'chart', 'texts', 'alarms', 'notifications', 'scripts', 'reports', 'locations', 'arMarkers'
+ *  Table: 'general', 'views', 'devices', 'chart', 'texts', 'alarms', 'recipes', 'notifications', 'scripts', 'reports', 'locations', 'arMarkers'
  */
 
 'use strict';
@@ -78,6 +78,7 @@ function _bind() {
         sql += "CREATE TABLE if not exists devicesSecurity (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists texts (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists alarms (name TEXT PRIMARY KEY, value TEXT);";
+        sql += "CREATE TABLE if not exists recipes (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists notifications (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists scripts (name TEXT PRIMARY KEY, value TEXT);";
         sql += "CREATE TABLE if not exists reports (name TEXT PRIMARY KEY, value TEXT);";
@@ -220,6 +221,7 @@ function clearAll() {
         sql += "DELETE FROM devices;";
         sql += "DELETE FROM texts;";
         sql += "DELETE FROM alarms;";
+        sql += "DELETE FROM recipes;";
         sql += "DELETE FROM notifications;";
         sql += "DELETE FROM scripts;";
         sql += "DELETE FROM reports;";
@@ -246,6 +248,7 @@ const TableType = {
     DEVICESSECURITY: 'devicesSecurity',
     TEXTS: 'texts',
     ALARMS: 'alarms',
+    RECIPES: 'recipes',
     NOTIFICATIONS: 'notifications',
     SCRIPTS: 'scripts',
     REPORTS: 'reports',

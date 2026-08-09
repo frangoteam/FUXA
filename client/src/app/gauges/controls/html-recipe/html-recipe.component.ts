@@ -110,7 +110,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
     /** Load the recipe type template (for creating new instances) */
     loadTypeDefinition() {
         if (!this.typeId) return;
-        this.recipeService.getRecipe(this.typeId).subscribe({
+        this.recipeService.getRecipeType(this.typeId).subscribe({
             next: (type) => {
                 this.typeDefinition = type;
             },
@@ -172,6 +172,10 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
         this.error = '';
     }
 
+    get busy(): boolean {
+        return this.saving || this.deleting || this.downloading || this.uploading;
+    }
+
     /** Clear the current selection */
     private _clearSelection() {
         this.currentInstance = null;
@@ -182,6 +186,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
     /** Navigate to the previous instance */
     onPrev() {
+        if (this.busy) return;
         if (this.currentIndex > 0) {
             this._selectInstance(this.instances[this.currentIndex - 1].id);
         }
@@ -189,6 +194,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
     /** Navigate to the next instance */
     onNext() {
+        if (this.busy) return;
         if (this.currentIndex < this.instances.length - 1) {
             this._selectInstance(this.instances[this.currentIndex + 1].id);
         }
@@ -325,7 +331,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
     /** Save the current instance entries to the server */
     onSave() {
-        if (!this.currentInstanceId || !this.currentInstance) return;
+        if (this.busy || !this.currentInstanceId || !this.currentInstance) return;
 
         this.saving = true;
         this.error = '';
@@ -339,7 +345,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
             entries: this.entries
         };
 
-        this.recipeService.saveRecipe(recipe).subscribe({
+        this.recipeService.saveRecipeInstance(recipe).subscribe({
             next: () => {
                 this.saving = false;
                 this.loadInstances();
@@ -356,7 +362,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
      * Reloads the instance list on success, surfaces errors on failure (FR-26).
      */
     onDelete() {
-        if (this.deleting || !this.currentInstanceId || !this.currentInstance) return;
+        if (this.busy || !this.currentInstanceId || !this.currentInstance) return;
 
         const name = this.currentInstance.name || this.currentInstanceId;
         if (!confirm(this.translateService.instant('recipe.delete-confirm', { name }))) {
@@ -365,7 +371,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
         this.deleting = true;
         this.error = '';
-        this.recipeService.deleteRecipe(this.currentInstanceId).subscribe({
+        this.recipeService.deleteRecipeInstance(this.currentInstanceId).subscribe({
             next: () => {
                 this.deleting = false;
                 this.loadInstances();
@@ -382,13 +388,15 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
      * Saves edited values first, then triggers the async download.
      */
     onDownload() {
-        if (this.downloading || this.saving || !this.currentInstanceId || !this.currentInstance) return;
+        if (this.busy || !this.currentInstanceId || !this.currentInstance) return;
 
         this.error = '';
         this._sanitizeEntries(this.entries);
+        const instanceId = this.currentInstanceId;
+        const totalEntries = this.entries.length;
 
         const recipe = {
-            id: this.currentInstanceId,
+            id: instanceId,
             typeId: this.typeId,
             name: this.currentInstance.name,
             description: this.currentInstance.description,
@@ -396,19 +404,22 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
         };
 
         this.saving = true;
-        this.recipeService.saveRecipe(recipe).subscribe({
+        this.recipeService.saveRecipeInstance(recipe).subscribe({
             next: () => {
                 this.saving = false;
-                this.recipeService.downloadRecipe(this.currentInstanceId).subscribe({
+                this.runInstanceId = instanceId;
+                this.progressMode = 'download';
+                this.downloading = true;
+                this.progress = { current: 0, total: totalEntries, errors: [] };
+                this.recipeService.downloadRecipe(instanceId).subscribe({
                     next: (result) => {
-                        this.runInstanceId = this.currentInstanceId;
-                        this.progressMode = 'download';
-                        this.downloading = true;
-                        this.progress = { current: 0, total: result.totalEntries || this.entries.length, errors: [] };
+                        this.progress = { current: 0, total: result.totalEntries || totalEntries, errors: [] };
                     },
                     error: (err) => {
                         this.downloading = false;
+                        this.progressMode = null;
                         this.progress = null;
+                        this.runInstanceId = '';
                         this.error = err?.error?.error || this.translateService.instant('recipe.download-failed');
                     }
                 });
@@ -425,19 +436,24 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
      * the displayed entries afterwards.
      */
     onUpload() {
-        if (this.uploading || !this.currentInstanceId) return;
+        if (this.busy || !this.currentInstanceId) return;
 
         this.error = '';
-        this.recipeService.uploadRecipe(this.currentInstanceId).subscribe({
+        const instanceId = this.currentInstanceId;
+        const totalEntries = this.entries.length;
+        this.runInstanceId = instanceId;
+        this.progressMode = 'upload';
+        this.uploading = true;
+        this.progress = { current: 0, total: totalEntries, errors: [] };
+        this.recipeService.uploadRecipe(instanceId).subscribe({
             next: (result) => {
-                this.runInstanceId = this.currentInstanceId;
-                this.progressMode = 'upload';
-                this.uploading = true;
-                this.progress = { current: 0, total: result.totalEntries || this.entries.length, errors: [] };
+                this.progress = { current: 0, total: result.totalEntries || totalEntries, errors: [] };
             },
             error: (err) => {
                 this.uploading = false;
+                this.progressMode = null;
                 this.progress = null;
+                this.runInstanceId = '';
                 this.error = err?.error?.error || this.translateService.instant('recipe.upload-failed');
             }
         });
@@ -453,7 +469,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
             // If type not loaded yet, load it from the API instead of failing
             this.loading = true;
             this.error = '';
-            this.recipeService.getRecipe(this.typeId).subscribe({
+            this.recipeService.getRecipeType(this.typeId).subscribe({
                 next: (type) => {
                     this.typeDefinition = type;
                     this.loading = false;
@@ -492,7 +508,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
             const entries = this._sanitizeEntries(sourceEntries);
 
-            this.recipeService.saveRecipe({
+            this.recipeService.saveRecipeInstance({
                 typeId: this.typeId,
                 name: result.name.trim() || this.translateService.instant('recipe.instance-name', { index: this.instances.length + 1 }),
                 description: result.description.trim(),
@@ -664,3 +680,4 @@ export class HtmlRecipeComponent extends GaugeBaseComponent {
         return HtmlRecipeComponent.initElement(ga, res, ref, false);
     }
 }
+

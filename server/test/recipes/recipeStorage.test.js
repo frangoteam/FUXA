@@ -32,11 +32,8 @@ describe('Recipe storage ordering', () => {
         recipeStorage.close();
     });
 
-    async function insertRecipe(id, name, typeId) {
-        const data = { id, name, typeId: typeId || undefined, entries: [] };
-        if (!typeId) {
-            delete data.typeId;
-        }
+    async function insertRecipe(id, name, typeId, entries = []) {
+        const data = { id, name, typeId: typeId || undefined, entries };
         await recipeStorage.setRecipeData(id, data);
     }
 
@@ -50,21 +47,24 @@ describe('Recipe storage ordering', () => {
         expect(result.map(r => r.data.name)).to.deep.equal(['alpha', 'Beta', 'Charlie']);
     });
 
-    it('returns recipe types ordered by name case-insensitive', async () => {
-        await insertRecipe('r_t2', 'Zulu Type');
-        await insertRecipe('r_t1', 'alpha Type');
-        await insertRecipe('r_t3', 'Mango Type');
-
-        const result = await recipeStorage.getRecipeTypes();
-        expect(result.map(r => r.data.name)).to.deep.equal(['alpha Type', 'Mango Type', 'Zulu Type']);
-    });
-
-    it('returns all recipes ordered by name case-insensitive', async () => {
-        await insertRecipe('r_b', 'Beta');
-        await insertRecipe('r_a', 'alpha');
-        await insertRecipe('r_c', 'Charlie');
+    it('returns all recipe instances ordered by name case-insensitive', async () => {
+        await insertRecipe('r_b', 'Beta', 'r_type');
+        await insertRecipe('r_a', 'alpha', 'r_type');
+        await insertRecipe('r_c', 'Charlie', 'r_type');
 
         const result = await recipeStorage.getAllRecipes();
         expect(result.map(r => r.data.name)).to.deep.equal(['alpha', 'Beta', 'Charlie']);
+    });
+
+    it('stores only instance values for template-backed recipes', async () => {
+        await insertRecipe('r_instance', 'Instance', 'r_type', [
+            { id: 'e_a', tagId: 'tag-a', tagName: 'Tag A', tagType: 'int', value: 42 }
+        ]);
+
+        const result = await recipeStorage.getRecipeData('r_instance');
+        expect(result.entries).to.deep.equal([{ tagId: 'tag-a', value: 42 }]);
+        expect(result.entries[0].tagName).to.equal(undefined);
+        expect(result.entries[0].tagType).to.equal(undefined);
+        expect(result.entries[0].value).to.equal(42);
     });
 });

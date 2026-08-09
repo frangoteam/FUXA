@@ -137,12 +137,15 @@ Values are converted to the correct JavaScript type before being written, accord
 
 Recipe authorization is enforced in two places:
 
-- **Server (REST API)**: When secure mode is enabled, guest users receive `401` for all write operations — creating or editing (`POST /api/recipes`), deleting (`DELETE`), download, upload and import. Guests can still list and read recipes. Deleting a recipe therefore requires a non-guest role.
+- **Server (REST API)**: Recipe templates are project data and use dedicated endpoints: `GET/POST/DELETE /api/recipes/types`. When secure mode is enabled, creating, editing, deleting and importing templates (`POST /api/recipes/types/import`) require admin permission resolved from the user's groups and roles. Recipe instances are operational data and use `GET/POST/DELETE /api/recipes/instances`; in secure mode they require an authenticated non-guest user. `POST /api/recipes/download` and `POST /api/recipes/upload` also require a non-guest user because they write/read live tag values.
 - **Recipe widget**: The permission configured in the widget's **Authorization** setting decides at runtime whether the action bar is shown and enabled. Editor mode always bypasses the check. The **Visible actions** setting is independent of the permission and only controls which buttons render.
 
 ## Data Storage
 
-Recipes are stored in a SQLite database (`recipes.db` in the server working directory) in a `recipes` table with the recipe id, a JSON payload and creation/update timestamps.
+Recipe data is split between project configuration and operational storage:
+
+- Recipe types/templates are stored in the project, like alarm definitions, because they define the tag structure and reference project tags.
+- Recipe instances are stored in a SQLite database (`recipes.db` in the server working directory). Instances keep their own values and reference the template through `typeId`.
 
 - Recipe ids look like `r_` followed by 12 hex characters; entry ids like `e_` followed by 8
 - Validation limits: name required (max 128 chars), description optional (max 512), between 1 and 1000 entries, every entry with a non-empty tag id and a valid tag type
@@ -189,3 +192,4 @@ Recipe operations log to the server console and log files with details about:
 - Download/upload start, per-entry write/read results, and completion summaries
 - Execution cancellations and unauthorized requests
 - Storage errors (database access, JSON parsing)
+

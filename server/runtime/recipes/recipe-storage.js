@@ -99,7 +99,7 @@ function setRecipeData(recipeId, data) {
             return;
         }
         
-        const jsonData = JSON.stringify(data);
+        const jsonData = JSON.stringify(_toStoredRecipeData(recipeId, data));
         const sql = `
             INSERT OR REPLACE INTO ${TABLE_RECIPES} (id, data, updated_at) 
             VALUES (?, ?, CURRENT_TIMESTAMP)
@@ -130,10 +130,10 @@ function getAllRecipes() {
                 reject(err);
             } else {
                 try {
-                    const recipes = rows.map(row => ({
-                        id: row.id,
-                        data: JSON.parse(row.data)
-                    }));
+                    const recipes = rows.map(row => {
+                        const data = JSON.parse(row.data);
+                        return { id: row.id, data: data };
+                    });
                     _sortByName(recipes);
                     resolve(recipes);
                 } catch (parseErr) {
@@ -145,11 +145,7 @@ function getAllRecipes() {
     });
 }
 
-/**
- * Get all recipe types (recipes without typeId).
- * @returns {Promise<Array>} Array of { id, data } objects
- */
-function getRecipeTypes() {
+function getAllRecipeInstances() {
     return new Promise((resolve, reject) => {
         if (!recipeDB) {
             reject(new Error('Recipe database not initialized'));
@@ -159,25 +155,18 @@ function getRecipeTypes() {
         const sql = `SELECT id, data FROM ${TABLE_RECIPES}`;
         recipeDB.all(sql, [], (err, rows) => {
             if (err) {
-                logger.error('recipe-storage get types error: ' + err);
+                logger.error('recipe-storage get instances error: ' + err);
                 reject(err);
             } else {
                 try {
-                    const recipes = rows.filter(row => {
-                        try {
-                            const d = JSON.parse(row.data);
-                            return !d.typeId;
-                        } catch {
-                            return true; // if parse fails, treat as type
-                        }
-                    }).map(row => ({
-                        id: row.id,
-                        data: JSON.parse(row.data)
-                    }));
+                    const recipes = rows.map(row => {
+                        const data = JSON.parse(row.data);
+                        return { id: row.id, data: data };
+                    }).filter(row => row.data && row.data.typeId);
                     _sortByName(recipes);
                     resolve(recipes);
                 } catch (parseErr) {
-                    logger.error('recipe-storage get types JSON error: ' + parseErr);
+                    logger.error('recipe-storage get instances JSON error: ' + parseErr);
                     reject(parseErr);
                 }
             }
@@ -211,10 +200,10 @@ function getAllRecipesByType(typeId) {
                         } catch {
                             return false; // if parse fails, exclude
                         }
-                    }).map(row => ({
-                        id: row.id,
-                        data: JSON.parse(row.data)
-                    }));
+                    }).map(row => {
+                        const data = JSON.parse(row.data);
+                        return { id: row.id, data: data };
+                    });
                     _sortByName(recipes);
                     resolve(recipes);
                 } catch (parseErr) {
@@ -245,6 +234,55 @@ function deleteRecipeData(recipeId) {
     });
 }
 
+function deleteAllRecipesByType(typeId) {
+    return new Promise((resolve, reject) => {
+        if (!recipeDB) {
+            reject(new Error('Recipe database not initialized'));
+            return;
+        }
+
+        const sql = `SELECT id, data FROM ${TABLE_RECIPES}`;
+        recipeDB.all(sql, [], async (err, rows) => {
+            if (err) {
+                logger.error('recipe-storage delete by type select error: ' + err);
+                reject(err);
+                return;
+            }
+            try {
+                const ids = rows.filter(row => {
+                    try {
+                        const d = JSON.parse(row.data);
+                        return d.typeId === typeId;
+                    } catch {
+                        return false;
+                    }
+                }).map(row => row.id);
+
+                for (const id of ids) {
+                    await _deleteRecipeData(id);
+                }
+                resolve({ changes: ids.length });
+            } catch (deleteErr) {
+                logger.error('recipe-storage delete by type error: ' + deleteErr);
+                reject(deleteErr);
+            }
+        });
+    });
+}
+
+function _deleteRecipeData(recipeId) {
+    return new Promise((resolve, reject) => {
+        const sql = `DELETE FROM ${TABLE_RECIPES} WHERE id = ?`;
+        recipeDB.run(sql, [recipeId], function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve({ changes: this.changes });
+            }
+        });
+    });
+}
+
 /**
  * Sort recipe rows by name (case-insensitive) for a stable, predictable order.
  * Recipes without a name sort last.
@@ -258,6 +296,25 @@ function _sortByName(recipes) {
         if (nameA > nameB) return 1;
         return 0;
     });
+}
+
+function _toStoredRecipeData(recipeId, data) {
+    if (!data || !data.typeId) {
+        return data;
+    }
+
+    return {
+        id: recipeId,
+        typeId: data.typeId,
+        name: data.name,
+        description: data.description || '',
+        entries: (data.entries || []).map(entry => ({
+            tagId: entry.tagId,
+            value: entry.value
+        })),
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt
+    };
 }
 
 function close() {
@@ -275,8 +332,9 @@ module.exports = {
     getRecipeData: getRecipeData,
     setRecipeData: setRecipeData,
     getAllRecipes: getAllRecipes,
-    getRecipeTypes: getRecipeTypes,
+    getAllRecipeInstances: getAllRecipeInstances,
     getAllRecipesByType: getAllRecipesByType,
     deleteRecipeData: deleteRecipeData,
+    deleteAllRecipesByType: deleteAllRecipesByType,
     close: close
 };

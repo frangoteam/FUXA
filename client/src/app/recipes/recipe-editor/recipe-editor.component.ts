@@ -123,7 +123,7 @@ export class RecipeEditorComponent implements OnInit {
             recipeData.id = this.data.recipe.id;
         }
 
-        this.recipeService.saveRecipe(recipeData).subscribe(result => {
+        this.recipeService.saveRecipeType(recipeData).subscribe(result => {
             this.saving = false;
             this.dialogRef.close(result);
         }, err => {

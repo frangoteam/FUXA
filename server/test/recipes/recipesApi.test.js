@@ -112,12 +112,23 @@ describe('Recipes API', () => {
 
         runtime = {
             settings: {},
-            project: { id: 'test-project' },
+            project: {
+                id: 'test-project',
+                ProjectDataCmdType: {
+                    SetRecipe: 'set-recipe',
+                    DelRecipe: 'del-recipe'
+                },
+                getRecipe: sandbox.stub().returns(null),
+                getRecipesSync: sandbox.stub().returns([]),
+                setProjectData: sandbox.stub().resolves(true)
+            },
             recipeStorage: {
                 getRecipeData: sandbox.stub().resolves(null),
                 getAllRecipes: sandbox.stub().resolves([]),
+                getAllRecipeInstances: sandbox.stub().resolves([]),
                 setRecipeData: sandbox.stub().resolves({ changes: 1 }),
-                deleteRecipeData: sandbox.stub().resolves({ changes: 1 })
+                deleteRecipeData: sandbox.stub().resolves({ changes: 1 }),
+                deleteAllRecipesByType: sandbox.stub().resolves({ changes: 0 })
             },
             recipeService: {
                 isRecipeRunning: sandbox.stub().returns(false),
@@ -159,33 +170,58 @@ describe('Recipes API', () => {
         server.close(done);
     });
 
-    describe('GET /api/recipes', () => {
-        it('should return list of recipes', async () => {
+    describe('GET /api/recipes/types and /api/recipes/instances', () => {
+        it('should return list of recipe types', async () => {
             const recipes = [
-                { id: 'r_001', data: { name: 'Recipe 1', entries: [{ id: 'e_001', tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }] } },
-                { id: 'r_002', data: { name: 'Recipe 2', entries: [{ id: 'e_002', tagId: 't2', tagName: 'T2', tagType: 'real', value: '3.14' }] } }
+                { id: 'r_001', data: { id: 'r_001', name: 'Recipe 1', entries: [{ id: 'e_001', tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }] } },
+                { id: 'r_002', data: { id: 'r_002', name: 'Recipe 2', entries: [{ id: 'e_002', tagId: 't2', tagName: 'T2', tagType: 'real', value: '3.14' }] } }
             ];
-            runtime.recipeStorage.getAllRecipes.resolves(recipes);
+            runtime.project.getRecipesSync.returns(recipes.map(row => row.data));
 
-            const res = await request(server, '/api/recipes');
+            const res = await request(server, '/api/recipes/types');
 
             expect(res.statusCode).to.equal(200);
             expect(res.body.recipes).to.have.lengthOf(2);
             expect(res.body.recipes[0].id).to.equal('r_001');
         });
 
-        it('should return single recipe by id', async () => {
+        it('should return single recipe instance by id', async () => {
             const recipeData = { name: 'Test', entries: [{ id: 'e_001', tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }] };
             runtime.recipeStorage.getRecipeData.withArgs('r_test').resolves(recipeData);
 
-            const res = await request(server, '/api/recipes/r_test');
+            const res = await request(server, '/api/recipes/instances/r_test');
 
             expect(res.statusCode).to.equal(200);
             expect(res.body.name).to.equal('Test');
         });
 
+        it('should merge instance values with the current recipe type entries', async () => {
+            runtime.project.getRecipe.withArgs('r_type').returns({
+                id: 'r_type',
+                name: 'Type',
+                entries: [
+                    { id: 'e_a', tagId: 'tag-a', tagName: 'Tag A', tagType: 'int', value: 0 },
+                    { id: 'e_b', tagId: 'tag-b', tagName: 'Tag B', tagType: 'string', value: '' }
+                ]
+            });
+            runtime.recipeStorage.getRecipeData.withArgs('r_instance').resolves({
+                id: 'r_instance',
+                typeId: 'r_type',
+                name: 'Instance',
+                entries: [{ tagId: 'tag-a', value: 42 }]
+            });
+
+            const res = await request(server, '/api/recipes/instances/r_instance');
+
+            expect(res.statusCode).to.equal(200);
+            expect(res.body.entries.map(entry => entry.tagId)).to.deep.equal(['tag-a', 'tag-b']);
+            expect(res.body.entries[0].tagName).to.equal('Tag A');
+            expect(res.body.entries[0].value).to.equal(42);
+            expect(res.body.entries[1].value).to.equal('');
+        });
+
         it('should return 404 for non-existent recipe', async () => {
-            const res = await request(server, '/api/recipes/r_nonexistent');
+            const res = await request(server, '/api/recipes/instances/r_nonexistent');
 
             expect(res.statusCode).to.equal(404);
         });
@@ -193,33 +229,34 @@ describe('Recipes API', () => {
         it('should return 404 when no project loaded', async () => {
             runtime.project = null;
 
-            const res = await request(server, '/api/recipes');
+            const res = await request(server, '/api/recipes/types');
 
             expect(res.statusCode).to.equal(404);
         });
     });
 
-    describe('POST /api/recipes', () => {
+    describe('POST /api/recipes/types', () => {
         it('should create a new recipe with generated id', async () => {
             const recipeData = {
                 name: 'New Recipe',
                 entries: [{ tagId: 't1', tagName: 'Temp', tagType: 'real', value: '25.5' }]
             };
 
-            const res = await postRequest(server, '/api/recipes', recipeData);
+            const res = await postRequest(server, '/api/recipes/types', recipeData);
 
             expect(res.statusCode).to.equal(200);
             expect(res.body.id).to.exist;
             expect(res.body.id).to.match(/^r_[0-9a-f]{12}$/);
 
-            // setRecipeData should have been called
-            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
-            const setArgs = runtime.recipeStorage.setRecipeData.getCall(0).args;
-            expect(setArgs[0]).to.match(/^r_[0-9a-f]{12}$/);
+            expect(runtime.project.setProjectData.calledOnce).to.be.true;
+            const setArgs = runtime.project.setProjectData.getCall(0).args;
+            expect(setArgs[0]).to.equal('set-recipe');
+            expect(setArgs[1].id).to.match(/^r_[0-9a-f]{12}$/);
             expect(setArgs[1].name).to.equal('New Recipe');
             expect(setArgs[1].entries[0].id).to.match(/^e_[0-9a-f]{8}$/);
             expect(setArgs[1].createdAt).to.exist;
             expect(setArgs[1].updatedAt).to.exist;
+            expect(runtime.recipeStorage.setRecipeData.called).to.be.false;
         });
 
         it('should update existing recipe with provided id', async () => {
@@ -229,29 +266,59 @@ describe('Recipes API', () => {
                 entries: [{ id: 'e_001', tagId: 't1', tagName: 'Temp', tagType: 'real', value: '99.9' }]
             };
 
-            const res = await postRequest(server, '/api/recipes', recipeData);
+            const res = await postRequest(server, '/api/recipes/types', recipeData);
 
             expect(res.statusCode).to.equal(200);
             expect(res.body.id).to.equal('r_existing');
-            expect(runtime.recipeStorage.setRecipeData.calledWith('r_existing')).to.be.true;
+            expect(runtime.project.setProjectData.calledWith('set-recipe')).to.be.true;
+            expect(runtime.project.setProjectData.getCall(0).args[1].id).to.equal('r_existing');
+        });
+
+        it('should reject recipe instances on the template endpoint', async () => {
+            const recipeData = {
+                typeId: 'r_type',
+                name: 'Instance A',
+                entries: [{ id: 'e_001', tagId: 't1', tagName: 'Temp', tagType: 'real', value: '99.9' }]
+            };
+
+            const res = await postRequest(server, '/api/recipes/types', recipeData);
+
+            expect(res.statusCode).to.equal(400);
+            expect(res.body.error).to.include('must not have typeId');
+            expect(runtime.recipeStorage.setRecipeData.called).to.be.false;
+            expect(runtime.project.setProjectData.called).to.be.false;
+        });
+
+        it('should reject non-admin recipe template changes when secure mode is enabled', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+
+            const res = await postRequest(server, '/api/recipes/types', {
+                name: 'Template',
+                entries: [{ tagId: 't1', tagName: 'Temp', tagType: 'real', value: '99.9' }]
+            });
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.project.setProjectData.called).to.be.false;
         });
 
         it('should return 400 for missing name', async () => {
-            const res = await postRequest(server, '/api/recipes', { entries: [{ tagId: 't1', tagName: 'T1', tagType: 'int', value: '1' }] });
+            const res = await postRequest(server, '/api/recipes/types', { entries: [{ tagId: 't1', tagName: 'T1', tagType: 'int', value: '1' }] });
 
             expect(res.statusCode).to.equal(400);
             expect(res.body.error).to.include('name is required');
         });
 
         it('should return 400 for empty name', async () => {
-            const res = await postRequest(server, '/api/recipes', { name: '', entries: [{ tagId: 't1', tagName: 'T1', tagType: 'int', value: '1' }] });
+            const res = await postRequest(server, '/api/recipes/types', { name: '', entries: [{ tagId: 't1', tagName: 'T1', tagType: 'int', value: '1' }] });
 
             expect(res.statusCode).to.equal(400);
             expect(res.body.error).to.include('name is required');
         });
 
         it('should return 400 for name exceeding 128 characters', async () => {
-            const res = await postRequest(server, '/api/recipes', {
+            const res = await postRequest(server, '/api/recipes/types', {
                 name: 'A'.repeat(129),
                 entries: [{ tagId: 't1', tagName: 'T1', tagType: 'int', value: '1' }]
             });
@@ -261,14 +328,14 @@ describe('Recipes API', () => {
         });
 
         it('should return 400 for missing entries', async () => {
-            const res = await postRequest(server, '/api/recipes', { name: 'Test' });
+            const res = await postRequest(server, '/api/recipes/types', { name: 'Test' });
 
             expect(res.statusCode).to.equal(400);
             expect(res.body.error).to.include('entries');
         });
 
         it('should return 400 for empty entries array', async () => {
-            const res = await postRequest(server, '/api/recipes', { name: 'Test', entries: [] });
+            const res = await postRequest(server, '/api/recipes/types', { name: 'Test', entries: [] });
 
             expect(res.statusCode).to.equal(400);
             expect(res.body.error).to.include('at least one entry');
@@ -278,14 +345,14 @@ describe('Recipes API', () => {
             const entries = Array.from({ length: 1001 }, (_, i) => ({
                 tagId: 't' + i, tagName: 'T' + i, tagType: 'int', value: '1'
             }));
-            const res = await postRequest(server, '/api/recipes', { name: 'Test', entries });
+            const res = await postRequest(server, '/api/recipes/types', { name: 'Test', entries });
 
             expect(res.statusCode).to.equal(400);
             expect(res.body.error).to.include('1000 entries');
         });
 
         it('should return 400 for entry with missing tagId', async () => {
-            const res = await postRequest(server, '/api/recipes', {
+            const res = await postRequest(server, '/api/recipes/types', {
                 name: 'Test',
                 entries: [{ tagName: 'T1', tagType: 'int', value: '1' }]
             });
@@ -295,7 +362,7 @@ describe('Recipes API', () => {
         });
 
         it('should return 400 for entry with invalid tagType', async () => {
-            const res = await postRequest(server, '/api/recipes', {
+            const res = await postRequest(server, '/api/recipes/types', {
                 name: 'Test',
                 entries: [{ tagId: 't1', tagName: 'T1', tagType: 'invalid_type', value: '1' }]
             });
@@ -305,7 +372,7 @@ describe('Recipes API', () => {
         });
 
         it('should return 400 for entry with uncoercible value', async () => {
-            const res = await postRequest(server, '/api/recipes', {
+            const res = await postRequest(server, '/api/recipes/types', {
                 name: 'Test',
                 entries: [{ tagId: 't1', tagName: 'T1', tagType: 'int', value: 'not-a-number' }]
             });
@@ -315,7 +382,7 @@ describe('Recipes API', () => {
         });
 
         it('should accept string/word values for string and word tagTypes', async () => {
-            const res = await postRequest(server, '/api/recipes', {
+            const res = await postRequest(server, '/api/recipes/types', {
                 name: 'Test',
                 entries: [
                     { tagId: 't1', tagName: 'T1', tagType: 'string', value: 'hello world' },
@@ -325,46 +392,89 @@ describe('Recipes API', () => {
 
             expect(res.statusCode).to.equal(200);
             expect(res.body.id).to.exist;
-            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
+            expect(runtime.project.setProjectData.calledOnce).to.be.true;
         });
 
         it('should coerce an empty string value to 0 for a numeric tag on POST', async () => {
-            const res = await postRequest(server, '/api/recipes', {
+            const res = await postRequest(server, '/api/recipes/types', {
                 name: 'Empty Numeric',
                 entries: [{ tagId: 't1', tagName: 'T1', tagType: 'int', value: '' }]
             });
 
             expect(res.statusCode).to.equal(200);
-            const saved = runtime.recipeStorage.setRecipeData.getCall(0).args[1];
+            const saved = runtime.project.setProjectData.getCall(0).args[1];
             expect(saved.entries[0].value).to.equal(0);
         });
 
         it('should coerce an empty string value to false for a bool tag on POST', async () => {
-            const res = await postRequest(server, '/api/recipes', {
+            const res = await postRequest(server, '/api/recipes/types', {
                 name: 'Empty Bool',
                 entries: [{ tagId: 't1', tagName: 'T1', tagType: 'bool', value: '' }]
             });
 
             expect(res.statusCode).to.equal(200);
-            const saved = runtime.recipeStorage.setRecipeData.getCall(0).args[1];
+            const saved = runtime.project.setProjectData.getCall(0).args[1];
             expect(saved.entries[0].value).to.equal(false);
         });
 
         it('should keep an empty string value valid for a string tag on POST', async () => {
-            const res = await postRequest(server, '/api/recipes', {
+            const res = await postRequest(server, '/api/recipes/types', {
                 name: 'Empty String',
                 entries: [{ tagId: 't1', tagName: 'T1', tagType: 'string', value: '' }]
             });
 
             expect(res.statusCode).to.equal(200);
-            const saved = runtime.recipeStorage.setRecipeData.getCall(0).args[1];
+            const saved = runtime.project.setProjectData.getCall(0).args[1];
             expect(saved.entries[0].value).to.equal('');
         });
     });
 
-    describe('DELETE /api/recipes', () => {
+    describe('POST /api/recipes/instances', () => {
+        it('should store recipe instances in recipe storage', async () => {
+            const recipeData = {
+                typeId: 'r_type',
+                name: 'Instance A',
+                entries: [{ id: 'e_001', tagId: 't1', tagName: 'Temp', tagType: 'real', value: '99.9' }]
+            };
+
+            const res = await postRequest(server, '/api/recipes/instances', recipeData);
+
+            expect(res.statusCode).to.equal(200);
+            expect(res.body.id).to.match(/^r_[0-9a-f]{12}$/);
+            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
+            expect(runtime.recipeStorage.setRecipeData.getCall(0).args[1].typeId).to.equal('r_type');
+            expect(runtime.project.setProjectData.called).to.be.false;
+        });
+
+        it('should require typeId for recipe instances', async () => {
+            const res = await postRequest(server, '/api/recipes/instances', {
+                name: 'Missing Type',
+                entries: [{ tagId: 't1', tagName: 'Temp', tagType: 'real', value: '99.9' }]
+            });
+
+            expect(res.statusCode).to.equal(400);
+            expect(res.body.error).to.include('typeId');
+            expect(runtime.recipeStorage.setRecipeData.called).to.be.false;
+        });
+
+        it('should allow non-admin recipe instance changes when secure mode is enabled', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+
+            const res = await postRequest(server, '/api/recipes/instances', {
+                typeId: 'r_type',
+                name: 'Instance',
+                entries: [{ tagId: 't1', tagName: 'Temp', tagType: 'real', value: '99.9' }]
+            });
+
+            expect(res.statusCode).to.equal(200);
+            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
+        });
+    });
+
+    describe('DELETE /api/recipes/instances', () => {
         it('should delete existing recipe', async () => {
-            const res = await deleteRequest(server, '/api/recipes?id=r_test');
+            const res = await deleteRequest(server, '/api/recipes/instances?id=r_test');
 
             expect(res.statusCode).to.equal(200);
             expect(res.body.result).to.equal('ok');
@@ -374,14 +484,14 @@ describe('Recipes API', () => {
         it('should return 404 for non-existent recipe', async () => {
             runtime.recipeStorage.deleteRecipeData.resolves({ changes: 0 });
 
-            const res = await deleteRequest(server, '/api/recipes?id=r_nonexistent');
+            const res = await deleteRequest(server, '/api/recipes/instances?id=r_nonexistent');
 
             expect(res.statusCode).to.equal(404);
             expect(res.body.error).to.equal('Recipe not found');
         });
 
         it('should return 400 for missing id parameter', async () => {
-            const res = await deleteRequest(server, '/api/recipes');
+            const res = await deleteRequest(server, '/api/recipes/instances');
 
             expect(res.statusCode).to.equal(400);
             expect(res.body.error).to.include('Missing id parameter');
@@ -392,17 +502,17 @@ describe('Recipes API', () => {
                 runtime.settings.secureEnabled = true;
                 currentUser = { userId: 'guest', groups: ['guest'] };
 
-                const res = await deleteRequest(server, '/api/recipes?id=r_test');
+                const res = await deleteRequest(server, '/api/recipes/instances?id=r_test');
 
                 expect(res.statusCode).to.equal(401);
                 expect(res.body.error).to.equal('unauthorized_error');
             });
 
-            it('should allow non-admin user with 200', async () => {
+            it('should allow non-admin user to delete an instance with 200', async () => {
                 runtime.settings.secureEnabled = true;
                 currentUser = { userId: 'operator', groups: 2 };
 
-                const res = await deleteRequest(server, '/api/recipes?id=r_test');
+                const res = await deleteRequest(server, '/api/recipes/instances?id=r_test');
 
                 expect(res.statusCode).to.equal(200);
                 expect(res.body.result).to.equal('ok');
@@ -413,12 +523,58 @@ describe('Recipes API', () => {
                 runtime.settings.secureEnabled = true;
                 currentUser = { userId: 'admin', groups: 255 };
 
-                const res = await deleteRequest(server, '/api/recipes?id=r_test');
+                const res = await deleteRequest(server, '/api/recipes/instances?id=r_test');
 
                 expect(res.statusCode).to.equal(200);
                 expect(res.body.result).to.equal('ok');
                 expect(res.body.deleted).to.equal(1);
             });
+        });
+    });
+
+    describe('DELETE /api/recipes/types', () => {
+        it('should delete existing recipe type and cascade its instances', async () => {
+            runtime.project.getRecipe.withArgs('r_template').returns({ id: 'r_template', name: 'Template', entries: [] });
+            runtime.recipeStorage.deleteAllRecipesByType.withArgs('r_template').resolves({ changes: 2 });
+
+            const res = await deleteRequest(server, '/api/recipes/types?id=r_template');
+
+            expect(res.statusCode).to.equal(200);
+            expect(res.body.result).to.equal('ok');
+            expect(res.body.deleted).to.equal(3);
+            expect(runtime.project.setProjectData.calledWith('del-recipe')).to.be.true;
+            expect(runtime.recipeStorage.deleteAllRecipesByType.calledWith('r_template')).to.be.true;
+        });
+
+        it('should return 404 for non-existent recipe type', async () => {
+            const res = await deleteRequest(server, '/api/recipes/types?id=r_nonexistent');
+
+            expect(res.statusCode).to.equal(404);
+            expect(res.body.error).to.equal('Recipe not found');
+        });
+
+        it('should reject non-admin user deleting a template when secure mode is enabled', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+            runtime.project.getRecipe.withArgs('r_template').returns({ id: 'r_template', name: 'Template', entries: [] });
+
+            const res = await deleteRequest(server, '/api/recipes/types?id=r_template');
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.project.setProjectData.called).to.be.false;
+        });
+
+        it('should allow admin user deleting a template when secure mode is enabled', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'admin', groups: 255 };
+            runtime.project.getRecipe.withArgs('r_template').returns({ id: 'r_template', name: 'Template', entries: [] });
+
+            const res = await deleteRequest(server, '/api/recipes/types?id=r_template');
+
+            expect(res.statusCode).to.equal(200);
+            expect(res.body.result).to.equal('ok');
+            expect(runtime.project.setProjectData.calledWith('del-recipe')).to.be.true;
         });
     });
 
@@ -571,14 +727,31 @@ describe('Recipes API', () => {
         });
     });
 
-    describe('POST /api/recipes/import', () => {
+    describe('POST /api/recipes/types/import', () => {
+        it('should reject non-admin import when secure mode is enabled', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+
+            const res = await postRequest(server, '/api/recipes/types/import', {
+                file: JSON.stringify({
+                    name: 'Imported JSON',
+                    entries: [{ tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }]
+                }),
+                format: 'json'
+            });
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.project.setProjectData.called).to.be.false;
+        });
+
         it('should import valid JSON', async () => {
             const jsonPayload = JSON.stringify({
                 name: 'Imported JSON',
                 entries: [{ tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }]
             });
 
-            const res = await postRequest(server, '/api/recipes/import', {
+            const res = await postRequest(server, '/api/recipes/types/import', {
                 file: jsonPayload,
                 format: 'json'
             });
@@ -587,26 +760,26 @@ describe('Recipes API', () => {
             expect(res.body.id).to.match(/^r_[0-9a-f]{12}$/);
             expect(res.body.name).to.equal('Imported JSON');
             expect(res.body.entriesCount).to.equal(1);
-            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
+            expect(runtime.project.setProjectData.calledOnce).to.be.true;
         });
 
         it('should import valid CSV', async () => {
             const csvPayload = 'tagId,tagName,tagType,value\nt1,Temp,real,25.5\nt2,Press,int,100';
 
-            const res = await postRequest(server, '/api/recipes/import', {
+            const res = await postRequest(server, '/api/recipes/types/import', {
                 file: csvPayload,
                 format: 'csv'
             });
 
             expect(res.statusCode).to.equal(200);
             expect(res.body.entriesCount).to.equal(2);
-            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
+            expect(runtime.project.setProjectData.calledOnce).to.be.true;
         });
 
         it('should auto-detect CSV format from content', async () => {
             const csvPayload = 'tagId,tagName,tagType,value\nt1,Temp,real,25.5';
 
-            const res = await postRequest(server, '/api/recipes/import', {
+            const res = await postRequest(server, '/api/recipes/types/import', {
                 file: csvPayload
                 // No format — should auto-detect
             });
@@ -622,14 +795,14 @@ describe('Recipes API', () => {
             });
 
             // No format — must route to JSON (not CSV) and parse despite the BOM
-            const res = await postRequest(server, '/api/recipes/import', {
+            const res = await postRequest(server, '/api/recipes/types/import', {
                 file: bomJson
             });
 
             expect(res.statusCode).to.equal(200);
             expect(res.body.name).to.equal('BOM Imported');
             expect(res.body.entriesCount).to.equal(1);
-            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
+            expect(runtime.project.setProjectData.calledOnce).to.be.true;
         });
 
         it('should strip formula-injection guard prefix on CSV import', async () => {
@@ -637,14 +810,14 @@ describe('Recipes API', () => {
             // starting with -, +, = or @ (e.g. negative numbers, formulas)
             const csvPayload = 'tagId,tagName,tagType,value\nt1,Temp,real,\'-5.5\nt2,Pres,real,\'+100\n';
 
-            const res = await postRequest(server, '/api/recipes/import', {
+            const res = await postRequest(server, '/api/recipes/types/import', {
                 file: csvPayload,
                 format: 'csv'
             });
 
             expect(res.statusCode).to.equal(200);
-            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
-            const saved = runtime.recipeStorage.setRecipeData.getCall(0).args[1];
+            expect(runtime.project.setProjectData.calledOnce).to.be.true;
+            const saved = runtime.project.setProjectData.getCall(0).args[1];
             expect(saved.entries[0].value).to.equal('-5.5');
             expect(saved.entries[1].value).to.equal('+100');
         });
@@ -655,18 +828,18 @@ describe('Recipes API', () => {
             // would later write to the device.
             const csvPayload = 'tagId,tagName,tagType,value\nt1,Temp,int,\n';
 
-            const res = await postRequest(server, '/api/recipes/import', {
+            const res = await postRequest(server, '/api/recipes/types/import', {
                 file: csvPayload,
                 format: 'csv'
             });
 
             expect(res.statusCode).to.equal(200);
-            const saved = runtime.recipeStorage.setRecipeData.getCall(0).args[1];
+            const saved = runtime.project.setProjectData.getCall(0).args[1];
             expect(saved.entries[0].value).to.equal(0);
         });
 
         it('should return 400 for invalid JSON syntax', async () => {
-            const res = await postRequest(server, '/api/recipes/import', {
+            const res = await postRequest(server, '/api/recipes/types/import', {
                 file: '{invalid json}',
                 format: 'json'
             });
@@ -676,7 +849,7 @@ describe('Recipes API', () => {
         });
 
         it('should return 400 for missing file/data', async () => {
-            const res = await postRequest(server, '/api/recipes/import', {});
+            const res = await postRequest(server, '/api/recipes/types/import', {});
 
             expect(res.statusCode).to.equal(400);
             expect(res.body.error).to.include('Missing file or data');
@@ -746,3 +919,5 @@ describe('Recipes API', () => {
         });
     });
 });
+
+

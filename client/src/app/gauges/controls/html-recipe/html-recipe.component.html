@@ -24,14 +24,14 @@
     <div *ngIf="!loading && !error && typeId" class="recipe-content">
         <!-- Navigation header with prev/next (only when instances exist) -->
         <div class="recipe-nav-header" *ngIf="instances.length > 0">
-            <button type="button" class="nav-btn" (click)="onPrev()" [disabled]="currentIndex < 1">
+            <button type="button" class="nav-btn" (click)="onPrev()" [disabled]="busy || currentIndex < 1">
                 <span class="material-icons">chevron_left</span>
             </button>
             <div class="nav-info">
                 <span class="nav-title">{{ currentInstance?.name || ('recipe.no-instance' | translate) }}</span>
                 <span class="nav-count">{{ currentIndex + 1 }} / {{ instances.length }}</span>
             </div>
-            <button type="button" class="nav-btn" (click)="onNext()" [disabled]="currentIndex >= instances.length - 1">
+            <button type="button" class="nav-btn" (click)="onNext()" [disabled]="busy || currentIndex >= instances.length - 1">
                 <span class="material-icons">chevron_right</span>
             </button>
         </div>
@@ -40,7 +40,7 @@
         <div *ngIf="instances.length === 0 && !currentInstance" class="recipe-empty">
             <span class="material-icons">menu_book</span>
             <span>{{'recipe.no-instances' | translate}}</span>
-            <button *ngIf="!readonly && permission.show && isActionVisible('new')" type="button" class="btn-action" (click)="onNew()" [disabled]="!permission.enabled">
+            <button *ngIf="!readonly && permission.show && isActionVisible('new')" type="button" class="btn-action" (click)="onNew()" [disabled]="busy || !permission.enabled">
                 {{'recipe.new' | translate}}
             </button>
         </div>
@@ -86,34 +86,34 @@
 
         <!-- Action buttons (editable mode) -->
         <div *ngIf="!readonly && currentInstance && permission.show" class="recipe-actions">
-            <button *ngIf="isActionVisible('new')" type="button" class="btn-action" (click)="onNew()" [disabled]="saving || deleting || downloading || uploading || !permission.enabled">
+            <button *ngIf="isActionVisible('new')" type="button" class="btn-action" (click)="onNew()" [disabled]="busy || !permission.enabled">
                 <span class="material-icons">add</span>
                 {{'recipe.new' | translate}}
             </button>
-            <button *ngIf="isActionVisible('delete')" type="button" class="btn-action" (click)="onDelete()" [disabled]="deleting || saving || downloading || uploading || !permission.enabled">
+            <button *ngIf="isActionVisible('delete')" type="button" class="btn-action" (click)="onDelete()" [disabled]="busy || !permission.enabled">
                 <span class="material-icons">delete</span>
                 {{deleting ? ('recipe.deleting' | translate) : ('recipe.delete' | translate)}}
             </button>
-            <button *ngIf="isActionVisible('save')" type="button" class="btn-action" (click)="onSave()" [disabled]="saving || deleting || downloading || uploading || !permission.enabled">
+            <button *ngIf="isActionVisible('save')" type="button" class="btn-action" (click)="onSave()" [disabled]="busy || !permission.enabled">
                 <span class="material-icons">save</span>
                 {{saving ? ('recipe.saving' | translate) : ('recipe.save' | translate)}}
             </button>
-            <button *ngIf="isActionVisible('download')" type="button" class="btn-action" (click)="onDownload()" [disabled]="saving || deleting || downloading || uploading || !permission.enabled">
+            <button *ngIf="isActionVisible('download')" type="button" class="btn-action" (click)="onDownload()" [disabled]="busy || !permission.enabled">
                 <span class="material-icons">arrow_downward</span>
                 {{downloading ? ('recipe.downloading' | translate) : ('recipe.download' | translate)}}
             </button>
-            <button *ngIf="isActionVisible('upload')" type="button" class="btn-action" (click)="onUpload()" [disabled]="saving || deleting || downloading || uploading || !permission.enabled">
+            <button *ngIf="isActionVisible('upload')" type="button" class="btn-action" (click)="onUpload()" [disabled]="busy || !permission.enabled">
                 <span class="material-icons">arrow_upward</span>
                 {{uploading ? ('recipe.uploading' | translate) : ('recipe.upload' | translate)}}
             </button>
         </div>
         <!-- Action buttons (read-only mode) -->
         <div *ngIf="readonly && currentInstance && permission.show" class="recipe-actions">
-            <button *ngIf="isActionVisible('download')" type="button" class="btn-action" (click)="onDownload()" [disabled]="downloading || !permission.enabled">
+            <button *ngIf="isActionVisible('download')" type="button" class="btn-action" (click)="onDownload()" [disabled]="busy || !permission.enabled">
                 <span class="material-icons">arrow_downward</span>
                 {{downloading ? ('recipe.downloading' | translate) : ('recipe.download' | translate)}}
             </button>
-            <button *ngIf="isActionVisible('upload')" type="button" class="btn-action" (click)="onUpload()" [disabled]="uploading || !permission.enabled">
+            <button *ngIf="isActionVisible('upload')" type="button" class="btn-action" (click)="onUpload()" [disabled]="busy || !permission.enabled">
                 <span class="material-icons">arrow_upward</span>
                 {{uploading ? ('recipe.uploading' | translate) : ('recipe.upload' | translate)}}
             </button>

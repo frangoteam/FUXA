@@ -92,7 +92,7 @@ export class RecipeListComponent implements OnInit, OnDestroy {
         const recipeName = item.data?.name || item.id;
         this.translate.get('recipes.delete-confirm', { name: recipeName }).subscribe((msg: string) => {
             if (confirm(msg)) {
-                this.recipeService.deleteRecipe(item.id).subscribe(result => {
+                this.recipeService.deleteRecipeType(item.id).subscribe(result => {
                     this.translate.get('recipes.delete-success').subscribe((txt: string) => {
                         this.toastr.success(txt);
                     });

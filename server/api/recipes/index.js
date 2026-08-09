@@ -5,6 +5,7 @@
 var express = require("express");
 const authJwt = require('../jwt-helper');
 const crypto = require('crypto');
+const recipeUtils = require('../../runtime/recipes/recipe-utils');
 
 var runtime;
 var secureFnc;
@@ -32,97 +33,63 @@ module.exports = {
             }
         });
 
-        // GET recipe data — list all, get single, get types, or get instances by typeId
-        recipesApp.get("/api/recipes/:id?", secureFnc, function(req, res) {
-            var idParam = req.params.id;
-            var typeId = req.query.typeId;
-
-            if (idParam === 'types') {
-                // GET /api/recipes/types — return types only (recipes without typeId)
-                _handlePromise(runtime.recipeStorage.getRecipeTypes(), res, function(result) {
-                    res.json({ recipes: result || [] });
-                }, 'getTypes');
-            } else if (typeId) {
-                // GET /api/recipes?typeId=xxx — return instances for a given type
-                _handlePromise(runtime.recipeStorage.getAllRecipesByType(typeId), res, function(result) {
-                    res.json({ recipes: result || [] });
-                }, 'getByType');
-            } else if (idParam) {
-                // GET /api/recipes/:id — get single recipe by id
-                _handlePromise(runtime.recipeStorage.getRecipeData(idParam), res, function(result) {
-                    if (result) {
-                        res.json(result);
-                    } else {
-                        res.status(404).end();
-                    }
-                }, 'get');
-            } else {
-                // GET /api/recipes — return all (backwards compatible)
-                _handlePromise(runtime.recipeStorage.getAllRecipes(), res, function(result) {
-                    res.json({ recipes: result || [] });
-                }, 'getAll');
+        // GET recipe types (project data)
+        recipesApp.get("/api/recipes/types/:id?", secureFnc, function(req, res) {
+            if (req.params.id) {
+                const type = runtime.project.getRecipe ? runtime.project.getRecipe(req.params.id) : null;
+                if (type) {
+                    res.json(type);
+                } else {
+                    res.status(404).end();
+                }
+                return;
             }
+            _handlePromise(Promise.resolve(recipeUtils.getRecipeTypes(runtime)), res, function(result) {
+                res.json({ recipes: result || [] });
+            }, 'getTypes');
         });
 
-        // POST recipe data — create or update (upsert)
-        recipesApp.post("/api/recipes", secureFnc, function(req, res) {
+        // POST recipe type (project data)
+        recipesApp.post("/api/recipes/types", secureFnc, function(req, res) {
             if (res.statusCode === 403) {
-                runtime.logger.error("api post recipes: Tocken Expired");
+                runtime.logger.error("api post recipe type: Tocken Expired");
                 return;
             }
-            const permission = checkGroupsFnc(req);
-            const isGuest = authJwt.isGuestUser(req.userId, req.userGroups);
-            const isAdmin = authJwt.haveAdminPermission(permission);
-            if (runtime.settings?.secureEnabled && isGuest) {
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && auth.isGuest) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
-                runtime.logger.error("api post recipes: Unauthorized guest");
+                runtime.logger.error("api post recipe type: Unauthorized guest");
                 return;
             }
+            if (auth.secureEnabled && !auth.isAdmin) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post recipe type: Unauthorized template change");
+                return;
+            }
+
             try {
-                var data = req.body;
-                if (!data) {
-                    res.status(400).json({ error: 'Missing recipe data in request body' });
-                    return;
-                }
-
-                const validation = _validateRecipeData(data);
-                if (!validation.valid) {
-                    runtime.logger.error("Invalid recipe data: " + validation.error);
-                    res.status(400).json({ error: validation.error });
-                    return;
-                }
-
-                var id = req.body.id || 'r_' + crypto.randomBytes(6).toString('hex');
-
-                // Generate entry IDs for entries that don't have one
-                (data.entries || []).forEach(function(entry) {
-                    entry.id = entry.id || 'e_' + crypto.randomBytes(4).toString('hex');
-                });
-
-                // Set timestamps
-                data.createdAt = data.createdAt || new Date().toISOString();
-                data.updatedAt = new Date().toISOString();
-
-                _handlePromise(runtime.recipeStorage.setRecipeData(id, data), res, function() {
-                    res.json({ id: id });
-                }, 'set');
-
+                _saveRecipeType(req.body, res);
             } catch (err) {
-                runtime.logger.error("api post recipes error: " + err);
+                runtime.logger.error("api post recipe type error: " + err);
                 res.status(400).json({ error: err.message });
             }
         });
 
-        // DELETE recipe data
-        recipesApp.delete("/api/recipes", secureFnc, function(req, res) {
+        // DELETE recipe type (project data)
+        recipesApp.delete("/api/recipes/types", secureFnc, function(req, res) {
             if (res.statusCode === 403) {
-                runtime.logger.error("api delete recipes: Tocken Expired");
+                runtime.logger.error("api delete recipe type: Tocken Expired");
                 return;
             }
-            const isGuest = authJwt.isGuestUser(req.userId, req.userGroups);
-            if (runtime.settings?.secureEnabled && isGuest) {
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && auth.isGuest) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
-                runtime.logger.error("api delete recipes: Unauthorized guest");
+                runtime.logger.error("api delete recipe type: Unauthorized guest");
+                return;
+            }
+            if (auth.secureEnabled && !auth.isAdmin) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api delete recipe type: Unauthorized template delete");
                 return;
             }
             try {
@@ -130,8 +97,7 @@ module.exports = {
                     res.status(400).json({ error: 'Missing id parameter' });
                     return;
                 }
-                var id = req.query.id;
-                _handlePromise(runtime.recipeStorage.deleteRecipeData(id), res, function(result) {
+                _handlePromise(_deleteRecipeType(req.query.id), res, function(result) {
                     if (result.changes === 0) {
                         res.status(404).json({ error: 'Recipe not found' });
                     } else {
@@ -140,7 +106,84 @@ module.exports = {
                 }, 'delete');
 
             } catch (err) {
-                runtime.logger.error("api delete recipes error: " + err);
+                runtime.logger.error("api delete recipe type error: " + err);
+                res.status(400).json({ error: err.message });
+            }
+        });
+
+        // GET recipe instances (runtime data)
+        recipesApp.get("/api/recipes/instances/:id?", secureFnc, function(req, res) {
+            if (req.params.id) {
+                _handlePromise(_getRecipeInstance(req.params.id), res, function(result) {
+                    if (result) {
+                        res.json(result);
+                    } else {
+                        res.status(404).end();
+                    }
+                }, 'getInstance');
+                return;
+            }
+
+            var promise = req.query.typeId
+                ? runtime.recipeStorage.getAllRecipesByType(req.query.typeId)
+                : runtime.recipeStorage.getAllRecipeInstances();
+            _handlePromise(promise, res, function(result) {
+                const recipes = (result || []).map(row => ({
+                    id: row.id,
+                    data: recipeUtils.mergeInstanceWithTemplate(runtime, row.data)
+                }));
+                recipes.sort(recipeUtils.sortByName);
+                res.json({ recipes: recipes });
+            }, 'getInstances');
+        });
+
+        // POST recipe instance (runtime data)
+        recipesApp.post("/api/recipes/instances", secureFnc, function(req, res) {
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post recipe instance: Tocken Expired");
+                return;
+            }
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && auth.isGuest) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post recipe instance: Unauthorized guest");
+                return;
+            }
+
+            try {
+                _saveRecipeInstance(req.body, res);
+            } catch (err) {
+                runtime.logger.error("api post recipe instance error: " + err);
+                res.status(400).json({ error: err.message });
+            }
+        });
+
+        // DELETE recipe instance (runtime data)
+        recipesApp.delete("/api/recipes/instances", secureFnc, function(req, res) {
+            if (res.statusCode === 403) {
+                runtime.logger.error("api delete recipe instance: Tocken Expired");
+                return;
+            }
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && auth.isGuest) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api delete recipe instance: Unauthorized guest");
+                return;
+            }
+            try {
+                if (!req.query || !req.query.id) {
+                    res.status(400).json({ error: 'Missing id parameter' });
+                    return;
+                }
+                _handlePromise(runtime.recipeStorage.deleteRecipeData(req.query.id), res, function(result) {
+                    if (result.changes === 0) {
+                        res.status(404).json({ error: 'Recipe not found' });
+                    } else {
+                        res.json({ result: "ok", deleted: result.changes });
+                    }
+                }, 'deleteInstance');
+            } catch (err) {
+                runtime.logger.error("api delete recipe instance error: " + err);
                 res.status(400).json({ error: err.message });
             }
         });
@@ -151,9 +194,8 @@ module.exports = {
                 runtime.logger.error("api post recipes download: Tocken Expired");
                 return;
             }
-            const permission = checkGroupsFnc(req);
-            const isGuest = authJwt.isGuestUser(req.userId, req.userGroups);
-            if (runtime.settings?.secureEnabled && isGuest) {
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && auth.isGuest) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post recipes download: Unauthorized guest");
                 return;
@@ -219,9 +261,8 @@ module.exports = {
                 runtime.logger.error("api post recipes upload: Tocken Expired");
                 return;
             }
-            const permission = checkGroupsFnc(req);
-            const isGuest = authJwt.isGuestUser(req.userId, req.userGroups);
-            if (runtime.settings?.secureEnabled && isGuest) {
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && auth.isGuest) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post recipes upload: Unauthorized guest");
                 return;
@@ -285,7 +326,7 @@ module.exports = {
                     return;
                 }
 
-                _handlePromise(runtime.recipeStorage.getRecipeData(req.body.id), res, function(data) {
+                _handlePromise(_getRecipeData(req.body.id), res, function(data) {
                     if (!data) {
                         res.status(404).json({ error: 'Recipe not found' });
                         return;
@@ -318,17 +359,21 @@ module.exports = {
             }
         });
 
-        // POST import recipe — import from JSON or CSV
-        recipesApp.post("/api/recipes/import", secureFnc, function(req, res) {
+        // POST import recipe type — import a project template from JSON or CSV
+        recipesApp.post("/api/recipes/types/import", secureFnc, function(req, res) {
             if (res.statusCode === 403) {
                 runtime.logger.error("api post recipes import: Tocken Expired");
                 return;
             }
-            const permission = checkGroupsFnc(req);
-            const isGuest = authJwt.isGuestUser(req.userId, req.userGroups);
-            if (runtime.settings?.secureEnabled && isGuest) {
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && auth.isGuest) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
                 runtime.logger.error("api post recipes import: Unauthorized guest");
+                return;
+            }
+            if (auth.secureEnabled && !auth.isAdmin) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post recipes import: Unauthorized template import");
                 return;
             }
             try {
@@ -473,7 +518,8 @@ function _importJson(content, name, desc) {
     data.createdAt = data.createdAt || new Date().toISOString();
     data.updatedAt = new Date().toISOString();
 
-    return runtime.recipeStorage.setRecipeData(id, data).then(function() {
+    data.id = id;
+    return runtime.project.setProjectData(runtime.project.ProjectDataCmdType.SetRecipe, data).then(function() {
         return { id: id, name: data.name, entriesCount: data.entries ? data.entries.length : 0 };
     });
 }
@@ -527,9 +573,123 @@ function _importCsv(content, name, desc) {
     data.createdAt = new Date().toISOString();
     data.updatedAt = new Date().toISOString();
 
-    return runtime.recipeStorage.setRecipeData(id, data).then(function() {
+    data.id = id;
+    return runtime.project.setProjectData(runtime.project.ProjectDataCmdType.SetRecipe, data).then(function() {
         return { id: id, name: data.name, entriesCount: entries.length };
     });
+}
+
+function _saveRecipeType(data, res) {
+    if (!data) {
+        res.status(400).json({ error: 'Missing recipe type data in request body' });
+        return;
+    }
+    if (data.typeId) {
+        res.status(400).json({ error: 'Recipe type must not have typeId' });
+        return;
+    }
+
+    const validation = _validateRecipeData(data);
+    if (!validation.valid) {
+        runtime.logger.error("Invalid recipe type data: " + validation.error);
+        res.status(400).json({ error: validation.error });
+        return;
+    }
+
+    var id = data.id || 'r_' + crypto.randomBytes(6).toString('hex');
+    data.id = id;
+    (data.entries || []).forEach(function(entry) {
+        entry.id = entry.id || 'e_' + crypto.randomBytes(4).toString('hex');
+    });
+    data.createdAt = data.createdAt || new Date().toISOString();
+    data.updatedAt = new Date().toISOString();
+
+    _handlePromise(runtime.project.setProjectData(runtime.project.ProjectDataCmdType.SetRecipe, data), res, function() {
+        res.json({ id: id });
+    }, 'setType');
+}
+
+function _saveRecipeInstance(data, res) {
+    if (!data) {
+        res.status(400).json({ error: 'Missing recipe instance data in request body' });
+        return;
+    }
+    if (!data.typeId) {
+        res.status(400).json({ error: 'Missing typeId for recipe instance' });
+        return;
+    }
+
+    const validation = _validateRecipeData(data);
+    if (!validation.valid) {
+        runtime.logger.error("Invalid recipe instance data: " + validation.error);
+        res.status(400).json({ error: validation.error });
+        return;
+    }
+
+    var id = data.id || 'r_' + crypto.randomBytes(6).toString('hex');
+    data.id = id;
+    (data.entries || []).forEach(function(entry) {
+        entry.id = entry.id || 'e_' + crypto.randomBytes(4).toString('hex');
+    });
+    data.createdAt = data.createdAt || new Date().toISOString();
+    data.updatedAt = new Date().toISOString();
+
+    _handlePromise(runtime.recipeStorage.setRecipeData(id, data), res, function() {
+        res.json({ id: id });
+    }, 'setInstance');
+}
+
+function _getRecipeData(id) {
+    const type = runtime.project.getRecipe ? runtime.project.getRecipe(id) : null;
+    if (type) {
+        return Promise.resolve(type);
+    }
+    return _getRecipeInstance(id);
+}
+
+function _getRecipeInstance(id) {
+    return runtime.recipeStorage.getRecipeData(id).then(data => recipeUtils.mergeInstanceWithTemplate(runtime, data));
+}
+
+function _deleteRecipeData(id) {
+    const type = runtime.project.getRecipe ? runtime.project.getRecipe(id) : null;
+    if (!type) {
+        return runtime.recipeStorage.deleteRecipeData(id);
+    }
+
+    return _deleteRecipeType(id);
+}
+
+function _deleteRecipeType(id) {
+    const type = runtime.project.getRecipe ? runtime.project.getRecipe(id) : null;
+    if (!type) {
+        return Promise.resolve({ changes: 0 });
+    }
+
+    return runtime.project.setProjectData(runtime.project.ProjectDataCmdType.DelRecipe, { id: id }).then(function() {
+        return runtime.recipeStorage.deleteAllRecipesByType(id).then(function(instanceResult) {
+            return { changes: 1 + (instanceResult.changes || 0) };
+        });
+    });
+}
+
+function _getAuthContext(req) {
+    const secureEnabled = !!runtime.settings?.secureEnabled;
+    if (!secureEnabled) {
+        return {
+            secureEnabled: false,
+            isGuest: false,
+            isAdmin: true
+        };
+    }
+
+    const permission = checkGroupsFnc(req);
+    return {
+        secureEnabled: true,
+        permission: permission,
+        isGuest: authJwt.isGuestUser(req.userId, req.userGroups),
+        isAdmin: authJwt.haveAdminPermission(permission)
+    };
 }
 
 // ─── CSV Helpers ──────────────────────────────────────────────────────────────

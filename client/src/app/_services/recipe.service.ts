@@ -27,12 +27,6 @@ export class RecipeService {
         return { _ts: Date.now().toString() };
     }
 
-    getRecipes(): Observable<{ recipes: { id: string; data: Recipe }[] }> {
-        return this.http.get<{ recipes: { id: string; data: Recipe }[] }>(this.endPointConfig + '/api/recipes', {
-            params: this._ts()
-        });
-    }
-
     getRecipeTypes(): Observable<{ recipes: { id: string; data: Recipe }[] }> {
         return this.http.get<{ recipes: { id: string; data: Recipe }[] }>(this.endPointConfig + '/api/recipes/types', {
             params: this._ts()
@@ -40,24 +34,39 @@ export class RecipeService {
     }
 
     getRecipeInstances(typeId: string): Observable<{ recipes: { id: string; data: Recipe }[] }> {
-        return this.http.get<{ recipes: { id: string; data: Recipe }[] }>(this.endPointConfig + '/api/recipes', {
+        return this.http.get<{ recipes: { id: string; data: Recipe }[] }>(this.endPointConfig + '/api/recipes/instances', {
             params: { typeId, ...this._ts() }
         });
     }
 
-    getRecipe(id: string): Observable<Recipe> {
-        return this.http.get<Recipe>(this.endPointConfig + '/api/recipes/' + id, {
+    getRecipeType(id: string): Observable<Recipe> {
+        return this.http.get<Recipe>(this.endPointConfig + '/api/recipes/types/' + id, {
             params: this._ts()
         });
     }
 
-    saveRecipe(recipe: { id?: string; typeId?: string; name: string; description?: string; entries: RecipeEntry[] }): Observable<{ id: string }> {
-        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-        return this.http.post<{ id: string }>(this.endPointConfig + '/api/recipes', recipe, { headers: header });
+    getRecipeInstance(id: string): Observable<Recipe> {
+        return this.http.get<Recipe>(this.endPointConfig + '/api/recipes/instances/' + id, {
+            params: this._ts()
+        });
     }
 
-    deleteRecipe(id: string): Observable<{ result: string; deleted: number }> {
-        return this.http.delete<{ result: string; deleted: number }>(this.endPointConfig + '/api/recipes?id=' + id);
+    saveRecipeType(recipe: { id?: string; name: string; description?: string; entries: RecipeEntry[] }): Observable<{ id: string }> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.post<{ id: string }>(this.endPointConfig + '/api/recipes/types', recipe, { headers: header });
+    }
+
+    saveRecipeInstance(recipe: { id?: string; typeId: string; name: string; description?: string; entries: RecipeEntry[] }): Observable<{ id: string }> {
+        let header = new HttpHeaders({ 'Content-Type': 'application/json' });
+        return this.http.post<{ id: string }>(this.endPointConfig + '/api/recipes/instances', recipe, { headers: header });
+    }
+
+    deleteRecipeType(id: string): Observable<{ result: string; deleted: number }> {
+        return this.http.delete<{ result: string; deleted: number }>(this.endPointConfig + '/api/recipes/types?id=' + id);
+    }
+
+    deleteRecipeInstance(id: string): Observable<{ result: string; deleted: number }> {
+        return this.http.delete<{ result: string; deleted: number }>(this.endPointConfig + '/api/recipes/instances?id=' + id);
     }
 
     downloadRecipe(id: string): Observable<{ result: string; recipeId: string; totalEntries: number }> {
@@ -83,6 +92,6 @@ export class RecipeService {
     importRecipe(data: { file: string; format?: string; name?: string; description?: string }): Observable<{ id: string; name: string; entriesCount: number }> {
         let header = new HttpHeaders({ 'Content-Type': 'application/json' });
         return this.http.post<{ id: string; name: string; entriesCount: number }>(
-            this.endPointConfig + '/api/recipes/import', data, { headers: header });
+            this.endPointConfig + '/api/recipes/types/import', data, { headers: header });
     }
 }
