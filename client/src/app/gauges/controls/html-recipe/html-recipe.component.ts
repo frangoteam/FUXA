@@ -7,6 +7,7 @@ import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 import { RecipeService } from '../../../_services/recipe.service';
 import { HmiService } from '../../../_services/hmi.service';
 import { AuthService } from '../../../_services/auth.service';
+import { SettingsService } from '../../../_services/settings.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Recipe, RecipeEntry, RecipeProgressEvent, RecipeCompleteEvent } from '../../../_models/recipe';
 import { Subscription } from 'rxjs';
@@ -90,7 +91,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
     private subscriptionCanceled!: Subscription;
 
     constructor(private recipeService: RecipeService, private hmiService: HmiService, private dialog: MatDialog,
-        private authService: AuthService, private translateService: TranslateService) { }
+        private authService: AuthService, private settingsService: SettingsService, private translateService: TranslateService) { }
 
     ngOnInit() {
         this.permission = this._checkPermission();
@@ -316,6 +317,9 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
      */
     private _checkPermission(): { show: boolean; enabled: boolean } {
         if (this.isEditor) {
+            return { show: true, enabled: true };
+        }
+        if (!this.settingsService.getSettings().secureEnabled) {
             return { show: true, enabled: true };
         }
         return this.authService.checkPermission(this.property) || { show: true, enabled: true };

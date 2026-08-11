@@ -137,7 +137,7 @@ Values are converted to the correct JavaScript type before being written, accord
 
 Recipe authorization is enforced in two places:
 
-- **Server (REST API)**: Recipe templates are project data and use dedicated endpoints: `GET/POST/DELETE /api/recipes/types`. When secure mode is enabled, creating, editing, deleting and importing templates (`POST /api/recipes/types/import`) require admin permission resolved from the user's groups and roles. Recipe instances are operational data and use `GET/POST/DELETE /api/recipes/instances`; in secure mode they require an authenticated non-guest user. `POST /api/recipes/download` and `POST /api/recipes/upload` also require a non-guest user because they write/read live tag values.
+- **Server (REST API)**: Recipe templates are project data and use dedicated endpoints: `GET/POST/DELETE /api/recipes/types`. When secure mode is enabled, creating, editing, deleting and importing templates (`POST /api/recipes/types/import`) require admin permission resolved from the user's groups and roles. Recipe instances are operational data and use `GET/POST/DELETE /api/recipes/instances`; in secure mode they require an authenticated non-guest user and the linked recipe template's permission must allow the operation. `POST /api/recipes/download` and `POST /api/recipes/upload` use the same template permission check because they write/read live tag values.
 - **Recipe widget**: The permission configured in the widget's **Authorization** setting decides at runtime whether the action bar is shown and enabled. Editor mode always bypasses the check. The **Visible actions** setting is independent of the permission and only controls which buttons render.
 
 ## Data Storage

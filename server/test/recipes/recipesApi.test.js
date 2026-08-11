@@ -136,6 +136,7 @@ describe('Recipes API', () => {
                 uploadRecipe: sandbox.stub().resolves(),
                 coerceValue: recipeService.coerceValue
             },
+            checkPermission: sandbox.stub().returns({ show: true, enabled: true }),
             logger: {
                 error() {},
                 info() {}
@@ -446,6 +447,19 @@ describe('Recipes API', () => {
             expect(runtime.project.setProjectData.called).to.be.false;
         });
 
+        it('should not evaluate template permissions when secure mode is disabled', async () => {
+            const res = await postRequest(server, '/api/recipes/instances', {
+                typeId: 'r_type',
+                name: 'Instance',
+                entries: [{ tagId: 't1', tagName: 'Temp', tagType: 'real', value: '99.9' }]
+            });
+
+            expect(res.statusCode).to.equal(200);
+            expect(runtime.project.getRecipe.calledWith('r_type')).to.be.false;
+            expect(runtime.checkPermission.called).to.be.false;
+            expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
+        });
+
         it('should require typeId for recipe instances', async () => {
             const res = await postRequest(server, '/api/recipes/instances', {
                 name: 'Missing Type',
@@ -460,6 +474,7 @@ describe('Recipes API', () => {
         it('should allow non-admin recipe instance changes when secure mode is enabled', async () => {
             runtime.settings.secureEnabled = true;
             currentUser = { userId: 'operator', groups: 2 };
+            runtime.project.getRecipe.withArgs('r_type').returns({ id: 'r_type', name: 'Type', entries: [] });
 
             const res = await postRequest(server, '/api/recipes/instances', {
                 typeId: 'r_type',
@@ -470,9 +485,35 @@ describe('Recipes API', () => {
             expect(res.statusCode).to.equal(200);
             expect(runtime.recipeStorage.setRecipeData.calledOnce).to.be.true;
         });
+
+        it('should reject instance changes when the recipe type permission denies access', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+            runtime.project.getRecipe.withArgs('r_type').returns({ id: 'r_type', name: 'Type', permission: 4, entries: [] });
+            runtime.checkPermission.returns({ show: true, enabled: false });
+
+            const res = await postRequest(server, '/api/recipes/instances', {
+                typeId: 'r_type',
+                name: 'Instance',
+                entries: [{ tagId: 't1', tagName: 'Temp', tagType: 'real', value: '99.9' }]
+            });
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.recipeStorage.setRecipeData.called).to.be.false;
+        });
     });
 
     describe('DELETE /api/recipes/instances', () => {
+        beforeEach(() => {
+            runtime.recipeStorage.getRecipeData.withArgs('r_test').resolves({
+                id: 'r_test',
+                typeId: 'r_type',
+                name: 'Instance',
+                entries: [{ id: 'e_001', tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }]
+            });
+        });
+
         it('should delete existing recipe', async () => {
             const res = await deleteRequest(server, '/api/recipes/instances?id=r_test');
 
@@ -511,12 +552,26 @@ describe('Recipes API', () => {
             it('should allow non-admin user to delete an instance with 200', async () => {
                 runtime.settings.secureEnabled = true;
                 currentUser = { userId: 'operator', groups: 2 };
+                runtime.project.getRecipe.withArgs('r_type').returns({ id: 'r_type', name: 'Type', entries: [] });
 
                 const res = await deleteRequest(server, '/api/recipes/instances?id=r_test');
 
                 expect(res.statusCode).to.equal(200);
                 expect(res.body.result).to.equal('ok');
                 expect(res.body.deleted).to.equal(1);
+            });
+
+            it('should reject non-admin user when the recipe type permission denies delete', async () => {
+                runtime.settings.secureEnabled = true;
+                currentUser = { userId: 'operator', groups: 2 };
+                runtime.project.getRecipe.withArgs('r_type').returns({ id: 'r_type', name: 'Type', permission: 4, entries: [] });
+                runtime.checkPermission.returns({ show: true, enabled: false });
+
+                const res = await deleteRequest(server, '/api/recipes/instances?id=r_test');
+
+                expect(res.statusCode).to.equal(401);
+                expect(res.body.error).to.equal('unauthorized_error');
+                expect(runtime.recipeStorage.deleteRecipeData.called).to.be.false;
             });
 
             it('should allow admin user with 200', async () => {
@@ -630,6 +685,25 @@ describe('Recipes API', () => {
             expect(res.statusCode).to.equal(400);
             expect(res.body.error).to.include('already in progress');
         });
+
+        it('should reject download when the recipe type permission denies access', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+            runtime.recipeStorage.getRecipeData.withArgs('r_test').resolves({
+                id: 'r_test',
+                typeId: 'r_type',
+                name: 'Test',
+                entries: [{ id: 'e_001', tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }]
+            });
+            runtime.project.getRecipe.withArgs('r_type').returns({ id: 'r_type', name: 'Type', permission: 4, entries: [] });
+            runtime.checkPermission.returns({ show: true, enabled: false });
+
+            const res = await postRequest(server, '/api/recipes/download', { id: 'r_test' });
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.recipeService.downloadRecipe.called).to.be.false;
+        });
     });
 
     describe('POST /api/recipes/upload', () => {
@@ -672,6 +746,25 @@ describe('Recipes API', () => {
 
             expect(res.statusCode).to.equal(400);
             expect(res.body.error).to.include('already in progress');
+        });
+
+        it('should reject upload when the recipe type permission denies access', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+            runtime.recipeStorage.getRecipeData.withArgs('r_test').resolves({
+                id: 'r_test',
+                typeId: 'r_type',
+                name: 'Test',
+                entries: [{ id: 'e_001', tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }]
+            });
+            runtime.project.getRecipe.withArgs('r_type').returns({ id: 'r_type', name: 'Type', permission: 4, entries: [] });
+            runtime.checkPermission.returns({ show: true, enabled: false });
+
+            const res = await postRequest(server, '/api/recipes/upload', { id: 'r_test' });
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.recipeService.uploadRecipe.called).to.be.false;
         });
     });
 

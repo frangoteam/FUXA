@@ -6,6 +6,11 @@ export interface Recipe {
     name: string;            // required, max 128
     description: string;     // optional, max 512
     entries: RecipeEntry[];  // 1..1000
+    permission?: number;
+    permissionRoles?: {
+        show?: string[];
+        enabled?: string[];
+    };
     createdAt?: string;
     updatedAt?: string;
 }

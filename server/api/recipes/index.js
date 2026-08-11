@@ -151,6 +151,9 @@ module.exports = {
             }
 
             try {
+                if (auth.secureEnabled && !_authorizeRecipeTypeForData(req.body, auth, res, 'save instance')) {
+                    return;
+                }
                 _saveRecipeInstance(req.body, res);
             } catch (err) {
                 runtime.logger.error("api post recipe instance error: " + err);
@@ -175,13 +178,22 @@ module.exports = {
                     res.status(400).json({ error: 'Missing id parameter' });
                     return;
                 }
-                _handlePromise(runtime.recipeStorage.deleteRecipeData(req.query.id), res, function(result) {
-                    if (result.changes === 0) {
+                _handlePromise(runtime.recipeStorage.getRecipeData(req.query.id), res, function(data) {
+                    if (!data) {
                         res.status(404).json({ error: 'Recipe not found' });
-                    } else {
-                        res.json({ result: "ok", deleted: result.changes });
+                        return;
                     }
-                }, 'deleteInstance');
+                    if (auth.secureEnabled && !_authorizeRecipeTypeForData(data, auth, res, 'delete instance')) {
+                        return;
+                    }
+                    _handlePromise(runtime.recipeStorage.deleteRecipeData(req.query.id), res, function(result) {
+                        if (result.changes === 0) {
+                            res.status(404).json({ error: 'Recipe not found' });
+                        } else {
+                            res.json({ result: "ok", deleted: result.changes });
+                        }
+                    }, 'deleteInstance');
+                }, 'getInstanceForDelete');
             } catch (err) {
                 runtime.logger.error("api delete recipe instance error: " + err);
                 res.status(400).json({ error: err.message });
@@ -210,6 +222,9 @@ module.exports = {
                 _handlePromise(runtime.recipeStorage.getRecipeData(id), res, async function(data) {
                     if (!data) {
                         res.status(400).json({ error: 'Recipe not found' });
+                        return;
+                    }
+                    if (auth.secureEnabled && !_authorizeRecipeTypeForData(data, auth, res, 'download')) {
                         return;
                     }
                     if (!data.entries || data.entries.length === 0) {
@@ -277,6 +292,9 @@ module.exports = {
                 _handlePromise(runtime.recipeStorage.getRecipeData(id), res, async function(data) {
                     if (!data) {
                         res.status(400).json({ error: 'Recipe not found' });
+                        return;
+                    }
+                    if (auth.secureEnabled && !_authorizeRecipeTypeForData(data, auth, res, 'upload')) {
                         return;
                     }
                     if (!data.entries || data.entries.length === 0) {
@@ -671,6 +689,45 @@ function _deleteRecipeType(id) {
             return { changes: 1 + (instanceResult.changes || 0) };
         });
     });
+}
+
+function _authorizeRecipeTypeForData(data, auth, res, operation) {
+    if (auth.isAdmin) {
+        return true;
+    }
+    if (!data || !data.typeId) {
+        res.status(400).json({ error: 'Missing recipe type reference' });
+        _logRecipeAuthorizationFailure(operation, 'missing recipe type reference');
+        return false;
+    }
+
+    const recipeType = runtime.project.getRecipe ? runtime.project.getRecipe(data.typeId) : null;
+    if (!recipeType) {
+        res.status(404).json({ error: 'Recipe type not found' });
+        _logRecipeAuthorizationFailure(operation, 'recipe type not found');
+        return false;
+    }
+
+    if (!_isRecipeTypeOperationAllowed(recipeType, auth.permission)) {
+        res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+        _logRecipeAuthorizationFailure(operation, 'unauthorized by recipe type permission');
+        return false;
+    }
+
+    return true;
+}
+
+function _logRecipeAuthorizationFailure(operation, reason) {
+    runtime.logger.error("api recipes " + operation + ": " + reason);
+}
+
+function _isRecipeTypeOperationAllowed(recipeType, permission) {
+    if (!runtime.checkPermission) {
+        return true;
+    }
+
+    const result = runtime.checkPermission(permission, recipeType, false, true);
+    return !!(result && result.enabled);
 }
 
 function _getAuthContext(req) {
