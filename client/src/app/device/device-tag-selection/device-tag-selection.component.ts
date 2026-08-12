@@ -136,6 +136,10 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
             this.tagPropertyService.editTagPropertyBacnet(device).subscribe(result => {
                 this.loadDevicesTags();
             });
+        } else if (device.type === DeviceType.PlumEconextGateway) {
+            this.tagPropertyService.editTagPropertyPlumEconext(device).subscribe(() => {
+                this.loadDevicesTags();
+            });
         } else if (device.type === DeviceType.WebAPI) {
             this.tagPropertyService.editTagPropertyWebapi(device).subscribe(result => {
                 this.loadDevicesTags();

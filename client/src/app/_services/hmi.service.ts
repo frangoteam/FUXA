@@ -117,6 +117,32 @@ export class HmiService {
         }
     }
 
+    /** Write a device value and wait for the backend/driver acknowledgement. */
+    putSignalValueWithResult(sigId: string, value: any): Promise<{ success: boolean; error?: string; details?: any }> {
+        sigId = this.deviceAdapaterService.resolveAdapterTagsId([sigId])[0];
+        const device = this.projectService.getDeviceFromTagId(sigId);
+        if (!device) return Promise.resolve({ success: false, error: 'Device not found' });
+        const variable = new Variable(sigId, null, null);
+        variable.value = value;
+        variable.source = device.id;
+        if (this.socket) {
+            return new Promise(resolve => {
+                this.socket.timeout(15000).emit(IoEventTypes.DEVICE_VALUES,
+                    { cmd: 'set', var: variable, fnc: [null, value] },
+                    (error, response) => {
+                        if (error) resolve({ success: false, error: 'Write acknowledgement timeout' });
+                        else resolve(response || { success: false, error: 'Empty write acknowledgement' });
+                    });
+            });
+        }
+        if (this.bridge) {
+            return Promise.resolve(this.bridge.setDeviceValue(variable, { fnc: [null, value] }))
+                .then(success => ({ success: success === true }))
+                .catch(error => ({ success: false, error: error?.message || String(error) }));
+        }
+        return Promise.resolve({ success: false, error: 'No backend connection' });
+    }
+
     public getAllSignals() {
         return this.variables;
     }
