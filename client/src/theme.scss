@@ -134,6 +134,12 @@ $dark-theme: mat.m2-define-dark-theme((
 @import 'codemirror/addon/lint/lint';
 @import 'codemirror/addon/hint/show-hint';
 
+// CodeMirror appends lint tooltips to <body>. Keep them above Angular Material
+// dialogs, whose overlay container otherwise covers CodeMirror's default z-index: 100.
+.CodeMirror-lint-tooltip {
+    z-index: 10000;
+}
+
 
 /* ===== Token overrides: label/tab/icon ===== */
 
