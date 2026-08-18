@@ -1,11 +1,11 @@
-$main-backcolor: rgb(12, 101, 189);
-$main-bordercolor: var(--mapBorderColor); //rgb(5, 65, 123);
-$device-color: rgb(79, 86, 93);
-$line-color: var(--mapBorderColor);
-$flow-backcolor: rgb(218, 218, 218);
-$flow-bordercolor: var(--mapBorderColor); //rgb(117, 117, 117);
-$flowline-color: var(--mapBorderColor); //rgb(117, 117, 117);
-$internal-backcolor: rgb(114, 120, 125);
+$main-backcolor: #0f4c81;
+$main-bordercolor: #2f79be;
+$device-color: #374151;
+$line-color: #9ca3af;
+$flow-backcolor: #f3f4f6;
+$flow-bordercolor: #9ca3af;
+$flowline-color: #9ca3af;
+$internal-backcolor: #4b5563;
 
 :host {
     .page-container {
@@ -15,108 +15,168 @@ $internal-backcolor: rgb(114, 120, 125);
         min-height: 0;
         overflow: hidden;
     }
+
     .container {
         flex: 1 1 auto;
         min-height: 0;
-        overflow: auto;  /* scroll solo interno */
+        overflow: auto;
         position: relative;
     }
-    .main-device {
+
+    .map-container {
+        display: flex;
+        flex-direction: column;
+        min-width: 300px;
         position: absolute;
-        text-align: center;
-        background-color: $main-backcolor;
-        color: white;
+        bottom: 0;
+        top: 1px;
+        left: 0;
+        right: 0;
+        overflow: auto;
+        // background: #1f2937;
+    }
+
+    .map-stage {
+        overflow: visible;
+        min-width: 100%;
+    }
+
+    .main-device,
+    .node-device,
+    .node-internal,
+    .node-flow {
+        position: absolute;
         border-style: solid;
+        text-align: left;
+        padding: 7px 7px 12px;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+        transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 22px rgba(15, 23, 42, 0.12);
+        }
+
+        mat-icon {
+            overflow: visible;
+        }
+    }
+
+    .main-device {
+        background: $main-backcolor;
+        color: white;
         border-color: $main-bordercolor;
     }
 
     .node-device {
-        position: absolute;
-        background-color: $device-color;
-        text-align: center;
-        padding-top: 17px;
-        border-style: solid;
-        border-color: $line-color;
-
-        mat-icon {
-            color: white;
-        }
+        background: $device-color;
+        color: #f8fafc;
+        border-color: #6b7280;
     }
 
     .node-internal {
-        position: absolute;
-        background-color: $internal-backcolor;
-        text-align: center;
-        padding-top: 17px;
-        border-style: solid;
-        border-color: $line-color;
-
-        mat-icon {
-            color: white;
-        }
+        background: $internal-backcolor;
+        color: #f8fafc;
+        border-color: #6b7280;
     }
 
     .node-flow {
-        position: absolute;
-        background-color: $flow-backcolor;
-        text-align: center;
-        padding-top: 17px;
-        border-style: solid;
+        background: $flow-backcolor;
+        color: #0f172a;
         border-color: $flow-bordercolor;
+    }
+
+    .device-card__glow {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        top: -48px;
+        right: -32px;
+        border-radius: 999px;
+        background: transparent;
+        pointer-events: none;
+    }
+
+    .device-card__topline {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .device-type {
+        display: inline-flex;
+        align-items: center;
+        height: 22px;
+        padding: 0 9px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        max-width: calc(100% - 8px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .device-type {
+        background: rgba(15, 23, 42, 0.12);
+        color: inherit;
+    }
+
+    .node-flow .device-type {
+        background: #e5e7eb;
+    }
+
+    .device-card__main {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .device-avatar {
+        flex: 0 0 40px;
+        width: 40px;
+        height: 40px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.08);
 
         mat-icon {
-            color: black;
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            color: inherit;
         }
     }
 
-    .main-line {
-        position: absolute;
-        background-color: $line-color;
+    .node-flow .device-avatar {
+        background: #ffffff;
     }
 
-    .main-line-flow {
-        position: absolute;
-        background-color: $flowline-color;
-    }
-
-    .device-line {
-        position: absolute;
-        background-color: $line-color;
-    }
-
-    .flow-line {
-        position: absolute;
-        background-color: $flowline-color;
-    }
-
-    .connection-line {
-        position: absolute;
-        background-color: $line-color;
-    }
-
-    .table-wrapper {
-        position: relative;
-    }
-
-    // mat-header-row {
-    //     position: sticky;
-    //     top: 0;
-    //     z-index: 10;
-    // }
-
-    .paginator-wrapper {
-        position: sticky;
-        bottom: 0;
-        z-index: 11;
-        background: white;
-        padding-top: 4px;
+    .device-copy {
+        min-width: 0;
+        flex: 1 1 auto;
     }
 
     .device-header {
         display: block;
-        font-size: 17px;
-        padding-bottom: 7px;
-        padding-top: 0px;
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.25;
+        padding: 0;
+        margin-bottom: 4px;
         min-height: 20px;
         white-space: nowrap;
         overflow: hidden;
@@ -126,11 +186,18 @@ $internal-backcolor: rgb(114, 120, 125);
     .device-pro {
         display: block;
         font-size: 12px;
-        padding-top: 0px;
+        line-height: 1.3;
+        opacity: 0.9;
         min-height: 14px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    .device-pro--meta {
+        margin-top: 4px;
+        padding-right: 4px;
+        opacity: 0.72;
     }
 
     .device-pro-line {
@@ -139,24 +206,83 @@ $internal-backcolor: rgb(114, 120, 125);
         padding-top: 5px;
     }
 
+    .main-line,
+    .main-line-flow,
+    .device-line,
+    .flow-line,
+    .connection-line {
+        position: absolute;
+        // border-radius: 2px;
+        box-shadow: none;
+        z-index: 1;
+    }
+
+    .main-line,
+    .device-line,
+    .connection-line {
+        background: $line-color;
+        opacity: 1;
+    }
+
+    .main-line-flow,
+    .flow-line {
+        background: $flowline-color;
+        opacity: 1;
+    }
+
+    .main-device,
+    .node-device,
+    .node-internal,
+    .node-flow {
+        z-index: 2;
+    }
+
+    .table-wrapper {
+        position: relative;
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .paginator-wrapper {
+        position: sticky;
+        bottom: 0;
+        z-index: 11;
+        background: white;
+        padding-top: 4px;
+    }
+
     .device-icon {
         position: absolute;
         cursor: pointer;
+        z-index: 2;
+    }
+
+    .device-edit,
+    .device-delete,
+    .device-list {
+        position: absolute;
+        z-index: 2;
+        // border-radius: 10px;
+        background: rgba(15, 23, 42, 0.08);
 
         mat-icon {
             overflow: visible;
         }
     }
 
-    .device-edit {
-        position: absolute;
-        bottom: 0px;
-        right: 0px;
-        font-size: 17px;
+    .node-flow .device-edit,
+    .node-flow .device-delete,
+    .node-flow .device-list {
+        background: rgba(255, 255, 255, 0.9);
+    }
 
-        mat-icon {
-            overflow: visible;
-        }
+    .device-edit {
+        bottom: 6px;
+        right: 6px;
+        font-size: 17px;
     }
 
     .device-edit-disabled {
@@ -165,53 +291,50 @@ $internal-backcolor: rgb(114, 120, 125);
     }
 
     .device-delete {
-        position: absolute;
-        top: 0px;
-        right: 0px;
+        top: 6px;
+        right: 6px;
         font-size: 17px;
-
-        mat-icon {
-            overflow: visible;
-        }
     }
 
     .device-list {
-        position: absolute;
-        right: 30px;
+        right: 40px;
+        bottom: 6px;
         font-size: 24px;
-        bottom: 0px;
-
-        mat-icon {
-            overflow: visible;
-        }
     }
 
     .device-status {
         position: absolute;
-        bottom: 10px;
-        left: 10px;
-        width: 10px;
-        height: 10px;
-        border-radius: 4px;
+        bottom: 16px;
+        left: 16px;
+        width: 11px;
+        height: 11px;
+        border-radius: 999px;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.75);
+        z-index: 2;
     }
 
-    .map-container {
-        display: flex;
-        flex-direction: column;
-        min-width: 300px;
-        position: absolute;
-        bottom: 0px;
-        top: 1px;
-        left: 0px;
-        right: 0px;
+    .accent-server {
+        .device-avatar {
+            background: rgba(255, 255, 255, 0.1);
+        }
     }
 
-    .table-wrapper {
-        flex: 1 1 auto;
-        min-height: 0;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
+    .accent-flow {
+        .device-card__glow {
+            background: transparent;
+        }
+    }
+
+    .accent-device {
+        .device-card__glow {
+            background: transparent;
+        }
+    }
+
+    .accent-internal {
+        .device-card__glow {
+            background: transparent;
+        }
     }
 
     .table-wrapper mat-table {
@@ -234,7 +357,6 @@ $internal-backcolor: rgb(114, 120, 125);
 
     .mat-table {
         overflow: auto;
-        /* min-width: 1500px; */
         height: 100%;
     }
 
@@ -266,7 +388,6 @@ $internal-backcolor: rgb(114, 120, 125);
     }
 
     .mat-column-select {
-        // overflow: visible;
         flex: 0 0 120px;
     }
 
@@ -321,6 +442,7 @@ $internal-backcolor: rgb(114, 120, 125);
     .hideTable {
         display: none;
     }
+
     .map-container {
         .mat-mdc-icon-button.mat-mdc-button-base {
             height: 30px !important;
