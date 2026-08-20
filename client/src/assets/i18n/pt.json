@@ -686,5 +686,6 @@
     "msg.login-password-required": "Entra uma palavra-passe",
     "msg.signin-failed": "Não autorizado",
     "device.tag-uns-path": "UNS Path",
+        "device.topic-publish-retain": "Manter mensagem no broker",
     "gauges.property-icon-none": "Sem ícone"
 }

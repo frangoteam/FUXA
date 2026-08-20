@@ -40,6 +40,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
     publishTopicPath: string;
     pubPayload = new MqttPayload();
     pubPayloadResult = '';
+    retainEnabled = true;
     itemType = MqttItemType;
     itemTag = Utils.getEnumKey(MqttItemType, MqttItemType.tag);
     itemTimestamp = Utils.getEnumKey(MqttItemType, MqttItemType.timestamp);
@@ -120,6 +121,9 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
                     if (tag.options.pubs) {
                         // sure publish
                         this.pubPayload.items = tag.options.pubs;
+                    }
+                    if (typeof tag.options.retain === 'boolean') {
+                        this.retainEnabled = tag.options.retain;
                     }
                 }
             }
@@ -295,7 +299,7 @@ export class TopicPropertyComponent implements OnInit, OnDestroy {
             tag.name = this.publishTopicName;
             tag.address = this.publishTopicPath;
             tag.type = this.topicSelectedPubType;
-            tag.options = { pubs: this.pubPayload.items };
+            tag.options = { pubs: this.pubPayload.items, retain: this.retainEnabled };
             this.invokePublish(this.data.topic, tag);
         }
     }

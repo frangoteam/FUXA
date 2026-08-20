@@ -1116,6 +1116,7 @@
     "device.add-topics": "Publish my Topics on broker",
     "device.topic-publish-name": "Topic name",
     "device.topic-publish-path": "Topic path",
+    "device.topic-publish-retain": "Retain message on broker",
     "device.topic-publish": "Publish",
     "device.topic-subscribe": "Subscribe",
     "device.topic-select-all": "Select All",
