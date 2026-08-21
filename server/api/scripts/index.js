@@ -36,7 +36,8 @@ module.exports = {
             if (res.statusCode === 403) {
                 runtime.logger.error("api post runscript: Tocken Expired");
                 //runtime.settings.secureEnabled
-            } else if (script?.test && (!req.isAuthenticated || !authJwt.haveAdminPermission(permission))) {
+            } else if (runtime.settings?.secureEnabled && script?.test &&
+                       (!req.isAuthenticated || !authJwt.haveAdminPermission(permission))) {
                 res.status(401).json({ error: "unauthorized_error", message: "Unauthorized!" });
                 runtime.logger.error("api post runscript: Unauthorized test mode");
             } else if (!script?.test && !script?.id) {

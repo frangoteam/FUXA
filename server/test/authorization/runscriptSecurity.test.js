@@ -141,4 +141,51 @@ describe('Security - runscript authorization target binding', () => {
         expect(calls.authorised).to.equal(0);
         expect(calls.run).to.equal(0);
     });
+
+    it('allows script tests when security is disabled', async () => {
+        const calls = { authorised: 0, run: 0 };
+        const app = express();
+        app.use(express.json());
+
+        scriptsApi.init(
+            {
+                project: {},
+                settings: { secureEnabled: false },
+                logger: makeLogger(),
+                scriptsMgr: {
+                    isAuthorised: () => {
+                        calls.authorised += 1;
+                        return true;
+                    },
+                    runScript: () => {
+                        calls.run += 1;
+                        return Promise.resolve('executed');
+                    }
+                }
+            },
+            (req, res, next) => {
+                req.isAuthenticated = false;
+                next();
+            },
+            () => -1
+        );
+
+        app.use(scriptsApi.app());
+
+        const res = await request(app, 'POST', '/api/runscript', {
+            params: {
+                script: {
+                    test: true,
+                    name: 'test_script',
+                    parameters: [],
+                    code: 'return true;'
+                }
+            }
+        });
+
+        expect(res.statusCode).to.equal(200);
+        expect(res.body).to.equal('executed');
+        expect(calls.authorised).to.equal(1);
+        expect(calls.run).to.equal(1);
+    });
 });
