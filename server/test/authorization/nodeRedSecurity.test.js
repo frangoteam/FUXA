@@ -27,8 +27,8 @@ function makeResponse() {
         cookie(name, value, options) {
             this.cookies.push({ name, value, options });
         },
-        clearCookie(name) {
-            this.clearedCookies.push(name);
+        clearCookie(name, options) {
+            this.clearedCookies.push({ name, options });
         },
         redirect(url) {
             this.redirectUrl = url;
@@ -199,7 +199,10 @@ describe('Node-RED secure mode authorization', () => {
 
         expect(result.allowed).to.equal(false);
         expect(result.res.statusCode).to.equal(401);
-        expect(result.res.clearedCookies).to.deep.equal(['nodered_auth']);
+        expect(result.res.clearedCookies).to.deep.equal([{
+            name: 'nodered_auth',
+            options: { path: '/nodered', sameSite: 'lax' }
+        }]);
     });
 
     it('keeps dashboard routes public', async () => {
