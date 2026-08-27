@@ -48,6 +48,15 @@
     border-bottom: 1px solid rgb(81, 81, 81);
 }
 
+.mat-row {
+    min-height: 40px;
+    height: 43px;
+}
+
+.mat-cell {
+    font-size: 13px;
+}
+
 .loading-spinner {
     display: flex;
     justify-content: center;
@@ -73,18 +82,38 @@
     margin-bottom: 16px;
 }
 
-.toolbar-row {
-    display: flex;
-    justify-content: flex-end;
-    padding: 4px 16px;
-    min-height: 40px;
-    align-items: center;
-    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
-}
-
 .fab-add {
     position: absolute;
     bottom: 24px;
     right: 24px;
     z-index: 100;
+}
+
+.mat-column-select {
+    overflow: visible;
+    flex: 0 0 80px;
+}
+
+.mat-column-name {
+    flex: 1 1 120px;
+}
+
+.mat-column-description {
+    flex: 3 1 180px;
+}
+
+.mat-column-entries {
+    flex: 1 1 120px;
+}
+
+.mat-column-options {
+    flex: 0 0 60px;
+}
+
+.mat-column-remove {
+    flex: 0 0 60px;
+}
+
+.selectidthClass {
+    flex: 0 0 50px;
 }

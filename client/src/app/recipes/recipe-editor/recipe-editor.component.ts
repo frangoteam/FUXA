@@ -1,22 +1,23 @@
 import { Component, Inject, OnInit } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
 
 import { RecipeService } from '../../_services/recipe.service';
-import { TagBrowserComponent } from '../tag-browser/tag-browser.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ProjectService } from '../../_services/project.service';
+import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
 
 @Component({
     selector: 'app-recipe-editor',
     templateUrl: './recipe-editor.component.html',
-    styleUrls: ['./recipe-editor.component.css']
+    styleUrls: ['./recipe-editor.component.scss']
 })
 export class RecipeEditorComponent implements OnInit {
-    recipeName = '';
-    recipeDescription = '';
-    displayedColumns: string[] = ['tagName', 'tagId', 'tagType', 'value', 'actions'];
+    myForm: UntypedFormGroup;
+    displayedColumns: string[] = ['tagName', 'deviceName', 'tagType', 'value', 'actions'];
     dataSource = new MatTableDataSource<any>([]);
     saving = false;
     isNew: boolean;
@@ -24,39 +25,54 @@ export class RecipeEditorComponent implements OnInit {
     constructor(
         public dialogRef: MatDialogRef<RecipeEditorComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any,
+        private fb: UntypedFormBuilder,
         private recipeService: RecipeService,
+        private projectService: ProjectService,
         private dialog: MatDialog,
         private translate: TranslateService,
         private toastr: ToastrService
     ) {
         this.isNew = data?.newRecipe !== false;
+        this.myForm = this.fb.group({
+            name: [data?.recipe?.name || '', Validators.required],
+            description: [data?.recipe?.description || '']
+        });
     }
 
     ngOnInit() {
         if (this.data?.recipe) {
-            this.recipeName = this.data.recipe.name || '';
-            this.recipeDescription = this.data.recipe.description || '';
             this.dataSource.data = this.data.recipe.entries || [];
         }
     }
 
     onAddEntry() {
-        const dialogRef = this.dialog.open(TagBrowserComponent, {
-            width: '600px',
-            data: {}
+        const dialogRef = this.dialog.open(DeviceTagSelectionComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            data: <DeviceTagSelectionData> {
+                variableId: null,
+                multiSelection: true
+            }
         });
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                const exists = this.dataSource.data.find(e => e.tagId === result.tagId);
-                if (!exists) {
-                    const newEntry = {
-                        id: 'e_' + Math.random().toString(16).substring(2, 10),
-                        tagId: result.tagId,
-                        tagName: result.tagName,
-                        tagType: result.tagType,
-                        value: ''
-                    };
-                    this.dataSource.data = [...this.dataSource.data, newEntry];
+                const tagsId = result.variablesId?.length ? result.variablesId : (result.variableId ? [result.variableId] : []);
+                const newEntries = [];
+                tagsId.forEach(tagId => {
+                    const tag = this.projectService.getTagFromId(tagId);
+                    const exists = this.dataSource.data.find(e => e.tagId === tagId);
+                    if (tag && !exists) {
+                        newEntries.push({
+                            id: 'e_' + Math.random().toString(16).substring(2, 10),
+                            tagId: tag.id,
+                            tagName: tag.name,
+                            tagType: tag.type || 'number',
+                            value: ''
+                        });
+                    }
+                });
+                if (newEntries.length) {
+                    this.dataSource.data = [...this.dataSource.data, ...newEntries];
                 }
             }
         });
@@ -64,6 +80,10 @@ export class RecipeEditorComponent implements OnInit {
 
     onRemoveEntry(entry: any) {
         this.dataSource.data = this.dataSource.data.filter(e => e !== entry);
+    }
+
+    getDeviceName(entry: any): string {
+        return this.projectService.getDeviceFromTagId(entry.tagId)?.name || '';
     }
 
     /**
@@ -101,7 +121,7 @@ export class RecipeEditorComponent implements OnInit {
     }
 
     onSave() {
-        if (!this.recipeName || this.recipeName.trim() === '') {
+        if (this.myForm.invalid) {
             this.toastr.error('Name is required');
             return;
         }
@@ -112,12 +132,13 @@ export class RecipeEditorComponent implements OnInit {
 
         this.saving = true;
         const entries = this.dataSource.data.map(e => ({ ...e, value: this._sanitizeValue(e) }));
+        const formValue = this.myForm.value;
         const recipeData: any = {
-            name: this.recipeName.trim(),
+            name: formValue.name.trim(),
             entries: entries
         };
-        if (this.recipeDescription) {
-            recipeData.description = this.recipeDescription.trim();
+        if (formValue.description) {
+            recipeData.description = formValue.description.trim();
         }
         if (!this.isNew && this.data?.recipe?.id) {
             recipeData.id = this.data.recipe.id;
@@ -134,5 +155,9 @@ export class RecipeEditorComponent implements OnInit {
 
     onCancel() {
         this.dialogRef.close();
+    }
+
+    onNoClick() {
+        this.onCancel();
     }
 }

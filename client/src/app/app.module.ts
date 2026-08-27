@@ -244,7 +244,6 @@ import { ArViewComponent } from './ar/ar-view/ar-view.component';
 import { RecipeListComponent } from './recipes/recipe-list/recipe-list.component';
 import { RecipeEditorComponent } from './recipes/recipe-editor/recipe-editor.component';
 import { RecipeProgressComponent } from './recipes/recipe-progress/recipe-progress.component';
-import { TagBrowserComponent } from './recipes/tag-browser/tag-browser.component';
 import { HtmlRecipeViewComponent, HtmlRecipeComponent } from './gauges/controls/html-recipe/html-recipe.component';
 import { HtmlRecipeNewDialogComponent } from './gauges/controls/html-recipe/html-recipe-new-dialog/html-recipe-new-dialog.component';
 import { RecipePropertyComponent } from './gauges/controls/html-recipe/recipe-property/recipe-property.component';
@@ -441,7 +440,6 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         RecipeListComponent,
         RecipeEditorComponent,
         RecipeProgressComponent,
-        TagBrowserComponent,
         HtmlRecipeViewComponent,
         HtmlRecipeComponent,
         HtmlRecipeNewDialogComponent,

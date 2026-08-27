@@ -8,9 +8,10 @@ import { Subscription } from 'rxjs';
 
 import { RecipeService } from '../../_services/recipe.service';
 import { HmiService } from '../../_services/hmi.service';
-import { Recipe, RecipeCompleteEvent } from '../../_models/recipe';
+import { RecipeCompleteEvent } from '../../_models/recipe';
 import { RecipeEditorComponent } from '../recipe-editor/recipe-editor.component';
 import { RecipeProgressComponent } from '../recipe-progress/recipe-progress.component';
+import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'app-recipe-list',
@@ -18,7 +19,7 @@ import { RecipeProgressComponent } from '../recipe-progress/recipe-progress.comp
     styleUrls: ['./recipe-list.component.css']
 })
 export class RecipeListComponent implements OnInit, OnDestroy {
-    displayedColumns: string[] = ['name', 'description', 'entries', 'actions'];
+    displayedColumns: string[] = ['select', 'name', 'description', 'entries', 'options', 'remove'];
     dataSource = new MatTableDataSource<any>([]);
     loading = false;
     private subscription: Subscription = new Subscription();
@@ -65,7 +66,8 @@ export class RecipeListComponent implements OnInit, OnDestroy {
 
     onAddRecipe() {
         const dialogRef = this.dialog.open(RecipeEditorComponent, {
-            width: '800px',
+            width: '980px',
+            disableClose: true,
             data: { newRecipe: true }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -78,7 +80,8 @@ export class RecipeListComponent implements OnInit, OnDestroy {
     onEditRecipe(item: any) {
         const recipeData = { id: item.id, ...item.data };
         const dialogRef = this.dialog.open(RecipeEditorComponent, {
-            width: '800px',
+            width: '980px',
+            disableClose: true,
             data: { recipe: recipeData, newRecipe: false }
         });
         dialogRef.afterClosed().subscribe(result => {
@@ -90,8 +93,13 @@ export class RecipeListComponent implements OnInit, OnDestroy {
 
     onDeleteRecipe(item: any) {
         const recipeName = item.data?.name || item.id;
-        this.translate.get('recipes.delete-confirm', { name: recipeName }).subscribe((msg: string) => {
-            if (confirm(msg)) {
+        const msg = this.translate.instant('recipes.delete-confirm', { name: recipeName });
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: { msg: msg },
+            position: { top: '60px' }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
                 this.recipeService.deleteRecipeType(item.id).subscribe(result => {
                     this.translate.get('recipes.delete-success').subscribe((txt: string) => {
                         this.toastr.success(txt);

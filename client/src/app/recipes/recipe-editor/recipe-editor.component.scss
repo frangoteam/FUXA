@@ -1,0 +1,115 @@
+:host {
+    .container {
+        height: 100%;
+    }
+
+    .recipe-form {
+        display: flex;
+        flex-direction: column;
+        min-width: 680px;
+    }
+
+    .recipe-row {
+        display: block;
+        width: 100%;
+
+        input,
+        textarea {
+            width: -webkit-fill-available;
+        }
+
+        textarea {
+            font-family: inherit;
+        }
+    }
+
+    .entries-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 22px;
+        margin-bottom: 10px;
+
+        h3 {
+            margin: 0;
+        }
+    }
+
+    .add-entry-action span {
+        vertical-align: super;
+    }
+
+    .entries-table {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .entries-table-wrap {
+        max-height: 360px;
+        overflow-y: auto;
+    }
+
+    ::ng-deep .entries-table {
+        .mat-mdc-header-row,
+        .mat-header-row {
+            top: 0;
+            position: sticky;
+            z-index: 10;
+            background-color: var(--mat-table-background-color);
+        }
+
+        tr.mat-mdc-row,
+        tr.mat-row,
+        mat-row.mat-mdc-row,
+        mat-row.mat-row {
+            height: 36px !important;
+            min-height: 36px !important;
+        }
+
+        td.mat-mdc-cell,
+        td.mat-cell,
+        mat-cell.mat-mdc-cell,
+        mat-cell.mat-cell {
+            height: 36px !important;
+            min-height: 36px !important;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+    }
+
+    .value-input {
+        width: 120px;
+    }
+
+    .value-field {
+        display: block;
+    }
+
+    .mat-column-tagName {
+        width: 34%;
+    }
+
+    .mat-column-deviceName {
+        width: 30%;
+    }
+
+    .mat-column-tagType {
+        width: 14%;
+    }
+
+    .mat-column-value {
+        width: 16%;
+    }
+
+    .mat-column-actions {
+        width: 46px;
+        text-align: right;
+    }
+
+    .no-entries {
+        text-align: center;
+        padding: 20px;
+        color: #888;
+        font-style: italic;
+    }
+}

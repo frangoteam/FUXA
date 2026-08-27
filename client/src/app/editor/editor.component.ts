@@ -43,7 +43,6 @@ import { ResourcesService } from '../_services/resources.service';
 import { InputPropertyComponent } from '../gauges/controls/html-input/input-property/input-property.component';
 import { SettingsService } from '../_services/settings.service';
 import { OnboardingWizardComponent } from './onboarding-wizard/onboarding-wizard.component';
-import { RecipePropertyComponent } from '../gauges/controls/html-recipe/recipe-property/recipe-property.component';
 
 declare var Gauge: any;
 

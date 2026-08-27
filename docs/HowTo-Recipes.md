@@ -28,7 +28,7 @@ A **recipe instance** is a concrete snapshot derived from a type. Instances shar
 
 ## Managing Recipes
 
-Recipes are managed from the Recipes management page. It is reached through the setup card **Recipes** (bookmarks icon, menu label "Recipes") in the editor, which opens the `/recipes` route.
+Recipes are managed from the Recipes management page. It is reached through the setup card **Recipes** (receipt icon, menu label "Recipes") in the editor, which opens the `/recipes` route.
 
 ### Recipe List
 
@@ -73,7 +73,7 @@ The Recipe widget is the operator-facing component for working with a recipe typ
 
 ### Adding the Widget
 
-In the editor's toolbar, select the **Recipe** control (bookmarks icon, tooltip "Recipe"). Drop it onto the view and open its properties.
+In the editor's toolbar, select the **Recipe** control (receipt icon, tooltip "Recipe"). Drop it onto the view and open its properties.
 
 ### Widget Properties
 
