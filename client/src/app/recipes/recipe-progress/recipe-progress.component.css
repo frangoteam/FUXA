@@ -1,0 +1,53 @@
+.progress-container {
+    min-width: 400px;
+    padding: 8px 0;
+}
+
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.progress-text {
+    white-space: nowrap;
+    font-size: 14px;
+    color: #666;
+}
+
+.status-summary {
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.success { color: #4caf50; }
+.error { color: #f44336; }
+
+.entries-progress {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.entry-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 13px;
+}
+
+.entry-name {
+    flex: 1;
+}
+
+.entry-status mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.entry-error {
+    color: #f44336;
+    font-size: 12px;
+}

@@ -3,6 +3,7 @@ import { Hmi } from './hmi';
 import { Chart } from './chart';
 import { Graph } from './graph';
 import { Alarm } from './alarm';
+import { Recipe } from './recipe';
 import { Notification } from './notification';
 import { Languages, LanguageText } from './language';
 import { Utils } from '../_helpers/utils';
@@ -28,6 +29,8 @@ export class ProjectData {
     graphs: Graph[] = [];
     /** Alarms, Tags, logic, level, colors, etc.  */
     alarms: Alarm[] = [];
+    /** Recipe templates, Tags, default values, etc. */
+    recipes: Recipe[] = [];
     /** Notifications  */
     notifications: Notification[] = [];
     /** Scripts */
@@ -62,6 +65,8 @@ export enum ProjectDataCmdType {
     DelText = 'del-text',
     SetAlarm = 'set-alarm',
     DelAlarm = 'del-alarm',
+    SetRecipe = 'set-recipe',
+    DelRecipe = 'del-recipe',
     SetNotification = 'set-notification',
     DelNotification = 'del-notification',
     SetScript = 'set-script',

@@ -40,6 +40,7 @@ nav:
       - Configure Events: HowTo-configure-events.md
       - Use Same View: HowTo-use-same-view.md
       - Configure Script: HowTo-configure-Script.md
+      - Recipes: HowTo-Recipes.md
       - ODBC: HowTo-ODBC.md
       - Widgets: HowTo-Widgets.md
       - WebSockets: HowTo-WebSockets.md

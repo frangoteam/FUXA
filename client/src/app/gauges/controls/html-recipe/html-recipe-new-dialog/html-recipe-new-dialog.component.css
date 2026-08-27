@@ -1,0 +1,44 @@
+.newrecipe-dialog {
+    min-width: 380px;
+    padding: 16px 20px;
+}
+
+.dialog-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.dialog-header mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.dialog-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dialog-field {
+    width: 100%;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.full-width {
+    width: 100%;
+}

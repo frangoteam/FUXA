@@ -1,0 +1,95 @@
+<div class="element-property">
+    <div class="element-property-title">
+        {{'recipe.property-settings-title' | translate}}
+    </div>
+    <div class="container">
+        <!-- Name -->
+        <div class="element-property-header">
+            <span>{{'recipe.property-data' | translate}}</span>
+        </div>
+        <div class="block mt5">
+            <div class="my-form-field">
+                <span>{{'gauges.property-name' | translate}}</span>
+                <input [(ngModel)]="data.settings.name" (change)="onPropertyChanged()" style="width: 260px" type="text">
+            </div>
+        </div>
+
+        <!-- Recipe selector -->
+        <div class="element-property-header mt15">
+            <span>{{'recipe.property-recipe' | translate}}</span>
+        </div>
+        <div class="block mt5">
+            <div class="my-form-field">
+                <span>{{'recipe.property-select-recipe' | translate}}</span>
+                <mat-select style="width: 260px;" [(ngModel)]="property.recipeId" (selectionChange)="onPropertyChanged()">
+                    <mat-option [value]="null">-- {{'recipe.no-recipe-selected' | translate}} --</mat-option>
+                    <mat-option *ngFor="let r of recipes" [value]="r.id">{{r.data?.name || r.id}}</mat-option>
+                </mat-select>
+            </div>
+            <div *ngIf="loading" class="loading-hint">{{'recipe.loading-recipes' | translate}}</div>
+        </div>
+
+        <!-- Readonly toggle -->
+        <div class="element-property-header mt15">
+            <span>{{'recipe.property-behavior' | translate}}</span>
+        </div>
+        <div class="block mt5">
+            <mat-slide-toggle [(ngModel)]="property.readonly" (change)="onPropertyChanged()">
+                {{'recipe.property-readonly' | translate}}
+            </mat-slide-toggle>
+        </div>
+
+        <!-- Authorization -->
+        <div class="element-property-header mt15">
+            <span>{{'recipe.property-authorization' | translate}}</span>
+        </div>
+        <div class="block mt5">
+            <flex-auth [name]="data.settings.name" [permission]="property.permission"
+                (onChanged)="onFlexAuthChanged($event)" [permissionRoles]="property.permissionRoles">
+            </flex-auth>
+        </div>
+
+        <!-- Visible actions -->
+        <div class="element-property-header mt15">
+            <span>{{'recipe.property-visible-actions' | translate}}</span>
+        </div>
+        <div class="block mt5">
+            <div class="flex" style="flex-wrap: wrap; gap: 15px; justify-content: flex-start;">
+                <mat-checkbox [(ngModel)]="property.visibleActions.new" (change)="onPropertyChanged()">{{'recipe.new' | translate}}</mat-checkbox>
+                <mat-checkbox [(ngModel)]="property.visibleActions.delete" (change)="onPropertyChanged()">{{'recipe.delete' | translate}}</mat-checkbox>
+                <mat-checkbox [(ngModel)]="property.visibleActions.save" (change)="onPropertyChanged()">{{'recipe.save' | translate}}</mat-checkbox>
+                <mat-checkbox [(ngModel)]="property.visibleActions.download" (change)="onPropertyChanged()">{{'recipe.download' | translate}}</mat-checkbox>
+                <mat-checkbox [(ngModel)]="property.visibleActions.upload" (change)="onPropertyChanged()">{{'recipe.upload' | translate}}</mat-checkbox>
+            </div>
+        </div>
+
+        <!-- Appearance / Colors -->
+        <div class="element-property-header mt15">
+            <span>{{'recipe.property-appearance' | translate}}</span>
+        </div>
+        <div class="block mt5">
+            <div class="flex" style="flex-wrap: wrap; gap: 15px; justify-content: flex-start;">
+                <div class="my-form-field">
+                    <span>{{'recipe.property-background' | translate}}</span>
+                    <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                        (change)="onPropertyChanged()" [(ngModel)]="property.backgroundColor">
+                </div>
+                <div class="my-form-field">
+                    <span>{{'recipe.property-text' | translate}}</span>
+                    <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                        (change)="onPropertyChanged()" [(ngModel)]="property.textColor">
+                </div>
+                <div class="my-form-field">
+                    <span>{{'recipe.property-border' | translate}}</span>
+                    <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                        (change)="onPropertyChanged()" [(ngModel)]="property.borderColor">
+                </div>
+                <div class="my-form-field">
+                    <span>{{'recipe.property-accent' | translate}}</span>
+                    <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
+                        (change)="onPropertyChanged()" [(ngModel)]="property.accentColor">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,80 @@
+<form [formGroup]="myForm" class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{ (isNew ? 'recipes.new-recipe' : 'recipes.edit-recipe') | translate }}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+
+    <div mat-dialog-content>
+        <div class="recipe-form">
+            <div class="my-form-field recipe-row">
+                <span>{{ 'recipes.name' | translate }}</span>
+                <input formControlName="name" type="text" maxlength="128" placeholder="{{ 'recipes.name' | translate }} *">
+            </div>
+
+            <div class="my-form-field recipe-row mt10">
+                <span>{{ 'recipes.description' | translate }}</span>
+                <textarea formControlName="description" maxlength="512" rows="3"></textarea>
+            </div>
+
+            <div class="entries-header">
+                <h3>{{ 'recipes.entries' | translate }}</h3>
+                <div class="add-entry-action">
+                    <button mat-icon-button type="button" (click)="onAddEntry()">
+                        <mat-icon>add_circle_outline</mat-icon>
+                    </button>
+                    <span>{{ 'recipes.add-entry' | translate }}</span>
+                </div>
+            </div>
+
+            <div class="entries-table-wrap">
+                <table mat-table [dataSource]="dataSource" class="entries-table">
+                    <ng-container matColumnDef="tagName">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'recipes.tag-name' | translate }}</th>
+                        <td mat-cell *matCellDef="let entry">{{ entry.tagName }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="deviceName">
+                        <th mat-header-cell *matHeaderCellDef>Connections</th>
+                        <td mat-cell *matCellDef="let entry">{{ getDeviceName(entry) }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="tagType">
+                        <th mat-header-cell *matHeaderCellDef>Type</th>
+                        <td mat-cell *matCellDef="let entry">{{ entry.tagType }}</td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="value">
+                        <th mat-header-cell *matHeaderCellDef>{{ 'recipe.value' | translate }}</th>
+                        <td mat-cell *matCellDef="let entry">
+                            <div class="my-form-field value-field">
+                                <input class="value-input" [type]="getInputType(entry.tagType)"
+                                    [(ngModel)]="entry.value" [ngModelOptions]="{standalone: true}">
+                            </div>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef></th>
+                        <td mat-cell *matCellDef="let entry">
+                            <button mat-icon-button color="warn" type="button" (click)="onRemoveEntry(entry)">
+                                <mat-icon>clear</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+            </div>
+
+            <div *ngIf="dataSource.data.length === 0" class="no-entries">
+                No entries. Click "Add Entry" to select a tag.
+            </div>
+        </div>
+    </div>
+
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button type="button" (click)="onNoClick()">{{ 'dlg.cancel' | translate }}</button>
+        <button mat-raised-button type="button" color="primary" (click)="onSave()" [disabled]="saving || myForm.invalid">
+            {{ 'dlg.ok' | translate }}
+        </button>
+    </div>
+</form>
