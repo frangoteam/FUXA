@@ -69,6 +69,9 @@ export class HtmlSelectComponent extends GaugeBaseComponent {
                 if (Number.isNaN(val)) {
                     // maybe boolean
                     val = Number(sig.value);
+                    if (Number.isNaN(val)) {
+                        val = sig.value;
+                    }
                 } else {
                     val = parseFloat(val.toFixed(5));
                 }
