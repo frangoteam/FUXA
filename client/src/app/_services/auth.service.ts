@@ -85,7 +85,7 @@ export class AuthService {
 	}
 
 	signOut() {
-		if (this.useRefreshCookieAuth && environment.serverEnabled) {
+		if (environment.serverEnabled && (this.useRefreshCookieAuth || this.settings.getSettings()?.nodeRedEnabled)) {
 			let header = new HttpHeaders({ 'Skip-Auth': 'true', 'Skip-Error': 'true' });
 			this.http.post(this.endPointConfig + '/api/signout', {}, { headers: header, withCredentials: true }).subscribe({
 				next: () => this.finalizeSignOut(),

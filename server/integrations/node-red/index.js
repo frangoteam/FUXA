@@ -126,6 +126,11 @@ const getCookieValue = (req, name) => {
     return null;
 };
 
+const NODE_RED_AUTH_COOKIE_OPTIONS = {
+    path: '/nodered',
+    sameSite: 'lax',
+};
+
 const verifyApiKey = (runtime, apiKey) => {
     return runtime.apiKeys.getApiKeys().then(stored => {
         const now = Date.now();
@@ -184,8 +189,8 @@ function createNodeRedAuthMiddleware({ settings, runtime, logger, authJwt }) {
                 }
                 if (queryToken) {
                     res.cookie('nodered_auth', token, {
+                        ...NODE_RED_AUTH_COOKIE_OPTIONS,
                         httpOnly: true,
-                        sameSite: 'lax',
                         secure: !!settings.https,
                     });
                     if (req.method === 'GET') {
@@ -198,7 +203,7 @@ function createNodeRedAuthMiddleware({ settings, runtime, logger, authJwt }) {
             })
             .catch(() => {
                 if (cookieToken) {
-                    res.clearCookie('nodered_auth');
+                    res.clearCookie('nodered_auth', NODE_RED_AUTH_COOKIE_OPTIONS);
                 }
                 return res.status(401).json({ error: "unauthorized_error", message: "Invalid token!" });
             });

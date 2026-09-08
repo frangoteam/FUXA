@@ -16,6 +16,7 @@ var tokenExpiresIn;
 var enableRefreshCookieAuth = false;
 var refreshTokenExpiresIn = '7d';
 const refreshCookieName = 'fuxa_refresh';
+const nodeRedAuthCookieName = 'nodered_auth';
 
 function parseExpiresToMs(expiresIn) {
     if (expiresIn === undefined || expiresIn === null) {
@@ -75,6 +76,17 @@ function setRefreshCookie(res, token) {
 function clearRefreshCookie(res) {
     res.clearCookie(refreshCookieName, {
         path: BASE_PATH + '/api/refresh'
+    });
+}
+
+function clearNodeRedAuthCookie(res) {
+    res.clearCookie(nodeRedAuthCookieName, {
+        path: BASE_PATH + '/nodered',
+        sameSite: 'lax'
+    });
+    res.clearCookie(nodeRedAuthCookieName, {
+        path: BASE_PATH || '/',
+        sameSite: 'lax'
     });
 }
 
@@ -208,6 +220,7 @@ module.exports = {
             if (enableRefreshCookieAuth) {
                 clearRefreshCookie(res);
             }
+            clearNodeRedAuthCookie(res);
             res.status(204).end();
         });
 
