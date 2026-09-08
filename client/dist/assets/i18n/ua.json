@@ -640,5 +640,6 @@
     "msg.login-password-required": "Пароль",
     "msg.signin-failed": "Не авторизований",
     "device.tag-uns-path": "UNS Path",
+        "device.topic-publish-retain": "Зберігати повідомлення в брокері",
     "gauges.property-icon-none": "Без значка"
 }

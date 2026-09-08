@@ -795,6 +795,7 @@
     "device.add-topics": "Veröffentliche meine Themen beim Broker",
     "device.topic-publish-name": "Themenname",
     "device.topic-publish-path": "Themenpfad",
+        "device.topic-publish-retain": "Nachricht auf dem Broker behalten",
     "device.topic-publish": "Veröffentlichen",
     "device.topic-subscribe": "Abonnieren",
     "device.topic-subscription-content": "Inhalt",
@@ -1338,6 +1339,5 @@
     "msg.device-tags-request-result": "Lade {{value}} von {{current}}",
     "gauges.property-icon-none": "Kein Symbol"
 }
-
 
 
