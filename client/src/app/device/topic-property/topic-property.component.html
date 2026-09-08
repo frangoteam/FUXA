@@ -94,6 +94,10 @@
                             <span>{{'device.topic-publish-path' | translate}}</span>
                             <input [(ngModel)]="publishTopicPath" (keyup)="stringifyPublishItem()" style="width: 400px;" type="text">
                         </div>
+                        <div class="my-form-field" style="display:inline-block; margin-right: 10px;margin-bottom: 10px; vertical-align: middle;">
+                            <span>{{'device.topic-publish-retain' | translate}}</span>
+                            <mat-checkbox [(ngModel)]="retainEnabled" [disabled]="isSubscriptionEdit()"></mat-checkbox>
+                        </div>
                         <mat-button-toggle-group class="toggle-group" [(ngModel)]="topicSelectedPubType" (change)="onPubTopicValChange($event.value)">
                             <mat-button-toggle value="raw" [disabled]="!isPublishTypeToEnable('raw')">{{'device.topic-raw' | translate}}</mat-button-toggle>
                             <mat-button-toggle value="json" [disabled]="!isPublishTypeToEnable('json')">{{'device.topic-json' | translate}}</mat-button-toggle>

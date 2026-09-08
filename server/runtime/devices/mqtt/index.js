@@ -540,7 +540,7 @@ function MQTTclient(_data, _logger, _events, _runtime) {
     var _publishValues = function (tags) {
         Object.keys(tags).forEach(key => {
             try {
-                const topicOptions = { retain: true };
+                const topicOptions = { retain: _getRetainOption(tags[key]) };
                 // publish only tags with pubs and value changed
                 if (tags[key].options && tags[key].options.pubs && tags[key].options.pubs.length) {
                     var topicTopuplish = {};
@@ -584,6 +584,20 @@ function MQTTclient(_data, _logger, _events, _runtime) {
             }
         })
     }
+}
+
+/**
+ * Return the MQTT retain flag for a topic to publish.
+ * It is configured per publish topic through the editor
+ * (Tag.options.retain). It defaults to true to keep the historical
+ * behavior for projects that do not set the flag.
+ * @param {*} tag
+ */
+function _getRetainOption(tag) {
+    if (tag && tag.options && typeof tag.options.retain === 'boolean') {
+        return tag.options.retain;
+    }
+    return true;
 }
 
 /**
