@@ -34,9 +34,9 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
     dataSource = new MatTableDataSource([]);
     tableWidth = 1200;
 
-    @ViewChild(MatTable, {static: false}) table: MatTable<any>;
-    @ViewChild(MatSort, {static: false}) sort: MatSort;
-    @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+    @ViewChild(MatTable, { static: false }) table: MatTable<any>;
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
+    @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
     flowBorder = 5;
     flowWidth = 160;
@@ -520,6 +520,11 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                         }
                         device.property.socketReuse = tempdevice.property.socketReuse;
                         device.property.forceFC16 = tempdevice.property.forceFC16;
+                        if (tempdevice.property.timeout) {
+                            device.property.timeout = parseInt(tempdevice.property.timeout);
+                        } else {
+                            delete device.property.timeout;
+                        }
                     }
                     this.projectService.setDevice(device, olddevice, result.security);
                 }

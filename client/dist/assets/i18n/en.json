@@ -1,10 +1,8 @@
 {
     "with param": "sample {{value}}",
-
     "app.home": "Home",
     "app.lab": "Lab",
     "app.editor": "Editor",
-
     "header.new-project": "New Project",
     "header.save-project": "Save Project",
     "header.save-project-tooltip": "Save all outstanding project changes",
@@ -26,15 +24,10 @@
     "header.change-thema": "Switch Theme (beta)",
     "header.info-version": "Version ",
     "header.theme": "Theme light/dark",
-
     "project.name": "Project name",
-
     "sidenav.title": "FUXA",
-
     "tutorial.title": "FUXA Tutorial",
-
     "dlg.info-title": "FUXA",
-
     "dlg.layout-title": "Layout settings",
     "dlg.layout-general": "General",
     "dlg.layout-lbl-auto-resize": "Auto resize",
@@ -69,7 +62,6 @@
     "dlg.layout-lbl-login-info": "Login info",
     "dlg.layout-lbl-custom-styles": "Custom styles",
     "dlg.layout-lbl-show-language": "Show language",
-
     "dlg.menuitem-title": "Menu Item",
     "dlg.menuitem-image": "[My Image...]",
     "dlg.menuitem-icon": "Icon",
@@ -79,16 +71,13 @@
     "dlg.menuitem-alarms": "Alarms by Click",
     "dlg.menuitem-address": "Link address",
     "dlg.menuitem-icons-filter": "Icons Filter",
-
     "dlg.menuitem-submenu": "Submenu",
     "dlg.menuitem-add-submenu": "Add Submenu Item",
     "dlg.menuitem-submenu-items": "Submenu Items",
     "sidenav.new_item": "New Submenu Item",
-
     "dlg.headeritem-title": "Header Item",
     "dlg.headeritem-icon": "Icon",
     "dlg.headeritem-icons-filter": "Icons Filter",
-
     "dlg.docproperty-title": "View properties",
     "dlg.docproperty-name": "Name",
     "dlg.docproperty-width": "Width",
@@ -118,7 +107,6 @@
     "dlg.docproperty-gridtype-verticalFixed": "VerticalFixed",
     "dlg.docproperty-gridtype-horizontalFixed": "HorizontalFixed",
     "dlg.docproperty-renderDelay": "View rendering delay (ms)",
-
     "dlg.docname-title": "View name",
     "dlg.docname-name": "Name",
     "dlg.docproperty-type": "View type",
@@ -127,36 +115,28 @@
     "dlg.item-req-name": "Function name (No spaced or numbers allowed)",
     "dlg.item-name-error": "Name exists!",
     "dlg.parameter-title": "Parameter",
-
     "dlg.tagname-title": "Tag name",
     "dlg.tagname-name": "Name",
-
     "dlg.linkproperty-title": "Make Hyperlink",
     "dlg.linkproperty-url": "Hyperlink URL",
-
     "dlg.login-title": "Sign in...",
     "dlg.logout-btn": "Sign out",
-
     "dlg.ok": "OK",
     "dlg.cancel": "CANCEL",
     "dlg.close": "CLOSE",
     "dlg.apply": "APPLY",
-
     "dlg.userproperty-title": "User",
     "dlg.userproperty-groups": "Authorization Groups",
     "dlg.userproperty-roles": "Authorization Roles",
     "dlg.useraccess-groups": "Authorization (void = full for everyone)",
     "dlg.userproperty-language": "Language",
     "dlg.userproperty-start": "Start View",
-
     "dlg.gauge-permission-title": "Authorization",
     "dlg.gauge-permission-label": "(void = full for everyone)",
     "dlg.gauge-permission-show": "Show",
     "dlg.gauge-permission-enabled": "Enabled",
-
     "date.range-start": "Date start",
     "date.range-end": "Date end",
-
     "general.search-up": "SEARCH",
     "general.close": "Close",
     "general.confirm": "Confirm",
@@ -197,62 +177,92 @@
     "general.sunday-short": "Sun",
     "general.save-template": "Save as template",
     "general.import-template": "Import from template",
-    "general.weekdays": ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-    "general.weekdays-short": ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"],
-    "general.months": ["January","February","March","April","May","June","July","August","September","October","November","December"],
-    "general.months-short": ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
-
+    "general.weekdays": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+    ],
+    "general.weekdays-short": [
+        "Sun",
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat"
+    ],
+    "general.months": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+    ],
+    "general.months-short": [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+    ],
     "tester.title": "Variable",
     "tester.send": "Send",
-
     "item.overlaycolor-none": "None",
     "item.overlaycolor-black": "Black",
     "item.overlaycolor-white": "White",
-
     "item.navsmode-none": "None",
     "item.navsmode-push": "Push",
     "item.navsmode-over": "Over",
     "item.navsmode-fix": "Fixed",
-
     "item.navtype-icons": "Icons",
     "item.navtype-text": "Text",
     "item.navtype-icons-text-block": "Icons & Text (block)",
     "item.navtype-icons-text-inline": "Icons & Text (inline)",
-
     "item.headertype-button": "Button",
     "item.headertype-label": "Label",
     "item.headertype-image": "Image",
     "item.headeranchor-left": "Left",
     "item.headeranchor-right": "Right",
     "item.headeranchor-center": "Center",
-
     "item.notifymode-hide": "Hide",
     "item.notifymode-fix": "Fixed",
     "item.notifymode-float": "Push",
-
     "item.logininfo-type-nothing": "Nothing",
     "item.logininfo-type-username": "Username",
     "item.logininfo-type-fullname": "Full name",
     "item.logininfo-type-both": "Username & Full name",
-
     "item.language-show-mode-nothing": "Hide",
     "item.language-show-mode-simple": "Show",
     "item.language-show-mode-key": "Show with Key",
     "item.language-show-mode-fullname": "Show with Full name",
-
     "item.zoommode-disabled": "Disabled",
     "item.zoommode-enabled": "Manually",
     "item.zoommode-autoresize": "Auto-resize",
-
     "item.headerbarmode-hide": "Hide",
     "item.headerbarmode-show": "Show",
-
     "dlg.layout-input-dialog": "Dialog Mode of input field",
     "item.inputmode-disabled": "Disabled",
     "item.inputmode-enabled": "Dialog",
     "item.inputmode-keyboard": "Virtual-Keyboard",
     "item.inputmode-keyboard-full-screen": "Virtual-Keyboard full screen",
-
     "chart.config-title": "Charts settings",
     "chart.config-charts": "Charts",
     "chart.config-devices": "Devices",
@@ -282,7 +292,6 @@
     "chart.config-line-zone-max": "Max",
     "chart.config-line-zone-stroke": "Stroke",
     "chart.config-line-zone-fill": "Fill",
-
     "chart.property-data": "Data",
     "chart.property-props": "Property",
     "chart.property-layout": "Layout",
@@ -332,21 +341,17 @@
     "chart.property-axis-y4-min": "Y4 Min",
     "chart.property-axis-y4-max": "Y4 Max",
     "chart.property-script": "Script data source",
-
     "chart.rangetype-last8h": "Last 8 hours",
     "chart.rangetype-last1d": "Last day",
     "chart.rangetype-last3d": "Last 3 days",
     "chart.rangetype-last1w": "Last week",
-
     "chart.legend-always": "always",
     "chart.legend-follow": "follow",
     "chart.legend-bottom": "bottom",
     "chart.legend-never": "never",
-
     "chart.labels-serie": "Serie",
     "chart.labels-time": "Time",
     "chart.labels-title": "Title",
-
     "graph.config-title": "Graph settings",
     "graph.config-rename": "Rename",
     "graph.config-source-tag": "Add Source Tag",
@@ -363,7 +368,6 @@
     "graph.property-fnctype": "Function type",
     "graph.bar-date-fnc-value-integral": "Sum (Integral)",
     "graph.bar-date-fnc-hour-integral": "Hour Sum (Integral)",
-
     "graph.property-data": "Data",
     "graph.property-name": "Name",
     "graph.property-general": "General",
@@ -420,20 +424,16 @@
     "graph.property-datalabels-show": "Show",
     "graph.property-datalabels-fontsize": "Font size",
     "graph.property-datalabels-align": "Align",
-
     "graph.rangetype-last1h": "Last hour",
     "graph.rangetype-last1d": "Last day",
     "graph.rangetype-last3d": "Last 3 days",
     "graph.rangetype-last1w": "Last week",
     "graph.rangetype-last1m": "Last month",
-
     "graph.grouptype-hours": "Hours",
     "graph.grouptype-days": "Days",
-
     "iframe.property-data": "Data",
     "iframe.property-address": "Address (fix)",
     "iframe.property-image": "Image",
-
     "video.property-title": "Video settings",
     "video.property-data": "Data",
     "video.property-address": "Address",
@@ -441,7 +441,6 @@
     "video.property-loop": "Loop",
     "video.property-image": "Initial image",
     "video.property-image-placeholder": "Select the initial image",
-
     "panel.property-data": "Data",
     "panel.property-view-name": "View name",
     "panel.property-name": "Name",
@@ -449,7 +448,6 @@
     "panel.property-scalemode-none": "None",
     "panel.property-scalemode-contain": "Contain",
     "panel.property-scalemode-stretch": "Stretch",
-
     "table.property-title": "Data Table settings",
     "table.property-data": "Data",
     "table.property-date-last-range": "Date range",
@@ -518,19 +516,16 @@
     "table.cell-align-left": "Left",
     "table.cell-align-center": "Center",
     "table.cell-align-right": "Right",
-
     "table.history-filter": "Filter",
     "table.rangetype-last1h": "Last hour",
     "table.rangetype-last1d": "Last day",
     "table.rangetype-last3d": "Last 3 days",
-
     "table.alarms-title": "Table Alarms",
     "table.alarms-history-title": "Table Alarms History",
     "table.alarm-columns": "Alarms Columns",
     "table.alarm-filter": "Alarms Filter",
     "table.alarm-priority": "Priority",
     "table.alarm-tags": "Tags",
-
     "table.reports-title": "Table Reports",
     "table.report-columns": "Reports Columns",
     "table.report-view-name": "Name",
@@ -540,7 +535,6 @@
     "table.report-filter": "Reports Filter",
     "table.report-filter-name": "Name",
     "table.report-filter-count": "Max.",
-
     "editor.view-svg": "Canvas/SVG",
     "editor.view-cards": "Multi views container",
     "editor.view-maps": "Maps",
@@ -588,7 +582,7 @@
     "editor.onboarding-wizard-admin-password-message": "Set a new password for the default administrator account 'admin'.",
     "editor.onboarding-wizard-admin-password-required": "Administrator password required",
     "editor.controls-html-switch-settings": "Switch settings",
-	"editor.controls-switch": "Switch",
+    "editor.controls-switch": "Switch",
     "editor.controls-graphbar": "Bar Graph",
     "editor.controls-graph-bar-settings": "Bar Graph settings",
     "editor.controls-graphpie": "Pie Graph",
@@ -604,7 +598,6 @@
     "editor.controls-video-settings": "Video settings",
     "editor.controls-scheduler": "Time Scheduler",
     "editor.controls-scheduler-settings": "Time Scheduler settings",
-
     "scheduler.property-settings-title": "Scheduler settings",
     "scheduler.devices": "Devices",
     "scheduler.device-name": "Device Name",
@@ -631,7 +624,6 @@
     "scheduler.show-disabled": "Show Disabled",
     "scheduler.show-active": "Show Active",
     "scheduler.clear-all-schedules": "Clear All Schedules",
-
     "scheduler.col-start": "Start",
     "scheduler.col-mode": "Mode",
     "scheduler.col-device": "Device",
@@ -684,9 +676,7 @@
     "scheduler.clear-schedules": "Clear Schedules",
     "scheduler.to-remove-permission": "Are you sure you want to delete {{value}} schedule/s you have permission to modify? This action cannot be undone.",
     "scheduler.property-data": "Data",
-
     "editor.layout-settings": "Layout settings",
-
     "editor.interactivity": "Interactivity",
     "editor.interactivity-id": "id:",
     "editor.interactivity-id-title": "Identify the element",
@@ -694,7 +684,6 @@
     "editor.interactivity-class-title": "Element class",
     "editor.interactivity-name": "name",
     "editor.edit-bind-of-tags": "Edit bind of Tags",
-
     "editor.cmenu-property": "Property",
     "editor.cmenu-cut": "Cut",
     "editor.cmenu-copy": "Copy",
@@ -713,7 +702,6 @@
     "editor.cmenu-layer-marge-all": "Merge All",
     "editor.cmenu-unlock": "Unlock",
     "editor.cmenu-lock": "Lock",
-
     "editor.transform": "Transform",
     "editor.transform-x": "x",
     "editor.transform-x-title": "Change X coordinate",
@@ -769,7 +757,6 @@
     "editor.transform-angle-title": "Change rotation angle",
     "editor.transform-hide": "Hide",
     "editor.transform-lock": "Lock",
-
     "editor.align": "Align",
     "editor.align-left-title": "Align Left",
     "editor.align-center-title": "Align Center",
@@ -777,7 +764,6 @@
     "editor.align-top-title": "Align Top",
     "editor.align-middle-title": "Align Middle",
     "editor.align-bottom-title": "Align Bottom",
-
     "editor.stroke": "Stroke",
     "editor.stroke-width": "stroke width",
     "editor.stroke-width-title": "Change stroke width by 1, shift-click to change by 0.1",
@@ -791,7 +777,6 @@
     "editor.stroke-capround-title": "Linecap Round",
     "editor.stroke-shadow": "shadow",
     "editor.stroke-shadow-title": "With shadow",
-
     "editor.marker": "Marker",
     "editor.marker-start": "start",
     "editor.marker-start-title": "Select start marker type",
@@ -799,10 +784,8 @@
     "editor.marker-middle-title": "Select mid marker type",
     "editor.marker-end": "end",
     "editor.marker-end-title": "Select end marker type",
-
     "editor.hyperlink": "Hyperlink",
     "editor.hyperlink-url": "url",
-
     "editor.tools-launch-title": "Launch Current View",
     "editor.tools-select": "Select Tool",
     "editor.tools-pencil": "Pencil Tool",
@@ -813,7 +796,6 @@
     "editor.tools-path": "Path Tool",
     "editor.tools-text": "Text Tool",
     "editor.tools-image": "Image Tool (embedded)",
-
     "editor.tools-zoom-title": "Zoom Tool [Ctrl+Up/Down]",
     "editor.tools-grid-title": "Show Hide Grid",
     "editor.tools-movestep-title": "Movement step",
@@ -837,17 +819,12 @@
     "editor.tools-ungroup-title": "Ungroup Elements [G]",
     "editor.tools-hyperlink-title": "Make Hyperlink",
     "editor.tools-svg-selector": "Item list selector",
-
     "editor.settings-general": "General",
     "editor.settings-events": "Events",
     "editor.settings-actions": "Actions",
-
     "tags.ids-config-title": "Tags-Ids reference",
-
     "svg.selector.property-title": "View item list",
-
     "tutorial.editor-keyboard-shortcuts": "Editor Keyboard Shortcuts",
-
     "shapes.action-hide": "Hide",
     "shapes.action-show": "Show",
     "shapes.action-blink": "Blink",
@@ -864,7 +841,6 @@
     "shapes.action-moveByTags": "Move by tags",
     "shapes.action-refreshImage": "Refresh image",
     "shapes.action-loadImage": "Load image",
-
     "shapes.event-click": "Click",
     "shapes.event-dblclick": "DoubleClick",
     "shapes.event-mouseup": "MouseUp",
@@ -895,7 +871,6 @@
     "shapes.event-onLoad": "OnLoad",
     "shapes.event-relativefrom-window": "Window",
     "shapes.event-relativefrom-mouse": "Mouse",
-
     "pipe.property-title": "Pipe settings",
     "pipe.property-data": "Data",
     "pipe.property-style": "Style",
@@ -912,7 +887,6 @@
     "pipe.property-style-animation-image": "Select Image (SVG)",
     "pipe.property-style-animation-count": "Image count",
     "pipe.property-style-animation-delay": "Animation delay (msec.)",
-
     "slider.property-props": "Property",
     "slider.property-horizontal": "Horizontal",
     "slider.property-vertical": "Vertical",
@@ -948,7 +922,6 @@
     "slider.property-slider-width": "Bar width",
     "slider.property-handle-width": "Pointer width",
     "slider.property-handle-height": "Pointer height",
-
     "html-switch.property-off-value": "Off Value",
     "html-switch.property-on-value": "On Value",
     "html-switch.property-on-background": "On Background",
@@ -962,12 +935,10 @@
     "html-switch.property-on-text-color": "On Text color",
     "html-switch.property-font-size": "Font size",
     "html-switch.property-font": "Font",
-
     "html-input.min": "Min",
     "html-input.max": "Max",
     "html-input.out-of-range": "Value out of range",
     "html-input.not-a-number": "Value is not a number",
-
     "editor.tools-zoomlevel-title": "Zoom level",
     "editor.tools-zoomlevel-fitcanvas": "Fit to canvas",
     "editor.tools-zoomlevel-fitsection": "Fit to selection",
@@ -975,7 +946,6 @@
     "editor.tools-fillcolor-title": "Change fill color",
     "editor.tools-strokecolor-title": "Change stroke color",
     "editor.tools-palettecolor-title": "Click to change fill color, shift-click to change stroke color",
-
     "device.list-title": "Connections settings",
     "device.list-device": "Connections",
     "device.list-filter": "Filter",
@@ -996,7 +966,6 @@
     "device.list-options": "Tag options",
     "device.list-clipboard": "Copy Tag object to clipboard",
     "device.list-direction": "Direction",
-
     "devices.export": "Export Connections",
     "devices.export-json": "JSON",
     "devices.export-csv": "CSV",
@@ -1008,6 +977,7 @@
     "devices.import-template": "Import Connections with template",
     "device.property-client": "Connections Property",
     "device.property-server": "FUXA Server Property",
+    "device.property-timeout": "Timeout",
     "device.property-name": "Name",
     "device.property-type": "Type",
     "device.property-polling": "Polling",
@@ -1105,7 +1075,6 @@
     "device.property-redis-scan-select": "Select all (filtered)",
     "device.property-redis-scan-scanning": "Scanning…",
     "device.property-redis-scan-found": "Found",
-
     "device.browsetopics-property-title": "Broker Topics to subscribe and publish",
     "device.browsetopics-property-sub": "Subscribe",
     "device.browsetopics-property-pub": "Publish",
@@ -1136,7 +1105,6 @@
     "device.topic-name-exist": "The Topic name '{{value}}' already exists",
     "device.topic-subs-address-exist": "The Topic to subscribe with address '{{value}}' already exists",
     "device.topic-pubs-address-exist": "The Topic to publish with address '{{value}}' already exists",
-
     "device.property-mqtt-address": "Address (mqtt://[server]:[port])",
     "device.tag-property-title": "Tag Property",
     "device.browsetag-property-title": "Browse Tags in Server",
@@ -1159,21 +1127,16 @@
     "device.tag-property-direction": "Direction",
     "device.tag-property-edge": "Edge",
     "device.tag-property-gpio": "GPIO Number",
-
-
     "device.tag-array-id": "Array ID:",
     "device.tag-array-value": "Value:",
     "device-tag-dialog-title": "Tag Selection",
-
     "device.tag-options-title": "Tag Options",
     "device.tag-daq-enabled": "Registration Enabled",
     "device.tag-daq-changed": "Save if changed",
     "device.tag-daq-interval": "Save value interval (sec.)",
     "device.tag-daq-restored": "To restore",
-
     "device.tag-format": "Format digits (2 = #.##)",
     "device.tag-deadband": "Deadband",
-
     "device.tag-uns-path": "UNS Path",
     "device.tag-scale": "Scale Mode / Convertion",
     "device.tag-scale-mode-undefined": "No Scaling",
@@ -1210,18 +1173,12 @@
     "device.tag-property-webcam-options.quality": "quality",
     "device.tag-property-webcam-options.outputType": "outputType",
     "device.tag-property-webcam-options.callbackReturn": "callbackReturn",
-
-
-
-
     "device.edit-placeholder-titel": "Edit Placeholder",
-
     "device.connect-ok": "Ok",
     "device.connect-error": "Error",
     "device.connect-failed": "Failed",
     "device.connect-off": "Off",
     "device.connect-busy": "Busy",
-
     "devices.mode-map": "Devices diagramm",
     "devices.mode-list": "Devices list",
     "devices.list-name": "Name",
@@ -1230,27 +1187,22 @@
     "devices.list-polling": "Polling",
     "devices.list-enabled": "Enabled",
     "devices.list-status": "Status",
-
     "users.list-title": "Users settings",
     "users.list-name": "Username",
     "users.list-fullname": "Full Name",
     "users.list-groups": "Groups",
     "users.list-roles": "Roles",
     "users.list-start": "Start View",
-
     "roles.list-title": "Roles settings",
     "roles.list-index": "Index",
     "roles.list-name": "Name",
     "roles.list-description": "Description",
-
     "user-role-edit-title": "Role setting",
     "user-role-edit-name": "Name",
     "user-role-edit-index": "Index",
     "user-role-edit-description": "Description",
-
     "events-history.list-title": "Events history",
     "events-history.filter-daterange": "Date range filter",
-
     "gauges.property-props": "Property",
     "gauges.property-events": "Events",
     "gauges.property-title": "Property",
@@ -1318,7 +1270,6 @@
     "gauges.property-icon": "Icon",
     "gauges.property-icon-none": "No icon",
     "gauges.property-icons-filter": "Icons Filter",
-
     "gauges.property-update-enabled": "Enable update",
     "gauges.property-update-esc": "ESC update",
     "gauges.property-input-esc-action": "Action on leave",
@@ -1330,18 +1281,18 @@
     "gauges.property-actions": "Actions",
     "gauges.property-action-type": "Type",
     "gauges.property-action-param": "Action Id",
-    "gauges.property-action-minAngle" : "Min Angle",
-    "gauges.property-action-maxAngle" : "Max Angle",
-    "gauges.property-action-toX" : "To position X",
-    "gauges.property-action-toY" : "To position Y",
-    "gauges.property-action-duration" : "Duration",
-    "gauges.property-action-tagX" : "Position X tag",
-    "gauges.property-action-tagY" : "Position Y tag",
-    "gauges.property-action-axis" : "Axis",
-    "gauges.property-action-value-min" : "Value min",
-    "gauges.property-action-value-max" : "Value max",
-    "gauges.property-action-position-min" : "Position min",
-    "gauges.property-action-position-max" : "Position max",
+    "gauges.property-action-minAngle": "Min Angle",
+    "gauges.property-action-maxAngle": "Max Angle",
+    "gauges.property-action-toX": "To position X",
+    "gauges.property-action-toY": "To position Y",
+    "gauges.property-action-duration": "Duration",
+    "gauges.property-action-tagX": "Position X tag",
+    "gauges.property-action-tagY": "Position Y tag",
+    "gauges.property-action-axis": "Axis",
+    "gauges.property-action-value-min": "Value min",
+    "gauges.property-action-value-max": "Value max",
+    "gauges.property-action-position-min": "Position min",
+    "gauges.property-action-position-max": "Position max",
     "gauges.property-action-image-url": "Image URL",
     "gauges.property-events-mapping-from": "Context variable",
     "gauges.property-map-variable": "Add context variable to bind",
@@ -1353,7 +1304,6 @@
     "gauges.property-input-range": "Allowed input range",
     "gauges.property-input-startText": "Start text",
     "gauges.property-language-text": "Text or @TextID",
-
     "bag.property-ticks": "Ticks",
     "bag.property-divisions": "Divisions",
     "bag.property-subdivisions": "SubDivisions",
@@ -1386,7 +1336,6 @@
     "bag.property-zones": "Zones",
     "bag.property-color": "Color",
     "bag.property-fill": "Fill",
-
     "alarms.list-title": "Alarms settings",
     "alarms.list-name": "Name",
     "alarms.list-device": "Device / Variable",
@@ -1450,7 +1399,6 @@
     "alarm.property-action-destination": "View to show",
     "alarm.property-action-toastMessage": "Message to show",
     "alarm.property-action-toastType": "Type",
-
     "notifications.list-title": "Notifications settings",
     "notifications.list-name": "Name",
     "notifications.list-receiver": "Receivers",
@@ -1472,7 +1420,6 @@
     "notification.property-mode": "Mode",
     "notification.property-mode-alarm-all": "notify all new active alarms",
     "notification.property-mode-alarm-single": "notify one for priority",
-
     "scripts.list-title": "Scripts settings",
     "scripts.list-name": "Name",
     "scripts.list-type": "Type",
@@ -1481,19 +1428,15 @@
     "scripts.list-scheduling": "Scheduling / Interval",
     "scripts.list-permission": "Authorization",
     "scripts.list-options": "Script options",
-
     "script.permission-title": "Authorization",
     "script.permission-label": "(void = full for everyone)",
     "script.permission-enabled": "Enabled",
-
     "script.create-title": "Create script",
-
     "script.mode": "Execute mode",
     "script.mode-title": "Execute mode",
     "script.mode-label": "Execute mode",
     "script.mode-CLIENT": "Client (Execute in browser)",
     "script.mode-SERVER": "Server (Execute in server)",
-
     "script.property-title": "Script",
     "script.property-systems": "System functions",
     "script.property-templates": "Templates",
@@ -1574,8 +1517,8 @@
     "script.sys-fnc-setDeviceProperty-tooltip": "System function to set Device property: $setDeviceProperty(Device name as string, Property as object {address, port, ...} )",
     "script.sys-fnc-setDeviceProperty-params": "'Device name', 'Property'",
     "script.sys-fnc-getHistoricalTag-text": "$getHistoricalTags(TagIds array, from msec., to msec.)",
-    "script.sys-fnc-getHistoricalTag-tooltip":"get historical tags by milliseconds range: $getHistoricalTags([TagIds] as array, from as number, to as number)",
-    "script.sys-fnc-getHistoricalTag-params":"'Tag Ids array', 'From msec.', 'To msec.'",
+    "script.sys-fnc-getHistoricalTag-tooltip": "get historical tags by milliseconds range: $getHistoricalTags([TagIds] as array, from as number, to as number)",
+    "script.sys-fnc-getHistoricalTag-params": "'Tag Ids array', 'From msec.', 'To msec.'",
     "script.sys-fnc-sendMessage-text": "$sendMessage(address, subject, message)",
     "script.sys-fnc-sendMessage-tooltip": "System function to send Message (Mail): $sendMessage(address as string, subject as string, message as string)",
     "script.sys-fnc-sendMessage-params": "'address', 'subject', 'message'",
@@ -1588,7 +1531,6 @@
     "script.sys-fnc-ackAlarms-text": "$ackAlarm(Alarm name, types)",
     "script.sys-fnc-ackAlarms-tooltip": "System function to ACK alarm (): $ackAlarm(Alarm name as string, [types] 'highhigh|high|low')",
     "script.sys-fnc-ackAlarms-params": "'Alarm name', 'types'",
-
     "script.template-chart-data-text": "Customized chart data",
     "script.template-chart-data-tooltip": "Code template of customized chart data to return",
     "script.template-chart-data-touch-text": "Customized chart data with touch event",
@@ -1597,17 +1539,14 @@
     "script.template-invoke-chart-update-options-tooltip": "Code template to update Chart options (Y-axis scale range). CLIENT mode only!",
     "script.template-getHistoricalTagsoptions-text": "Get Historical Tags values",
     "script.template-getHistoricalTagsoptions-tooltip": "Code template to get Historical Tags values.",
-
     "client.script-access-title": "Client Scripts access",
     "client.script-access-info": "Configure access to system functions from the frontend (e.g. widgets) via window.fuxaScriptAPI.",
-
     "reports.list-title": "Reports settings",
     "reports.list-name": "Name",
     "reports.list-type": "Type",
     "reports.list-receiver": "Receiver",
     "reports.list-scheduling": "Scheduling / Interval",
     "reports.list-enabled": "Enabled",
-
     "report.property-title": "Report",
     "report.property-name": "Name",
     "report.property-receiver": "Receivers Emails",
@@ -1671,7 +1610,6 @@
     "report.chart-name": "Chart name",
     "report.chart-width": "Width",
     "report.chart-height": "Height",
-
     "maps.locations-list-title": "Locations settings",
     "maps.locations-list-name": "Name",
     "maps.locations-list-view": "View",
@@ -1701,7 +1639,6 @@
     "maps.location-property-showValue": "Show Value",
     "maps.location-property-marker-background": "Background",
     "maps.location-property-marker-color": "Color",
-
     "ar.markers-list-title": "AR marker settings",
     "ar.markers-list-id": "Marker ID",
     "ar.markers-list-label": "Label",
@@ -1717,15 +1654,12 @@
     "ar.marker-property-qr": "QR marker",
     "ar.marker-property-no-views": "No views available",
     "ar.marker-property-generate": "Generate marker",
-
     "logs.view-title": "System Logs",
     "logs.view-files": "Logs files",
-
     "events.view-ontime": "Date/Time",
     "events.view-type": "Type",
     "events.view-source": "Source",
     "events.view-text": "Text",
-
     "card.config-title": "Card settings",
     "card.config-content-type": "Content type",
     "card.config-content-view": "Content View",
@@ -1735,7 +1669,6 @@
     "card.widget-table": "Table",
     "card.widget-iframe": "Link",
     "card.style-zoom": "Zoom",
-
     "resources.lib-icons": "Icons",
     "resources.lib-images": "Images",
     "resource.list-title": "Resources list",
@@ -1743,10 +1676,8 @@
     "resource.list-type": "File type",
     "resource.list-title-fonts": "Fonts list",
     "resources.lib-widgets": "Widgets",
-
     "widgets.kiosk-title": "Widgets Kiosk",
     "widget.remove": "Remove Widget",
-
     "texts.list-title": "Language settings",
     "texts.list-filter": "Filter",
     "texts.list-filter-group": "Group",
@@ -1767,16 +1698,13 @@
     "text.settings-id": "Name (Allowed letters and numbers, no spaces)",
     "text.settings-group": "Group",
     "text.settings-value": "Text (default)",
-
     "gui.range-number-min": "Min",
     "gui.range-number-max": "Max",
     "gui.range-number-boolean": "Mask value",
     "gui.range-number-true": "True [1-1]",
     "gui.range-number-false": "False [0-0]",
     "gui.range-number-switcher": "Range as number or boolean",
-
     "dlg.bitmask-title": "Bitmask",
-
     "dlg.plugins-title": "Server Plugins",
     "dlg.plugins-info": "Not installed plugins can be installed in the server manually: 'npm install [package name]@[version]'",
     "dlg.plugins-type": "Type",
@@ -1789,7 +1717,6 @@
     "dlg.plugins-status-installed": "Installing...OK!",
     "dlg.plugins-status-removed": "Removing...OK!",
     "dlg.plugins-status-error": "Error! Try manually!",
-
     "dlg.setup-title": "Setup",
     "dlg.setup-gui": "User Interface",
     "dlg.setup-diverse": "Misc",
@@ -1865,13 +1792,11 @@
     "dlg.app-auth-tooltip": "Enabled: you have a administrator account 'admin/123456' (don't forget to change it). Server restart is required!",
     "dlg.app-settings-client-broadcast": "Broadcast to client (frontend) all tags values",
     "dlg.app-settings-lazy-view-loading": "Lazy view loading",
-
     "dlg.app-settings-daqstore": "DAQ storage",
     "dlg.app-settings-daqstore-type": "Database type",
     "dlg.app-settings-daqstore-url": "URL",
     "dlg.app-settings-daqstore-configurl": "Config URL",
     "dlg.app-settings-daqstore-queryconn": "Query connection (PGWire)",
-
     "dlg.app-settings-daqstore-questdb-host": "QuestDB Host",
     "dlg.app-settings-daqstore-ingestconn": "Ingestion connection (ILP)",
     "dlg.app-settings-daqstore-token": "Token",
@@ -1881,11 +1806,9 @@
     "dlg.app-settings-daqstore-database": "Database name",
     "dlg.app-settings-daqstore-username": "Username",
     "dlg.app-settings-daqstore-password": "Password",
-
     "dlg.app-settings-user-group-label": "Authorization type",
     "dlg.app-settings-user-group": "Groups (default)",
     "dlg.app-settings-user-roles": "Roles",
-
     "store.retention-none": "Disabled",
     "store.retention-day1": "1 day",
     "store.retention-days2": "2 days",
@@ -1897,16 +1820,13 @@
     "store.retention-year1": "1 year",
     "store.retention-year3": "3 year",
     "store.retention-year5": "5 year",
-
     "plugin.group-connection-device": "Connection device",
     "plugin.group-connection-database": "Connection database",
     "plugin.group-chart-report": "Chart image for Report",
     "plugin.group-service": "Service",
-
     "action-settings-title": "Actions Settings",
     "action-settings-readonly-tag": "Tag",
     "action-settings-readonly-values": "Values",
-
     "apikeys.list-title": "API Keys settings",
     "apikeys.list-name": "Name",
     "apikeys.list-key": "API Key",
@@ -1923,7 +1843,6 @@
     "apikeys.edit-expires": "Expiration",
     "apikeys.edit-enabled": "Enabled",
     "apikeys.edit-generate": "Generate",
-
     "msg.alarm-ack-all": "Would you like to ACK all alarms?",
     "msg.alarm-remove": "Would you like to remove Alarm?",
     "msg.text-remove": "Would you like to remove Text?",
@@ -1941,7 +1860,6 @@
     "msg.report-property-missing-value": "There are incorrect or missing values!",
     "msg.file-upload-failed": "Upload failed!",
     "msg.file-delete-failed": "Delete file failed!",
-
     "msg.home-welcome": "Wait...go to editor, map the devices, design your visualization and bind the devices variables",
     "msg.server-connection-failed": "SERVER CONNECTION FAILED!",
     "msg.project-load-error": "Unable to read '{{value}}'",

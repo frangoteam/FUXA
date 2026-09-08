@@ -17,8 +17,8 @@ import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, Modbus
 export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	// @Input() name: any;
-	@ViewChild('panelProperty', {static: false}) panelProperty: MatExpansionPanel;
-	@ViewChild('panelCertificate', {static: false}) panelCertificate: MatExpansionPanel;
+	@ViewChild('panelProperty', { static: false }) panelProperty: MatExpansionPanel;
+	@ViewChild('panelCertificate', { static: false }) panelCertificate: MatExpansionPanel;
 
 	tableRadio: any;
 	databaseTables = [];
@@ -28,38 +28,39 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	deviceType: any = {};
 	showPassword: boolean;
 
-	pollingPlcType = [{text: '50 ms', value: 50},
-		              {text: '100 ms', value: 100},
-		              {text: '200 ms', value: 200},
-					  {text: '350 ms', value: 350},
-					  {text: '500 ms', value: 500},
-					  {text: '700 ms', value: 700},
-					  {text: '1 sec', value: 1000},
-					  {text: '1.5 sec', value: 1500},
-					  {text: '2 sec', value: 2000},
-					  {text: '3 sec', value: 3000},
-					  {text: '4 sec', value: 4000},
-					  {text: '5 sec', value: 5000},
-					  {text: '10 sec', value: 10000},
-					  {text: '30 sec', value: 30000},
-					  {text: '1 min', value: 60000}];
+	pollingPlcType = [{ text: '50 ms', value: 50 },
+	{ text: '100 ms', value: 100 },
+	{ text: '200 ms', value: 200 },
+	{ text: '350 ms', value: 350 },
+	{ text: '500 ms', value: 500 },
+	{ text: '700 ms', value: 700 },
+	{ text: '1 sec', value: 1000 },
+	{ text: '1.5 sec', value: 1500 },
+	{ text: '2 sec', value: 2000 },
+	{ text: '3 sec', value: 3000 },
+	{ text: '4 sec', value: 4000 },
+	{ text: '5 sec', value: 5000 },
+	{ text: '10 sec', value: 10000 },
+	{ text: '30 sec', value: 30000 },
+	{ text: '1 min', value: 60000 }];
 
-	pollingWebApiType = [{text: '1 sec', value: 1000},
-						 {text: '2 sec', value: 2000},
-						 {text: '3 sec', value: 3000},
-						 {text: '5 sec', value: 5000},
-						 {text: '10 sec', value: 10000},
-						 {text: '30 sec', value: 30000},
-						 {text: '1 min', value: 60000},
-						 {text: '2 min', value: 60000 * 2},
-						 {text: '5 min', value: 60000 * 5},
-						 {text: '10 min', value: 60000 * 10},
-						 {text: '30 min', value: 60000 * 30},
-						 {text: '60 min', value: 60000 * 60}];
+	pollingWebApiType = [{ text: '1 sec', value: 1000 },
+	{ text: '2 sec', value: 2000 },
+	{ text: '3 sec', value: 3000 },
+	{ text: '5 sec', value: 5000 },
+	{ text: '10 sec', value: 10000 },
+	{ text: '30 sec', value: 30000 },
+	{ text: '1 min', value: 60000 },
+	{ text: '2 min', value: 60000 * 2 },
+	{ text: '5 min', value: 60000 * 5 },
+	{ text: '10 min', value: 60000 * 10 },
+	{ text: '30 min', value: 60000 * 30 },
+	{ text: '60 min', value: 60000 * 60 }];
 
-    pollingWebCamType = this.pollingWebApiType.concat([{text: 'Disabled', value: -1}]);
+	pollingWebCamType = this.pollingWebApiType.concat([{ text: 'Disabled', value: -1 }]);
 
 	pollingType = this.pollingPlcType;
+
 
 	isFuxaServer = false;
 	isToRemove = false;
@@ -68,7 +69,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	propertyLoading: boolean;
 	securityMode: any = [];
 	security = new DeviceSecurity();
-	baudrateType = [110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200, 128000, 256000, 921600 ];
+	baudrateType = [110, 300, 600, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200, 128000, 256000, 921600];
 	databitsType = [7, 8];
 	stopbitsType = [1, 1.5, 2];
 	parityType = ['None', 'Odd', 'Even'];
@@ -78,10 +79,10 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	modbusRtuOptionType = [ModbusOptionType.SerialPort, ModbusOptionType.RTUBufferedPort, ModbusOptionType.AsciiPort];
 	modbusTcpOptionType = [ModbusOptionType.TcpPort, ModbusOptionType.UdpPort, ModbusOptionType.TcpRTUBufferedPort, ModbusOptionType.TelnetPort];
 	modbusReuseModeType = ModbusReuseModeType;
-    redisReadModeType = RedisReadModeType;
-    redisReadModeSimple = RedisReadModeType.simple;
-    redisReadModeHash = RedisReadModeType.hash;
-    // redisReadModeCustom = RedisReadModeType.custom;
+	redisReadModeType = RedisReadModeType;
+	redisReadModeSimple = RedisReadModeType.simple;
+	redisReadModeHash = RedisReadModeType.hash;
+	// redisReadModeCustom = RedisReadModeType.custom;
 	redisOptions = new RedisOptions();
 	writeArgsTooltip = '';
 	result = '';
@@ -89,16 +90,16 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	private subscriptionHostInterfaces: Subscription;
 	private subscriptionDeviceWebApiRequest: Subscription;
 
-    private projectService: ProjectService;
+	private projectService: ProjectService;
 
 	constructor(
 		private hmiService: HmiService,
-        private translateService: TranslateService,
-        private appService: AppService,
+		private translateService: TranslateService,
+		private appService: AppService,
 		public dialogRef: MatDialogRef<DevicePropertyComponent>,
 		@Inject(MAT_DIALOG_DATA) public data: any) {
-            this.projectService = data.projectService;
-        }
+		this.projectService = data.projectService;
+	}
 
 	ngOnInit() {
 		this.isToRemove = this.data.remove;
@@ -126,25 +127,25 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 						let sec = res.result[idx];
 						let mode = this.securityModeToString(sec.securityMode);
 						if (sec.securityPolicy.indexOf(secPol.None) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.None.toString() + ' - ' + mode});
+							this.securityMode.push({ value: sec, text: SecurityPolicy.None.toString() + ' - ' + mode });
 						} else if (sec.securityPolicy.indexOf(secPol.Basic128Rsa15) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Basic128Rsa15.toString() + ' - ' + mode});
+							this.securityMode.push({ value: sec, text: SecurityPolicy.Basic128Rsa15.toString() + ' - ' + mode });
 						} else if (sec.securityPolicy.indexOf(secPol.Basic128) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Basic128.toString() + ' - ' + mode});
+							this.securityMode.push({ value: sec, text: SecurityPolicy.Basic128.toString() + ' - ' + mode });
 						} else if (sec.securityPolicy.indexOf(secPol.Basic192Rsa15) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Basic192Rsa15.toString() + ' - ' + mode});
+							this.securityMode.push({ value: sec, text: SecurityPolicy.Basic192Rsa15.toString() + ' - ' + mode });
 						} else if (sec.securityPolicy.indexOf(secPol.Basic192) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Basic192.toString() + ' - ' + mode});
+							this.securityMode.push({ value: sec, text: SecurityPolicy.Basic192.toString() + ' - ' + mode });
 						} else if (sec.securityPolicy.indexOf(secPol.Basic256Rsa15) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Basic256Rsa15.toString() + ' - ' + mode});
+							this.securityMode.push({ value: sec, text: SecurityPolicy.Basic256Rsa15.toString() + ' - ' + mode });
 						} else if (sec.securityPolicy.indexOf(secPol.Basic256Sha256) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Basic256Sha256.toString() + ' - ' + mode});
+							this.securityMode.push({ value: sec, text: SecurityPolicy.Basic256Sha256.toString() + ' - ' + mode });
 						} else if (sec.securityPolicy.indexOf(secPol.Basic256) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Basic256.toString() + ' - ' + mode});
+							this.securityMode.push({ value: sec, text: SecurityPolicy.Basic256.toString() + ' - ' + mode });
 						} else if (sec.securityPolicy.indexOf(secPol.Aes128_Sha256_RsaOaep) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Aes128_Sha256_RsaOaep.toString() + ' - ' + mode});
+							this.securityMode.push({ value: sec, text: SecurityPolicy.Aes128_Sha256_RsaOaep.toString() + ' - ' + mode });
 						} else if (sec.securityPolicy.indexOf(secPol.Aes256_Sha256_RsaPss) !== -1) {
-							this.securityMode.push({value: sec, text: SecurityPolicy.Aes256_Sha256_RsaPss.toString() + ' - ' + mode});
+							this.securityMode.push({ value: sec, text: SecurityPolicy.Aes256_Sha256_RsaPss.toString() + ' - ' + mode });
 						}
 						if (this.isSecurityMode(sec)) {
 							this.securityRadio = sec;
@@ -184,28 +185,31 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			});
 		}
 
-        if (this.data.device.property) {
-            if (!this.data.device.property.baudrate) {
-                this.data.device.property.baudrate = 9600;
-            }
-            if (!this.data.device.property.databits) {
-                this.data.device.property.databits = 8;
-            }
-            if (!this.data.device.property.stopbits) {
-                this.data.device.property.stopbits = 1;
-            }
-            if (!this.data.device.property.parity) {
-                this.data.device.property.parity = 'None';
-            }
-            if (!this.data.device.property.forceFC16) {
-                this.data.device.property.forceFC16 = false;
-            }
-        }
+		if (this.data.device.property) {
+			if (!this.data.device.property.baudrate) {
+				this.data.device.property.baudrate = 9600;
+			}
+			if (!this.data.device.property.databits) {
+				this.data.device.property.databits = 8;
+			}
+			if (!this.data.device.property.stopbits) {
+				this.data.device.property.stopbits = 1;
+			}
+			if (!this.data.device.property.parity) {
+				this.data.device.property.parity = 'None';
+			}
+			if (!this.data.device.property.forceFC16) {
+				this.data.device.property.forceFC16 = false;
+			}
+			if (!this.data.device.property.timeout) {
+				this.data.device.property.timeout = (this.data.device.type === DeviceType.MQTTclient) ? 10000 : 2000;
+			}
+		}
 		if (this.data.device.type === DeviceType.REDIS) {
 			const opts = this.data.device?.property?.options;
 			this.redisOptions = (typeof opts === 'string')
-			  ? new RedisOptions()
-			  : (opts || new RedisOptions());
+				? new RedisOptions()
+				: (opts || new RedisOptions());
 		}
 		this.subscriptionHostInterfaces = this.hmiService.onHostInterfaces.subscribe(res => {
 			if (res.result) {
@@ -251,7 +255,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	onCheckOpcUaServer() {
 		this.propertyLoading = true;
-        this.propertyError = '';
+		this.propertyError = '';
 		this.hmiService.askDeviceProperty(this.data.device.property.address, this.data.device.type);
 	}
 
@@ -264,7 +268,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	onCheckOdbc() {
 		this.propertyLoading = true;
 		this.result = '';
-		this.hmiService.askDeviceProperty(<EndPointSettings> {
+		this.hmiService.askDeviceProperty(<EndPointSettings>{
 			address: this.data.device.property.address,
 			uid: this.security.username,
 			pwd: this.security.password,
@@ -286,19 +290,19 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	onDeviceTypeChanged() {
-		if (this.data.device.type === DeviceType.WebAPI ) {
+		if (this.data.device.type === DeviceType.WebAPI) {
 			this.pollingType = this.pollingWebApiType;
 		} else if (this.data.device.type === DeviceType.WebCam) {
-            this.pollingType = this.pollingWebCamType;
-        } else {
+			this.pollingType = this.pollingWebCamType;
+		} else {
 			this.pollingType = this.pollingPlcType;
 		}
 	}
 
 	isValid(device): boolean {
-        if (!device.name || !device.type) {
-            return false;
-        }
+		if (!device.name || !device.type) {
+			return false;
+		}
 		return (this.data.exist.find((n) => n === device.name)) ? false : true;
 	}
 
@@ -366,9 +370,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		}
 	}
 
-    keyDownStopPropagation(event) {
-        event.stopPropagation();
-    }
+	keyDownStopPropagation(event) {
+		event.stopPropagation();
+	}
 
 	isWithPolling() {
 		if (this.data.device?.type === DeviceType.internal) {
