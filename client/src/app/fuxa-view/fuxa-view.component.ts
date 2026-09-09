@@ -77,6 +77,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     viewLoaded: boolean = false;
     private viewRenderDelay = 0; // Delay to render view after loading SVG content
+    /**
+     * Index supplied when a template page is opened. It is used to resolve
+     * variable names containing the literal {index}, e.g.
+     * "UDT Veld.Motor[{index}].EnableUDT".
+     */
+    private templateIndex: string | number | null = null;
 
     private subscriptionOnChange: Subscription;
     protected staticValues: any = {};
@@ -480,8 +486,71 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
      * @param device if don't have a replace, check the device tags name to replace
      * @returns
      */
+    /**
+     * Resolves an indexed PLC tag name in a template view to the ID of a
+     * configured FUXA tag. The configured OPC-UA tags remain the source of
+     * truth; this method only selects one of them when the page is loaded.
+     */
+    private applyIndexedTagMapping(target: any, tags?: Tag[]): boolean {
+        if (this.templateIndex === null || this.templateIndex === undefined ||
+            !target?.variableId || !tags) {
+            return false;
+        }
+
+        // FUXA uses '@' for a placeholder variable. Keep it in the editor so
+        // the binding is saved, but remove it before looking up the real tag.
+        const templateName = target.variableId.startsWith(PlaceholderDevice.id)
+            ? target.variableId.substring(PlaceholderDevice.id.length)
+            : target.variableId;
+
+        if (!templateName.includes('{index}')) {
+            return false;
+        }
+
+        const requestedName = templateName.replace(/\{index\}/g, String(this.templateIndex));
+        console.info(`[FUXA template] Index=${this.templateIndex}; resolving ${requestedName}`);
+        const tag = tags.find(item =>
+            item.name === requestedName ||
+            item.address === requestedName ||
+            item.label === requestedName ||
+            (item as any).unsPath === requestedName
+        );
+
+        if (!tag) {
+            console.warn(`FUXA template tag not found: ${requestedName}`);
+            return false;
+        }
+
+        target.variableId = tag.id;
+        target.variableValue = tag.value;
+        console.info(`[FUXA template] resolved ${requestedName}`, tag);
+        return true;
+    }
+
+    /**
+     * Returns the current value of the internal FUXA tag named "Index".
+     * This makes a template reusable from normal FUXA actions: first set
+     * Index, then open the template page.
+     */
+    private getIndexFromFuxaTag(): string | number | null {
+        const fuxaDevice = this.projectService.getDeviceFromId('0');
+        const indexTag = (Object.values(fuxaDevice?.tags ?? {}) as Tag[])
+            .find((tag: Tag) => tag.name === 'Index');
+
+        if (!indexTag) {
+            console.warn('FUXA template Index tag was not found on the FUXA device.');
+            return null;
+        }
+
+        const variables = (this.hmiService as any).variables ?? {};
+        return variables[indexTag.id]?.value ?? indexTag.value ?? null;
+    }
+
     protected applyVariableMappingTo(target, tags?: Tag[]) {
         if (!target || !target['variableId']) {
+            return;
+        }
+        if (this.applyIndexedTagMapping(target, tags)) {
             return;
         }
         if (this.plainVariableMapping.hasOwnProperty(target.variableId)) {
@@ -872,6 +941,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         let view: View = await this.getView(viewref);
         this.closeAllCards();
         if (view) {
+            // An explicit page parameter takes precedence. Otherwise use the
+            // normal internal FUXA tag "Index", which can be set by an event.
+            this.templateIndex = options?.templateIndex ?? this.getIndexFromFuxaTag();
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);
             }
