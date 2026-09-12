@@ -16,6 +16,7 @@
     "client": "ng serve -c client",
     "build": "ng build",
     "lint": "ng lint",
+    "test:scripts": "node --test test/home-scheduled-scripts.test.cjs",
     "e2e": "ng e2e"
   },
   "dependencies": {
