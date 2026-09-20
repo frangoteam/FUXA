@@ -7,6 +7,7 @@ var Device = require('./device');
 
 var sharedDevices = {};             // Shared Devices list
 var activeDevices = {};             // Actives Devices list
+var failedDevices = {};             // Configured devices that could not be created
 var runtime;                        // Access to application resource like logger/settings
 var wokingStatus;                   // Current status (start/stop) to know if is working
 
@@ -100,6 +101,7 @@ function updateDevice(device) {
  * @param {*} device
  */
 function removeDevice(device) {
+    delete failedDevices[device.id];
     if (!activeDevices[device.id]) {
         delete activeDevices[device.id];
     } else {
@@ -119,6 +121,7 @@ function load() {
     var tempdevices = runtime.project.getDevices();
     var serverDevice = runtime.project.getServer();
     activeDevices = {};
+    failedDevices = {};
     runtime.daqStorage.reset();
     if (serverDevice) {
         devices.loadDevice(serverDevice);
@@ -162,11 +165,20 @@ function loadDevice(device) {
          if (tdev && tdev.start) {
             runtime.logger.info(`'${device.name}' created`);
             activeDevices[device.id] = tdev;
+            delete failedDevices[device.id];
             activeDevices[device.id].bindGetProperty(runtime.project.getDeviceProperty);
             activeDevices[device.id].bindUpdateConnectionStatus(setDeviceConnectionStatus);
         } else {
             if (!Device.isInternal(device)) {
                 runtime.logger.warn('try to create ' + device.name + ' but plugin is missing!');
+                if (device.enabled !== false) {
+                    failedDevices[device.id] = 'connect-failed';
+                    if (runtime.events) {
+                        runtime.events.emit('device-status:changed', { id: device.id, status: 'connect-failed' });
+                    }
+                } else {
+                    delete failedDevices[device.id];
+                }
             }
             return false;
         }
@@ -186,6 +198,11 @@ function getDevicesStatus() {
     var adev = {};
     for (var id in activeDevices) {
         adev[id] = activeDevices[id].getStatus();
+    }
+    for (var id in failedDevices) {
+        if (!adevs[id]) {
+            adev[id] = failedDevices[id];
+        }
     }
     return adev;
 }
