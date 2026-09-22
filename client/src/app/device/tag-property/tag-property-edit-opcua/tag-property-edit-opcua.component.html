@@ -20,6 +20,22 @@
                     <input formControlName="tagName" type="text" readonly>
                 </div>
                 <div class="my-form-field item-block mt10">
+                    <span>Address mode</span>
+                    <mat-select formControlName="pathMode" (selectionChange)="onPathModeChanged($event.value)">
+                        <mat-option *ngFor="let mode of pathModes" [value]="mode.value">
+                            {{ mode.text }}
+                        </mat-option>
+                    </mat-select>
+                </div>
+                <div class="my-form-field item-block mt10">
+                    <span>NodeId</span>
+                    <input formControlName="tagAddress" type="text" readonly>
+                </div>
+                <div class="my-form-field item-block mt10" *ngIf="formGroup.get('pathMode').value === 'browsePath'">
+                    <span>BrowsePath</span>
+                    <input formControlName="browsePath" type="text">
+                </div>
+                <div class="my-form-field item-block mt10">
                     <span>{{'device.tag-property-type' | translate}}</span>
                     <mat-select formControlName="tagType">
                         <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
@@ -34,6 +50,14 @@
             </div>
         </ng-container>
         <ng-template #addTag>
+            <div class="my-form-field item-block" style="margin: 0px 10px 10px 10px">
+                <span>Address mode</span>
+                <mat-select [value]="pathMode" (selectionChange)="onPathModeChanged($event.value)">
+                    <mat-option *ngFor="let mode of pathModes" [value]="mode.value">
+                        {{ mode.text }}
+                    </mat-option>
+                </mat-select>
+            </div>
             <div style="overflow: auto; margin: 0px 10px">
                 <ngx-treetable #treetable [config]="config" (expand)="queryNext($event)"></ngx-treetable>
             </div>
