@@ -223,6 +223,10 @@ export class TagPropertyService {
                     tag.label = n.text;
                     tag.type = n.type;
                     tag.address = n.id;
+                    (tag as any).pathMode = result.pathMode || 'id';
+                    if ((tag as any).pathMode === 'browsePath') {
+                        (tag as any).browsePath = (n as any).browsePath;
+                    }
                     this.checkToAdd(tag, result.device);
                     if (tagsMap) {
                         tagsMap[tag.id] = tag;
@@ -252,6 +256,12 @@ export class TagPropertyService {
                 if (result) {
                     tag.type = result.tagType;
                     tag.description = result.tagDescription;
+                    (tag as any).pathMode = result.pathMode || 'id';
+                    if ((tag as any).pathMode === 'browsePath') {
+                        (tag as any).browsePath = result.browsePath;
+                    } else {
+                        delete (tag as any).browsePath;
+                    }
                     if (checkToAdd) {
                         this.checkToAdd(tag, device);
                     } else if (tag.id !== oldTagId) {
@@ -266,7 +276,7 @@ export class TagPropertyService {
             })
         );
     }
-
+    
     public editTagPropertyBacnet(device: Device, tagsMap?: any): Observable<any> {
         let dialogRef = this.dialog.open(TagPropertyEditBacnetComponent, {
             disableClose: true,
