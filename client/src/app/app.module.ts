@@ -241,6 +241,12 @@ import { SectionMessageDialogComponent } from './editor/section-message-dialog/s
 import { ArMarkerListComponent } from './ar/ar-marker-list/ar-marker-list.component';
 import { ArMarkerPropertyComponent } from './ar/ar-marker-property/ar-marker-property.component';
 import { ArViewComponent } from './ar/ar-view/ar-view.component';
+import { RecipeListComponent } from './recipes/recipe-list/recipe-list.component';
+import { RecipeEditorComponent } from './recipes/recipe-editor/recipe-editor.component';
+import { RecipeProgressComponent } from './recipes/recipe-progress/recipe-progress.component';
+import { HtmlRecipeViewComponent, HtmlRecipeComponent } from './gauges/controls/html-recipe/html-recipe.component';
+import { HtmlRecipeNewDialogComponent } from './gauges/controls/html-recipe/html-recipe-new-dialog/html-recipe-new-dialog.component';
+import { RecipePropertyComponent } from './gauges/controls/html-recipe/recipe-property/recipe-property.component';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -431,7 +437,14 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         SectionMessageDialogComponent,
         ArMarkerListComponent,
         ArMarkerPropertyComponent,
-        ArViewComponent
+        ArViewComponent,
+        RecipeListComponent,
+        RecipeEditorComponent,
+        RecipeProgressComponent,
+        HtmlRecipeViewComponent,
+        HtmlRecipeComponent,
+        HtmlRecipeNewDialogComponent,
+        RecipePropertyComponent
     ],
     bootstrap: [AppComponent], imports: [BrowserModule,
         FormsModule,

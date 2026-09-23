@@ -1,0 +1,23 @@
+<div class="newrecipe-dialog" [style.backgroundColor]="data.backgroundColor" [style.color]="data.color"
+    [style.--recipe-input-background]="data.backgroundColor">
+    <h1 mat-dialog-title class="dialog-title pointer-move" mat-dialog-draggable [style.color]="data.color">{{'recipe.new' | translate}}</h1>
+    <mat-icon (click)="onCancel()" class="dialog-close-btn" [style.color]="data.color">clear</mat-icon>
+    <div mat-dialog-content class="dialog-content">
+        <div class="my-form-field dialog-field">
+            <span [style.color]="data.color" [style.opacity]="0.7">{{'recipes.name' | translate}}</span>
+            <input [(ngModel)]="dialogName" [style.color]="data.color" type="text">
+        </div>
+        <div class="my-form-field dialog-field">
+            <span [style.color]="data.color" [style.opacity]="0.7">{{'recipes.description' | translate}}</span>
+            <input [(ngModel)]="dialogDescription" [style.color]="data.color" type="text">
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button type="button" mat-raised-button (click)="onCancel()" [style.backgroundColor]="data.backgroundColor" [style.color]="data.color">
+            {{'dlg.cancel' | translate}}
+        </button>
+        <button type="button" mat-raised-button color="primary" (click)="onSave()" [style.backgroundColor]="data.backgroundColor" [style.color]="data.color">
+            {{'dlg.ok' | translate}}
+        </button>
+    </div>
+</div>
