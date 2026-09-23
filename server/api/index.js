@@ -292,6 +292,9 @@ function mergeUserSettings(settings) {
         runtime.settings.authRateLimitMax = settings.authRateLimitMax;
     }
     runtime.settings.secureEnabled = settings.secureEnabled;
+    if (!utils.isNullOrUndefined(settings.secureOnlyEditor)) {
+        runtime.settings.secureOnlyEditor = settings.secureOnlyEditor;
+    }
     runtime.settings.logFull = settings.logFull;
     runtime.settings.userRole = settings.userRole;
     runtime.settings.nodeRedEnabled = settings.nodeRedEnabled;

@@ -30,7 +30,8 @@
                                     </mat-select>
                                 </div>
                                 <div class="my-form-field ml20 inbk">
-                                    <span>{{'dlg.app-settings-auth-only-editor' | translate}}</span>
+                                    <span style="display: inline-block;">{{'dlg.app-settings-auth-only-editor' | translate}}</span>
+                                    <mat-icon class="my-form-field-info" style="height: 16px" matTooltip="{{authOnlyEditorTooltip}}">error_outline</mat-icon>
                                     <mat-slide-toggle color="primary" [(ngModel)]="settings.secureOnlyEditor" [disabled]="authentication === ''"></mat-slide-toggle>
                                 </div>
                             </div>

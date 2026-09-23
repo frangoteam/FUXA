@@ -51,6 +51,7 @@ export class AppSettingsComponent implements OnInit {
     originalSecureEnabled = false;
     authentication = '';
     authenticationTooltip = '';
+    authOnlyEditorTooltip = '';
     smtpTesting = false;
     smtpTestAddress = '';
     showPassword = false;
@@ -79,6 +80,7 @@ export class AppSettingsComponent implements OnInit {
             this.nodeRedAuthModeType[i].text = this.translateService.instant(this.nodeRedAuthModeType[i].text);
         }
         this.translateService.get('dlg.app-auth-tooltip').subscribe((txt: string) => { this.authenticationTooltip = txt; });
+        this.translateService.get('dlg.app-settings-auth-only-editor-tooltip').subscribe((txt: string) => { this.authOnlyEditorTooltip = txt; });
 
         if (this.settings.secureEnabled) {
             this.authentication = this.settings.tokenExpiresIn;

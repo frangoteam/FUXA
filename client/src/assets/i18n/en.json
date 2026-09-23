@@ -1784,6 +1784,7 @@
     "dlg.app-settings-logs": "Logs",
     "dlg.app-settings-auth-token": "Authentication with Token",
     "dlg.app-settings-auth-only-editor": "Only for Editor",
+    "dlg.app-settings-auth-only-editor-tooltip": "Enabled: sign-in required only for Editor and admin pages, values can be changed by anyone. Disabled: sign-in required to change values too.",
     "dlg.app-settings-auth-secret": "Secret code",
     "dlg.app-auth-disabled": "Disabled",
     "dlg.app-auth-expiration-15m": "Enabled with token expiration in 15 min.",
