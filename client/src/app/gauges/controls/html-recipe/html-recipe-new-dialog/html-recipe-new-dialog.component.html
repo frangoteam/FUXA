@@ -1,24 +1,23 @@
-<div class="newrecipe-dialog">
-    <div class="dialog-header">
-        <mat-icon>add</mat-icon>
-        <h3>{{'recipe.new' | translate}}</h3>
+<div class="newrecipe-dialog" [style.backgroundColor]="data.backgroundColor" [style.color]="data.color"
+    [style.--recipe-input-background]="data.backgroundColor">
+    <h1 mat-dialog-title class="dialog-title pointer-move" mat-dialog-draggable [style.color]="data.color">{{'recipe.new' | translate}}</h1>
+    <mat-icon (click)="onCancel()" class="dialog-close-btn" [style.color]="data.color">clear</mat-icon>
+    <div mat-dialog-content class="dialog-content">
+        <div class="my-form-field dialog-field">
+            <span [style.color]="data.color" [style.opacity]="0.7">{{'recipes.name' | translate}}</span>
+            <input [(ngModel)]="dialogName" [style.color]="data.color" type="text">
+        </div>
+        <div class="my-form-field dialog-field">
+            <span [style.color]="data.color" [style.opacity]="0.7">{{'recipes.description' | translate}}</span>
+            <input [(ngModel)]="dialogDescription" [style.color]="data.color" type="text">
+        </div>
     </div>
-    <div class="dialog-content">
-        <mat-form-field appearance="outline" class="dialog-field full-width">
-            <mat-label>{{'recipes.name' | translate}}</mat-label>
-            <input matInput [(ngModel)]="dialogName" />
-        </mat-form-field>
-        <mat-form-field appearance="outline" class="dialog-field full-width">
-            <mat-label>{{'recipes.description' | translate}}</mat-label>
-            <input matInput [(ngModel)]="dialogDescription" />
-        </mat-form-field>
-    </div>
-    <div class="dialog-actions">
-        <button type="button" mat-stroked-button (click)="onCancel()">
+    <div mat-dialog-actions class="dialog-action">
+        <button type="button" mat-raised-button (click)="onCancel()" [style.backgroundColor]="data.backgroundColor" [style.color]="data.color">
             {{'dlg.cancel' | translate}}
         </button>
-        <button type="button" mat-stroked-button color="primary" (click)="onSave()">
-            {{'recipe.save' | translate}}
+        <button type="button" mat-raised-button color="primary" (click)="onSave()" [style.backgroundColor]="data.backgroundColor" [style.color]="data.color">
+            {{'dlg.ok' | translate}}
         </button>
     </div>
 </div>

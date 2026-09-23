@@ -2,6 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { RecipeService } from '../../../../_services/recipe.service';
 import { Recipe } from '../../../../_models/recipe';
 import { FlexAuthValues } from '../../../gauge-property/flex-auth/flex-auth.component';
+import { Utils } from '../../../../_helpers/utils';
+import { Define } from '../../../../_helpers/define';
 
 /**
  * Property panel for the HTML recipe widget used inside the SVG editor.
@@ -23,6 +25,8 @@ export class RecipePropertyComponent implements OnInit {
     recipes: { id: string; data: Recipe }[] = [];
     property: any = {};
     loading = false;
+    defaultColor = Utils.defaultColor;
+    fonts = Define.fonts;
 
     constructor(private recipeService: RecipeService) { }
 
@@ -40,7 +44,12 @@ export class RecipePropertyComponent implements OnInit {
         this.property.textColor ??= '#505050';
         this.property.borderColor ??= '#cccccc';
         this.property.accentColor ??= '#2196f3';
+        this.property.fontFamily ??= 'Roboto-Regular';
+        this.property.fontSize ??= 12;
         this.property.readonly ??= false;
+        this.property.showType ??= true;
+        this.property.tagAlign ??= 'left';
+        this.property.valueAlign ??= 'right';
         // Additive visibility defaults — saved views without them stay valid (FR-31)
         this.property.visibleActions ??= {};
         this.property.visibleActions.new ??= true;

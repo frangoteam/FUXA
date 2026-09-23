@@ -28,4 +28,6 @@ export class ConfirmDialogComponent {
 export interface ConfirmDialogData {
     msg: string;
     hideCancel?: boolean;
+    backgroundColor?: string;
+    color?: string;
 }

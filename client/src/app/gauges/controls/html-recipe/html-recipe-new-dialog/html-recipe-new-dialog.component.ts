@@ -1,16 +1,17 @@
-import { Component, Inject, ViewEncapsulation } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export interface HtmlRecipeNewDialogData {
     name: string;
     description: string;
+    backgroundColor?: string;
+    color?: string;
 }
 
 @Component({
     selector: 'html-recipe-new-dialog',
     templateUrl: './html-recipe-new-dialog.component.html',
-    styleUrls: ['./html-recipe-new-dialog.component.css'],
-    encapsulation: ViewEncapsulation.None
+    styleUrls: ['./html-recipe-new-dialog.component.scss']
 })
 export class HtmlRecipeNewDialogComponent {
     dialogName: string;

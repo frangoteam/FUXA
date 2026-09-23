@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Recipe, RecipeEntry, RecipeProgressEvent, RecipeCompleteEvent } from '../../../_models/recipe';
 import { Subscription } from 'rxjs';
 import { HtmlRecipeNewDialogComponent } from './html-recipe-new-dialog/html-recipe-new-dialog.component';
+import { ConfirmDialogComponent, ConfirmDialogData } from '../../../gui-helpers/confirm-dialog/confirm-dialog.component';
 
 /**
  * Runtime view component for the HTML recipe widget.
@@ -21,7 +22,7 @@ import { HtmlRecipeNewDialogComponent } from './html-recipe-new-dialog/html-reci
 @Component({
     selector: 'html-recipe-view',
     templateUrl: './html-recipe.component.html',
-    styleUrls: ['./html-recipe.component.css']
+    styleUrls: ['./html-recipe.component.scss']
 })
 export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
@@ -68,6 +69,8 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
     textColor: string = '#505050';
     borderColor: string = '#cccccc';
     accentColor: string = '#2196f3';
+    fontFamily: string = 'Roboto-Regular';
+    fontSize: number = 12;
     borderWidth: number = 1;
 
     /** Progress state during download / upload execution */
@@ -361,29 +364,34 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
         });
     }
 
-    /**
-     * Delete the current instance after a native confirm dialog.
-     * Reloads the instance list on success, surfaces errors on failure (FR-26).
-     */
+    /** Delete the current instance after confirmation. */
     onDelete() {
         if (this.busy || !this.currentInstanceId || !this.currentInstance) return;
 
         const name = this.currentInstance.name || this.currentInstanceId;
-        if (!confirm(this.translateService.instant('recipe.delete-confirm', { name }))) {
-            return;
-        }
-
-        this.deleting = true;
-        this.error = '';
-        this.recipeService.deleteRecipeInstance(this.currentInstanceId).subscribe({
-            next: () => {
-                this.deleting = false;
-                this.loadInstances();
-            },
-            error: (err) => {
-                this.deleting = false;
-                this.error = err?.error?.error || this.translateService.instant('recipe.delete-failed');
+        const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+            data: <ConfirmDialogData>{
+                msg: this.translateService.instant('recipe.delete-confirm', { name }),
+                backgroundColor: this.backgroundColor,
+                color: this.textColor
             }
+        });
+
+        dialogRef.afterClosed().subscribe(confirmed => {
+            if (!confirmed) return;
+
+            this.deleting = true;
+            this.error = '';
+            this.recipeService.deleteRecipeInstance(this.currentInstanceId).subscribe({
+                next: () => {
+                    this.deleting = false;
+                    this.loadInstances();
+                },
+                error: (err) => {
+                    this.deleting = false;
+                    this.error = err?.error?.error || this.translateService.instant('recipe.delete-failed');
+                }
+            });
         });
     }
 
@@ -500,7 +508,12 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
         }));
 
         const dialogRef = this.dialog.open(HtmlRecipeNewDialogComponent, {
-            data: { name: '', description: '' },
+            data: {
+                name: '',
+                description: '',
+                backgroundColor: this.backgroundColor,
+                color: this.textColor
+            },
             disableClose: true
         });
 
@@ -547,20 +560,6 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
         this.readonly = readonly;
     }
 
-    /** Return the badge colour for a given tag type */
-    getTagTypeColor(tagType: string): string {
-        switch (tagType?.toLowerCase()) {
-            case 'boolean':
-            case 'bool': return '#4caf50';
-            case 'number':
-            case 'int':
-            case 'dint':
-            case 'real':
-            case 'float': return '#2196f3';
-            default: return '#ff9800';
-        }
-    }
-
     /** Check whether a tag type belongs to the numeric family */
     isNumericType(tagType: string): boolean {
         const t = (tagType || '').toLowerCase();
@@ -574,12 +573,14 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
     }
 
     /** Apply designer colours to the widget */
-    setColors(colors: { background?: string; text?: string; border?: string; accent?: string }) {
+    setColors(colors: { background?: string; text?: string; border?: string; accent?: string; fontFamily?: string; fontSize?: number }) {
         if (colors) {
             this.backgroundColor = colors.background || this.backgroundColor;
             this.textColor = colors.text || this.textColor;
             this.borderColor = colors.border || this.borderColor;
             this.accentColor = colors.accent || this.accentColor;
+            this.fontFamily = colors.fontFamily || this.fontFamily;
+            this.fontSize = colors.fontSize || this.fontSize;
         }
     }
 }
@@ -651,6 +652,11 @@ export class HtmlRecipeComponent extends GaugeBaseComponent {
         gab.property.textColor ??= '#505050';
         gab.property.borderColor ??= '#cccccc';
         gab.property.accentColor ??= '#2196f3';
+        gab.property.fontFamily ??= 'Roboto-Regular';
+        gab.property.fontSize ??= 12;
+        gab.property.showType ??= true;
+        gab.property.tagAlign ??= 'left';
+        gab.property.valueAlign ??= 'right';
         // New permission/visibility fields — additive defaults keep saved views valid (FR-31)
         gab.property.visibleActions ??= {};
         gab.property.visibleActions.new ??= true;
@@ -669,7 +675,9 @@ export class HtmlRecipeComponent extends GaugeBaseComponent {
             background: gab.property.backgroundColor,
             text: gab.property.textColor,
             border: gab.property.borderColor,
-            accent: gab.property.accentColor
+            accent: gab.property.accentColor,
+            fontFamily: gab.property.fontFamily,
+            fontSize: gab.property.fontSize
         });
 
         componentRef.changeDetectorRef.detectChanges();

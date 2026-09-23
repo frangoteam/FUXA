@@ -37,6 +37,9 @@
             <mat-slide-toggle [(ngModel)]="property.readonly" (change)="onPropertyChanged()">
                 {{'recipe.property-readonly' | translate}}
             </mat-slide-toggle>
+            <mat-slide-toggle class="ml15" [(ngModel)]="property.showType" (change)="onPropertyChanged()">
+                {{'recipe.property-show-type' | translate}}
+            </mat-slide-toggle>
         </div>
 
         <!-- Authorization -->
@@ -54,7 +57,7 @@
             <span>{{'recipe.property-visible-actions' | translate}}</span>
         </div>
         <div class="block mt5">
-            <div class="flex" style="flex-wrap: wrap; gap: 15px; justify-content: flex-start;">
+            <div class="flex" style="flex-wrap: wrap; gap: 5px; justify-content: flex-start;">
                 <mat-checkbox [(ngModel)]="property.visibleActions.new" (change)="onPropertyChanged()">{{'recipe.new' | translate}}</mat-checkbox>
                 <mat-checkbox [(ngModel)]="property.visibleActions.delete" (change)="onPropertyChanged()">{{'recipe.delete' | translate}}</mat-checkbox>
                 <mat-checkbox [(ngModel)]="property.visibleActions.save" (change)="onPropertyChanged()">{{'recipe.save' | translate}}</mat-checkbox>
@@ -71,23 +74,58 @@
             <div class="flex" style="flex-wrap: wrap; gap: 15px; justify-content: flex-start;">
                 <div class="my-form-field">
                     <span>{{'recipe.property-background' | translate}}</span>
-                    <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
-                        (change)="onPropertyChanged()" [(ngModel)]="property.backgroundColor">
+                    <input [(colorPicker)]="property.backgroundColor" [cpAlphaChannel]="'always'" class="input-color"
+                        [style.background]="property.backgroundColor" [cpPresetColors]="defaultColor" [cpOKButton]="true"
+                        [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" (colorPickerChange)="onPropertyChanged()" />
                 </div>
                 <div class="my-form-field">
                     <span>{{'recipe.property-text' | translate}}</span>
-                    <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
-                        (change)="onPropertyChanged()" [(ngModel)]="property.textColor">
+                    <input [(colorPicker)]="property.textColor" [cpAlphaChannel]="'always'" class="input-color"
+                        [style.background]="property.textColor" [cpPresetColors]="defaultColor" [cpOKButton]="true"
+                        [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" (colorPickerChange)="onPropertyChanged()" />
                 </div>
                 <div class="my-form-field">
                     <span>{{'recipe.property-border' | translate}}</span>
-                    <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
-                        (change)="onPropertyChanged()" [(ngModel)]="property.borderColor">
+                    <input [(colorPicker)]="property.borderColor" [cpAlphaChannel]="'always'" class="input-color"
+                        [style.background]="property.borderColor" [cpPresetColors]="defaultColor" [cpOKButton]="true"
+                        [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" (colorPickerChange)="onPropertyChanged()" />
                 </div>
                 <div class="my-form-field">
                     <span>{{'recipe.property-accent' | translate}}</span>
-                    <input class="input-color" style="width: 85px; height: 40px; border: 3px solid #333; border-radius: 6px; cursor: pointer;" type="color"
-                        (change)="onPropertyChanged()" [(ngModel)]="property.accentColor">
+                    <input [(colorPicker)]="property.accentColor" [cpAlphaChannel]="'always'" class="input-color"
+                        [style.background]="property.accentColor" [cpPresetColors]="defaultColor" [cpOKButton]="true"
+                        [cpCancelButton]="true" [cpCancelButtonClass]="'cpCancelButtonClass'" (colorPickerChange)="onPropertyChanged()" />
+                </div>
+            </div>
+            <div class="flex mt10" style="flex-wrap: wrap; gap: 15px; justify-content: flex-start;">
+                <div class="my-form-field">
+                    <span>{{'slider.property-font' | translate}}</span>
+                    <mat-select [(value)]="property.fontFamily" (selectionChange)="onPropertyChanged()">
+                        <mat-option *ngFor="let font of fonts" [style.fontFamily]="font" [value]="font">
+                            {{font}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+                <div class="my-form-field">
+                    <span>{{'html-switch.property-font-size' | translate}}</span>
+                    <input numberOnly [(ngModel)]="property.fontSize" (change)="onPropertyChanged()"
+                        (keyup.enter)="onPropertyChanged()" type="number" min="6" max="50" step="1">
+                </div>
+                <div class="my-form-field">
+                    <span>{{'recipe.property-tag-align' | translate}}</span>
+                    <mat-select [(value)]="property.tagAlign" (selectionChange)="onPropertyChanged()">
+                        <mat-option value="left">{{'general.align-left' | translate}}</mat-option>
+                        <mat-option value="center">{{'general.align-center' | translate}}</mat-option>
+                        <mat-option value="right">{{'general.align-right' | translate}}</mat-option>
+                    </mat-select>
+                </div>
+                <div class="my-form-field">
+                    <span>{{'recipe.property-value-align' | translate}}</span>
+                    <mat-select [(value)]="property.valueAlign" (selectionChange)="onPropertyChanged()">
+                        <mat-option value="left">{{'general.align-left' | translate}}</mat-option>
+                        <mat-option value="center">{{'general.align-center' | translate}}</mat-option>
+                        <mat-option value="right">{{'general.align-right' | translate}}</mat-option>
+                    </mat-select>
                 </div>
             </div>
         </div>

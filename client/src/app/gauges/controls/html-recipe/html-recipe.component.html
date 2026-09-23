@@ -1,4 +1,6 @@
-<div class="recipe-widget" [style.backgroundColor]="backgroundColor" [style.color]="textColor" [style.borderColor]="borderColor" [style.border]="borderWidth + 'px solid ' + borderColor">
+<div class="recipe-widget" [style.backgroundColor]="backgroundColor" [style.color]="textColor" [style.borderColor]="borderColor" [style.border]="borderWidth + 'px solid ' + borderColor"
+    [style.fontFamily]="fontFamily" [style.fontSize.px]="fontSize" [style.--recipe-font-size]="fontSize + 'px'"
+    [style.--recipe-border-color]="borderColor">
     <!-- Loading state -->
     <div *ngIf="loading" class="recipe-loading">
         <mat-spinner diameter="24"></mat-spinner>
@@ -53,23 +55,24 @@
         <!-- Entries table (editable) -->
         <div class="recipe-entries" *ngIf="entries.length > 0">
             <div class="entries-header">
-                <span class="col-tag">{{'recipe.tag' | translate}}</span>
-                <span class="col-type">{{'recipe.type' | translate}}</span>
-                <span class="col-value">{{'recipe.value' | translate}}</span>
+                <span class="col-tag" [style.textAlign]="property?.tagAlign">{{'recipe.tag' | translate}}</span>
+                <span *ngIf="property?.showType" class="col-type">{{'recipe.type' | translate}}</span>
+                <span class="col-value" [style.textAlign]="property?.valueAlign">{{'recipe.value' | translate}}</span>
             </div>
             <div class="entries-body">
                 <div *ngFor="let entry of entries; let i = index" class="entry-row">
-                    <span class="col-tag" [attr.title]="entry.tagId">{{entry.tagName}}</span>
-                    <span class="col-type">
-                        <span class="type-badge" [style.backgroundColor]="getTagTypeColor(entry.tagType)">{{entry.tagType}}</span>
+                    <span class="col-tag" [attr.title]="entry.tagId" [style.textAlign]="property?.tagAlign">{{entry.tagName}}</span>
+                    <span *ngIf="property?.showType" class="col-type">
+                        <span class="type-badge">{{entry.tagType}}</span>
                     </span>
-                    <span class="col-value">
+                    <span class="col-value" [style.textAlign]="property?.valueAlign">
                         <input *ngIf="!readonly"
                                class="value-input"
                                [(ngModel)]="entry.value"
                                [type]="isNumericType(entry.tagType) ? 'number' : (isStringType(entry.tagType) ? 'text' : 'text')"
-                               [style.borderColor]="accentColor" />
-                        <span *ngIf="readonly" class="value-text">{{entry.value !== null && entry.value !== undefined ? entry.value : '-'}}</span>
+                               [style.borderColor]="accentColor"
+                               [style.textAlign]="property?.valueAlign" />
+                           <span *ngIf="readonly" class="value-text" [style.textAlign]="property?.valueAlign">{{entry.value !== null && entry.value !== undefined ? entry.value : '-'}}</span>
                     </span>
                 </div>
             </div>
