@@ -156,6 +156,47 @@ describe('Security - JWT lifecycle', () => {
         }
     });
 
+    it('clears Node-RED auth cookies on signout', async () => {
+        const runtime = {
+            project: {},
+            settings: {
+                https: false
+            },
+            logger: {
+                error() {},
+                info() {}
+            }
+        };
+
+        authApi.init(runtime, SECRET, '1h', false, '7d');
+        const app = express();
+        app.use(authApi.app());
+        const server = await listen(app);
+
+        try {
+            const response = await request(server, {
+                method: 'POST',
+                path: '/api/signout',
+                headers: {
+                    Cookie: 'nodered_auth=stale-token'
+                }
+            });
+
+            expect(response.statusCode).to.equal(204);
+            const setCookies = response.headers['set-cookie'] || [];
+            expect(setCookies.some(cookie =>
+                cookie.startsWith('nodered_auth=;') &&
+                cookie.includes('Path=/nodered')
+            )).to.equal(true);
+            expect(setCookies.some(cookie =>
+                cookie.startsWith('nodered_auth=;') &&
+                cookie.includes('Path=/;')
+            )).to.equal(true);
+        } finally {
+            await new Promise((resolve) => server.close(resolve));
+        }
+    });
+
     it('refreshes access tokens with current stored groups after demotion', async () => {
         const runtime = {
             project: {},

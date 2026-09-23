@@ -14,6 +14,7 @@ import { ScriptParamType, Script, ScriptTest, SCRIPT_PREFIX, SystemFunctions, Sy
 import { DevicesUtils, DeviceType } from '../../_models/device';
 import { DeviceTagSelectionComponent, DeviceTagSelectionData } from '../../device/device-tag-selection/device-tag-selection.component';
 import { ScriptEditorParamComponent } from './script-editor-param/script-editor-param.component';
+import { getJavaScriptSyntaxAnnotations } from './javascript-linter';
 
 @Component({
     selector: 'app-script-editor',
@@ -27,12 +28,8 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
         lineNumbers: true,
         theme: 'material',
         mode: 'javascript',
-        // lineWrapping: true,
-        // foldGutter: true,
-        // gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-        // gutters: ["CodeMirror-lint-markers"],
-        // lint: {options: {esversion: 2021}},
-        lint: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-lint-markers'],
+        lint: false
     };
     systemFunctions: SystemFunctions;
     templatesCode: TemplatesCode;
@@ -47,6 +44,14 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     msgRemoveScript = '';
     ready = false;
     private destroy$ = new Subject<void>();
+    private codeMirrorSetupTimer: number;
+    private readonly lintOptions = {
+        getAnnotations: (code: string) => getJavaScriptSyntaxAnnotations(
+            code,
+            this.parameters.map(parameter => parameter.name),
+            !this.script.sync
+        )
+    };
 
     constructor(public dialogRef: MatDialogRef<ScriptEditorComponent>,
         public dialog: MatDialog,
@@ -86,13 +91,20 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        window.clearTimeout(this.codeMirrorSetupTimer);
         this.destroy$.next(null);
         this.destroy$.complete();
     }
 
     setCM() {
         this.changeDetector.detectChanges();
-        this.CodeMirror?.codeMirror?.refresh();
+        const editor = this.CodeMirror?.codeMirror;
+        if (!editor) {
+            this.codeMirrorSetupTimer = window.setTimeout(() => this.setCM(), 50);
+            return;
+        }
+
+        editor.refresh();
         let spellCheckOverlay = {
             token: (stream) => {
                 for (let i = 0; i < this.checkSystemFnc.length; i++) {
@@ -104,7 +116,9 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
                 return null;
             }
         };
-        this.CodeMirror?.codeMirror?.addOverlay(spellCheckOverlay);
+        editor.addOverlay(spellCheckOverlay);
+        editor.setOption('lint', this.lintOptions);
+        editor.performLint();
     }
 
     onNoClick(): void {
@@ -253,6 +267,7 @@ export class ScriptEditorComponent implements OnInit, OnDestroy {
 
     toggleSync() {
         this.script.sync = !this.script.sync;
+        this.CodeMirror?.codeMirror?.performLint();
     }
 
     onConsoleClear() {

@@ -745,6 +745,7 @@
     "device.add-topics": "Опубликовать мои Топики в брокер",
     "device.topic-publish-name": "Имя Топика",
     "device.topic-publish-path": "Путь Топика",
+        "device.topic-publish-retain": "Сохранять сообщение в брокере",
     "device.topic-publish": "Опубликовать",
     "device.topic-subscribe": "Подписаться",
     "device.topic-subscription-content": "Содержимое",
@@ -1257,6 +1258,5 @@
     "msg.device-tags-request-result": "Загружено {{value}} из {{current}}",
     "gauges.property-icon-none": "Без значка"
 }
-
 
 

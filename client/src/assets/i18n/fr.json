@@ -963,6 +963,7 @@
   "device.add-topics": "Publier mes topics sur le broker",
   "device.topic-publish-name": "Nom du topic",
   "device.topic-publish-path": "Chemin",
+      "device.topic-publish-retain": "Conserver le message sur le broker",
   "device.topic-publish": "Publier",
   "device.topic-subscribe": "S'abonner",
   "device.topic-subscription-content": "Contenu",
@@ -1749,5 +1750,4 @@
   "msg.operation-unauthorized": "Opération non autorisée !",
     "gauges.property-icon-none": "Aucune icône"
 }
-
 

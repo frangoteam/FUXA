@@ -987,6 +987,7 @@
     "device.add-topics": "ブローカーにトピックを公開",
     "device.topic-publish-name": "トピック名",
     "device.topic-publish-path": "トピックパス",
+        "device.topic-publish-retain": "ブローカーにメッセージを保持",
     "device.topic-publish": "公開",
     "device. topic-subscribe": "サブスクライブ",
     "device.topic-subscription-content": "コンテンツ",
@@ -1784,4 +1785,3 @@
     "msg.operation-unauthorized": "操作が許可されていません！",
     "gauges.property-icon-none": "アイコンなし"
 }
-

@@ -957,6 +957,7 @@
     "device.add-topics": "Publicera mina ämnen på broker",
     "device.topic-publish-name": "Ämnesnamn",
     "device.topic-publish-path": "Ämnesväg",
+    "device.topic-publish-retain": "Behåll meddelande på broker",
     "device.topic-publish": "Publicera",
     "device.topic-subscribe": "Prenumerera",
     "device.topic-subscription-content": "Innehåll",

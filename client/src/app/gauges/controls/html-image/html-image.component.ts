@@ -267,7 +267,7 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         let element = SVG.adopt(svgele.node);
         let img = Utils.searchTreeTagName(element.node, 'IMG');
         if (img) {
-            img.setAttribute('src', HtmlImageComponent.withSnapshotAuth(`/snapshots${sig.value}`));
+            img.setAttribute('src', HtmlImageComponent.withSnapshotAuth(`${EndPointApi.getBasePath()}/snapshots${sig.value}`));
         }
     }
 
@@ -289,17 +289,22 @@ export class HtmlImageComponent extends GaugeBaseComponent {
     }
 
     private static withSnapshotAuth(src: string): string {
-        if (!src || !src.startsWith('/snapshots')) {
+        if (!src || !src.startsWith(`${EndPointApi.getBasePath()}/snapshots`)) {
             return src;
         }
 
-        const separator = src.indexOf('?') === -1 ? '?' : '&';
-        const cacheBuster = `t=${new Date().getTime()}`;
+        const [path, query] = src.split('?');
+        const params = new URLSearchParams(query);
+        params.delete('t');
+        params.delete('token');
+
         const token = (window as any).fuxaAccessToken || HtmlImageComponent.getStoredAccessToken();
-        if (!token) {
-            return `${src}${separator}${cacheBuster}`;
+        if (token) {
+            params.set('token', token);
         }
-        return `${src}${separator}token=${encodeURIComponent(token)}&${cacheBuster}`;
+        params.set('t', new Date().getTime().toString());
+
+        return `${path}?${params.toString()}`;
     }
 
     private static getStoredAccessToken(): string {

@@ -964,6 +964,7 @@
     "device.add-topics": "在broker上发布我的话题",
     "device.topic-publish-name": "主题名称",
     "device.topic-publish-path": "主题路径",
+        "device.topic-publish-retain": "在服务器上保留消息",
     "device.topic-publish": "发布",
     "device.topic-subscribe": "订阅",
     "device.topic-subscription-content": "内容",
@@ -1751,5 +1752,4 @@
     "msg.operation-unauthorized": "操作未经授权！",
     "gauges.property-icon-none": "无图标"
 }
-
 

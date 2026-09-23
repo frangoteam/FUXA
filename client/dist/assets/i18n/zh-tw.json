@@ -964,6 +964,7 @@
     "device.add-topics": "在 broker 上發佈我的主題",
     "device.topic-publish-name": "主題名稱",
     "device.topic-publish-path": "主題路徑",
+        "device.topic-publish-retain": "在伺服器上保留訊息",
     "device.topic-publish": "發佈",
     "device.topic-subscribe": "訂閱",
     "device.topic-subscription-content": "內容",
@@ -1750,5 +1751,4 @@
     "msg.operation-unauthorized": "操作未授權！",
     "gauges.property-icon-none": "無圖示"
 }
-
 

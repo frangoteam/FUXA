@@ -509,6 +509,7 @@
     "device.add-topics": "브로커에 항목 계시",
     "device.topic-publish-name": "항목 이름",
     "device.topic-publish-path": "항목 위치",
+        "device.topic-publish-retain": "브로커에 메시지 유지",
     "device.topic-publish": "항목",
     "device.topic-subscribe": "구독",
     "device.topic-subscription-content": "컨텐츠",
@@ -804,6 +805,5 @@
     "msg.alarms-clear-success": "모든 알림이 취소되었습니다!",
     "gauges.property-icon-none": "아이콘 없음"
 }
-
 
 

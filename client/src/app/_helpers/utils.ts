@@ -6,6 +6,19 @@ declare const numeral: any;
 @Injectable()
 export class Utils {
 
+    static normalizeTagValue(value: string | number | boolean): string | number {
+        if (typeof value === 'boolean') {
+            return Number(value);
+        }
+
+        if (typeof value === 'number') {
+            return Number.isFinite(value) ? parseFloat(value.toFixed(5)) : value;
+        }
+
+        const numericValue = parseFloat(value);
+        return Number.isNaN(numericValue) ? value : parseFloat(numericValue.toFixed(5));
+    }
+
     static _seed = Date.now();
     static minDate = new Date(1970, 0, 1);
     static maxDate = new Date(2100, 11, 31);

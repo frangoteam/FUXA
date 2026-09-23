@@ -509,6 +509,7 @@
     "device.add-topics": "Publicar mi topico en el broker",
     "device.topic-publish-name": "Nombre del topico",
     "device.topic-publish-path": "Ruta del topico",
+        "device.topic-publish-retain": "Conservar mensaje en el broker",
     "device.topic-publish": "Publicar",
     "device.topic-subscribe": "Subscribir",
     "device.topic-subscription-content": "Contenido",
@@ -806,6 +807,5 @@
     "msg.alarms-clear-success": "Todas las alarmas han sido canceladas!",
     "gauges.property-icon-none": "Sin icono"
   }
-
 
 
