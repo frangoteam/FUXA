@@ -51,7 +51,7 @@ function QuestDB(_settings, _log, _currentStorage) {
                 tagid,
                 deviceId,
                 deviceName: deviceName || '',
-                unsPath: normalizeUnsPath(tag.unsPath),
+                unsPath: normalizeUnsPath(tag.unsPath === undefined ? tag.tagref?.unsPath : tag.unsPath),
                 value: tag.value,
                 timestamp: tag.timestamp || Date.now(),
             });
