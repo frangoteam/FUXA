@@ -24,7 +24,14 @@ const IoEventTypes = {
     ALIVE: 'heartbeat',
     SCHEDULER_UPDATED: 'scheduler:updated',
     SCHEDULER_ACTIVE: 'scheduler:event-active',
-    SCHEDULER_REMAINING: 'scheduler:remaining-time'
+    SCHEDULER_REMAINING: 'scheduler:remaining-time',
+    RECIPE_DOWNLOAD_PROGRESS: 'recipe:download-progress',
+    RECIPE_DOWNLOAD_COMPLETE: 'recipe:download-complete',
+    RECIPE_DOWNLOAD_ERROR: 'recipe:download-error',
+    RECIPE_UPLOAD_PROGRESS: 'recipe:upload-progress',
+    RECIPE_UPLOAD_COMPLETE: 'recipe:upload-complete',
+    RECIPE_UPLOAD_ERROR: 'recipe:upload-error',
+    RECIPE_CANCELED: 'recipe:cancel-confirmed'
 }
 
 // module.exports = IoEventTypes;

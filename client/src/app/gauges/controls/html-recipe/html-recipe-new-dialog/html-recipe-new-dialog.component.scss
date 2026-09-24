@@ -1,0 +1,41 @@
+:host {
+    .newrecipe-dialog {
+        min-width: 380px;
+        color: inherit;
+    }
+
+    .newrecipe-dialog .dialog-content {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding-top: 8px;
+        overflow: hidden;
+    }
+
+    .newrecipe-dialog .dialog-field {
+        width: 100%;
+    }
+
+    .newrecipe-dialog .my-form-field {
+        color: inherit;
+    }
+
+    .newrecipe-dialog .my-form-field span {
+        color: inherit;
+        opacity: 0.7;
+    }
+
+    .newrecipe-dialog .my-form-field input {
+        width: 100%;
+        box-sizing: border-box;
+        background-color: color-mix(in srgb, var(--recipe-input-background) 86%, transparent);
+        border: 1px solid color-mix(in srgb, var(--recipe-input-background) 65%, currentColor);
+        border-radius: 3px;
+        padding: 5px 6px;
+        color: inherit;
+    }
+
+    .newrecipe-dialog .full-width {
+        width: 100%;
+    }
+}

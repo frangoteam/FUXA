@@ -1,0 +1,35 @@
+<h2 mat-dialog-title>
+    {{ data.mode === 'download' ? ('recipes.download' | translate) : ('recipes.upload' | translate) }}: {{ data.recipeName }}
+</h2>
+
+<mat-dialog-content>
+    <div class="progress-container">
+        <div class="progress-bar-container">
+            <mat-progress-bar mode="determinate" [value]="getProgressPercent()"></mat-progress-bar>
+            <span class="progress-text">{{ currentIndex }} / {{ totalEntries }}</span>
+        </div>
+
+        <div class="status-summary" *ngIf="completed">
+            <span class="success" *ngIf="successCount > 0">{{ 'recipes.succeeded-count' | translate: { count: successCount } }}</span>
+            <span class="error" *ngIf="errorCount > 0"> {{ 'recipes.failed-count' | translate: { count: errorCount } }}</span>
+            <span class="error-message" *ngIf="errorMessage">{{ errorMessage }}</span>
+        </div>
+
+        <div class="entries-progress">
+            <div *ngFor="let entry of progressEntries" class="entry-row" [class.success]="entry.status === 'success'" [class.error]="entry.status === 'error'">
+                <span class="entry-name">{{ entry.tagName || entry.entryId }}</span>
+                <span class="entry-status">
+                    <mat-icon *ngIf="entry.status === 'success'">check_circle</mat-icon>
+                    <mat-icon *ngIf="entry.status === 'error'">error</mat-icon>
+                    <mat-icon *ngIf="entry.status === 'writing' || entry.status === 'reading'">hourglass_empty</mat-icon>
+                </span>
+                <span class="entry-error" *ngIf="entry.error">{{ entry.error }}</span>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button *ngIf="!completed" (click)="onCancel()">{{ 'recipes.cancel' | translate }}</button>
+    <button mat-raised-button color="primary" *ngIf="completed" (click)="onClose()">{{ 'recipes.close' | translate }}</button>
+</mat-dialog-actions>

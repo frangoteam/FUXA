@@ -58,7 +58,7 @@ function init(_settings, log, _runtime) {
  */
 function load() {
     return new Promise(function (resolve, reject) {
-        data = { devices: {}, hmi: { views: [] }, texts: [], alarms: [], ar: { enabled: false, markers: [] } };
+        data = { devices: {}, hmi: { views: [] }, texts: [], alarms: [], recipes: [], ar: { enabled: false, markers: [] } };
         // load general data
         prjstorage.getSection(prjstorage.TableType.GENERAL).then(grows => {
             for (var ig = 0; ig < grows.length; ig++) {
@@ -103,7 +103,17 @@ function load() {
                                 callback(err);
                             });
                         },
-                        // step 3 get notifications
+                        // step 3 get recipes
+                        function (callback) {
+                            getRecipes().then(recipes => {
+                                data.recipes = recipes || [];
+                                callback();
+                            }).catch(function (err) {
+                                logger.error(`project.prjstorage-failed-to-load! '${prjstorage.TableType.RECIPES}' ${err}`);
+                                callback(err);
+                            });
+                        },
+                        // step 4 get notifications
                         function (callback) {
                             getNotifications().then(notifications => {
                                 data.notifications = notifications;
@@ -113,7 +123,7 @@ function load() {
                                 callback(err);
                             });
                         },
-                        // step 4 get scripts
+                        // step 5 get scripts
                         function (callback) {
                             getScripts().then(scripts => {
                                 data.scripts = scripts;
@@ -123,7 +133,7 @@ function load() {
                                 callback(err);
                             });
                         },
-                        // step 5 get reports
+                        // step 6 get reports
                         function (callback) {
                             getReports().then(reports => {
                                 data.reports = reports;
@@ -133,7 +143,7 @@ function load() {
                                 callback(err);
                             });
                         },
-                        // step 6 get MapsLocations
+                        // step 7 get MapsLocations
                         function (callback) {
                             getMapsLocations().then(locations => {
                                 data.mapsLocations = locations;
@@ -143,7 +153,7 @@ function load() {
                                 callback(err);
                             });
                         },
-                        // step 7 get AR markers
+                        // step 8 get AR markers
                         function (callback) {
                             getArMarkers().then(markers => {
                                 if (!data.ar) {
@@ -248,6 +258,14 @@ function setProjectData(cmd, value) {
                 section.table = prjstorage.TableType.ALARMS;
                 section.name = value.name;
                 toremove = removeAlarm(value);
+            } else if (cmd === ProjectDataCmdType.SetRecipe) {
+                section.table = prjstorage.TableType.RECIPES;
+                section.name = value.id;
+                setRecipe(value);
+            } else if (cmd === ProjectDataCmdType.DelRecipe) {
+                section.table = prjstorage.TableType.RECIPES;
+                section.name = value.id;
+                toremove = removeRecipe(value);
             } else if (cmd === ProjectDataCmdType.SetNotification) {
                 section.table = prjstorage.TableType.NOTIFICATIONS;
                 section.name = value.id;
@@ -482,6 +500,43 @@ function removeAlarm(alarm) {
         for (var i = 0; i < data.alarms.length; i++) {
             if (data.alarms[i].name === alarm.name) {
                 data.alarms.splice(i, 1);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/**
+ * Set or add if not exist (check with recipe.id) the Recipe template in Project
+ * @param {*} recipe
+ */
+function setRecipe(recipe) {
+    if (!data.recipes) {
+        data.recipes = [];
+    }
+    var pos = -1;
+    for (var i = 0; i < data.recipes.length; i++) {
+        if (data.recipes[i].id === recipe.id) {
+            pos = i;
+        }
+    }
+    if (pos >= 0) {
+        data.recipes[pos] = recipe;
+    } else {
+        data.recipes.push(recipe);
+    }
+}
+
+/**
+ * Remove the Recipe template from Project
+ * @param {*} recipe
+ */
+function removeRecipe(recipe) {
+    if (data.recipes) {
+        for (var i = 0; i < data.recipes.length; i++) {
+            if (data.recipes[i].id === recipe.id) {
+                data.recipes.splice(i, 1);
                 return true;
             }
         }
@@ -756,6 +811,14 @@ function setProject(prjcontent) {
                                 scs.push({ table: prjstorage.TableType.ALARMS, name: alarms[i].name, value: alarms[i] });
                             }
                         }
+                    } else if (key === 'recipes') {
+                        // recipe templates
+                        var recipes = prjcontent[key];
+                        if (recipes && recipes.length) {
+                            for (var i = 0; i < recipes.length; i++) {
+                                scs.push({ table: prjstorage.TableType.RECIPES, name: recipes[i].id, value: recipes[i] });
+                            }
+                        }
                     } else if (key === 'notifications') {
                         // notifications
                         var notifications = prjcontent[key];
@@ -903,6 +966,40 @@ function getAlarms() {
             reject(err);
         });
     });
+}
+
+/**
+ * Get the recipe templates
+ */
+function getRecipes() {
+    return new Promise(function (resolve, reject) {
+        prjstorage.getSection(prjstorage.TableType.RECIPES).then(drows => {
+            if (drows.length > 0) {
+                var recipes = [];
+                for (var id = 0; id < drows.length; id++) {
+                    recipes.push(JSON.parse(drows[id].value));
+                }
+                resolve(recipes);
+            } else {
+                resolve([]);
+            }
+        }).catch(function (err) {
+            logger.error(`project.prjstorage.get-recipes failed! '${prjstorage.TableType.RECIPES} ${err}'`);
+            reject(err);
+        });
+    });
+}
+
+function getRecipe(recipeId) {
+    return (data.recipes || []).find(recipe => recipe.id === recipeId) || null;
+}
+
+function getRecipesData() {
+    return data.recipes || [];
+}
+
+function getRecipesSync() {
+    return data.recipes || [];
 }
 
 /**
@@ -1205,6 +1302,8 @@ const ProjectDataCmdType = {
     DelText: 'del-text',
     SetAlarm: 'set-alarm',
     DelAlarm: 'del-alarm',
+    SetRecipe: 'set-recipe',
+    DelRecipe: 'del-recipe',
     SetNotification: 'set-notification',
     DelNotification: 'del-notification',
     SetScript: 'set-script',
@@ -1224,6 +1323,10 @@ module.exports = {
     getServer: getServer,
     getDevice: getDevice,
     getAlarms: getAlarms,
+    getRecipes: getRecipes,
+    getRecipe: getRecipe,
+    getRecipesData: getRecipesData,
+    getRecipesSync: getRecipesSync,
     getNotifications: getNotifications,
     getScripts: getScripts,
     getReports: getReports,
