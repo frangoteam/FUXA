@@ -35,6 +35,7 @@ export class HmiService {
     @Output() onSchedulerEventActive: EventEmitter<any> = new EventEmitter();
     @Output() onSchedulerRemainingTime: EventEmitter<any> = new EventEmitter();
     @Output() onGaugeEvent: EventEmitter<any> = new EventEmitter();
+    @Output() onWriteUnauthorized: EventEmitter<void> = new EventEmitter();
     @Output() onRecipeDownloadProgress: EventEmitter<any> = new EventEmitter();
     @Output() onRecipeDownloadComplete: EventEmitter<any> = new EventEmitter();
     @Output() onRecipeDownloadError: EventEmitter<any> = new EventEmitter();
@@ -258,6 +259,12 @@ export class HmiService {
         });
         // devices values
         this.socket.on(IoEventTypes.DEVICE_VALUES, (message) => {
+            if (message.cmd === 'set-unauthorized') {
+                // the rejected write already overwrote the local value optimistically; resync from the server
+                this.askDeviceValues();
+                this.onWriteUnauthorized.emit();
+                return;
+            }
             const updateVariable = (id: string, value: any, timestamp: any, quality: any) => {
                 if (Utils.isNullOrUndefined(this.variables[id])) {
                     this.variables[id] = new Variable(id, null, null);
