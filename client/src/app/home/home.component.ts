@@ -29,7 +29,7 @@ import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.
 import { User } from '../_models/user';
 import { UserInfo } from '../users/user-edit/user-edit.component';
 import { Intervals } from '../_helpers/intervals';
-import { Script, ScriptMode } from '../_models/script';
+import { Script, ScriptMode, ScriptSchedulingMode } from '../_models/script';
 import { ScriptService } from '../_services/script.service';
 // declare var panzoom: any;
 
@@ -188,7 +188,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     script.scheduling.interval * 1000,
                     this.scriptService.evalScript,
                     script,
-                    this.scriptService
+                    this.scriptService,
+                    script.scheduling.mode === ScriptSchedulingMode.start
                 );
             }
         });
