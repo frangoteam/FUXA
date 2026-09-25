@@ -27,6 +27,11 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     var getProperty = null;             // Function to ask property (security)
     var lastTimestampValue;             // Last Timestamp of asked values
     var tagsIdMap = {};                 // Map of tag id with opc nodeId
+    var monitoredItems = {};            // Map of tag id with monitored item
+    var lastBrowsePathResolve = 0;      // Last BrowsePath resolution timestamp
+    const TAG_PATH_MODE_ID = 'id';
+    const TAG_PATH_MODE_BROWSE_PATH = 'browsePath';
+    const BROWSE_PATH_RESOLVE_INTERVAL = 30000;
     /**
      * Connect the client to OPC UA server
      * Open Session, Create Subscription, Emit connection status, Clear the memory Tags value
@@ -174,6 +179,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                         let opcNodes = [];
                         browseResult.references.forEach(function (reference) {
                             let node = new OpcNode(reference.browseName.toString());
+                            node.browseName = reference.browseName.toString();
                             if (reference.displayName) {
                                 node.name = reference.displayName.text;
                             }
@@ -220,6 +226,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                         let browseResult = response.results[0];
                         browseResult.references.forEach(function (reference) {
                             let node = new OpcNode(reference.browseName.toString());
+                            node.browseName = reference.browseName.toString();
                             if (reference.displayName) {
                                 node.name = reference.displayName.text;
                             }
@@ -299,6 +306,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                 });
             } else if (the_session && client) {
                 try {
+                    await _refreshBrowsePathMonitors();
                     var varsValueChanged = await _checkVarsChanged();
                     lastTimestampValue = new Date().getTime();
                     _emitValues(varsValue);
@@ -322,6 +330,11 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     this.load = function (_data) {
         data = JSON.parse(JSON.stringify(_data));
         try {
+            for (var id in data.tags) {
+                if (!data.tags[id].pathMode) {
+                    data.tags[id].pathMode = TAG_PATH_MODE_ID;
+                }
+            }
             var count = Object.keys(data.tags).length;
             logger.info(`'${data.name}' data loaded (${count})`, true);
         } catch (err) {
@@ -377,6 +390,10 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
             valueToSend = await deviceUtils.tagRawCalculator(valueToSend, data.tags[tagId], runtime);
             if (opcType === opcua.DataType.String || opcType === opcua.DataType.ByteString) {
                 valueToSend = valueToSend?.toString();
+            }
+            if (!data.tags[tagId].address) {
+                logger.error(`'${data.name}' setValue(${tagId}) nodeId not resolved`);
+                return false;
             }
             var nodesToWrite = [
                 {
@@ -514,11 +531,13 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
         return new Promise(async function (resolve, reject) {
             if (the_session && the_subscription) {
                 tagsIdMap = {};
+                monitoredItems = {};
+                lastBrowsePathResolve = 0;
                 var count = 0;
                 for (var id in data.tags) {
                     count++;
                     try {
-                        var nodeId = data.tags[id].address;
+                        var nodeId = await _resolveTagNodeId(id);
                         tagsIdMap[nodeId] = id;
                         var monitoredItem = await the_subscription.monitor(
                             { nodeId: nodeId, attributeId: opcua.AttributeIds.Value },
@@ -526,15 +545,111 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                             opcua.TimestampsToReturn.Both
                         );
                         monitoredItem.on('changed', _monitorcallback(nodeId));
+                        monitoredItems[id] = monitoredItem;
                     } catch (err) {
                         logger.error(`'${nodeId}' _startMonitor ${err}`);
                     }
                 }
+                lastBrowsePathResolve = Date.now();
                 resolve(true);
             } else {
                 reject();
             }
         });
+    }
+
+    var _resolveTagNodeId = async function (tagId) {
+        const tag = data.tags[tagId];
+        if (!tag) {
+            throw new Error(`tag '${tagId}' not found`);
+        }
+        if (_getPathMode(tag) === TAG_PATH_MODE_ID) {
+            return tag.address;
+        }
+        try {
+            const nodeId = await _resolveBrowsePath(tag);
+            tag.address = nodeId;
+            return nodeId;
+        } catch (err) {
+            tag.address = null;
+            throw err;
+        }
+    }
+
+    var _resolveBrowsePath = async function (tag) {
+        if (!the_session) {
+            throw new Error('Session Error');
+        }
+        if (!tag.browsePath) {
+            throw new Error('BrowsePath is empty');
+        }
+        const browsePath = opcua.makeBrowsePath(
+            opcua.resolveNodeId('RootFolder'),
+            tag.browsePath
+        );
+        const result = await the_session.translateBrowsePath(browsePath);
+        if (!result || !result.statusCode || !result.statusCode.isGood()) {
+            const status = result && result.statusCode ? result.statusCode.toString() : 'Unknown';
+            throw new Error(`BrowsePath resolve failed (${status}): ${tag.browsePath}`);
+        }
+        if (!result.targets || result.targets.length !== 1) {
+            const count = result.targets ? result.targets.length : 0;
+            throw new Error(`BrowsePath must resolve to one node (${count}): ${tag.browsePath}`);
+        }
+        return result.targets[0].targetId.toString();
+    }
+
+    var _refreshBrowsePathMonitors = async function () {
+        const now = Date.now();
+        if (now - lastBrowsePathResolve < BROWSE_PATH_RESOLVE_INTERVAL) {
+            return;
+        }
+        lastBrowsePathResolve = now;
+        for (var id in data.tags) {
+            const tag = data.tags[id];
+            if (_getPathMode(tag) !== TAG_PATH_MODE_BROWSE_PATH) {
+                continue;
+            }
+            const currentNodeId = tag.address;
+            try {
+                const nodeId = await _resolveBrowsePath(tag);
+                if (currentNodeId !== nodeId || !monitoredItems[id]) {
+                    if (monitoredItems[id]) {
+                        await monitoredItems[id].terminate();
+                        delete monitoredItems[id];
+                    }
+                    if (currentNodeId) {
+                        delete tagsIdMap[currentNodeId];
+                    }
+                    tag.address = nodeId;
+                    tagsIdMap[nodeId] = id;
+                    var monitoredItem = await the_subscription.monitor(
+                        { nodeId: nodeId, attributeId: opcua.AttributeIds.Value },
+                        { samplingInterval: data.polling || 1000, discardOldest: true, queueSize: 1 },
+                        opcua.TimestampsToReturn.Both
+                    );
+                    monitoredItem.on('changed', _monitorcallback(nodeId));
+                    monitoredItems[id] = monitoredItem;
+                    logger.info(`'${data.name}' BrowsePath resolved '${id}' ${currentNodeId || '-'} -> ${nodeId}`, true);
+                } else {
+                    tag.address = nodeId;
+                }
+            } catch (err) {
+                if (monitoredItems[id]) {
+                    await monitoredItems[id].terminate();
+                    delete monitoredItems[id];
+                }
+                if (tag.address) {
+                    delete tagsIdMap[tag.address];
+                }
+                tag.address = null;
+                logger.error(`'${data.name}' BrowsePath resolve error '${id}': ${err}`);
+            }
+        }
+    }
+
+    var _getPathMode = function (tag) {
+        return tag && tag.pathMode === TAG_PATH_MODE_BROWSE_PATH ? TAG_PATH_MODE_BROWSE_PATH : TAG_PATH_MODE_ID;
     }
 
     /**

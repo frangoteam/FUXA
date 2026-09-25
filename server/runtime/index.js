@@ -608,7 +608,8 @@ function tagsToSend(tags) {
         id: tag.id,
         value: tag.value,
         timestamp: tag.timestamp,
-        quality: tag.quality
+        quality: tag.quality,
+        address: tag.address
     }));
 }
 

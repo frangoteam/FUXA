@@ -46,6 +46,18 @@
                     <mat-cell *matCellDef="let element"> {{getAddress(element)}} </mat-cell>
                 </ng-container>
 
+                <!-- NodeId Column -->
+                <ng-container matColumnDef="nodeid">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> NodeId </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.address}} </mat-cell>
+                </ng-container>
+
+                <!-- BrowsePath Column -->
+                <ng-container matColumnDef="browsepath">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> BrowsePath </mat-header-cell>
+                    <mat-cell *matCellDef="let element"> {{element.browsePath}} </mat-cell>
+                </ng-container>
+
                 <!-- Device Column -->
                 <ng-container matColumnDef="device">
                     <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-device' | translate}} </mat-header-cell>
