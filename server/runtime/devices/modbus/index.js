@@ -389,17 +389,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 
                 _checkWorking(true);
 
-                await _writeMemory(parseInt(memaddr), offset, val).then(result => {
-                    logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
-                }, reason => {
-                    if (reason && reason.stack) {
-                        logger.error(`'${data.name}' _writeMemory error! ${reason.stack}`);
-                    } else {
-                        logger.error(`'${data.name}' _writeMemory error! ${reason}`);
-                    }
-                });
+                await _writeMemory(parseInt(memaddr), offset, val);
+                logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
             } catch (err) {
                 logger.error(`'${data.name}' setValue error! ${err}`);
+                return false;
             } finally {
                 _checkWorking(false);
                 if (!utils.isNullOrUndefined(socketRelease)) {
