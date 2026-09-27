@@ -157,10 +157,16 @@ describe('Security - JWT lifecycle', () => {
     });
 
     it('clears Node-RED auth cookies on signout', async () => {
+        const accessEvents = [];
         const runtime = {
             project: {},
             settings: {
                 https: false
+            },
+            events: {
+                emit(event, data) {
+                    accessEvents.push({ event, data });
+                }
             },
             logger: {
                 error() {},
@@ -192,6 +198,106 @@ describe('Security - JWT lifecycle', () => {
                 cookie.startsWith('nodered_auth=;') &&
                 cookie.includes('Path=/;')
             )).to.equal(true);
+            expect(accessEvents).to.deep.equal([{ event: 'access:logout', data: {} }]);
+        } finally {
+            await new Promise((resolve) => server.close(resolve));
+        }
+    });
+
+    it('includes the verified username in the signout event', async () => {
+        const accessEvents = [];
+        const runtime = {
+            project: {},
+            settings: { https: false },
+            events: {
+                emit(event, data) {
+                    accessEvents.push({ event, data });
+                }
+            },
+            logger: { error() {}, info() {} }
+        };
+
+        authApi.init(runtime, SECRET, '1h', false, '7d');
+        const app = express();
+        app.use(authApi.app());
+        const server = await listen(app);
+
+        try {
+            const token = jwt.sign({ id: 'alice', groups: 1 }, SECRET, { expiresIn: '1h' });
+            const response = await request(server, {
+                method: 'POST',
+                path: '/api/signout',
+                headers: { 'x-access-token': token }
+            });
+
+            expect(response.statusCode).to.equal(204);
+            expect(accessEvents).to.deep.equal([{ event: 'access:logout', data: { username: 'alice' } }]);
+        } finally {
+            await new Promise((resolve) => server.close(resolve));
+        }
+    });
+
+    it('does not trust an invalid access token for logout attribution', async () => {
+        const accessEvents = [];
+        const runtime = {
+            project: {},
+            settings: { https: false },
+            events: {
+                emit(event, data) {
+                    accessEvents.push({ event, data });
+                }
+            },
+            logger: { error() {}, info() {} }
+        };
+
+        authApi.init(runtime, SECRET, '1h', false, '7d');
+        const app = express();
+        app.use(authApi.app());
+        const server = await listen(app);
+
+        try {
+            const forgedToken = jwt.sign({ id: 'mallory', groups: -1 }, 'different-secret', { expiresIn: '1h' });
+            const response = await request(server, {
+                method: 'POST',
+                path: '/api/signout',
+                headers: { 'x-access-token': forgedToken }
+            });
+
+            expect(response.statusCode).to.equal(204);
+            expect(accessEvents).to.deep.equal([{ event: 'access:logout', data: {} }]);
+        } finally {
+            await new Promise((resolve) => server.close(resolve));
+        }
+    });
+
+    it('attributes logout to a user with an expired but correctly signed access token', async () => {
+        const accessEvents = [];
+        const runtime = {
+            project: {},
+            settings: { https: false },
+            events: {
+                emit(event, data) {
+                    accessEvents.push({ event, data });
+                }
+            },
+            logger: { error() {}, info() {} }
+        };
+
+        authApi.init(runtime, SECRET, '1h', false, '7d');
+        const app = express();
+        app.use(authApi.app());
+        const server = await listen(app);
+
+        try {
+            const token = jwt.sign({ id: 'alice', groups: 1 }, SECRET, { expiresIn: '-1s' });
+            const response = await request(server, {
+                method: 'POST',
+                path: '/api/signout',
+                headers: { 'x-access-token': token }
+            });
+
+            expect(response.statusCode).to.equal(204);
+            expect(accessEvents).to.deep.equal([{ event: 'access:logout', data: { username: 'alice' } }]);
         } finally {
             await new Promise((resolve) => server.close(resolve));
         }

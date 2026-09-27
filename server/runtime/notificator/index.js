@@ -240,7 +240,9 @@ function NotificatorManager(_runtime) {
         // Access notifications have no login/logout subscriptions: every
         // notification configured as type "access" receives both events.
         const notifications = notificationsSubsctiption.access || [];
-        const content = event === 'login' ? `User ${data?.username || ''} logged in (Login)` : 'User logged out (Logout)';
+        const content = event === 'login'
+            ? `User${data?.username ? ` "${data.username}"` : ''} logged in (Login)`
+            : `User${data?.username ? ` "${data.username}"` : ''} logged out (Logout)`;
         for (const notification of notifications) {
             try {
                 if (!_isValidEmail(notification.receiver)) {

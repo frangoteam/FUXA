@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 
 import { User, UserGroups } from '../_models/user';
 import { environment } from '../../environments/environment';
@@ -60,28 +61,35 @@ export class AuthService {
 	}
 
 	signIn(username: string, password: string) {
-		return new Observable((observer) => {
-			if (environment.serverEnabled) {
-				let header = new HttpHeaders({ 'Content-Type': 'application/json' });
-				return this.http.post(this.endPointConfig + '/api/signin', { username: username, password: password }).subscribe((result: any) => {
-					if (result) {
-						this.currentUser = <UserProfile>result.data;
-						if (this.currentUser.info) {
-							this.currentUser.infoRoles = JSON.parse(this.currentUser.info)?.roles;
-						}
-						this.saveUserToken(this.currentUser);
-						this.publishAccessToken(this.currentUser.token);
-						this.currentUser$.next(this.currentUser);
-					}
-					observer.next(null);
-				}, err => {
-					console.error(err);
-					observer.error(err);
-				});
-			} else {
-				observer.next(null);
-			}
+		if (!environment.serverEnabled) {
+			return of(null);
+		}
+		const header = new HttpHeaders({
+			'Content-Type': 'application/json',
+			'Skip-Auth': 'true',
+			'Skip-Error': 'true'
 		});
+		return this.http.post(this.endPointConfig + '/api/signin', { username: username, password: password }, { headers: header }).pipe(
+			tap((result: any) => {
+				if (result) {
+					this.currentUser = <UserProfile>result.data;
+					if (this.currentUser.info) {
+						this.currentUser.infoRoles = JSON.parse(this.currentUser.info)?.roles;
+					}
+					this.saveUserToken(this.currentUser);
+					this.publishAccessToken(this.currentUser.token);
+					this.currentUser$.next(this.currentUser);
+				}
+			}),
+			switchMap(() => this.settings.refreshSettings().pipe(
+				map(() => null),
+				catchError(error => {
+					// Settings refresh should not turn a successful sign-in into a failed sign-in.
+					console.error('settings refresh after sign-in err: ' + error);
+					return of(null);
+				})
+			))
+		);
 
 	}
 
@@ -91,7 +99,7 @@ export class AuthService {
 		}
 		this.signOutInProgress = true;
 		if (environment.serverEnabled) {
-			const header = new HttpHeaders({ 'Skip-Auth': 'true', 'Skip-Error': 'true' });
+			const header = new HttpHeaders({ 'Skip-Error': 'true' });
 			const withCredentials = this.useRefreshCookieAuth;
 			this.http.post(this.endPointConfig + '/api/signout', {}, { headers: header, withCredentials }).subscribe({
 				next: () => this.finalizeSignOut(),

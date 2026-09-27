@@ -94,6 +94,34 @@ function sendInvalidSignInResponse(res) {
     res.status(401).json({ status: 'error', message: 'Invalid email/password!!!', data: null });
 }
 
+function getLogoutUser(req) {
+    const accessToken = req.headers['x-access-token'];
+    if (accessToken) {
+        try {
+            const decoded = jwt.verify(accessToken, secretCode, { ignoreExpiration: true });
+            if (typeof decoded.id === 'string' && decoded.id && decoded.type !== 'refresh') {
+                return { username: decoded.id };
+            }
+        } catch (err) {
+            // Logout must still clear cookies when the access token is expired or invalid.
+        }
+    }
+
+    const refreshToken = getCookieValue(req, refreshCookieName);
+    if (refreshToken) {
+        try {
+            const decoded = jwt.verify(refreshToken, secretCode);
+            if (decoded.type === 'refresh' && typeof decoded.id === 'string' && decoded.id) {
+                return { username: decoded.id };
+            }
+        } catch (err) {
+            // Do not trust an invalid refresh cookie for user attribution.
+        }
+    }
+
+    return {};
+}
+
 module.exports = {
     init: function (_runtime, _secretCode, _tokenExpires, _enableRefreshCookieAuth, _refreshTokenExpires) {
         runtime = _runtime;
@@ -222,7 +250,7 @@ module.exports = {
                 clearRefreshCookie(res);
             }
             clearNodeRedAuthCookie(res);
-            runtime.events.emit('access:logout');
+            runtime.events.emit('access:logout', getLogoutUser(req));
             res.status(204).end();
         });
 
