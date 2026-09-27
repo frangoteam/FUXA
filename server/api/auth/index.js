@@ -139,6 +139,7 @@ module.exports = {
                             }
                         });
                         runtime.logger.info('api-signin: ' + userInfo[0].username + ' ' + userInfo[0].fullname + ' ' + userInfo[0].groups);
+                        runtime.events.emit('access:login', { username: userInfo[0].username, fullname: userInfo[0].fullname });
                     } else {
                         sendInvalidSignInResponse(res);
                         runtime.logger.error('api post signin: Invalid email/password!!!');
@@ -221,6 +222,7 @@ module.exports = {
                 clearRefreshCookie(res);
             }
             clearNodeRedAuthCookie(res);
+            runtime.events.emit('access:logout');
             res.status(204).end();
         });
 

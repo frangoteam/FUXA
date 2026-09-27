@@ -24,7 +24,8 @@ export enum NotificationMode {
 
 export enum NotificationsType {
     alarms = 'notification.type-alarm',
-    trigger = 'notification.type-trigger'
+    trigger = 'notification.type-trigger',
+    access = 'notification.type-access'
 }
 
 export const NOTIFY_PREFIX = 'n_';

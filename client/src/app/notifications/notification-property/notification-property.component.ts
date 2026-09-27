@@ -19,6 +19,7 @@ export class NotificationPropertyComponent implements OnInit {
     notificationsType = NotificationsType;
     notificationAlarm = Utils.getEnumKey(NotificationsType, NotificationsType.alarms);
     notificationTrigger = Utils.getEnumKey(NotificationsType, NotificationsType.trigger);
+    notificationAccess = Utils.getEnumKey(NotificationsType, NotificationsType.access);
     formGroup: UntypedFormGroup;
 
     alarmsType = [AlarmsType.HIGH_HIGH, AlarmsType.HIGH, AlarmsType.LOW, AlarmsType.INFO];
@@ -56,10 +57,17 @@ export class NotificationPropertyComponent implements OnInit {
 
     onOkClick(): void {
         this.notification = {...this.notification, ...this.formGroup.getRawValue()};
+        if (this.notification.type === this.notificationAccess) {
+            this.notification.delay = 0;
+            this.notification.interval = 0;
+        }
         this.dialogRef.close(this.notification);
     }
 
     onTypeChanged(type: NotificationsType) {
+        if (type === NotificationsType.access) {
+            this.formGroup.patchValue({ delay: 0, interval: 0 });
+        }
     }
 
     onSubscriptionChanged(type: AlarmsType, value: boolean) {
@@ -72,6 +80,7 @@ export class NotificationPropertyComponent implements OnInit {
         }
         return false;
     }
+
 
     isValidName(): ValidatorFn {
         const names = this.projectService.getNotifications().map(not => not.name);
@@ -90,4 +99,3 @@ export class NotificationPropertyComponent implements OnInit {
 export interface NotificationPropertyData {
     notification: Notification;
 }
-

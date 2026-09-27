@@ -15,6 +15,7 @@ export class AuthService {
 	private endPointConfig: string = EndPointApi.getURL();
 	currentUser$ = new BehaviorSubject<UserProfile>(null);
 	private useRefreshCookieAuth = false;
+	private signOutInProgress = false;
 
 	constructor(
 		private http: HttpClient,
@@ -85,9 +86,14 @@ export class AuthService {
 	}
 
 	signOut() {
-		if (environment.serverEnabled && (this.useRefreshCookieAuth || this.settings.getSettings()?.nodeRedEnabled)) {
-			let header = new HttpHeaders({ 'Skip-Auth': 'true', 'Skip-Error': 'true' });
-			this.http.post(this.endPointConfig + '/api/signout', {}, { headers: header, withCredentials: true }).subscribe({
+		if (this.signOutInProgress) {
+			return;
+		}
+		this.signOutInProgress = true;
+		if (environment.serverEnabled) {
+			const header = new HttpHeaders({ 'Skip-Auth': 'true', 'Skip-Error': 'true' });
+			const withCredentials = this.useRefreshCookieAuth;
+			this.http.post(this.endPointConfig + '/api/signout', {}, { headers: header, withCredentials }).subscribe({
 				next: () => this.finalizeSignOut(),
 				error: () => this.finalizeSignOut()
 			});
@@ -183,6 +189,7 @@ export class AuthService {
 	}
 
 	private finalizeSignOut() {
+		this.signOutInProgress = false;
 		if (this.removeUser()) {
 			window.location.reload();
 		}
