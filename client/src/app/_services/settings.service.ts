@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { finalize, tap } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 import { TranslateService } from '@ngx-translate/core';
@@ -33,15 +34,20 @@ export class SettingsService {
 		this.fuxaLanguage.use('en');
         // to load saved settings
         if (environment.serverEnabled) {
-            this.http.get<any>(this.endPointConfig + '/api/settings').subscribe(result => {
-                this.setSettings(result);
-                this.loaded$.next(true);
-            }, error => {
-                console.error('settings.service err: ' + error);
-                this.loaded$.next(true);
+            this.refreshSettings().subscribe({
+                error: error => console.error('settings.service err: ' + error)
             });
         }
         // this.setLanguage(this.appSettings.language);
+    }
+
+    refreshSettings(): Observable<any> {
+        return this.http.get<any>(this.endPointConfig + '/api/settings').pipe(
+            tap(result => {
+                this.setSettings(result);
+            }),
+            finalize(() => this.loaded$.next(true))
+        );
     }
 
     getSettings() {

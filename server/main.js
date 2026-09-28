@@ -387,7 +387,8 @@ const allowCrossDomain = function (req, res, next) {
 
     if (isOriginAllowed(origin)) {
         res.header('Access-Control-Allow-Origin', origin || '*');
-        if (settings.enableRefreshCookieAuth) {
+
+        if (settings.enableRefreshCookieAuth || settings.nodeRedEnabled) {
             res.header('Access-Control-Allow-Credentials', 'true');
         }
     }

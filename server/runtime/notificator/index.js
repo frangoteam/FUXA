@@ -174,6 +174,18 @@ function NotificatorManager(_runtime) {
                                     notificationsFound++;
                                 }
                             });
+                            if (notification.type === 'access') {
+                                if (!notificationsSubsctiption.access) {
+                                    notificationsSubsctiption.access = [];
+                                }
+                                var accessNotification = new Notification(notification.id, notification.name, notification.type);
+                                accessNotification.receiver = notification.receiver;
+                                accessNotification.enabled = notification.enabled;
+                                accessNotification.text = notification.text;
+                                accessNotification.options = notification.options;
+                                notificationsSubsctiption.access.push(accessNotification);
+                                notificationsFound++;
+                            }
                         }
                     });
                 }
@@ -222,6 +234,26 @@ function NotificatorManager(_runtime) {
     var _isValidEmail = function (email) {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
+    }
+
+    var _sendAccessNotifications = async function (event, data) {
+        // Access notifications have no login/logout subscriptions: every
+        // notification configured as type "access" receives both events.
+        const notifications = notificationsSubsctiption.access || [];
+        const content = event === 'login'
+            ? `User${data?.username ? ` "${data.username}"` : ''} logged in (Login)`
+            : `User${data?.username ? ` "${data.username}"` : ''} logged out (Logout)`;
+        for (const notification of notifications) {
+            try {
+                if (!_isValidEmail(notification.receiver)) {
+                    await runtime.notificatorMgr.postMessage(notification.receiver.replace(/\$\{content\}/g, content));
+                } else {
+                    await runtime.notificatorMgr.sendMail(new MailMessage(null, notification.receiver, notification.name, content), null);
+                }
+            } catch (err) {
+                logger.error(`notificator.access.send.failed: ${err}`);
+            }
+        }
     }
 
     /**
@@ -356,6 +388,8 @@ function NotificatorManager(_runtime) {
 
     // check if alarms status chenaged
     events.on('alarms-status:changed', this.forceCheck);
+    events.on('access:login', data => _sendAccessNotifications('login', data));
+    events.on('access:logout', data => _sendAccessNotifications('logout', data));
 }
 
 module.exports = {
