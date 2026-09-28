@@ -99,7 +99,7 @@ function getLogoutUser(req) {
     if (accessToken) {
         try {
             const decoded = jwt.verify(accessToken, secretCode, { ignoreExpiration: true });
-            if (typeof decoded.id === 'string' && decoded.id && decoded.type !== 'refresh') {
+            if (typeof decoded.id === 'string' && decoded.id && decoded.id !== 'guest' && decoded.type !== 'refresh') {
                 return { username: decoded.id };
             }
         } catch (err) {
@@ -111,7 +111,7 @@ function getLogoutUser(req) {
     if (refreshToken) {
         try {
             const decoded = jwt.verify(refreshToken, secretCode);
-            if (decoded.type === 'refresh' && typeof decoded.id === 'string' && decoded.id) {
+            if (decoded.type === 'refresh' && typeof decoded.id === 'string' && decoded.id && decoded.id !== 'guest') {
                 return { username: decoded.id };
             }
         } catch (err) {
@@ -250,7 +250,10 @@ module.exports = {
                 clearRefreshCookie(res);
             }
             clearNodeRedAuthCookie(res);
-            runtime.events.emit('access:logout', getLogoutUser(req));
+            const logoutUser = getLogoutUser(req);
+            if (logoutUser.username) {
+                runtime.events.emit('access:logout', logoutUser);
+            }
             res.status(204).end();
         });
 

@@ -198,7 +198,7 @@ describe('Security - JWT lifecycle', () => {
                 cookie.startsWith('nodered_auth=;') &&
                 cookie.includes('Path=/;')
             )).to.equal(true);
-            expect(accessEvents).to.deep.equal([{ event: 'access:logout', data: {} }]);
+            expect(accessEvents).to.deep.equal([]);
         } finally {
             await new Promise((resolve) => server.close(resolve));
         }
@@ -264,7 +264,7 @@ describe('Security - JWT lifecycle', () => {
             });
 
             expect(response.statusCode).to.equal(204);
-            expect(accessEvents).to.deep.equal([{ event: 'access:logout', data: {} }]);
+            expect(accessEvents).to.deep.equal([]);
         } finally {
             await new Promise((resolve) => server.close(resolve));
         }
