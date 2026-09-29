@@ -200,7 +200,7 @@ function getDevicesStatus() {
         adev[id] = activeDevices[id].getStatus();
     }
     for (var id in failedDevices) {
-        if (!adevs[id]) {
+        if (!adev[id]) {
             adev[id] = failedDevices[id];
         }
     }
