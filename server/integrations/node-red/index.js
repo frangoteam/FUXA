@@ -4,6 +4,27 @@
 const fs = require('fs');
 const path = require('path');
 
+const BASE_PATH = (process.env.BASE_PATH || '').replace(/\/+$/, '');
+
+function getPathWithoutBasePath(requestPath, basePath = BASE_PATH) {
+    if (!basePath) return requestPath;
+    if (requestPath === basePath) return '/';
+    if (requestPath.startsWith(basePath + '/')) {
+        return requestPath.slice(basePath.length);
+    }
+    return requestPath;
+}
+
+function shouldBypassSpaCatchAll(requestPath, basePath = BASE_PATH) {
+    const routePath = getPathWithoutBasePath(requestPath, basePath);
+    return routePath === '/api' ||
+        routePath.startsWith('/api/') ||
+        routePath.includes('.') ||
+        routePath.startsWith('/nodered') ||
+        routePath.startsWith('/dashboard');
+}
+
+
 const BLOCKED_DEVICE_PROPERTY_KEYS = new Set([
     '__proto__',
     'prototype',
@@ -381,11 +402,8 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
         // Catch-all route for SPA - serve Angular index.html for client routes
         // Exclude API routes and static assets
         app.get('*', (req, res, next) => {
-            // Skip API routes and static assets
-            if (req.path.startsWith('/api/') ||
-                req.path.includes('.') ||
-                req.path.startsWith('/nodered') ||
-                req.path.startsWith('/dashboard')) {
+            // Skip API routes and static assets, including routes below BASE_PATH.
+            if (shouldBypassSpaCatchAll(req.path)) {
                 return next();
             }
             res.sendFile(path.join(settings.httpStatic, 'index.html'));
@@ -395,4 +413,10 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
     logger.info('[Node-RED] Started at /nodered');
 }
 
-module.exports = { mountNodeRedIfInstalled, createNodeRedAuthMiddleware, createDevicePropertyHelpers };
+module.exports = {
+    mountNodeRedIfInstalled,
+    createNodeRedAuthMiddleware,
+    createDevicePropertyHelpers,
+    getPathWithoutBasePath,
+    shouldBypassSpaCatchAll,
+};
