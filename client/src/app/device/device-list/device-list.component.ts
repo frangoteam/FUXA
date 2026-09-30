@@ -33,6 +33,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
     readonly defInternalRowWidth = 1200;
+    readonly defOpcUaColumns = ['select', 'name', 'nodeid', 'browsepath', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'uns', 'logger', 'options', 'remove'];
 
     displayedColumns = this.defAllColumns;
 
@@ -68,6 +69,10 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         if (!this.deviceSelected && this.devices) {
             this.deviceSelected = this.devices[0];
         }
+
+        this.hmiService.onVariableChanged.subscribe(() => {
+            this.updateDeviceValue();
+        });
     }
 
     ngAfterViewInit() {
@@ -125,6 +130,9 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             this.tableWidth = this.defAllRowWidth;
         } else if (this.deviceSelected.type === DeviceType.REDIS) {
             this.displayedColumns = this.defAllExtColumns;
+            this.tableWidth = this.defAllRowWidth;
+        } else if (this.deviceSelected.type === DeviceType.OPCUA) {
+            this.displayedColumns = this.defOpcUaColumns;
             this.tableWidth = this.defAllRowWidth;
         } else {
             this.displayedColumns = this.defAllColumns;
@@ -193,6 +201,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         if (this.deviceSelected.type === DeviceType.MQTTclient) {
             this.editTopics(row);
         } else {
+            this.updateDeviceValue();
             this.editTag(row, false);
         }
     }
@@ -399,6 +408,9 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                 this.tagsMap[id].error = signal.error;
                 this.tagsMap[id].timestamp = signal.timestamp;
                 this.tagsMap[id].quality = signal.quality;
+                if ((this.tagsMap[id] as any).pathMode === 'browsePath' && signal.address) {
+                    this.tagsMap[id].address = signal.address;
+                }
             }
         }
         this.changeDetector.detectChanges();

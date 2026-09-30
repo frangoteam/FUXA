@@ -18,6 +18,11 @@ export class TagPropertyEditOpcuaComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
     @ViewChild(TreetableComponent, {static: false}) treetable: TreetableComponent;
     tagType = OpcUaTagType;
+    pathMode = 'id';
+    pathModes = [
+        { text: 'NodeId', value: 'id' },
+        { text: 'BrowsePath', value: 'browsePath' }
+    ];
 
     config = {
         height: '640px',
@@ -33,12 +38,17 @@ export class TagPropertyEditOpcuaComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         if (this.data.tag) {
+            this.pathMode = (this.data.tag as any).pathMode || 'id';
             this.formGroup = this.fb.group({
                 deviceName: [this.data.device.name, Validators.required],
                 tagName: [this.data.tag.name, Validators.required],
                 tagType: [this.data.tag.type],
+                tagAddress: [this.data.tag.address],
+                pathMode: [this.pathMode, Validators.required],
+                browsePath: [(this.data.tag as any).browsePath || ''],
                 tagDescription: [this.data.tag.description]
             });
+            this.updateBrowsePathValidator(this.pathMode);
         } else {
             this.hmiService.onDeviceBrowse.pipe(
                 takeUntil(this.destroy$),
@@ -75,7 +85,7 @@ export class TagPropertyEditOpcuaComponent implements OnInit, OnDestroy {
     }
 
     queryNext(node: Node) {
-        let n = (node) ? { id: node.id } : null;
+        let n = (node) ? { id: node.id, browsePath: (node as any).browsePath } : null;
         if (node) {
             n['parent'] = (node.parent) ? node.parent.id : null;
         }
@@ -89,9 +99,16 @@ export class TagPropertyEditOpcuaComponent implements OnInit, OnDestroy {
                 let node = new Node(n.id, n.name);
                 node.class = n.class;
                 node.property = this.getProperty(n);
+                (node as any).browseName = n.browseName;
+                (node as any).browsePath = this.buildBrowsePath(parent, n.browseName);
                 let enabled = true;
                 if (node.class === NodeType.Variable) {
-                    const selected = tempTags.find((t: Tag) => t.address === n.id);
+                    const selected = tempTags.find((t: Tag) => {
+                        if (this.pathMode === 'browsePath') {
+                            return (t as any).pathMode === 'browsePath' && (t as any).browsePath === (node as any).browsePath;
+                        }
+                        return t.address === n.id;
+                    });
                     if (selected) {
                         enabled = false;
                     }
@@ -103,6 +120,35 @@ export class TagPropertyEditOpcuaComponent implements OnInit, OnDestroy {
             });
             this.treetable.update();
         }
+    }
+
+    private buildBrowsePath(parent: Node, browseName: string): string {
+        if (!browseName) {
+            return null;
+        }
+        const parentPath = (parent) ? ((parent as any).browsePath || '') : '';
+        return parentPath + '/' + browseName;
+    }
+
+    onPathModeChanged(mode: string) {
+        this.pathMode = mode;
+        if (this.formGroup) {
+            this.formGroup.get('pathMode').setValue(mode);
+            this.updateBrowsePathValidator(mode);
+        }
+    }
+
+    private updateBrowsePathValidator(mode: string) {
+        if (!this.formGroup) {
+            return;
+        }
+        const control = this.formGroup.get('browsePath');
+        if (mode === 'browsePath') {
+            control.setValidators(Validators.required);
+        } else {
+            control.clearValidators();
+        }
+        control.updateValueAndValidity();
     }
 
     attributeToString(attribute) {
@@ -138,9 +184,13 @@ export class TagPropertyEditOpcuaComponent implements OnInit, OnDestroy {
 
     onOkClick(): void {
         if (this.data.tag) {
+            if (!this.formGroup.valid) {
+                return;
+            }
             this.result.emit(this.formGroup.getRawValue());
         } else {
             this.data.nodes = [];
+            this.data.pathMode = this.pathMode;
             Object.keys(this.treetable.nodes).forEach((key) => {
                 let n: Node = this.treetable.nodes[key];
                 if (n.checked && n.enabled && (n.type || !n.childs || n.childs.length == 0)) {
@@ -156,4 +206,5 @@ export interface TagPropertyOpcUaData {
     device: Device;
     nodes?: Node[];
     tag?: Tag;
+    pathMode?: string;
 }
