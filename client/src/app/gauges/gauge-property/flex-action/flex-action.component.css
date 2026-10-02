@@ -55,3 +55,18 @@
 .move-by-tags {
     display: inline-block;
 }
+
+.load-image-preview {
+    height: 32px;
+    max-width: 64px;
+    margin-left: 10px;
+    vertical-align: bottom;
+    object-fit: contain;
+    border: 1px solid rgba(128, 128, 128, 0.4);
+}
+
+.load-image-hint {
+    font-size: 11px;
+    opacity: 0.7;
+    padding-top: 2px;
+}

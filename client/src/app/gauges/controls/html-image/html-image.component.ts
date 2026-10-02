@@ -208,15 +208,24 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                     }
                     // check actions
                     if (ga.property.actions) {
+                        let hasLoadImage = false;
+                        let loadImageMatch: GaugeAction = null;
                         ga.property.actions.forEach(act => {
                             if (ShapesComponent.isActionSignal(act, sig.id)) {
                                 if (this.actionsType[act.type] === this.actionsType.loadImage) {
-                                    HtmlImageComponent.actionLoadImage(act, svgele, value);
+                                    hasLoadImage = true;
+                                    if (HtmlImageComponent.isLoadImageInRange(act, value)) {
+                                        loadImageMatch = act;
+                                    }
                                 } else {
                                     ShapesComponent.processAction(act, svgele, value, gaugeStatus, propertyColor, sig.id);
                                 }
                             }
                         });
+                        // one image per state: the last matching range wins, no match falls back to the widget image
+                        if (hasLoadImage) {
+                            HtmlImageComponent.loadImageUrl(svgele, loadImageMatch ? loadImageMatch.options.url : ga.property.address);
+                        }
                     }
                     // check widget
                     if (ga.property.type === HtmlImageComponent.propertyWidgetType && ga.property.scriptContent && ga.property.varsToBind?.length) {
@@ -271,10 +280,13 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         }
     }
 
-    static actionLoadImage(act: GaugeAction, svgele: any, value: number) {
+    static isLoadImageInRange(act: GaugeAction, value: number): boolean {
         const actionValue = GaugeBaseComponent.checkBitmask(act.bitmask, value);
-        const url = act.options?.url;
-        if (!url || act.range.min > actionValue || act.range.max < actionValue) {
+        return !!act.options?.url && act.range.min <= actionValue && act.range.max >= actionValue;
+    }
+
+    static loadImageUrl(svgele: any, url: string) {
+        if (!url) {
             return;
         }
         let element = SVG.adopt(svgele.node);
