@@ -274,6 +274,26 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
+     * autoresize scales the view to the window; for printing fit it to the page instead
+     * (A4 landscape minus the 5 mm @page margins of styles.css, CSS px at 96 dpi), keeping the aspect ratio
+     */
+    @HostListener('window:beforeprint')
+    onBeforePrint() {
+        let hmi = this.projectService.getHmi();
+        const el: HTMLElement = this.dataContainer?.nativeElement;
+        if (!el || this.child || !hmi?.layout || ZoomModeType[hmi.layout.zoom] !== ZoomModeType.autoresize) {
+            return;
+        }
+        const mm = 96 / 25.4;
+        el.style.transform = 'scale(' + Math.min(287 * mm / el.clientWidth, 200 * mm / el.clientHeight) + ')';
+    }
+
+    @HostListener('window:afterprint')
+    onAfterPrint() {
+        this.onResize();
+    }
+
+    /**
      * main function to check placeholder of property, events, action
      * load all gauge settings, bind gauge with signals, bind gauge event
      * @param view
