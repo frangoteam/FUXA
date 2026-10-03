@@ -1298,6 +1298,7 @@
     "gauges.property-action-position-min": "Position min",
     "gauges.property-action-position-max": "Position max",
     "gauges.property-action-image-url": "Image URL",
+    "gauges.property-action-image-default": "No matching range: the widget image is shown",
     "gauges.property-events-mapping-from": "Context variable",
     "gauges.property-map-variable": "Add context variable to bind",
     "gauges.property-head-remove-mapvariable": "Remove the bind",

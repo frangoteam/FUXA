@@ -111,6 +111,8 @@
                     <span>{{'gauges.property-action-image-url' | translate}}</span>
                     <input [(ngModel)]="item.options.url" type="text" style="width: 420px">
                 </div>
+                <img *ngIf="item.options.url" [src]="item.options.url" class="load-image-preview">
+                <div class="load-image-hint">{{'gauges.property-action-image-default' | translate}}</div>
             </div>
         </div>
     </div>
