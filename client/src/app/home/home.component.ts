@@ -259,6 +259,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 // try iframe link
             });
         }
+        this.onAlarmsShowMode('close');
         this.checkToCloseSideNav();
     }
 
