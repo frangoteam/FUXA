@@ -89,3 +89,6 @@ server/_appdata
 #client/package-lock.json
 
 server/_widgets
+
+.agents/
+AGENTS.md
