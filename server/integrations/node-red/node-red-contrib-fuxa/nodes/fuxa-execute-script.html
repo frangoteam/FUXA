@@ -39,6 +39,12 @@
 <script type="text/x-red" data-help-name="execute-script">
     <p>Execute a FUXA script.</p>
     <p><strong>Available scripts:</strong> Dropdown populated from FUXA project scripts.</p>
+    <p>Input <code>msg.payload</code> is forwarded to the selected script parameters:</p>
+    <ul>
+        <li>Use an array for positional parameters, for example <code>[10, 20]</code>.</li>
+        <li>Use an object keyed by FUXA script parameter names, for example <code>{ a: 10, b: 20 }</code>.</li>
+        <li>A non-empty scalar or object with no matching parameter names is passed as one parameter.</li>
+    </ul>
     <p>The output <code>msg.payload</code> contains execution status:</p>
     <ul>
         <li><code>success</code>: boolean indicating if execution succeeded</li>
