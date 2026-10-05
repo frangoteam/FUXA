@@ -29,15 +29,19 @@
                                         </mat-option>
                                     </mat-select>
                                 </div>
-                                <div class="my-form-field ml20 inbk">
-                                    <span style="display: inline-block;">{{'dlg.app-settings-auth-only-editor' | translate}}</span>
-                                    <mat-icon class="my-form-field-info" style="height: 16px" matTooltip="{{authOnlyEditorTooltip}}">error_outline</mat-icon>
+                            </div>
+                            <div class="auth-secret-row block mt15" *ngIf="authentication">
+                                <div class="my-form-field system-input auth-secret-field">
+                                    <span>{{'dlg.app-settings-auth-secret' | translate}}</span>
+                                    <input autocomplete="off" [(ngModel)]="settings.secretCode" style="width: 180px" type="password">
+                                </div>
+                                <div class="my-form-field auth-only-editor-field">
+                                    <div class="auth-only-editor-label">
+                                        <span>{{'dlg.app-settings-auth-only-editor' | translate}}</span>
+                                        <mat-icon class="my-form-field-info" style="height: 16px" matTooltip="{{authOnlyEditorTooltip}}">error_outline</mat-icon>
+                                    </div>
                                     <mat-slide-toggle color="primary" [(ngModel)]="settings.secureOnlyEditor" [disabled]="authentication === ''"></mat-slide-toggle>
                                 </div>
-                            </div>
-                            <div class="my-form-field block mt15 system-input" *ngIf="authentication">
-                                <span>{{'dlg.app-settings-auth-secret' | translate}}</span>
-                                <input autocomplete="off" [(ngModel)]="settings.secretCode" style="width: 320px" type="password">
                             </div>
                             <div class="my-form-field block mt15 system-input">
                                 <span>{{'dlg.app-settings-lazy-view-loading' | translate}}</span>

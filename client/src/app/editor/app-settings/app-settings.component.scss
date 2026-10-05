@@ -57,6 +57,41 @@
         box-sizing: border-box;
     }
 
+    .auth-secret-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .auth-secret-field {
+        width: 190px;
+    }
+
+    .auth-only-editor-field {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .auth-only-editor-label {
+        display: flex;
+        align-items: center;
+        height: 20px;
+        margin-left: 3px;
+    }
+
+    .auth-only-editor-label > span {
+        font-size: 12px;
+        opacity: 0.5;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .auth-only-editor-label .my-form-field-info {
+        padding-left: 4px;
+    }
+
     .node-red-info {
         margin-top: 6px;
         padding: 6px 8px;
