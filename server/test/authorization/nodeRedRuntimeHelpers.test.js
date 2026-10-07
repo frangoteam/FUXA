@@ -96,6 +96,14 @@ describe('Node-RED FUXA runtime helpers', () => {
         ]);
     });
 
+    it('uses safe options when opening a card without options', () => {
+        helpers.openCard('Pump details');
+        expect(commands).to.deep.equal([
+            { command: 'OPENCARD', params: ['Pump details', {}] },
+        ]);
+        expect(JSON.parse(JSON.stringify(commands))[0].params[1]).to.deep.equal({});
+    });
+
     it('forwards device enable and tag DAQ operations to the device manager', () => {
         expect(helpers.enableDevice('PLC-1', false)).to.equal(true);
         expect(enabledCalls).to.deep.equal([{ deviceName: 'PLC-1', enable: false }]);
@@ -148,13 +156,27 @@ describe('Node-RED FUXA runtime helpers', () => {
         ]);
     });
 
-    it('supports array payloads and treats an empty object as no script parameters', async () => {
+    it('supports nonempty array payloads and preserves saved defaults for empty payloads', async () => {
         await helpers.runScript('calculate', ['left', 'right']);
         expect(runCalls[0].script.parameters).to.deep.equal(['left', 'right']);
 
-        runCalls.length = 0;
-        await helpers.runScript('calculate', {});
-        expect(runCalls[0].script.parameters).to.deep.equal([]);
+        const defaults = [{ name: 'a', value: 1 }, { name: 'b', value: 2 }];
+        for (const payload of [undefined, null, '', [], {}]) {
+            runCalls.length = 0;
+            await helpers.runScript('calculate', payload);
+            expect(runCalls[0].script.parameters).to.deep.equal(defaults);
+        }
+    });
+
+    it('preserves zero and false as explicit parameter payloads', async () => {
+        await helpers.runScript('calculate', 0);
+        await helpers.runScript('calculate', false);
+        await helpers.runScript('calculate', { a: 0, b: false });
+        expect(runCalls.map(call => call.script.parameters)).to.deep.equal([
+            [0],
+            [false],
+            [0, false],
+        ]);
     });
 
     it('normalizes a scalar or object payload as a single parameter when names do not match', () => {
