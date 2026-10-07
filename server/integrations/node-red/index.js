@@ -93,16 +93,17 @@ function isSafeDevicePropertyValue(value) {
 }
 
 function normalizeScriptParameters(script, params) {
-    if (Array.isArray(params)) {
-        return params;
+    const defaults = script?.parameters || [];
+    if (params === undefined || params === null || params === '') {
+        return defaults;
     }
-    if (params === undefined || params === null) {
-        return [];
+    if (Array.isArray(params)) {
+        return params.length ? params : defaults;
     }
     if (typeof params === 'object' && !Array.isArray(params)) {
         const keys = Object.keys(params);
         if (!keys.length) {
-            return [];
+            return defaults;
         }
         const definitions = Array.isArray(script?.parameters) ? script.parameters : [];
         const hasNamedMatch = definitions.some(p => p && typeof p === 'object' && p.name && Object.prototype.hasOwnProperty.call(params, p.name));
@@ -130,7 +131,7 @@ function createNodeRedRuntimeHelpers(runtime, devices) {
         openCard(viewName, options) {
             runtime.scriptSendCommand({
                 command: 'OPENCARD',
-                params: [viewName, options],
+                params: [viewName, options === undefined ? {} : options],
             });
             return true;
         },
