@@ -3,11 +3,11 @@
 const assert = require('node:assert/strict');
 const { EventEmitter } = require('node:events');
 const { setTimeout: pause } = require('node:timers/promises');
-const opcua = require('node-opcua');
-const { EUInformation } = require('node-opcua-data-access');
-const driver = require('../../runtime/devices/opcua');
 
 async function run() {
+    const opcua = require('node-opcua');
+    const { EUInformation } = require('node-opcua-data-access');
+    const driver = require('../../runtime/devices/opcua');
     const server = new opcua.OPCUAServer({
         port: 24871, resourcePath: '/ArrayRegression', nodeset_filename: [opcua.nodesets.standard]
     });
@@ -96,4 +96,6 @@ async function run() {
     }
 }
 
-run().catch(error => { console.error(error); process.exitCode = 1; });
+if (require.main === module) {
+    run().catch(error => { console.error(error); process.exitCode = 1; });
+}
