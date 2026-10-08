@@ -31,6 +31,8 @@ export class Device {
     polling: number;
     /** Tags list of Tag */
     tags: DictionaryTag;
+    /** Generic EtherNet/IP I/O modules */
+    modules?: { [id: string]: EthernetIPModule };
 
     constructor(_id: string) {
         this.id = _id;
@@ -40,7 +42,7 @@ export class Device {
         id: 'Device id, GUID',
         name: 'Device name',
         enabled: 'Enabled',
-        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | ADSclient | Gpio | WebCam | MELSEC | REDIS',
+        type: 'Device Type: FuxaServer | SiemensS7 | OPCUA | BACnet | ModbusRTU | ModbusTCP | WebAPI | MQTTclient | internal | EthernetIP | GenericEthernetIP | ADSclient | Gpio | WebCam | MELSEC | REDIS',
         polling: 'Polling interval in millisec., check changed value after ask value, by OPCUA there is a monitor',
         property: 'Connection property depending of type',
         tags: 'Tags list of Tag',
@@ -106,6 +108,9 @@ export class Tag {
     direction?: string;
     edge?: string;
 
+    /** Generic EtherNet/IP tag configuration */
+    enipOptions?: EnipTagOptions;
+
 
     constructor(_id: string) {
         this.id = _id;
@@ -130,6 +135,87 @@ export class Tag {
         direction: 'A string specifying whether the GPIO should be configured as an input or output. The valid values are: \'in\', \'out\', \'high\', and \'low\'. If \'out\' is specified the GPIO will be configured as an output and the value of the GPIO will be set to 0. \'high\' and \'low\' are variants of \'out\' that configure the GPIO as an output with an initial level of 1 or 0 respectively.',
         edge: 'An optional string specifying the interrupt generating edge or edges for an input GPIO. The valid values are: \'none\', \'rising\', \'falling\' or \'both\'. The default value is \'none\' indicating that the GPIO will not generate interrupts. Whether or not interrupts are supported by an input GPIO is GPIO specific. If interrupts are not supported by a GPIO the edge argument should not be specified. The edge argument is ignored for output GPIOs.',
     };
+}
+
+export enum EnipTypes {
+    BOOL = 0xc1,
+    SINT = 0xc2,
+    INT = 0xc3,
+    DINT = 0xc4,
+    LINT = 0xc5,
+    USINT = 0xc6,
+    UINT = 0xc7,
+    UDINT = 0xc8,
+    REAL = 0xca,
+    LREAL = 0xcb,
+    STIME = 0xcc,
+    DATE = 0xcd,
+    TIME_AND_DAY = 0xce,
+    DATE_AND_STRING = 0xcf,
+    STRING = 0xd0,
+    WORD = 0xd1,
+    DWORD = 0xd2,
+    BIT_STRING = 0xd3,
+    LWORD = 0xd4,
+    STRING2 = 0xd5,
+    FTIME = 0xd6,
+    LTIME = 0xd7,
+    ITIME = 0xd8,
+    STRINGN = 0xd9,
+    SHORT_STRING = 0xda,
+    TIME = 0xdb,
+    EPATH = 0xdc,
+    ENGUNIT = 0xdd,
+    STRINGI = 0xde,
+    STRUCT = 0x02a0
+}
+
+export enum EnipTagDataSourceType {
+    symbolic,
+    explicit,
+    assemblyIO
+}
+
+export enum EnipIODataType {
+    bit,
+    integer16
+}
+
+export interface EnipTagOptions {
+    tagType: EnipTagDataSourceType;
+    symbolicOpt?: { program?: string; dataType?: EnipTypes };
+    explicitOpt?: {
+        class?: number;
+        instance?: number;
+        attribute?: number;
+        getOrSend?: boolean;
+        sendBuffer?: string;
+    };
+    ioOpt?: {
+        ioModuleId?: string;
+        ioType?: EnipIODataType;
+        ioByteOffset?: number;
+        ioBitOffset?: number;
+        ioOutput?: boolean;
+    };
+}
+
+export class EthernetIPModule {
+    id: string;
+    name: string;
+    description: string;
+    rpi: number;
+    inputInstance: number;
+    inputSize: number;
+    outputInstance: number;
+    outputSize: number;
+    configurationInstance: number;
+    configurationSize: number;
+    configurationData: string;
+
+    constructor(id: string) {
+        this.id = id;
+    }
 }
 
 export interface TagDevice extends Tag {
@@ -247,6 +333,7 @@ export enum DeviceType {
     MQTTclient = 'MQTTclient',
     internal = 'internal',
     EthernetIP = 'EthernetIP',
+    GenericEthernetIP = 'GenericEthernetIP',
     OmronEthernetIP = 'OmronEthernetIP',
     ODBC = 'ODBC',
     ADSclient = 'ADSclient',
@@ -442,6 +529,7 @@ export enum BACnetObjectType {
 
 export const DEVICE_PREFIX = 'd_';
 export const TAG_PREFIX = 't_';
+export const ETHERNETIPMODULE_PREFIX = 'm_';
 
 export class DevicesUtils {
     static getDeviceTagText(devices: Device[], id: string): string {

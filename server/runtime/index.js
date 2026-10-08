@@ -238,6 +238,21 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 logger.error(`${Events.IoEventTypes.DEVICE_BROWSE}: ${err}`);
             }
         });
+        socket.on(Events.IoEventTypes.DEVICE_BROWSE_FOR_DEVICES, (message) => {
+            if (!isSocketAdminAuthorized(socket)) {
+                logger.warn(`${Events.IoEventTypes.DEVICE_BROWSE_FOR_DEVICES}: unauthorized request from ${socket.userId || 'guest'}`);
+                return;
+            }
+            if (!message || !message.device) {
+                return;
+            }
+            devices.browseForDevices(message.device, message.node).then(result => {
+                socket.emit(Events.IoEventTypes.DEVICE_BROWSE_FOR_DEVICES, { ...message, result });
+            }).catch(error => {
+                logger.error(`${Events.IoEventTypes.DEVICE_BROWSE_FOR_DEVICES}: ${error}`);
+                socket.emit(Events.IoEventTypes.DEVICE_BROWSE_FOR_DEVICES, { ...message, error: error.message || error });
+            });
+        });
         // client ask device node attribute
         socket.on(Events.IoEventTypes.DEVICE_NODE_ATTRIBUTE, (message) => {
             try {

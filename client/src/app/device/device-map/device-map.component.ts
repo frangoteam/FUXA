@@ -526,6 +526,10 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                             delete device.property.timeout;
                         }
                     }
+                    if (device.type === DeviceType.GenericEthernetIP) {
+                        device.modules = JSON.parse(JSON.stringify(tempdevice.modules || {}));
+                        device.property.ioport = parseInt(tempdevice.property?.ioport) || 2222;
+                    }
                     this.projectService.setDevice(device, olddevice, result.security);
                 }
                 this.loadDevices();
