@@ -1,0 +1,26 @@
+:host {
+    display: block;
+    width: min(100%, 460px);
+}
+
+.module-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.module-grid .my-form-field,
+.content > .my-form-field {
+    display: block;
+}
+
+.module-grid input,
+.content > .my-form-field input {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+small {
+    opacity: 0.7;
+}

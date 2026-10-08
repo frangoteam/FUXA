@@ -3,7 +3,7 @@ import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { Device, EnipTypes, Tag } from '../../../_models/device';
+import { Device, EnipIODataType, EnipTagDataSourceType, EnipTagOptions, EnipTypes, EthernetIPModule, Tag } from '../../../_models/device';
 import { HmiService } from '../../../_services/hmi.service';
 
 @Component({
@@ -16,6 +16,21 @@ export class TagPropertyEditGenericEthernetIPComponent implements OnInit, OnDest
     formGroup: UntypedFormGroup;
     availableTags: any[] = [];
     browseError = '';
+    readonly EnipTagDataSourceType = EnipTagDataSourceType;
+    readonly EnipIODataType = EnipIODataType;
+    tagSources = [
+        { name: 'device.enip-tag-type-symbolic', value: EnipTagDataSourceType.symbolic },
+        { name: 'device.enip-tag-type-explicit', value: EnipTagDataSourceType.explicit },
+        { name: 'device.enip-tag-type-io', value: EnipTagDataSourceType.assemblyIO }
+    ];
+    ioTypes = [
+        { name: 'device.enip-io-bit', value: EnipIODataType.bit },
+        { name: 'device.enip-io-integer16', value: EnipIODataType.integer16 }
+    ];
+    ioDirections = [
+        { name: 'device.enip-io-input', value: false },
+        { name: 'device.enip-io-output', value: true }
+    ];
     dataTypes = [
         { name: 'BOOL', value: EnipTypes.BOOL },
         { name: 'SINT', value: EnipTypes.SINT },
@@ -39,12 +54,28 @@ export class TagPropertyEditGenericEthernetIPComponent implements OnInit, OnDest
         @Inject(MAT_DIALOG_DATA) public data: { device: Device; tag: Tag }) { }
 
     ngOnInit() {
+        const options: EnipTagOptions = this.data.tag.enipOptions || {
+            tagType: EnipTagDataSourceType.symbolic
+        };
         const symbolic = this.data.tag.enipOptions?.symbolicOpt || {};
+        const explicit = options.explicitOpt || {};
+        const io = options.ioOpt || {};
         this.formGroup = this.fb.group({
             name: [this.data.tag.name, [Validators.required, this.validateName()]],
+            tagType: [options.tagType ?? EnipTagDataSourceType.symbolic, Validators.required],
             address: [this.data.tag.address, Validators.required],
             program: [symbolic.program || ''],
             dataType: [symbolic.dataType ?? null],
+            explicitClass: [explicit.class ?? null],
+            explicitInstance: [explicit.instance ?? null],
+            explicitAttribute: [explicit.attribute ?? null],
+            explicitGetOrSend: [explicit.getOrSend ?? true],
+            explicitSendBuffer: [explicit.sendBuffer || ''],
+            ioModuleId: [io.ioModuleId || ''],
+            ioType: [io.ioType ?? EnipIODataType.bit],
+            ioByteOffset: [io.ioByteOffset ?? 0],
+            ioBitOffset: [io.ioBitOffset ?? 0],
+            ioOutput: [io.ioOutput ?? false],
             description: [this.data.tag.description || '']
         });
         this.hmiService.onDeviceBrowse.pipe(takeUntil(this.destroy$)).subscribe(message => {
@@ -87,6 +118,46 @@ export class TagPropertyEditGenericEthernetIPComponent implements OnInit, OnDest
 
     onOkClick() {
         this.result.emit(this.formGroup.getRawValue());
+    }
+
+    isSymbolic() {
+        return this.formGroup?.get('tagType')?.value === EnipTagDataSourceType.symbolic;
+    }
+
+    isExplicit() {
+        return this.formGroup?.get('tagType')?.value === EnipTagDataSourceType.explicit;
+    }
+
+    isAssemblyIO() {
+        return this.formGroup?.get('tagType')?.value === EnipTagDataSourceType.assemblyIO;
+    }
+
+    isBitIO() {
+        return this.formGroup?.get('ioType')?.value === EnipIODataType.bit;
+    }
+
+    isValid() {
+        if (!this.formGroup || this.formGroup.get('name')?.invalid) {
+            return false;
+        }
+        const value = this.formGroup.getRawValue();
+        if (this.isSymbolic()) {
+            return !!value.address;
+        }
+        if (this.isExplicit()) {
+            return [value.explicitClass, value.explicitInstance, value.explicitAttribute]
+                .every(item => item !== null && item !== '' && Number.isFinite(Number(item)));
+        }
+        if (this.isAssemblyIO()) {
+            return !!value.ioModuleId && Number.isFinite(Number(value.ioByteOffset)) &&
+                Number(value.ioByteOffset) >= 0 && (!this.isBitIO() ||
+                    (Number.isFinite(Number(value.ioBitOffset)) && Number(value.ioBitOffset) >= 0 && Number(value.ioBitOffset) <= 7));
+        }
+        return false;
+    }
+
+    ethernetIpModules(): EthernetIPModule[] {
+        return Object.values(this.data.device.modules || {});
     }
 
     browseTags() {

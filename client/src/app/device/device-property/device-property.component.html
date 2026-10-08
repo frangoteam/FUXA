@@ -490,6 +490,37 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="my-form-field generic-enip-io-port">
+                            <span>{{'device.enip-io-port' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.device.property.ioport" type="number" min="1" max="65535">
+                        </div>
+
+                        <div class="generic-enip-modules">
+                            <div class="generic-enip-modules-heading">
+                                <span>{{'device.enip-modules' | translate}}</span>
+                                <button mat-stroked-button color="primary" type="button" (click)="onAddEnipModule()">
+                                    <mat-icon>add</mat-icon>{{'device.enip-module-add' | translate}}
+                                </button>
+                            </div>
+                            <div *ngIf="!ethernetIpModules().length" class="generic-enip-empty">
+                                {{'device.enip-modules-empty' | translate}}
+                            </div>
+                            <div *ngFor="let module of ethernetIpModules()" class="generic-enip-module-row">
+                                <div>
+                                    <strong>{{module.name}}</strong>
+                                    <small>{{module.description}}</small>
+                                </div>
+                                <span>{{module.rpi}} ms</span>
+                                <button mat-icon-button type="button" (click)="onEditEnipModule(module)"
+                                    [matTooltip]="'device.enip-module-edit' | translate">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button type="button" (click)="onRemoveEnipModule(module)"
+                                    [matTooltip]="'device.enip-module-delete' | translate">
+                                    <mat-icon>delete_outline</mat-icon>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.OmronEthernetIP">

@@ -180,6 +180,58 @@
         flex-direction: column;
         gap: 4px;
     }
+
+    .generic-enip-modules {
+        display: grid;
+        gap: 8px;
+        padding-top: 8px;
+        border-top: 1px solid var(--formExtBackground);
+    }
+
+    .generic-enip-modules-heading,
+    .generic-enip-module-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .generic-enip-modules-heading {
+        justify-content: space-between;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .generic-enip-modules-heading button {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .generic-enip-module-row {
+        min-height: 40px;
+        padding: 4px 6px;
+        background: var(--formExtBackground);
+        border-radius: 3px;
+
+        > div {
+            display: grid;
+            flex: 1;
+            min-width: 0;
+        }
+
+        small {
+            overflow: hidden;
+            opacity: 0.65;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    .generic-enip-empty {
+        padding: 8px 4px;
+        opacity: 0.65;
+        font-size: 12px;
+    }
 }
 
 :host ::ng-deep .mat-expansion-panel-body {

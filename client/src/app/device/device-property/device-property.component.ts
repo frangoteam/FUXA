@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy, ViewChild } from '@angular/core';
-import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatExpansionPanel } from '@angular/material/expansion';
 import { Subscription, Subject, delay, takeUntil } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,7 +7,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { EndPointSettings, HmiService } from '../../_services/hmi.service';
 import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
-import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType, ModbusReuseModeType, RedisReadModeType, RedisOptions } from './../../_models/device';
+import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType, ModbusReuseModeType, RedisReadModeType, RedisOptions, EthernetIPModule, ETHERNETIPMODULE_PREFIX } from './../../_models/device';
+import { Utils } from '../../_helpers/utils';
+import { DeviceEnipmoduleComponent } from '../device-enipmodule/device-enipmodule.component';
+import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
 
 @Component({
 	selector: 'app-device-property',
@@ -97,6 +100,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private hmiService: HmiService,
+		private dialog: MatDialog,
 		private translateService: TranslateService,
 		private appService: AppService,
 		public dialogRef: MatDialogRef<DevicePropertyComponent>,
@@ -106,6 +110,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.isToRemove = this.data.remove;
+		this.ensureGenericEthernetIPConfig();
 		this.isFuxaServer = (this.data.device.type && this.data.device.type === DeviceType.FuxaServer) ? true : false;
 		for (let key in DeviceType) {
 			if (!this.isFuxaServer && key !== DeviceType.FuxaServer) {
@@ -326,6 +331,60 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		} else {
 			this.pollingType = this.pollingPlcType;
 		}
+		this.ensureGenericEthernetIPConfig();
+	}
+
+	private ensureGenericEthernetIPConfig() {
+		if (this.data.device.type !== DeviceType.GenericEthernetIP) {
+			return;
+		}
+		const modules = this.data.device.modules;
+		this.data.device.modules = Array.isArray(modules)
+			? Object.fromEntries(modules.filter(module => module?.id).map(module => [module.id, module]))
+			: (modules || {});
+		this.data.device.property = this.data.device.property || {};
+		this.data.device.property.ioport = parseInt(this.data.device.property.ioport) || 2222;
+	}
+
+	ethernetIpModules(): EthernetIPModule[] {
+		return Object.values(this.data.device.modules || {});
+	}
+
+	onAddEnipModule() {
+		this.editEnipModule(new EthernetIPModule(Utils.getGUID(ETHERNETIPMODULE_PREFIX)));
+	}
+
+	onEditEnipModule(module: EthernetIPModule) {
+		this.editEnipModule(module);
+	}
+
+	onRemoveEnipModule(module: EthernetIPModule) {
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+			disableClose: true,
+			data: { msg: this.translateService.instant('device.enip-module-remove-confirm', { name: module.name }) },
+			position: { top: '60px' }
+		});
+		dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(result => {
+			if (result) {
+				delete this.data.device.modules[module.id];
+			}
+		});
+	}
+
+	private editEnipModule(module: EthernetIPModule) {
+		const draft = Object.assign(new EthernetIPModule(module.id), module);
+		const dialogRef = this.dialog.open(DeviceEnipmoduleComponent, {
+			disableClose: true,
+			panelClass: 'app-device-enipmodule',
+			data: { module: draft },
+			position: { top: '60px' }
+		});
+		dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe(result => {
+			if (result) {
+				this.data.device.modules = this.data.device.modules || {};
+				this.data.device.modules[result.id] = result;
+			}
+		});
 	}
 
 	isValid(device): boolean {

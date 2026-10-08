@@ -119,7 +119,10 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
                     logger.debug('caught async execption in connect');
                     logger.debug(err.toString());
                     // TODO add error lookup to string
-                    logger.error(`'${device.name}' try to connect error! ${JSON.stringify(err)}`);
+                    logger.error(`'${device.name}' try to connect error! ${err.message || err}`);
+                    if (err.stack) {
+                        logger.debug(err.stack);
+                    }
                     _checkWorking(false);
                     _emitStatus('connect-error');
                     _clearVarsValue();
@@ -265,6 +268,9 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
      */
     this.setValue = async function (tagId, value) {
         if (device.tags[tagId]) {
+            if (!conn || !this.isConnected()) {
+                return false;
+            }
             const tag = device.tags[tagId];
             const isStringTag = _isStringTag(tag);
             let valueToSend = isStringTag ? value : await deviceUtils.tagRawCalculator(value, tag, runtime);
@@ -312,8 +318,12 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
                     logger.error(`${device.name} '${tag.name}' Ethernet/IP explicit tag value must be of type string (hex) to set value`);
                     return false;
                 }
-                
+
                 const trimedVal = strBuf.replace(/\s/g, "");
+                if (trimedVal.length % 2 !== 0 || !/^[0-9a-f]*$/i.test(trimedVal)) {
+                    logger.error(`${device.name} '${tag.name}' explicit value must contain complete hexadecimal bytes`);
+                    return false;
+                }
                 let valueBuf = undefined;
                 try {
                     valueBuf = Buffer.from(trimedVal, 'hex');
@@ -322,15 +332,17 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
                     return false;
                 }
                                 
-                conn?.setAttributeSingle(tag.enipOptions.explicitOpt.class,
-                    tag.enipOptions.explicitOpt.instance,
-                    tag.enipOptions.explicitOpt.attribute,
-                    valueBuf).then(() => {
-                        logger.debug(`${device.name} '${tag.name}' setValue ${strBuf} set`);
-                    }).catch(error => {
-                        logger.error(`${device.name} '${tag.name}' setValue error! ${JSON.stringify(error)}`);
-                    }); 
-                return true;
+                try {
+                    await conn.setAttributeSingle(tag.enipOptions.explicitOpt.class,
+                        tag.enipOptions.explicitOpt.instance,
+                        tag.enipOptions.explicitOpt.attribute,
+                        valueBuf);
+                    logger.debug(`${device.name} '${tag.name}' setValue ${strBuf} set`);
+                    return true;
+                } catch (error) {
+                    logger.error(`${device.name} '${tag.name}' setValue error! ${JSON.stringify(error)}`);
+                    return false;
+                }
             }
 
             //symbolic
@@ -340,13 +352,15 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
                     tag.enipOptions?.symbolicOpt.dataType
                 );
                 enipTag.value = valueToSend;
-                conn.writeTag(enipTag).then(() => {
+                try {
+                    await conn.writeTag(enipTag);
                     logger.debug(`${device.name} Sending value ${valueToSend}`);
                     //logger.info(`'${tag.name}' setValue(${tagId}, ${valueToSend})`, true, true);
-                }).catch(error => {
+                    return true;
+                } catch (error) {
                     logger.error(`${device.name} '${tag.name}' setValue error! ${error}`);
-                }); 
-                return true;
+                    return false;
+                }
             }
         }
         return false;
@@ -554,26 +568,40 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
                     return false;
                 }
                 }   
-            const tagValue = await conn?.getAttributeSingle(theTag.enipOptions.explicitOpt.class, theTag.enipOptions.explicitOpt.instance, theTag.enipOptions.explicitOpt.attribute, valueBuf);
+            let tagValue;
+            try {
+                tagValue = await conn?.getAttributeSingle(
+                    theTag.enipOptions.explicitOpt.class,
+                    theTag.enipOptions.explicitOpt.instance,
+                    theTag.enipOptions.explicitOpt.attribute,
+                    valueBuf
+                );
+            } catch (error) {
+                logger.error(`${device.name} explicit read failed for '${theTag.name}' ` +
+                    `(class=${theTag.enipOptions.explicitOpt.class}, ` +
+                    `instance=${theTag.enipOptions.explicitOpt.instance}, ` +
+                    `attribute=${theTag.enipOptions.explicitOpt.attribute}): ${error.message || JSON.stringify(error)}`);
+                throw error;
+            }
             logger.debug(`${device.name} Read Explicit tag ${theTag.name} value:`);
             logger.debug(tagValue);
             items[id] = tagValue;
             tagMemoryTable[id] = tagValue;//do we need this?
         }
 
-        // for symoblic
-        if (connSupportsTagGroup) {
+        // Read symbolic tags only when this device has any. Some generic
+        // adapters support explicit/I/O messaging but not Logix tag services;
+        // sending an empty TagGroup makes those otherwise valid polls fail.
+        const symbolicTags = tags.filter(tag => tag.enipOptions?.tagType === EnipTagType.symbolic);
+        if (symbolicTags.length > 0 && connSupportsTagGroup) {
             const group = new STEthernetIp.TagGroup();
-            for (var id in device.tags) {
-                if (device.tags[id].enipOptions?.tagType !== EnipTagType.symbolic) {
-                    continue;
-                }
+            for (const tag of symbolicTags) {
                 //const aTag = new STEthernetIp.Tag(device.tags[id].address);
-                const aTag = new STEthernetIp.Tag(device.tags[id].address,
-                    device.tags[id].enipOptions?.symbolicOpt.program,
-                    device.tags[id].enipOptions?.symbolicOpt.dataType
+                const aTag = new STEthernetIp.Tag(tag.address,
+                    tag.enipOptions?.symbolicOpt.program,
+                    tag.enipOptions?.symbolicOpt.dataType
                 );
-                aTag.FuxaId = id;
+                aTag.FuxaId = tag.id;
                 group.add(aTag);
             }
             try {
@@ -585,7 +613,8 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
                 });
                 
             } catch(error) {
-                logger.error(JSON.stringify(error));
+                logger.error(`${device.name} symbolic tag group read failed for ` +
+                    `${symbolicTags.map(tag => tag.name).join(', ')}: ${error.message || JSON.stringify(error)}`);
                 if (error.generalStatusCode !== 8) {//0x08 is not supported
                     //error is something other than not supported
                     throw(error);
@@ -595,16 +624,13 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
                 // next polling try single tag reads
                 connSupportsTagGroup = false;
             };
-        } else {
+        } else if (symbolicTags.length > 0) {
             //read one at a time
-            for (var id in device.tags) {                
-                if (device.tags[id].enipOptions?.tagType !== EnipTagType.symbolic) {
-                    continue;
-                }
-                const aTag = conn.newTag(device.tags[id].address);
+            for (const tag of symbolicTags) {
+                const aTag = conn.newTag(tag.address, tag.enipOptions?.symbolicOpt.program, tag.enipOptions?.symbolicOpt.dataType);
                 await conn.readTag(aTag);
-                logger.debug(`${device.name} Read symbolic tag ${device.tags[id].name} value ${aTag.value}`);
-                items[id] = aTag.value === null ? '' : aTag.value;
+                logger.debug(`${device.name} Read symbolic tag ${tag.name} value ${aTag.value}`);
+                items[tag.id] = aTag.value === null ? '' : aTag.value;
             }
         }
         return items;        
@@ -650,6 +676,11 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
                             if (ioconn.lastError.generalStatusCode === 1 && ioconn.lastError.extendedStatus === 0x106) {
                                 logger.error(`${device.name} Ethernet/ip IO module connection ownership conflict`);
                             }
+                        }
+                        if (ioconn.tcpController?.established_conn && !ioconn.connected) {
+                            logger.error(`${device.name} I/O Forward Open succeeded but no cyclic UDP packets arrived; verify the target I/O UDP port and that the selected profile/device supports Class 1 I/O.`);
+                        } else if (!ioconn.connected) {
+                            logger.error(`${device.name} I/O Forward Open did not establish; verify assembly instance IDs, sizes, RPI, and routing against the device manual.`);
                         }
                     }
                     reject(`${device.name} unable to connect to IO module, connection attempts reached ${connectionAttempts}.`);
@@ -700,8 +731,11 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
                 ioconn.run = false;
                 try {
                     logger.debug(`${device.name} closing io connection...`);
-                    //await ioconn.tcpController.disconnect();
-                    await ioconn.disconnect();
+                    if (typeof ioconn.disconnect === 'function') {
+                        await ioconn.disconnect();
+                    } else if (ioconn.tcpController && typeof ioconn.tcpController.disconnect === 'function') {
+                        await ioconn.tcpController.disconnect();
+                    }
                     logger.debug(`${device.name} io connection closed`);
                 } catch (error) {
                     logger.debug(`${device.name} Error disconnecting io connection`);
@@ -783,7 +817,14 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
                 if (globalIOScanner === undefined) {
                     logger.debug(`${device.name} globalIOScanner undefined, creating new and binding to UDP socket`);
                     globalIOScanner = new STEthernetIp.IO.Scanner();
-                    await globalIOScanner.bind(2222, '0.0.0.0');
+                    if (typeof globalIOScanner.bind === 'function') {
+                        await globalIOScanner.bind(2222, '0.0.0.0');
+                    } else if (globalIOScanner.socket && !globalIOScanner.socket.listening) {
+                        await new Promise((resolve, reject) => {
+                            globalIOScanner.socket.once('listening', resolve);
+                            globalIOScanner.socket.once('error', reject);
+                        });
+                    }
                     logger.debug(`${device.name} globalIOScanner bind successful`);
                 }
                 let totalTimeout = 0;
@@ -829,7 +870,9 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
                         logger.debug(`${device.name} IOController enip socket end ${msg}`);
                         //ioconn.tcpController.established_conn = false;
                     });
-                    await ioconn.connect();
+                    if (typeof ioconn.connect === 'function') {
+                        await ioconn.connect();
+                    }
                     ioconnections.push(ioconn);                                       
                 }
                 _mapIOTags();
@@ -913,8 +956,7 @@ function GenericEthernetIPclient(_data, _logger, _events, _runtime) {
         // }
         logger.debug(`${device.name} ethernet/ip explicit/symbolic conn is now connected!!!!`);
         await _makeIOConnection(addr, device.property.ioport).catch(error => {
-            logger.debug(`${device.name} _makeIOConnections failed`);
-            logger.debug(error);
+            logger.error(`${device.name} _makeIOConnections failed: ${error.message || error}`);
             throw (error);
         });
     }

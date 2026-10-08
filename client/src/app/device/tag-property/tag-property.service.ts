@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog as MatDialog } from '@angular/material/dialog';
-import { Device, TAG_PREFIX, Tag, ServerTagType } from '../../_models/device';
+import { Device, EnipTagDataSourceType, TAG_PREFIX, Tag, ServerTagType } from '../../_models/device';
 import { Utils } from '../../_helpers/utils';
 import { TagPropertyEditS7Component } from './tag-property-edit-s7/tag-property-edit-s7.component';
 import { Observable, map } from 'rxjs';
@@ -212,6 +212,8 @@ export class TagPropertyService {
         const tagToEdit: Tag = Utils.clone(tag);
         const dialogRef = this.dialog.open(TagPropertyEditGenericEthernetIPComponent, {
             disableClose: true,
+            width: '560px',
+            maxWidth: 'calc(100vw - 32px)',
             data: { device, tag: tagToEdit },
             position: { top: '60px' }
         });
@@ -220,14 +222,32 @@ export class TagPropertyService {
             map(result => {
                 if (result) {
                     tag.name = result.name;
-                    tag.address = result.address;
+                    tag.address = result.address || '';
                     tag.description = result.description;
-                    tag.type = result.dataType === 0xc1 ? 'boolean' : 'number';
+                    tag.type = result.tagType === EnipTagDataSourceType.symbolic && result.dataType === 0xc1
+                        ? 'boolean'
+                        : result.tagType === EnipTagDataSourceType.assemblyIO && result.ioType === 0
+                            ? 'boolean'
+                            : 'number';
                     tag.enipOptions = {
-                        tagType: 0,
+                        tagType: result.tagType,
                         symbolicOpt: {
                             program: result.program || undefined,
                             dataType: result.dataType === null ? undefined : result.dataType
+                        },
+                        explicitOpt: {
+                            class: result.explicitClass,
+                            instance: result.explicitInstance,
+                            attribute: result.explicitAttribute,
+                            getOrSend: result.explicitGetOrSend,
+                            sendBuffer: result.explicitSendBuffer
+                        },
+                        ioOpt: {
+                            ioModuleId: result.ioModuleId,
+                            ioType: result.ioType,
+                            ioByteOffset: result.ioByteOffset,
+                            ioBitOffset: result.ioBitOffset,
+                            ioOutput: result.ioOutput
                         }
                     };
                     if (checkToAdd) {

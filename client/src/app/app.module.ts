@@ -46,6 +46,7 @@ import { LanguageTextListComponent } from './language/language-text-list/languag
 import { LabComponent } from './lab/lab.component';
 import { DeviceComponent } from './device/device.component';
 import { DevicePropertyComponent } from './device/device-property/device-property.component';
+import { DeviceEnipmoduleComponent } from './device/device-enipmodule/device-enipmodule.component';
 import { TagOptionsComponent } from './device/tag-options/tag-options.component';
 import { TopicPropertyComponent } from './device/topic-property/topic-property.component';
 import { DeviceListComponent } from './device/device-list/device-list.component';
@@ -284,6 +285,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagOptionsComponent,
         TopicPropertyComponent,
         DevicePropertyComponent,
+        DeviceEnipmoduleComponent,
         DeviceWebapiPropertyDialogComponent,
         LayoutPropertyComponent,
         TagsIdsConfigComponent,

@@ -4,40 +4,114 @@
     <div mat-dialog-content class="content" [formGroup]="formGroup">
         <div class="my-form-field block mb10">
             <span>{{'device.tag-property-name' | translate}}</span>
-            <input formControlName="name" type="text" style="width: 350px">
+            <input formControlName="name" type="text">
         </div>
         <div class="my-form-field block mb10">
-            <button mat-stroked-button color="primary" type="button" (click)="browseTags()">{{'device.enip-tag-browse' | translate}}</button>
-            <mat-select *ngIf="availableTags.length" [placeholder]="'device.enip-tag-select' | translate" (selectionChange)="selectTag($event.value)" style="width: 350px; margin-left: 10px;">
-                <mat-option *ngFor="let tag of availableTags" [value]="tag">
-                    {{tag.program ? tag.program + ':' : ''}}{{tag.name}}
+            <span>{{'device.tag-property-type' | translate}}</span>
+            <mat-select formControlName="tagType">
+                <mat-option *ngFor="let source of tagSources" [value]="source.value">
+                    {{source.name | translate}}
                 </mat-option>
             </mat-select>
-            <span class="error" *ngIf="browseError">{{browseError}}</span>
         </div>
-        <div class="my-form-field block mb10">
-            <span>{{'device.property-address-port' | translate}}</span>
-            <input formControlName="address" type="text" style="width: 350px">
+
+        <div *ngIf="isSymbolic()" class="enip-tag-options">
+            <div class="enip-browse-row mb10">
+                <button mat-stroked-button color="primary" type="button" (click)="browseTags()">
+                    {{'device.enip-tag-browse' | translate}}
+                </button>
+                <div class="my-form-field enip-browse-select">
+                    <span>{{'device.enip-tag-select' | translate}}</span>
+                    <mat-select [disabled]="!availableTags.length" (selectionChange)="selectTag($event.value)">
+                        <mat-option *ngFor="let tag of availableTags" [value]="tag">
+                            {{tag.program ? tag.program + ':' : ''}}{{tag.name}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="enip-browse-error" *ngIf="browseError">{{browseError}}</div>
+            <div class="my-form-field block mb10">
+                <span>{{'device.enip-address' | translate}}</span>
+                <input formControlName="address" type="text">
+            </div>
+            <div class="my-form-field block mb10">
+                <span>{{'device.enip-tag-program' | translate}}</span>
+                <input formControlName="program" type="text">
+            </div>
+            <div class="my-form-field block mb10">
+                <span>{{'device.enip-tag-data-type' | translate}}</span>
+                <mat-select formControlName="dataType">
+                    <mat-option [value]="null">{{'device.enip-tag-auto' | translate}}</mat-option>
+                    <mat-option *ngFor="let type of dataTypes" [value]="type.value">{{type.name}}</mat-option>
+                </mat-select>
+            </div>
         </div>
-        <div class="my-form-field block mb10">
-            <span>{{'device.enip-tag-program' | translate}}</span>
-            <input formControlName="program" type="text" style="width: 350px">
+
+        <div *ngIf="isExplicit()" class="enip-tag-options">
+            <div class="my-form-field block mb10">
+                <span>{{'device.enip-explicit-class' | translate}}</span>
+                <input formControlName="explicitClass" type="number" min="0" max="255">
+            </div>
+            <div class="my-form-field block mb10">
+                <span>{{'device.enip-explicit-instance' | translate}}</span>
+                <input formControlName="explicitInstance" type="number" min="0">
+            </div>
+            <div class="my-form-field block mb10">
+                <span>{{'device.enip-explicit-attribute' | translate}}</span>
+                <input formControlName="explicitAttribute" type="number" min="0">
+            </div>
+            <div class="my-form-field block mb10">
+                <span>{{'device.enip-explicit-operation' | translate}}</span>
+                <mat-select formControlName="explicitGetOrSend">
+                    <mat-option [value]="true">{{'device.enip-explicit-read' | translate}}</mat-option>
+                    <mat-option [value]="false">{{'device.enip-explicit-write' | translate}}</mat-option>
+                </mat-select>
+            </div>
+            <div *ngIf="!formGroup.get('explicitGetOrSend')?.value" class="my-form-field block mb10">
+                <span>{{'device.enip-explicit-send-buffer' | translate}}</span>
+                <input formControlName="explicitSendBuffer" type="text">
+            </div>
         </div>
-        <div class="my-form-field block mb10">
-            <span>{{'device.enip-tag-data-type' | translate}}</span>
-            <mat-select formControlName="dataType" style="width: 350px">
-                <mat-option [value]="null">{{'device.enip-tag-auto' | translate}}</mat-option>
-                <mat-option *ngFor="let type of dataTypes" [value]="type.value">{{type.name}}</mat-option>
-            </mat-select>
+
+        <div *ngIf="isAssemblyIO()" class="enip-tag-options">
+            <div class="my-form-field block mb10">
+                <span>{{'device.enip-io-module' | translate}}</span>
+                <mat-select formControlName="ioModuleId">
+                    <mat-option *ngFor="let module of ethernetIpModules()" [value]="module.id">{{module.name}}</mat-option>
+                </mat-select>
+            </div>
+            <div class="my-form-field block mb10">
+                <span>{{'device.enip-io-type' | translate}}</span>
+                <mat-select formControlName="ioType">
+                    <mat-option *ngFor="let type of ioTypes" [value]="type.value">{{type.name | translate}}</mat-option>
+                </mat-select>
+            </div>
+            <div class="my-form-field block mb10">
+                <span>{{'device.enip-io-byte-offset' | translate}}</span>
+                <input formControlName="ioByteOffset" type="number" min="0">
+            </div>
+            <div *ngIf="isBitIO()" class="my-form-field block mb10">
+                <span>{{'device.enip-io-bit-offset' | translate}}</span>
+                <input formControlName="ioBitOffset" type="number" min="0" max="7">
+            </div>
+            <div class="my-form-field block mb10">
+                <span>{{'device.enip-io-direction' | translate}}</span>
+                <mat-select formControlName="ioOutput">
+                    <mat-option *ngFor="let direction of ioDirections" [value]="direction.value">
+                        {{direction.name | translate}}
+                    </mat-option>
+                </mat-select>
+            </div>
         </div>
+
         <div class="my-form-field block">
             <span>{{'device.enip-tag-description' | translate}}</span>
-            <input formControlName="description" type="text" style="width: 350px">
+            <input formControlName="description" type="text">
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" [disabled]="formGroup?.invalid" (click)="onOkClick()"
+        <button mat-raised-button color="primary" [disabled]="!isValid()" (click)="onOkClick()"
             [mat-dialog-close]="data">{{'dlg.ok' | translate}}</button>
     </div>
 </div>
