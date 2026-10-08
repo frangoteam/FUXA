@@ -41,6 +41,8 @@ function Device(data, runtime) {
     var currentCmd = null;                                  // Current Command (StateMachine)
     var deviceCheckStatus = null;                           // TimerInterval to check Device status (connection)
     var devicePolling = null;                               // TimerInterval to polling read device value
+    var deviceConnecting = false;                           // Prevent overlapping connection attempts
+    var connectGeneration = 0;                               // Invalidate in-flight connect after stop
     var connectionStatus = ConnectionStatusEnum.OFF;        // Connection status depending of read tag value response
     var pollingInterval = DEVICE_POLLING_INTERVAL;
     var sharedDevices = data.sharedDevices;
@@ -162,6 +164,7 @@ function Device(data, runtime) {
     this.stop = function () {
         return new Promise(function (resolve, reject) {
             currentCmd = DeviceCmdEnum.STOP;
+            connectGeneration++;
             logger.info(`'${property.name}' stop`);
             if (devicePolling) {
                 clearInterval(devicePolling);
@@ -185,18 +188,27 @@ function Device(data, runtime) {
      * Check the Device connection, Reconnect
      */
     this.checkStatus = function () {
-        if (status === DeviceStatusEnum.INIT && currentCmd === DeviceCmdEnum.START) {
+        if (status === DeviceStatusEnum.INIT && currentCmd === DeviceCmdEnum.START && !deviceConnecting) {
             const self = this;
+            deviceConnecting = true;
             this.connect().then(() => {
+                if (currentCmd !== DeviceCmdEnum.START) {
+                    return;
+                }
                 tryToConnect = 0;
                 status = DeviceStatusEnum.IDLE;
                 self.restoreValues();
             }).catch(function (err) {
+                if (currentCmd !== DeviceCmdEnum.START) {
+                    return;
+                }
                 logger.error(`'${property.name}' connect error! ${err} (${tryToConnect})`);
                 if (tryToConnect++ > 3) {
                     tryToConnect = 0;
                     self.disconnect().then(() => {});
                 }
+            }).finally(() => {
+                deviceConnecting = false;
             });
         } else if (status === DeviceStatusEnum.IDLE && !comm.isConnected()) {
             status = DeviceStatusEnum.INIT;
@@ -224,7 +236,9 @@ function Device(data, runtime) {
      * Call Device to polling
      */
     this.polling = function () {
-        comm.polling();
+        if (currentCmd === DeviceCmdEnum.START && status === DeviceStatusEnum.IDLE) {
+            comm.polling();
+        }
     }
 
     /**
@@ -232,12 +246,21 @@ function Device(data, runtime) {
      */
     this.connect = function () {
         var self = this;
+        const attempt = ++connectGeneration;
         if (data.type === DeviceEnum.ModbusRTU) {
             comm.init(MODBUSclient.ModbusTypes.RTU);
         } else if (data.type === DeviceEnum.ModbusTCP) {
             comm.init(MODBUSclient.ModbusTypes.TCP);
         }
-        return comm.connect().then(function () {
+        return comm.connect().then(async function () {
+            if (attempt !== connectGeneration || currentCmd !== DeviceCmdEnum.START) {
+                await comm.disconnect();
+                return;
+            }
+            if (devicePolling) {
+                clearInterval(devicePolling);
+                devicePolling = null;
+            }
             if (pollingInterval !== DISABLE_POLLING_INTERVAL){
                 devicePolling = setInterval(function () {
                     self.polling();
