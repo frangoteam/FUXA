@@ -92,6 +92,89 @@ function isSafeDevicePropertyValue(value) {
     return value === null || ['string', 'number', 'boolean'].includes(typeof value);
 }
 
+function normalizeScriptParameters(script, params) {
+    const defaults = script?.parameters || [];
+    if (params === undefined || params === null || params === '') {
+        return defaults;
+    }
+    if (Array.isArray(params)) {
+        return params.length ? params : defaults;
+    }
+    if (typeof params === 'object' && !Array.isArray(params)) {
+        const keys = Object.keys(params);
+        if (!keys.length) {
+            return defaults;
+        }
+        const definitions = Array.isArray(script?.parameters) ? script.parameters : [];
+        const hasNamedMatch = definitions.some(p => p && typeof p === 'object' && p.name && Object.prototype.hasOwnProperty.call(params, p.name));
+        if (hasNamedMatch) {
+            return definitions.map(p => {
+                if (p && typeof p === 'object' && p.name && Object.prototype.hasOwnProperty.call(params, p.name)) {
+                    return params[p.name];
+                }
+                return p;
+            });
+        }
+    }
+    return [params];
+}
+
+function createNodeRedRuntimeHelpers(runtime, devices) {
+    return {
+        setView(viewName, force) {
+            runtime.scriptSendCommand({
+                command: 'SETVIEW',
+                params: [viewName, force],
+            });
+            return true;
+        },
+        openCard(viewName, options) {
+            runtime.scriptSendCommand({
+                command: 'OPENCARD',
+                params: [viewName, options === undefined ? {} : options],
+            });
+            return true;
+        },
+        enableDevice(deviceName, enable) {
+            devices.enableDevice(deviceName, enable);
+            return true;
+        },
+        getDevice(deviceName, includeTags = true) {
+            const device = runtime.project.getDevice(deviceName);
+            if (!device) return null;
+
+            const statuses = typeof devices.getDevicesStatus === 'function' ? devices.getDevicesStatus() : {};
+            const summary = {
+                id: device.id,
+                name: device.name,
+                type: device.type,
+                enabled: device.enabled !== false,
+                status: statuses?.[device.id] ?? null,
+            };
+
+            if (includeTags) {
+                summary.tags = Object.values(device.tags || {}).map(tag => ({
+                    id: tag.id,
+                    name: tag.name,
+                }));
+            }
+
+            return summary;
+        },
+        getTagDaqSettings: devices.getTagDaqSettings,
+        setTagDaqSettings: devices.setTagDaqSettings,
+        async runScript(scriptName, params) {
+            const scripts = await runtime.project.getScripts();
+            const script = scripts?.find(s => s.name === scriptName);
+            if (!script) throw new Error(`Script '${scriptName}' not found`);
+
+            const scriptToRun = JSON.parse(JSON.stringify(script));
+            scriptToRun.parameters = normalizeScriptParameters(scriptToRun, params);
+            return runtime.scriptsMgr.runScript(scriptToRun, false);
+        },
+    };
+}
+
 function createDevicePropertyHelpers(devices) {
     return {
         getDeviceProperty(deviceName, property) {
@@ -247,6 +330,7 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
 
     const devices = require(path.join(settings.appDir, 'runtime/devices'));
     const devicePropertyHelpers = createDevicePropertyHelpers(devices);
+    const nodeRedRuntimeHelpers = createNodeRedRuntimeHelpers(runtime, devices);
 
     // Minimal Node-RED settings; extend only what is really needed
     const redSettings = {
@@ -270,6 +354,7 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
             // Expose essential FUXA runtime helpers
             fuxa: {
                 runtime,
+                ...nodeRedRuntimeHelpers,
                 getTag: devices.getTagValue,
                 setTag: devices.setTagValue,
                 getDaq: require(path.join(settings.appDir, 'runtime/storage/daqstorage')).getNodeValues,
@@ -303,12 +388,6 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
                 getScripts: async () => {
                     const scripts = await runtime.project.getScripts();
                     return scripts ? scripts.map(s => ({ id: s.id, name: s.name })) : [];
-                },
-                runScript: async (scriptName, params) => {
-                    const scripts = await runtime.project.getScripts();
-                    const script = scripts?.find(s => s.name === scriptName);
-                    if (!script) throw new Error(`Script '${scriptName}' not found`);
-                    return runtime.scriptsMgr.runScript(script, null, params);
                 },
             },
 
@@ -417,6 +496,8 @@ module.exports = {
     mountNodeRedIfInstalled,
     createNodeRedAuthMiddleware,
     createDevicePropertyHelpers,
+    createNodeRedRuntimeHelpers,
+    normalizeScriptParameters,
     getPathWithoutBasePath,
     shouldBypassSpaCatchAll,
 };

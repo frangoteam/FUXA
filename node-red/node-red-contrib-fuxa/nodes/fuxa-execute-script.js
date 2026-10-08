@@ -7,7 +7,10 @@ module.exports = function(RED) {
         this.on('input', function(msg) {
             try {
                 var scriptName = config.script;
-                var params = msg.payload || {};
+                var params =
+                    (msg.payload === undefined || msg.payload === null)
+                        ? {}
+                        : msg.payload;
 
                 if (scriptName) {
                     fuxa.runScript(scriptName, params).then(function(result) {
