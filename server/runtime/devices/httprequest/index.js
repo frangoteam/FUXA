@@ -129,7 +129,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
      * Return the timestamp of last read tag operation on polling
      * @returns
      */
-     this.lastReadTimestamp = () => {
+    this.lastReadTimestamp = () => {
         return lastTimestampValue;
     }
 
@@ -174,25 +174,63 @@ function HTTPclient(_data, _logger, _events, _runtime) {
     }
 
     /**
-     * Set the Tag value, not used
+     * Set the Tag value
+     * - ownFlag=true: POST request to API (original behavior)
+     * - ownFlag=false: Update varsValue and emit to frontend like polling
      */
     this.setValue = async function (tagId, value) {
-        if (apiProperty.ownFlag && data.tags[tagId]) {
-            if (apiProperty.postTags) {
-                value = _parseValue(data.tags[tagId].type, value);
-                data.tags[tagId].value = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
-                axios.post(apiProperty.getTags, [{id: tagId, value: data.tags[tagId].value}]).then(res => {
-                    lastTimestampRequest = new Date().getTime();
-                    logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true, true);
-                }).catch(err => {
-                    logger.error(`setValue '${data.tags[tagId].name}' error! ${err}`);
-                });
+        if (data.tags[tagId]) {
+            if (apiProperty.ownFlag) {
+                if (apiProperty.postTags) {
+                    value = _parseValue(data.tags[tagId].type, value);
+                    data.tags[tagId].value = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
+                    axios.post(apiProperty.getTags, [{id: tagId, value: data.tags[tagId].value}]).then(res => {
+                        lastTimestampRequest = new Date().getTime();
+                        logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true, true);
+                    }).catch(err => {
+                        logger.error(`setValue '${data.tags[tagId].name}' error! ${err}`);
+                    });
+                } else {
+                    logger.error(`postTags undefined (setValue)`, true);
+                }
+                return true;
             } else {
-                logger.error(`postTags undefined (setValue)`, true);
+                // Updates varsValue and emits to frontend like polling does
+                value = _parseValue(data.tags[tagId].type, value);
+                const calculatedValue = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
+                data.tags[tagId].value = calculatedValue;
+
+                const timestamp = new Date().getTime();
+                const oldValue = varsValue[tagId] ? varsValue[tagId].value : null;
+                const valueChanged = oldValue !== null && calculatedValue !== oldValue;
+
+                let composedValue = calculatedValue;
+                if (!utils.isNullOrUndefined(calculatedValue)) {
+                    composedValue = await deviceUtils.tagValueCompose(calculatedValue, oldValue, data.tags[tagId], runtime);
+                }
+
+                varsValue[tagId] = {
+                    id: tagId,
+                    value: composedValue,
+                    type: data.tags[tagId].type,
+                    timestamp: timestamp,
+                    changed: valueChanged,
+                    daq: data.tags[tagId].daq
+                };
+
+                if (this.addDaq && deviceUtils.tagDaqToSave(varsValue[tagId], timestamp)) {
+                    const daqValue = {};
+                    daqValue[tagId] = varsValue[tagId];
+                    this.addDaq(daqValue, data.name, data.id);
+                }
+                varsValue[tagId].changed = false;
+
+                _emitValues(varsValue);
+                lastTimestampValue = timestamp;
+                return true;
             }
-            return true;
         } else {
-            logger.error(`setValue not supported!`, true);
+            logger.error(`setValue: Tag '${tagId}' not found in device '${data.name}'`, true);
         }
         return false;
     }
