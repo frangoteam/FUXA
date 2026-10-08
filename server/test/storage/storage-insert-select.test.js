@@ -6,7 +6,7 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 
 const prjstorage = require('../../runtime/project/prjstorage');
-const apiKeysStorage = require('../../runtime/apikeys/apikeysStorage');
+const apiKeysStorage = require('../../runtime/apikeys/apiKeysStorage');
 const alarmstorage = require('../../runtime/alarms/alarmstorage');
 
 function runSql(db, sql, params = []) {
