@@ -86,6 +86,115 @@
             font-size: 18px;
         }
     }
+
+    .odbc-result-panel {
+        width: 100%;
+    }
+
+    .mqtt-expansion-panel {
+        width: 100%;
+
+        .expand-panel .my-form-field {
+            display: block;
+            width: 100%;
+        }
+
+        .expand-panel .my-form-field > input {
+            box-sizing: border-box;
+            width: 100% !important;
+        }
+    }
+
+    .webapi-result-panel {
+        width: 100%;
+    }
+
+    .opcua-security-panel {
+        width: 100%;
+    }
+
+    .modbus-connection-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 130px;
+        gap: 12px;
+        width: 100%;
+
+        > .my-form-field {
+            display: block !important;
+            min-width: 0;
+        }
+
+        mat-select {
+            box-sizing: border-box;
+            width: 100% !important;
+        }
+    }
+
+    .modbus-slave-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 120px;
+        align-items: end;
+        gap: 15px;
+        margin-bottom: 10px;
+        width: 100%;
+
+        > .my-form-field {
+            display: block !important;
+            min-width: 0;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100% !important;
+        }
+    }
+
+    .modbus-timing-row {
+        display: grid;
+        grid-template-columns: 100px minmax(0, 1fr) minmax(0, 1.4fr);
+        gap: 12px;
+        width: 100%;
+
+        > .my-form-field {
+            display: block !important;
+            min-width: 0;
+            width: auto !important;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100% !important;
+        }
+    }
+
+    .mqtt-connection-row {
+        display: flex;
+        align-items: flex-end;
+        gap: 10px;
+        width: 100%;
+        margin-bottom: 10px;
+
+        .mqtt-address {
+            flex: 1;
+            min-width: 0;
+
+            input {
+                box-sizing: border-box;
+                width: 100% !important;
+            }
+        }
+
+        .mqtt-timeout {
+            flex: 0 0 135px;
+        }
+    }
+
+    .name-field input,
+    .my-form-field.block input,
+    .my-form-field[style*="display: block"] input {
+        box-sizing: border-box;
+        width: 100% !important;
+    }
 }
 
 :host ::ng-deep .mat-expansion-panel-body {
