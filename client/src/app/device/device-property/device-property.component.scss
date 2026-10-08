@@ -86,6 +86,100 @@
             font-size: 18px;
         }
     }
+
+    .generic-enip-config {
+        display: grid;
+        gap: 14px;
+        width: min(100%, 520px);
+        padding: 8px 0;
+    }
+
+    .generic-enip-address-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .generic-enip-address-field {
+            flex: 1;
+            min-width: 0;
+
+            input {
+                box-sizing: border-box;
+                width: 100%;
+            }
+        }
+
+        .generic-enip-search-field {
+            flex: 0 0 32px;
+            min-width: 32px;
+
+            > span {
+                visibility: hidden;
+            }
+        }
+
+        .generic-enip-search-control {
+            display: flex;
+            height: 29px;
+            align-items: center;
+            justify-content: center;
+
+            mat-spinner {
+                flex: 0 0 20px;
+            }
+
+            button {
+                width: 29px;
+                height: 29px;
+                min-width: 29px;
+                padding: 2px;
+                line-height: 29px;
+            }
+        }
+    }
+
+    .generic-enip-address small {
+        display: block;
+        margin-top: 4px;
+        color: var(--formLabelColor);
+        font-size: 11px;
+    }
+
+    .generic-enip-discovered {
+        display: block;
+        width: 100%;
+    }
+
+    .generic-enip-error {
+        color: var(--errorColor, #d32f2f);
+        font-size: 12px;
+    }
+
+    .generic-enip-routing {
+        display: flex;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding-top: 4px;
+    }
+
+    .generic-enip-route-fields {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+
+        input {
+            width: 48px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+    }
+
+    .generic-enip-routing-toggle {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
 }
 
 :host ::ng-deep .mat-expansion-panel-body {

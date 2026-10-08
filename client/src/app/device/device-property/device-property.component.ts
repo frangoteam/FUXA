@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatExpansionPanel } from '@angular/material/expansion';
-import { Subscription, delay } from 'rxjs';
+import { Subscription, Subject, delay, takeUntil } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { EndPointSettings, HmiService } from '../../_services/hmi.service';
@@ -89,6 +89,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	private subscriptionDeviceProperty: Subscription;
 	private subscriptionHostInterfaces: Subscription;
 	private subscriptionDeviceWebApiRequest: Subscription;
+	private destroy$ = new Subject<void>();
+	ethernetIpDevices: any[] = [];
+	browseLoading = false;
 
 	private projectService: ProjectService;
 
@@ -222,11 +225,23 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			}
 			this.propertyLoading = false;
 		});
+		this.hmiService.onDeviceBrowseForDevices.pipe(
+			takeUntil(this.destroy$)
+		).subscribe(res => {
+			if (res.device !== this.data.device.id) {
+				return;
+			}
+			this.browseLoading = false;
+			this.ethernetIpDevices = res.result || [];
+			this.propertyError = res.error || '';
+		});
 		this.writeArgsTooltip = this.translateService.instant('device.property-redis-write-args-tooltip');
 		this.onDeviceTypeChanged();
 	}
 
 	ngOnDestroy() {
+		this.destroy$.next();
+		this.destroy$.complete();
 		try {
 			if (this.subscriptionDeviceProperty) {
 				this.subscriptionDeviceProperty.unsubscribe();
@@ -287,6 +302,20 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 
 	onAddressChanged() {
 		this.propertyLoading = false;
+	}
+
+	browseForEthernetIpDevices() {
+		this.browseLoading = true;
+		this.propertyError = '';
+		this.ethernetIpDevices = [];
+		this.hmiService.askDeviceBrowseForDevices(this.data.device.id);
+	}
+
+	selectEthernetIpDevice(device) {
+		if (device) {
+			this.data.device.property.address = device.socketAddress?.sin_addr || '';
+			this.data.device.name = device.productName || this.data.device.name;
+		}
 	}
 
 	onDeviceTypeChanged() {

@@ -436,6 +436,62 @@
                         </div>
                     </div>
                 </div>
+                <div *ngSwitchCase="deviceType.GenericEthernetIP">
+                    <div class="generic-enip-config">
+                        <div class="generic-enip-address">
+                            <div class="generic-enip-address-row">
+                                <div class="my-form-field generic-enip-address-field">
+                                    <span>{{'device.enip-address' | translate}}</span>
+                                    <input id="generic-enip-address" [(ngModel)]="data.device.property.address"
+                                        [placeholder]="'device.enip-address-placeholder' | translate"
+                                        type="text" (click)="onAddressChanged()">
+                                </div>
+                                <div class="my-form-field generic-enip-search-field">
+                                    <span aria-hidden="true">&nbsp;</span>
+                                    <div class="generic-enip-search-control">
+                                        <mat-spinner *ngIf="browseLoading" diameter="20"></mat-spinner>
+                                        <button *ngIf="!browseLoading" mat-icon-button color="primary" type="button"
+                                            (click)="browseForEthernetIpDevices()"
+                                            [matTooltip]="'device.enip-find' | translate"
+                                            [attr.aria-label]="'device.enip-find' | translate">
+                                            <mat-icon>search</mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <small>{{'device.enip-transport' | translate}}</small>
+                        </div>
+
+                        <div *ngIf="ethernetIpDevices.length" class="my-form-field generic-enip-discovered">
+                            <span>{{'device.enip-discovered' | translate}}</span>
+                            <mat-select [placeholder]="'device.enip-select' | translate"
+                                (selectionChange)="selectEthernetIpDevice($event.value)">
+                                <mat-option *ngFor="let found of ethernetIpDevices" [value]="found">
+                                    {{found.productName}} ({{found.socketAddress?.sin_addr}})
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="generic-enip-error" *ngIf="propertyError">{{propertyError}}</div>
+
+                        <div class="generic-enip-routing">
+                            <div class="my-form-field generic-enip-routing-toggle">
+                                <span>{{'device.property-routing' | translate}}</span>
+                                <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.options">
+                                </mat-slide-toggle>
+                            </div>
+                            <div class="generic-enip-route-fields" *ngIf="data.device.property.options">
+                                <div class="my-form-field">
+                                    <span>{{'device.enip-rack' | translate}}</span>
+                                    <input numberOnly [(ngModel)]="data.device.property.rack" type="text">
+                                </div>
+                                <div class="my-form-field">
+                                    <span>{{'device.enip-slot' | translate}}</span>
+                                    <input numberOnly [(ngModel)]="data.device.property.slot" type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div *ngSwitchCase="deviceType.OmronEthernetIP">
                     <div class="my-form-field" style="display: inline-block; margin-bottom: 10px;">
                         <span>{{'device.property-address-port' | translate}}</span>

@@ -1,0 +1,43 @@
+<div class="container">
+    <h1 mat-dialog-title class="dialog-title">{{'device.tag-property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="content" [formGroup]="formGroup">
+        <div class="my-form-field block mb10">
+            <span>{{'device.tag-property-name' | translate}}</span>
+            <input formControlName="name" type="text" style="width: 350px">
+        </div>
+        <div class="my-form-field block mb10">
+            <button mat-stroked-button color="primary" type="button" (click)="browseTags()">{{'device.enip-tag-browse' | translate}}</button>
+            <mat-select *ngIf="availableTags.length" [placeholder]="'device.enip-tag-select' | translate" (selectionChange)="selectTag($event.value)" style="width: 350px; margin-left: 10px;">
+                <mat-option *ngFor="let tag of availableTags" [value]="tag">
+                    {{tag.program ? tag.program + ':' : ''}}{{tag.name}}
+                </mat-option>
+            </mat-select>
+            <span class="error" *ngIf="browseError">{{browseError}}</span>
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'device.property-address-port' | translate}}</span>
+            <input formControlName="address" type="text" style="width: 350px">
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'device.enip-tag-program' | translate}}</span>
+            <input formControlName="program" type="text" style="width: 350px">
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'device.enip-tag-data-type' | translate}}</span>
+            <mat-select formControlName="dataType" style="width: 350px">
+                <mat-option [value]="null">{{'device.enip-tag-auto' | translate}}</mat-option>
+                <mat-option *ngFor="let type of dataTypes" [value]="type.value">{{type.name}}</mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field block">
+            <span>{{'device.enip-tag-description' | translate}}</span>
+            <input formControlName="description" type="text" style="width: 350px">
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" [disabled]="formGroup?.invalid" (click)="onOkClick()"
+            [mat-dialog-close]="data">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

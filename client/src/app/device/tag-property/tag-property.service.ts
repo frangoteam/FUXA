@@ -13,6 +13,7 @@ import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component'
 import { TagPropertyBacNetData, TagPropertyEditBacnetComponent } from './tag-property-edit-bacnet/tag-property-edit-bacnet.component';
 import { TagPropertyEditWebapiComponent, TagPropertyWebApiData } from './tag-property-edit-webapi/tag-property-edit-webapi.component';
 import { TagPropertyEditEthernetipComponent, TagPropertyEthernetIpData } from './tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
+import { TagPropertyEditGenericEthernetIPComponent } from './tag-property-edit-generic-ethernetip/tag-property-edit-generic-ethernetip.component';
 import { TagPropertyEditADSclientComponent } from './tag-property-edit-adsclient/tag-property-edit-adsclient.component';
 import { TopicPropertyComponent, TopicPropertyData } from '../topic-property/topic-property.component';
 import { TranslateService } from '@ngx-translate/core';
@@ -195,6 +196,43 @@ export class TagPropertyService {
                         this.checkToAdd(tag, device);
                     } else if (tag.id !== oldTagId) {
                         //remove old tag device reference
+                        delete device.tags[oldTagId];
+                        this.checkToAdd(tag, device);
+                    }
+                    this.projectService.setDeviceTags(device);
+                }
+                dialogRef.close();
+                return result;
+            })
+        );
+    }
+
+    public editTagPropertyGenericEthernetIP(device: Device, tag: Tag, checkToAdd: boolean): Observable<any> {
+        const oldTagId = tag.id;
+        const tagToEdit: Tag = Utils.clone(tag);
+        const dialogRef = this.dialog.open(TagPropertyEditGenericEthernetIPComponent, {
+            disableClose: true,
+            data: { device, tag: tagToEdit },
+            position: { top: '60px' }
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                if (result) {
+                    tag.name = result.name;
+                    tag.address = result.address;
+                    tag.description = result.description;
+                    tag.type = result.dataType === 0xc1 ? 'boolean' : 'number';
+                    tag.enipOptions = {
+                        tagType: 0,
+                        symbolicOpt: {
+                            program: result.program || undefined,
+                            dataType: result.dataType === null ? undefined : result.dataType
+                        }
+                    };
+                    if (checkToAdd) {
+                        this.checkToAdd(tag, device);
+                    } else if (tag.id !== oldTagId) {
                         delete device.tags[oldTagId];
                         this.checkToAdd(tag, device);
                     }

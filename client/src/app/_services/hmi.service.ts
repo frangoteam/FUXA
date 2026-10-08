@@ -21,6 +21,7 @@ export class HmiService {
     @Output() onVariableChanged: EventEmitter<Variable> = new EventEmitter();
     @Output() onDeviceChanged: EventEmitter<boolean> = new EventEmitter();
     @Output() onDeviceBrowse: EventEmitter<any> = new EventEmitter();
+    @Output() onDeviceBrowseForDevices: EventEmitter<any> = new EventEmitter();
     @Output() onDeviceNodeAttribute: EventEmitter<any> = new EventEmitter();
     @Output() onDaqResult: EventEmitter<DaqResult> = new EventEmitter();
     @Output() onDeviceProperty: EventEmitter<any> = new EventEmitter();
@@ -293,6 +294,9 @@ export class HmiService {
         this.socket.on(IoEventTypes.DEVICE_BROWSE, (message) => {
             this.onDeviceBrowse.emit(message);
         });
+        this.socket.on(IoEventTypes.DEVICE_BROWSE_FOR_DEVICES, (message) => {
+            this.onDeviceBrowseForDevices.emit(message);
+        });
         // scheduler updated (one-time events removed, etc.)
         this.socket.on(IoEventTypes.SCHEDULER_UPDATED, (message) => {
             this.onSchedulerUpdated.emit(message);
@@ -446,6 +450,12 @@ export class HmiService {
         if (this.socket) {
             let msg = { device: deviceId, node: node };
             this.socket.emit(IoEventTypes.DEVICE_BROWSE, msg);
+        }
+    }
+
+    public askDeviceBrowseForDevices(deviceId: string) {
+        if (this.socket) {
+            this.socket.emit(IoEventTypes.DEVICE_BROWSE_FOR_DEVICES, { device: deviceId });
         }
     }
 
@@ -790,6 +800,7 @@ export enum IoEventTypes {
     DEVICE_PROPERTY = 'device-property',
     DEVICE_VALUES = 'device-values',
     DEVICE_BROWSE = 'device-browse',
+    DEVICE_BROWSE_FOR_DEVICES = 'device-find-devices',
     DEVICE_NODE_ATTRIBUTE = 'device-node-attribute',
     DEVICE_WEBAPI_REQUEST = 'device-webapi-request',
     DEVICE_TAGS_REQUEST = 'device-tags-request',
