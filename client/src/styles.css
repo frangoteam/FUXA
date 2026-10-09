@@ -1268,3 +1268,9 @@ mat-toolbar-row {
     justify-content: center;
     align-items: center;
   }
+
+/* print: one A4 landscape page, the autoresize view is fitted to it in fuxa-view onBeforePrint() */
+@page {
+    size: A4 landscape;
+    margin: 5mm;
+}
