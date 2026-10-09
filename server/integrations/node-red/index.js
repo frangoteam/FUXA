@@ -291,6 +291,9 @@ function createNodeRedAuthMiddleware({ settings, runtime, logger, authJwt }) {
                 if (!decoded?.id || decoded.type === 'refresh' || authJwt.isGuestUser(decoded.id, decoded.groups)) {
                     return res.status(403).json({ error: "forbidden_error", message: "Authenticated user required!" });
                 }
+                if (!authJwt.haveAdminPermission(decoded.groups)) {
+                    return res.status(403).json({ error: "forbidden_error", message: "Administrator access required!" });
+                }
                 if (queryToken) {
                     res.cookie('nodered_auth', token, {
                         ...NODE_RED_AUTH_COOKIE_OPTIONS,
