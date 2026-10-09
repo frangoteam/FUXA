@@ -116,6 +116,75 @@ describe('Security - JWT lifecycle', () => {
         }
     });
 
+    it('rejects signin attempts that omit the username', async () => {
+        const passwordHash = bcrypt.hashSync('correct-password', 4);
+        let findOneCalls = 0;
+        const runtime = {
+            project: {},
+            users: {
+                findOne(credentials) {
+                    findOneCalls++;
+                    // Mirror usrstorage.getUsers(): an absent username returns every
+                    // user, so without the guard the first row (admin) would authenticate.
+                    if (!credentials || !credentials.username || credentials.username === 'admin') {
+                        return Promise.resolve([
+                            {
+                                username: 'admin',
+                                fullname: 'Administrator',
+                                password: passwordHash,
+                                groups: -1,
+                                info: '{}'
+                            }
+                        ]);
+                    }
+                    return Promise.resolve([]);
+                }
+            },
+            logger: {
+                error() {},
+                info() {}
+            }
+        };
+
+        authApi.init(runtime, SECRET, '1h', false, '7d');
+        const app = express();
+        app.use(express.json());
+        app.use(authApi.app());
+        const server = await listen(app);
+
+        try {
+            const headers = { 'Content-Type': 'application/json' };
+            const noUsername = await request(server, {
+                method: 'POST',
+                path: '/api/signin',
+                headers,
+                body: JSON.stringify({ password: 'correct-password' })
+            });
+            const blankUsername = await request(server, {
+                method: 'POST',
+                path: '/api/signin',
+                headers,
+                body: JSON.stringify({ username: '   ', password: 'correct-password' })
+            });
+            const validLogin = await request(server, {
+                method: 'POST',
+                path: '/api/signin',
+                headers,
+                body: JSON.stringify({ username: 'admin', password: 'correct-password' })
+            });
+
+            expect(noUsername.statusCode).to.equal(401);
+            expect(noUsername.json).to.deep.equal({ status: 'error', message: 'Invalid email/password!!!', data: null });
+            expect(blankUsername.statusCode).to.equal(401);
+            expect(validLogin.statusCode).to.equal(200);
+            expect(validLogin.json.data.username).to.equal('admin');
+            // Only the valid login may reach the user lookup.
+            expect(findOneCalls).to.equal(1);
+        } finally {
+            await new Promise((resolve) => server.close(resolve));
+        }
+    });
+
     it('rejects refresh cookies for deleted users instead of reusing token groups', async () => {
         const runtime = {
             project: {},
