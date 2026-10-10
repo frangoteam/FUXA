@@ -17,6 +17,7 @@
     "build": "ng build",
     "lint": "ng lint",
     "test:scripts": "node --test test/home-scheduled-scripts.test.cjs",
+    "test:input-confirm": "node --test test/input-confirm.test.cjs",
     "e2e": "ng e2e"
   },
   "dependencies": {
