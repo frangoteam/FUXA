@@ -33,10 +33,14 @@ var utils = module.exports = {
         var tagEnd = '</' + tagsplitter.toLowerCase();
         var text = src.toLowerCase();
         var start = text.indexOf(tagStart, first);
+        if (start === -1) {
+            result.before = src;
+            return result;
+        }
         var end = text.indexOf(tagEnd, start);
         result.before = src.slice(0, start);
-        result.tagcontent = src.slice(start, end);
-        result.after = src.slice(end);
+        result.tagcontent = end === -1 ? src.slice(start) : src.slice(start, end);
+        result.after = end === -1 ? '' : src.slice(end);
         return result;
     },
 

@@ -41,9 +41,37 @@ describe('Utils Help functions', () => {
             const result = Utils.domStringSplitter(src, tagsplitter, first);
 
             expect(result).to.be.an('object');
-            //expect(result.before).to.equal(src);
+            expect(result.before).to.equal(src);
             expect(result.tagcontent).to.equal('');
-            //expect(result.after).to.equal('');
+            expect(result.after).to.equal('');
+        });
+
+        it('should return the whole input as before when the input is empty', () => {
+            const src = '';
+            const result = Utils.domStringSplitter(src, 'foreignobject', 0);
+
+            expect(result).to.be.an('object');
+            expect(result.before).to.equal('');
+            expect(result.tagcontent).to.equal('');
+            expect(result.after).to.equal('');
+        });
+
+        it('should keep the rest of the input as tagcontent when the closing tag is missing', () => {
+            const src = '<svg><foreignobject><div>Hello</div></svg>';
+            const result = Utils.domStringSplitter(src, 'foreignobject', 0);
+
+            expect(result.before).to.equal('<svg>');
+            expect(result.tagcontent).to.equal('<foreignobject><div>Hello</div></svg>');
+            expect(result.after).to.equal('');
+        });
+
+        it('should handle a single tag that spans the whole input', () => {
+            const src = '<foreignobject><div>Hello</div></foreignobject>';
+            const result = Utils.domStringSplitter(src, 'foreignobject', 0);
+
+            expect(result.before).to.equal('');
+            expect(result.tagcontent).to.equal('<foreignobject><div>Hello</div>');
+            expect(result.after).to.equal('</foreignobject>');
         });
 
         it('should handle case-insensitivity for <foreignobject> tags', () => {
