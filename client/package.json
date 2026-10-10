@@ -17,6 +17,7 @@
     "build": "ng build",
     "lint": "ng lint",
     "test:scripts": "node --test test/home-scheduled-scripts.test.cjs",
+    "test:internal-tags": "node --test test/internal-tag-init.test.cjs",
     "e2e": "ng e2e"
   },
   "dependencies": {

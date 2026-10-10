@@ -1,5 +1,5 @@
 import { GridType } from 'angular-gridster2';
-import { Device, DeviceType, Tag } from './device';
+import { Device, DeviceType, ServerTagType, Tag } from './device';
 import { WidgetPropertyVariable } from '../_helpers/svg-utils';
 import { MapsLocation } from './maps';
 
@@ -640,7 +640,17 @@ export class Variable {
         this.name = name;
         this.device = device;
         if (device?.type === DeviceType.internal) {
-            this.value = '0';
+            const tag = device.tags?.[id];
+            const init = tag?.init;
+            const hasInit = init !== undefined && init !== null && init !== '';
+            if (tag?.type === ServerTagType.string) {
+                this.value = hasInit ? String(init) : '';
+            } else if (tag?.type === ServerTagType.boolean) {
+                const normalized = String(init).trim().toLowerCase();
+                this.value = hasInit && (normalized === 'true' || normalized === '1') ? '1' : '0';
+            } else {
+                this.value = hasInit ? String(parseFloat(init)) : '0';
+            }
         }
     }
 }
