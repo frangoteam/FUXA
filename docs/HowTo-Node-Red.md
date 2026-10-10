@@ -22,6 +22,39 @@ Dashboard 2 must be installed separately if needed:
 - **@flowfuse/node-red-dashboard**: For modern dashboard creation
 - **node-red-contrib-fuxa**: Automatically included (provides FUXA integration nodes)
 
+### Ping requests in Docker
+
+Images built from the current Dockerfile include `iputils-ping` in the final runtime
+stage. Existing containers need an image built with this change; restarting an older
+image does not install the executable.
+
+Use the built-in Node-RED **exec** node to check a fixed host without installing an
+additional palette package:
+
+1. Connect an **inject** node to an **exec** node.
+2. Set the exec command to `ping -n -c 1 -W 2 127.0.0.1` for an initial loopback check.
+3. Disable **Append msg.payload** and leave spawn mode disabled.
+4. Connect the exec outputs to **debug** nodes. The first output contains stdout,
+   the second stderr, and the third the return code object (`msg.payload.code`).
+5. Deploy and inject. A return code of `0` indicates a reply. Replace `127.0.0.1`
+   with the fixed IP address or hostname of the device to monitor.
+
+The count and timeout keep each request bounded. A failed ping does not necessarily
+mean the device is offline: routing or a firewall can block ICMP replies.
+
+To verify the executable and loopback from outside Node-RED, replace
+`<container-name>` with the running FUXA container name:
+
+```bash
+docker exec <container-name> ping -V
+docker exec <container-name> ping -n -c 1 -W 2 127.0.0.1
+```
+
+Palette nodes that invoke the system `ping` command can use the same executable,
+but their Node-RED packages still need to be installed separately. If ping reports
+`Operation not permitted`, check the container's ICMP socket permissions and runtime
+policy. Installing the executable does not change container capabilities.
+
 ### Configuration
 No additional configuration is required. Node-RED automatically connects to FUXA's runtime environment.
 
