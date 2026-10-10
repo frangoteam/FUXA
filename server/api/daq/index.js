@@ -33,6 +33,13 @@ module.exports = {
             try {
                 if (req.query && req.query.query) {
                     var query = JSON.parse(req.query.query);
+                    const maxSids = 100;
+                    if (!query || !Array.isArray(query.sids) || query.sids.length > maxSids) {
+                        return res.status(400).json({
+                            error: "invalid_query",
+                            message: `sids must be an array containing at most ${maxSids} items`
+                        });
+                    }
                     var dbfncs = [];
                     for (let i = 0; i < query.sids.length; i++) {
                         if (query.to === query.from) {  // current values
