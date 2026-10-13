@@ -347,10 +347,12 @@ function NotificatorManager(_runtime) {
             try {
                 var smtpServer = smtp || settings.smtp;
                 if (smtpServer && smtpServer.host && smtpServer.port && smtpServer.username && smtpServer.password) {
+                    // the settings form saves the port as text ("465")
+                    const port = Number(smtpServer.port);
                     const transporter = nodemailer.createTransport({
                         host: smtpServer.host,
-                        port: smtpServer.port,
-                        secure: (smtpServer.port === 465) ? true : false, // true for 465, false for other ports
+                        port: port,
+                        secure: port === 465, // true for 465, false for other ports
                         auth: {
                             user: smtpServer.username,
                             pass: smtpServer.password
