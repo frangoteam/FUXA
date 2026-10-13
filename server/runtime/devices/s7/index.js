@@ -546,7 +546,7 @@ function S7client(_data, _logger, _events, _runtime) {
             DBNumber: v.dbnum,
             Start: v.type === 'BOOL' ? v.Start * 8 + v.bit : v.Start,
             Amount: 1,
-            Data: datatypes[v.type].formatter(parseFloat(v.value))
+            Data: datatypes[v.type].formatter(v.type === 'BOOL' ? toBoolean(v.value) : parseFloat(v.value))
         }));
         return new Promise((resolve, reject) => {
             s7client.WriteMultiVars(toWrite, (err, res) => {
@@ -687,6 +687,28 @@ function loadSnap7Lib(manager) {
         if (!snap7 && manager) { try { snap7 = manager.require('node-snap7'); } catch { } }
     }
     return !!snap7;
+}
+
+/**
+ * Value written to a BOOL tag, as true/false.
+ * parseFloat() cannot be used for BOOL: parseFloat(true) is NaN, which the formatter
+ * writes as 0, so writing `true` cleared the bit. Numbers and numeric strings behave
+ * as before (non-zero is true); 'true'/'on' and 'false'/'off' are also accepted.
+ */
+function toBoolean(value) {
+    if (typeof value === 'string') {
+        const text = value.trim().toLowerCase();
+        if (text === 'true' || text === 'on') {
+            return true;
+        }
+        if (text === 'false' || text === 'off') {
+            return false;
+        }
+        const number = parseFloat(text);
+        return !Number.isNaN(number) && number !== 0;
+    }
+    const number = Number(value);
+    return !Number.isNaN(number) && number !== 0;
 }
 
 function DbItem(dbnum) {

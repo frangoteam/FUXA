@@ -471,6 +471,8 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
         let dialogRef = this.dialog.open(DevicePropertyComponent, {
             disableClose: true,
             panelClass: 'dialog-property',
+            width: '450px',
+            maxWidth: 'calc(100vw - 32px)',
             data: {
                 device: tempdevice, remove: toremove, exist: exist, availableType: this.plugins,
                 projectService: this.projectService

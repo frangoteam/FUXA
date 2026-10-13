@@ -11,7 +11,8 @@
     </div>
     <div mat-dialog-content class="content" *ngIf="!isToRemove">
         <div style="display: block;">
-            <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+            <div class="my-form-field name-field"
+                style="display: block;margin-bottom: 10px;">
                 <span>{{'device.property-name' | translate}}</span>
                 <input [(ngModel)]="data.device.name" style="width: 350px" type="text" [disabled]="isFuxaServer">
             </div>
@@ -54,7 +55,7 @@
                         <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip"
                             (click)="onAddressChanged()">
                     </div>
-                    <div class="my-form-field" class="my-expansion-panel">
+                    <div class="my-form-field my-expansion-panel opcua-security-panel">
                         <mat-expansion-panel #panelProperty (closed)="onPropertyExpand(false)"
                             (opened)="onPropertyExpand(true);onCheckOpcUaServer()">
                             <mat-expansion-panel-header class="header" [collapsedHeight]="'32px'"
@@ -136,18 +137,18 @@
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.ModbusRTU">
-                    <div class="mb10 block">
+                    <div class="mb10 block modbus-connection-row">
                         <div class="my-form-field inbk">
                             <span>{{'device.property-connection-options' | translate}}</span>
-                            <mat-select [(value)]="data.device.property.connectionOption" style="width: 200px">
+                            <mat-select [(value)]="data.device.property.connectionOption" style="width: 100%">
                                 <mat-option *ngFor="let value of modbusRtuOptionType" [value]="value">
                                     {{ value }}
                                 </mat-option>
                             </mat-select>
                         </div>
-                        <div class="my-form-field inbk ml10 ftr">
+                        <div class="my-form-field inbk">
                             <span>{{'device.property-socket-reuse' | translate}}</span>
-                            <mat-select [(value)]="data.device.property.socketReuse" style="width: 130px">
+                            <mat-select [(value)]="data.device.property.socketReuse" style="width: 100%">
                                 <mat-option [value]=""></mat-option>
                                 <mat-option *ngFor="let mode of modbusReuseModeType | enumToArray" [value]="mode.key">
                                     {{ mode.value }}
@@ -155,15 +156,15 @@
                             </mat-select>
                         </div>
                     </div>
-                    <div style="display: block;margin-bottom: 10px;">
+                    <div class="modbus-slave-row">
                         <div class="my-form-field" style="display: inline-block;">
                             <span>{{'device.property-serialport' | translate}}</span>
-                            <input [(ngModel)]="data.device.property.address" style="width: 262px" type="ip"
+                            <input [(ngModel)]="data.device.property.address" style="width: 100%" type="ip"
                                 (click)="onAddressChanged()">
                         </div>
-                        <div class="my-form-field" style="display: inline-block;margin-left: 15px;">
+                        <div class="my-form-field" style="display: inline-block;">
                             <span>{{'device.property-slave-id' | translate}}</span>
-                            <input numberOnly [(ngModel)]="data.device.property.slaveid" style="width: 65px"
+                            <input numberOnly [(ngModel)]="data.device.property.slaveid" style="width: 100px"
                                 type="text">
                         </div>
                     </div>
@@ -199,7 +200,7 @@
                             </mat-option>
                         </mat-select>
                     </div>
-                    <div class="mb10 block">
+                    <div class="mb10 block modbus-timing-row">
                         <div class="my-form-field inbk" style="width: 100px; text-align: center;">
                             <span>{{'device.property-tockenized' | translate}}</span>
                             <mat-slide-toggle color="primary"
@@ -213,7 +214,7 @@
                         <div class="my-form-field inbk"
                             style="display: inline-block;margin-bottom: 10px;margin-left: 25px;">
                             <span>{{'device.property-timeout' | translate}}</span>
-                            <input numberOnly [(ngModel)]="data.device.property.timeout" style="width: 135px"
+                            <input numberOnly [(ngModel)]="data.device.property.timeout" style="width: 155px"
                                 type="number">
                         </div>
                     </div>
@@ -226,18 +227,18 @@
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.ModbusTCP">
-                    <div class="mb10 block">
+                    <div class="mb10 block modbus-connection-row">
                         <div class="my-form-field inbk">
                             <span>{{'device.property-connection-options' | translate}}</span>
-                            <mat-select [(value)]="data.device.property.connectionOption" style="width: 200px">
+                            <mat-select [(value)]="data.device.property.connectionOption" style="width: 100%">
                                 <mat-option *ngFor="let value of modbusTcpOptionType" [value]="value">
                                     {{ value }}
                                 </mat-option>
                             </mat-select>
                         </div>
-                        <div class="my-form-field inbk ml10 ftr">
+                        <div class="my-form-field inbk">
                             <span>{{'device.property-socket-reuse' | translate}}</span>
-                            <mat-select [(value)]="data.device.property.socketReuse" style="width: 130px">
+                            <mat-select [(value)]="data.device.property.socketReuse" style="width: 100%">
                                 <mat-option [value]=""></mat-option>
                                 <mat-option *ngFor="let mode of modbusReuseModeType | enumToArray" [value]="mode.key">
                                     {{ mode.value }}
@@ -245,16 +246,18 @@
                             </mat-select>
                         </div>
                     </div>
-                    <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
+                    <div class="modbus-slave-row">
+                    <div class="my-form-field" style="display: inline-block;">
                         <span>{{'device.property-address-port' | translate}}</span>
-                        <input [(ngModel)]="data.device.property.address" style="width: 262px" type="ip"
+                        <input [(ngModel)]="data.device.property.address" style="width: 100%" type="ip"
                             (click)="onAddressChanged()">
                     </div>
-                    <div class="my-form-field" style="display: inline-block;margin-left: 15px;">
+                    <div class="my-form-field" style="display: inline-block;">
                         <span>{{'device.property-slave-id' | translate}}</span>
-                        <input numberOnly [(ngModel)]="data.device.property.slaveid" style="width: 65px" type="text">
+                        <input numberOnly [(ngModel)]="data.device.property.slaveid" style="width: 100px" type="text">
                     </div>
-                    <div class="mb10 block">
+                    </div>
+                    <div class="mb10 block modbus-timing-row">
                         <div class="my-form-field inbk" style="width: 100px; text-align: center;">
                             <span>{{'device.property-tockenized' | translate}}</span>
                             <mat-slide-toggle color="primary"
@@ -268,7 +271,7 @@
                         <div class="my-form-field inbk"
                             style="display: inline-block;margin-bottom: 10px;margin-left: 25px;">
                             <span>{{'device.property-timeout' | translate}}</span>
-                            <input numberOnly [(ngModel)]="data.device.property.timeout" style="width: 135px"
+                            <input numberOnly [(ngModel)]="data.device.property.timeout" style="width: 165px"
                                 type="number">
                         </div>
                     </div>
@@ -302,7 +305,7 @@
                         <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip"
                             (click)="onAddressChanged()">
                     </div>
-                    <div class="my-form-field" class="my-expansion-panel">
+                    <div class="my-form-field my-expansion-panel webapi-result-panel">
                         <mat-expansion-panel [disabled]="!data.device.property.method || !data.device.property.address"
                             #panelProperty (closed)="onPropertyExpand(false)"
                             (opened)="onPropertyExpand(true);onCheckWebApi()">
@@ -328,17 +331,19 @@
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.MQTTclient">
-                    <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;">
+                    <div class="mqtt-connection-row">
+                    <div class="my-form-field mqtt-address">
                         <span>{{'device.property-mqtt-address' | translate}}</span>
-                        <input [(ngModel)]="data.device.property.address" style="width: 280px" type="ip"
+                        <input [(ngModel)]="data.device.property.address" style="width: 100%" type="ip"
                             (click)="onAddressChanged()">
                     </div>
 
-                    <div class="my-form-field inbk" style="display: inline-block;margin-left: 10px;">
+                    <div class="my-form-field mqtt-timeout">
                         <span>{{'device.property-timeout' | translate}}</span>
                         <input numberOnly [(ngModel)]="data.device.property.timeout" style="width: 135px" type="number">
                     </div>
-                    <div class="my-form-field" class="my-expansion-panel">
+                    </div>
+                    <div class="my-form-field my-expansion-panel mqtt-expansion-panel">
                         <mat-expansion-panel #panelProperty (closed)="onPropertyExpand(false)"
                             (opened)="onPropertyExpand(true);">
                             <mat-expansion-panel-header class="header" [collapsedHeight]="'32px'"
@@ -379,7 +384,7 @@
                             </ng-container>
                         </mat-expansion-panel>
                     </div>
-                    <div class="my-form-field" class="my-expansion-panel">
+                    <div class="my-form-field my-expansion-panel mqtt-expansion-panel">
                         <mat-expansion-panel #panelCertificate (closed)="onPropertyExpand(false)"
                             (opened)="onPropertyExpand(true);">
                             <mat-expansion-panel-header class="header" [collapsedHeight]="'32px'"
@@ -417,9 +422,9 @@
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.EthernetIP">
-                    <div class="my-form-field" style="display: inline-block; margin-bottom: 10px;">
+                    <div class="my-form-field block mb10">
                         <span>{{'device.property-address-port' | translate}}</span>
-                        <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip"
+                        <input [(ngModel)]="data.device.property.address" style="width: 100%" type="ip"
                             (click)="onAddressChanged()">
                     </div>
                     <div style="display: block; height: 45px;">
@@ -437,9 +442,9 @@
                     </div>
                 </div>
                 <div *ngSwitchCase="deviceType.OmronEthernetIP">
-                    <div class="my-form-field" style="display: inline-block; margin-bottom: 10px;">
+                    <div class="my-form-field block mb10">
                         <span>{{'device.property-address-port' | translate}}</span>
-                        <input [(ngModel)]="data.device.property.address" style="width: 350px" type="ip"
+                        <input [(ngModel)]="data.device.property.address" style="width: 100%" type="ip"
                             (click)="onAddressChanged()">
                     </div>
                 </div>
@@ -461,7 +466,7 @@
                         <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword
                             ? 'visibility' : 'visibility_off'}}</mat-icon>
                     </div>
-                    <div class="my-form-field my-expansion-panel">
+                    <div class="my-form-field my-expansion-panel odbc-result-panel">
                         <mat-expansion-panel [disabled]="!data.device.property.address" #panelProperty
                             (closed)="onPropertyExpand(false)" (opened)="onPropertyExpand(true);onCheckOdbc()">
                             <mat-expansion-panel-header class="header" [collapsedHeight]="'32px'"

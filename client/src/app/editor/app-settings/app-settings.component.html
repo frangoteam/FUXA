@@ -33,7 +33,7 @@
                             <div class="auth-secret-row block mt15" *ngIf="authentication">
                                 <div class="my-form-field system-input auth-secret-field">
                                     <span>{{'dlg.app-settings-auth-secret' | translate}}</span>
-                                    <input autocomplete="off" [(ngModel)]="settings.secretCode" style="width: 180px" type="password">
+                                    <input autocomplete="off" (keydown)="keyDownStopPropagation($event)" [(ngModel)]="settings.secretCode" style="width: 180px" type="password">
                                 </div>
                                 <div class="my-form-field auth-only-editor-field">
                                     <div class="auth-only-editor-label">
