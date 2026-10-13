@@ -123,24 +123,32 @@ describe('Node-RED secure mode authorization', () => {
         expect(result.res.statusCode).to.equal(403);
     });
 
-    it('allows an authenticated user with numeric groups', async () => {
+    it('rejects an authenticated non-admin user with numeric groups', async () => {
         const token = jwt.sign({ id: 'operator', groups: 2 }, SECRET, { expiresIn: '1h' });
         const result = await authorize({ 'x-access-token': token });
 
-        expect(result.allowed).to.equal(true);
-        expect(result.res.statusCode).to.equal(200);
+        expect(result.allowed).to.equal(false);
+        expect(result.res.statusCode).to.equal(403);
     });
 
-    it('allows an authenticated role-based user without groups in the JWT', async () => {
+    it('rejects an authenticated role-based user without groups in the JWT', async () => {
         const token = jwt.sign({ id: 'role-user' }, SECRET, { expiresIn: '1h' });
         const result = await authorize({ 'x-access-token': token });
 
-        expect(result.allowed).to.equal(true);
-        expect(result.res.statusCode).to.equal(200);
+        expect(result.allowed).to.equal(false);
+        expect(result.res.statusCode).to.equal(403);
     });
 
-    it('allows an authenticated user with no assigned groups', async () => {
+    it('rejects an authenticated user with no assigned groups', async () => {
         const token = jwt.sign({ id: 'no-group-user', groups: 0 }, SECRET, { expiresIn: '1h' });
+        const result = await authorize({ 'x-access-token': token });
+
+        expect(result.allowed).to.equal(false);
+        expect(result.res.statusCode).to.equal(403);
+    });
+
+    it('allows an authenticated administrator', async () => {
+        const token = jwt.sign({ id: 'admin', groups: -1 }, SECRET, { expiresIn: '1h' });
         const result = await authorize({ 'x-access-token': token });
 
         expect(result.allowed).to.equal(true);
@@ -173,7 +181,7 @@ describe('Node-RED secure mode authorization', () => {
     });
 
     it('preserves query-token login, cookie creation and clean redirect', async () => {
-        const token = jwt.sign({ id: 'operator', groups: 2 }, SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: 'admin', groups: -1 }, SECRET, { expiresIn: '1h' });
         const result = await authorize({}, {
             method: 'GET',
             query: { token, tab: 'flows' },
@@ -188,7 +196,7 @@ describe('Node-RED secure mode authorization', () => {
     });
 
     it('preserves authenticated cookie access', async () => {
-        const token = jwt.sign({ id: 'operator', groups: 2 }, SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ id: 'admin', groups: -1 }, SECRET, { expiresIn: '1h' });
         const result = await authorize({ cookie: `other=value; nodered_auth=${token}` });
 
         expect(result.allowed).to.equal(true);
@@ -230,7 +238,7 @@ describe('Node-RED secure mode authorization', () => {
         const guest = await request(app, '/nodered/flows', {
             'x-access-token': authJwt.getGuestToken()
         });
-        const userToken = jwt.sign({ id: 'operator', groups: 2 }, SECRET, { expiresIn: '1h' });
+        const userToken = jwt.sign({ id: 'admin', groups: -1 }, SECRET, { expiresIn: '1h' });
         const user = await request(app, `/nodered/?token=${userToken}`);
 
         expect(guest.statusCode).to.equal(403);

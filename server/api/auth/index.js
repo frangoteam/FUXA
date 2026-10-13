@@ -147,6 +147,13 @@ module.exports = {
          * Sign In with User credentials
          */
         authApp.post('/api/signin', function (req, res, next) {
+            // Bind the attempt to a username: without it the storage lookup would
+            // fall back to every user and authenticate against the first row.
+            if (!req.body || typeof req.body.username !== 'string' || !req.body.username.trim()) {
+                sendInvalidSignInResponse(res);
+                runtime.logger.error('api post signin: missing username');
+                return;
+            }
             runtime.users.findOne(req.body).then(function (userInfo) {
                 if (userInfo && userInfo.length && userInfo[0].password) {
                     if (bcrypt.compareSync(req.body.password, userInfo[0].password)) {

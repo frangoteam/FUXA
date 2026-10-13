@@ -20,6 +20,7 @@ function makeSettings() {
             type: 'influxDB',
             url: 'http://influx.internal:8086',
             host: 'questdb.internal',
+            configurationString: 'http::addr=questdb.internal:9000;username=daq-user;password=daq-secret;',
             database: 'fuxa',
             credentials: {
                 username: 'daq-user',
@@ -59,6 +60,7 @@ describe('Security - settings disclosure', () => {
         expect(publicSettings.smtp.mailsender).to.equal('fuxa@example.com');
         expect(publicSettings.daqstore).to.not.have.property('url');
         expect(publicSettings.daqstore).to.not.have.property('host');
+        expect(publicSettings.daqstore).to.not.have.property('configurationString');
         expect(publicSettings.daqstore).to.include({
             type: 'influxDB',
             database: 'fuxa'
@@ -75,7 +77,8 @@ describe('Security - settings disclosure', () => {
         });
         expect(adminSettings.daqstore).to.include({
             url: 'http://influx.internal:8086',
-            host: 'questdb.internal'
+            host: 'questdb.internal',
+            configurationString: 'http::addr=questdb.internal:9000;username=daq-user;password=daq-secret;'
         });
     });
 });

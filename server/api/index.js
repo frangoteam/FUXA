@@ -248,6 +248,7 @@ function getPublicSettings(settings) {
     if (tosend.daqstore) {
         delete tosend.daqstore.url;
         delete tosend.daqstore.host;
+        delete tosend.daqstore.configurationString;
     }
     return tosend;
 }
