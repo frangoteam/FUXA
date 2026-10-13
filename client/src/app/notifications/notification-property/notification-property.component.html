@@ -46,6 +46,12 @@
                 {{'alarm.property-' + item | translate}}
             </mat-checkbox>
         </div>
+        <div class="my-form-field block mt10" *ngIf="formGroup.value.type === notificationAccess">
+            <span>{{'notification.property-language' | translate}}</span>
+            <mat-select formControlName="language" style="width: 207px">
+                <mat-option *ngFor="let language of notificationLanguages" [value]="language.value">{{language.text | translate}}</mat-option>
+            </mat-select>
+        </div>
     </div>
     <div mat-dialog-actions class="dialog-action mt10">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>

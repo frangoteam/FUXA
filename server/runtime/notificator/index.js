@@ -166,6 +166,7 @@ function NotificatorManager(_runtime) {
                                     temp.delay = notification.delay;
                                     temp.interval = notification.interval;
                                     temp.enabled = notification.enabled;
+                                    temp.language = notification.language;
                                     temp.text = notification.text;
                                     temp.subscriptions = notification.subscriptions;
                                     temp.options = notification.options;
@@ -181,6 +182,7 @@ function NotificatorManager(_runtime) {
                                 var accessNotification = new Notification(notification.id, notification.name, notification.type);
                                 accessNotification.receiver = notification.receiver;
                                 accessNotification.enabled = notification.enabled;
+                                accessNotification.language = notification.language;
                                 accessNotification.text = notification.text;
                                 accessNotification.options = notification.options;
                                 notificationsSubsctiption.access.push(accessNotification);
@@ -240,11 +242,11 @@ function NotificatorManager(_runtime) {
         // Access notifications have no login/logout subscriptions: every
         // notification configured as type "access" receives both events.
         const notifications = notificationsSubsctiption.access || [];
-        const content = event === 'login'
-            ? `User${data?.username ? ` "${data.username}"` : ''} logged in (Login)`
-            : `User${data?.username ? ` "${data.username}"` : ''} logged out (Logout)`;
         for (const notification of notifications) {
             try {
+                const content = runtime.localization.translate(notification.language, `notification-${event}`, {
+                    user: data?.username || ''
+                });
                 if (!_isValidEmail(notification.receiver)) {
                     await runtime.notificatorMgr.postMessage(notification.receiver.replace(/\$\{content\}/g, content));
                 } else {
@@ -428,6 +430,7 @@ function Notification(id, name, type) {
     this.notifytime = 0;
     this.notifytype = '';
     this.enabled = true;
+    this.language = 'en';
     this.text;
     this.subscriptions = {};
     this.options;

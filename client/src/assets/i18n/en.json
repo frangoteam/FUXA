@@ -1426,6 +1426,7 @@
     "notification.property-delay": "Delay (min.)",
     "notification.property-interval": "Interval (min.)",
     "notification.property-enabled": "Enbled",
+    "notification.property-language": "Language",
     "notification.property-priority": "Priority",
     "notification.type-alarm": "Alarms",
     "notification.type-access": "Access (Login/Logout)",
@@ -2026,5 +2027,9 @@
         "tag-name": "Tag Name",
         "succeeded-count": "{{count}} succeeded",
         "failed-count": "{{count}} failed"
+    },
+    "server": {
+        "notification-login": "User \"{{user}}\" logged in (Login)",
+        "notification-logout": "User \"{{user}}\" logged out (Logout)"
     }
 }

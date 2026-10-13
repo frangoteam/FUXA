@@ -1425,6 +1425,7 @@
     "notification.property-delay": "延迟（分钟）",
     "notification.property-interval": "间隔（分钟）",
     "notification.property-enabled": "启用",
+    "notification.property-language": "语言",
     "notification.property-priority": "优先级",
     "notification.type-alarm": "警报",
     "notification.type-access": "访问（登录/注销）",
@@ -2024,5 +2025,9 @@
         "succeeded-count": "{{count}} 成功",
         "failed-count": "{{count}} 失败"
     },
-    " item.navtype-icons-text-inline": "图标和文本（内联）"
+    " item.navtype-icons-text-inline": "图标和文本（内联）",
+    "server": {
+        "notification-login": "用户“{{user}}”已登录 (Login)",
+        "notification-logout": "用户“{{user}}”已退出登录 (Logout)"
+    }
 }

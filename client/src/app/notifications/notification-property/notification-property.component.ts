@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Utils } from '../../_helpers/utils';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ProjectService } from '../../_services/project.service';
+import { APP_LANGUAGES } from '../../_models/language';
 
 @Component({
     selector: 'app-notification-property',
@@ -14,6 +15,8 @@ import { ProjectService } from '../../_services/project.service';
     styleUrls: ['./notification-property.component.scss']
 })
 export class NotificationPropertyComponent implements OnInit {
+
+    notificationLanguages = APP_LANGUAGES;
 
     notification: Notification;
     notificationsType = NotificationsType;
@@ -38,6 +41,7 @@ export class NotificationPropertyComponent implements OnInit {
         this.formGroup = this.fb.group({
             name: [this.notification.name, Validators.required],
             receiver: [this.notification.receiver, Validators.required],
+            language: [this.notification.language || 'en'],
             type: [this.notification.type, Validators.required],
             delay: [this.notification.delay],
             interval: [this.notification.interval],

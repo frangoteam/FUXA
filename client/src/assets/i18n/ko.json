@@ -1425,6 +1425,7 @@
     "notification.property-delay": "지연(분)",
     "notification.property-interval": "간격(분)",
     "notification.property-enabled": "활성화됨",
+    "notification.property-language": "언어",
     "notification.property-priority": "우선순위",
     "notification.type-alarm": "알람",
     "notification.type-access": "접속(로그인/로그아웃)",
@@ -2023,5 +2024,9 @@
         "tag-name": "태그 이름",
         "succeeded-count": "{{count}} 성공",
         "failed-count": "{{count}} 실패"
+    },
+    "server": {
+        "notification-login": "사용자 \"{{user}}\"님이 로그인했습니다 (Login)",
+        "notification-logout": "사용자 \"{{user}}\"님이 로그아웃했습니다 (Logout)"
     }
 }

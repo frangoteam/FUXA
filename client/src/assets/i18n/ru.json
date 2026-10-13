@@ -1425,6 +1425,7 @@
     "notification.property-delay": "Задержка (мин.)",
     "notification.property-interval": "Интервал (мин.)",
     "notification.property-enabled": "Включено",
+    "notification.property-language": "Язык",
     "notification.property-priority": "Приоритет",
     "notification.type-alarm": "Сигнализация",
     "notification.type-access": "Доступ (Вход/Выход)",
@@ -2023,5 +2024,9 @@
         "tag-name": "Имя тега",
         "succeeded-count": "{{count}} выполнено успешно",
         "failed-count": "{{count}} не удалось"
+    },
+    "server": {
+        "notification-login": "Пользователь \"{{user}}\" вошёл в систему (Login)",
+        "notification-logout": "Пользователь \"{{user}}\" вышел из системы (Logout)"
     }
 }
