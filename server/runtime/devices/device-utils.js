@@ -27,7 +27,10 @@ module.exports = {
                     value = await callScaleScript(tag.scaleReadFunction, tag.scaleReadParams ? tag.scaleReadParams : undefined, runtime, true, value);
                 }
                 const type = tag?.type;
-                if (!(type === 'String' || type === 'ByteString' || type === 'string') && utils.isNumber(value, obj)) {
+                // Number([42]) and Number(new Float64Array([42])) are numeric,
+                // but collection values must not enter the scalar scaling path.
+                const isCollection = Array.isArray(value) || ArrayBuffer.isView(value);
+                if (!isCollection && !(type === 'String' || type === 'ByteString' || type === 'string') && utils.isNumber(value, obj)) {
                     value = obj.value;
                     if (tag.deadband && tag.deadband.value && !utils.isNullOrUndefined(oldValue)) {
                         if (Math.abs(value - oldValue) <= tag.deadband.value) {
