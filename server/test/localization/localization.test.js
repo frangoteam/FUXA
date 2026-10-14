@@ -3,12 +3,16 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { expect } = require('chai');
 const localization = require('../../runtime/localization');
 
 describe('runtime localization', function () {
+    let expect;
     let i18nPath;
     let service;
+
+    before(async function () {
+        ({ expect } = await import('chai'));
+    });
 
     beforeEach(function () {
         i18nPath = fs.mkdtempSync(path.join(os.tmpdir(), 'fuxa-i18n-'));
