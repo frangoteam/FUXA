@@ -15,7 +15,9 @@ var notificator = require('./notificator');
 var scripts = require('./scripts');
 var plugins = require('./plugins');
 var utils = require('./utils');
+var localization = require('./localization');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 const daqstorage = require('./storage/daqstorage');
 const schedulerStorage = require('./scheduler/scheduler-storage');
 const schedulerService = require('./scheduler/scheduler-service');
@@ -54,6 +56,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
     settings = _settings;
     logger = _log;
     api = _api;
+    localization.init({
+        i18nPath: settings.httpStatic ? path.join(settings.httpStatic, 'assets', 'i18n') : undefined,
+        logger
+    });
     // check runtime init dependency and send to main if ready
     var checkInit = function () {
         if (!events.listenerCount('init-plugins-ok') && !events.listenerCount('init-users-ok') && !events.listenerCount('init-project-ok')) {
@@ -804,5 +810,6 @@ var runtime = module.exports = {
     checkPermission: checkPermission,
     get socketPool() { return socketPool },
     get socketMutex() {return socketMutex },
-    get apiKeys() { return apiKeys }
+    get apiKeys() { return apiKeys },
+    localization: localization
 }

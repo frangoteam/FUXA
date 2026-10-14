@@ -1425,6 +1425,7 @@
     "notification.property-delay": "Délai (min.)",
     "notification.property-interval": "Intervalle (min.)",
     "notification.property-enabled": "Activé",
+    "notification.property-language": "Langue",
     "notification.property-priority": "Priorité",
     "notification.type-alarm": "Alarmes",
     "notification.type-access": "Accès (Connexion/Déconnexion)",
@@ -2023,5 +2024,9 @@
         "tag-name": "Nom de la balise",
         "succeeded-count": "{{count}} a réussi",
         "failed-count": "{{count}} a échoué"
+    },
+    "server": {
+        "notification-login": "L’utilisateur « {{user}} » s’est connecté (Login)",
+        "notification-logout": "L’utilisateur « {{user}} » s’est déconnecté (Logout)"
     }
 }

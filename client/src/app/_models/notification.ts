@@ -3,6 +3,7 @@ export class Notification {
     id: string;
     name: string;
     receiver: string;
+    language = 'en';
     delay = 1;
     interval = 0;
     enabled = true;

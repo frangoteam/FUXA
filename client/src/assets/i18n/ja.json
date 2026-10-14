@@ -1425,6 +1425,7 @@
     "notification.property-delay": "遅延 (分)",
     "notification.property-interval": "間隔 (分)",
     "notification.property-enabled": "有効",
+    "notification.property-language": "言語",
     "notification.property-priority": "優先度",
     "notification.type-alarm": "アラーム",
     "notification.type-access": "アクセス（ログイン/ログアウト）",
@@ -2048,5 +2049,9 @@
     "script. sys-fnc-resolveAdapterTagId-params": "'TagID of Adapter'",
     "report. tags-table-add": "タグを追加",
     "report. item-daterange": "データ範囲",
-    " dlg.app-settings-daqstore-password": "パスワード"
+    " dlg.app-settings-daqstore-password": "パスワード",
+    "server": {
+        "notification-login": "ユーザー「{{user}}」がログインしました (Login)",
+        "notification-logout": "ユーザー「{{user}}」がログアウトしました (Logout)"
+    }
 }

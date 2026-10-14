@@ -1425,6 +1425,7 @@
     "notification.property-delay": "Retraso (mín.)",
     "notification.property-interval": "Intervalo (mín.)",
     "notification.property-enabled": "habilitado",
+    "notification.property-language": "Idioma",
     "notification.property-priority": "Prioridad",
     "notification.type-alarm": "Alarmas",
     "notification.type-access": "Acceso (Iniciar sesión/Cerrar sesión)",
@@ -2023,5 +2024,9 @@
         "tag-name": "Nombre de etiqueta",
         "succeeded-count": "{{count}} correctas",
         "failed-count": "{{count}} fallidas"
+    },
+    "server": {
+        "notification-login": "El usuario \"{{user}}\" ha iniciado sesión (Login)",
+        "notification-logout": "El usuario \"{{user}}\" ha cerrado sesión (Logout)"
     }
 }

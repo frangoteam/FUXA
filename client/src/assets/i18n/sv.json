@@ -1425,6 +1425,7 @@
     "notification.property-delay": "Fördröjning (min.)",
     "notification.property-interval": "Intervall (min.)",
     "notification.property-enabled": "Aktiverad",
+    "notification.property-language": "Språk",
     "notification.property-priority": "Prioritet",
     "notification.type-alarm": "Larm",
     "notification.type-access": "Åtkomst (Logga in/Logga ut)",
@@ -2023,5 +2024,9 @@
         "tag-name": "Taggnamn",
         "succeeded-count": "{{count}} lyckades",
         "failed-count": "{{count}} misslyckades"
+    },
+    "server": {
+        "notification-login": "Användaren \"{{user}}\" loggade in (Login)",
+        "notification-logout": "Användaren \"{{user}}\" loggade ut (Logout)"
     }
 }

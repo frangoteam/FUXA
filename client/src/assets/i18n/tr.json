@@ -1425,6 +1425,7 @@
     "notification.property-delay": "Gecikme (dak.)",
     "notification.property-interval": "Aralık (dak.)",
     "notification.property-enabled": "Etkinleştirildi",
+    "notification.property-language": "Dil",
     "notification.property-priority": "Öncelik",
     "notification.type-alarm": "Alarmlar",
     "notification.type-access": "Erişim (Oturum Açma/Oturum Kapatma)",
@@ -2023,5 +2024,9 @@
         "tag-name": "Etiket Adı",
         "succeeded-count": "{{count}} başarılı oldu",
         "failed-count": "{{count}} başarısız oldu"
+    },
+    "server": {
+        "notification-login": "\"{{user}}\" kullanıcısı giriş yaptı (Login)",
+        "notification-logout": "\"{{user}}\" kullanıcısı çıkış yaptı (Logout)"
     }
 }
