@@ -40,10 +40,6 @@ export class OnboardingWizardComponent implements OnInit {
 
     ngOnInit() {
         const settings = this.settingsService.getSettings();
-        this.authType = this.authType.map(auth => ({
-            ...auth,
-            text: this.translateService.instant(auth.text)
-        }));
         this.translateService.get('dlg.app-auth-tooltip').subscribe((txt: string) => {
             this.authenticationTooltip = txt;
         });
