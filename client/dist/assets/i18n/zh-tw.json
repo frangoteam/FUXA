@@ -1425,6 +1425,7 @@
     "notification.property-delay": "延遲（分鐘）",
     "notification.property-interval": "間隔（分鐘）",
     "notification.property-enabled": "啟用",
+    "notification.property-language": "語言",
     "notification.property-priority": "優先順序",
     "notification.type-alarm": "警報",
     "notification.type-access": "訪問（登入/登出）",
@@ -2024,5 +2025,9 @@
         "succeeded-count": "{{count}} 成功",
         "failed-count": "{{count}} 失敗"
     },
-    " item.navtype-icons-text-inline": "圖示與文字（行內）"
+    " item.navtype-icons-text-inline": "圖示與文字（行內）",
+    "server": {
+        "notification-login": "使用者「{{user}}」已登入 (Login)",
+        "notification-logout": "使用者「{{user}}」已登出 (Logout)"
+    }
 }

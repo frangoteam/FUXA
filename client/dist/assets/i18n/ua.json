@@ -1425,6 +1425,7 @@
     "notification.property-delay": "Затримка (мін.)",
     "notification.property-interval": "Інтервал (хв.)",
     "notification.property-enabled": "Увімкнено",
+    "notification.property-language": "Мова",
     "notification.property-priority": "Пріоритет",
     "notification.type-alarm": "Сигналізація",
     "notification.type-access": "Доступ (Вхід/Вихід)",
@@ -2024,5 +2025,9 @@
         "succeeded-count": "{{count}} вдалося",
         "failed-count": "{{count}} не вдалося"
     },
-    "chart.legend-onmouseover": "при наведенні мишки"
+    "chart.legend-onmouseover": "при наведенні мишки",
+    "server": {
+        "notification-login": "Користувач \"{{user}}\" увійшов у систему (Login)",
+        "notification-logout": "Користувач \"{{user}}\" вийшов із системи (Logout)"
+    }
 }
