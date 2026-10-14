@@ -7,7 +7,7 @@
             <span style="display: inline-block;">{{'dlg.app-settings-auth-token' | translate}}</span>
             <mat-select formControlName="authentication" style="display: block;">
                 <mat-option *ngFor="let auth of authType" [value]="auth.value">
-                    {{ auth.text }}
+                    {{ auth.text | translate }}
                 </mat-option>
             </mat-select>
         </div>
