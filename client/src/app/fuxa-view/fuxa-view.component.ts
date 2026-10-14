@@ -649,6 +649,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.touchKeyboard.ngxTouchKeyboardFullScreen = true;
         }
         if (htmlevent.type === 'key-enter') {
+            let submittingByEnter = false;
             htmlevent.dom.onkeydown = function(ev) {
                 if (ev.key === 'Enter') {
                     const isToSkip = HtmlInputComponent.SkipEnterEvent.includes((htmlevent?.dom?.nodeName ?? '').toLowerCase());
@@ -666,7 +667,13 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     else {
                         htmlevent.value = res.value;
                         self.gaugesManager.putEvent(htmlevent);
-                        htmlevent.dom.blur();
+                        // blur fires synchronously; Confirm on leave must not submit again.
+                        submittingByEnter = true;
+                        try {
+                            htmlevent.dom.blur();
+                        } finally {
+                            submittingByEnter = false;
+                        }
                     }
                     if (htmlevent.ga.type === HtmlInputComponent.TypeTag) {
                         // htmlevent.dom.focus();
@@ -738,7 +745,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                     // Remove any error message when input is blured
                     htmlevent.dom.setCustomValidity('');
-                    self.checkRestoreValue(htmlevent);
+                    self.checkRestoreValue(htmlevent, submittingByEnter);
                 };
 
                 htmlevent.dom.oninput = function(ev){
@@ -760,7 +767,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    private checkRestoreValue(htmlevent: Event) {
+    private checkRestoreValue(htmlevent: Event, submittingByEnter: boolean = false) {
         if (htmlevent.ga?.property?.options?.updated &&
             (htmlevent.ga.property.options.updatedEsc || htmlevent.ga.property.options.actionOnEsc === InputActionEscType.update)) {
             //ToDo there is definitely a better way
@@ -771,7 +778,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     htmlevent.dom.value = currentInputValue;
                 }
             }, 1000);
-        } else if (htmlevent.ga?.property?.options?.actionOnEsc === InputActionEscType.enter) {
+        } else if (!submittingByEnter && htmlevent.ga?.property?.options?.actionOnEsc === InputActionEscType.enter) {
             this.emulateEnterKey(htmlevent.dom);
         }
     }
