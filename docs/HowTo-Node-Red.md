@@ -22,14 +22,41 @@ Dashboard 2 must be installed separately if needed:
 - **@flowfuse/node-red-dashboard**: For modern dashboard creation
 - **node-red-contrib-fuxa**: Automatically included (provides FUXA integration nodes)
 
-### Ping requests in Docker
+### Optional ping requests in Docker
 
-Images built from the current Dockerfile include `iputils-ping` in the final runtime
-stage. Existing containers need an image built with this change; restarting an older
-image does not install the executable.
+The default FUXA Docker image does not install `ping`. If a Node-RED flow needs the
+system executable, build an optional custom image. Installing a palette package
+that invokes `ping` does not install the operating-system executable.
 
-Use the built-in Node-RED **exec** node to check a fixed host without installing an
-additional palette package:
+Save the following as `Dockerfile.ping`. This example extends the Debian-based FUXA
+image and requires its package manager to be available during the build:
+
+```dockerfile
+ARG FUXA_IMAGE=frangoteam/fuxa:latest
+FROM ${FUXA_IMAGE}
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends iputils-ping \
+    && rm -rf /var/lib/apt/lists/* \
+    && ping -V
+```
+
+Build and check the custom image:
+
+```bash
+docker build --build-arg FUXA_IMAGE=frangoteam/fuxa:latest -f Dockerfile.ping -t fuxa-with-ping:local .
+docker run --rm --entrypoint ping fuxa-with-ping:local -V
+docker run --rm --entrypoint ping fuxa-with-ping:local -n -c 1 -W 2 127.0.0.1
+```
+
+For a reproducible build, replace the `FUXA_IMAGE` argument with the release tag or
+digest used by your deployment. Select `fuxa-with-ping:local` as its image while
+retaining the existing data volumes, environment and network settings. Recreate
+the container to use the new image; restarting an existing container does not
+install the executable. The default FUXA image remains unchanged.
+
+In the custom image, use the built-in Node-RED **exec** node to check a fixed host
+without installing an additional palette package:
 
 1. Connect an **inject** node to an **exec** node.
 2. Set the exec command to `ping -n -c 1 -W 2 127.0.0.1` for an initial loopback check.
@@ -39,11 +66,12 @@ additional palette package:
 5. Deploy and inject. A return code of `0` indicates a reply. Replace `127.0.0.1`
    with the fixed IP address or hostname of the device to monitor.
 
-The count and timeout keep each request bounded. A failed ping does not necessarily
+The count and reply timeout bound the ICMP probe. Loopback (`127.0.0.1`) checks the
+container itself, not the Docker host or a PLC. A failed ping does not necessarily
 mean the device is offline: routing or a firewall can block ICMP replies.
 
 To verify the executable and loopback from outside Node-RED, replace
-`<container-name>` with the running FUXA container name:
+`<container-name>` with the running custom FUXA container name:
 
 ```bash
 docker exec <container-name> ping -V

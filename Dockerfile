@@ -54,14 +54,13 @@ WORKDIR /usr/src/app/FUXA
 # Install ONLY runtime libraries
 RUN apt-get update \
     && apt-get install -y \
-        sqlite3 libsqlite3-0 iputils-ping \
+        sqlite3 libsqlite3-0 \
         $( [ "$INSTALL_ODBC" = "true" ] && echo "unixodbc odbc-mariadb odbc-postgresql libsqliteodbc tdsodbc" ) \
     && if [ "$INSTALL_ODBC" = "true" ]; then \
         mkdir -p /usr/lib/odbc && \
         find /usr/lib -path '*/odbc/*.so' -exec cp {} /usr/lib/odbc/ \; ; \
     fi \
-    && rm -rf /var/lib/apt/lists/* \
-    && ping -V
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy MySQL and MSSQL ODBC drivers from builder (not available in Debian repos)
 COPY --from=server-builder /usr/lib/odbc/ /usr/lib/odbc/
