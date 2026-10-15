@@ -1,4 +1,23 @@
 module.exports = function(RED) {
+    function hasTimestamp(value) {
+        return value !== undefined && value !== null &&
+            !(typeof value === 'string' && value.trim() === '');
+    }
+
+    function timestamp(messageValue, configuredValue, fallback, name) {
+        var value = hasTimestamp(messageValue) ? messageValue :
+            (hasTimestamp(configuredValue) ? configuredValue : fallback);
+        if (typeof value === 'string') {
+            value = value.trim();
+            // Numeric strings represent milliseconds, not a date such as year "0".
+            value = /^-?\d+(?:\.\d+)?$/.test(value) ? Number(value) : Date.parse(value);
+        }
+        if (typeof value !== 'number' || !Number.isFinite(value)) {
+            throw new Error('Invalid ' + name + ' timestamp: use milliseconds or a valid date string');
+        }
+        return value;
+    }
+
     function FuxaGetDaqNode(config) {
         RED.nodes.createNode(this, config);
         var node = this;
@@ -14,8 +33,12 @@ module.exports = function(RED) {
                 }
                 
                 if (tagId) {
-                    var fromts = config.from || msg.from || Date.now() - 3600000; // default 1 hour ago
-                    var tots = config.to || msg.to || Date.now();
+                    var now = Date.now();
+                    var fromts = timestamp(msg.from, config.from, now - 3600000, 'from');
+                    var tots = timestamp(msg.to, config.to, now, 'to');
+                    if (fromts > tots) {
+                        throw new Error('Invalid DAQ range: from timestamp must not exceed to timestamp');
+                    }
                     var data = await fuxa.getDaq(tagId, fromts, tots);
                     msg.payload = data;
                     node.send(msg);

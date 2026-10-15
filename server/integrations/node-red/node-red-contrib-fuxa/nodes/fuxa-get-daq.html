@@ -136,10 +136,12 @@
     <p><strong>Static timestamps</strong> can be set in the node configuration.</p>
     <p><strong>Dynamic timestamps</strong> can override the configured values:</p>
     <ul>
-        <li><code>msg.from</code> - Start timestamp (Unix timestamp or ISO string)</li>
-        <li><code>msg.to</code> - End timestamp (Unix timestamp or ISO string)</li>
+        <li><code>msg.from</code> - Start timestamp (milliseconds since Unix epoch or a date string)</li>
+        <li><code>msg.to</code> - End timestamp (milliseconds since Unix epoch or a date string)</li>
     </ul>
     <p>If no timestamps are provided, defaults to the last hour.</p>
+    <p>Each message timestamp overrides the corresponding configured timestamp. Blank or null values fall back to the node configuration, then to the default range. Timestamp <code>0</code> is valid.</p>
+    <p>ISO strings with an explicit timezone are recommended. Date strings without a timezone use the FUXA server's local timezone. Invalid timestamps and ranges where <code>from &gt; to</code> report a node error without querying storage.</p>
     <h4>Examples</h4>
     <pre>// Get data for last 24 hours
 msg.from = Date.now() - 86400000;
