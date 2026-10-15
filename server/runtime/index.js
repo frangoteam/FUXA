@@ -281,7 +281,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
                                     dbfncs.push(daqstorage.getNodeValues(msg.sids[i], chunk.start, chunk.end));
                                 }
                                 const values = await Promise.all(dbfncs);
-                                io.emit(Events.IoEventTypes.DAQ_RESULT, {
+                                socket.emit(Events.IoEventTypes.DAQ_RESULT, {
                                     gid: msg.gid,
                                     result: values,
                                     chunk: {
@@ -291,7 +291,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
                                 });
                             } catch (error) {
                                 logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${error.stack || error}`);
-                                io.emit(Events.IoEventTypes.DAQ_ERROR, { gid, error });
+                                socket.emit(Events.IoEventTypes.DAQ_ERROR, { gid: msg.gid, error });
                                 return;
                             }
                         }
