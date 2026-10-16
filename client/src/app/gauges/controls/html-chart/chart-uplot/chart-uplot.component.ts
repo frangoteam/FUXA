@@ -85,7 +85,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             delete this.nguplot;
             this.destroy$.next(null);
-            this.destroy$.unsubscribe();
+            this.destroy$.complete();
         } catch (e) {
             console.error(e);
         }
