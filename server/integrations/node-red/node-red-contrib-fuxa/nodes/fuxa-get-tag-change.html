@@ -92,6 +92,7 @@
 <script type="text/x-red" data-help-name="get-tag-change">
     <p>Monitor a FUXA tag for value changes in real-time.</p>
     <p>This node listens for tag change events and outputs the new value whenever the specified tag changes.</p>
+    <p>Arrays, typed arrays and structured values are compared by contents, so an unchanged value does not emit again on each device update.</p>
     <h4>Output</h4>
     <ul>
         <li><code>msg.payload</code>: The new tag value</li>
@@ -99,6 +100,7 @@
         <li><code>msg.tagId</code>: The internal tag ID</li>
         <li><code>msg.tagName</code>: The tag name</li>
         <li><code>msg.timestamp</code>: Timestamp of the change</li>
+        <li><code>msg.previousValue</code>: A snapshot of the preceding value</li>
     </ul>
     <p>This node is event-driven and does not poll for changes, making it efficient for real-time monitoring. Use multiple instances to monitor different tags.</p>
 </script>

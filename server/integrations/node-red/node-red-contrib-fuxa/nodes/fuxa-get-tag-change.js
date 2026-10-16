@@ -1,4 +1,21 @@
+const { isDeepStrictEqual } = require('util');
+
 module.exports = function(RED) {
+    function snapshotValue(value) {
+        // Node-RED clones retain Buffer backing memory; detach it for change history.
+        function detachBuffers(copy, seen = new WeakSet()) {
+            if (Buffer.isBuffer(copy)) return Buffer.from(copy);
+            if (copy && typeof copy === 'object' && !seen.has(copy)) {
+                seen.add(copy);
+                Object.keys(copy).forEach(key => {
+                    copy[key] = detachBuffers(copy[key], seen);
+                });
+            }
+            return copy;
+        }
+        return detachBuffers(RED.util.cloneMessage({ payload: value }).payload);
+    }
+
     function FuxaGetTagChangeNode(config) {
         RED.nodes.createNode(this, config);
         var node = this;
@@ -18,7 +35,7 @@ module.exports = function(RED) {
         if (configuredTagId) {
             var initialValue = fuxa.getTag(configuredTagId);
             if (initialValue !== undefined) {
-                previousValues[configuredTagId] = initialValue;
+                previousValues[configuredTagId] = snapshotValue(initialValue);
             }
         }
 
@@ -36,9 +53,12 @@ module.exports = function(RED) {
                         if (currentValue !== undefined) {
                             // Check if the value has actually changed compared to our stored previous value
                             var previousValue = previousValues[configuredTagId];
-                            if (previousValue !== currentValue) {
+                            var valueChanged = currentValue !== null && typeof currentValue === 'object'
+                                ? !isDeepStrictEqual(previousValue, currentValue)
+                                : previousValue !== currentValue;
+                            if (valueChanged) {
                                 // Update previous value
-                                previousValues[configuredTagId] = currentValue;
+                                previousValues[configuredTagId] = snapshotValue(currentValue);
 
                                 // Output the tag change
                                 var outputMsg = {
