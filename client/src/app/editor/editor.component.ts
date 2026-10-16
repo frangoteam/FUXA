@@ -121,6 +121,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     mapsViewType = ViewType.maps;
     shapesGrps = [];
     private gaugesRef = {};
+    private removedGaugeSettings: { [id: string]: GaugeSettings } = {};
 
     private subscriptionSave: Subscription;
     private subscriptionLoad: Subscription;
@@ -258,7 +259,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                 },
                 (eleadded) => {
-                    let ga: GaugeSettings = this.getGaugeSettings(eleadded, this.ctrlInitParams);
+                    if (eleadded.restoreFromHistory) {
+                        const restoredSettings = this.removedGaugeSettings[eleadded.id];
+                        if (restoredSettings) {
+                            this.currentView.items[eleadded.id] = restoredSettings;
+                            delete this.removedGaugeSettings[eleadded.id];
+                        }
+                        return;
+                    }
+                    let ga: GaugeSettings = this.removedGaugeSettings[eleadded.id] || this.getGaugeSettings(eleadded, this.ctrlInitParams);
+                    delete this.removedGaugeSettings[eleadded.id];
                     this.checkGaugeAdded(ga);
                     setTimeout(() => {
                         this.setMode('select', false);
@@ -395,6 +405,21 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             return this.currentView.svgcontent;
         }
         return this.winRef.nativeWindow.svgEditor.getSvgString();
+    }
+
+    private destroyRemovedGauges() {
+        Object.keys(this.removedGaugeSettings).forEach(id => {
+            const gauge = this.gaugesRef[id]?.ref;
+            if (gauge && typeof gauge.ngOnDestroy === 'function') {
+                try {
+                    gauge.ngOnDestroy();
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+            delete this.gaugesRef[id];
+        });
+        this.removedGaugeSettings = {};
     }
 
     /**
@@ -542,7 +567,10 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
 
                 // check gauge to init
+                this.destroyRemovedGauges();
                 this.gaugesRef = {};
+                this.removedGaugeSettings = {};
+
                 if (v) { this.projectService.cleanView(v); }
                 setTimeout(() => {
                     for (let key in v.items) {
@@ -772,16 +800,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.currentView && this.currentView.items && ele) {
             for (let i = 0; i < ele.length; i++) {
                 if (this.currentView.items[ele[i].id]) {
+                    this.removedGaugeSettings[ele[i].id] = this.currentView.items[ele[i].id];
                     delete this.currentView.items[ele[i].id];
-                    if (this.gaugesRef.hasOwnProperty(ele[i].id)) {
-                        if (this.gaugesRef[ele[i].id].ref && this.gaugesRef[ele[i].id].ref['ngOnDestroy']) {
-                            try {
-                                this.gaugesRef[ele[i].id].ref['ngOnDestroy']();
-                            } catch (e) {
-                                console.error(e);
-                            }
-                        }
-                    }
+                    // if (this.gaugesRef.hasOwnProperty(ele[i].id)) {
+                    //     if (this.gaugesRef[ele[i].id].ref && this.gaugesRef[ele[i].id].ref['ngOnDestroy']) {
+                    //         try {
+                    //             this.gaugesRef[ele[i].id].ref['ngOnDestroy']();
+                    //         } catch (e) {
+                    //             console.error(e);
+                    //         }
+                    //     }
+                    // }
                 }
             }
         }
