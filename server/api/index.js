@@ -27,7 +27,8 @@ const reportsApi = new reports.ReportsApiService();
 const verifyApiOrToken = require('./apikeys/verify-api-or-token');
 const utils = require('../runtime/utils');
 
-const version = '1.0.0';
+// report the real FUXA version (server/package.json) instead of a fixed API string
+const version = require('../package.json').version;
 
 var apiApp;
 var server;

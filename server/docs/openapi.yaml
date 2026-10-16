@@ -36,7 +36,7 @@ paths:
   /api/version:
     get:
       tags: [System]
-      summary: API version string
+      summary: FUXA version string (server/package.json), e.g. 1.3.5-2912
       responses:
         '200':
           description: OK
