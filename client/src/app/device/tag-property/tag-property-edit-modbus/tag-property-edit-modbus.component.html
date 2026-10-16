@@ -27,7 +27,7 @@
             <span>{{'device.tag-property-type' | translate}}</span>
             <mat-select formControlName="tagType">
                 <mat-option *ngFor="let type of tagType | enumToArray" [value]="type.key">
-                    {{ type.value }}
+                    {{ type.value }}{{ tagTypeHint[type.key] ? ' (' + tagTypeHint[type.key] + ')' : '' }}
                 </mat-option>
             </mat-select>
         </div>
