@@ -176,6 +176,19 @@ describe('Alarms history', () => {
     });
 
     describe('authorization', () => {
+        it('applies history permissions to valid epoch-zero alarm rows', async () => {
+            const visible = makeProjectAlarm('epoch-visible', 'device-a^~^tag-a', { permission: 1 << 8 });
+            const hidden = makeProjectAlarm('epoch-hidden', 'device-a^~^tag-b', { permission: 2 << 8 });
+            await initManager({ secureEnabled: true, userRole: false }, [visible, hidden], [
+                makeStoredAlarm('epoch-visible^~^highhigh', 'highhigh', 0),
+                makeStoredAlarm('epoch-hidden^~^highhigh', 'highhigh', 0)
+            ]);
+
+            const history = await manager.getAlarmsHistory({ start: 0, end: 0 }, 1);
+            expect(history.map(alarm => alarm.name)).to.deep.equal(['epoch-visible']);
+            expect(history[0].ontime).to.equal(0);
+        });
+
         it('filters alarm history by group permission bitmask', async () => {
             const alarmA = makeProjectAlarm('visible-alarm', 'device-a^~^tag-a', { permission: 1 << 8 });
             const alarmB = makeProjectAlarm('hidden-alarm', 'device-a^~^tag-b', { permission: 2 << 8 });
