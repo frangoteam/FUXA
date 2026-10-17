@@ -34,10 +34,12 @@ module.exports = function(RED) {
 
                 // Convert tag names to tag IDs (like advanced reports do)
                 var tagIds = [];
+                var resolvedTags = [];
                 for (var i = 0; i < tags.length; i++) {
                     var tagId = fuxa.getTagId(tags[i]);
                     if (tagId) {
                         tagIds.push(tagId);
+                        resolvedTags.push({ id: tagId, name: tags[i] });
                     } else {
                         node.warn('Tag not found: ' + tags[i]);
                     }
@@ -48,21 +50,21 @@ module.exports = function(RED) {
                     
                     // Filter out null values and convert to the expected format (like advanced reports)
                     var filteredData = {};
-                    for (var tagId in data) {
-                        if (data.hasOwnProperty(tagId)) {
-                            var tagData = data[tagId].filter(function(item) {
+                    for (var resolvedTag of resolvedTags) {
+                        if (Object.prototype.hasOwnProperty.call(data, resolvedTag.id)) {
+                            var tagData = data[resolvedTag.id].filter(function(item) {
                                 return item && item.x !== undefined && item.y !== undefined && item.y !== null;
                             });
-                            // Convert back to tag name keys for consistency
-                            var tagName = tags[tagIds.indexOf(tagId)];
-                            if (tagName) {
-                                filteredData[tagName] = tagData;
-                            }
+                            // Keep the name paired with its ID even when other lookups fail.
+                            // Define an own key so names such as "__proto__" remain data.
+                            Object.defineProperty(filteredData, resolvedTag.name, {
+                                value: tagData, enumerable: true, writable: true, configurable: true
+                            });
                         }
                     }
                     
                     msg.payload = filteredData;
-                    msg.topic = tags[0];  // Set topic to first tag name for join operations
+                    msg.topic = resolvedTags[0].name;  // First resolved tag for join operations
                     node.send(msg);
                 } else {
                     node.error('No valid tags found', msg);
