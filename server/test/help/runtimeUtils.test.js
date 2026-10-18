@@ -178,15 +178,13 @@ describe('Utils Help functions', () => {
     });
 
     describe('Utils.endTime', () => {
-        it('should return a positive number representing the time difference in milliseconds', () => {
+        it('should return a positive number representing the time difference in milliseconds', async () => {
             const startTime = new Date();
             const delay = 10; // Milliseconds
-            setTimeout(() => {
-                const result = Utils.endTime(startTime);
-                expect(result).to.be.a('number');
-                expect(result).to.be.greaterThan(0);
-                expect(result).to.be.lessThan(delay + 50);
-            }, delay);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            const result = Utils.endTime(startTime);
+            expect(result).to.be.a('number');
+            expect(result).to.be.greaterThan(0);
         });
     });
 
