@@ -2031,5 +2031,29 @@
     "server": {
         "notification-login": "User \"{{user}}\" logged in (Login)",
         "notification-logout": "User \"{{user}}\" logged out (Logout)"
-    }
+    },
+    "editor.controls-3d": "3D Model",
+    "editor.controls-3d-settings": "3D Model settings",
+    "three-d.property-title": "3D Model settings",
+    "three-d.property-data": "Data",
+    "three-d.property-model": "Model address",
+    "three-d.property-model-upload": "Upload model (.glb / .gltf)",
+    "three-d.property-model-clear": "Clear model",
+    "three-d.property-model-uploading": "Uploading model...",
+    "three-d.property-auto-rotate": "Auto rotate",
+    "three-d.property-fov": "Camera FOV",
+    "three-d.property-bg-color": "Background",
+    "three-d.property-bg-transparent": "Transparent",
+    "three-d.property-action-add": "Add action",
+    "three-d.property-action-remove": "Remove action",
+    "three-d.property-action-type": "Action type",
+    "three-d.property-action-part": "Part name",
+    "three-d.property-action-variable": "Device tag",
+    "three-d.property-action-color": "Color",
+    "three-d.action-rotate-speed": "Rotation speed",
+    "three-d.action-part-visibility": "Part visibility",
+    "three-d.action-part-color": "Part color",
+    "three-d.error-placeholder": "3D model failed to load",
+    "three-d.error-webgl": "3D rendering not available (WebGL unavailable or limit reached)",
+    "three-d.placeholder": "Drag to draw a 3D model area"
 }

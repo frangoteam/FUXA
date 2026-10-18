@@ -2029,5 +2029,29 @@
     "server": {
         "notification-login": "用户“{{user}}”已登录 (Login)",
         "notification-logout": "用户“{{user}}”已退出登录 (Logout)"
-    }
+    },
+    "editor.controls-3d": "3D 模型",
+    "editor.controls-3d-settings": "3D 模型设置",
+    "three-d.property-title": "3D 模型设置",
+    "three-d.property-data": "数据",
+    "three-d.property-model": "模型地址",
+    "three-d.property-model-upload": "上传模型（.glb / .gltf）",
+    "three-d.property-model-clear": "清除模型",
+    "three-d.property-model-uploading": "模型上传中...",
+    "three-d.property-auto-rotate": "自动旋转",
+    "three-d.property-fov": "相机 FOV",
+    "three-d.property-bg-color": "背景色",
+    "three-d.property-bg-transparent": "透明",
+    "three-d.property-action-add": "添加动作",
+    "three-d.property-action-remove": "移除动作",
+    "three-d.property-action-type": "动作类型",
+    "three-d.property-action-part": "部件名称",
+    "three-d.property-action-variable": "设备标签",
+    "three-d.property-action-color": "颜色",
+    "three-d.action-rotate-speed": "旋转速度",
+    "three-d.action-part-visibility": "部件可见性",
+    "three-d.action-part-color": "部件颜色",
+    "three-d.error-placeholder": "3D 模型加载失败",
+    "three-d.error-webgl": "无法启用 3D 渲染（WebGL 不可用或已达上限）",
+    "three-d.placeholder": "拖拽绘制 3D 模型区域"
 }
