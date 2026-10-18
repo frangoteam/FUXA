@@ -58,6 +58,7 @@
     "qrcode": "^1.5.4",
     "rxjs": "^7.8.0",
     "socket.io-client": "4.8.1",
+    "three": "^0.180.0",
     "tslib": "^2.5.0",
     "uplot": "1.6.24",
     "xgplayer": "3.0.13",
@@ -90,6 +91,7 @@
     "eslint-plugin-unused-imports": "^3.2.0",
     "sass": "^1.36.0",
     "ts-node": "~10.9.1",
-    "typescript": "~5.4.5"
+    "typescript": "~5.4.5",
+    "@types/three": "^0.180.0"
   }
 }

@@ -1,0 +1,3 @@
+/* html-3d control: styling is applied inline from html-3d.component.ts
+   (the control is only used through its static contract and never instantiated,
+   see html-video/html-iframe for the same pattern) */

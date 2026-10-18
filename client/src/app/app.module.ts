@@ -226,6 +226,7 @@ import { TagPropertyEditWebcamComponent } from './device/tag-property/tag-proper
 import { EditPlaceholderComponent } from './gui-helpers/edit-placeholder/edit-placeholder.component';
 import { DeviceAdapterService } from './device-adapter/device-adapter.service';
 import { VideoPropertyComponent } from './gauges/controls/html-video/video-property/video-property.component';
+import { ThreeDPropertyComponent } from './gauges/controls/html-3d/three-d-property/three-d-property.component';
 import { InputPropertyComponent } from './gauges/controls/html-input/input-property/input-property.component';
 import { TagPropertyEditMelsecComponent } from './device/tag-property/tag-property-edit-melsec/tag-property-edit-melsec.component';
 import { SchedulerConfirmDialogComponent } from './gauges/controls/html-scheduler/scheduler-confirm-dialog/scheduler-confirm-dialog.component';
@@ -423,6 +424,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ClientScriptAccessComponent,
         TagPropertyEditWebcamComponent,
         VideoPropertyComponent,
+        ThreeDPropertyComponent,
         HtmlSchedulerComponent,
         SchedulerComponent,
         SchedulerPropertyComponent,

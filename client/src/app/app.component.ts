@@ -47,6 +47,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 		location: Location
 	) {
 		this.location = location;
+		// expose the translator to non-Angular code paths (gauges static contract, e.g. html-3d placeholders)
+		(window as any).__fuxaTranslate = this.translateService;
 	}
 
 	ngOnInit() {
