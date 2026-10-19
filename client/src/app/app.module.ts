@@ -132,6 +132,7 @@ import { PipePropertyComponent } from './gauges/controls/pipe/pipe-property/pipe
 import { PipeComponent } from './gauges/controls/pipe/pipe.component';
 import { SliderComponent } from './gauges/controls/slider/slider.component';
 import { SliderPropertyComponent } from './gauges/controls/slider/slider-property/slider-property.component';
+import { ButtonActionPropertyComponent } from './gauges/controls/html-button/button-action-property/button-action-property.component';
 import { HtmlSwitchPropertyComponent } from './gauges/controls/html-switch/html-switch-property/html-switch-property.component';
 
 import { NgxUplotComponent } from './gui-helpers/ngx-uplot/ngx-uplot.component';
@@ -321,6 +322,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         PipePropertyComponent,
         SliderPropertyComponent,
         HtmlSwitchPropertyComponent,
+        ButtonActionPropertyComponent,
         ShapesComponent,
         ProcEngComponent,
         ApeShapesComponent,
