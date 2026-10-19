@@ -1,0 +1,46 @@
+<div class="container">
+    <h1 mat-dialog-title class="dialog-title">{{'device.enip-module-title' | translate}}</h1>
+    <mat-icon (click)="dialogRef.close()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="content" *ngIf="data.module as module">
+        <div class="my-form-field block mb10">
+            <span>{{'device.enip-module-name' | translate}}</span>
+            <input [(ngModel)]="module.name" type="text" cdkFocusInitial>
+        </div>
+        <div class="my-form-field block mb10">
+            <span>{{'device.enip-module-rpi' | translate}}</span>
+            <input [(ngModel)]="module.rpi" type="number" min="1">
+        </div>
+        <div class="module-grid">
+            <div class="my-form-field">
+                <span>{{'device.enip-module-input-instance' | translate}}</span>
+                <input [(ngModel)]="module.inputInstance" type="number" min="0">
+            </div>
+            <div class="my-form-field">
+                <span>{{'device.enip-module-input-size' | translate}}</span>
+                <input [(ngModel)]="module.inputSize" type="number" min="1">
+            </div>
+            <div class="my-form-field">
+                <span>{{'device.enip-module-output-instance' | translate}}</span>
+                <input [(ngModel)]="module.outputInstance" type="number" min="0">
+            </div>
+            <div class="my-form-field">
+                <span>{{'device.enip-module-output-size' | translate}}</span>
+                <input [(ngModel)]="module.outputSize" type="number" min="1">
+            </div>
+            <div class="my-form-field">
+                <span>{{'device.enip-module-config-instance' | translate}}</span>
+                <input [(ngModel)]="module.configurationInstance" type="number" min="0">
+            </div>
+            <div class="my-form-field">
+                <span>{{'device.enip-module-config-size' | translate}}</span>
+                <input [(ngModel)]="module.configurationSize" type="number" min="0">
+            </div>
+        </div>
+        <small>{{'device.enip-module-size-hint' | translate}}</small>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="dialogRef.close()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" [disabled]="!isValid(data.module)"
+            (click)="dialogRef.close(data.module)">{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

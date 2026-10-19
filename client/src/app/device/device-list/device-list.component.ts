@@ -274,7 +274,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
 
     isToEdit(type, tag: Tag) {
         if (type === DeviceType.SiemensS7 || type === DeviceType.ModbusTCP || type === DeviceType.ModbusRTU ||
-            type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.OmronEthernetIP || type === DeviceType.FuxaServer ||
+            type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.GenericEthernetIP ||
+            type === DeviceType.OmronEthernetIP || type === DeviceType.FuxaServer ||
             type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.ADSclient ||
             type === DeviceType.WebCam || type === DeviceType.MELSEC || type === DeviceType.REDIS) {
             return true;
@@ -317,6 +318,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         }
         if (this.deviceSelected.type === DeviceType.EthernetIP || this.deviceSelected.type === DeviceType.OmronEthernetIP) {
             this.tagPropertyService.editTagPropertyEthernetIp(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
+        if (this.deviceSelected.type === DeviceType.GenericEthernetIP) {
+            this.tagPropertyService.editTagPropertyGenericEthernetIP(this.deviceSelected, tag, checkToAdd).subscribe(result => {
                 this.tagsMap[tag.id] = tag;
                 this.bindToTable(this.deviceSelected.tags);
             });
