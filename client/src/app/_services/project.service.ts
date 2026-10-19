@@ -117,36 +117,41 @@ export class ProjectService {
      * Load Project from Server if enable.
      * From Local Storage, from 'assets' if demo or create a local project
      */
-    private load(loadFull = false) {
+    private load(loadFull = false): Promise<void> {
         const requestId = ++this.projectLoadRequestId;
-        this.storage.getStorageProject(loadFull).subscribe(prj => {
-            if (requestId !== this.projectLoadRequestId) {
-                return;
-            }
-            if (!prj && this.appService.isDemoApp) {
-                console.log('create demo');
-                this.setNewProject();
-            } else if (this.appService.isClientApp) {
-                if (!prj && (this.storage as ResClientService).isReady) {
+        return new Promise(resolve => {
+            this.storage.getStorageProject(loadFull).subscribe(prj => {
+                if (requestId !== this.projectLoadRequestId) {
+                    resolve();
+                    return;
+                }
+                if (!prj && this.appService.isDemoApp) {
+                    console.log('create demo');
                     this.setNewProject();
+                } else if (this.appService.isClientApp) {
+                    if (!prj && (this.storage as ResClientService).isReady) {
+                        this.setNewProject();
+                    } else {
+                        this.loadingViews.clear();
+                        this.projectData = prj;
+                    }
+                    this.ready = true;
+                    this.notifyToLoadHmi();
                 } else {
                     this.loadingViews.clear();
                     this.projectData = prj;
+                    // copy to check before save
+                    this.projectOld = JSON.parse(JSON.stringify(this.projectData));
+                    this.ready = true;
+                    this.notifyToLoadHmi();
                 }
-                this.ready = true;
-                this.notifyToLoadHmi();
-            } else {
-                this.loadingViews.clear();
-                this.projectData = prj;
-                // copy to check before save
-                this.projectOld = JSON.parse(JSON.stringify(this.projectData));
-                this.ready = true;
-                this.notifyToLoadHmi();
-            }
-        }, err => {
-            if (requestId === this.projectLoadRequestId) {
-                console.error('FUXA load error', err);
-            }
+                resolve();
+            }, err => {
+                if (requestId === this.projectLoadRequestId) {
+                    console.error('FUXA load error', err);
+                }
+                resolve();
+            });
         });
     }
 
@@ -259,8 +264,8 @@ export class ProjectService {
         });
     }
 
-    reload(loadFull = false) {
-        this.load(loadFull);
+    reload(loadFull = false): Promise<void> {
+        return this.load(loadFull);
     }
 
     /**
