@@ -26,6 +26,8 @@ the community for v1/v2c, or user name, security level, authentication/privacy p
 The credentials are stored encrypted with the device security and never in the project file.
 
 Each Tag address is the numeric OID with instance, for example `1.3.6.1.2.1.1.5.0` (sysName).
+With the device connected you can also use **Scan Tags** from the add button of the Tags list: it walks a subtree of the agent
+(default `1.3.6.1.2.1`, mib-2) and lets you select the OIDs to import with the type and the current value found.
 The Tag type is used to encode the value for writes (SET) and to coerce the read value:
 `Integer`, `Counter32`, `Gauge32`, `Unsigned32`, `TimeTicks` and `Counter64` are numbers,
 `OctetString`, `IpAddress` and `OID` are strings, `Hex` shows an OctetString as hexadecimal string (ex. MAC addresses).

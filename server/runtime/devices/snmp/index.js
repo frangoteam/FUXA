@@ -10,6 +10,9 @@ const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
 const SYS_UPTIME_OID = '1.3.6.1.2.1.1.3.0';     // used as reachability/credentials probe on connect
+const MIB2_OID = '1.3.6.1.2.1';                 // default subtree to browse
+const BROWSE_MAX_RESULTS = 2000;
+const BROWSE_MAX_REPETITIONS = 20;              // GetBulk repetitions used by the subtree walk (v2c/v3)
 const OID_REGEX = /^\.?\d+(\.\d+)+$/;
 
 const SnmpVersion = {
@@ -235,6 +238,55 @@ function SnmpClient(_data, _logger, _events, _runtime) {
             logger.error(`'${tag.name}' setValue error! ${err}`);
             return false;
         }
+    };
+
+    /**
+     * Walk the subtree of the node OID (default mib-2) and return the instances found with type and current value
+     * @param {*} node { oid: base OID, max: max results }
+     */
+    this.browse = function (node) {
+        return new Promise((resolve, reject) => {
+            if (!session || !connected) {
+                return reject('Device not connected!');
+            }
+            const baseOid = _normalizeOid(String((node && node.oid) || MIB2_OID).trim());
+            if (!OID_REGEX.test(baseOid)) {
+                return reject(`Invalid OID '${baseOid}'`);
+            }
+            const max = (node && parseInt(node.max, 10) > 0) ? parseInt(node.max, 10) : BROWSE_MAX_RESULTS;
+            const items = [];
+            let truncated = false;
+            const feed = (varbinds) => {
+                for (const varbind of varbinds) {
+                    if (items.length >= max) {
+                        truncated = true;
+                        return true;    // stop the walk
+                    }
+                    if (snmp.isVarbindError(varbind)) {
+                        continue;
+                    }
+                    const type = _tagTypeOf(varbind);
+                    items.push({
+                        address: varbind.oid,
+                        type: type,
+                        value: _decodeVarbind(varbind, { type: type }).value
+                    });
+                }
+                return false;
+            };
+            try {
+                session.subtree(baseOid, BROWSE_MAX_REPETITIONS, feed, (err) => {
+                    if (err) {
+                        logger.error(`'${data.name}' browse error! ${err}`);
+                        return reject(err);
+                    }
+                    resolve({ items: items, total: items.length, truncated: truncated });
+                });
+            } catch (err) {
+                logger.error(`'${data.name}' browse error! ${err}`);
+                reject(err);
+            }
+        });
     };
 
     this.isConnected = function () {
@@ -466,6 +518,35 @@ function SnmpClient(_data, _logger, _events, _runtime) {
     function _isNumericType(type) {
         return [SnmpTagType.Integer, SnmpTagType.Counter32, SnmpTagType.Gauge32, SnmpTagType.Unsigned32,
             SnmpTagType.TimeTicks, SnmpTagType.Counter64].indexOf(type) !== -1;
+    }
+
+    /**
+     * Tag type to propose for a varbind read from the agent
+     */
+    function _tagTypeOf(varbind) {
+        const ObjectType = snmp.ObjectType;
+        switch (varbind.type) {
+            case ObjectType.Boolean:
+                return SnmpTagType.Boolean;
+            case ObjectType.OctetString:
+                return (Buffer.isBuffer(varbind.value) && !_isPrintable(varbind.value.toString('utf8'))) ? SnmpTagType.Hex : SnmpTagType.OctetString;
+            case ObjectType.Opaque:
+                return SnmpTagType.Hex;
+            case ObjectType.OID:
+                return SnmpTagType.OID;
+            case ObjectType.IpAddress:
+                return SnmpTagType.IpAddress;
+            case ObjectType.Counter32:
+                return SnmpTagType.Counter32;
+            case ObjectType.Gauge32:
+                return SnmpTagType.Gauge32;
+            case ObjectType.TimeTicks:
+                return SnmpTagType.TimeTicks;
+            case ObjectType.Counter64:
+                return SnmpTagType.Counter64;
+            default:
+                return SnmpTagType.Integer;
+        }
     }
 
     function _objectTypeOf(type) {

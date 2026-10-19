@@ -112,6 +112,22 @@ describe('SNMP driver against a loopback net-snmp agent', function () {
         assert.equal(device.getValues().str.value, mib.getScalarValue('testStr').toString());
     });
 
+    it('browses the agent subtree', async () => {
+        createDevice({ version: 'v2c' }, { pwd: COMMUNITY });
+        await device.connect();
+        const result = await device.browse({ oid: '1.3.6.1.4.1.8072.9999' });
+        assert.equal(result.truncated, false);
+        assert.deepEqual(result.items.map(item => [item.address, item.type]), [
+            [`${INT_OID}.0`, 'Integer'],
+            [`${STR_OID}.0`, 'OctetString'],
+            [`${COUNTER64_OID}.0`, 'Counter64']
+        ]);
+        assert.equal(result.items[0].value, mib.getScalarValue('testInt'));
+        const limited = await device.browse({ oid: '1.3.6.1.4.1.8072.9999', max: 1 });
+        assert.equal(limited.total, 1);
+        assert.equal(limited.truncated, true);
+    });
+
     it('fails to connect with a wrong v2c community', async () => {
         createDevice({ version: 'v2c' }, { pwd: 'wrong' });
         await assert.rejects(device.connect(), /timed out/);

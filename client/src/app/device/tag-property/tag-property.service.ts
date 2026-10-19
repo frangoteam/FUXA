@@ -23,6 +23,7 @@ import { TagPropertyEditMelsecComponent } from './tag-property-edit-melsec/tag-p
 import { TagPropertyEditRedisComponent, TagPropertyRedisData } from './tag-property-edit-redis/tag-property-edit-redis.component';
 import { TagPropertyRedisScanComponent, TagPropertyRedisScanData } from './tag-property-edit-redis/tag-property-redis-scan/tag-property-redis-scan.component';
 import { TagPropertyEditSnmpComponent, TagPropertySnmpData } from './tag-property-edit-snmp/tag-property-edit-snmp.component';
+import { TagPropertySnmpScanComponent, TagPropertySnmpScanData } from './tag-property-edit-snmp/tag-property-snmp-scan/tag-property-snmp-scan.component';
 
 @Injectable({
     providedIn: 'root'
@@ -559,6 +560,35 @@ export class TagPropertyService {
                 }
                 dialogRef.close();
                 return result;
+            })
+        );
+    }
+
+    public scanTagsSnmp(device: Device): Observable<any> {
+        const existing = device.tags ? Object.values(device.tags).map(tag => tag.address) : [];
+        let dialogRef = this.dialog.open(TagPropertySnmpScanComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            data: <TagPropertySnmpScanData> {
+                device: device,
+                existing: existing
+            },
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                if (result) {
+                    result.selected?.forEach(row => {
+                        let tag = new Tag(Utils.getGUID(TAG_PREFIX));
+                        tag.name = row.address;
+                        tag.type = row.type;
+                        tag.address = row.address;
+                        this.checkToAdd(tag, device);
+                    });
+                    this.projectService.setDeviceTags(device);
+                }
+                dialogRef.close();
+                return device.tags;
             })
         );
     }

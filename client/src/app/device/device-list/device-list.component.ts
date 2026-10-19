@@ -234,6 +234,14 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         }
     }
 
+    onScanSnmpTag() {
+        if (this.deviceSelected.type === DeviceType.SNMP) {
+            this.tagPropertyService.scanTagsSnmp(this.deviceSelected).subscribe(result => {
+                this.bindToTable(this.deviceSelected.tags);
+            });
+        }
+    }
+
     onScanRedisTag() {
         if (this.deviceSelected.type === DeviceType.REDIS) {
             this.tagPropertyService.scanTagsRedis(this.deviceSelected).subscribe(result => {

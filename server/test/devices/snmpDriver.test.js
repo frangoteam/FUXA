@@ -31,6 +31,17 @@ describe('SNMP driver', () => {
                 callback(null, oids.map(oid => ({ oid, type: ObjectType.Integer, value: 1 })));
             }),
             set: sandbox.stub().callsFake((varbinds, callback) => callback(null, varbinds)),
+            subtree: sandbox.stub().callsFake((oid, maxRepetitions, feed, done) => {
+                feed([
+                    { oid: `${oid}.1.5.0`, type: ObjectType.OctetString, value: Buffer.from('router-1') },
+                    { oid: `${oid}.1.7.0`, type: ObjectType.Integer, value: 72 },
+                    { oid: `${oid}.2.2.1.6.1`, type: ObjectType.OctetString, value: Buffer.from([0x00, 0x1a, 0x2b]) },
+                    { oid: `${oid}.2.2.1.10.1`, type: ObjectType.Counter32, value: 1234 },
+                    { oid: `${oid}.4.20.1.1.1`, type: ObjectType.IpAddress, value: '10.0.0.1' },
+                    { oid: `${oid}.99`, type: ObjectType.NoSuchObject, value: null }
+                ]);
+                done(null);
+            }),
             on: sandbox.stub(),
             close: sandbox.stub()
         };
@@ -372,6 +383,51 @@ describe('SNMP driver', () => {
             await device.connect();
             assert.equal(await device.setValue('unknown', 1), false);
             sinon.assert.notCalled(session.set);
+        });
+    });
+
+    describe('browse', () => {
+        it('walks the subtree and returns the instances with proposed type and value', async () => {
+            const device = createDevice();
+            await device.connect();
+            const result = await device.browse({ oid: '.1.3.6.1.2.1' });
+            assert.equal(session.subtree.firstCall.args[0], '1.3.6.1.2.1');
+            assert.equal(result.total, 5);
+            assert.equal(result.truncated, false);
+            assert.deepEqual(result.items, [
+                { address: '1.3.6.1.2.1.1.5.0', type: 'OctetString', value: 'router-1' },
+                { address: '1.3.6.1.2.1.1.7.0', type: 'Integer', value: 72 },
+                { address: '1.3.6.1.2.1.2.2.1.6.1', type: 'Hex', value: '001a2b' },
+                { address: '1.3.6.1.2.1.2.2.1.10.1', type: 'Counter32', value: 1234 },
+                { address: '1.3.6.1.2.1.4.20.1.1.1', type: 'IpAddress', value: '10.0.0.1' }
+            ]);
+        });
+
+        it('walks mib-2 by default and truncates to max results', async () => {
+            const device = createDevice();
+            await device.connect();
+            const result = await device.browse({ max: 2 });
+            assert.equal(session.subtree.firstCall.args[0], '1.3.6.1.2.1');
+            assert.equal(result.total, 2);
+            assert.equal(result.truncated, true);
+        });
+
+        it('rejects an invalid base OID', async () => {
+            const device = createDevice();
+            await device.connect();
+            await assert.rejects(device.browse({ oid: 'system' }), /Invalid OID/);
+        });
+
+        it('rejects when the device is not connected', async () => {
+            const device = createDevice();
+            await assert.rejects(device.browse({}), /not connected/);
+        });
+
+        it('rejects when the walk fails', async () => {
+            session.subtree.callsFake((oid, maxRepetitions, feed, done) => done(new Error('Request timed out')));
+            const device = createDevice();
+            await device.connect();
+            await assert.rejects(device.browse({}), /timed out/);
         });
     });
 

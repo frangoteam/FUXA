@@ -236,6 +236,7 @@ import { ApiKeyPropertyComponent } from './apikeys/api-key-property/api-key-prop
 import { TagPropertyEditRedisComponent } from './device/tag-property/tag-property-edit-redis/tag-property-edit-redis.component';
 import { TagPropertyRedisScanComponent } from './device/tag-property/tag-property-edit-redis/tag-property-redis-scan/tag-property-redis-scan.component';
 import { TagPropertyEditSnmpComponent } from './device/tag-property/tag-property-edit-snmp/tag-property-edit-snmp.component';
+import { TagPropertySnmpScanComponent } from './device/tag-property/tag-property-edit-snmp/tag-property-snmp-scan/tag-property-snmp-scan.component';
 import { OnboardingWizardComponent } from './editor/onboarding-wizard/onboarding-wizard.component';
 import { PluginsListComponent } from './plugins/plugins-list/plugins-list.component';
 import { SectionMessageDialogComponent } from './editor/section-message-dialog/section-message-dialog.component';
@@ -434,6 +435,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyEditRedisComponent,
         TagPropertyRedisScanComponent,
         TagPropertyEditSnmpComponent,
+        TagPropertySnmpScanComponent,
         OnboardingWizardComponent,
         PluginsListComponent,
         SectionMessageDialogComponent,
