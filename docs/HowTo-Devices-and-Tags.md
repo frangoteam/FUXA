@@ -18,6 +18,23 @@ Add a **MQTT** connection and a topic subscription
 Add a **WebAPI** connection and a Tag of the JSON result
 ![](images/fuxa-webapi.gif)
 
+**SNMP**
+
+Add a **SNMP** connection to read and write scalar OIDs of a SNMP agent (v1, v2c or v3).
+In the device property set the agent address and port (default 161), the SNMP version and the credentials:
+the community for v1/v2c, or user name, security level, authentication/privacy protocols and keys for v3.
+The credentials are stored encrypted with the device security and never in the project file.
+
+Each Tag address is the numeric OID with instance, for example `1.3.6.1.2.1.1.5.0` (sysName).
+The Tag type is used to encode the value for writes (SET) and to coerce the read value:
+`Integer`, `Counter32`, `Gauge32`, `Unsigned32`, `TimeTicks` and `Counter64` are numbers,
+`OctetString`, `IpAddress` and `OID` are strings, `Hex` shows an OctetString as hexadecimal string (ex. MAC addresses).
+
+Notes:
+- SNMP uses UDP, the connection status is driven by the answers to the polling: after the configured polls without answer the device reconnects.
+- The DES privacy protocol needs the OpenSSL legacy provider on Node.js 17 and later, prefer AES.
+- `Counter64` values above 2^53 lose precision as JavaScript numbers.
+
 **Tag Options**
 
 If you have any Tag types which don't have a defined data type you can set this. For example TIME data type is no a defined type, but the base data type is normally int64 or uint64 and the time is in milliseconds.

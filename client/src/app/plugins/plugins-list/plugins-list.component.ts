@@ -110,6 +110,8 @@ export class PluginsListComponent implements OnInit, OnDestroy {
             return 'settings_input_component';
         case PluginType.REDIS:
             return 'storage';
+        case PluginType.SNMP:
+            return 'router';
         case PluginGroupType.Chart:
             return 'insert_chart';
         case PluginGroupType.Service:
