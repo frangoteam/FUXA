@@ -485,6 +485,13 @@ function browseDevice(deviceid, node, callback) {
     });
 }
 
+function browseForDevices(deviceid, node, callback) {
+    if (activeDevices[deviceid] && activeDevices[deviceid].browseForDevices) {
+        return activeDevices[deviceid].browseForDevices(node, callback);
+    }
+    return Device.browseEthernetIPDevices(runtime.plugins.manager, runtime.logger);
+}
+
 /**
  * Return Device Tag/Node attribute
  * @param {*} deviceid
@@ -576,6 +583,7 @@ var devices = module.exports = {
     setDeviceValue: setDeviceValue,
     getDeviceIdFromTag: getDeviceIdFromTag,
     browseDevice: browseDevice,
+    browseForDevices: browseForDevices,
     readNodeAttribute: readNodeAttribute,
     getDeviceTagsResult: getDeviceTagsResult,
     isWoking: isWoking,

@@ -1,0 +1,59 @@
+:host {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+}
+
+:host .content {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.content > .my-form-field {
+    display: block;
+}
+
+.content > .my-form-field input,
+.content > .my-form-field mat-select {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.enip-tag-options {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.enip-tag-options .my-form-field {
+    display: block;
+}
+
+.enip-tag-options input,
+.enip-tag-options mat-select {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.enip-browse-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+.enip-browse-row button {
+    flex: 0 0 auto;
+    margin-bottom: 2px;
+}
+
+.enip-browse-select {
+    display: block;
+    flex: 1;
+    min-width: 0;
+}
+
+.enip-browse-error {
+    color: var(--errorColor, #d32f2f);
+    font-size: 12px;
+    margin-top: -4px;
+}

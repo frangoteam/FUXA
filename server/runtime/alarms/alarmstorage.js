@@ -227,9 +227,13 @@ function removeAlarm(alarm) {
  * Close the database
  */
 function close() {
-    if (db_alarms) {
-        db_alarms.close();
-    }
+    if (!db_alarms) return Promise.resolve();
+
+    const db = db_alarms;
+    db_alarms = null;
+    return new Promise((resolve, reject) => {
+        db.close(err => err ? reject(err) : resolve());
+    });
 }
 
 module.exports = {

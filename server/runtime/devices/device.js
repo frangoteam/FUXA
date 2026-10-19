@@ -10,6 +10,7 @@ var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
 var MQTTclient = require('./mqtt');
 var EthernetIPclient = require('./ethernetip');
+var GenericEthernetIPclient = require('./genericethernetip');
 var OmronEthernetIPclient = require('./omron-ethernetip');
 var FuxaServer = require('./fuxaserver');
 var ODBCclient = require('./odbc');
@@ -41,6 +42,8 @@ function Device(data, runtime) {
     var currentCmd = null;                                  // Current Command (StateMachine)
     var deviceCheckStatus = null;                           // TimerInterval to check Device status (connection)
     var devicePolling = null;                               // TimerInterval to polling read device value
+    var deviceConnecting = false;                           // Prevent overlapping connection attempts
+    var connectGeneration = 0;                               // Invalidate in-flight connect after stop
     var connectionStatus = ConnectionStatusEnum.OFF;        // Connection status depending of read tag value response
     var pollingInterval = DEVICE_POLLING_INTERVAL;
     var sharedDevices = data.sharedDevices;
@@ -86,6 +89,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = EthernetIPclient.create(data, logger, events, manager, runtime);
+    } else if (data.type === DeviceEnum.GenericEthernetIP) {
+        if (!GenericEthernetIPclient) {
+            return null;
+        }
+        comm = GenericEthernetIPclient.create(data, logger, events, manager, runtime);
     } else if (data.type === DeviceEnum.OmronEthernetIP) {
         if (!OmronEthernetIPclient) {
             return null;
@@ -162,6 +170,7 @@ function Device(data, runtime) {
     this.stop = function () {
         return new Promise(function (resolve, reject) {
             currentCmd = DeviceCmdEnum.STOP;
+            connectGeneration++;
             logger.info(`'${property.name}' stop`);
             if (devicePolling) {
                 clearInterval(devicePolling);
@@ -185,18 +194,27 @@ function Device(data, runtime) {
      * Check the Device connection, Reconnect
      */
     this.checkStatus = function () {
-        if (status === DeviceStatusEnum.INIT && currentCmd === DeviceCmdEnum.START) {
+        if (status === DeviceStatusEnum.INIT && currentCmd === DeviceCmdEnum.START && !deviceConnecting) {
             const self = this;
+            deviceConnecting = true;
             this.connect().then(() => {
+                if (currentCmd !== DeviceCmdEnum.START) {
+                    return;
+                }
                 tryToConnect = 0;
                 status = DeviceStatusEnum.IDLE;
                 self.restoreValues();
             }).catch(function (err) {
+                if (currentCmd !== DeviceCmdEnum.START) {
+                    return;
+                }
                 logger.error(`'${property.name}' connect error! ${err} (${tryToConnect})`);
                 if (tryToConnect++ > 3) {
                     tryToConnect = 0;
                     self.disconnect().then(() => {});
                 }
+            }).finally(() => {
+                deviceConnecting = false;
             });
         } else if (status === DeviceStatusEnum.IDLE && !comm.isConnected()) {
             status = DeviceStatusEnum.INIT;
@@ -224,7 +242,9 @@ function Device(data, runtime) {
      * Call Device to polling
      */
     this.polling = function () {
-        comm.polling();
+        if (currentCmd === DeviceCmdEnum.START && status === DeviceStatusEnum.IDLE) {
+            comm.polling();
+        }
     }
 
     /**
@@ -232,12 +252,21 @@ function Device(data, runtime) {
      */
     this.connect = function () {
         var self = this;
+        const attempt = ++connectGeneration;
         if (data.type === DeviceEnum.ModbusRTU) {
             comm.init(MODBUSclient.ModbusTypes.RTU);
         } else if (data.type === DeviceEnum.ModbusTCP) {
             comm.init(MODBUSclient.ModbusTypes.TCP);
         }
-        return comm.connect().then(function () {
+        return comm.connect().then(async function () {
+            if (attempt !== connectGeneration || currentCmd !== DeviceCmdEnum.START) {
+                await comm.disconnect();
+                return;
+            }
+            if (devicePolling) {
+                clearInterval(devicePolling);
+                devicePolling = null;
+            }
             if (pollingInterval !== DISABLE_POLLING_INTERVAL){
                 devicePolling = setInterval(function () {
                     self.polling();
@@ -332,10 +361,19 @@ function Device(data, runtime) {
                 }).catch(function (err) {
                     reject(err);
                 });
+            } else if (data.type === DeviceEnum.GenericEthernetIP) {
+                comm.browse(path, callback).then(resolve).catch(reject);
             } else {
                 reject('Browse not supported!');
             }
         });
+    }
+
+    this.browseForDevices = function (path, callback) {
+        if (data.type !== DeviceEnum.GenericEthernetIP || !comm.browseForDevices) {
+            return Promise.reject('Browse for devices not supported!');
+        }
+        return comm.browseForDevices(path, callback);
     }
 
     /**
@@ -550,6 +588,8 @@ function loadPlugin(type, module) {
         MQTTclient = require(module);
     } else if (type === DeviceEnum.EthernetIP) {
         EthernetIPclient = require(module);
+    } else if (type === DeviceEnum.GenericEthernetIP) {
+        GenericEthernetIPclient = require(module);
     } else if (type === DeviceEnum.OmronEthernetIP) {
         OmronEthernetIPclient = require(module);
     } else if (type === DeviceEnum.FuxaServer) {
@@ -573,6 +613,13 @@ function isInternal(device) {
     return (device.type === DeviceEnum.internal);
 }
 
+function browseEthernetIPDevices(manager, logger) {
+    if (GenericEthernetIPclient && GenericEthernetIPclient.browseForDevices) {
+        return GenericEthernetIPclient.browseForDevices(manager, logger);
+    }
+    return Promise.reject('Generic EtherNet/IP plugin is not installed');
+}
+
 module.exports = {
     init: function (settings) {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
@@ -583,6 +630,7 @@ module.exports = {
     getSupportedProperty: getSupportedProperty,
     getRequestResult: getRequestResult,
     loadPlugin: loadPlugin,
+    browseEthernetIPDevices: browseEthernetIPDevices,
     isInternal: isInternal,
 
     get DeviceType() { return DeviceEnum }
@@ -600,6 +648,7 @@ var DeviceEnum = {
     WebAPI: 'WebAPI',
     MQTTclient: 'MQTTclient',
     EthernetIP: 'EthernetIP',
+    GenericEthernetIP: 'GenericEthernetIP',
     OmronEthernetIP: 'OmronEthernetIP',
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
