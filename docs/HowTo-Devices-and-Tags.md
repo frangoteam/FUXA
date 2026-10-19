@@ -25,7 +25,11 @@ In the device property set the agent address and port (default 161), the SNMP ve
 the community for v1/v2c, or user name, security level, authentication/privacy protocols and keys for v3.
 The credentials are stored encrypted with the device security and never in the project file.
 
-Each Tag address is the numeric OID with instance, for example `1.3.6.1.2.1.1.5.0` (sysName).
+Each Tag address is the numeric OID with instance, for example `1.3.6.1.2.1.1.5.0` (sysName),
+or a MIB name with module and instance, for example `SNMPv2-MIB::sysName.0` or `IF-MIB::ifInOctets.3`.
+The standard modules (SNMPv2-MIB, IF-MIB, RFC1213-MIB, ...) are built in; vendor MIB files can be uploaded from the
+device property (they are stored in the `_mibs` directory of the server and loaded when the device is saved or started).
+The names are resolved on the server, the scan shows the known name of each OID and uses it as Tag name.
 With the device connected you can also use **Scan Tags** from the add button of the Tags list: it walks a subtree of the agent
 (default `1.3.6.1.2.1`, mib-2) and lets you select the OIDs to import with the type and the current value found.
 The Tag type is used to encode the value for writes (SET) and to coerce the read value:

@@ -9,6 +9,8 @@ let snmp; // resolved via require or via plugin manager if needed
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 const trapReceiver = require('./trap-receiver');
+const mibStore = require('./mib-store');
+const path = require('path');
 
 const SYS_UPTIME_OID = '1.3.6.1.2.1.1.3.0';     // used as reachability/credentials probe on connect
 const SNMP_TRAP_OID = '1.3.6.1.6.3.1.1.4.1.0';  // snmpTrapOID.0, synthesized for v1 traps (RFC 3584)
@@ -192,14 +194,15 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         tagMap = {};
         oidTagIds = {};
         try {
+            mibStore.refresh();
             let count = 0;
             for (const id in data.tags) {
                 const tag = data.tags[id];
-                if (!tag.address || !OID_REGEX.test(tag.address)) {
-                    logger.warn(`'${data.name}' tag ${tag.name} (${id}) invalid OID '${tag.address}'`);
+                const address = mibStore.toOid(tag.address);
+                if (!address) {
+                    logger.warn(`'${data.name}' tag ${tag.name} (${id}) ${mibStore.isSymbolic(tag.address) ? 'unknown MIB name' : 'invalid OID'} '${tag.address}'`);
                     continue;
                 }
-                const address = _normalizeOid(tag.address);
                 tagMap[id] = { ...tag, id, address: address, trapOnly: !!(tag.options && tag.options.trapOnly) };
                 oidTagIds[address] = (oidTagIds[address] || []).concat(id);
                 count++;
@@ -282,6 +285,7 @@ function SnmpClient(_data, _logger, _events, _runtime) {
                     const type = _tagTypeOf(varbind);
                     items.push({
                         address: varbind.oid,
+                        name: mibStore.toName(varbind.oid),
                         type: type,
                         value: _decodeVarbind(varbind, { type: type }).value
                     });
@@ -725,6 +729,8 @@ module.exports = {
         if (!snmp) {
             return null;
         }
+        const appDir = runtime && runtime.settings && runtime.settings.appDir;
+        mibStore.init(snmp, appDir ? path.resolve(appDir, '_mibs') : null, logger);
         return new SnmpClient(data, logger, events, runtime);
     },
     SnmpVersion: SnmpVersion,

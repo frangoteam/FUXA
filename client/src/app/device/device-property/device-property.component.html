@@ -592,6 +592,10 @@
                             <input numberOnly [(ngModel)]="snmpOptions.trapPort" placeholder="162" style="width: 80px" type="text">
                         </div>
                     </div>
+                    <div class="my-form-field block mb10">
+                        <span>{{'device.property-snmp-mib' | translate}}</span>
+                        <app-file-upload destination="mibs"></app-file-upload>
+                    </div>
                     <div class="my-form-field block mb5" style="font-size: 13px; font-weight: 500;">
                         <span>{{'device.property-snmp-security' | translate}}</span>
                     </div>

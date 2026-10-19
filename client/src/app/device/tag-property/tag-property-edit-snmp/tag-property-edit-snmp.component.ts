@@ -18,7 +18,8 @@ export class TagPropertyEditSnmpComponent implements OnInit, OnDestroy {
     error: string;
     private destroy$ = new Subject<void>();
 
-    static readonly OID_REGEX = /^\.?\d+(\.\d+)+$/;
+    /** numeric OID or MIB name 'MODULE::name.instance' resolved by the server */
+    static readonly OID_REGEX = /^(\.?\d+(\.\d+)+|([A-Za-z][\w-]*::)[A-Za-z][\w-]*(\.\d+)*)$/;
 
     constructor(private fb: UntypedFormBuilder,
         private translateService: TranslateService,

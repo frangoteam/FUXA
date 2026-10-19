@@ -85,6 +85,7 @@ describe('SNMP driver', () => {
         events = new EventEmitter();
         delete require.cache[require.resolve('../../runtime/devices/snmp')];
         delete require.cache[require.resolve('../../runtime/devices/snmp/trap-receiver')];
+        delete require.cache[require.resolve('../../runtime/devices/snmp/mib-store')];
 
         const originalLoad = Module._load;
         sandbox.stub(Module, '_load').callsFake(function (request, parent, isMain) {
@@ -100,6 +101,7 @@ describe('SNMP driver', () => {
         sandbox.restore();
         delete require.cache[require.resolve('../../runtime/devices/snmp')];
         delete require.cache[require.resolve('../../runtime/devices/snmp/trap-receiver')];
+        delete require.cache[require.resolve('../../runtime/devices/snmp/mib-store')];
     });
 
     function createDevice(overrides = {}, security = null) {
@@ -340,7 +342,7 @@ describe('SNMP driver', () => {
             const device = createDevice({
                 tags: {
                     good: { id: 'good', name: 'good', address: '.1.3.6.1.2.1.1.5.0', type: 'OctetString' },
-                    bad: { id: 'bad', name: 'bad', address: 'sysName.0', type: 'OctetString' }
+                    bad: { id: 'bad', name: 'bad', address: '1.3.6.x', type: 'OctetString' }
                 }
             });
             sinon.assert.calledWithMatch(logger.warn, /bad.*invalid OID/);
@@ -420,11 +422,11 @@ describe('SNMP driver', () => {
             assert.equal(result.total, 5);
             assert.equal(result.truncated, false);
             assert.deepEqual(result.items, [
-                { address: '1.3.6.1.2.1.1.5.0', type: 'OctetString', value: 'router-1' },
-                { address: '1.3.6.1.2.1.1.7.0', type: 'Integer', value: 72 },
-                { address: '1.3.6.1.2.1.2.2.1.6.1', type: 'Hex', value: '001a2b' },
-                { address: '1.3.6.1.2.1.2.2.1.10.1', type: 'Counter32', value: 1234 },
-                { address: '1.3.6.1.2.1.4.20.1.1.1', type: 'IpAddress', value: '10.0.0.1' }
+                { address: '1.3.6.1.2.1.1.5.0', name: null, type: 'OctetString', value: 'router-1' },
+                { address: '1.3.6.1.2.1.1.7.0', name: null, type: 'Integer', value: 72 },
+                { address: '1.3.6.1.2.1.2.2.1.6.1', name: null, type: 'Hex', value: '001a2b' },
+                { address: '1.3.6.1.2.1.2.2.1.10.1', name: null, type: 'Counter32', value: 1234 },
+                { address: '1.3.6.1.2.1.4.20.1.1.1', name: null, type: 'IpAddress', value: '10.0.0.1' }
             ]);
         });
 
@@ -453,6 +455,54 @@ describe('SNMP driver', () => {
             const device = createDevice();
             await device.connect();
             await assert.rejects(device.browse({}), /timed out/);
+        });
+    });
+
+    describe('MIB names', () => {
+        const names = { 'SNMPv2-MIB::sysName': '1.3.6.1.2.1.1.5', 'IF-MIB::ifInOctets': '1.3.6.1.2.1.2.2.1.10' };
+        const oids = { '1.3.6.1.2.1.1.5': 'SNMPv2-MIB::sysName', '1.3.6.1.2.1.1': 'SNMPv2-MIB::system' };
+
+        beforeEach(() => {
+            snmpMock.OidFormat = { oid: 'oid', path: 'path', module: 'module' };
+            snmpMock.createModuleStore = () => ({
+                loadBaseModules() { },
+                loadFromFile() { },
+                translate(value, format) {
+                    const table = (format === 'oid') ? names : oids;
+                    if (!table[value]) {
+                        throw new Error(`No '${format}' translation found for ${value}`);
+                    }
+                    return table[value];
+                }
+            });
+        });
+
+        it('resolves symbolic tag addresses and skips unknown names', async () => {
+            const device = createDevice({
+                tags: {
+                    name: { id: 'name', name: 'name', address: 'SNMPv2-MIB::sysName.0', type: 'OctetString' },
+                    octets: { id: 'octets', name: 'octets', address: 'IF-MIB::ifInOctets.3', type: 'Counter32' },
+                    unknown: { id: 'unknown', name: 'unknown', address: 'FOO-MIB::bar.0', type: 'Integer' }
+                }
+            });
+            sinon.assert.calledWithMatch(logger.warn, /unknown.*unknown MIB name 'FOO-MIB::bar.0'/);
+            await device.connect();
+            session.get.resetHistory();
+            await device.polling();
+            assert.deepEqual(session.get.firstCall.args[0], ['1.3.6.1.2.1.1.5.0', '1.3.6.1.2.1.2.2.1.10.3']);
+            assert.equal(device.getValues().name.value, 1);
+            assert.equal(device.getTagProperty('unknown'), null);
+        });
+
+        it('returns the known names in the browse result', async () => {
+            const device = createDevice();
+            await device.connect();
+            const result = await device.browse({ oid: '1.3.6.1.2.1' });
+            assert.equal(result.items[0].address, '1.3.6.1.2.1.1.5.0');
+            assert.equal(result.items[0].name, 'SNMPv2-MIB::sysName.0');
+            assert.equal(result.items[1].address, '1.3.6.1.2.1.1.7.0');
+            assert.equal(result.items[1].name, 'SNMPv2-MIB::system.7.0');
+            assert.equal(result.items[4].name, null);
         });
     });
 

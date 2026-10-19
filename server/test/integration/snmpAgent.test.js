@@ -72,7 +72,7 @@ describe('SNMP driver against a loopback net-snmp agent', function () {
             name: 'SNMP live',
             property: { address: '127.0.0.1', port: AGENT_PORT, options: Object.assign({ timeout: 1000, retries: 0 }, options) },
             tags: {
-                uptime: { id: 'uptime', name: 'uptime', address: '1.3.6.1.2.1.1.3.0', type: 'TimeTicks' },
+                uptime: { id: 'uptime', name: 'uptime', address: 'SNMPv2-MIB::sysUpTime.0', type: 'TimeTicks' },
                 int: { id: 'int', name: 'int', address: `${INT_OID}.0`, type: 'Integer' },
                 str: { id: 'str', name: 'str', address: `${STR_OID}.0`, type: 'OctetString' },
                 big: { id: 'big', name: 'big', address: `${COUNTER64_OID}.0`, type: 'Counter64' }
@@ -117,6 +117,7 @@ describe('SNMP driver against a loopback net-snmp agent', function () {
         await device.connect();
         const result = await device.browse({ oid: '1.3.6.1.4.1.8072.9999' });
         assert.equal(result.truncated, false);
+        assert.equal(result.items[0].name, `SNMPv2-SMI::enterprises.8072.9999.1.0`);
         assert.deepEqual(result.items.map(item => [item.address, item.type]), [
             [`${INT_OID}.0`, 'Integer'],
             [`${STR_OID}.0`, 'OctetString'],

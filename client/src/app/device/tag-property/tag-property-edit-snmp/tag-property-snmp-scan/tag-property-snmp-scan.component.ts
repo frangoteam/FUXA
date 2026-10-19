@@ -17,7 +17,7 @@ export class TagPropertySnmpScanComponent implements OnInit, OnDestroy {
     @Output() result = new EventEmitter<TagPropertySnmpScanResult>();
     private destroy$ = new Subject<void>();
 
-    displayedColumns = ['select', 'address', 'type', 'value'];
+    displayedColumns = ['select', 'address', 'name', 'type', 'value'];
     dataSource = new MatTableDataSource<SnmpOidRow>([]);
     selection = new SelectionModel<SnmpOidRow>(true, []);
 
@@ -69,6 +69,7 @@ export class TagPropertySnmpScanComponent implements OnInit, OnDestroy {
                 this.truncated = !!res?.result?.truncated;
                 const items: SnmpOidRow[] = (res?.result?.items || []).map((x: any) => ({
                     address: x.address,
+                    name: x.name || '',
                     type: x.type || 'Integer',
                     value: (x.value === null || x.value === undefined) ? '' : String(x.value)
                 }));
@@ -141,7 +142,8 @@ export class TagPropertySnmpScanComponent implements OnInit, OnDestroy {
     }
 
     private rowMatches(row: SnmpOidRow, f: string) {
-        return row.address.toLowerCase().includes(f) || (row.type || '').toLowerCase().includes(f) || (row.value || '').toLowerCase().includes(f);
+        return row.address.toLowerCase().includes(f) || (row.name || '').toLowerCase().includes(f) ||
+            (row.type || '').toLowerCase().includes(f) || (row.value || '').toLowerCase().includes(f);
     }
 
     private getFilteredRows(): SnmpOidRow[] {
@@ -179,6 +181,8 @@ export class TagPropertySnmpScanComponent implements OnInit, OnDestroy {
 
 export interface SnmpOidRow {
     address: string;
+    /** MIB name 'MODULE::name.instance' if known by the server */
+    name: string;
     type: string;
     value: string;
 }

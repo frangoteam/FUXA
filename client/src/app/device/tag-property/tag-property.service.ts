@@ -585,7 +585,7 @@ export class TagPropertyService {
                 if (result) {
                     result.selected?.forEach(row => {
                         let tag = new Tag(Utils.getGUID(TAG_PREFIX));
-                        tag.name = row.address;
+                        tag.name = row.name || row.address;
                         tag.type = row.type;
                         tag.address = row.address;
                         this.checkToAdd(tag, device);
