@@ -162,7 +162,7 @@ export class AppSettingsComponent implements OnInit {
         if (!this.settings.smtp.host || !this.settings.smtp.host.length) {
             return false;
         }
-        if (!this.settings.smtp.username || !this.settings.smtp.username.length) {
+        if (!this.settings.smtp.port) {
             return false;
         }
         if (!this.smtpTestAddress || !this.smtpTestAddress.length) {
