@@ -11,6 +11,7 @@ const ObjectType = {
     TimeTicks: 67, Opaque: 68, Counter64: 70, NoSuchObject: 128, NoSuchInstance: 129, EndOfMibView: 130,
     Integer32: 2, Counter32: 65, Gauge32: 66, Unsigned32: 66
 };
+const PduType = { Trap: 164, InformRequest: 166, TrapV2: 167 };
 const SecurityLevel = { noAuthNoPriv: 1, authNoPriv: 2, authPriv: 3 };
 const AuthProtocols = { none: 1, md5: 2, sha: 3, sha224: 4, sha256: 5, sha384: 6, sha512: 7 };
 const PrivProtocols = { none: 1, des: 2, aes: 4, aes256b: 6, aes256r: 8 };
@@ -20,6 +21,7 @@ describe('SNMP driver', () => {
     let driver;
     let snmpMock;
     let session;
+    let receiver;
     let logger;
     let events;
     let sandbox;
@@ -45,22 +47,44 @@ describe('SNMP driver', () => {
             on: sandbox.stub(),
             close: sandbox.stub()
         };
+        const authorizer = {
+            communities: [], users: [],
+            addCommunity(c) { this.communities.push(c); },
+            getCommunities() { return this.communities; },
+            deleteCommunity(c) { this.communities = this.communities.filter(x => x !== c); },
+            addUser(u) { this.users.push(u); },
+            getUsers() { return this.users; },
+            deleteUser(name) { this.users = this.users.filter(x => x.name !== name); }
+        };
+        receiver = {
+            callback: null,
+            authorizer: authorizer,
+            getAuthorizer: () => authorizer,
+            close: sandbox.stub().callsFake(cb => cb && cb())
+        };
         snmpMock = {
             Version1: 0,
             Version2c: 1,
             Version3: 3,
             ObjectType,
+            PduType,
             SecurityLevel,
             AuthProtocols,
             PrivProtocols,
             createSession: sandbox.stub().returns(session),
             createV3Session: sandbox.stub().returns(session),
+            createReceiver: sandbox.stub().callsFake((options, callback) => {
+                receiver.options = options;
+                receiver.callback = callback;
+                return receiver;
+            }),
             isVarbindError: (varbind) => [ObjectType.NoSuchObject, ObjectType.NoSuchInstance, ObjectType.EndOfMibView].includes(varbind.type),
             varbindError: (varbind) => `error type ${varbind.type}`
         };
         logger = { info: sandbox.spy(), warn: sandbox.spy(), error: sandbox.spy() };
         events = new EventEmitter();
         delete require.cache[require.resolve('../../runtime/devices/snmp')];
+        delete require.cache[require.resolve('../../runtime/devices/snmp/trap-receiver')];
 
         const originalLoad = Module._load;
         sandbox.stub(Module, '_load').callsFake(function (request, parent, isMain) {
@@ -75,6 +99,7 @@ describe('SNMP driver', () => {
     afterEach(() => {
         sandbox.restore();
         delete require.cache[require.resolve('../../runtime/devices/snmp')];
+        delete require.cache[require.resolve('../../runtime/devices/snmp/trap-receiver')];
     });
 
     function createDevice(overrides = {}, security = null) {
@@ -428,6 +453,119 @@ describe('SNMP driver', () => {
             const device = createDevice();
             await device.connect();
             await assert.rejects(device.browse({}), /timed out/);
+        });
+    });
+
+    describe('traps and informs', () => {
+        const TRAP_OID = '1.3.6.1.6.3.1.1.4.1.0';
+        const IF_INDEX_OID = '1.3.6.1.2.1.2.2.1.1.3';
+
+        function createTrapDevice(options = {}, security = { pwd: 'trapcomm' }) {
+            return createDevice({
+                property: { address: '192.168.1.10', port: 161, options: Object.assign({ version: 'v2c', trapsEnabled: true }, options) },
+                tags: {
+                    uptime: { id: 'uptime', name: 'uptime', address: SYS_UPTIME_OID, type: 'TimeTicks' },
+                    trap: { id: 'trap', name: 'trap', address: TRAP_OID, type: 'OID', options: { trapOnly: true } },
+                    ifIndex: { id: 'ifIndex', name: 'ifIndex', address: IF_INDEX_OID, type: 'Integer', options: { trapOnly: true } }
+                }
+            }, security);
+        }
+
+        it('subscribes to the trap receiver on connect and unsubscribes on disconnect', async () => {
+            const device = createTrapDevice({ trapPort: 1162 });
+            await device.connect();
+            sinon.assert.calledOnce(snmpMock.createReceiver);
+            assert.deepEqual(receiver.options, { port: 1162, transport: 'udp4', includeAuthentication: true });
+            assert.deepEqual(receiver.authorizer.getCommunities(), ['trapcomm']);
+            await device.disconnect();
+            sinon.assert.calledOnce(receiver.close);
+        });
+
+        it('does not subscribe when traps are disabled', async () => {
+            const device = createTrapDevice({ trapsEnabled: false });
+            await device.connect();
+            sinon.assert.notCalled(snmpMock.createReceiver);
+        });
+
+        it('registers the v3 user for v3 devices', async () => {
+            const device = createTrapDevice({ version: 'v3', securityLevel: 'authPriv', authProtocol: 'sha', privProtocol: 'aes' }, { uid: 'fuxa', pwd: 'authkey', privKey: 'privkey' });
+            await device.connect();
+            assert.deepEqual(receiver.authorizer.getCommunities(), []);
+            assert.deepEqual(receiver.authorizer.getUsers(), [{ name: 'fuxa', level: SecurityLevel.authPriv, authProtocol: AuthProtocols.sha, authKey: 'authkey', privProtocol: PrivProtocols.aes, privKey: 'privkey' }]);
+        });
+
+        it('does not poll the trap-only tags', async () => {
+            const device = createTrapDevice();
+            await device.connect();
+            session.get.resetHistory();
+            await device.polling();
+            sinon.assert.calledOnce(session.get);
+            assert.deepEqual(session.get.firstCall.args[0], [SYS_UPTIME_OID]);
+        });
+
+        it('updates the matching tags from a v2c trap', async () => {
+            const device = createTrapDevice();
+            const addDaq = sandbox.spy();
+            device.bindAddDaq(addDaq);
+            const emitted = [];
+            events.on('device-value:changed', event => emitted.push(event));
+            await device.connect();
+            receiver.callback(null, {
+                pdu: {
+                    type: PduType.TrapV2, community: 'trapcomm',
+                    varbinds: [
+                        { oid: SYS_UPTIME_OID, type: ObjectType.TimeTicks, value: 99 },
+                        { oid: TRAP_OID, type: ObjectType.OID, value: '1.3.6.1.6.3.1.1.5.3' },
+                        { oid: IF_INDEX_OID, type: ObjectType.Integer, value: 3 },
+                        { oid: '1.3.6.1.4.1.9.9.1.0', type: ObjectType.Integer, value: 1 }
+                    ]
+                },
+                rinfo: { address: '192.168.1.10', port: 40000 }
+            });
+            await new Promise(resolve => setImmediate(resolve));
+            const values = device.getValues();
+            assert.equal(values.trap.value, '1.3.6.1.6.3.1.1.5.3');
+            assert.equal(values.ifIndex.value, 3);
+            assert.equal(values.uptime.value, 99);
+            assert.equal(emitted[emitted.length - 1].values.trap.value, '1.3.6.1.6.3.1.1.5.3');
+        });
+
+        it('ignores notifications from another address or community', async () => {
+            const device = createTrapDevice();
+            await device.connect();
+            const pdu = { type: PduType.TrapV2, community: 'trapcomm', varbinds: [{ oid: IF_INDEX_OID, type: ObjectType.Integer, value: 3 }] };
+            receiver.callback(null, { pdu: pdu, rinfo: { address: '10.0.0.1' } });
+            receiver.callback(null, { pdu: Object.assign({}, pdu, { community: 'other' }), rinfo: { address: '192.168.1.10' } });
+            await new Promise(resolve => setImmediate(resolve));
+            assert.equal(device.getValues().ifIndex, undefined);
+        });
+
+        it('synthesizes sysUpTime and snmpTrapOID for v1 traps', async () => {
+            const device = createTrapDevice({ version: 'v1' });
+            await device.connect();
+            receiver.callback(null, {
+                pdu: { type: PduType.Trap, community: 'trapcomm', enterprise: '1.3.6.1.4.1.8072', generic: 2, specific: 0, upTime: 12, varbinds: [{ oid: IF_INDEX_OID, type: ObjectType.Integer, value: 3 }] },
+                rinfo: { address: '192.168.1.10' }
+            });
+            receiver.callback(null, {
+                pdu: { type: PduType.Trap, community: 'trapcomm', enterprise: '1.3.6.1.4.1.8072', generic: 6, specific: 7, upTime: 13, varbinds: [] },
+                rinfo: { address: '192.168.1.10' }
+            });
+            await new Promise(resolve => setImmediate(resolve));
+            const values = device.getValues();
+            assert.equal(values.uptime.value, 13);
+            assert.equal(values.trap.value, '1.3.6.1.4.1.8072.0.7');
+            assert.equal(values.ifIndex.value, 3);
+        });
+
+        it('logs the bind error of the trap port', async () => {
+            const device = createTrapDevice();
+            await device.connect();
+            const err = new Error('bind EACCES 0.0.0.0:162');
+            err.code = 'EACCES';
+            receiver.callback(err, null);
+            sinon.assert.calledWithMatch(logger.error, /trap receiver error! Error: bind EACCES/);
+            assert.equal(device.isConnected(), true);
         });
     });
 

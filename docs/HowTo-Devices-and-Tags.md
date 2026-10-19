@@ -32,6 +32,13 @@ The Tag type is used to encode the value for writes (SET) and to coerce the read
 `Integer`, `Counter32`, `Gauge32`, `Unsigned32`, `TimeTicks` and `Counter64` are numbers,
 `OctetString`, `IpAddress` and `OID` are strings, `Hex` shows an OctetString as hexadecimal string (ex. MAC addresses).
 
+**Traps and informs**: enable *Receive traps and informs* in the device property to listen on the trap port (default 162,
+on Linux a port below 1024 needs privileges, otherwise configure the agent to send to a port above 1024).
+Notifications are accepted only from the device address and with the same credentials of the session (community or v3 user).
+Each varbind of the notification updates the Tag with the same OID: for example a Tag with address `1.3.6.1.6.3.1.1.4.1.0` (snmpTrapOID.0)
+receives the OID of the last trap, usable to trigger alarms or scripts. For v1 traps sysUpTime.0 and snmpTrapOID.0 are built as RFC 3584.
+Mark the Tags that exist only in the notifications with *Updated only by traps/informs*, so they are not polled. Informs are acknowledged.
+
 Notes:
 - SNMP uses UDP, the connection status is driven by the answers to the polling: after the configured polls without answer the device reconnects.
 - The DES privacy protocol needs the OpenSSL legacy provider on Node.js 17 and later, prefer AES.

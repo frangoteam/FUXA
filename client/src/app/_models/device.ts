@@ -425,6 +425,9 @@ export class SnmpOptions {
     maxOidsPerRequest = 25;
     /** Consecutive polls without answer before reconnect */
     offlineAfterTimeouts = 3;
+    /** Receive the traps/informs sent by the agent, with the same credentials of the session */
+    trapsEnabled = false;
+    trapPort = 162;
 }
 
 export enum ModbusOptionType {

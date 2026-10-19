@@ -8,8 +8,11 @@ let snmp; // resolved via require or via plugin manager if needed
 
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
+const trapReceiver = require('./trap-receiver');
 
 const SYS_UPTIME_OID = '1.3.6.1.2.1.1.3.0';     // used as reachability/credentials probe on connect
+const SNMP_TRAP_OID = '1.3.6.1.6.3.1.1.4.1.0';  // snmpTrapOID.0, synthesized for v1 traps (RFC 3584)
+const SNMP_TRAPS_OID = '1.3.6.1.6.3.1.1.5';     // generic traps coldStart..egpNeighborLoss
 const MIB2_OID = '1.3.6.1.2.1';                 // default subtree to browse
 const BROWSE_MAX_RESULTS = 2000;
 const BROWSE_MAX_REPETITIONS = 20;              // GetBulk repetitions used by the subtree walk (v2c/v3)
@@ -31,7 +34,9 @@ const DEFAULT_OPTIONS = {
     privProtocol: 'aes',        // v3 only: des | aes | aes256b | aes256r
     context: '',                // v3 only
     maxOidsPerRequest: 25,      // OIDs per GET PDU, keeps the datagram under a typical MTU
-    offlineAfterTimeouts: 3     // consecutive polls without any answer before reconnect
+    offlineAfterTimeouts: 3,    // consecutive polls without any answer before reconnect
+    trapsEnabled: false,        // receive traps/informs sent by the agent (same credentials of the session)
+    trapPort: 162               // port < 1024 needs privileges on Linux
 };
 
 function tryLoadSnmp(manager) {
@@ -57,8 +62,11 @@ function SnmpClient(_data, _logger, _events, _runtime) {
     let lastTimestampValue = 0;             // timestamp of last successful polling
     let consecutiveTimeouts = 0;            // polls in a row without any answer
     let getProperty = null;                 // function to ask stored property (security)
+    let trapUnregister = null;              // function to unsubscribe from the shared trap receiver
+    const self = this;
 
     let tagMap = {};                        // tagId -> tag definition (.address is the OID)
+    let oidTagIds = {};                     // OID -> [tagId], to match the notification varbinds
     let varsValue = {};                     // values to send to frontend
 
     /**
@@ -90,6 +98,9 @@ function SnmpClient(_data, _logger, _events, _runtime) {
             consecutiveTimeouts = 0;
             logger.info(`'${data.name}' connected!`, true);
             _emitStatus('connect-ok');
+            if (options.trapsEnabled) {
+                _registerTraps(options, security);
+            }
         } catch (err) {
             connected = false;
             _closeSession();
@@ -131,7 +142,7 @@ function SnmpClient(_data, _logger, _events, _runtime) {
             if (!session || !connected) {
                 return;
             }
-            const tagIds = Object.keys(tagMap);
+            const tagIds = Object.keys(tagMap).filter(id => !tagMap[id].trapOnly);
             if (!tagIds.length) {
                 if (lastStatus !== 'connect-ok') {
                     _emitStatus('connect-ok');
@@ -179,6 +190,7 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         data = JSON.parse(JSON.stringify(_data));
         varsValue = {};
         tagMap = {};
+        oidTagIds = {};
         try {
             let count = 0;
             for (const id in data.tags) {
@@ -187,7 +199,9 @@ function SnmpClient(_data, _logger, _events, _runtime) {
                     logger.warn(`'${data.name}' tag ${tag.name} (${id}) invalid OID '${tag.address}'`);
                     continue;
                 }
-                tagMap[id] = { ...tag, id, address: _normalizeOid(tag.address) };
+                const address = _normalizeOid(tag.address);
+                tagMap[id] = { ...tag, id, address: address, trapOnly: !!(tag.options && tag.options.trapOnly) };
+                oidTagIds[address] = (oidTagIds[address] || []).concat(id);
                 count++;
             }
             logger.info(`'${data.name}' data loaded (${count})`, true);
@@ -388,7 +402,72 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         return user;
     }
 
+    /**
+     * Subscribe to the shared trap receiver with the credentials of the session
+     */
+    function _registerTraps(options, security) {
+        _unregisterTraps();
+        const subscriber = {
+            id: data.id,
+            address: data.property.address,
+            community: (options.version === SnmpVersion.v3) ? null : (security.pwd || 'public'),
+            user: (options.version === SnmpVersion.v3) ? _createV3User(options, security) : null,
+            onNotification: (pdu) => {
+                _onNotification(pdu).catch(err => logger.error(`'${data.name}' notification error! ${err}`));
+            },
+            onError: (err) => {
+                logger.error(`'${data.name}' trap receiver error! ${err}`);
+                trapUnregister = null;
+            }
+        };
+        trapUnregister = trapReceiver.register(snmp, { port: options.trapPort, transport: options.transport }, subscriber, logger);
+    }
+
+    function _unregisterTraps() {
+        if (trapUnregister) {
+            trapUnregister();
+            trapUnregister = null;
+        }
+    }
+
+    /**
+     * Update the tags matching the notification varbinds
+     */
+    async function _onNotification(pdu) {
+        const results = {};
+        _notificationVarbinds(pdu).forEach(varbind => {
+            (oidTagIds[varbind.oid] || []).forEach(id => {
+                results[id] = varbind;
+            });
+        });
+        if (utils.isEmptyObject(results)) {
+            logger.info(`'${data.name}' notification received without matching tags`, true);
+            return;
+        }
+        const changed = await _updateVarsValue(results);
+        _emitValues(varsValue);
+        if (self.addDaq && changed && !utils.isEmptyObject(changed)) {
+            self.addDaq(changed, data.name, data.id);
+        }
+    }
+
+    /**
+     * Varbinds of the notification, for v1 traps sysUpTime.0 and snmpTrapOID.0 are synthesized as RFC 3584
+     */
+    function _notificationVarbinds(pdu) {
+        const varbinds = (pdu.varbinds || []).slice();
+        if (pdu.type === snmp.PduType.Trap) {
+            const trapOid = (pdu.generic >= 0 && pdu.generic < 6) ? `${SNMP_TRAPS_OID}.${pdu.generic + 1}` : `${pdu.enterprise}.0.${pdu.specific}`;
+            varbinds.unshift(
+                { oid: SYS_UPTIME_OID, type: snmp.ObjectType.TimeTicks, value: pdu.upTime },
+                { oid: SNMP_TRAP_OID, type: snmp.ObjectType.OID, value: trapOid }
+            );
+        }
+        return varbinds;
+    }
+
     function _closeSession() {
+        _unregisterTraps();
         if (session) {
             try {
                 session.close();

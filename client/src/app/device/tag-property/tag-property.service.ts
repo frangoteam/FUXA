@@ -549,6 +549,11 @@ export class TagPropertyService {
                     tag.address = result.tagAddress;
                     tag.type = result.tagType;
                     tag.description = result.tagDescription;
+                    if (result.trapOnly) {
+                        tag.options = { ...(tag.options || {}), trapOnly: true };
+                    } else if (tag.options?.trapOnly) {
+                        delete tag.options.trapOnly;
+                    }
                     if (checkToAdd) {
                         this.checkToAdd(tag, device);
                     } else if (tag.id !== oldTagId) {

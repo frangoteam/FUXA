@@ -32,6 +32,7 @@ export class TagPropertyEditSnmpComponent implements OnInit, OnDestroy {
             tagType: [this.data.tag.type || SnmpTagType.Integer, Validators.required],
             tagAddress: [this.data.tag.address, [Validators.required, this.validateOid()]],
             tagDescription: [this.data.tag.description],
+            trapOnly: [!!this.data.tag.options?.trapOnly],
         });
 
         this.formGroup.updateValueAndValidity();

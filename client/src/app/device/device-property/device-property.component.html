@@ -582,6 +582,16 @@
                             <input numberOnly [(ngModel)]="snmpOptions.offlineAfterTimeouts" style="width: 210px" type="text">
                         </div>
                     </div>
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk tac" style="width: 200px;">
+                            <span>{{'device.property-snmp-traps' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="snmpOptions.trapsEnabled"></mat-slide-toggle>
+                        </div>
+                        <div *ngIf="snmpOptions.trapsEnabled" class="my-form-field inbk ml10">
+                            <span>{{'device.property-snmp-trapPort' | translate}}</span>
+                            <input numberOnly [(ngModel)]="snmpOptions.trapPort" placeholder="162" style="width: 80px" type="text">
+                        </div>
+                    </div>
                     <div class="my-form-field block mb5" style="font-size: 13px; font-weight: 500;">
                         <span>{{'device.property-snmp-security' | translate}}</span>
                     </div>

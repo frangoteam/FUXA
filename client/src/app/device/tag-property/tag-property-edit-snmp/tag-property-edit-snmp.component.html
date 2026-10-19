@@ -32,6 +32,9 @@
             <span>{{'device.tag-property-description' | translate}}</span>
             <input formControlName="tagDescription" type="text">
         </div>
+        <div class="my-form-field item-block mt10">
+            <mat-checkbox formControlName="trapOnly" color="primary">{{'device.tag-property-snmp-trapOnly' | translate}}</mat-checkbox>
+        </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>

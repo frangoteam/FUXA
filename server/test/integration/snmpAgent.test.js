@@ -128,6 +128,86 @@ describe('SNMP driver against a loopback net-snmp agent', function () {
         assert.equal(limited.truncated, true);
     });
 
+    describe('traps and informs', () => {
+        const TRAP_PORT = 16162;
+        const TRAP_OID = '1.3.6.1.6.3.1.1.4.1.0';
+        const IF_INDEX_OID = '1.3.6.1.2.1.2.2.1.1.3';
+        const ENTERPRISE_TRAP = '1.3.6.1.4.1.8072.9999.0.1';
+        let sender;
+
+        afterEach(() => {
+            if (sender) {
+                sender.close();
+                sender = null;
+            }
+        });
+
+        function createTrapDevice(options, security) {
+            createDevice(Object.assign({ trapsEnabled: true, trapPort: TRAP_PORT }, options), security);
+            device.load({
+                id: 'snmp-live',
+                name: 'SNMP live',
+                property: { address: '127.0.0.1', port: AGENT_PORT, options: Object.assign({ timeout: 1000, retries: 0, trapsEnabled: true, trapPort: TRAP_PORT }, options) },
+                tags: {
+                    uptime: { id: 'uptime', name: 'uptime', address: '1.3.6.1.2.1.1.3.0', type: 'TimeTicks' },
+                    trap: { id: 'trap', name: 'trap', address: TRAP_OID, type: 'OID', options: { trapOnly: true } },
+                    ifIndex: { id: 'ifIndex', name: 'ifIndex', address: IF_INDEX_OID, type: 'Integer', options: { trapOnly: true } }
+                }
+            });
+            return device;
+        }
+
+        function waitForValue(tagId, expected, timeout = 3000) {
+            return new Promise((resolve, reject) => {
+                const started = Date.now();
+                const check = () => {
+                    const values = device.getValues();
+                    if (values[tagId] && values[tagId].value === expected) {
+                        return resolve();
+                    }
+                    if (Date.now() - started > timeout) {
+                        return reject(new Error(`tag ${tagId} not updated, value ${values[tagId] ? values[tagId].value : 'undefined'}`));
+                    }
+                    setTimeout(check, 20);
+                };
+                check();
+            });
+        }
+
+        it('receives a v2c trap', async () => {
+            createTrapDevice({ version: 'v2c' }, { pwd: COMMUNITY });
+            await device.connect();
+            sender = snmp.createSession('127.0.0.1', COMMUNITY, { version: snmp.Version2c, trapPort: TRAP_PORT });
+            sender.trap(ENTERPRISE_TRAP, [{ oid: IF_INDEX_OID, type: snmp.ObjectType.Integer, value: 3 }], () => { });
+            await waitForValue('trap', ENTERPRISE_TRAP);
+            assert.equal(device.getValues().ifIndex.value, 3);
+        });
+
+        it('receives and acknowledges a v3 inform', async () => {
+            createTrapDevice({ version: 'v3', securityLevel: 'authPriv', authProtocol: 'sha256', privProtocol: 'aes' }, V3_USER);
+            await device.connect();
+            sender = snmp.createV3Session('127.0.0.1', {
+                name: V3_USER.uid, level: snmp.SecurityLevel.authPriv,
+                authProtocol: snmp.AuthProtocols.sha256, authKey: V3_USER.pwd,
+                privProtocol: snmp.PrivProtocols.aes, privKey: V3_USER.privKey
+            }, { version: snmp.Version3, trapPort: TRAP_PORT, timeout: 1000 });
+            const acknowledged = new Promise((resolve, reject) => {
+                sender.inform(ENTERPRISE_TRAP, [{ oid: IF_INDEX_OID, type: snmp.ObjectType.Integer, value: 7 }], (err) => err ? reject(err) : resolve());
+            });
+            await acknowledged;
+            await waitForValue('ifIndex', 7);
+            assert.equal(device.getValues().trap.value, ENTERPRISE_TRAP);
+        });
+
+        it('ignores a trap with a wrong community', async () => {
+            createTrapDevice({ version: 'v2c' }, { pwd: COMMUNITY });
+            await device.connect();
+            sender = snmp.createSession('127.0.0.1', 'wrong', { version: snmp.Version2c, trapPort: TRAP_PORT });
+            sender.trap(ENTERPRISE_TRAP, [{ oid: IF_INDEX_OID, type: snmp.ObjectType.Integer, value: 3 }], () => { });
+            await assert.rejects(waitForValue('ifIndex', 3, 800), /not updated/);
+        });
+    });
+
     it('fails to connect with a wrong v2c community', async () => {
         createDevice({ version: 'v2c' }, { pwd: 'wrong' });
         await assert.rejects(device.connect(), /timed out/);
