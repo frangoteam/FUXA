@@ -286,6 +286,8 @@ export class DeviceNetProperty {
     /** MELSEC */
     ascii?: boolean;
     octalIO?: boolean;
+    /** MELSEC MC protocol frame: '1E' (default) or '3E' (Q/L/iQ built-in Ethernet) */
+    frame?: string;
     timeout?: number;
 
     static descriptor = {
