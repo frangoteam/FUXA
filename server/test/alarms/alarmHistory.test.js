@@ -102,12 +102,12 @@ describe('Alarms history', () => {
         expect = chai.expect;
     });
 
-    afterEach(() => {
+    afterEach(async () => {
         if (manager) {
             manager.stop();
         }
         if (storageOpen) {
-            alarmstorage.close();
+            await alarmstorage.close();
         }
         if (workDir) {
             try { fs.rmSync(workDir, { recursive: true, force: true }); } catch (_) {}

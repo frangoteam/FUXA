@@ -55,8 +55,11 @@ export class NgxGaugeComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
 
     ngOnDestroy() {
         try {
+            // The editor may invoke this hook when removing the gauge, before Angular
+            // invokes it again while destroying the view. Completing is safe to repeat;
+            // unsubscribing the Subject itself would make a later next() throw.
             this.destroy$.next(null);
-            this.destroy$.unsubscribe();
+            this.destroy$.complete();
         } catch (e) {
             console.error(e);
         }

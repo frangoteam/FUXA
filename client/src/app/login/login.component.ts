@@ -55,9 +55,10 @@ export class LoginComponent {
 	signIn() {
 		this.submitLoading = true;
 		this.authService.signIn(this.username.value, this.password.value).subscribe(result => {
-			this.submitLoading = false;
-			this.dialogRef.close(true);
-			this.projectService.reload();
+			this.projectService.reload().then(() => {
+				this.submitLoading = false;
+				this.dialogRef.close(true);
+			});
 		}, error => {
 			this.submitLoading = false;
 			this.translateService.get('msg.signin-failed').subscribe((txt: string) => this.messageError = txt);

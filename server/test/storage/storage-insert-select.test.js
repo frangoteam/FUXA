@@ -126,8 +126,8 @@ describe('Storage insert/select regression', () => {
             await alarmstorage.init({ workDir }, makeLogger());
         });
 
-        afterEach(() => {
-            alarmstorage.close();
+        afterEach(async () => {
+            await alarmstorage.close();
         });
 
         it('insert/select alarms and history works', async () => {
@@ -158,7 +158,7 @@ describe('Storage insert/select regression', () => {
         });
 
         it('migrates old chronicle schema without value column', async () => {
-            alarmstorage.close();
+            await alarmstorage.close();
             const dbfile = path.join(workDir, 'alarms.fuxap.db');
             fs.unlinkSync(dbfile);
             const db = new sqlite3.Database(dbfile);
