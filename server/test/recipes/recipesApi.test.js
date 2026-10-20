@@ -186,6 +186,28 @@ describe('Recipes API', () => {
             expect(res.body.recipes[0].id).to.equal('r_001');
         });
 
+        it('should reject guest reads in secure mode', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'guest', groups: ['guest'] };
+
+            const typeRes = await request(server, '/api/recipes/types');
+            const instanceRes = await request(server, '/api/recipes/instances');
+
+            expect(typeRes.statusCode).to.equal(401);
+            expect(instanceRes.statusCode).to.equal(401);
+        });
+
+        it('should allow authenticated operator reads in secure mode', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+
+            const typeRes = await request(server, '/api/recipes/types');
+            const instanceRes = await request(server, '/api/recipes/instances');
+
+            expect(typeRes.statusCode).to.equal(200);
+            expect(instanceRes.statusCode).to.equal(200);
+        });
+
         it('should return single recipe instance by id', async () => {
             const recipeData = { name: 'Test', entries: [{ id: 'e_001', tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }] };
             runtime.recipeStorage.getRecipeData.withArgs('r_test').resolves(recipeData);

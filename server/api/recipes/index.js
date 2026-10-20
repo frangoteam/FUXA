@@ -35,6 +35,12 @@ module.exports = {
 
         // GET recipe types (project data)
         recipesApp.get("/api/recipes/types/:id?", secureFnc, function(req, res) {
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && auth.isGuest) {
+                res.status(401).json({error:"unauthorized_error", message: "Authentication required!"});
+                runtime.logger.error("api get recipe types: Unauthorized guest");
+                return;
+            }
             if (req.params.id) {
                 const type = runtime.project.getRecipe ? runtime.project.getRecipe(req.params.id) : null;
                 if (type) {
@@ -113,6 +119,12 @@ module.exports = {
 
         // GET recipe instances (runtime data)
         recipesApp.get("/api/recipes/instances/:id?", secureFnc, function(req, res) {
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && auth.isGuest) {
+                res.status(401).json({error:"unauthorized_error", message: "Authentication required!"});
+                runtime.logger.error("api get recipe instances: Unauthorized guest");
+                return;
+            }
             if (req.params.id) {
                 _handlePromise(_getRecipeInstance(req.params.id), res, function(result) {
                     if (result) {
