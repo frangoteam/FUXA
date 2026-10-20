@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="220" viewBox="0 0 300 220" fill="#222222">
+    <defs><linearGradient id="metal"><stop stop-color="#ffffff"/><stop offset="1" stop-color="#666666"/></linearGradient></defs>
+    <rect x="140" y="130" width="120" height="20" fill="url(#metal)"/>
+    <circle id="bezel" cx="70" cy="70" r="55" fill="#373737" stroke="#111111" stroke-width="3"/>
+    <g fill="#20a060" stroke="#224466" transform="translate(145 20)">
+        <path id="zone" d="M0 0H110V100H0Z" fill="#e08020"/>
+        <g><circle id="inherited" cx="55" cy="50" r="32"/></g>
+    </g>
+    <text id="label" x="20" y="175" fill="#3366cc" stroke="none">Motor current</text>
+    <path id="styled" d="M20 195H270" fill="none" stroke="#663399" style="fill: #cc2277; stroke: #0088aa; stroke-width: 4; opacity: 0.8"/>
+    <script><![CDATA[
+//!export-start
+var _pn_value = 0;
+var _pc_color = '#3366cc';
+//!export-end
+function putValue(name, value) {
+    document.getElementById('label').setAttribute('fill', value);
+}
+    ]]></script>
+</svg>
