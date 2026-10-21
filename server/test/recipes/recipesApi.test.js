@@ -524,6 +524,34 @@ describe('Recipes API', () => {
             expect(res.body.error).to.equal('unauthorized_error');
             expect(runtime.recipeStorage.setRecipeData.called).to.be.false;
         });
+
+        it('should reject overwriting an instance when the caller lacks permission for its stored type', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+            runtime.recipeStorage.getRecipeData.withArgs('r_existing').resolves({
+                id: 'r_existing',
+                typeId: 'r_type_a',
+                name: 'Existing instance',
+                entries: [{ tagId: 'tag-a', tagType: 'real', value: 1 }]
+            });
+            runtime.project.getRecipe.withArgs('r_type_a').returns({ id: 'r_type_a', name: 'Type A' });
+            runtime.project.getRecipe.withArgs('r_type_b').returns({ id: 'r_type_b', name: 'Type B' });
+            runtime.checkPermission.callsFake((permission, recipeType) => ({
+                show: true,
+                enabled: recipeType.id === 'r_type_b'
+            }));
+
+            const res = await postRequest(server, '/api/recipes/instances', {
+                id: 'r_existing',
+                typeId: 'r_type_b',
+                name: 'Replacement instance',
+                entries: [{ tagId: 'tag-b', tagName: 'Tag B', tagType: 'real', value: 2 }]
+            });
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.recipeStorage.setRecipeData.called).to.be.false;
+        });
     });
 
     describe('DELETE /api/recipes/instances', () => {

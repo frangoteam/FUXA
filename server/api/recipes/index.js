@@ -166,6 +166,19 @@ module.exports = {
                 if (auth.secureEnabled && !_authorizeRecipeTypeForData(req.body, auth, res, 'save instance')) {
                     return;
                 }
+                // Updating an existing instance must also be authorized against
+                // the type currently stored for that ID. Otherwise a caller
+                // permitted to write type B could submit type B with the ID of
+                // an instance belonging to type A and replace it.
+                if (auth.secureEnabled && req.body && req.body.id) {
+                    _handlePromise(runtime.recipeStorage.getRecipeData(req.body.id), res, function(existing) {
+                        if (existing && !_authorizeRecipeTypeForData(existing, auth, res, 'update instance')) {
+                            return;
+                        }
+                        _saveRecipeInstance(req.body, res);
+                    }, 'getInstanceForUpdate');
+                    return;
+                }
                 _saveRecipeInstance(req.body, res);
             } catch (err) {
                 runtime.logger.error("api post recipe instance error: " + err);
