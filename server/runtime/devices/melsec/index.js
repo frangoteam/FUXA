@@ -212,6 +212,11 @@ function MelsecClient(_data, _logger, _events, _runtime) {
         if (!tagMap[tagId] || !conn) {
             return false;
         }
+        if (_isWordDeviceBit(tagMap[tagId].address)) {
+            // mcprotocol would send the whole word with value 0 and clear the other bits
+            logger.error(`'${tagMap[tagId].name}' setValue error! writing a single bit of a word device (${tagMap[tagId].address}) is not supported`);
+            return false;
+        }
         try {
             const valueToSend = await deviceUtils.tagRawCalculator(value, tagMap[tagId], runtime);
             await new Promise((resolve, reject) => {
@@ -305,6 +310,13 @@ function MelsecClient(_data, _logger, _events, _runtime) {
             varsValue[id].changed = false;
         }
         return toDaq;
+    }
+
+    /**
+     * Bit of a word device as parsed by mcprotocol (D111.1, D111/1, R, TN, CN): readable, but not writable
+     */
+    function _isWordDeviceBit(address) {
+        return /^(D|R|TN|CN)\d+[./]\d+/.test(String(address).trim());
     }
 
     function _syncRegisteredItems() {
