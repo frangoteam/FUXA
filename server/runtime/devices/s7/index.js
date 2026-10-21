@@ -34,11 +34,14 @@ function S7client(_data, _logger, _events, _runtime) {
      */
     this.connect = function () {
         return new Promise(function (resolve, reject) {
-            if (data.property && data.property.rack >= 0 && data.property.slot >= 0) {
+            // rack/slot can be strings (e.g. after a CSV import), node-snap7 requires numbers
+            const rack = data.property ? parseInt(data.property.rack, 10) : NaN;
+            const slot = data.property ? parseInt(data.property.slot, 10) : NaN;
+            if (data.property && rack >= 0 && slot >= 0) {
                 try {
                     if (!s7client.Connected() && _checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
-                        s7client.ConnectTo(data.property.address, data.property.rack, data.property.slot, function (err) {
+                        s7client.ConnectTo(data.property.address, rack, slot, function (err) {
                             if (err) {
                                 logger.error(`'${data.name}' connect failed! ${err}`);
                                 _emitStatus('connect-error');
