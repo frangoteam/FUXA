@@ -21,7 +21,7 @@ It allows you to build modern dashboards, connect industrial devices and monitor
 
 ## ✨ Features
 - **Industrial protocol support**
-  Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley), ODBC, ADSclient, Gpio (Raspberry), WebCam, MELSEC, Redis
+  Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley), ODBC, ADSclient, Gpio (Raspberry), WebCam, MELSEC, Redis, SNMP
 - **Database and data storage**
   Built-in data historian (DAQ) with support for SQLite, InfluxDB and other time-series databases.
   External integrations via ODBC and Redis.

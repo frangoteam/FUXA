@@ -620,6 +620,131 @@
                         </div>
                     </div>
                 </div>
+                <div *ngSwitchCase="deviceType.SNMP">
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk">
+                            <span>{{'device.property-snmp-target' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.address" placeholder="192.168.1.10"
+                                style="width: 250px" type="ip" (click)="onAddressChanged()">
+                        </div>
+                        <div class="my-form-field inbk ml10">
+                            <span>{{'device.property-snmp-port' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.device.property.port" placeholder="161"
+                                style="width: 80px" type="text">
+                        </div>
+                    </div>
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk">
+                            <span>{{'device.property-snmp-version' | translate}}</span>
+                            <mat-select [(value)]="snmpOptions.version" style="width: 100px">
+                                <mat-option *ngFor="let version of snmpVersionType | enumToArray" [value]="version.key">
+                                    {{ version.value }}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="my-form-field inbk ml10">
+                            <span>{{'device.property-snmp-transport' | translate}}</span>
+                            <mat-select [(value)]="snmpOptions.transport" style="width: 100px">
+                                <mat-option *ngFor="let transport of snmpTransportType | enumToArray" [value]="transport.key">
+                                    {{ transport.value }}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="my-form-field inbk ml10">
+                            <span>{{'device.property-snmp-timeout' | translate}}</span>
+                            <input numberOnly [(ngModel)]="snmpOptions.timeout" style="width: 60px" type="text">
+                        </div>
+                        <div class="my-form-field inbk ml10">
+                            <span>{{'device.property-snmp-retries' | translate}}</span>
+                            <input numberOnly [(ngModel)]="snmpOptions.retries" style="width: 40px" type="text">
+                        </div>
+                    </div>
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk">
+                            <span>{{'device.property-snmp-maxOidsPerRequest' | translate}}</span>
+                            <input numberOnly [(ngModel)]="snmpOptions.maxOidsPerRequest" style="width: 120px" type="text">
+                        </div>
+                        <div class="my-form-field inbk ml10">
+                            <span>{{'device.property-snmp-offlineAfterTimeouts' | translate}}</span>
+                            <input numberOnly [(ngModel)]="snmpOptions.offlineAfterTimeouts" style="width: 210px" type="text">
+                        </div>
+                    </div>
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk tac" style="width: 200px;">
+                            <span>{{'device.property-snmp-traps' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="snmpOptions.trapsEnabled"></mat-slide-toggle>
+                        </div>
+                        <div *ngIf="snmpOptions.trapsEnabled" class="my-form-field inbk ml10">
+                            <span>{{'device.property-snmp-trapPort' | translate}}</span>
+                            <input numberOnly [(ngModel)]="snmpOptions.trapPort" placeholder="162" style="width: 80px" type="text">
+                        </div>
+                    </div>
+                    <div class="my-form-field block mb10">
+                        <span>{{'device.property-snmp-mib' | translate}}</span>
+                        <app-file-upload destination="mibs"></app-file-upload>
+                    </div>
+                    <div class="my-form-field block mb5" style="font-size: 13px; font-weight: 500;">
+                        <span>{{'device.property-snmp-security' | translate}}</span>
+                    </div>
+                    <div *ngIf="snmpOptions.version !== snmpVersionV3" class="my-form-field block mb10">
+                        <span>{{'device.property-snmp-community' | translate}}</span>
+                        <input autocomplete="off" (keydown)="keyDownStopPropagation($event)" placeholder="public"
+                            [type]="showPassword ? 'text' : 'password'" [(ngModel)]="security.password" style="width: 315px">
+                        <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                    </div>
+                    <div *ngIf="snmpOptions.version === snmpVersionV3">
+                        <div class="mb10 block">
+                            <div class="my-form-field inbk">
+                                <span>{{'device.property-snmp-username' | translate}}</span>
+                                <input [(ngModel)]="security.username" style="width: 180px" type="text">
+                            </div>
+                            <div class="my-form-field inbk ml10">
+                                <span>{{'device.property-snmp-securityLevel' | translate}}</span>
+                                <mat-select [(value)]="snmpOptions.securityLevel" style="width: 150px">
+                                    <mat-option *ngFor="let level of snmpSecurityLevelType | enumToArray" [value]="level.key">
+                                        {{ level.value }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div *ngIf="snmpOptions.securityLevel !== snmpSecurityLevelNoAuthNoPriv" class="mb10 block">
+                            <div class="my-form-field inbk">
+                                <span>{{'device.property-snmp-authProtocol' | translate}}</span>
+                                <mat-select [(value)]="snmpOptions.authProtocol" style="width: 100px">
+                                    <mat-option *ngFor="let protocol of snmpAuthProtocolType | enumToArray" [value]="protocol.key">
+                                        {{ protocol.value }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="my-form-field inbk ml10">
+                                <span>{{'device.property-snmp-authKey' | translate}}</span>
+                                <input autocomplete="off" (keydown)="keyDownStopPropagation($event)"
+                                    [type]="showPassword ? 'text' : 'password'" [(ngModel)]="security.password" style="width: 205px">
+                                <mat-icon matSuffix (click)="showPassword = !showPassword" class="show-password">{{showPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                            </div>
+                        </div>
+                        <div *ngIf="snmpOptions.securityLevel === snmpSecurityLevelAuthPriv" class="mb10 block">
+                            <div class="my-form-field inbk">
+                                <span>{{'device.property-snmp-privProtocol' | translate}}</span>
+                                <mat-select [(value)]="snmpOptions.privProtocol" style="width: 100px">
+                                    <mat-option *ngFor="let protocol of snmpPrivProtocolType | enumToArray" [value]="protocol.key">
+                                        {{ protocol.value }}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                            <div class="my-form-field inbk ml10">
+                                <span>{{'device.property-snmp-privKey' | translate}}</span>
+                                <input autocomplete="off" (keydown)="keyDownStopPropagation($event)"
+                                    [type]="showPrivKey ? 'text' : 'password'" [(ngModel)]="security.privKey" style="width: 205px">
+                                <mat-icon matSuffix (click)="showPrivKey = !showPrivKey" class="show-password">{{showPrivKey ? 'visibility' : 'visibility_off'}}</mat-icon>
+                            </div>
+                        </div>
+                        <div class="my-form-field block mb10">
+                            <span>{{'device.property-snmp-context' | translate}}</span>
+                            <input [(ngModel)]="snmpOptions.context" style="width: 350px" type="text">
+                        </div>
+                    </div>
+                </div>
                 <div *ngSwitchCase="deviceType.REDIS">
                     <div class="my-form-field block mb10">
                         <span>{{'device.property-redis-target' | translate}}</span>

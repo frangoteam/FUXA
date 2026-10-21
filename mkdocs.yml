@@ -42,6 +42,7 @@ nav:
       - Configure Script: HowTo-configure-Script.md
       - Recipes: HowTo-Recipes.md
       - ODBC: HowTo-ODBC.md
+      - SNMP: HowTo-SNMP.md
       - Widgets: HowTo-Widgets.md
       - WebSockets: HowTo-WebSockets.md
   - Settings: Settings.md

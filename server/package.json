@@ -35,6 +35,7 @@
     "jsonwebtoken": "^9.0.3",
     "morgan": "1.12.1",
     "mqtt": "4.3.7",
+    "net-snmp": "3.29.2",
     "node-red": "^4.1.10",
     "node-schedule": "2.1.1",
     "nodemailer": "^8.0.8",
