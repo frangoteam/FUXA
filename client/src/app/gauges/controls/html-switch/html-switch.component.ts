@@ -1,6 +1,6 @@
 import { Injectable, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 
-import { GaugeSettings, Variable, GaugeStatus, Event, GaugeProperty } from '../../../_models/hmi';
+import { GaugeSettings, Variable, GaugeStatus, Event, GaugeProperty, GaugeEventType, GaugeEventActionType } from '../../../_models/hmi';
 import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 import { NgxSwitchComponent } from '../../../gui-helpers/ngx-switch/ngx-switch.component';
@@ -45,7 +45,19 @@ export class HtmlSwitchComponent extends GaugeBaseComponent {
 
     static bindEvents(ga: GaugeSettings, slider?: NgxSwitchComponent, callback?: any): Event {
         if (slider) {
+            const toggleAction = Utils.getEnumKey(GaugeEventActionType, GaugeEventActionType.onToggleValue);
+            const togglesBoundValue = this.getEvents(ga.property, GaugeEventType.click)?.some(event => {
+                const variable = event.actoptions?.variable;
+                const variableId = variable?.variableId || ga.property.variableId;
+                const bitmask = variable?.variableId ? variable.bitmask : undefined;
+                return !!ga.property.variableId && event.action === toggleAction && variableId === ga.property.variableId &&
+                    (bitmask || 0) === (ga.property.bitmask || 0);
+            });
             slider.bindUpdate((val) => {
+                // The click action must read the value before the checkbox change writes it.
+                if (togglesBoundValue) {
+                    return;
+                }
                 let event = new Event();
                 event.type = 'on';
                 event.ga = ga;
