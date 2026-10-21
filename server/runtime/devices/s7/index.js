@@ -9,6 +9,14 @@ const deviceUtils = require('../device-utils');
 
 const MAX_MIX_ITEM = 20;
 
+function _parseConnectionIndex(value) {
+    if (typeof value === 'string') {
+        if (!/^\d+$/.test(value.trim())) return NaN;
+        value = Number(value);
+    }
+    return Number.isSafeInteger(value) && value >= 0 ? value : NaN;
+}
+
 function S7client(_data, _logger, _events, _runtime) {
 
     var runtime = _runtime;
@@ -35,8 +43,8 @@ function S7client(_data, _logger, _events, _runtime) {
     this.connect = function () {
         return new Promise(function (resolve, reject) {
             // rack/slot can be strings (e.g. after a CSV import), node-snap7 requires numbers
-            const rack = data.property ? parseInt(data.property.rack, 10) : NaN;
-            const slot = data.property ? parseInt(data.property.slot, 10) : NaN;
+            const rack = data.property ? _parseConnectionIndex(data.property.rack) : NaN;
+            const slot = data.property ? _parseConnectionIndex(data.property.slot) : NaN;
             if (data.property && rack >= 0 && slot >= 0) {
                 try {
                     if (!s7client.Connected() && _checkWorking(true)) {
