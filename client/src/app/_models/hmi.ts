@@ -798,3 +798,18 @@ export interface VideoOptions {
     loop?: boolean;
 }
 
+export class Gauge3dProperty extends GaugeProperty {
+    constructor() {
+        super();
+        this.options = new ThreeDOptions();
+    }
+}
+
+export class ThreeDOptions {
+    address = '';
+    autoRotate = false;
+    bgColor = '';
+    fov = 60;
+    camera = 'perspective';
+}
+

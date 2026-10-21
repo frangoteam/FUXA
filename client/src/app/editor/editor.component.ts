@@ -1,4 +1,4 @@
-﻿/* eslint-disable @angular-eslint/component-class-suffix */
+/* eslint-disable @angular-eslint/component-class-suffix */
 import { Component, Inject, OnInit, OnDestroy, AfterViewInit, ViewChild, ViewContainerRef, ComponentFactoryResolver, ElementRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { MatDialog as MatDialog, MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA} from '@angular/material/dialog';
@@ -25,6 +25,7 @@ import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.
 import { ValueComponent } from '../gauges/controls/value/value.component';
 import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from '../gauges/controls/gauge-semaphore/gauge-semaphore.component';
+import { Html3dComponent } from '../gauges/controls/html-3d/html-3d.component';
 import { HtmlSwitchPropertyComponent } from '../gauges/controls/html-switch/html-switch-property/html-switch-property.component';
 
 import { GridsterItem } from 'angular-gridster2';
@@ -41,6 +42,7 @@ import { MapsViewComponent } from '../maps/maps-view/maps-view.component';
 import { KioskWidgetsComponent } from '../resources/kiosk-widgets/kiosk-widgets.component';
 import { ResourcesService } from '../_services/resources.service';
 import { InputPropertyComponent } from '../gauges/controls/html-input/input-property/input-property.component';
+import { ThreeDPropertyComponent } from '../gauges/controls/html-3d/three-d-property/three-d-property.component';
 import { SettingsService } from '../_services/settings.service';
 import { OnboardingWizardComponent } from './onboarding-wizard/onboarding-wizard.component';
 
@@ -1432,6 +1434,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.reloadGaugeDialog = !this.reloadGaugeDialog;
             return;
+        } else if (dlgType === GaugeDialogType.ThreeD) {
+            dialogRef = this.dialog.open(ThreeDPropertyComponent, {
+                position: { top: '60px' },
+                disableClose: true,
+                data: {
+                    settings: tempsettings,
+                    withActions: actionsSupported
+                }
+            });
         } else if (dlgType === GaugeDialogType.Input) {
             dialogRef = this.dialog.open(InputPropertyComponent, {
                 position: { top: '60px' },
@@ -1582,6 +1593,8 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             return this.translateService.instant('editor.controls-progress-settings');
         } else if (type.startsWith(GaugeSemaphoreComponent.TypeTag)) {
             return this.translateService.instant('editor.controls-semaphore-settings');
+        } else if (type.startsWith(Html3dComponent.TypeTag)) {
+            return this.translateService.instant('editor.controls-3d-settings');
         } else {
             return this.translateService.instant('editor.controls-shape-settings');
         }
