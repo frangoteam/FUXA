@@ -6,7 +6,7 @@ module.exports = function(RED) {
 
         this.on('input', async function(msg) {
             try {
-                var cardName = config.cardName || msg.cardName;
+                var cardName = msg.cardName || config.cardName;
                 if (cardName) {
                     var result = await fuxa.openCard(cardName);
                     msg.payload = result;
