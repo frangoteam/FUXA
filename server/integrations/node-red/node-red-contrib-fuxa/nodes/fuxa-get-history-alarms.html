@@ -70,13 +70,16 @@
         <li><code>msg.start</code> - Start timestamp (Unix timestamp in milliseconds, or ISO date string)</li>
         <li><code>msg.end</code> - End timestamp (Unix timestamp in milliseconds, or ISO date string)</li>
     </ul>
-    <p>If no timestamps are provided, defaults to the last 24 hours.</p>
+    <p>Each non-blank message endpoint overrides its configured endpoint. Blank, null or absent endpoints fall back to configuration, then to the last 24 hours. Both defaults use the same clock sample.</p>
+    <p>Numeric zero (including an end time of zero) is a valid timestamp. Invalid or reversed ranges report a node error without querying history or emitting a successful message.</p>
     <h4>Supported Timestamp Formats</h4>
     <ul>
         <li><strong>Unix timestamp:</strong> <code>1693526400000</code> (milliseconds since epoch)</li>
+        <li><strong>Numeric string:</strong> <code>"1693526400000"</code> or <code>"0"</code> (milliseconds, not calendar years)</li>
         <li><strong>ISO string:</strong> <code>"2025-10-26T13:54:21.000Z"</code></li>
         <li><strong>Date string:</strong> <code>"2025-10-26 13:54:21"</code></li>
     </ul>
+    <p>Editor date strings without a timezone retain local-time interpretation. Include an ISO offset or <code>Z</code> when a fixed timezone is required.</p>
     <h4>Examples</h4>
     <pre>// Get alarms for last week
 msg.start = Date.now() - 604800000; // 7 days ago
