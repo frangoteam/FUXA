@@ -608,6 +608,15 @@
                             style="width: 350px" type="ip" (click)="onAddressChanged()">
                     </div>
                     <div class="mb10 block">
+                        <div class="my-form-field inbk" style="width: 100px;">
+                            <span>{{'device.property-melsec-frame' | translate}}</span>
+                            <mat-select [value]="data.device.property.frame || '1E'"
+                                (valueChange)="data.device.property.frame = $event" style="width: 74px">
+                                <mat-option *ngFor="let value of melsecFrameType" [value]="value">
+                                    {{ value }}
+                                </mat-option>
+                            </mat-select>
+                        </div>
                         <div class="my-form-field inbk tac" style="width: 100px;">
                             <span>{{'device.property-melsec-ascii' | translate}}</span>
                             <mat-slide-toggle color="primary"
