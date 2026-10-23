@@ -8,6 +8,7 @@ var OpcUAclient = require('./opcua');
 var MODBUSclient = require('./modbus');
 var BACNETclient = require('./bacnet');
 var HTTPclient = require('./httprequest');
+var IoTHTTPclient = require('./iothttp');
 var MQTTclient = require('./mqtt');
 var EthernetIPclient = require('./ethernetip');
 var GenericEthernetIPclient = require('./genericethernetip');
@@ -77,6 +78,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = HTTPclient.create(data, logger, events, runtime);
+    } else if (data.type === DeviceEnum.IoTHTTP) {
+        if (!IoTHTTPclient) {
+            return null;
+        }
+        comm = IoTHTTPclient.create(data, logger, events, runtime);
     } else if (data.type === DeviceEnum.MQTTclient) {
         if (!MQTTclient) {
             return null;
@@ -572,6 +578,8 @@ function loadPlugin(type, module) {
         BACNETclient = require(module);
     } else if (type === DeviceEnum.WebAPI) {
         HTTPclient = require(module);
+    } else if (type === DeviceEnum.IoTHTTP) {
+        IoTHTTPclient = require(module);
     } else if (type === DeviceEnum.MQTTclient) {
         MQTTclient = require(module);
     } else if (type === DeviceEnum.EthernetIP) {
@@ -632,6 +640,7 @@ var DeviceEnum = {
     ModbusTCP: 'ModbusTCP',
     BACnet: 'BACnet',
     WebAPI: 'WebAPI',
+    IoTHTTP: 'IoTHTTP',
     MQTTclient: 'MQTTclient',
     EthernetIP: 'EthernetIP',
     GenericEthernetIP: 'GenericEthernetIP',

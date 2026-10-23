@@ -79,6 +79,52 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	methodType = ['GET'];//, 'POST'];
 	parserType = ['JSON'];//, 'CSV'];
 	hostInterfaces = [];
+	httpMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+
+	// IoTHTTP driver ready-made profiles
+	iotProfile = 'custom';
+	iotProfiles = ['custom', 'firebase', 'restToken', 'basic', 'oauth', 'apiKeyHeader'];
+
+	applyIotProfile(profile: string) {
+		const p = this.data && this.data.device ? this.data.device.property : null;
+		if (!p) { return; }
+		if (profile === 'firebase') {
+			p.method = 'GET';
+			p.authMode = 'apiKey';
+			p.authQuery = 'auth';
+			p.headers = p.headers || '{"Accept":"application/json"}';
+		} else if (profile === 'restToken') {
+			p.method = 'GET';
+			p.authMode = 'bearer';
+		} else if (profile === 'basic') {
+			p.method = 'GET';
+			p.authMode = 'basic';
+		} else if (profile === 'oauth') {
+			p.method = 'GET';
+			p.authMode = 'login';
+			p.loginMethod = 'POST';
+			p.loginBody = '{"username":"{username}","password":"{password}"}';
+			p.tokenFrom = 'json';
+			p.tokenPath = 'access_token';
+			p.tokenInject = 'headerBearer';
+			p.tokenRefreshMinutes = 50;
+		} else if (profile === 'apiKeyHeader') {
+			p.method = 'GET';
+			p.authMode = 'apiKey';
+			p.authHeader = p.authHeader || 'X-API-Key';
+		}
+	}
+
+	isValidJson(value: any): boolean {
+		if (!value || typeof value !== 'string') { return true; }
+		try { JSON.parse(value); return true; } catch (_e) { return false; }
+	}
+
+	get iotHeadersInvalid(): boolean { return !this.isValidJson(this.data?.device?.property?.headers); }
+	get iotQueryInvalid(): boolean { return !this.isValidJson(this.data?.device?.property?.query); }
+	get iotReadBodyInvalid(): boolean { return !this.isValidJson(this.data?.device?.property?.readBody); }
+	get iotLoginBodyInvalid(): boolean { return !this.isValidJson(this.data?.device?.property?.loginBody); }
+
 	modbusRtuOptionType = [ModbusOptionType.SerialPort, ModbusOptionType.RTUBufferedPort, ModbusOptionType.AsciiPort];
 	modbusTcpOptionType = [ModbusOptionType.TcpPort, ModbusOptionType.UdpPort, ModbusOptionType.TcpRTUBufferedPort, ModbusOptionType.TelnetPort];
 	modbusReuseModeType = ModbusReuseModeType;

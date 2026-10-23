@@ -277,7 +277,8 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             type === DeviceType.internal || type === DeviceType.EthernetIP || type === DeviceType.GenericEthernetIP ||
             type === DeviceType.OmronEthernetIP || type === DeviceType.FuxaServer ||
             type === DeviceType.OPCUA || type === DeviceType.GPIO || type === DeviceType.ADSclient ||
-            type === DeviceType.WebCam || type === DeviceType.MELSEC || type === DeviceType.REDIS) {
+            type === DeviceType.WebCam || type === DeviceType.MELSEC || type === DeviceType.REDIS ||
+            type === DeviceType.IoTHTTP) {
             return true;
         } else if (type === DeviceType.MQTTclient) {
             if (tag && tag.options && (tag.options.pubs || tag.options.subs)) {
@@ -288,6 +289,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     }
 
     editTag(tag: Tag, checkToAdd: boolean) {
+        if (this.deviceSelected.type === DeviceType.IoTHTTP) {
+            this.tagPropertyService.editTagPropertyIotHttp(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
         if (this.deviceSelected.type === DeviceType.SiemensS7) {
             this.tagPropertyService.editTagPropertyS7(this.deviceSelected, tag, checkToAdd).subscribe(result => {
                 this.tagsMap[tag.id] = tag;
