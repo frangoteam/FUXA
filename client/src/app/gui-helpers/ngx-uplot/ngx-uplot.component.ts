@@ -3,7 +3,8 @@ import { Component, OnInit, OnDestroy, ElementRef, ViewChild, Input } from '@ang
 import { Utils } from '../../_helpers/utils';
 
 import { Series, Options, Legend } from './uPlot';
-import { ChartLineZone } from '../../_models/chart';
+import { ChartLineZone, ChartState } from '../../_models/chart';
+import { StateTimeline, trimStateData } from './state-timeline';
 
 declare const uPlot: any;
 declare const placement: any;
@@ -32,6 +33,7 @@ const WHEEL_PAN_STEP = 0.1;            // pan by 10% of current visible x-range 
 const WHEEL_PAN_FAST_STEP = 0.3;       // pan by 30% when shift is pressed.
 const WHEEL_ZOOM_SENSITIVITY = 0.0015; // exponential zoom sensitivity (higher = faster zooming).
 const WHEEL_MIN_RANGE_DIVISOR = 1e4;   // prevent over-zoom: min range = current range / divisor.
+const STATE_LANE_HEIGHT = 48;
 
 @Component({
     selector: 'ngx-uplot',
@@ -43,6 +45,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
     @Input() public id: string;
     @Input() public options: NgxOptions;
     @ViewChild('graph', {static: true}) public graph: ElementRef;
+    @ViewChild('stateLanes', {static: true}) public stateLanes: ElementRef<HTMLElement>;
     @Input() onChartClick: (x: number, y: number ) => void;
 
     readonly lineInterpolations = {
@@ -57,6 +60,8 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
     overlay: any;
     uplot: any;
     data: number[][];
+    private stateTimelines = new Map<number, StateTimeline>();
+    private chartHeight: number;
     get xSample() { return this.rawData ? [2, 7] : [new Date().getTime() / 1000 - 1, new Date().getTime() / 1000]; };     // start and sample x time
     sampleData = [this.xSample, [35, 71]];
 
@@ -202,11 +207,19 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         if (!width) {
             width = chart.clientWidth;
         }
-        this.uplot.setSize({height: height, width: width});
+        this.chartHeight = height;
+        // Keep room for trends when a chart contains many state lanes.
+        const laneHeight = Math.min(this.stateTimelines.size * STATE_LANE_HEIGHT, Math.max(0, height * 0.4));
+        this.stateLanes.nativeElement.style.height = `${laneHeight}px`;
+        this.uplot.setSize({height: Math.max(1, height - laneHeight), width: width});
         // this.uplot.redraw(false, true);
     }
 
     init(options?: ChartOptions, rawData?: boolean) {
+        this.stateTimelines.clear();
+        this.stateLanes.nativeElement.replaceChildren();
+        this.stateLanes.nativeElement.style.height = '0px';
+        this.chartHeight = options?.height || this.options.height;
         this.data = [[]];
         this.rawData = rawData;
         if (!Utils.isNullOrUndefined(options?.rawData)) {
@@ -276,6 +289,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
         // set plugins
         opt.plugins = (this.options.tooltip && this.options.tooltip.show) ? [this.tooltipPlugin()] : [];
+        opt.plugins.push({ hooks: { draw: u => this.drawStateTimelines(u) } });
         if (this.options.thouchZoom) {
             opt.plugins.push(this.touchZoomPlugin(opt));
         }
@@ -423,9 +437,17 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         this.init(this.options, this.rawData);
     }
 
-    addSerie(index: number, attribute: Series) {
-        this.data.push([null,null]);
-        if (attribute.lineInterpolation === this.lineInterpolations.stepAfter) {
+    addSerie(index: number, attribute: NgxSeries) {
+        this.data.push(this.data[0].map(() => null));
+        if (attribute.type === 'state') {
+            this.stateTimelines.set(index, new StateTimeline(attribute.label, attribute.states || [], attribute.stateColor));
+            // State lanes share x, but must not affect numeric axes, cursors or legends.
+            attribute.paths = () => null;
+            attribute.points = { show: false };
+            attribute.auto = false;
+            attribute.show = false;
+            attribute.class = 'fuxa-state-series';
+        } else if (attribute.lineInterpolation === this.lineInterpolations.stepAfter) {
             attribute.paths = uPlot.paths.stepped({ align: 1 });
         } else if (attribute.lineInterpolation === this.lineInterpolations.stepBefore) {
             attribute.paths = uPlot.paths.stepped({ align: -1 });
@@ -438,24 +460,36 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         }
         this.uplot.addSeries(attribute, index);
         this.uplot.setData(this.data);
+        this.resize(this.chartHeight, this.uplot.width);
     }
 
     setSample() {
-        let sample = [this.xSample];
-        for (let i = 0; i < this.uplot.series.length; i++) {
-            sample.push([Math.floor(Math.random() * 20), Math.floor(Math.random() * 30)]);
+        const sample: any[][] = [this.xSample];
+        for (let i = 1; i < this.uplot.series.length; i++) {
+            const states = (this.uplot.series[i] as NgxSeries).states;
+            sample.push(this.stateTimelines.has(i)
+                ? [states?.[0]?.value ?? 'Running', states?.[1]?.value ?? 'Stopped']
+                : [Math.floor(Math.random() * 20), Math.floor(Math.random() * 30)]);
         }
         this.setData(sample);
     }
 
-    setData(data = [[]]) {
-        this.data = data;
+    setData(data: any[][] = [[]]) {
+        this.data = data.map((values, index) => {
+            const timeline = this.stateTimelines.get(index);
+            if (timeline) {
+                timeline.reset();
+                return values.map(value => timeline.encode(value));
+            }
+            return values.slice();
+        });
         this.uplot.setData(this.data);
     }
 
-    addData(data = [[]]) {
+    addData(data: any[][] = [[]]) {
         for (var index = 0; index < data.length; index++) {
-            this.data[index] = this.data[index].concat(data[index]);
+            const timeline = this.stateTimelines.get(index);
+            this.data[index] = this.data[index].concat(timeline ? data[index].map(value => timeline.encode(value)) : data[index]);
         }
         this.uplot.setData(this.data);
     }
@@ -464,28 +498,31 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         this.uplot.setScale('x', { min: min, max: max });
     }
 
-	addValue(index, x, y, size) {
-        let xpos = this.data[0].indexOf(x);
-        if (xpos < 0) {
-            this.data[0].push(x);
-            for (let i = 0; i < this.data.length; i++) {
-
-                if (i === index) {
-                    this.data[i].push(y);
-                } else if (i) {
-                    this.data[i].push(null);
-                }
+    addValue(index: number, x: number, y: unknown, size: number) {
+        let value = y as number;
+        if (this.stateTimelines.has(index)) {
+            value = this.stateTimelines.get(index).encode(y);
+        }
+        const times = this.data[0];
+        // Paused samples are replayed per tag, so arrival order need not be chronological.
+        let low = 0;
+        let high = times.length;
+        while (low < high) {
+            const middle = Math.floor((low + high) / 2);
+            if (times[middle] < x) {
+                low = middle + 1;
+            } else {
+                high = middle;
             }
+        }
+        if (times[low] === x) {
+            this.data[index][low] = value;
         } else {
-            this.data[index][xpos] = y;
+            this.data.forEach((values, seriesIndex) => {
+                values.splice(low, 0, seriesIndex === 0 ? x : (seriesIndex === index ? value : null));
+            });
         }
-        // remove data out of size
-        let min = x - size;
-        while (this.data[0][0] < min) {
-            for (let i = 0; i < this.data.length; i++) {
-                this.data[i].shift();
-            }
-        }
+        trimStateData(this.data, times[times.length - 1] - size, [...this.stateTimelines.keys()]);
         this.uplot.setData(this.data);
     }
 
@@ -495,6 +532,47 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
     checkAxisOptions() {
 
+    }
+
+    private drawStateTimelines(u: any) {
+        if (!this.stateTimelines.size) {
+            return;
+        }
+        u.root.querySelectorAll('.u-legend .fuxa-state-series').forEach(row => row.style.display = 'none');
+        const container = this.stateLanes.nativeElement;
+        const fragment = document.createDocumentFragment();
+        const min = u.scales.x.min;
+        const max = u.scales.x.max;
+        // uPlot's overlay uses CSS pixels, so this also works on high-DPI displays.
+        const left = u.over.offsetLeft;
+        const width = u.over.clientWidth;
+        this.stateTimelines.forEach((timeline, index) => {
+            const row = document.createElement('div');
+            row.style.cssText = `height:${STATE_LANE_HEIGHT}px;margin-left:${left}px;width:${width}px;`;
+            const title = document.createElement('div');
+            title.style.cssText = 'height:20px;line-height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;';
+            title.textContent = timeline.label;
+            title.title = timeline.label;
+            row.appendChild(title);
+            const track = document.createElement('div');
+            track.style.cssText = 'position:relative;height:24px;background:rgba(128,128,128,0.12);overflow:hidden;';
+            for (const interval of timeline.intervals(u.data[0], u.data[index] || [], min, max)) {
+                const block = document.createElement('div');
+                const start = u.valToPos(interval.from, 'x');
+                const end = u.valToPos(interval.to, 'x');
+                block.style.cssText = `position:absolute;left:${start}px;width:${end - start}px;height:24px;box-sizing:border-box;` +
+                    'overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-align:center;padding:2px 3px;' +
+                    'font-size:12px;color:white;text-shadow:0 1px 2px black;border-right:1px solid rgba(0,0,0,0.2);';
+                block.style.backgroundColor = interval.state.color;
+                // Labels and recipe values are project/tag data, never HTML.
+                block.textContent = interval.state.label || interval.state.value;
+                block.title = [timeline.label, interval.state.label || interval.state.value, interval.state.description].filter(Boolean).join(': ');
+                track.appendChild(block);
+            }
+            row.appendChild(track);
+            fragment.appendChild(row);
+        });
+        container.replaceChildren(fragment);
     }
 
     tooltipPlugin(opts: any = null) {
@@ -554,6 +632,9 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
         const xdiv = `<div class="ut-head">${u.series[0].label}: ${this.rawData ? x : time}</div>`;
         let series = '';
         for (let i = 1; i < u.series.length; i++) {
+            if (this.stateTimelines.has(i)) {
+                continue;
+            }
             let value = '';
             try {
                 var ydx = this._proximityIndex(u, i, idx, x);
@@ -931,10 +1012,12 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                         wheelPlot.setScale('x', next);
                     };
                     over.addEventListener('wheel', onWheel, { passive: false });
+                    this.stateLanes.nativeElement.addEventListener('wheel', onWheel, { passive: false });
                 },
                 destroy: () => {
                     if (over && onWheel) {
                         over.removeEventListener('wheel', onWheel);
+                        this.stateLanes.nativeElement.removeEventListener('wheel', onWheel);
                     }
                     over = null;
                     onWheel = null;
@@ -1023,4 +1106,7 @@ export interface ChartOptions extends NgxOptions {
 }
 
 export interface NgxSeries extends Series {
+    type?: 'trend' | 'state';
+    states?: ChartState[];
+    stateColor?: string;
 }

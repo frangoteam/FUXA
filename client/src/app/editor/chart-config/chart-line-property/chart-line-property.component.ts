@@ -24,6 +24,7 @@ export class ChartLinePropertyComponent implements OnInit {
         this.formGroup = this.fb.group({
             name: [{value: this.data.name, disabled: true }, Validators.required],
             label: [this.data.label, Validators.required],
+            type: [this.data.type || 'trend'],
             yaxis: [this.data.yaxis],
             lineInterpolation: [this.data.lineInterpolation],
             lineWidth: [this.data.lineWidth],
@@ -36,7 +37,27 @@ export class ChartLinePropertyComponent implements OnInit {
     }
 
     onOkClick(): void {
+        if (this.formGroup.invalid || this.hasDuplicateStates()) {
+            return;
+        }
         this.dialogRef.close({...this.data, ...this.formGroup.getRawValue()});
+    }
+
+    onAddState() {
+        this.data.states ??= [];
+        this.data.states.push({ value: '', label: '', color: this.data.color || '#808080' });
+    }
+
+    onRemoveState(index: number) {
+        this.data.states.splice(index, 1);
+    }
+
+    hasDuplicateStates(): boolean {
+        if (this.formGroup?.value.type !== 'state') {
+            return false;
+        }
+        const values = (this.data.states || []).map(state => String(state.value));
+        return new Set(values).size !== values.length;
     }
 
     onAddZone() {
