@@ -330,6 +330,171 @@
                         </mat-expansion-panel>
                     </div>
                 </div>
+                <div *ngSwitchCase="deviceType.IoTHTTP">
+                    <div class="mb10 block" style="align-items: flex-start;">
+                        <div class="my-form-field inbk" style="width: 240px;">
+                            <span>{{'device.iothttp-profile' | translate}}</span>
+                            <mat-select [(value)]="iotProfile" (selectionChange)="applyIotProfile($event.value)" style="width: 220px">
+                                <mat-option *ngFor="let pr of iotProfiles" [value]="pr">{{'device.iothttp-profile.' + pr | translate}}</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="iot-help">{{'device.iothttp-profile.' + iotProfile + 'Hint' | translate}}</div>
+                    </div>
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.iothttp-url' | translate}}</span>
+                        <input [(ngModel)]="data.device.property.address" style="width: 350px" type="text"
+                            placeholder="http://192.168.0.50">
+                    </div>
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk" style="width: 160px;">
+                            <span>{{'device.iothttp-method' | translate}}</span>
+                            <mat-select [(value)]="data.device.property.method" style="width: 140px">
+                                <mat-option *ngFor="let m of httpMethods" [value]="m">{{ m }}</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="my-form-field inbk" style="width: 140px; margin-left: 15px;">
+                            <span>{{'device.iothttp-timeout' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.device.property.timeout" style="width: 100px" type="number">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 200px; text-align: center; margin-left: 15px;">
+                            <span>{{'device.iothttp-verify-tls' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.verifyTls"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field inbk" style="width: 180px; text-align: center; margin-left: 15px;">
+                            <span>{{'device.iothttp-stream' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="data.device.property.stream"></mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="mb10 block">
+                        <div class="my-form-field inbk" style="width: 220px;">
+                            <span>{{'device.iothttp-auth-mode' | translate}}</span>
+                            <mat-select [(value)]="data.device.property.authMode" style="width: 200px">
+                                <mat-option value="none">none</mat-option>
+                                <mat-option value="bearer">bearer</mat-option>
+                                <mat-option value="basic">basic</mat-option>
+                                <mat-option value="apiKey">apiKey</mat-option>
+                                <mat-option value="login">login</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="my-form-field inbk" style="width: 300px; margin-left: 15px;"
+                            *ngIf="data.device.property.authMode === 'bearer'">
+                            <span>{{'device.iothttp-token' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.authToken" style="width: 280px" type="text">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 160px; margin-left: 15px;"
+                            *ngIf="data.device.property.authMode === 'basic'">
+                            <span>{{'device.iothttp-user' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.authUser" style="width: 140px" type="text">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 160px; margin-left: 15px;"
+                            *ngIf="data.device.property.authMode === 'basic'">
+                            <span>{{'device.iothttp-password' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.authPass" style="width: 140px" type="password">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 160px; margin-left: 15px;"
+                            *ngIf="data.device.property.authMode === 'apiKey'">
+                            <span>{{'device.iothttp-header-name' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.authHeader" style="width: 140px" type="text"
+                                placeholder="X-API-Key">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 220px; margin-left: 15px;"
+                            *ngIf="data.device.property.authMode === 'apiKey'">
+                            <span>{{'device.iothttp-api-key' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.authKey" style="width: 200px" type="text">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 160px; margin-left: 15px;"
+                            *ngIf="data.device.property.authMode === 'apiKey'">
+                            <span>{{'device.iothttp-query-name' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.authQuery" style="width: 140px" type="text"
+                                placeholder="{{'device.iothttp-optional' | translate}}">
+                        </div>
+                    </div>
+                    <div class="mb10 block" *ngIf="data.device.property.authMode === 'login'">
+                        <div class="my-form-field inbk" style="width: 300px;">
+                            <span>{{'device.iothttp-login-url' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.loginUrl" style="width: 280px" type="text" placeholder="/auth">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 140px; margin-left: 15px;">
+                            <span>{{'device.iothttp-login-method' | translate}}</span>
+                            <mat-select [(value)]="data.device.property.loginMethod" style="width: 120px">
+                                <mat-option *ngFor="let m of httpMethods" [value]="m">{{ m }}</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="my-form-field inbk" style="width: 160px; margin-left: 15px;">
+                            <span>{{'device.iothttp-token-from' | translate}}</span>
+                            <mat-select [(value)]="data.device.property.tokenFrom" style="width: 140px">
+                                <mat-option value="json">json</mat-option>
+                                <mat-option value="cookie">cookie</mat-option>
+                                <mat-option value="header">header</mat-option>
+                                <mat-option value="text">text</mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                    <div class="mb10 block" *ngIf="data.device.property.authMode === 'login'">
+                        <div class="my-form-field inbk" style="width: 220px;">
+                            <span>{{'device.iothttp-token-path' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.tokenPath" style="width: 200px" type="text" placeholder="access_token">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 180px; margin-left: 15px;">
+                            <span>{{'device.iothttp-cookie-name' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.cookieName" style="width: 160px" type="text" placeholder="authToken">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 200px; margin-left: 15px;">
+                            <span>{{'device.iothttp-token-inject' | translate}}</span>
+                            <mat-select [(value)]="data.device.property.tokenInject" style="width: 180px">
+                                <mat-option value="headerBearer">header Bearer</mat-option>
+                                <mat-option value="header">header custom</mat-option>
+                                <mat-option value="query">query</mat-option>
+                                <mat-option value="body">body</mat-option>
+                            </mat-select>
+                        </div>
+                        <div class="my-form-field inbk" style="width: 140px; margin-left: 15px;">
+                            <span>{{'device.iothttp-token-refresh' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.device.property.tokenRefreshMinutes" style="width: 120px" type="number" placeholder="0">
+                        </div>
+                    </div>
+                    <div class="mb10 block" *ngIf="data.device.property.authMode === 'login'">
+                        <div class="my-form-field inbk" style="width: 200px;"
+                            *ngIf="data.device.property.tokenInject === 'header'">
+                            <span>{{'device.iothttp-token-header' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.tokenHeader" style="width: 180px" type="text" placeholder="X-Token">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 200px;"
+                            *ngIf="data.device.property.tokenInject === 'query'">
+                            <span>{{'device.iothttp-token-query' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.tokenQuery" style="width: 180px" type="text" placeholder="token">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 200px;"
+                            *ngIf="data.device.property.tokenInject === 'body'">
+                            <span>{{'device.iothttp-token-body-key' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.tokenBodyKey" style="width: 180px" type="text" placeholder="authToken">
+                        </div>
+                        <div class="my-form-field inbk" style="width: 100%; margin-top: 5px;">
+                            <span>{{'device.iothttp-login-body' | translate}}</span>
+                            <textarea [(ngModel)]="data.device.property.loginBody" rows="2" style="width: 100%"
+                                placeholder='{"username":"{username}","password":"{password}"}'></textarea>
+                            <div class="iot-invalid" *ngIf="iotLoginBodyInvalid">{{'device.iothttp-invalid-json' | translate}}</div>
+                        </div>
+                    </div>
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.iothttp-headers' | translate}}</span>
+                        <textarea [(ngModel)]="data.device.property.headers" rows="2" style="width: 100%"
+                            placeholder='{"Accept": "application/json"}'></textarea>
+                        <div class="iot-invalid" *ngIf="iotHeadersInvalid">{{'device.iothttp-invalid-json' | translate}}</div>
+                    </div>
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.iothttp-query' | translate}}</span>
+                        <textarea [(ngModel)]="data.device.property.query" rows="2" style="width: 100%"
+                            placeholder='{"api_key": "..."}'></textarea>
+                        <div class="iot-invalid" *ngIf="iotQueryInvalid">{{'device.iothttp-invalid-json' | translate}}</div>
+                    </div>
+                    <div class="my-form-field" style="display: block;margin-bottom: 10px;">
+                        <span>{{'device.iothttp-read-body' | translate}}</span>
+                        <textarea [(ngModel)]="data.device.property.readBody" rows="2" style="width: 100%"
+                            placeholder='{"authToken": "..."}'></textarea>
+                        <div class="iot-invalid" *ngIf="iotReadBodyInvalid">{{'device.iothttp-invalid-json' | translate}}</div>
+                    </div>
+                </div>
                 <div *ngSwitchCase="deviceType.MQTTclient">
                     <div class="mqtt-connection-row">
                     <div class="my-form-field mqtt-address">

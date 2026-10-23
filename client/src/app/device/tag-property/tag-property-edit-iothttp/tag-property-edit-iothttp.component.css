@@ -1,0 +1,18 @@
+.container {
+    width: 480px;
+}
+
+.item-block {
+    display: block;
+}
+
+.item-block mat-select,
+.item-block input,
+.item-block span {
+    width: calc(100% - 5px);
+}
+
+.iot-test { margin-top: 8px; padding: 6px 8px; border-radius: 4px; font-size: 12px; background: rgba(255,255,255,0.04); }
+.iot-test.ok { border-left: 3px solid #4caf50; }
+.iot-test.err { border-left: 3px solid #e57373; color: #e57373; }
+.iot-test pre { margin: 4px 0 0; white-space: pre-wrap; word-break: break-all; font-size: 11px; opacity: 0.8; }
