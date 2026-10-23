@@ -676,6 +676,12 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
+        // Optional pure-JS driver, selected per device (default stays 'snap7'):
+        //   property: { ..., driver: "nodes7", tsapLocal, tsapRemote, timeout }
+        if (String((data && data.property && data.property.driver) || '').toLowerCase() === 'nodes7') {
+            const nodes7Driver = require('./nodes7');
+            return nodes7Driver.create(data, logger, events, manager, runtime);
+        }
         if (!loadSnap7Lib(manager)) return null;
         return new S7client(data, logger, events, runtime);
     }

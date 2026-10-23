@@ -135,6 +135,33 @@
                         <span>{{'device.property-slot' | translate}}</span>
                         <input numberOnly [(ngModel)]="data.device.property.slot" style="width: 80px" type="text">
                     </div>
+                    <div class="my-form-field" style="display: inline-block;margin-bottom: 10px;margin-left: 15px;">
+                        <span>{{'device.property-s7-driver' | translate}}</span>
+                        <mat-select [(value)]="data.device.property.driver" style="width: 160px">
+                            <mat-option value="snap7">snap7 (native)</mat-option>
+                            <mat-option value="nodes7">nodes7 (pure JS)</mat-option>
+                        </mat-select>
+                    </div>
+                    <div *ngIf="data.device.property.driver === 'nodes7'"
+                        style="display: block;margin-bottom: 10px;padding-left: 10px;border-left: 2px solid #ccc;">
+                        <div style="font-size: 12px;color:#888;margin-bottom:5px;">
+                            {{'device.property-s7-nodes7-hint' | translate}}</div>
+                        <div class="my-form-field" style="display: inline-block;padding-right: 10px;">
+                            <span>{{'device.property-s7-tsap-local' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.tsapLocal" placeholder="0x0100"
+                                style="width: 90px" type="text">
+                        </div>
+                        <div class="my-form-field" style="display: inline-block;padding-right: 10px;">
+                            <span>{{'device.property-s7-tsap-remote' | translate}}</span>
+                            <input [(ngModel)]="data.device.property.tsapRemote" placeholder="0x0201"
+                                style="width: 90px" type="text">
+                        </div>
+                        <div class="my-form-field" style="display: inline-block;">
+                            <span>{{'device.property-s7-timeout' | translate}}</span>
+                            <input numberOnly [(ngModel)]="data.device.property.timeout" placeholder="5000"
+                                style="width: 90px" type="number">
+                        </div>
+                    </div>
                 </div>
                 <div *ngSwitchCase="deviceType.ModbusRTU">
                     <div class="mb10 block modbus-connection-row">
