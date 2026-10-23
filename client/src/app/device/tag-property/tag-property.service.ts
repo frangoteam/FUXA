@@ -12,6 +12,7 @@ import { TagPropertyEditOpcuaComponent, TagPropertyOpcUaData } from './tag-prope
 import { Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 import { TagPropertyBacNetData, TagPropertyEditBacnetComponent } from './tag-property-edit-bacnet/tag-property-edit-bacnet.component';
 import { TagPropertyEditWebapiComponent, TagPropertyWebApiData } from './tag-property-edit-webapi/tag-property-edit-webapi.component';
+import { TagPropertyEditIothttpComponent } from './tag-property-edit-iothttp/tag-property-edit-iothttp.component';
 import { TagPropertyEditEthernetipComponent, TagPropertyEthernetIpData } from './tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
 import { TagPropertyEditGenericEthernetIPComponent } from './tag-property-edit-generic-ethernetip/tag-property-edit-generic-ethernetip.component';
 import { TagPropertyEditADSclientComponent } from './tag-property-edit-adsclient/tag-property-edit-adsclient.component';
@@ -586,8 +587,43 @@ export class TagPropertyService {
         );
     }
 
-    public scanTagsRedis(device: Device): Observable<any> {
-        const existing = device.tags ? Object.values(device.tags).map(tag => tag.address) : [];
+    public editTagPropertyIotHttp(device: Device, tag: Tag, checkToAdd: boolean): Observable<any> {
+        let oldTagId = tag.id;
+        let tagToEdit: Tag = Utils.clone(tag);
+        let dialogRef = this.dialog.open(TagPropertyEditIothttpComponent, {
+            disableClose: true,
+            data: {
+                device: device,
+                tag: tagToEdit
+            },
+            position: { top: '60px' }
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                if (result) {
+                    tag.name = result.tagName;
+                    tag.type = result.tagType;
+                    tag.address = result.tagAddress;
+                    tag.memaddress = result.memaddress;
+                    tag.description = result.tagDescription;
+                    tag.options = result.options;
+                    if (checkToAdd) {
+                        this.checkToAdd(tag, device);
+                    } else if (tag.id !== oldTagId) {
+                        //remove old tag device reference
+                        delete device.tags[oldTagId];
+                        this.checkToAdd(tag, device);
+                    }
+                    this.projectService.setDeviceTags(device);
+                }
+                dialogRef.close();
+                return result;
+            })
+        );
+    }
+
+    public scanTagsRedis(device: Device): Observable<any> {        const existing = device.tags ? Object.values(device.tags).map(tag => tag.address) : [];
         let dialogRef = this.dialog.open(TagPropertyRedisScanComponent, {
             disableClose: true,
             position: { top: '60px' },

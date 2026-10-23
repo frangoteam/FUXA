@@ -190,6 +190,7 @@ import { TagPropertyEditInternalComponent } from './device/tag-property/tag-prop
 import { TagPropertyEditOpcuaComponent } from './device/tag-property/tag-property-edit-opcua/tag-property-edit-opcua.component';
 import { TagPropertyEditBacnetComponent } from './device/tag-property/tag-property-edit-bacnet/tag-property-edit-bacnet.component';
 import { TagPropertyEditWebapiComponent } from './device/tag-property/tag-property-edit-webapi/tag-property-edit-webapi.component';
+import { TagPropertyEditIothttpComponent } from './device/tag-property/tag-property-edit-iothttp/tag-property-edit-iothttp.component';
 import { TagPropertyEditEthernetipComponent } from './device/tag-property/tag-property-edit-ethernetip/tag-property-edit-ethernetip.component';
 import { TagPropertyEditGenericEthernetIPComponent } from './device/tag-property/tag-property-edit-generic-ethernetip/tag-property-edit-generic-ethernetip.component';
 import { ViewPropertyComponent } from './editor/view-property/view-property.component';
@@ -277,6 +278,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyEditOpcuaComponent,
         TagPropertyEditBacnetComponent,
         TagPropertyEditWebapiComponent,
+        TagPropertyEditIothttpComponent,
         TagPropertyEditEthernetipComponent,
         TagPropertyEditGenericEthernetIPComponent,
         TagPropertyEditADSclientComponent,

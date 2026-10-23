@@ -1,0 +1,89 @@
+<form class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'device.iothttp-tag-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content>
+        <div class="my-form-field item-block">
+            <span>{{'device.tag-property-name' | translate}}</span>
+            <input [(ngModel)]="tagName" name="tagName" type="text">
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.tag-property-type' | translate}}</span>
+            <mat-select [(value)]="tagType" name="tagType">
+                <mat-option value="number">number</mat-option>
+                <mat-option value="boolean">boolean</mat-option>
+                <mat-option value="string">string</mat-option>
+            </mat-select>
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.iothttp-read-endpoint' | translate}}</span>
+            <input [(ngModel)]="tagAddress" name="tagAddress" type="text" placeholder="/api/status">
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.iothttp-json-path' | translate}}</span>
+            <input [(ngModel)]="memaddress" name="memaddress" type="text" placeholder="data.sensor.value">
+        </div>
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.iothttp-read-method' | translate}}</span>
+            <mat-select [(value)]="readMethod" name="readMethod">
+                <mat-option *ngFor="let m of readMethods" [value]="m">{{ m }}</mat-option>
+            </mat-select>
+        </div>
+
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.iothttp-write-method' | translate}}</span>
+            <mat-select [(value)]="writeMethod" name="writeMethod">
+                <mat-option *ngFor="let m of writeMethods" [value]="m">{{ m }}</mat-option>
+            </mat-select>
+        </div>
+        <div *ngIf="writeMethod !== 'none'">
+            <div class="my-form-field item-block mt10">
+                <span>{{'device.iothttp-write-endpoint' | translate}}</span>
+                <input [(ngModel)]="writePath" name="writePath" type="text" placeholder="/api/relay (default: read endpoint)">
+            </div>
+            <div class="my-form-field item-block mt10">
+                <span>{{'device.iothttp-write-key' | translate}}</span>
+                <input [(ngModel)]="writeKey" name="writeKey" type="text" placeholder="rele1">
+            </div>
+            <div class="my-form-field item-block mt10">
+                <span>{{'device.iothttp-body-mode' | translate}}</span>
+                <mat-select [(value)]="writeMode" name="writeMode">
+                    <mat-option *ngFor="let m of bodyModes" [value]="m">{{ m }}</mat-option>
+                </mat-select>
+            </div>
+            <div class="my-form-field item-block mt10" *ngIf="writeMode === 'json-template'">
+                <span>template</span>
+                <input [(ngModel)]="writeTemplate" name="writeTemplate" type="text" placeholder='{"value": {value}}'>
+            </div>
+            <div class="my-form-field item-block mt10">
+                <span>Content-Type</span>
+                <input [(ngModel)]="writeContentType" name="writeContentType" type="text">
+            </div>
+        </div>
+
+        <div class="my-form-field item-block mt10">
+            <span>{{'device.tag-property-description' | translate}}</span>
+            <input [(ngModel)]="tagDescription" name="tagDescription" type="text">
+        </div>
+
+        <div class="my-form-field item-block mt10">
+            <button mat-stroked-button color="accent" (click)="testRead()" [disabled]="testing || !tagAddress">
+                {{ testing ? '...' : ('device.iothttp-test' | translate) }}
+            </button>
+            <div *ngIf="testResult" class="iot-test" [ngClass]="{ ok: testResult.ok, err: !testResult.ok }">
+                <div *ngIf="testResult.ok">
+                    <b>{{'device.iothttp-test-value' | translate}}:</b> {{ testResult.value }}
+                    <span *ngIf="testResult.status">(status {{ testResult.status }})</span>
+                </div>
+                <div *ngIf="!testResult.ok">
+                    <b>{{'device.iothttp-test-error' | translate}}:</b> {{ testResult.error }}
+                    <span *ngIf="testResult.status">(status {{ testResult.status }})</span>
+                </div>
+                <pre *ngIf="testResult.raw">{{ testResult.raw }}</pre>
+            </div>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" [disabled]="!tagName || !tagAddress" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+    </div>
+</form>

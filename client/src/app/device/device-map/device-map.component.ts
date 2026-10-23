@@ -142,6 +142,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
             }, error => {
             });
             this.plugins.push(DeviceType.WebAPI);
+            this.plugins.push(DeviceType.IoTHTTP);
             this.plugins.push(DeviceType.MQTTclient);
             this.plugins.push(DeviceType.internal);
         } else {
@@ -522,6 +523,31 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                         }
                         device.property.socketReuse = tempdevice.property.socketReuse;
                         device.property.forceFC16 = tempdevice.property.forceFC16;
+                        // IoTHTTP
+                        device.property.verifyTls = tempdevice.property.verifyTls;
+                        device.property.stream = tempdevice.property.stream;
+                        device.property.headers = tempdevice.property.headers;
+                        device.property.query = tempdevice.property.query;
+                        device.property.readBody = tempdevice.property.readBody;
+                        device.property.authMode = tempdevice.property.authMode;
+                        device.property.authToken = tempdevice.property.authToken;
+                        device.property.authUser = tempdevice.property.authUser;
+                        device.property.authPass = tempdevice.property.authPass;
+                        device.property.authHeader = tempdevice.property.authHeader;
+                        device.property.authQuery = tempdevice.property.authQuery;
+                        device.property.authKey = tempdevice.property.authKey;
+                        device.property.loginUrl = tempdevice.property.loginUrl;
+                        device.property.loginMethod = tempdevice.property.loginMethod;
+                        device.property.loginBody = tempdevice.property.loginBody;
+                        device.property.loginHeaders = tempdevice.property.loginHeaders;
+                        device.property.tokenFrom = tempdevice.property.tokenFrom;
+                        device.property.tokenPath = tempdevice.property.tokenPath;
+                        device.property.cookieName = tempdevice.property.cookieName;
+                        device.property.tokenInject = tempdevice.property.tokenInject;
+                        device.property.tokenHeader = tempdevice.property.tokenHeader;
+                        device.property.tokenQuery = tempdevice.property.tokenQuery;
+                        device.property.tokenBodyKey = tempdevice.property.tokenBodyKey;
+                        device.property.tokenRefreshMinutes = tempdevice.property.tokenRefreshMinutes;
                         if (tempdevice.property.timeout) {
                             device.property.timeout = parseInt(tempdevice.property.timeout);
                         } else {
