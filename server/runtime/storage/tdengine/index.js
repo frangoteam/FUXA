@@ -48,11 +48,11 @@ function TDengine(_settings, _log, _currentStorage) {
         const cursor = conn.cursor();
         for (const tagid in tagsValues) {
             let tag = tagsValues[tagid];
+            if (tag.daq && tag.daq.restored && !utils.isNullOrUndefined(tag.value) && !Number.isNaN(tag.value)) {
+                dataToRestore.push({ id: tag.id, deviceId: deviceId, value: tag.value });
+            }
             if (!tag.daq || utils.isNullOrUndefined(tag.value) || Number.isNaN(tag.value)) {
-                if (tag.daq.restored) {
-                    dataToRestore.push({ id: tag.id, deviceId: deviceId, value: tag.value });
-                }
-                if (!tag.daq.enabled) {
+                if (tag.daq && !tag.daq.enabled) {
                     continue;
                 }
             }
