@@ -6,8 +6,8 @@ module.exports = function(RED) {
 
         this.on('input', async function(msg) {
             try {
-                var deviceName = config.deviceName || msg.deviceName;
-                var includeTags = (config.includeTags !== undefined) ? config.includeTags : (msg.includeTags !== undefined ? msg.includeTags : true);
+                var deviceName = msg.deviceName || config.deviceName;
+                var includeTags = (msg.includeTags !== undefined) ? msg.includeTags : (config.includeTags !== undefined ? config.includeTags : true);
 
                 if (deviceName) {
                     var device = await fuxa.getDevice(deviceName, includeTags);

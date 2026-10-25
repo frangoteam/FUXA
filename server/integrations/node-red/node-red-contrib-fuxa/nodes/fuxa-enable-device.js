@@ -6,8 +6,8 @@ module.exports = function(RED) {
 
         this.on('input', async function(msg) {
             try {
-                var deviceName = config.deviceName || msg.deviceName;
-                var enabled = (config.enabled !== undefined) ? config.enabled : (msg.enabled !== undefined ? msg.enabled : true);
+                var deviceName = msg.deviceName || config.deviceName;
+                var enabled = (msg.enabled !== undefined) ? msg.enabled : (config.enabled !== undefined ? config.enabled : true);
 
                 if (deviceName) {
                     var result = await fuxa.enableDevice(deviceName, enabled);
