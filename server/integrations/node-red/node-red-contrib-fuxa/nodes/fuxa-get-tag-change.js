@@ -62,7 +62,7 @@ module.exports = function(RED) {
 
                                 // Output the tag change
                                 var outputMsg = {
-                                    payload: currentValue,
+                                    payload: snapshotValue(currentValue),
                                     topic: config.tag || configuredTagId,
                                     tagId: configuredTagId,
                                     tagName: config.tag,

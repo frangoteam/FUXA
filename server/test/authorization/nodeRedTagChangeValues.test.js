@@ -10,7 +10,7 @@ describe('Node-RED tag change values', () => {
     let node;
     let value;
 
-    function create(initialValue, config = { tagId: 'tag-1', tag: 'Recipe' }) {
+    function create(initialValue, config = { tagId: 'tag-1', tag: 'Recipe' }, cloneSent = true) {
         value = initialValue;
         events = new EventEmitter();
         const fuxa = {
@@ -35,7 +35,7 @@ describe('Node-RED tag change values', () => {
                     target.on = emitter.on.bind(emitter);
                     target.emit = emitter.emit.bind(emitter);
                     target.messages = [];
-                    target.send = msg => target.messages.push(cloneMessage(msg));
+                    target.send = msg => target.messages.push(cloneSent ? cloneMessage(msg) : msg);
                 },
             },
         });
@@ -126,6 +126,30 @@ describe('Node-RED tag change values', () => {
         assert.deepEqual(node.messages[0].payload, [1]);
         assert.equal(node.messages[0].previousValue, undefined);
     });
+
+
+    for (const [name, make, mutate] of [
+        ['arrays', n => [n], (v, n) => { v[0] = n; }],
+        ['typed arrays', n => new Float64Array([n]), (v, n) => { v[0] = n; }],
+        ['ByteStrings', n => Buffer.from([n]), (v, n) => { v[0] = n; }],
+        ['nested ByteStrings', n => [{ bytes: Buffer.from([n]) }], (v, n) => { v[0].bytes[0] = n; }],
+    ]) {
+        it(`isolates ${name} sent to the first wire from live tag mutations`, () => {
+            // Node-RED passes the first wired message without cloning it.
+            create(make(10), undefined, false);
+            const live = make(20);
+            update(live);
+            mutate(live, 30);
+            assert.deepEqual(node.messages[0].payload, make(20));
+            update(live);
+            assert.equal(node.messages.length, 2);
+            assert.deepEqual(node.messages[1].previousValue, make(20));
+            mutate(node.messages[1].payload, 99);
+            assert.deepEqual(live, make(30));
+            update(live);
+            assert.equal(node.messages.length, 2);
+        });
+    }
 
     it('ignores other tags and removes the listener on close', () => {
         create([1]);
