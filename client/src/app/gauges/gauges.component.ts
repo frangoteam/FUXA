@@ -308,7 +308,7 @@ export class GaugesManager {
             }
         }
         let mouseEvents: GaugeEvent[] = this.getBindMouseEvent(ga, null);
-        if (mouseEvents && mouseEvents.length > 0) {
+        if (mouseEvents?.length > 0 || HtmlButtonComponent.hasButtonAction(ga)) {
             this.eventGauge[ga.id] = ga;
             if (!this.mapGaugeView[ga.id]) {
                 this.mapGaugeView[ga.id] = {};
