@@ -36,6 +36,29 @@ describe('Disabled HMI control markup', function () {
         assert.equal(disable(once), once);
     });
 
+    describe('foreignObject fragment boundaries', function () {
+        function split(before, tagcontent, after) {
+            assert.deepEqual(utils.domStringSplitter(before + tagcontent + after, 'foreignObject', 0), { before, tagcontent, after });
+        }
+
+        it('ignores opening-tag lookalikes in text containers and longer names', function () {
+            const before = '<!-- <foreignObject> --><![CDATA[<foreignObject>]]><svg title="<foreignObject>"><script>"<foreignObject>"</script><foreignObject-extra></foreignObject-extra>';
+            split(before, '<foreignObject><input>', '</foreignObject></svg>');
+        });
+
+        it('keeps the whole input before when only a commented opening tag exists', function () {
+            split('<!-- <foreignObject><input></foreignObject> -->', '', '');
+        });
+
+        it('stops a self-closing fragment before unrelated controls', function () {
+            split('<svg>', '<foreignObject />', '<input></svg>');
+        });
+
+        it('does not treat a longer closing tag name as the fragment boundary', function () {
+            split('<svg>', '<foreignObject><foreignObject-extra></foreignObject-extra><input>', '</foreignObject></svg>');
+        });
+    });
+
     async function loadProject(svgcontent) {
         const filename = require.resolve('../../runtime/project');
         const projectModule = new Module(filename, module);
@@ -82,6 +105,26 @@ describe('Disabled HMI control markup', function () {
             assert.equal(admin.hmi.views[0].svgcontent, original);
             assert.equal(admin.hmi.views[0].items.group.property.events.length, 1);
         });
+
+        const fragmentCases = [
+            ['a commented closing tag', '<!-- </foreignObject> -->'],
+            ['a CDATA closing tag', '<![CDATA[</foreignObject>]]>'],
+            ['a quoted closing tag', '<div title="</foreignObject>">Note</div>'],
+            ['a script closing-tag literal', '<script>const label = "</foreignObject>";</script>'],
+            ['a nested foreignObject', '<svg><foreignObject><button>Nested</button></foreignObject></svg>']
+        ];
+        for (const [name, prefix] of fragmentCases) {
+            it('disables controls after ' + name + ' through both project paths', async function () {
+                const original = '<svg><g id="controlGroup"><foreignObject>' + prefix + '<input><button>Run</button></foreignObject></g></svg>';
+                const expected = '<svg><g id="controlGroup"><foreignObject>' + prefix.replace('<button>', '<button disabled >') + '<input disabled ><button disabled >Run</button></foreignObject></g></svg>';
+                const project = await loadProject(original);
+                const restricted = await project.getProject('viewer', 'viewer');
+                assert.equal(restricted.hmi.views[0].svgcontent, expected);
+                const view = await project.getProjectView('v1', 'viewer');
+                assert.equal(view.svgcontent, expected);
+                assert.equal((await project.getProject('admin', 'admin')).hmi.views[0].svgcontent, original);
+            });
+        }
 
         it('preserves markup when retrieving a restricted single view repeatedly', async function () {
             const project = await loadProject(original);

@@ -28,20 +28,43 @@ var utils = module.exports = {
     SMALLEST_NEGATIVE_INTEGER: -9007199254740991,
 
     domStringSplitter: function (src, tagsplitter, first) {
-        var result = { before: '', tagcontent: '', after: '' };
-        var tagStart = '<' + tagsplitter.toLowerCase();
-        var tagEnd = '</' + tagsplitter.toLowerCase();
-        var text = src.toLowerCase();
-        var start = text.indexOf(tagStart, first);
-        if (start === -1) {
-            result.before = src;
-            return result;
+        const name = tagsplitter.toLowerCase();
+        const minimum = Math.max(0, Number(first) || 0);
+        const tokens = /<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<\/?[a-z][a-z0-9:-]*(?=[\s/>])(?:[^"'<>]|"[^"]*"|'[^']*')*>/gi;
+        let start = -1;
+        let depth = 0;
+        let rawTextTag = null;
+        // Match complete tags so quoted values and inert markup cannot truncate
+        // the fragment used by permission filtering. Balance nested fragments.
+        for (const token of src.matchAll(tokens)) {
+            const match = token[0].match(/^<(\/?)([a-z][a-z0-9:-]*)/i);
+            if (!match) continue;
+            const tag = match[2].toLowerCase();
+            if (rawTextTag) {
+                if (!match[1] || tag !== rawTextTag) continue;
+                rawTextTag = null;
+            }
+            if (!match[1] && !/\/\s*>$/.test(token[0]) && ['script', 'style', 'textarea', 'title'].includes(tag)) rawTextTag = tag;
+            if (tag !== name) continue;
+            if (!match[1]) {
+                if (start === -1) {
+                    if (token.index < minimum) continue;
+                    start = token.index;
+                }
+                if (/\/\s*>$/.test(token[0])) {
+                    if (depth === 0) {
+                        const end = token.index + token[0].length;
+                        return { before: src.slice(0, start), tagcontent: src.slice(start, end), after: src.slice(end) };
+                    }
+                } else {
+                    depth++;
+                }
+            } else if (start !== -1 && --depth === 0) {
+                return { before: src.slice(0, start), tagcontent: src.slice(start, token.index), after: src.slice(token.index) };
+            }
         }
-        var end = text.indexOf(tagEnd, start);
-        result.before = src.slice(0, start);
-        result.tagcontent = end === -1 ? src.slice(start) : src.slice(start, end);
-        result.after = end === -1 ? '' : src.slice(end);
-        return result;
+        if (start === -1) return { before: src, tagcontent: '', after: '' };
+        return { before: src.slice(0, start), tagcontent: src.slice(start), after: '' };
     },
 
     domStringSetAttribute: function (src, tags, attribute) {
