@@ -348,18 +348,22 @@ function NotificatorManager(_runtime) {
         return new Promise(async function (resolve, reject) {
             try {
                 var smtpServer = smtp || settings.smtp;
-                if (smtpServer && smtpServer.host && smtpServer.port && smtpServer.username && smtpServer.password) {
+                if (smtpServer && smtpServer.host && smtpServer.port) {
                     // the settings form saves the port as text ("465")
                     const port = Number(smtpServer.port);
-                    const transporter = nodemailer.createTransport({
+                    const transportOptions = {
                         host: smtpServer.host,
                         port: port,
-                        secure: port === 465, // true for 465, false for other ports
-                        auth: {
+                        secure: port === 465 // true for 465, false for other ports
+                    };
+                    // relays that authenticate by IP address have no credentials
+                    if (smtpServer.username) {
+                        transportOptions.auth = {
                             user: smtpServer.username,
                             pass: smtpServer.password
-                        }
-                    });
+                        };
+                    }
+                    const transporter = nodemailer.createTransport(transportOptions);
                     if (!msg.from || smtpServer.mailsender) {
                         msg.from = smtpServer.mailsender || smtpServer.username;
                     }
