@@ -45,25 +45,32 @@ var utils = module.exports = {
     },
 
     domStringSetAttribute: function (src, tags, attribute) {
-        var result = src;
-        for (var i = 0; i < tags.length; i++) {
-            var text = result.toLowerCase();
-            var tagStart = '<' + tags[i].toLowerCase();
-            var pos = 0;
-            var temp  = '';
-            while((pos = text.indexOf(tagStart, pos)) !== -1) {
-                pos += tagStart.length + 1;
-                if (text.indexOf('>') === tagStart.length) {
-                    temp += src.slice(0, pos - 1) + ' ' + attribute + ' >' + src.slice(pos);
-                } else {
-                    temp += src.slice(0, pos) + attribute + ' ' + src.slice(pos);
-                }
+        const selected = new Set(tags.map(tag => tag.toLowerCase()));
+        const attributeName = attribute.trim().match(/^[^\s=/>]+/)[0].toLowerCase();
+        let rawTextTag = null;
+        // Keep quoted attribute values, comments and CDATA intact. In particular,
+        // tag-like text inside an attribute must not become a second control.
+        const tokens = /<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<\/?[a-z][a-z0-9:-]*(?=[\s/>])(?:[^"'<>]|"[^"]*"|'[^']*')*>/gi;
+        return src.replace(tokens, token => {
+            const match = token.match(/^<(\/?)([a-z][a-z0-9:-]*)/i);
+            if (!match) return token;
+            const name = match[2].toLowerCase();
+            if (rawTextTag) {
+                if (match[1] && name === rawTextTag) rawTextTag = null;
+                return token;
             }
-            if (temp.length) {
-                result = temp;
+            if (match[1]) return token;
+            if (['script', 'style', 'textarea', 'title'].includes(name)) rawTextTag = name;
+            if (!selected.has(name)) return token;
+
+            const tail = token.slice(match[0].length);
+            const attributes = /\s+([^\s=/>]+)(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?/g;
+            let existing;
+            while ((existing = attributes.exec(tail)) !== null) {
+                if (existing[1].toLowerCase() === attributeName) return token;
             }
-        }
-        return result;
+            return match[0] + ' ' + attribute + (/^\s/.test(tail) ? '' : ' ') + tail;
+        });
     },
 
     domStringSetOverlay: function (htmlString, tagNames) {
