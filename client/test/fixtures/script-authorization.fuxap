@@ -1,0 +1,253 @@
+{
+    "version": "1.00",
+    "devices": {
+        "0": {
+            "id": "0",
+            "name": "FUXA Memory",
+            "type": "FuxaServer",
+            "enabled": true,
+            "polling": 100,
+            "property": {},
+            "tags": {
+                "server-result": {
+                    "id": "server-result",
+                    "name": "server-result",
+                    "type": "number",
+                    "init": 0
+                },
+                "denied-result": {
+                    "id": "denied-result",
+                    "name": "denied-result",
+                    "type": "number",
+                    "init": 0
+                }
+            }
+        },
+        "internal-test": {
+            "id": "internal-test",
+            "name": "internal-test",
+            "type": "internal",
+            "enabled": true,
+            "polling": 1000,
+            "property": {},
+            "tags": {
+                "client-result": {
+                    "id": "client-result",
+                    "name": "client-result",
+                    "type": "number",
+                    "init": 0
+                }
+            }
+        }
+    },
+    "server": {
+        "id": "0",
+        "name": "FUXA Server",
+        "type": "FuxaServer",
+        "property": {}
+    },
+    "hmi": {
+        "layout": {
+            "start": "v_authorization",
+            "showdev": true,
+            "hidenavigation": false,
+            "navigation": {
+                "mode": "over",
+                "type": "text",
+                "items": []
+            },
+            "header": {},
+            "inputdialog": "false"
+        },
+        "views": [
+            {
+                "id": "v_authorization",
+                "name": "Script Authorization",
+                "type": "svg",
+                "profile": {
+                    "width": 920,
+                    "height": 510,
+                    "bkcolor": "#ffffffff"
+                },
+                "items": {
+                    "HXB_SERVER": {
+                        "id": "HXB_SERVER",
+                        "type": "svg-ext-html_button",
+                        "name": "Run SERVER",
+                        "label": "HtmlButton",
+                        "property": {
+                            "text": "Run SERVER",
+                            "permission": 770,
+                            "permissionRoles": {
+                                "show": [
+                                    "role-operator",
+                                    "role-viewer"
+                                ],
+                                "enabled": [
+                                    "role-operator"
+                                ]
+                            },
+                            "events": [
+                                {
+                                    "type": "click",
+                                    "action": "onRunScript",
+                                    "actparam": "server-script",
+                                    "actoptions": {
+                                        "params": []
+                                    }
+                                }
+                            ],
+                            "actions": [],
+                            "ranges": []
+                        }
+                    },
+                    "VAL_SERVER": {
+                        "id": "VAL_SERVER",
+                        "type": "svg-ext-value",
+                        "name": "server-result",
+                        "label": "Value",
+                        "property": {
+                            "variableId": "server-result",
+                            "events": [],
+                            "actions": [],
+                            "ranges": []
+                        }
+                    },
+                    "HXB_CLIENT": {
+                        "id": "HXB_CLIENT",
+                        "type": "svg-ext-html_button",
+                        "name": "Run CLIENT",
+                        "label": "HtmlButton",
+                        "property": {
+                            "text": "Run CLIENT",
+                            "permission": 770,
+                            "permissionRoles": {
+                                "show": [
+                                    "role-operator",
+                                    "role-viewer"
+                                ],
+                                "enabled": [
+                                    "role-operator"
+                                ]
+                            },
+                            "events": [
+                                {
+                                    "type": "click",
+                                    "action": "onRunScript",
+                                    "actparam": "client-script",
+                                    "actoptions": {
+                                        "params": []
+                                    }
+                                }
+                            ],
+                            "actions": [],
+                            "ranges": []
+                        }
+                    },
+                    "VAL_CLIENT": {
+                        "id": "VAL_CLIENT",
+                        "type": "svg-ext-value",
+                        "name": "client-result",
+                        "label": "Value",
+                        "property": {
+                            "variableId": "client-result",
+                            "events": [],
+                            "actions": [],
+                            "ranges": []
+                        }
+                    },
+                    "HXB_DENIED": {
+                        "id": "HXB_DENIED",
+                        "type": "svg-ext-html_button",
+                        "name": "Different script role",
+                        "label": "HtmlButton",
+                        "property": {
+                            "text": "Different script role",
+                            "permission": 770,
+                            "permissionRoles": {
+                                "show": [
+                                    "role-operator",
+                                    "role-viewer"
+                                ],
+                                "enabled": [
+                                    "role-operator"
+                                ]
+                            },
+                            "events": [
+                                {
+                                    "type": "click",
+                                    "action": "onRunScript",
+                                    "actparam": "denied-script",
+                                    "actoptions": {
+                                        "params": []
+                                    }
+                                }
+                            ],
+                            "actions": [],
+                            "ranges": []
+                        }
+                    },
+                    "VAL_DENIED": {
+                        "id": "VAL_DENIED",
+                        "type": "svg-ext-value",
+                        "name": "denied-result",
+                        "label": "Value",
+                        "property": {
+                            "variableId": "denied-result",
+                            "events": [],
+                            "actions": [],
+                            "ranges": []
+                        }
+                    }
+                },
+                "variables": {},
+                "svgcontent": "<svg width=\"920\" height=\"510\" xmlns=\"http://www.w3.org/2000/svg\"><g><title>Layer 1</title><text x=\"30\" y=\"45\" font-size=\"24\" fill=\"#172235\">HMI script authorization #2615</text><text x=\"30\" y=\"78\" font-size=\"16\" fill=\"#172235\">Internal tags only. Operator can execute; Viewer can only observe.</text><g id=\"HXB_SERVER\" type=\"svg-ext-html_button\"><rect x=\"35\" y=\"125\" width=\"220\" height=\"45\" fill=\"none\" stroke-width=\"0\"/><foreignObject x=\"35\" y=\"125\" width=\"220\" height=\"45\"><button xmlns=\"http://www.w3.org/1999/xhtml\" id=\"B-HXB_SERVER\" style=\"width:210px;height:40px\">Run SERVER</button></foreignObject></g><text x=\"300\" y=\"155\" font-size=\"18\" fill=\"#172235\">server-result:</text><g id=\"VAL_SERVER\" type=\"svg-ext-value\"><text x=\"490\" y=\"155\" font-size=\"24\" fill=\"#0c6cbb\">?</text></g><g id=\"HXB_CLIENT\" type=\"svg-ext-html_button\"><rect x=\"35\" y=\"235\" width=\"220\" height=\"45\" fill=\"none\" stroke-width=\"0\"/><foreignObject x=\"35\" y=\"235\" width=\"220\" height=\"45\"><button xmlns=\"http://www.w3.org/1999/xhtml\" id=\"B-HXB_CLIENT\" style=\"width:210px;height:40px\">Run CLIENT</button></foreignObject></g><text x=\"300\" y=\"265\" font-size=\"18\" fill=\"#172235\">client-result:</text><g id=\"VAL_CLIENT\" type=\"svg-ext-value\"><text x=\"490\" y=\"265\" font-size=\"24\" fill=\"#0c6cbb\">?</text></g><g id=\"HXB_DENIED\" type=\"svg-ext-html_button\"><rect x=\"35\" y=\"350\" width=\"220\" height=\"45\" fill=\"none\" stroke-width=\"0\"/><foreignObject x=\"35\" y=\"350\" width=\"220\" height=\"45\"><button xmlns=\"http://www.w3.org/1999/xhtml\" id=\"B-HXB_DENIED\" style=\"width:210px;height:40px\">Different script role</button></foreignObject></g><text x=\"300\" y=\"380\" font-size=\"16\" fill=\"#172235\">Operator button access does not grant Engineer script access.</text><text x=\"300\" y=\"440\" font-size=\"18\" fill=\"#172235\">denied-result:</text><g id=\"VAL_DENIED\" type=\"svg-ext-value\"><text x=\"490\" y=\"440\" font-size=\"24\" fill=\"#0c6cbb\">?</text></g></g></svg>"
+            }
+        ]
+    },
+    "charts": [],
+    "scripts": [
+        {
+            "id": "server-script",
+            "name": "server_script",
+            "mode": "SERVER",
+            "parameters": [],
+            "sync": true,
+            "code": "$setTag(\"server-result\", 42); return 42;",
+            "permission": 2,
+            "permissionRoles": {
+                "enabled": [
+                    "role-operator"
+                ]
+            }
+        },
+        {
+            "id": "client-script",
+            "name": "client_script",
+            "mode": "CLIENT",
+            "parameters": [],
+            "sync": true,
+            "code": "$setTag(\"client-result\", 42); return 42;",
+            "permission": 2,
+            "permissionRoles": {
+                "enabled": [
+                    "role-operator"
+                ]
+            }
+        },
+        {
+            "id": "denied-script",
+            "name": "denied_script",
+            "mode": "SERVER",
+            "parameters": [],
+            "sync": true,
+            "code": "$setTag(\"denied-result\", 99); return 99;",
+            "permission": 4,
+            "permissionRoles": {
+                "enabled": [
+                    "role-engineer"
+                ]
+            }
+        }
+    ]
+}
