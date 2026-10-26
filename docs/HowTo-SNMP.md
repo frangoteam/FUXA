@@ -13,7 +13,10 @@ Add a Device in **Connections** and select **SNMP**. In the device property set:
 The credentials are stored encrypted in the device security store, never in the project file: after importing a project you have to enter them again.
 The device is connected when the agent answers a probe of `sysUpTime.0`; for v3 this also validates the credentials.
 Since SNMP uses UDP there is no permanent connection: the status follows the answers to the polling and after the
-configured *Polls without answer before reconnect* the device reconnects. *OIDs per request* limits the size of each GET datagram.
+configured *Polls without answer before reconnect* the device reconnects. *OIDs per request* limits the size of each GET datagram,
+the requests of one polling are sent concurrently. A polling that starts while the previous one is still waiting for the agent
+is skipped and logged: keep the request timeout multiplied by the retries plus one below the polling interval
+(with the defaults 2000 ms, 1 retry and 3000 ms polling).
 
 **Tags**
 

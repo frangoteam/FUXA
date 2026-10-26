@@ -249,6 +249,68 @@ describe('SNMP driver', () => {
             assert.equal(Object.keys(device.getValues()).length, 26);
         });
 
+        it('sends the chunks concurrently', async () => {
+            const device = createDevice({
+                property: { address: 'a', options: { version: 'v2c', maxOidsPerRequest: 10 } },
+                tags: tags(26)
+            });
+            await device.connect();
+            const pending = [];
+            session.get.callsFake((oids, callback) => pending.push({ oids, callback }));
+            const polling = device.polling();
+            assert.equal(pending.length, 3, 'all chunks requested before any answer');
+            pending.forEach(request => request.callback(null, request.oids.map(oid => ({ oid, type: ObjectType.Integer, value: 7 }))));
+            await polling;
+            assert.equal(Object.keys(device.getValues()).length, 26);
+            assert.equal(device.getValues().tag25.value, 7);
+        });
+
+        it('keeps the answered chunks when another chunk times out', async () => {
+            const device = createDevice({
+                property: { address: 'a', options: { version: 'v2c', maxOidsPerRequest: 10 } },
+                tags: tags(20)
+            });
+            await device.connect();
+            let calls = 0;
+            session.get.callsFake((oids, callback) => {
+                if (++calls === 1) {
+                    return callback(new Error('Request timed out'));
+                }
+                callback(null, oids.map(oid => ({ oid, type: ObjectType.Integer, value: 1 })));
+            });
+            await device.polling();
+            assert.equal(device.getValues().tag0, undefined);
+            assert.equal(device.getValues().tag15.value, 1);
+            assert.equal(device.isConnected(), true);
+            assert.ok(device.lastReadTimestamp() > 0);
+        });
+
+        it('skips an overlapping poll without closing the session', async () => {
+            const device = createDevice();
+            await device.connect();
+            const pending = [];
+            session.get.callsFake((oids, callback) => pending.push({ oids, callback }));
+            const statuses = [];
+            events.on('device-status:changed', event => statuses.push(event.status));
+            const first = device.polling();
+            await device.polling();
+            await device.polling();
+            await device.polling();
+            assert.equal(pending.length, 1, 'the overlapping polls did not send requests');
+            sinon.assert.notCalled(session.close);
+            assert.equal(device.isConnected(), true);
+            assert.deepEqual(statuses, ['connect-busy', 'connect-busy', 'connect-busy']);
+            sinon.assert.calledOnce(logger.warn);
+            sinon.assert.calledWithMatch(logger.warn, /polling overlap, skipped 1 cycle/);
+            pending[0].callback(null, pending[0].oids.map(oid => ({ oid, type: ObjectType.Integer, value: 3 })));
+            await first;
+            assert.equal(device.getValues().tag1.value, 3);
+            assert.equal(statuses[statuses.length - 1], 'connect-ok');
+            session.get.callsFake((oids, callback) => callback(null, oids.map(oid => ({ oid, type: ObjectType.Integer, value: 4 }))));
+            await device.polling();
+            assert.equal(device.getValues().tag1.value, 4, 'polling resumes after the slow poll completes');
+        });
+
         it('decodes the varbind types and emits the values', async () => {
             const device = createDevice({
                 tags: {

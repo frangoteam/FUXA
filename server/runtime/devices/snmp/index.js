@@ -29,7 +29,7 @@ const SnmpVersion = {
 const DEFAULT_OPTIONS = {
     version: SnmpVersion.v3,
     transport: 'udp4',
-    timeout: 5000,              // ms per request
+    timeout: 2000,              // ms per request, keep timeout * (retries + 1) below the polling interval
     retries: 1,
     securityLevel: 'authPriv',  // v3 only: noAuthNoPriv | authNoPriv | authPriv
     authProtocol: 'sha256',     // v3 only: md5 | sha | sha224 | sha256 | sha384 | sha512
@@ -154,17 +154,19 @@ function SnmpClient(_data, _logger, _events, _runtime) {
             const options = _getOptions();
             const results = {};
             let answered = false;
-            for (const chunk of _chunk(tagIds, options.maxOidsPerRequest)) {
-                try {
-                    const varbinds = await _get(chunk.map(id => tagMap[id].address));
-                    chunk.forEach((id, index) => {
-                        results[id] = varbinds[index];
+            // the chunks are requested concurrently: the poll lasts as the slowest request, not the sum of all
+            const chunks = _chunk(tagIds, options.maxOidsPerRequest);
+            const outcomes = await Promise.allSettled(chunks.map(chunk => _get(chunk.map(id => tagMap[id].address))));
+            outcomes.forEach((outcome, chunkIndex) => {
+                if (outcome.status === 'fulfilled') {
+                    chunks[chunkIndex].forEach((id, index) => {
+                        results[id] = outcome.value[index];
                     });
                     answered = true;
-                } catch (err) {
-                    logger.error(`'${data.name}' polling error! ${err}`);
+                } else {
+                    logger.error(`'${data.name}' polling error! ${outcome.reason}`);
                 }
-            }
+            });
             if (answered) {
                 consecutiveTimeouts = 0;
                 lastTimestampValue = Date.now();
@@ -686,19 +688,23 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         events.emit('device-status:changed', { id: data.id, status: status });
     }
 
+    /**
+     * Guard against overlapping connection/polling: a poll started while the previous one is still waiting
+     * for the agent is skipped. The session is not closed, a slow agent is handled by the request timeout
+     * and the consecutive timeouts counter, not by the overlap.
+     */
     function _checkWorking(check) {
         if (check && working) {
             overloading++;
-            logger.warn(`'${data.name}' working (connection || polling) overload! ${overloading}`);
-            if (overloading >= 3) {
-                _closeSession();
-                connected = false;
-            } else {
-                return false;
+            if (overloading === 1 || overloading % 10 === 0) {
+                logger.warn(`'${data.name}' polling overlap, skipped ${overloading} cycle(s): reduce the tags or the timeout/retries, or increase the polling interval`);
             }
+            return false;
         }
         working = check;
-        overloading = 0;
+        if (!check) {
+            overloading = 0;
+        }
         return true;
     }
 }
