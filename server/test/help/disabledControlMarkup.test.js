@@ -18,6 +18,8 @@ const cases = [
     ['quoted angle brackets', '<input title="a > b" data-note=\'<button>\'><button title=\'x > y\'>Go</button>', '<input disabled title="a > b" data-note=\'<button>\'><button disabled title=\'x > y\'>Go</button>'],
     ['tag name boundaries', '<input-list></input-list><button-group></button-group><selectable>Text</selectable>', '<input-list></input-list><button-group></button-group><selectable>Text</selectable>'],
     ['comments and CDATA', '<!-- <input> --><![CDATA[<button>]]><input>', '<!-- <input> --><![CDATA[<button>]]><input disabled >'],
+    ['empty SVG script before controls', '<svg xmlns="http://www.w3.org/2000/svg"><script /></svg><input><button>Run</button>', '<svg xmlns="http://www.w3.org/2000/svg"><script /></svg><input disabled ><button disabled >Run</button>'],
+    ['empty SVG style before controls', '<svg xmlns="http://www.w3.org/2000/svg"><style/></svg><input><button>Run</button>', '<svg xmlns="http://www.w3.org/2000/svg"><style/></svg><input disabled ><button disabled >Run</button>'],
     ['raw text elements', '<script>const text = "<input>";</script><style>.x:after {content:"<button>"}</style><textarea><input></textarea><button>Go</button>', '<script>const text = "<input>";</script><style>.x:after {content:"<button>"}</style><textarea><input></textarea><button disabled >Go</button>'],
     ['existing disabled attributes', '<input disabled><button DISABLED="disabled">Go</button>', '<input disabled><button DISABLED="disabled">Go</button>'],
     ['attribute names inside values', '<input data-label="disabled" disabled-label="yes">', '<input disabled data-label="disabled" disabled-label="yes">'],
@@ -111,6 +113,8 @@ describe('Disabled HMI control markup', function () {
             ['a CDATA closing tag', '<![CDATA[</foreignObject>]]>'],
             ['a quoted closing tag', '<div title="</foreignObject>">Note</div>'],
             ['a script closing-tag literal', '<script>const label = "</foreignObject>";</script>'],
+            ['an empty SVG script', '<svg xmlns="http://www.w3.org/2000/svg"><script /></svg>'],
+            ['an empty SVG style', '<svg xmlns="http://www.w3.org/2000/svg"><style/></svg>'],
             ['a nested foreignObject', '<svg><foreignObject><button>Nested</button></foreignObject></svg>']
         ];
         for (const [name, prefix] of fragmentCases) {

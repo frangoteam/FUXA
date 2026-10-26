@@ -83,7 +83,7 @@ var utils = module.exports = {
                 return token;
             }
             if (match[1]) return token;
-            if (['script', 'style', 'textarea', 'title'].includes(name)) rawTextTag = name;
+            if (!/\/\s*>$/.test(token) && ['script', 'style', 'textarea', 'title'].includes(name)) rawTextTag = name;
             if (!selected.has(name)) return token;
 
             const tail = token.slice(match[0].length);
