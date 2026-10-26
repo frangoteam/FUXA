@@ -18,6 +18,11 @@ Add a **MQTT** connection and a topic subscription
 Add a **WebAPI** connection and a Tag of the JSON result
 ![](images/fuxa-webapi.gif)
 
+**SNMP**
+
+Add a **SNMP** connection to read and write the objects of a SNMP agent (v1, v2c or v3), with MIB names, scan of the agent and traps.
+See [HowTo SNMP](HowTo-SNMP.md).
+
 **Tag Options**
 
 If you have any Tag types which don't have a defined data type you can set this. For example TIME data type is no a defined type, but the base data type is normally int64 or uint64 and the time is in milliseconds.

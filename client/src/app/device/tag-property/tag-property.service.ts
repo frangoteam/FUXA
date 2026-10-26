@@ -23,6 +23,8 @@ import { TagPropertyEditWebcamComponent, TagPropertyWebcamData } from './tag-pro
 import { TagPropertyEditMelsecComponent } from './tag-property-edit-melsec/tag-property-edit-melsec.component';
 import { TagPropertyEditRedisComponent, TagPropertyRedisData } from './tag-property-edit-redis/tag-property-edit-redis.component';
 import { TagPropertyRedisScanComponent, TagPropertyRedisScanData } from './tag-property-edit-redis/tag-property-redis-scan/tag-property-redis-scan.component';
+import { TagPropertyEditSnmpComponent, TagPropertySnmpData } from './tag-property-edit-snmp/tag-property-edit-snmp.component';
+import { TagPropertySnmpScanComponent, TagPropertySnmpScanData } from './tag-property-edit-snmp/tag-property-snmp-scan/tag-property-snmp-scan.component';
 
 @Injectable({
     providedIn: 'root'
@@ -582,6 +584,74 @@ export class TagPropertyService {
                 }
                 dialogRef.close();
                 return result;
+            })
+        );
+    }
+
+    public editTagPropertySnmp(device: Device, tag: Tag, checkToAdd: boolean): Observable<any> {
+        let oldTagId = tag.id;
+        let tagToEdit: Tag = Utils.clone(tag);
+        let dialogRef = this.dialog.open(TagPropertyEditSnmpComponent, {
+            disableClose: true,
+            data: <TagPropertySnmpData>{
+                device: device,
+                tag: tagToEdit
+            },
+            position: { top: '60px' }
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                if (result) {
+                    tag.name = result.tagName;
+                    tag.address = result.tagAddress;
+                    tag.type = result.tagType;
+                    tag.description = result.tagDescription;
+                    if (result.trapOnly) {
+                        tag.options = { ...(tag.options || {}), trapOnly: true };
+                    } else if (tag.options?.trapOnly) {
+                        delete tag.options.trapOnly;
+                    }
+                    if (checkToAdd) {
+                        this.checkToAdd(tag, device);
+                    } else if (tag.id !== oldTagId) {
+                        //remove old tag device reference
+                        delete device.tags[oldTagId];
+                        this.checkToAdd(tag, device);
+                    }
+                    this.projectService.setDeviceTags(device);
+                }
+                dialogRef.close();
+                return result;
+            })
+        );
+    }
+
+    public scanTagsSnmp(device: Device): Observable<any> {
+        const existing = device.tags ? Object.values(device.tags).map(tag => tag.address) : [];
+        let dialogRef = this.dialog.open(TagPropertySnmpScanComponent, {
+            disableClose: true,
+            position: { top: '60px' },
+            data: <TagPropertySnmpScanData> {
+                device: device,
+                existing: existing
+            },
+        });
+
+        return dialogRef.componentInstance.result.pipe(
+            map(result => {
+                if (result) {
+                    result.selected?.forEach(row => {
+                        let tag = new Tag(Utils.getGUID(TAG_PREFIX));
+                        tag.name = row.name || row.address;
+                        tag.type = row.type;
+                        tag.address = row.address;
+                        this.checkToAdd(tag, device);
+                    });
+                    this.projectService.setDeviceTags(device);
+                }
+                dialogRef.close();
+                return device.tags;
             })
         );
     }

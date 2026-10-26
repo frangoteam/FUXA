@@ -1,0 +1,56 @@
+:host {
+    .container {
+        min-width: 840px;
+        min-height: 600px;
+        position: relative;
+    }
+
+    .toolbox {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+
+    .my-form-field {
+        width: 240px;
+    }
+
+    .max-field {
+        width: 90px;
+    }
+
+    .field-action {
+        flex: 0 0 auto;
+    }
+
+    .loading {
+        display: flex;
+        align-items: center;
+        gap:12px;
+        margin-bottom:8px;
+    }
+
+    .error {
+        color: red;
+        margin-bottom: 8px;
+    }
+
+    .value-cell {
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .mat-header-row {
+        top: 0;
+        position: sticky;
+        z-index: 1;
+    }
+
+    .mat-header-cell {
+        font-size: 15px;
+    }
+}

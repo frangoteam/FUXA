@@ -133,6 +133,7 @@ import { PipePropertyComponent } from './gauges/controls/pipe/pipe-property/pipe
 import { PipeComponent } from './gauges/controls/pipe/pipe.component';
 import { SliderComponent } from './gauges/controls/slider/slider.component';
 import { SliderPropertyComponent } from './gauges/controls/slider/slider-property/slider-property.component';
+import { ButtonActionPropertyComponent } from './gauges/controls/html-button/button-action-property/button-action-property.component';
 import { HtmlSwitchPropertyComponent } from './gauges/controls/html-switch/html-switch-property/html-switch-property.component';
 
 import { NgxUplotComponent } from './gui-helpers/ngx-uplot/ngx-uplot.component';
@@ -237,6 +238,8 @@ import { ApiKeysListComponent } from './apikeys/api-keys-list/api-keys-list.comp
 import { ApiKeyPropertyComponent } from './apikeys/api-key-property/api-key-property.component';
 import { TagPropertyEditRedisComponent } from './device/tag-property/tag-property-edit-redis/tag-property-edit-redis.component';
 import { TagPropertyRedisScanComponent } from './device/tag-property/tag-property-edit-redis/tag-property-redis-scan/tag-property-redis-scan.component';
+import { TagPropertyEditSnmpComponent } from './device/tag-property/tag-property-edit-snmp/tag-property-edit-snmp.component';
+import { TagPropertySnmpScanComponent } from './device/tag-property/tag-property-edit-snmp/tag-property-snmp-scan/tag-property-snmp-scan.component';
 import { OnboardingWizardComponent } from './editor/onboarding-wizard/onboarding-wizard.component';
 import { PluginsListComponent } from './plugins/plugins-list/plugins-list.component';
 import { SectionMessageDialogComponent } from './editor/section-message-dialog/section-message-dialog.component';
@@ -325,6 +328,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         PipePropertyComponent,
         SliderPropertyComponent,
         HtmlSwitchPropertyComponent,
+        ButtonActionPropertyComponent,
         ShapesComponent,
         ProcEngComponent,
         ApeShapesComponent,
@@ -436,6 +440,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ApiKeyPropertyComponent,
         TagPropertyEditRedisComponent,
         TagPropertyRedisScanComponent,
+        TagPropertyEditSnmpComponent,
+        TagPropertySnmpScanComponent,
         OnboardingWizardComponent,
         PluginsListComponent,
         SectionMessageDialogComponent,

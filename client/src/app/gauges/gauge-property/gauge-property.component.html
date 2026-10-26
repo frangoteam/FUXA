@@ -49,6 +49,7 @@
 											[property]="property">
 						</flex-widget-property>
 						<flex-head *ngIf="!isWidget()" [data]="data" [property]="property" #flexhead [withBitmask]="withBitmask"></flex-head>
+						<button-action-property *ngIf="isButton()" [property]="property"></button-action-property>
 					</div>
 				</div>
 			</mat-tab>
@@ -85,6 +86,6 @@
     </div>
     <div mat-dialog-actions class="dialog-action">
         <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
-        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" [mat-dialog-close]="data" [disabled]="isButtonActionInvalid()" cdkFocusInitial>{{'dlg.ok' | translate}}</button>
     </div>
 </div>

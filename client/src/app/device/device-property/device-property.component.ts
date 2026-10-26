@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EndPointSettings, HmiService } from '../../_services/hmi.service';
 import { AppService } from '../../_services/app.service';
 import { ProjectService } from '../../_services/project.service';
-import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType, ModbusReuseModeType, RedisReadModeType, RedisOptions, EthernetIPModule, ETHERNETIPMODULE_PREFIX } from './../../_models/device';
+import { DeviceType, DeviceSecurity, MessageSecurityMode, SecurityPolicy, ModbusOptionType, ModbusReuseModeType, RedisReadModeType, RedisOptions, SnmpOptions, SnmpVersion, SnmpTransport, SnmpSecurityLevel, SnmpAuthProtocol, SnmpPrivProtocol, EthernetIPModule, ETHERNETIPMODULE_PREFIX } from './../../_models/device';
 import { Utils } from '../../_helpers/utils';
 import { DeviceEnipmoduleComponent } from '../device-enipmodule/device-enipmodule.component';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
@@ -88,6 +88,16 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	// redisReadModeCustom = RedisReadModeType.custom;
 	redisOptions = new RedisOptions();
 	writeArgsTooltip = '';
+	snmpOptions = new SnmpOptions();
+	snmpVersionType = SnmpVersion;
+	snmpVersionV3 = SnmpVersion.v3;
+	snmpTransportType = SnmpTransport;
+	snmpSecurityLevelType = SnmpSecurityLevel;
+	snmpSecurityLevelNoAuthNoPriv = SnmpSecurityLevel.noAuthNoPriv;
+	snmpSecurityLevelAuthPriv = SnmpSecurityLevel.authPriv;
+	snmpAuthProtocolType = SnmpAuthProtocol;
+	snmpPrivProtocolType = SnmpPrivProtocol;
+	showPrivKey: boolean;
 	result = '';
 	private subscriptionDeviceProperty: Subscription;
 	private subscriptionHostInterfaces: Subscription;
@@ -181,7 +191,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		});
 		// check security
 		if (this.data.device.id && (this.data.device.type === DeviceType.OPCUA || this.data.device.type === DeviceType.MQTTclient
-			|| this.data.device.type === DeviceType.ODBC)) {
+			|| this.data.device.type === DeviceType.ODBC || this.data.device.type === DeviceType.SNMP)) {
 			this.projectService.getDeviceSecurity(this.data.device.id).pipe(
 				delay(500)
 			).subscribe(result => {
@@ -271,6 +281,23 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 		if (this.data.device.type === DeviceType.REDIS) {
 			this.data.device.property.options = this.redisOptions;
 		}
+		if (this.data.device.type === DeviceType.SNMP) {
+			this.data.device.property.options = this.snmpOptions;
+		}
+	}
+
+	/**
+	 * SNMP options are stored in property.options, keep the defaults for the missing fields
+	 */
+	loadSnmpOptions() {
+		const opts = this.data.device?.property?.options;
+		this.snmpOptions = new SnmpOptions();
+		if (opts && typeof opts === 'object') {
+			Object.assign(this.snmpOptions, opts);
+		}
+		if (this.data.device.property && !this.data.device.property.port) {
+			this.data.device.property.port = '161';
+		}
 	}
 
 	onCheckOpcUaServer() {
@@ -330,6 +357,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			this.pollingType = this.pollingWebCamType;
 		} else {
 			this.pollingType = this.pollingPlcType;
+		}
+		if (this.data.device.type === DeviceType.SNMP) {
+			this.loadSnmpOptions();
 		}
 		this.ensureGenericEthernetIPConfig();
 	}
@@ -434,6 +464,16 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 				};
 				return result;
 			}
+		} else if (this.data.device.type === DeviceType.SNMP) {
+			// v1/v2c: pwd is the community, v3: uid user name, pwd authentication key, privKey privacy key
+			if (this.security.username || this.security.password || this.security.privKey) {
+				let result = <DeviceSecurityGeneral>{
+					uid: this.security.username,
+					pwd: this.security.password,
+					privKey: this.security.privKey
+				};
+				return result;
+			}
 		}
 		return null;
 	}
@@ -446,6 +486,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			this.security.password = value.pwd;
 			this.security.clientId = value.clientId;
 			this.security.grant_type = value.gt;
+			this.security.privKey = value.privKey;
 			if (value.uid || value.pwd || value.clientId) {
 				this.panelProperty?.open();
 			}
@@ -513,4 +554,5 @@ interface DeviceSecurityGeneral {
 	cert: string;
 	pkey: string;
 	caCert: string;
+	privKey: string;
 }
