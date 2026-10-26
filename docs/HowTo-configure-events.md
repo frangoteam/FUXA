@@ -50,6 +50,11 @@ Used to set Tags value or increase and decrease current value.
 
 Used to **toggle** the Tags value 1/0 (if 1 set to 0, if 0 set to 1).
 
+For a [bound Switch](HowTo-bind-Controls.md#switch), the binding already writes
+the configured On/Off value. Do not also configure a **Toggle Value** click
+event for the same Tag and bits; the two writes can undo each other. Use the
+Switch binding, or use a shape or button with a Toggle Value event.
+
 ![](images/fuxa-events7.gif)
 
 ## Set from Input and Close

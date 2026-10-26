@@ -49,5 +49,6 @@
 <script type="text/x-red" data-help-name="set-device-property">
     <p>Set a property value on a FUXA device.</p>
     <p>The result is set to <code>msg.payload</code>.</p>
-    <p>Use message properties to override: <code>msg.deviceName</code>, <code>msg.property</code>, <code>msg.value</code>.</p>
+    <p>Non-empty <code>msg.deviceName</code> and <code>msg.property</code> override the configured values independently. Omitted or empty selectors use the configured values. The selected property must still be writable by FUXA.</p>
+    <p><code>msg.value</code> overrides the configured value whenever it is supplied, including <code>false</code>, <code>0</code>, an empty string or <code>null</code>.</p>
 </script>

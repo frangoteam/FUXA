@@ -16,7 +16,7 @@ Principally FUXA web server performs two page:
 - Editor to project and design http://localhost:1881/editor
 
 ## Step 1. Connect device and configure tags
-To connect the device you need to get the device credentials first. FUXA supports various devices: Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley). After you connected to a device, you can configure the subscriptions of the live values, Tags, Sensor, etc.
+To connect the device you need to get the device credentials first. FUXA supports various devices: Modbus RTU/TCP, Siemens S7 Protocol, OPC-UA, BACnet IP, MQTT, Ethernet/IP (Allen Bradley), ODBC, ADS, MELSEC, Redis, SNMP, GPIO, WebCam and WebAPI. After you connected to a device, you can configure the subscriptions of the live values, Tags, Sensor, etc.
 You may find configuration guide by here [**HowTo Devices and Tags**](https://github.com/frangoteam/FUXA/wiki/HowTo-Devices-and-Tags)
 
 ## Step 2. Create Visualization
