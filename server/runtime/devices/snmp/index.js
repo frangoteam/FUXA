@@ -144,14 +144,13 @@ function SnmpClient(_data, _logger, _events, _runtime) {
             if (!session || !connected) {
                 return;
             }
+            const options = _getOptions();
             const tagIds = Object.keys(tagMap).filter(id => !tagMap[id].trapOnly);
             if (!tagIds.length) {
-                if (lastStatus !== 'connect-ok') {
-                    _emitStatus('connect-ok');
-                }
+                // nothing to read (trap-only device): a GET of sysUpTime keeps the connection status alive
+                await _keepAlive(options);
                 return;
             }
-            const options = _getOptions();
             const results = {};
             let answered = false;
             // the chunks are requested concurrently: the poll lasts as the slowest request, not the sum of all
@@ -168,12 +167,9 @@ function SnmpClient(_data, _logger, _events, _runtime) {
                 }
             });
             if (answered) {
-                consecutiveTimeouts = 0;
-                lastTimestampValue = Date.now();
-            } else if (++consecutiveTimeouts >= options.offlineAfterTimeouts) {
-                connected = false;
-                logger.error(`'${data.name}' no answer after ${consecutiveTimeouts} polls, reconnect`);
-                _emitStatus('connect-error');
+                _markAnswered();
+            } else {
+                _markUnanswered(options);
             }
             const changed = await _updateVarsValue(results);
             _emitValues(varsValue);
@@ -437,9 +433,45 @@ function SnmpClient(_data, _logger, _events, _runtime) {
     }
 
     /**
-     * Update the tags matching the notification varbinds
+     * The agent answered: reset the timeouts counter and refresh the read timestamp used for the connection status
+     */
+    function _markAnswered() {
+        consecutiveTimeouts = 0;
+        lastTimestampValue = Date.now();
+    }
+
+    /**
+     * The agent did not answer: after offlineAfterTimeouts consecutive polls the device reconnects
+     */
+    function _markUnanswered(options) {
+        if (++consecutiveTimeouts >= options.offlineAfterTimeouts) {
+            connected = false;
+            logger.error(`'${data.name}' no answer after ${consecutiveTimeouts} polls, reconnect`);
+            _emitStatus('connect-error');
+        }
+    }
+
+    /**
+     * Polling of a device without tags to read: probe sysUpTime so the connection status follows the agent reachability
+     */
+    async function _keepAlive(options) {
+        try {
+            await _get([SYS_UPTIME_OID]);
+            _markAnswered();
+        } catch (err) {
+            logger.error(`'${data.name}' keepalive error! ${err}`);
+            _markUnanswered(options);
+        }
+        if (connected && lastStatus !== 'connect-ok') {
+            _emitStatus('connect-ok');
+        }
+    }
+
+    /**
+     * Update the tags matching the notification varbinds, a notification also proves the agent reachable
      */
     async function _onNotification(pdu) {
+        _markAnswered();
         const results = {};
         _notificationVarbinds(pdu).forEach(varbind => {
             (oidTagIds[varbind.oid] || []).forEach(id => {

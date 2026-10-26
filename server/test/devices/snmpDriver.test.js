@@ -615,6 +615,49 @@ describe('SNMP driver', () => {
             assert.deepEqual(session.get.firstCall.args[0], [SYS_UPTIME_OID]);
         });
 
+        it('keeps the connection status alive with a GET of sysUpTime when all tags are trap-only', async () => {
+            const device = createTrapDevice();
+            await device.connect();
+            device.load({
+                id: 'snmp1', name: 'SNMP test',
+                property: { address: '192.168.1.10', port: 161, options: { version: 'v2c', trapsEnabled: true } },
+                tags: { trap: { id: 'trap', name: 'trap', address: TRAP_OID, type: 'OID', options: { trapOnly: true } } }
+            });
+            session.get.resetHistory();
+            await device.polling();
+            sinon.assert.calledOnce(session.get);
+            assert.deepEqual(session.get.firstCall.args[0], [SYS_UPTIME_OID]);
+            assert.ok(device.lastReadTimestamp() > 0);
+            assert.equal(device.getValues().trap, undefined, 'the keepalive does not touch the tags');
+        });
+
+        it('goes offline when the keepalive of a trap-only device is not answered', async () => {
+            const device = createTrapDevice({ offlineAfterTimeouts: 2 });
+            await device.connect();
+            device.load({
+                id: 'snmp1', name: 'SNMP test',
+                property: { address: '192.168.1.10', port: 161, options: { version: 'v2c', trapsEnabled: true, offlineAfterTimeouts: 2 } },
+                tags: { trap: { id: 'trap', name: 'trap', address: TRAP_OID, type: 'OID', options: { trapOnly: true } } }
+            });
+            session.get.callsFake((oids, callback) => callback(new Error('Request timed out')));
+            await device.polling();
+            assert.equal(device.isConnected(), true);
+            await device.polling();
+            assert.equal(device.isConnected(), false);
+        });
+
+        it('refreshes the read timestamp when a notification is received', async () => {
+            const device = createTrapDevice();
+            await device.connect();
+            assert.equal(device.lastReadTimestamp(), 0);
+            receiver.callback(null, {
+                pdu: { type: PduType.TrapV2, community: 'trapcomm', varbinds: [{ oid: IF_INDEX_OID, type: ObjectType.Integer, value: 3 }] },
+                rinfo: { address: '192.168.1.10', port: 40000 }
+            });
+            await new Promise(resolve => setImmediate(resolve));
+            assert.ok(device.lastReadTimestamp() > 0);
+        });
+
         it('updates the matching tags from a v2c trap', async () => {
             const device = createTrapDevice();
             const addDaq = sandbox.spy();

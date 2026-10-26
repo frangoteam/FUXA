@@ -55,6 +55,8 @@ Informs are acknowledged.
 
 Mark the Tags that exist only in the notifications with *Updated only by traps/informs* in the Tag property: they are not polled,
 otherwise a GET of a non existing instance would overwrite the value at every polling.
+A device with only such Tags sends a GET of `sysUpTime.0` at every polling instead, so its connection status follows the
+reachability of the agent; every received notification refreshes the status as well.
 
 **Notes**
 

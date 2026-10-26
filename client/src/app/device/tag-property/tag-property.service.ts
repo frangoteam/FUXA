@@ -632,6 +632,7 @@ export class TagPropertyService {
         let dialogRef = this.dialog.open(TagPropertySnmpScanComponent, {
             disableClose: true,
             position: { top: '60px' },
+            maxWidth: 'calc(100vw - 32px)',
             data: <TagPropertySnmpScanData> {
                 device: device,
                 existing: existing
