@@ -96,13 +96,13 @@ function SnmpClient(_data, _logger, _events, _runtime) {
                 logger.error(`'${data.name}' session error! ${err}`);
             });
             await _get([SYS_UPTIME_OID]);
+            if (options.trapsEnabled) {
+                _registerTraps(options, security);      // throws when the trap port refuses the credentials
+            }
             connected = true;
             consecutiveTimeouts = 0;
             logger.info(`'${data.name}' connected!`, true);
             _emitStatus('connect-ok');
-            if (options.trapsEnabled) {
-                _registerTraps(options, security);
-            }
         } catch (err) {
             connected = false;
             _closeSession();
@@ -411,6 +411,7 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         _unregisterTraps();
         const subscriber = {
             id: data.id,
+            name: data.name,
             address: data.property.address,
             community: (options.version === SnmpVersion.v3) ? null : (security.pwd || 'public'),
             user: (options.version === SnmpVersion.v3) ? _createV3User(options, security) : null,

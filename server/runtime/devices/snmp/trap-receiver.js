@@ -13,13 +13,22 @@ const listeners = {};       // key 'transport:port' -> { receiver, subscribers: 
  * Subscribe a device to the notifications of a port
  * @param {*} snmp net-snmp module
  * @param {*} settings { port, transport }
- * @param {*} subscriber { id, address, community, user, onNotification(pdu, rinfo), onError(err) }
+ * @param {*} subscriber { id, name, address, community, user, onNotification(pdu, rinfo), onError(err) }
  * @param {*} logger
  * @returns function to unsubscribe
+ * @throws when a v3 user with the same name but different keys is already registered on the port:
+ * the receiver resolves the users by name, one port can hold only one credential set for each user name
  */
 function register(snmp, settings, subscriber, logger) {
     const key = `${settings.transport || 'udp4'}:${settings.port}`;
     let listener = listeners[key];
+    if (listener && subscriber.user) {
+        const holder = Object.values(listener.subscribers).find(other => other.id !== subscriber.id && other.user &&
+            other.user.name === subscriber.user.name && !_sameUser(other.user, subscriber.user));
+        if (holder) {
+            throw new Error(`trap receiver ${key}: user '${subscriber.user.name}' is already registered by device '${holder.name || holder.id}' with different keys, use the same credentials or another trap port`);
+        }
+    }
     if (!listener) {
         listener = { key: key, receiver: null, subscribers: {} };
         listeners[key] = listener;
@@ -113,10 +122,7 @@ function _syncAuthorizer(listener, logger) {
             communities.add(subscriber.community);
         }
         if (subscriber.user) {
-            if (users[subscriber.user.name] && !_sameUser(users[subscriber.user.name], subscriber.user)) {
-                logger.warn(`snmp trap receiver ${listener.key} user '${subscriber.user.name}' defined with different keys, last wins`);
-            }
-            users[subscriber.user.name] = subscriber.user;
+            users[subscriber.user.name] = subscriber.user;     // conflicting keys are rejected by register()
         }
     });
     authorizer.getCommunities().slice().forEach(community => {

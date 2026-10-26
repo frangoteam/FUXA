@@ -99,6 +99,28 @@ describe('SNMP shared trap receiver', () => {
         sinon.assert.notCalled(b.onNotification);
     });
 
+    it('rejects a v3 user already registered on the port with different keys', () => {
+        const user = { name: 'fuxa', level: 3, authProtocol: 2, authKey: 'authkey', privProtocol: 4, privKey: 'privkey' };
+        const a = subscriber('a', { name: 'Device A', community: null, user: user });
+        const b = subscriber('b', { name: 'Device B', address: '192.168.1.11', community: null, user: Object.assign({}, user, { authKey: 'other' }) });
+        trapReceiver.register(snmpMock, { port: 162 }, a, logger);
+        assert.throws(() => trapReceiver.register(snmpMock, { port: 162 }, b, logger), /user 'fuxa' is already registered by device 'Device A' with different keys/);
+        assert.deepEqual(receivers[0].authorizer.getUsers(), [user]);
+        assert.deepEqual(Object.keys(trapReceiver._listeners['udp4:162'].subscribers), ['a']);
+        sinon.assert.notCalled(receivers[0].close);
+        // another port is fine
+        trapReceiver.register(snmpMock, { port: 1162 }, b, logger);
+        assert.equal(receivers[1].authorizer.getUsers()[0].authKey, 'other');
+    });
+
+    it('accepts the same v3 user with the same keys from another device', () => {
+        const user = { name: 'fuxa', level: 3, authProtocol: 2, authKey: 'authkey', privProtocol: 4, privKey: 'privkey' };
+        trapReceiver.register(snmpMock, { port: 162 }, subscriber('a', { community: null, user: user }), logger);
+        trapReceiver.register(snmpMock, { port: 162 }, subscriber('b', { address: '192.168.1.11', community: null, user: Object.assign({}, user) }), logger);
+        assert.deepEqual(receivers[0].authorizer.getUsers(), [user]);
+        assert.deepEqual(Object.keys(trapReceiver._listeners['udp4:162'].subscribers), ['a', 'b']);
+    });
+
     it('warns when a notification matches no device', () => {
         trapReceiver.register(snmpMock, { port: 162 }, subscriber('a'), logger);
         receivers[0].callback(null, notification({ rinfo: { address: '10.0.0.1' } }));

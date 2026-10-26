@@ -606,6 +606,30 @@ describe('SNMP driver', () => {
             assert.deepEqual(receiver.authorizer.getUsers(), [{ name: 'fuxa', level: SecurityLevel.authPriv, authProtocol: AuthProtocols.sha, authKey: 'authkey', privProtocol: PrivProtocols.aes, privKey: 'privkey' }]);
         });
 
+        it('fails to connect when the v3 user is already registered on the trap port with different keys', async () => {
+            const options = { version: 'v3', securityLevel: 'authPriv', authProtocol: 'sha', privProtocol: 'aes' };
+            const first = createTrapDevice(options, { uid: 'fuxa', pwd: 'authkey', privKey: 'privkey' });
+            await first.connect();
+            const second = createDevice({
+                id: 'snmp2', name: 'SNMP second',
+                property: { address: '192.168.1.11', port: 161, options: Object.assign({ trapsEnabled: true }, options) }
+            }, { uid: 'fuxa', pwd: 'otherkey', privKey: 'privkey' });
+            const statuses = [];
+            events.on('device-status:changed', event => statuses.push(event.status));
+            await assert.rejects(second.connect(), /user 'fuxa' is already registered by device 'SNMP test' with different keys/);
+            assert.equal(second.isConnected(), false);
+            assert.deepEqual(statuses, ['connect-error']);
+            assert.equal(receiver.authorizer.getUsers()[0].authKey, 'authkey', 'the first device keeps the port');
+            sinon.assert.notCalled(receiver.close);
+            // the same user with the same keys is accepted
+            const third = createDevice({
+                id: 'snmp3', name: 'SNMP third',
+                property: { address: '192.168.1.12', port: 161, options: Object.assign({ trapsEnabled: true }, options) }
+            }, { uid: 'fuxa', pwd: 'authkey', privKey: 'privkey' });
+            await third.connect();
+            assert.equal(third.isConnected(), true);
+        });
+
         it('does not poll the trap-only tags', async () => {
             const device = createTrapDevice();
             await device.connect();

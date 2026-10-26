@@ -47,6 +47,9 @@ The selected OIDs are imported as Tags, named by their MIB name when known.
 
 Enable *Receive traps and informs* in the device property and set the trap port (default 162). On Linux a port below 1024
 needs privileges, otherwise configure the agent to send to a port above 1024. One listener per port is shared by all SNMP devices.
+For SNMPv3 the listener resolves the users by name, so on one port a user name can have only one set of keys: a device whose
+user name is already registered on that port with different keys fails to connect with an error that names the other device.
+Give the devices the same credentials, or a different trap port for each device.
 
 Notifications are accepted only from the device address and with the same credentials of the session (community or v3 user).
 Each varbind of the notification updates the Tag with the same OID. A Tag with address `1.3.6.1.6.3.1.1.4.1.0` (snmpTrapOID.0)
