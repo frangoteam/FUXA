@@ -644,7 +644,7 @@ export class TagPropertyService {
                 if (result) {
                     result.selected?.forEach(row => {
                         let tag = new Tag(Utils.getGUID(TAG_PREFIX));
-                        tag.name = row.name || row.address;
+                        tag.name = (row.name || row.address).replace(/^[^:]+::/, '');    // MIB name without the module prefix
                         tag.type = row.type;
                         tag.address = row.address;
                         this.checkToAdd(tag, device);

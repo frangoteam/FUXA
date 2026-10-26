@@ -10,13 +10,13 @@ Add a Device in **Connections** and select **SNMP**. In the device property set:
   the authentication protocol (`md5`, `sha`, `sha224`, `sha256`, `sha384`, `sha512`) with its key and the privacy protocol
   (`des`, `aes`, `aes256b`, `aes256r`) with its key, plus an optional context name
 
-The credentials are stored encrypted in the device security store, never in the project file: after importing a project you have to enter them again.
+The credentials are stored in the device security store of the server, never in the project file: after importing a project you have to enter them again.
 The device is connected when the agent answers a probe of `sysUpTime.0`; for v3 this also validates the credentials.
 Since SNMP uses UDP there is no permanent connection: the status follows the answers to the polling and after the
 configured *Polls without answer before reconnect* the device reconnects. *OIDs per request* limits the size of each GET datagram,
 the requests of one polling are sent concurrently. A polling that starts while the previous one is still waiting for the agent
 is skipped and logged: keep the request timeout multiplied by the retries plus one below the polling interval
-(with the defaults 2000 ms, 1 retry and 3000 ms polling).
+(with the defaults 1000 ms, 1 retry and 3000 ms polling).
 
 **Tags**
 
@@ -33,7 +33,7 @@ The Tag type selects the encoding of the value for writes (SET) and the conversi
 | `Counter64` | number, precision lost above 2^53 |
 | `OctetString`, `IpAddress`, `OID` | string |
 | `Hex` | OctetString shown as hexadecimal string, for example MAC addresses |
-| `Boolean` | boolean |
+| `Boolean` | boolean, on the wire an Integer TruthValue: 1 true, 2 false |
 
 Scale, deadband and the read/write scripts of the Tag options work as for the other devices.
 
@@ -47,6 +47,8 @@ The selected OIDs are imported as Tags, named by their MIB name when known.
 
 Enable *Receive traps and informs* in the device property and set the trap port (default 162). On Linux a port below 1024
 needs privileges, otherwise configure the agent to send to a port above 1024. One listener per port is shared by all SNMP devices.
+When the port cannot be bound the device reports a connection error and retries after 30 seconds. The subscription does not depend
+on the polling: an agent that answers no GET but sends traps keeps its Tags updated, only its connection status shows the missing answers.
 For SNMPv3 the listener resolves the users by name, so on one port a user name can have only one set of keys: a device whose
 user name is already registered on that port with different keys fails to connect with an error that names the other device.
 Give the devices the same credentials, or a different trap port for each device.

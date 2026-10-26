@@ -15,6 +15,7 @@ const PduType = { Trap: 164, InformRequest: 166, TrapV2: 167 };
 const SecurityLevel = { noAuthNoPriv: 1, authNoPriv: 2, authPriv: 3 };
 const AuthProtocols = { none: 1, md5: 2, sha: 3, sha224: 4, sha256: 5, sha384: 6, sha512: 7 };
 const PrivProtocols = { none: 1, des: 2, aes: 4, aes256b: 6, aes256r: 8 };
+const ErrorStatus = { NoError: 0, TooBig: 1, NoSuchName: 2 };
 const SYS_UPTIME_OID = '1.3.6.1.2.1.1.3.0';
 
 describe('SNMP driver', () => {
@@ -71,6 +72,7 @@ describe('SNMP driver', () => {
             SecurityLevel,
             AuthProtocols,
             PrivProtocols,
+            ErrorStatus,
             createSession: sandbox.stub().returns(session),
             createV3Session: sandbox.stub().returns(session),
             createReceiver: sandbox.stub().callsFake((options, callback) => {
@@ -203,6 +205,23 @@ describe('SNMP driver', () => {
             assert.deepEqual(statuses, ['connect-error']);
         });
 
+        it('parses the options stored as strings by the editor', async () => {
+            const device = createDevice({
+                property: { address: '192.168.1.10', port: '1161', options: { version: 'v2c', timeout: '1500', retries: '0', maxOidsPerRequest: '10', offlineAfterTimeouts: '2', trapsEnabled: true, trapPort: '1162' } }
+            }, { pwd: 'public' });
+            await device.connect();
+            assert.deepEqual(snmpMock.createSession.firstCall.args[2], { port: 1161, retries: 0, timeout: 1500, transport: 'udp4', version: 1 });
+            assert.equal(receiver.options.port, 1162);
+        });
+
+        it('falls back to the default trap port when the stored one is out of range', async () => {
+            const device = createDevice({
+                property: { address: '192.168.1.10', port: 161, options: { version: 'v2c', trapsEnabled: true, trapPort: '70000' } }
+            }, { pwd: 'public' });
+            await device.connect();
+            assert.equal(receiver.options.port, 162);
+        });
+
         it('rejects when the address is missing', async () => {
             const device = createDevice({ property: {} });
             await assert.rejects(device.connect(), /missing address/);
@@ -220,6 +239,37 @@ describe('SNMP driver', () => {
             sinon.assert.calledOnce(session.close);
             assert.equal(device.isConnected(), false);
             assert.equal(device.getStatus(), 'connect-error');
+        });
+
+        it('refuses a second connect while the first one is waiting for the agent', async () => {
+            let answer = null;
+            session.get.callsFake((oids, callback) => { answer = () => callback(null, [{ oid: oids[0], type: ObjectType.TimeTicks, value: 1 }]); });
+            const device = createDevice();
+            const first = device.connect();
+            await assert.rejects(device.connect(), /working/);
+            answer();
+            await first;
+            assert.equal(device.isConnected(), true);
+            sinon.assert.calledOnce(snmpMock.createSession);
+        });
+
+        it('discards a connect superseded by a disconnect', async () => {
+            let answer = null;
+            session.get.callsFake((oids, callback) => { answer = () => callback(null, [{ oid: oids[0], type: ObjectType.TimeTicks, value: 1 }]); });
+            const device = createDevice();
+            const statuses = [];
+            events.on('device-status:changed', event => statuses.push(event.status));
+            const pending = device.connect();
+            await new Promise(resolve => setImmediate(resolve));     // the probe is sent
+            await device.disconnect();
+            answer();
+            await assert.rejects(pending, /connection replaced/);
+            assert.equal(device.isConnected(), false);
+            assert.deepEqual(statuses, ['connect-off'], 'no connect-ok nor connect-error from the stale connect');
+            // the next connect works
+            session.get.callsFake((oids, callback) => callback(null, [{ oid: oids[0], type: ObjectType.TimeTicks, value: 1 }]));
+            await device.connect();
+            assert.equal(device.isConnected(), true);
         });
 
         it('closes the session on disconnect', async () => {
@@ -400,6 +450,140 @@ describe('SNMP driver', () => {
             assert.deepEqual(statuses, ['connect-error']);
         });
 
+        it('keeps the numeric looking strings of the string types as strings', async () => {
+            const device = createDevice({
+                tags: {
+                    serial: { id: 'serial', name: 'serial', address: '1.3.6.1.4.1.1.1.0', type: 'OctetString', format: 2 },
+                    mac: { id: 'mac', name: 'mac', address: '1.3.6.1.4.1.1.2.0', type: 'Hex' },
+                    exp: { id: 'exp', name: 'exp', address: '1.3.6.1.4.1.1.3.0', type: 'OctetString' },
+                    oid: { id: 'oid', name: 'oid', address: '1.3.6.1.4.1.1.4.0', type: 'OID' },
+                    num: { id: 'num', name: 'num', address: '1.3.6.1.4.1.1.5.0', type: 'Integer', format: 1 }
+                }
+            });
+            await device.connect();
+            session.get.callsFake((oids, callback) => callback(null, [
+                { oid: oids[0], type: ObjectType.OctetString, value: Buffer.from('0012') },
+                { oid: oids[1], type: ObjectType.OctetString, value: Buffer.from([0x00, 0x11, 0x22, 0x33]) },
+                { oid: oids[2], type: ObjectType.OctetString, value: Buffer.from('1e5') },
+                { oid: oids[3], type: ObjectType.OID, value: '1.3.6.1.4.1.8072' },
+                { oid: oids[4], type: ObjectType.Integer, value: 42 }
+            ]));
+            await device.polling();
+            const values = device.getValues();
+            assert.equal(values.serial.value, '0012');
+            assert.equal(values.mac.value, '00112233');
+            assert.equal(values.exp.value, '1e5');
+            assert.equal(values.oid.value, '1.3.6.1.4.1.8072');
+            assert.equal(values.num.value, 42);
+        });
+
+        it('decodes Boolean tags as TruthValue and Counter64 with a leading zero byte', async () => {
+            const device = createDevice({
+                tags: {
+                    up: { id: 'up', name: 'up', address: '1.3.6.1.4.1.1.1.0', type: 'Boolean' },
+                    down: { id: 'down', name: 'down', address: '1.3.6.1.4.1.1.2.0', type: 'Boolean' },
+                    big: { id: 'big', name: 'big', address: '1.3.6.1.4.1.1.3.0', type: 'Counter64' },
+                    small: { id: 'small', name: 'small', address: '1.3.6.1.4.1.1.4.0', type: 'Counter64' }
+                }
+            });
+            await device.connect();
+            session.get.callsFake((oids, callback) => callback(null, [
+                { oid: oids[0], type: ObjectType.Integer, value: 1 },
+                { oid: oids[1], type: ObjectType.Integer, value: 2 },
+                { oid: oids[2], type: ObjectType.Counter64, value: Buffer.from([0x00, 0x80, 0, 0, 0, 0, 0, 0, 0]) },    // 2^63 as 9 bytes BER content
+                { oid: oids[3], type: ObjectType.Counter64, value: Buffer.from([0x01, 0x00]) }
+            ]));
+            await device.polling();
+            const values = device.getValues();
+            assert.equal(values.up.value, true);
+            assert.equal(values.down.value, false);
+            assert.equal(values.big.value, 2 ** 63);
+            assert.equal(values.small.value, 256);
+        });
+
+        it('drops the OID refused by a v1 agent with noSuchName and reads the others', async () => {
+            const device = createDevice({
+                property: { address: '192.168.1.10', port: 161, options: { version: 'v1' } },
+                tags: {
+                    a: { id: 'a', name: 'a', address: '1.3.6.1.4.1.1.1.0', type: 'Integer' },
+                    missing: { id: 'missing', name: 'missing', address: '1.3.6.1.4.1.1.2.0', type: 'Integer' },
+                    c: { id: 'c', name: 'c', address: '1.3.6.1.4.1.1.3.0', type: 'Integer' }
+                }
+            });
+            await device.connect();
+            session.get.callsFake((oids, callback) => {
+                if (oids.includes('1.3.6.1.4.1.1.2.0')) {
+                    const err = new Error('NoSuchName: 1.3.6.1.4.1.1.2.0');
+                    err.status = ErrorStatus.NoSuchName;
+                    return callback(err);
+                }
+                callback(null, oids.map(oid => ({ oid, type: ObjectType.Integer, value: 7 })));
+            });
+            session.get.resetHistory();
+            await device.polling();
+            sinon.assert.calledTwice(session.get);
+            assert.deepEqual(session.get.secondCall.args[0], ['1.3.6.1.4.1.1.1.0', '1.3.6.1.4.1.1.3.0']);
+            const values = device.getValues();
+            assert.equal(values.a.value, 7);
+            assert.equal(values.c.value, 7);
+            assert.equal(values.missing.value, null);
+            assert.equal(device.isConnected(), true);
+            sinon.assert.calledWithMatch(logger.warn, /tag missing .*error type 129/);
+        });
+
+        it('logs a varbind error once until the tag recovers', async () => {
+            const device = createDevice();
+            await device.connect();
+            let fail = true;
+            session.get.callsFake((oids, callback) => callback(null, [{ oid: oids[0], type: fail ? ObjectType.NoSuchInstance : ObjectType.TimeTicks, value: fail ? null : 5 }]));
+            await device.polling();
+            await device.polling();
+            await device.polling();
+            assert.equal(logger.warn.callCount, 1);
+            fail = false;
+            await device.polling();
+            fail = true;
+            await device.polling();
+            assert.equal(logger.warn.callCount, 2, 'logged again after the recovery');
+        });
+
+        it('does not log the overlap while the agent is not answering', async () => {
+            const device = createDevice({ property: { address: 'a', options: { version: 'v2c', offlineAfterTimeouts: 10 } } });
+            await device.connect();
+            let answers = [];
+            session.get.callsFake((oids, callback) => { answers.push(() => callback(new Error('Request timed out'))); });
+            const slow = device.polling();
+            await device.polling();     // skipped, logged (the agent answered so far)
+            assert.equal(logger.warn.callCount, 1);
+            answers.forEach(answer => answer());
+            await slow;
+            const next = device.polling();
+            await device.polling();     // skipped, not logged: the previous poll timed out
+            assert.equal(logger.warn.callCount, 1);
+            answers.forEach(answer => answer());
+            await next;
+        });
+
+        it('discards the outcome of a poll finished after a disconnect', async () => {
+            const device = createDevice({ property: { address: 'a', options: { version: 'v2c', offlineAfterTimeouts: 1 } } });
+            await device.connect();
+            let answer = null;
+            session.get.callsFake((oids, callback) => { answer = () => callback(new Error('Socket forcibly closed')); });
+            const pending = device.polling();
+            await device.disconnect();
+            const statuses = [];
+            events.on('device-status:changed', event => statuses.push(event.status));
+            answer();
+            await pending;
+            assert.deepEqual(statuses, [], 'no connect-error from the cancelled requests');
+            // a new connection is not affected by the stale poll
+            session.get.callsFake((oids, callback) => callback(null, [{ oid: oids[0], type: ObjectType.TimeTicks, value: 1 }]));
+            await device.connect();
+            await device.polling();
+            assert.equal(device.isConnected(), true);
+            assert.equal(device.getStatus(), 'connect-ok');
+        });
+
         it('skips tags with an invalid OID', async () => {
             const device = createDevice({
                 tags: {
@@ -459,6 +643,25 @@ describe('SNMP driver', () => {
             assert.equal(varbind.value.readBigUInt64BE(0), BigInt(5000000000));
         });
 
+        it('rounds the scaled integer values', async () => {
+            const varbind = await written({ type: 'Integer', scale: { mode: 'linear', rawLow: 0, rawHigh: 1000, scaledLow: 0, scaledHigh: 100 } }, 33.3);
+            assert.equal(varbind.value, 333);
+        });
+
+        it('refuses a text that is not a number for the integer types', async () => {
+            const device = createDevice({ tags: { tag1: { id: 'tag1', name: 'tag1', address: '1.3.6.1.4.1.1.1.0', type: 'Integer' } } });
+            await device.connect();
+            assert.equal(await device.setValue('tag1', '12abc'), false);
+            assert.equal(await device.setValue('tag1', ''), false);
+            sinon.assert.notCalled(session.set);
+        });
+
+        it('writes a Boolean as TruthValue Integer', async () => {
+            const varbind = await written({ type: 'Boolean' }, false);
+            assert.equal(varbind.type, ObjectType.Integer);
+            assert.equal(varbind.value, 2);
+        });
+
         it('returns false when the write fails', async () => {
             session.set.callsFake((varbinds, callback) => callback(new Error('noAccess')));
             const device = createDevice();
@@ -484,12 +687,24 @@ describe('SNMP driver', () => {
             assert.equal(result.total, 5);
             assert.equal(result.truncated, false);
             assert.deepEqual(result.items, [
-                { address: '1.3.6.1.2.1.1.5.0', name: null, type: 'OctetString', value: 'router-1' },
-                { address: '1.3.6.1.2.1.1.7.0', name: null, type: 'Integer', value: 72 },
-                { address: '1.3.6.1.2.1.2.2.1.6.1', name: null, type: 'Hex', value: '001a2b' },
-                { address: '1.3.6.1.2.1.2.2.1.10.1', name: null, type: 'Counter32', value: 1234 },
-                { address: '1.3.6.1.2.1.4.20.1.1.1', name: null, type: 'IpAddress', value: '10.0.0.1' }
+                { address: '1.3.6.1.2.1.1.5.0', name: null, type: 'OctetString', value: 'router-1', existing: false },
+                { address: '1.3.6.1.2.1.1.7.0', name: null, type: 'Integer', value: 72, existing: false },
+                { address: '1.3.6.1.2.1.2.2.1.6.1', name: null, type: 'Hex', value: '001a2b', existing: false },
+                { address: '1.3.6.1.2.1.2.2.1.10.1', name: null, type: 'Counter32', value: 1234, existing: false },
+                { address: '1.3.6.1.2.1.4.20.1.1.1', name: null, type: 'IpAddress', value: '10.0.0.1', existing: false }
             ]);
+        });
+
+        it('marks the instances that are already tags of the device', async () => {
+            const device = createDevice({
+                tags: {
+                    name: { id: 'name', name: 'name', address: '1.3.6.1.2.1.1.5.0', type: 'OctetString' },
+                    services: { id: 'services', name: 'services', address: '.1.3.6.1.2.1.1.7.0', type: 'Integer' }
+                }
+            });
+            await device.connect();
+            const result = await device.browse({ oid: '1.3.6.1.2.1' });
+            assert.deepEqual(result.items.map(item => item.existing), [true, true, false, false, false]);
         });
 
         it('walks mib-2 by default and truncates to max results', async () => {
@@ -737,14 +952,54 @@ describe('SNMP driver', () => {
             assert.equal(values.ifIndex.value, 3);
         });
 
-        it('logs the bind error of the trap port', async () => {
+        it('reports a connection error when the trap port cannot be bound, the reconnect is refused until the retry time', async () => {
             const device = createTrapDevice();
             await device.connect();
+            const statuses = [];
+            events.on('device-status:changed', event => statuses.push(event.status));
             const err = new Error('bind EACCES 0.0.0.0:162');
             err.code = 'EACCES';
             receiver.callback(err, null);
             sinon.assert.calledWithMatch(logger.error, /trap receiver error! Error: bind EACCES/);
-            assert.equal(device.isConnected(), true);
+            assert.equal(device.isConnected(), false);
+            assert.deepEqual(statuses, ['connect-error']);
+            await assert.rejects(device.connect(), /bind EACCES 0.0.0.0:162, retry in \d+ s/);
+            sinon.assert.calledOnce(snmpMock.createReceiver);
+        });
+
+        it('registers the traps before the probe and keeps them when the probe fails', async () => {
+            session.get.callsFake((oids, callback) => callback(new Error('Request timed out')));
+            const device = createTrapDevice();
+            await assert.rejects(device.connect(), /timed out/);
+            sinon.assert.calledOnce(snmpMock.createReceiver);
+            assert.deepEqual(receiver.authorizer.getCommunities(), ['trapcomm']);
+            sinon.assert.notCalled(receiver.close);
+            // the traps are received although the agent does not answer the GET
+            receiver.callback(null, {
+                pdu: { type: PduType.TrapV2, community: 'trapcomm', varbinds: [{ oid: IF_INDEX_OID, type: ObjectType.Integer, value: 3 }] },
+                rinfo: { address: '192.168.1.10', port: 40000 }
+            });
+            await new Promise(resolve => setImmediate(resolve));
+            assert.equal(device.getValues().ifIndex.value, 3);
+            await device.disconnect();
+            sinon.assert.calledOnce(receiver.close);
+        });
+
+        it('keeps the trap-only values when the probe fails and clears them on disconnect', async () => {
+            const device = createTrapDevice();
+            await device.connect();
+            await device.polling();
+            receiver.callback(null, {
+                pdu: { type: PduType.TrapV2, community: 'trapcomm', varbinds: [{ oid: TRAP_OID, type: ObjectType.OID, value: '1.3.6.1.6.3.1.1.5.3' }] },
+                rinfo: { address: '192.168.1.10', port: 40000 }
+            });
+            await new Promise(resolve => setImmediate(resolve));
+            session.get.callsFake((oids, callback) => callback(new Error('Request timed out')));
+            await assert.rejects(device.connect(), /timed out/);
+            assert.equal(device.getValues().trap.value, '1.3.6.1.6.3.1.1.5.3');
+            assert.equal(device.getValues().uptime.value, null);
+            await device.disconnect();
+            assert.equal(device.getValues().trap.value, null);
         });
     });
 

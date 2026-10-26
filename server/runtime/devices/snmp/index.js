@@ -29,7 +29,7 @@ const SnmpVersion = {
 const DEFAULT_OPTIONS = {
     version: SnmpVersion.v3,
     transport: 'udp4',
-    timeout: 2000,              // ms per request, keep timeout * (retries + 1) below the polling interval
+    timeout: 1000,              // ms per request, keep timeout * (retries + 1) below the polling interval (default 3000)
     retries: 1,
     securityLevel: 'authPriv',  // v3 only: noAuthNoPriv | authNoPriv | authPriv
     authProtocol: 'sha256',     // v3 only: md5 | sha | sha224 | sha256 | sha384 | sha512
@@ -40,6 +40,7 @@ const DEFAULT_OPTIONS = {
     trapsEnabled: false,        // receive traps/informs sent by the agent (same credentials of the session)
     trapPort: 162               // port < 1024 needs privileges on Linux
 };
+const TRAP_PORT_RANGE = { min: 1, max: 65535 };
 
 function tryLoadSnmp(manager) {
     let mod = null;
@@ -58,8 +59,11 @@ function SnmpClient(_data, _logger, _events, _runtime) {
 
     let session = null;
     let connected = false;
-    let working = false;                    // avoid overload during polling/connection
+    let generation = 0;                     // incremented by connect/disconnect, a stale connect or poll discards its outcome
+    let workToken = 0;                      // owner of the current connection/polling, avoids overlapping work
+    let workSequence = 0;
     let overloading = 0;                    // overload counter
+    let tagErrors = {};                     // tagId -> last varbind error, logged once until the tag recovers
     let lastStatus = '';                    // 'connect-ok' | 'connect-off' | 'connect-error' | 'connect-busy' | 'connect-failed'
     let lastTimestampValue = 0;             // timestamp of last successful polling
     let consecutiveTimeouts = 0;            // polls in a row without any answer
@@ -77,52 +81,64 @@ function SnmpClient(_data, _logger, _events, _runtime) {
      * for v3 the probe also performs the engine discovery and validates the credentials.
      */
     this.connect = async function () {
-        if (!_checkWorking(true)) {
+        const token = _acquireWork();
+        if (!token) {
             throw new Error('working');
         }
+        const attempt = ++generation;
         try {
             if (!data.property || !data.property.address) {
                 logger.error(`'${data.name}' missing connection data!`);
                 _emitStatus('connect-failed');
-                _clearVarsValue();
+                _clearVarsValue(false);
                 throw new Error('missing address');
             }
             const options = _getOptions();
             const security = await _getSecurity();
+            _assertCurrent(attempt);
             logger.info(`'${data.name}' try to connect ${data.property.address}:${options.port} (${options.version})`, true);
             _closeSession();
             session = _createSession(options, security);
             session.on('error', (err) => {
+                // net-snmp reports here only malformed responses, the socket errors are handled by the request timeout
                 logger.error(`'${data.name}' session error! ${err}`);
             });
-            await _get([SYS_UPTIME_OID]);
             if (options.trapsEnabled) {
-                _registerTraps(options, security);      // throws when the trap port refuses the credentials
+                // registered before the probe and kept when the probe fails: the traps do not depend on the GET reachability
+                await _registerTraps(options, security);    // throws when the trap port refuses the credentials or cannot be bound
+                _assertCurrent(attempt);
             }
+            await _get([SYS_UPTIME_OID]);
+            _assertCurrent(attempt);
             connected = true;
             consecutiveTimeouts = 0;
             logger.info(`'${data.name}' connected!`, true);
             _emitStatus('connect-ok');
         } catch (err) {
+            if (attempt !== generation) {
+                // superseded by a newer connect or by a disconnect: that one owns the session now
+                throw err;
+            }
             connected = false;
             _closeSession();
             logger.error(`'${data.name}' connect failed! ${err}`);
             _emitStatus('connect-error');
-            _clearVarsValue();
+            _clearVarsValue(true);
             throw err;
         } finally {
-            _checkWorking(false);
+            _releaseWork(token);
         }
     };
 
     this.disconnect = function () {
         return new Promise((resolve, reject) => {
             try {
+                generation++;
+                _unregisterTraps();
                 _closeSession();
                 connected = false;
                 _emitStatus('connect-off');
-                _clearVarsValue();
-                _checkWorking(false);
+                _clearVarsValue(false);
                 logger.info(`'${data.name}' disconnected!`, true);
                 resolve(true);
             } catch (err) {
@@ -136,7 +152,8 @@ function SnmpClient(_data, _logger, _events, _runtime) {
      * Read all tags with GET requests split in chunks of maxOidsPerRequest OIDs
      */
     this.polling = async function () {
-        if (!_checkWorking(true)) {
+        const token = _acquireWork();
+        if (!token) {
             _emitStatus('connect-busy');
             return;
         }
@@ -144,18 +161,22 @@ function SnmpClient(_data, _logger, _events, _runtime) {
             if (!session || !connected) {
                 return;
             }
+            const attempt = generation;
             const options = _getOptions();
             const tagIds = Object.keys(tagMap).filter(id => !tagMap[id].trapOnly);
             if (!tagIds.length) {
                 // nothing to read (trap-only device): a GET of sysUpTime keeps the connection status alive
-                await _keepAlive(options);
+                await _keepAlive(options, attempt);
                 return;
             }
             const results = {};
             let answered = false;
             // the chunks are requested concurrently: the poll lasts as the slowest request, not the sum of all
             const chunks = _chunk(tagIds, options.maxOidsPerRequest);
-            const outcomes = await Promise.allSettled(chunks.map(chunk => _get(chunk.map(id => tagMap[id].address))));
+            const outcomes = await Promise.allSettled(chunks.map(chunk => _getChunk(chunk.map(id => tagMap[id].address))));
+            if (attempt !== generation) {
+                return;     // the session was replaced or closed while waiting: the outcome belongs to the old session
+            }
             outcomes.forEach((outcome, chunkIndex) => {
                 if (outcome.status === 'fulfilled') {
                     chunks[chunkIndex].forEach((id, index) => {
@@ -182,7 +203,7 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         } catch (err) {
             logger.error(`'${data.name}' polling error! ${err}`);
         } finally {
-            _checkWorking(false);
+            _releaseWork(token);
         }
     };
 
@@ -191,6 +212,7 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         varsValue = {};
         tagMap = {};
         oidTagIds = {};
+        tagErrors = {};
         try {
             mibStore.refresh();
             let count = 0;
@@ -285,7 +307,8 @@ function SnmpClient(_data, _logger, _events, _runtime) {
                         address: varbind.oid,
                         name: mibStore.toName(varbind.oid),
                         type: type,
-                        value: _decodeVarbind(varbind, { type: type }).value
+                        value: _decodeVarbind(varbind, { type: type }).value,
+                        existing: !!oidTagIds[varbind.oid]      // already a tag of the device (numeric or MIB name address)
                     });
                 }
                 return false;
@@ -339,6 +362,10 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         result.retries = (parseInt(result.retries, 10) >= 0) ? parseInt(result.retries, 10) : DEFAULT_OPTIONS.retries;
         result.maxOidsPerRequest = parseInt(result.maxOidsPerRequest, 10) || DEFAULT_OPTIONS.maxOidsPerRequest;
         result.offlineAfterTimeouts = parseInt(result.offlineAfterTimeouts, 10) || DEFAULT_OPTIONS.offlineAfterTimeouts;
+        result.trapPort = parseInt(result.trapPort, 10);
+        if (!(result.trapPort >= TRAP_PORT_RANGE.min && result.trapPort <= TRAP_PORT_RANGE.max)) {
+            result.trapPort = DEFAULT_OPTIONS.trapPort;
+        }
         return result;
     }
 
@@ -407,7 +434,7 @@ function SnmpClient(_data, _logger, _events, _runtime) {
     /**
      * Subscribe to the shared trap receiver with the credentials of the session
      */
-    function _registerTraps(options, security) {
+    async function _registerTraps(options, security) {
         _unregisterTraps();
         const subscriber = {
             id: data.id,
@@ -419,11 +446,16 @@ function SnmpClient(_data, _logger, _events, _runtime) {
                 _onNotification(pdu).catch(err => logger.error(`'${data.name}' notification error! ${err}`));
             },
             onError: (err) => {
+                // the trap port could not be bound (privileges, port in use): the device reconnects, the receiver retries the bind later
                 logger.error(`'${data.name}' trap receiver error! ${err}`);
                 trapUnregister = null;
+                if (connected) {
+                    connected = false;
+                    _emitStatus('connect-error');
+                }
             }
         };
-        trapUnregister = trapReceiver.register(snmp, { port: options.trapPort, transport: options.transport }, subscriber, logger);
+        trapUnregister = await trapReceiver.register(snmp, { port: options.trapPort, transport: options.transport }, subscriber, logger);
     }
 
     function _unregisterTraps() {
@@ -455,16 +487,31 @@ function SnmpClient(_data, _logger, _events, _runtime) {
     /**
      * Polling of a device without tags to read: probe sysUpTime so the connection status follows the agent reachability
      */
-    async function _keepAlive(options) {
+    async function _keepAlive(options, attempt) {
         try {
             await _get([SYS_UPTIME_OID]);
+            if (attempt !== generation) {
+                return;
+            }
             _markAnswered();
         } catch (err) {
+            if (attempt !== generation) {
+                return;
+            }
             logger.error(`'${data.name}' keepalive error! ${err}`);
             _markUnanswered(options);
         }
         if (connected && lastStatus !== 'connect-ok') {
             _emitStatus('connect-ok');
+        }
+    }
+
+    /**
+     * Throw when a newer connect or a disconnect replaced the state while awaiting
+     */
+    function _assertCurrent(attempt) {
+        if (attempt !== generation) {
+            throw new Error('connection replaced');
         }
     }
 
@@ -506,7 +553,6 @@ function SnmpClient(_data, _logger, _events, _runtime) {
     }
 
     function _closeSession() {
-        _unregisterTraps();
         if (session) {
             try {
                 session.close();
@@ -527,6 +573,41 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         });
     }
 
+    /**
+     * GET of a chunk of OIDs: the varbinds are returned in the order of the OIDs, undefined when not answered.
+     * A v1 agent answers a missing instance with a PDU error noSuchName that fails the whole request:
+     * the OID is dropped (reported as NoSuchInstance) and the others are requested again.
+     */
+    async function _getChunk(oids) {
+        const result = new Array(oids.length);
+        let pending = oids.map((oid, index) => ({ oid: oid, index: index }));
+        while (pending.length) {
+            try {
+                const varbinds = await _get(pending.map(entry => entry.oid));
+                pending.forEach((entry, position) => {
+                    result[entry.index] = varbinds[position];
+                });
+                return result;
+            } catch (err) {
+                const failed = _noSuchNameEntry(err, pending);
+                if (!failed) {
+                    throw err;
+                }
+                pending = pending.filter(entry => entry !== failed);
+                result[failed.index] = { oid: failed.oid, type: snmp.ObjectType.NoSuchInstance, value: null };
+            }
+        }
+        return result;
+    }
+
+    function _noSuchNameEntry(err, pending) {
+        if (!err || !snmp.ErrorStatus || err.status !== snmp.ErrorStatus.NoSuchName) {
+            return null;
+        }
+        const match = /:\s*(\S+)$/.exec(String(err.message || ''));   // 'NoSuchName: <oid>' when the error index is valid
+        return match ? pending.find(entry => entry.oid === match[1]) || null : null;
+    }
+
     function _set(varbinds) {
         return new Promise((resolve, reject) => {
             session.set(varbinds, (err, result) => {
@@ -539,8 +620,14 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         });
     }
 
-    function _clearVarsValue() {
+    /**
+     * Set the values to null, the trap-only tags are kept when the GET path fails (keepTrapOnly)
+     */
+    function _clearVarsValue(keepTrapOnly) {
         for (const id in varsValue) {
+            if (keepTrapOnly && tagMap[id] && tagMap[id].trapOnly) {
+                continue;
+            }
             varsValue[id].value = null;
         }
         _emitValues(varsValue);
@@ -557,9 +644,7 @@ function SnmpClient(_data, _logger, _events, _runtime) {
             }
             const tagDef = tagMap[id];
             const decoded = _decodeVarbind(varbind, tagDef);
-            if (decoded.error) {
-                logger.warn(`'${data.name}' tag ${tagDef.name} (${tagDef.address}) ${decoded.error}`);
-            }
+            _logTagError(id, tagDef, decoded.error);
             const previous = varsValue[id];
             const entry = {
                 id: id,
@@ -572,7 +657,7 @@ function SnmpClient(_data, _logger, _events, _runtime) {
                 timestamp: timestamp
             };
             if (!utils.isNullOrUndefined(decoded.value)) {
-                entry.value = await deviceUtils.tagValueCompose(decoded.value, previous ? previous.value : null, tagDef, runtime);
+                entry.value = await deviceUtils.tagValueCompose(decoded.value, previous ? previous.value : null, _composeTag(tagDef), runtime);
                 if (deviceUtils.tagDaqToSave(entry, timestamp)) {
                     toDaq[id] = entry;
                 }
@@ -585,8 +670,29 @@ function SnmpClient(_data, _logger, _events, _runtime) {
     }
 
     /**
-     * Convert a varbind to a JavaScript value: numbers for the integer types,
-     * strings for OctetString/IpAddress/OID, null for the error types
+     * Tag definition for the value composition: the string types are declared as 'String' so that a numeric looking
+     * text (serial numbers, hex strings) is not converted to a number by the scale/deadband/format path
+     */
+    function _composeTag(tag) {
+        return _isStringType(tag.type) ? { ...tag, type: 'String' } : tag;
+    }
+
+    /**
+     * Log a varbind error once, until the tag recovers
+     */
+    function _logTagError(id, tag, error) {
+        if (error && tagErrors[id] !== error) {
+            tagErrors[id] = error;
+            logger.warn(`'${data.name}' tag ${tag.name} (${tag.address}) ${error}`);
+        } else if (!error && tagErrors[id]) {
+            delete tagErrors[id];
+            logger.info(`'${data.name}' tag ${tag.name} (${tag.address}) recovered`, true);
+        }
+    }
+
+    /**
+     * Convert a varbind to a JavaScript value: numbers for the integer types, strings for OctetString/IpAddress/OID,
+     * boolean for the Boolean tag type (TruthValue, 1 true, 2 false), null for the error types
      */
     function _decodeVarbind(varbind, tag) {
         if (!varbind) {
@@ -605,6 +711,9 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         if (Buffer.isBuffer(value)) {
             return { value: _decodeOctetString(value, tag) };
         }
+        if (tag.type === SnmpTagType.Boolean) {
+            return { value: (typeof value === 'boolean') ? value : Number(value) === 1 };
+        }
         return { value: value };
     }
 
@@ -612,7 +721,11 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         if (!Buffer.isBuffer(value)) {
             return Number(value);
         }
-        const buffer = Buffer.concat([Buffer.alloc(Math.max(0, 8 - value.length)), value]);
+        let content = value;
+        while (content.length > 8 && content[0] === 0) {
+            content = content.subarray(1);      // BER integer with a leading zero byte for values >= 2^63
+        }
+        const buffer = Buffer.concat([Buffer.alloc(Math.max(0, 8 - content.length)), content.subarray(-8)]);
         return Number(buffer.readBigUInt64BE(0));
     }
 
@@ -638,14 +751,16 @@ function SnmpClient(_data, _logger, _events, _runtime) {
             SnmpTagType.TimeTicks, SnmpTagType.Counter64].indexOf(type) !== -1;
     }
 
+    function _isStringType(type) {
+        return [SnmpTagType.OctetString, SnmpTagType.Hex, SnmpTagType.IpAddress, SnmpTagType.OID].indexOf(type) !== -1;
+    }
+
     /**
      * Tag type to propose for a varbind read from the agent
      */
     function _tagTypeOf(varbind) {
         const ObjectType = snmp.ObjectType;
         switch (varbind.type) {
-            case ObjectType.Boolean:
-                return SnmpTagType.Boolean;
             case ObjectType.OctetString:
                 return (Buffer.isBuffer(varbind.value) && !_isPrintable(varbind.value.toString('utf8'))) ? SnmpTagType.Hex : SnmpTagType.OctetString;
             case ObjectType.Opaque:
@@ -671,6 +786,9 @@ function SnmpClient(_data, _logger, _events, _runtime) {
         if (type === SnmpTagType.Hex) {
             return snmp.ObjectType.OctetString;
         }
+        if (type === SnmpTagType.Boolean) {
+            return snmp.ObjectType.Integer;     // TruthValue, ASN.1 BOOLEAN is not a SMI type
+        }
         return snmp.ObjectType[type] || snmp.ObjectType.Integer;
     }
 
@@ -684,20 +802,26 @@ function SnmpClient(_data, _logger, _events, _runtime) {
             case SnmpTagType.OID:
                 return String(value);
             case SnmpTagType.Boolean:
-                return (value === true || value === 'true' || value === 1 || value === '1');
+                return (value === true || value === 'true' || value === 1 || value === '1') ? 1 : 2;    // TruthValue
             case SnmpTagType.Counter64: {
                 const buffer = Buffer.alloc(8);
-                buffer.writeBigUInt64BE(BigInt(Math.max(0, Math.trunc(Number(value)))));
+                buffer.writeBigUInt64BE(BigInt(Math.max(0, _toInteger(value))));
                 return buffer;
             }
-            default: {
-                const number = parseInt(value, 10);
-                if (isNaN(number)) {
-                    throw new Error(`value '${value}' is not an integer`);
-                }
-                return number;
-            }
+            default:
+                return _toInteger(value);
         }
+    }
+
+    /**
+     * Integer for the SET: rounded, scaled values like 332.9999 are not truncated, text that is not a number is refused
+     */
+    function _toInteger(value) {
+        const number = Number(value);
+        if (typeof value === 'boolean' || value === '' || value === null || !Number.isFinite(number)) {
+            throw new Error(`value '${value}' is not an integer`);
+        }
+        return Math.round(number);
     }
 
     function _normalizeOid(oid) {
@@ -725,20 +849,26 @@ function SnmpClient(_data, _logger, _events, _runtime) {
      * Guard against overlapping connection/polling: a poll started while the previous one is still waiting
      * for the agent is skipped. The session is not closed, a slow agent is handled by the request timeout
      * and the consecutive timeouts counter, not by the overlap.
+     * @returns the token to release, 0 when the work is already in progress
      */
-    function _checkWorking(check) {
-        if (check && working) {
+    function _acquireWork() {
+        if (workToken) {
             overloading++;
-            if (overloading === 1 || overloading % 10 === 0) {
+            // not logged while the agent is not answering: the skipped cycles are a consequence of the timeouts
+            if (!consecutiveTimeouts && (overloading === 1 || overloading % 10 === 0)) {
                 logger.warn(`'${data.name}' polling overlap, skipped ${overloading} cycle(s): reduce the tags or the timeout/retries, or increase the polling interval`);
             }
-            return false;
+            return 0;
         }
-        working = check;
-        if (!check) {
-            overloading = 0;
+        workToken = ++workSequence;
+        overloading = 0;
+        return workToken;
+    }
+
+    function _releaseWork(token) {
+        if (token && workToken === token) {
+            workToken = 0;
         }
-        return true;
     }
 }
 

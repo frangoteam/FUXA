@@ -103,6 +103,24 @@ describe('SNMP driver against a loopback net-snmp agent', function () {
         assert.equal(device.getValues().str.value, 'fuxa');
     });
 
+    it('reads and writes a Boolean tag as TruthValue', async () => {
+        createDevice({ version: 'v2c' }, { pwd: COMMUNITY });
+        device.load({
+            id: 'snmp-live', name: 'SNMP live',
+            property: { address: '127.0.0.1', port: AGENT_PORT, options: { version: 'v2c', timeout: 1000, retries: 0 } },
+            tags: { flag: { id: 'flag', name: 'flag', address: `${INT_OID}.0`, type: 'Boolean' } }
+        });
+        await device.connect();
+        assert.equal(await device.setValue('flag', true), true);
+        assert.equal(mib.getScalarValue('testInt'), 1);
+        await device.polling();
+        assert.equal(device.getValues().flag.value, true);
+        assert.equal(await device.setValue('flag', false), true);
+        assert.equal(mib.getScalarValue('testInt'), 2);
+        await device.polling();
+        assert.equal(device.getValues().flag.value, false);
+    });
+
     it('reads with v3 authPriv', async () => {
         createDevice({ version: 'v3', securityLevel: 'authPriv', authProtocol: 'sha256', privProtocol: 'aes' }, V3_USER);
         await device.connect();
