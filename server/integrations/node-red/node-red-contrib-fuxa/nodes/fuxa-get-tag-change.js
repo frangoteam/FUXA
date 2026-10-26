@@ -55,7 +55,8 @@ module.exports = function(RED) {
                             var previousValue = previousValues[configuredTagId];
                             var valueChanged = currentValue !== null && typeof currentValue === 'object'
                                 ? !isDeepStrictEqual(previousValue, currentValue)
-                                : previousValue !== currentValue;
+                                : previousValue !== currentValue &&
+                                    !(Number.isNaN(previousValue) && Number.isNaN(currentValue));
                             if (valueChanged) {
                                 // Update previous value
                                 previousValues[configuredTagId] = snapshotValue(currentValue);

@@ -151,6 +151,40 @@ describe('Node-RED tag change values', () => {
         });
     }
 
+    it('does not emit repeated scalar NaN reads', () => {
+        create(NaN);
+        update(NaN); update(Number('invalid'));
+        assert.equal(node.messages.length, 0);
+    });
+
+    it('emits once when a finite value becomes NaN', () => {
+        create(12);
+        update(NaN); update(NaN);
+        assert.equal(node.messages.length, 1);
+        assert.ok(Number.isNaN(node.messages[0].payload));
+        assert.equal(node.messages[0].previousValue, 12);
+    });
+
+    it('emits once when NaN recovers to a finite value', () => {
+        create(NaN);
+        update(NaN); update(12); update(12);
+        assert.equal(node.messages.length, 1);
+        assert.equal(node.messages[0].payload, 12);
+        assert.ok(Number.isNaN(node.messages[0].previousValue));
+    });
+
+    it('retains equal signed-zero behavior', () => {
+        create(0);
+        update(-0); update(0);
+        assert.equal(node.messages.length, 0);
+    });
+
+    it('retains infinite-value transitions', () => {
+        create(Infinity);
+        update(Infinity); update(-Infinity); update(-Infinity); update(0);
+        assert.deepEqual(node.messages.map(msg => msg.payload), [-Infinity, 0]);
+    });
+
     it('ignores other tags and removes the listener on close', () => {
         create([1]);
         update([2], 'other-tag');
