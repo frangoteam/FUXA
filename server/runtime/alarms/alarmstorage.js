@@ -154,7 +154,7 @@ function getAlarms() {
             reject(false);
         } else {
             var start = from || 0;
-            var end = to || Number.MAX_SAFE_INTEGER;
+            var end = (to || to === 0) ? to : Number.MAX_SAFE_INTEGER;
             var sql = "SELECT * FROM chronicle WHERE ontime BETWEEN ? and ? ORDER BY ontime DESC";
             db_alarms.all(sql, [start, end], function (err, rows) {
                 if (err) {

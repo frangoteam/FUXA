@@ -284,7 +284,9 @@ export class AuthService {
 		}
 		const contextPermission = settings.userRole ? context.permissionRoles : context.permission;
 		if (settings.userRole) {
-			if (userPermission && !contextPermission) {
+			// Role users may have no Groups bitmask. Honour the caller's
+			// default before reading permissions stripped by project filtering.
+			if (!contextPermission) {
 				return { show: forceUndefined, enabled: forceUndefined };
 			}
 		} else {

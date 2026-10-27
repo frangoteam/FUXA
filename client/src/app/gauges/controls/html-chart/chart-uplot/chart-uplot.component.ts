@@ -384,29 +384,22 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     private generateZones(ranges: ChartLineZone[], attribute: 'stroke' | 'fill', baseColor: string): Zone[] {
 
         const result: Zone[] = [];
-        const sorted = ranges.sort((a, b) => a.min - b.min);
+        const sorted = [...ranges].sort((a, b) => (a.min ?? -Infinity) - (b.min ?? -Infinity));
+        result.push([-Infinity, baseColor]);
 
-        // ── 1. Color for –∞ comes from the first zone ───────────────
-        const firstColor = sorted[0]?.[attribute] || baseColor;
-        result.push([-Infinity, firstColor]);
-
-        // ── 2. Mid‑zone stops (same as before) ──────────────────────
-        sorted.forEach((r, i) => {
-            const color = r[attribute] || baseColor;
-            result.push([r.min, color]);
-
-            const nextMin = sorted[i + 1]?.min;
-            if (nextMin !== undefined && r.max < nextMin) {
-                result.push([r.max, color]);
-            } else if (nextMin === undefined) {
-                // last zone – we’ll add +∞ after the loop
-                result.push([r.max, color]);
+        sorted.forEach(range => {
+            const min = range.min ?? -Infinity;
+            const max = range.max ?? Infinity;
+            const color = range[attribute] || baseColor;
+            result.push([min, color]);
+            result.push([max, color]);
+            if (Number.isFinite(max)) {
+                result.push([max, baseColor]);
             }
         });
-
-        // ── 3. Color for +∞ comes from the last zone ────────────────
-        const lastColor = sorted[sorted.length - 1]?.[attribute] || baseColor;
-        result.push([Infinity, lastColor]);
+        if (sorted.length === 0 || sorted[sorted.length - 1].max != null) {
+            result.push([Infinity, baseColor]);
+        }
 
         return result;
     }

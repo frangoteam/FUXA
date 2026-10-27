@@ -20,8 +20,8 @@ export class ChartLine {
 }
 
 export interface ChartLineZone {
-    min: number;
-    max: number;
+    min?: number;
+    max?: number;
     stroke: string;
     fill: string;
 }

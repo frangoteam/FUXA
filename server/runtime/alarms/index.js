@@ -153,7 +153,7 @@ function AlarmsManager(_runtime) {
                     alr.userack = result[i].userack;
                     alr.group = result[i].grp;
                     alr.value = result[i].value;
-                    if (alr.ontime) {
+                    if (alr.ontime || alr.ontime === 0) {
                         var alrPermission = { show: true, enabled: true };
                         if (alarmsProperty[alr.name]) {
                             alrPermission = runtime.checkPermission(permission, alarmsProperty[alr.name].property);
