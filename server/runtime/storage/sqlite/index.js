@@ -585,8 +585,9 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
     function _bindAndGetTagValues(dbfile, id, fromts, tots) {
         return new Promise(function (resolve, reject) {
             _bindDaqData(dbfile).then(result => {
-                _getTagValues(result, id, fromts, tots).then(rows => {
+                _getTagValues(result, id, fromts, tots).finally(() => {
                     result.close();
+                }).then(rows => {
                     resolve(rows);
                 }).catch(function (err) {
                     reject(err);
