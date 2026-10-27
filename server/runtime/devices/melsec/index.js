@@ -39,6 +39,7 @@ function MelsecClient(_data, _logger, _events, _runtime) {
 
     let tagMap = {};          // tagId -> definizione (.address in sintax MC)
     let varsValue = {};       // value to send on frontend
+    let abortConnect = null;  // rejects the in-flight connect: mcprotocol never calls back after dropConnection
 
     this.connect = function () {
         return new Promise((resolve, reject) => {
@@ -70,10 +71,19 @@ function MelsecClient(_data, _logger, _events, _runtime) {
                 }
 
                 conn = new McProtocol();
+                const attempt = conn;
+                abortConnect = () => {
+                    abortConnect = null;
+                    reject(new Error('connection aborted'));
+                };
 
                 conn.initiateConnection(
                     { host, port, ascii: !!ascii, octalInputOutput: (typeof octal === 'boolean' ? octal : true) },
                     (err) => {
+                        if (conn !== attempt || !abortConnect) {
+                            return;     // aborted by disconnect
+                        }
+                        abortConnect = null;
                         if (typeof err !== 'undefined') {
                             logger.error(`'${data.name}' connect failed! ${err}`);
                             connected = false;
@@ -112,7 +122,14 @@ function MelsecClient(_data, _logger, _events, _runtime) {
                 if (conn) {
                     try {
                         conn.dropConnection();
+                        // dropConnection removes the socket 'error' listener: a late connect error would be uncaught
+                        if (conn.isoclient) {
+                            conn.isoclient.on('error', () => { });
+                        }
                     } catch { }
+                }
+                if (abortConnect) {
+                    abortConnect();
                 }
                 connected = false;
                 registered = new Set();
