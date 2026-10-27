@@ -404,7 +404,8 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                     db.run("CREATE TABLE if not exists data (dt INTEGER, id INTEGER, value TEXT)", function (err) {
                         if (err) {
                             logger.error(`daqstorage.bind-daq-data-to-create-table error! '${id}' ${err}`);
-                            reject();
+                            db.close();
+                            reject(err);
                         } else {
                             resolve(db);
                         }
