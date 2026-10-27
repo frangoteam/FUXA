@@ -12,6 +12,8 @@ function CurrentTagReadings(_settings, _log) {
     var db_current = null;          // Database of project
     const dataQueue = new Map();    // Tags map
     let writing = false;
+    let writeTimer = null;
+    let closed = false;
 
     /**
      * Bind the database resource by create the table if not exist
@@ -101,6 +103,10 @@ function CurrentTagReadings(_settings, _log) {
      * Close the database
      */
     this.close = function () {
+        if (closed) return;
+        closed = true;
+        clearInterval(writeTimer);
+        writeTimer = null;
         if (db_current) {
             db_current.close();
         }
@@ -130,7 +136,8 @@ function CurrentTagReadings(_settings, _log) {
 
     _bind().then(result => {
         logger.info('currentstorage init successful!', true);
-        setInterval(async () => {
+        if (closed) return;
+        writeTimer = setInterval(async () => {
             try {
                 if (db_current) {
                     await _writeValues();
