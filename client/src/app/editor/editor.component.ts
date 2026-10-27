@@ -826,7 +826,32 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             {color = color.slice(1);}
         let alfa = 100;
         if (this.winRef.nativeWindow.svgEditor) {
-            this.winRef.nativeWindow.svgEditor.setColor(color, alfa, 'fill');
+            const svgEditor = this.winRef.nativeWindow.svgEditor;
+            const selected = svgEditor.getSelectedElements().filter(element => !!element);
+            const getFillTargets = (element: Element): Element[] => {
+                if (element.getAttribute('type')?.startsWith(HtmlImageComponent.TypeTag)) {
+                    const background = HtmlImageComponent.getBackgroundElement(element);
+                    return background ? [background] : [];
+                }
+                if (element.querySelector(`[type^="${HtmlImageComponent.TypeTag}"]`)) {
+                    return Array.from(element.children).flatMap(getFillTargets);
+                }
+                return [element];
+            };
+            const targets = selected.flatMap(getFillTargets);
+            const changeSelection = selected.length !== targets.length || selected.some((element, index) => element !== targets[index]);
+            try {
+                // The SVG editor recolors every descendant of a group. Image controls
+                // already have a background rect behind their foreignObject content.
+                if (changeSelection) {
+                    svgEditor.selectOnly(targets);
+                }
+                svgEditor.setColor(color, alfa, 'fill');
+            } finally {
+                if (changeSelection) {
+                    svgEditor.selectOnly(selected);
+                }
+            }
         }
         // this.fillcolor;
     }
