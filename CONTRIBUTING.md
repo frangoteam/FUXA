@@ -10,7 +10,7 @@ We welcome improvements to both the codebase and the documentation.
 
 ## Requirements
 
-- Node.js 18 LTS (recommended)
+- Node.js 22 LTS (recommended)
 - npm
 
 ## Setup Development Environment

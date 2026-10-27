@@ -145,9 +145,9 @@ services:
 
 **Installing with Node and NPM**
 
-You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 18.
+You need to have installed [Node](https://nodejs.org/en/about/previous-releases) Version 22.
 
-**WARNING** In linux with nodejs Version 18 the installation could be a challenge. If you don't intend communicate with Siemens PLCs via S7 (node-snap7 library) you can install from [NPM @frangoteam/fuxa-min](https://www.npmjs.com/package/@frangoteam/fuxa-min)
+**WARNING** In Linux, installing native dependencies could be challenging. If you don't intend to communicate with Siemens PLCs via S7 (node-snap7 library), you can install from [NPM @frangoteam/fuxa-min](https://www.npmjs.com/package/@frangoteam/fuxa-min)
 
 **NPM** (fifth option)
 
@@ -161,7 +161,7 @@ fuxa
 
 [Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it
 
-**WARNING** In linux with nodejs Version 18 the installation could be a challenge. If you don't intend communicate with Siemens PLCs via S7 you can remove the node-snap7 library from the server/package.json
+**WARNING** In Linux, installing native dependencies could be challenging. If you don't intend to communicate with Siemens PLCs via S7, you can remove the node-snap7 library from the server/package.json
 
 ```
 cd ./server
@@ -182,7 +182,7 @@ The app is only accessing the already running Fuxa Web Server
 
 `sudo apt-get update`
 
-`curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -`
+`curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -`
 
 `sudo apt-get install -y nodejs`
 
