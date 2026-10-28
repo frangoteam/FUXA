@@ -516,6 +516,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                         if (device.type === DeviceType.MELSEC) {
                             device.property.ascii = tempdevice.property.ascii;
                             device.property.octalIO = tempdevice.property.octalIO;
+                            device.property.frame = tempdevice.property.frame;
                         }
                         if (tempdevice.property.connectionOption) {
                             device.property.connectionOption = tempdevice.property.connectionOption;

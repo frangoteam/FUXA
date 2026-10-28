@@ -744,6 +744,10 @@ export class GaugesManager {
                 colors.fill = HtmlSelectComponent.getFillColor(eles[0]);
                 colors.stroke = HtmlSelectComponent.getStrokeColor(eles[0]);
                 return true;
+            } else if (ele.type.startsWith(HtmlImageComponent.TypeTag)) {
+                colors.fill = HtmlImageComponent.getBackgroundElement(eles[0])?.getAttribute('fill') || eles[0].getAttribute('fill');
+                colors.stroke = eles[0].getAttribute('stroke');
+                return true;
             }
         }
         return false;

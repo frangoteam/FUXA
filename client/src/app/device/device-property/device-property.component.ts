@@ -76,6 +76,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	databitsType = [7, 8];
 	stopbitsType = [1, 1.5, 2];
 	parityType = ['None', 'Odd', 'Even'];
+	melsecFrameType = ['1E', '3E'];
 	methodType = ['GET'];//, 'POST'];
 	parserType = ['JSON'];//, 'CSV'];
 	hostInterfaces = [];

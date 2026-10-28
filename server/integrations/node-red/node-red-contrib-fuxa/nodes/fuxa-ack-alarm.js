@@ -6,8 +6,8 @@ module.exports = function(RED) {
 
         this.on('input', async function(msg) {
             try {
-                var alarmName = config.alarmName || msg.alarmName || msg.payload;
-                var types = config.types || msg.types;
+                var alarmName = msg.alarmName || msg.payload || config.alarmName;
+                var types = (msg.types !== undefined && msg.types !== null) ? msg.types : config.types;
                 if (typeof types === 'string') {
                     types = types.split(',').map(s => s.trim());
                 }
