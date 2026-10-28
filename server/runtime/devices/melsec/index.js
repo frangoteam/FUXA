@@ -61,7 +61,9 @@ function MelsecClient(_data, _logger, _events, _runtime) {
                     data.property.octalIO
                 );
 
-                logger.info(`'${data.name}' try to connect ${host}:${port}`, true);
+                const frame = _parseFrame(data.property.frame);
+
+                logger.info(`'${data.name}' try to connect ${host}:${port} (frame ${frame})`, true);
 
                 if (!McProtocol) {
                     logger.error(`'${data.name}' mcprotocol not available`);
@@ -78,7 +80,7 @@ function MelsecClient(_data, _logger, _events, _runtime) {
                 };
 
                 conn.initiateConnection(
-                    { host, port, ascii: !!ascii, octalInputOutput: (typeof octal === 'boolean' ? octal : true) },
+                    { host, port, ascii: !!ascii, octalInputOutput: (typeof octal === 'boolean' ? octal : true), frame },
                     (err) => {
                         if (conn !== attempt || !abortConnect) {
                             return;     // aborted by disconnect
@@ -272,6 +274,14 @@ function MelsecClient(_data, _logger, _events, _runtime) {
             port = parseInt(address.substring(i + 1), 10);
         }
         return { host, port, ascii, octal };
+    }
+
+    /**
+     * MC protocol frame: '1E' (A-compatible, FX3U-ENET / QJ71E71) or '3E' (QnA-compatible / SLMP,
+     * Q/L/iQ-R/iQ-F built-in Ethernet). Default '1E' keeps existing projects unchanged.
+     */
+    function _parseFrame(frame) {
+        return frame === '3E' ? '3E' : '1E';
     }
 
     function _clearVarsValue() {

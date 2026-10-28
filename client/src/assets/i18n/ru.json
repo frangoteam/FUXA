@@ -1107,6 +1107,7 @@
     "device.template-tags": "Имя шаблона",
     "device.property-socket-reuse": "Повторное использование розеток",
     "device.property-melsec-target": "Адрес (IP[:порт])",
+    "device.property-melsec-frame": "Кадр MC",
     "device.property-melsec-ascii": "ASCII",
     "device.property-melsec-octalIO": "Восьмеричный ввод-вывод",
     "device.property-redis-target": "URL-адрес подключения",
