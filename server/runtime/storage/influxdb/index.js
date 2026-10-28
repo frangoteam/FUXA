@@ -66,7 +66,7 @@ function Influx(_settings, _log, _currentStorate) {
                 }
             } catch (error) {
                 logger.error(`influxdb-init failed! ${error}`);
-                reject(error);
+                return;
             }
             client = new influx.InfluxDB(clientOptions);
             status = InfluxDBStatusEnum.OPEN;
