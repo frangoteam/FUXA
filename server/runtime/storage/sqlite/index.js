@@ -607,7 +607,7 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                     reject(err);
                 } else {
                     for (var i = 0; i < rows.length; i++) {
-                        rows[i].value =  booleanMapping[rows[i].value] !== undefined ? booleanMapping[rows[i].value] : rows[i].value;
+                        rows[i].value =  Object.prototype.hasOwnProperty.call(booleanMapping, rows[i].value) ? booleanMapping[rows[i].value] : rows[i].value;
                     }
                     resolve(rows);
                 }
