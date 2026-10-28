@@ -189,36 +189,42 @@ function Nodes7S7(data, logger, events, runtime) {
         }
         self.working = true;
         try {
-            client.readAllItems((anyBad, values) => {
-                try {
-                    const vals = values || {};
-                    // nodes7 does NOT return '_COMMERR' in `values` (readDoneCallback only
-                    // delivers polled items). The real communication state is
-                    // client.isoConnectionState (4 = connected), which is exactly what
-                    // findItem('_COMMERR') would use.
-                    const connected = client.isoConnectionState === 4;
-                    // 1st argument is anyBadQualities (boolean): true means at least one
-                    // item has bad quality, the other values are still valid.
-                    if (anyBad && connected) {
-                        logger.debug(`'${data.name}' [nodes7] some items have bad quality`);
+            await new Promise((resolve) => {
+                client.readAllItems(async (anyBad, values) => {
+                    try {
+                        const vals = values || {};
+                        // nodes7 does NOT return '_COMMERR' in `values` (readDoneCallback only
+                        // delivers polled items). The real communication state is
+                        // client.isoConnectionState (4 = connected), which is exactly what
+                        // findItem('_COMMERR') would use.
+                        const connected = client.isoConnectionState === 4;
+                        // 1st argument is anyBadQualities (boolean): true means at least one
+                        // item has bad quality, the other values are still valid.
+                        if (anyBad && connected) {
+                            logger.debug(`'${data.name}' [nodes7] some items have bad quality`);
+                        }
+                        if (!connected) {
+                            // Keep the device manager's connection check in sync with the
+                            // socket state so it can initiate a reconnect.
+                            self.connected = false;
+                            _markCommError();
+                            // lastReadTs is intentionally NOT updated: the device layer uses it
+                            // to detect a stalled PLC and force a reconnect with backoff.
+                        } else {
+                            self.lastStatus = 'connect-ok';
+                            _emitStatus('connect-ok');
+                            self.lastReadTs = Date.now();
+                        }
+                        // Always process the returned values: bad quality items ("BAD ...")
+                        // are ignored by _processValues, keeping their last good value.
+                        await _processValues(vals);
+                    } catch (e) {
+                        logger.warn(`'${data.name}' [nodes7] processing: ${e.message}`);
+                    } finally {
+                        self.working = false;
+                        resolve();
                     }
-                    if (!connected) {
-                        _markCommError();
-                        // lastReadTs is intentionally NOT updated: the device layer uses it
-                        // to detect a stalled PLC and force a reconnect with backoff.
-                    } else {
-                        self.lastStatus = 'connect-ok';
-                        _emitStatus('connect-ok');
-                        self.lastReadTs = Date.now();
-                    }
-                    // Always process the returned values: bad quality items ("BAD ...")
-                    // are ignored by _processValues, keeping their last good value.
-                    _processValues(vals);
-                } catch (e) {
-                    logger.warn(`'${data.name}' [nodes7] processing: ${e.message}`);
-                } finally {
-                    self.working = false;
-                }
+                });
             });
         } catch (e) {
             logger.warn(`'${data.name}' [nodes7] polling error: ${e.message}`);
@@ -229,7 +235,7 @@ function Nodes7S7(data, logger, events, runtime) {
     function _processValues(values) {
         const now = new Date().getTime();
         const toDaq = {};
-        (async () => {
+        return (async () => {
             for (const id in self.byId) {
                 const meta = self.byId[id];
                 let raw = values[id];

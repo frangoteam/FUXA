@@ -297,6 +297,10 @@ export class DeviceNetProperty {
 
     static descriptor = {
         address: 'Device address (IP)',
+        driver: 'S7 driver backend',
+        tsapLocal: 'S7 nodes7 local TSAP',
+        tsapRemote: 'S7 nodes7 remote TSAP',
+        timeout: 'Connection timeout (ms)',
         // port: 'Address port',
         // slot: 'Slot number used for Siemens S7 connection',
         // rack: 'Rack number used for Siemens S7 connection',

@@ -149,6 +149,40 @@ describe('S7 nodes7 driver', () => {
         await instance.polling();
         await tick();
         assert.equal(instance.getValues().A.value, 7);
+        assert.equal(instance.isConnected(), false);
+    });
+
+    it('keeps polling locked until asynchronous tag processing completes', async () => {
+        const { instance, data } = makeDriver({ A: { address: 'DB1.DBW0', type: 'Int' } });
+        instance.load(data);
+        const fake = FakeNodeS7.lastInstance;
+        fake.isoConnectionState = 4;
+        fake.nextValues = { A: 3 };
+
+        const deviceUtils = require('../../runtime/devices/device-utils');
+        const originalCompose = deviceUtils.tagValueCompose;
+        let finishCompose;
+        deviceUtils.tagValueCompose = () => new Promise((resolve) => { finishCompose = resolve; });
+        try {
+            const firstPoll = instance.polling();
+            await Promise.resolve();
+            assert.equal(instance.working, true);
+            let readCount = 0;
+            const originalRead = fake.readAllItems;
+            fake.readAllItems = function (...args) {
+                readCount++;
+                return originalRead.apply(this, args);
+            };
+            await instance.polling();
+            assert.equal(readCount, 0);
+
+            finishCompose(3);
+            await firstPoll;
+            await tick();
+            assert.equal(instance.working, false);
+        } finally {
+            deviceUtils.tagValueCompose = originalCompose;
+        }
     });
 
     it('updates the last read timestamp only while connected', async () => {

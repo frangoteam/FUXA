@@ -193,6 +193,10 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			});
 		}
 
+		if (this.data.device.type === DeviceType.SiemensS7) {
+			this.data.device.property = this.data.device.property || {};
+			this.data.device.property.driver = this.data.device.property.driver || 'snap7';
+		}
 		if (this.data.device.property) {
 			if (!this.data.device.property.baudrate) {
 				this.data.device.property.baudrate = 9600;
