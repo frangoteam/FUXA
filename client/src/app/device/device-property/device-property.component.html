@@ -611,7 +611,7 @@
                         <div class="my-form-field inbk" style="width: 100px;">
                             <span>{{'device.property-melsec-frame' | translate}}</span>
                             <mat-select [value]="data.device.property.frame || '1E'"
-                                (valueChange)="data.device.property.frame = $event" style="width: 74px">
+                                (valueChange)="data.device.property.frame = $event" style="width: 80px">
                                 <mat-option *ngFor="let value of melsecFrameType" [value]="value">
                                     {{ value }}
                                 </mat-option>
