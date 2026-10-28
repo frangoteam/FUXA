@@ -404,7 +404,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
         if (type === 'number') {
             return parseFloat(value);
         } else if (type === 'boolean') {
-            return Boolean(value);
+            return deviceUtils.parseValue(value, type);
         } else if (type === 'string') {
             return value;
         } else {

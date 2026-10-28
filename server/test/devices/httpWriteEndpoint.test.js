@@ -36,6 +36,14 @@ describe('WebAPI configured write endpoint', function () {
         await client.connect();
     }
     for (const scenario of [
+        {name: "false text", type: 'boolean', value: "false", expected: false},
+        {name: "zero text", type: 'boolean', value: "0", expected: false},
+        {name: "padded false text", type: 'boolean', value: " FALSE ", expected: false},
+        {name: "empty text", type: 'boolean', value: "", expected: false},
+        {name: "native false", type: 'boolean', value: false, expected: false},
+        {name: "native true", type: 'boolean', value: true, expected: true},
+        {name: "true text", type: 'boolean', value: "true", expected: true},
+        {name: "one text", type: 'boolean', value: "1", expected: true},
         {name: 'number', type: 'number', value: '42', expected: 42},
         {name: 'string', type: 'string', value: 'RUN', expected: 'RUN'},
         {name: 'zero', type: 'number', value: 0, expected: 0},
