@@ -402,8 +402,14 @@ function init(_io, _api, _settings, _log, eventsMain) {
         });
         socket.on(Events.IoEventTypes.DEVICE_TAGS_SUBSCRIBE, (message) => {
             try {
-                socket.tagsClientSubscriptions = message.tagsId
-                if (message.sendLastValue) {
+                // Never trust the client payload: a non-array value would make
+                // the broadcast loop below throw on .includes() and abort the
+                // delivery for every other socket (see updateDeviceValues).
+                const tagsId = message && message.tagsId;
+                socket.tagsClientSubscriptions = Array.isArray(tagsId)
+                    ? tagsId.filter(id => typeof id === 'string')
+                    : [];
+                if (message && message.sendLastValue) {
                     var adevs = devices.getDevicesValues();
                     for (var id in adevs) {
                         updateDeviceValues({ id: id, values: adevs[id] || {}});
@@ -601,13 +607,22 @@ function updateDeviceValues(event) {
         //!TOFIX
         if (settings.broadcastAll === false) {
             Array.from(io.sockets.sockets.values()).forEach((socket) => {
-                const tags = Object.values(event.values).filter((tag) => {
-                    return socket.tagsClientSubscriptions.includes(tag.id);
-                });
-                socket.emit(Events.IoEventTypes.DEVICE_VALUES, {
-                    id: event.id,
-                    values: tagsToSend(tags)
-                });
+                // One malformed subscription must not stop the broadcast for
+                // all the other connected clients.
+                try {
+                    const subscriptions = Array.isArray(socket.tagsClientSubscriptions)
+                        ? socket.tagsClientSubscriptions
+                        : [];
+                    const tags = Object.values(event.values).filter((tag) => {
+                        return subscriptions.includes(tag.id);
+                    });
+                    socket.emit(Events.IoEventTypes.DEVICE_VALUES, {
+                        id: event.id,
+                        values: tagsToSend(tags)
+                    });
+                } catch (err) {
+                    logger.error(`${Events.IoEventTypes.DEVICE_VALUES}: ${err.message}`);
+                }
             });
         } else {
             io.emit(Events.IoEventTypes.DEVICE_VALUES, {
