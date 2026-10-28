@@ -15,7 +15,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
     var events = _events;               // Events to commit change to runtime
     var lastStatus = '';                // Last webapi status
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
-    var requestItemsMap = {};           // Map of request (JSON, CSV, XML, ...) {key: item path, value: tag}
+    var requestItemsMap = Object.create(null);           // Map of request (JSON, CSV, XML, ...) {key: item path, value: tag}
     var overloading = 0;                // Overloading counter to mange the break connection
     var lastTimestampRequest;           // Last Timestamp request
     var lastTimestampValue;             // Last Timestamp of asked values
@@ -140,7 +140,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
         varsValue = [];
         data = JSON.parse(JSON.stringify(_data));
         try {
-            requestItemsMap = {};
+            requestItemsMap = Object.create(null);
             var count = Object.keys(data.tags).length;
             for (var id in data.tags) {
                 const address = data.tags[id].address || data.tags[id].id;
@@ -427,7 +427,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
 function dataToFlat(data, property) {
 
     var parseTree = function(nodes, id, parent) {
-        let result = {};
+        let result = Object.create(null);
         let nodeId = id;
         if (parent) {
             nodeId = parent + ':' + nodeId;
