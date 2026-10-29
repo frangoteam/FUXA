@@ -41,8 +41,8 @@ export class DataTableComponent implements OnInit, AfterViewInit, OnDestroy {
     onTimeRange$ = new BehaviorSubject<DaqQuery>(null);
 
     rxjsPollingTimer: Observable<number>;
-    statusText = AlarmStatusType;
-    priorityText = AlarmPriorityType;
+    statusText = { ...AlarmStatusType };
+    priorityText = { ...AlarmPriorityType };
     alarmColumnType = AlarmColumnsType;
     reportColumnType = ReportColumnsType;
     loading = false;
