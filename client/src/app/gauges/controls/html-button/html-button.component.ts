@@ -100,6 +100,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
         if (bitmask) {
             return ((parseInt(value, 0) || 0) & bitmask) === ((parseInt(target, 0) || 0) & bitmask);
         }
+
         return String(value) === String(target);
     }
 
@@ -156,6 +157,125 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
 
     static getActions(type: string) {
         return this.actionsType;
+    }
+
+    /**
+     * Bind events to the button element.
+     */
+    static bindAction(gab: GaugeSettings, element?: HTMLElement, callbacks?:  { read: () => any; write: (value: string) => void }): () => void {
+
+        const { read: getValue, write: writeRaw } = callbacks || {};
+
+        const writeValue = (value: string) => {
+            if (gab.property.bitmask) {
+                const current = parseInt(getValue?.(), 0) || 0;
+                value = GaugeBaseComponent.valueBitmask(gab.property.bitmask, parseInt(value, 0) || 0, current).toString();
+            }
+
+            writeRaw?.(value);
+        };
+
+        const cleanups: Array<() => void> = [];
+
+        const on = <K extends keyof HTMLElementEventMap>(
+            target: HTMLElement,
+            type: K,
+            handler: (ev: HTMLElementEventMap[K]) => void
+        ) => {
+            target.addEventListener(type, handler);
+            cleanups.push(() => target.removeEventListener(type, handler));
+        };
+
+        const action = gab.property.buttonAction;
+        const button: HTMLElement = Utils.searchTreeStartWith(element, HtmlButtonComponent.prefixB);
+
+        if (element && button) {
+            element.style.touchAction = 'none';
+            on(element, 'contextmenu', (ev) => ev.preventDefault());
+
+            if (action.mode === ButtonActionMode.toggle || action.mode === ButtonActionMode.set) {
+                let pressed: boolean | null = null;
+                on(element, 'pointerdown', (ev: PointerEvent) => {pressed = ev.isPrimary;});
+                on(element, 'pointerleave', () => { pressed = false; });
+                on(element, 'pointerup', () => {
+                    if (!pressed) {
+                        return;
+                    }
+                    pressed = false;
+                    if (action.mode === ButtonActionMode.set) {
+                        writeValue(action.setValue);
+                    } else {
+                        const isOn = HtmlButtonComponent.isValueEqual(gab, getValue?.(), action.onValue);
+                        writeValue(isOn ? action.offValue : action.onValue);
+                    }
+                });
+            } else if (action.mode === ButtonActionMode.press) {
+                let pressedAt: number | null = null;
+                let releaseTimer: NodeJS.Timeout | null = null;
+
+                const setPressActive = (active: boolean) => {
+                    if (button) {
+                        button.dataset.pressActive = String(active);
+                        HtmlButtonComponent.updateButtonState(gab, button, getValue?.());
+                    }
+                };
+                const release = () => {
+                    // the tag changed during the press: don't revert it with the released value
+                    if (button?.dataset.pressInterrupted !== 'true') {
+                        writeValue(action.releaseValue);
+                    }
+                    setPressActive(false);
+                };
+                const onRelease = () => {
+                    window.removeEventListener('pointerup', onRelease);
+                    window.removeEventListener('pointercancel', onRelease);
+                    window.removeEventListener('blur', onRelease);
+                    if (pressedAt === null) {
+                        return;
+                    }
+                    const remaining = Number(action.minHoldTime) * 1000 - (Date.now() - pressedAt);
+                    pressedAt = null;
+                    if (remaining > 0) {
+                        releaseTimer = setTimeout(() => {
+                            releaseTimer = null;
+                            release();
+                        }, remaining);
+                    } else {
+                        release();
+                    }
+                };
+
+                on(element, 'pointerdown', (ev: PointerEvent) => {    
+                    if (!ev.isPrimary || pressedAt !== null) {
+                        return;
+                    }
+                    if (releaseTimer) {
+                        clearTimeout(releaseTimer);
+                    }
+
+                    releaseTimer = null;
+                    pressedAt = Date.now();
+                    if (button) {
+                        button.dataset.pressConfirmed = 'false';
+                        button.dataset.pressInterrupted = 'false';
+                    }
+                    writeValue(action.pressValue);
+                    setPressActive(true);
+                    window.addEventListener('pointerup', onRelease);
+                    window.addEventListener('pointercancel', onRelease);
+                    window.addEventListener('blur', onRelease);
+                });
+
+            }
+        }
+
+        // Dispose removes only element-scoped listeners. In-flight presses complete
+        // naturally via their window listeners and min-hold timer, so release value
+        // is still written on physical pointerup even after view unload.
+        return () => {
+            cleanups.forEach(cleanup => cleanup());
+            cleanups.length = 0; // prevent running cleanup again if the returned function is called multiple times
+        };
     }
 
     static initElement(gab: GaugeSettings, textTranslation?: string): HTMLElement {

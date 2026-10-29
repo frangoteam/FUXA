@@ -15,7 +15,7 @@ import {
 import { Subject, Subscription, take } from 'rxjs';
 import { ChangeDetectorRef } from '@angular/core';
 
-import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings, GaugeEventRelativeFromType, ViewEventType, InputActionEscType, IPropertyVariable, DocProfile, ButtonActionMode } from '../_models/hmi';
+import { Event, GaugeEvent, GaugeEventActionType, GaugeSettings, GaugeProperty, GaugeEventType, GaugeRangeProperty, GaugeStatus, Hmi, View, ViewType, Variable, ZoomModeType, InputOptionType, DocAlignType, DictionaryGaugeSettings, GaugeEventRelativeFromType, ViewEventType, InputActionEscType, IPropertyVariable, DocProfile } from '../_models/hmi';
 import { GaugesManager } from '../gauges/gauges.component';
 import { Utils } from '../_helpers/utils';
 import { ScriptParam, SCRIPT_PARAMS_MAP, ScriptParamType } from '../_models/script';
@@ -28,7 +28,6 @@ import { HmiService } from '../_services/hmi.service';
 import { EndPointApi } from '../_helpers/endpointapi';
 import { HtmlSelectComponent } from '../gauges/controls/html-select/html-select.component';
 import { HtmlButtonComponent } from '../gauges/controls/html-button/html-button.component';
-import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component';
 import { FuxaViewDialogComponent, FuxaViewDialogData } from './fuxa-view-dialog/fuxa-view-dialog.component';
 import { DialogPosition as DialogPosition, MatDialog as MatDialog } from '@angular/material/dialog';
 import { WebcamPlayerDialogComponent, WebcamPlayerDialogData } from '../gui-helpers/webcam-player/webcam-player-dialog/webcam-player-dialog.component';
@@ -87,6 +86,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     private loadOk = false;
     private zIndexCounter = 1000;
 
+    private disposers: Array<() => void> = [];
+
     constructor(
         private translateService: TranslateService,
         private changeDetector: ChangeDetectorRef,
@@ -134,6 +135,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (this['subscriptionOnGaugeEvent']) {
                 this['subscriptionOnGaugeEvent'].unsubscribe();
             }
+            this.disposers.forEach(dispose => dispose());
+            this.disposers = []; // prevent running dispose again if ngOnDestroy is called multiple times
             if (this.inputDialogRef) {
                 this.inputDialogRef.nativeElement.style.display = 'none';
             }
@@ -218,6 +221,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.gaugesManager.unbindGauge(this.id);
                     this.clearGaugeStatus();
                     this.viewContainerRef.clear();
+                    this.disposers.forEach(dispose => dispose());
+                    this.disposers = [];
                     this.dataContainer.nativeElement.innerHTML = '';
                 } catch (err) {
                     console.error(err);
@@ -591,100 +596,11 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    /**
-     * bind the button toggle/press/set action (configured in button property) to the pointer events
-     * @param ga
-     * @param element
-     */
     private bindButtonAction(ga: GaugeSettings, element: HTMLElement) {
-        const action = ga.property.buttonAction;
-        const variableId = ga.property.variableId;
-        const button: HTMLElement = Utils.searchTreeStartWith(element, HtmlButtonComponent.prefixB);
-        const getValue = () => this.hmiService.variables[variableId]?.value;
-        const writeValue = (value: string) => {
-            if (ga.property.bitmask) {
-                const current = parseInt(getValue(), 0) || 0;
-                value = GaugeBaseComponent.valueBitmask(ga.property.bitmask, parseInt(value, 0) || 0, current).toString();
-            }
-            this.gaugesManager.putSignalValue(variableId, value);
-        };
-        // avoid touch panning/long-press menu stealing the pointer while pressed
-        element.style.touchAction = 'none';
-        element.addEventListener('contextmenu', (ev) => ev.preventDefault());
-
-        if (action.mode === ButtonActionMode.toggle || action.mode === ButtonActionMode.set) {
-            // click: pointer pressed and released on the button
-            let pressed = false;
-            element.addEventListener('pointerdown', (ev: PointerEvent) => {
-                pressed = ev.isPrimary;
-            });
-            element.addEventListener('pointerleave', () => {
-                pressed = false;
-            });
-            element.addEventListener('pointerup', () => {
-                if (!pressed) {
-                    return;
-                }
-                pressed = false;
-                if (action.mode === ButtonActionMode.set) {
-                    writeValue(action.setValue);
-                } else {
-                    const isOn = HtmlButtonComponent.isValueEqual(ga, getValue(), action.onValue);
-                    writeValue(isOn ? action.offValue : action.onValue);
-                }
-            });
-        } else if (action.mode === ButtonActionMode.press) {
-            let pressedAt: number = null;
-            let releaseTimer = null;
-            const setPressActive = (active: boolean) => {
-                if (button) {
-                    button.dataset.pressActive = String(active);
-                    HtmlButtonComponent.updateButtonState(ga, button, getValue());
-                }
-            };
-            const release = () => {
-                // the tag changed during the press: don't revert it with the released value
-                if (button?.dataset.pressInterrupted !== 'true') {
-                    writeValue(action.releaseValue);
-                }
-                setPressActive(false);
-            };
-            const onRelease = () => {
-                window.removeEventListener('pointerup', onRelease);
-                window.removeEventListener('pointercancel', onRelease);
-                window.removeEventListener('blur', onRelease);
-                if (pressedAt === null) {
-                    return;
-                }
-                const remaining = Number(action.minHoldTime) * 1000 - (Date.now() - pressedAt);
-                pressedAt = null;
-                if (remaining > 0) {
-                    releaseTimer = setTimeout(() => {
-                        releaseTimer = null;
-                        release();
-                    }, remaining);
-                } else {
-                    release();
-                }
-            };
-            element.addEventListener('pointerdown', (ev: PointerEvent) => {
-                if (!ev.isPrimary || pressedAt !== null) {
-                    return;
-                }
-                clearTimeout(releaseTimer);
-                releaseTimer = null;
-                pressedAt = Date.now();
-                if (button) {
-                    button.dataset.pressConfirmed = 'false';
-                    button.dataset.pressInterrupted = 'false';
-                }
-                writeValue(action.pressValue);
-                setPressActive(true);
-                window.addEventListener('pointerup', onRelease);
-                window.addEventListener('pointercancel', onRelease);
-                window.addEventListener('blur', onRelease);
-            });
-        }
+        this.disposers.push(HtmlButtonComponent.bindAction(ga, element, {
+            read: () => this.hmiService.variables[ga.property.variableId]?.value,
+            write: (value: string) => this.gaugesManager.putSignalValue(ga.property.variableId, value)
+        }));
     }
 
     public runEvents(self: any, ga: GaugeSettings, ev: any, events: any) {
