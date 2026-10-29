@@ -177,7 +177,8 @@ function JobsManager(_runtime) {
                     } else {
                         logger.error(`checkJobs: ${reason}`);
                     }
-                    reject(reason);
+                    // Keep this batch owned until its remaining jobs finish too.
+                    Promise.allSettled(jobsExecute).then(() => reject(reason));
                 });
             } catch (err) {
                 logger.error(`checkJobs.failed: ${err}`);
