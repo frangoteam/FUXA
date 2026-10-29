@@ -6,6 +6,17 @@ import { GaugeDialogType } from '../../gauge-property/gauge-property.component';
 
 declare var SVG: any;
 
+/**
+ * active press state keyed by gauge id. Survives view reloads so the pressed
+ * visual persists if the operator navigates away mid-press and comes back.
+ */
+interface PressState {
+    button: HTMLElement;        // current visible button for this gauge id
+    pressConfirmed: boolean;    // tag has reflected the pressValue at least once
+    pressInterrupted: boolean;  // tag changed away from pressValue during the press
+}
+const activePresses = new Map<string, PressState>();
+
 @Component({
     selector: 'html-button',
     templateUrl: './html-button.component.html',
@@ -39,7 +50,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
     }
 
     static PressedClass = 'md-btn-pressed';
-    static MaxHoldTime = 3600;
+    static MaxHoldTimeSeconds = 3600; // How long the minimum hold time can be set for a press action, in seconds. Long hold times could lead to unexpected behavior (user closes scada )
 
     /**
      * true if the button has a valid toggle/press/set action configured on its tag
@@ -70,7 +81,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
      */
     static isHoldTimeValid(holdTime: any): boolean {
         const value = Number(holdTime);
-        return !Utils.isNullOrUndefined(holdTime) && String(holdTime).trim() !== '' && !Number.isNaN(value) && value > 0 && value <= this.MaxHoldTime;
+        return !Utils.isNullOrUndefined(holdTime) && String(holdTime).trim() !== '' && !Number.isNaN(value) && value > 0 && value <= this.MaxHoldTimeSeconds;
     }
 
     /**
@@ -111,11 +122,18 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
      */
     static isActiveState(ga: GaugeSettings, button: HTMLElement, value: any): boolean {
         const action = ga.property?.buttonAction;
-        let active = this.isButtonActionValid(action) && this.isValueEqual(ga, value, this.getActiveValue(action));
-        if (active && action.mode === ButtonActionMode.press) {
-            active = button.dataset.pressActive === 'true';
+        if (!this.isButtonActionValid(action)) {
+            return false;
         }
-        return active;
+        // in press mode the registry is the source of truth, decoupled from the tag value
+        // (which may transiently diverge during view reload or race with the pending write).
+        // if another agent (e.g. a toggle on the same tag, a script, the PLC) overwrote the
+        // tag during the press, trackPressValue marks pressInterrupted — drop the visual too.
+        if (action.mode === ButtonActionMode.press) {
+            const press = activePresses.get(ga.id);
+            return !!press && !press.pressInterrupted;
+        }
+        return this.isValueEqual(ga, value, this.getActiveValue(action));
     }
 
     /**
@@ -123,13 +141,14 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
      * (or its min. hold time) is in progress, the press is interrupted and the released value is not written
      */
     static trackPressValue(ga: GaugeSettings, button: HTMLElement, value: any) {
-        if (button.dataset.pressActive !== 'true') {
+        const press = activePresses.get(ga.id);
+        if (!press) {
             return;
         }
         if (this.isValueEqual(ga, value, ga.property.buttonAction.pressValue)) {
-            button.dataset.pressConfirmed = 'true';
-        } else if (button.dataset.pressConfirmed === 'true') {
-            button.dataset.pressInterrupted = 'true';
+            press.pressConfirmed = true;
+        } else if (press.pressConfirmed) {
+            press.pressInterrupted = true;
         }
     }
 
@@ -212,20 +231,27 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
                 });
             } else if (action.mode === ButtonActionMode.press) {
                 let pressedAt: number | null = null;
-                let releaseTimer: NodeJS.Timeout | null = null;
+                let releaseTimer: ReturnType<typeof setTimeout> | null = null;
 
-                const setPressActive = (active: boolean) => {
-                    if (button) {
-                        button.dataset.pressActive = String(active);
-                        HtmlButtonComponent.updateButtonState(gab, button, getValue?.());
-                    }
-                };
+                // re-mount during an active press: take over the DOM reference and restore the visual.
+                // reset confirmed/interrupted so stale value replays during view reload don't mark the
+                // press as interrupted and block the release-value write.
+                const existing = activePresses.get(gab.id);
+                if (existing) {
+                    existing.button = button;
+                    existing.pressConfirmed = false;
+                    existing.pressInterrupted = false;
+                    HtmlButtonComponent.updateButtonState(gab, button, getValue?.());
+                }
+
                 const release = () => {
-                    // the tag changed during the press: don't revert it with the released value
-                    if (button?.dataset.pressInterrupted !== 'true') {
+                    const press = activePresses.get(gab.id);
+                    const current = press?.button ?? button;
+                    if (!press?.pressInterrupted) {
                         writeValue(action.releaseValue);
                     }
-                    setPressActive(false);
+                    activePresses.delete(gab.id);
+                    HtmlButtonComponent.updateButtonState(gab, current, getValue?.());
                 };
                 const onRelease = () => {
                     window.removeEventListener('pointerup', onRelease);
@@ -246,7 +272,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
                     }
                 };
 
-                on(element, 'pointerdown', (ev: PointerEvent) => {    
+                on(element, 'pointerdown', (ev: PointerEvent) => {
                     if (!ev.isPrimary || pressedAt !== null) {
                         return;
                     }
@@ -256,12 +282,13 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
 
                     releaseTimer = null;
                     pressedAt = Date.now();
-                    if (button) {
-                        button.dataset.pressConfirmed = 'false';
-                        button.dataset.pressInterrupted = 'false';
-                    }
+                    activePresses.set(gab.id, {
+                        button,
+                        pressConfirmed: false,
+                        pressInterrupted: false,
+                    });
                     writeValue(action.pressValue);
-                    setPressActive(true);
+                    HtmlButtonComponent.updateButtonState(gab, button, getValue?.());
                     window.addEventListener('pointerup', onRelease);
                     window.addEventListener('pointercancel', onRelease);
                     window.addEventListener('blur', onRelease);
@@ -270,7 +297,7 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
             }
         }
 
-        // Dispose removes only element-scoped listeners. In-flight presses complete
+        // Dispose removes only element-scoped listeners. active presses complete
         // naturally via their window listeners and min-hold timer, so release value
         // is still written on physical pointerup even after view unload.
         return () => {
