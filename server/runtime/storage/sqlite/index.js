@@ -465,7 +465,8 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
         if (fs.existsSync(archive)) {
             fs.readdirSync(archive).forEach(file => {
                 const fromTo = _suffixToTimestamp(file);
-                if (file.indexOf(`_${id}_`) > 0 && fromTo && fromTo.from <= tots && fromTo.to >= fromts) {
+                const devicePrefix = file.split('_').slice(0, -2).join('_');
+                if (devicePrefix === db_daqdata_prefix + id && fromTo && fromTo.from <= tots && fromTo.to >= fromts) {
                     result.push(path.join(archive, file));
                 }
             });
