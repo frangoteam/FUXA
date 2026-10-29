@@ -31,7 +31,12 @@ const mode = process.argv[1];
                 await execute(archive, 'CREATE TABLE data (dt INTEGER, id INTEGER, value TEXT);');
                 const timestamp = new Date(2026, 0, 1, 12).getTime();
                 await close(archive);
-                fs.writeFileSync(archiveFile, 'synthetic non-SQLite archive contents');
+                if (mode.includes('open')) {
+                    fs.unlinkSync(archiveFile);
+                    fs.mkdirSync(archiveFile);
+                } else {
+                    fs.writeFileSync(archiveFile, 'synthetic non-SQLite archive contents');
+                }
                 const run = sqlite.Database.prototype.run;
                 sandbox.stub(sqlite.Database.prototype, 'run').callsFake(function (...args) {
                     if (path.dirname(this.filename) === archiveDirectory) opened.add(this);
@@ -65,9 +70,9 @@ const mode = process.argv[1];
                 const repetitions = mode.startsWith('repeated') ? 3 : 1;
                 for (let i = 0; i < repetitions; i++) {
                     const result = node.getDaqValue('tag', timestamp - 1000, timestamp + 1000);
-                    await assert.rejects(result, error => error.code === 'SQLITE_NOTADB');
+                    await assert.rejects(result, error => error.code === (mode.includes('open') ? 'SQLITE_CANTOPEN' : 'SQLITE_NOTADB'));
                 }
-                assert.equal(opened.size, repetitions);
+                assert.equal(opened.size, mode.includes('open') ? 0 : repetitions, 'failed opens must not queue SQL');
                 assert.equal(closing.size, opened.size, 'every archive query must close its own connection');
                 await Promise.all(closed);
                 for (const db of opened) assert.equal(db.open, false);
@@ -82,7 +87,7 @@ console.log('ok');
 `;
 
 describe('DAQ archive initialization failures', function () {
-    for (const mode of ['malformed archive', 'repeated bind failures']) {
+    for (const mode of ['malformed archive', 'repeated bind failures', 'open failure', 'repeated open failures']) {
         it('rejects and closes connections after ' + mode, function () {
             const child = spawnSync(process.execPath, ['--unhandled-rejections=strict', '-e', fixture, mode], {
                 cwd: path.resolve(__dirname, '../..'), env: {PATH: process.env.PATH, TZ: 'UTC'},

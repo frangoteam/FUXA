@@ -396,19 +396,19 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                 var db = new sqlite3.Database(dbfile, function (err) {
                     if (err) {
                         logger.error(`daqstorage.bind-daq-data error! '${id}' ${err}`);
-                        reject();
+                        return reject(err);
                     }
                     logger.info(`daqstorage.bind-daq-data '${dbfile}' database`, true);
-                });
-                db.serialize(function () {
-                    db.run("CREATE TABLE if not exists data (dt INTEGER, id INTEGER, value TEXT)", function (err) {
-                        if (err) {
-                            logger.error(`daqstorage.bind-daq-data-to-create-table error! '${id}' ${err}`);
-                            db.close();
-                            reject(err);
-                        } else {
-                            resolve(db);
-                        }
+                    db.serialize(function () {
+                        db.run("CREATE TABLE if not exists data (dt INTEGER, id INTEGER, value TEXT)", function (err) {
+                            if (err) {
+                                logger.error(`daqstorage.bind-daq-data-to-create-table error! '${id}' ${err}`);
+                                db.close();
+                                reject(err);
+                            } else {
+                                resolve(db);
+                            }
+                        });
                     });
                 });
             } catch (err) {
