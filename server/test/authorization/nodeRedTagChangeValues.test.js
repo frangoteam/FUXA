@@ -197,4 +197,28 @@ describe('Node-RED tag change values', () => {
         update([2]);
         assert.equal(node.messages.length, 0);
     });
+
+    for (const [name, make, mutate] of [
+        ['arrays', n => [n], (v, n) => { v[0] = n; }],
+        ['objects', n => ({ nested: { value: n } }), (v, n) => { v.nested.value = n; }],
+        ['typed arrays', n => new Float64Array([n]), (v, n) => { v[0] = n; }],
+        ['ByteStrings', n => Buffer.from([n]), (v, n) => { v[0] = n; }],
+        ['nested ByteStrings', n => [{ bytes: Buffer.from([n]) }], (v, n) => { v[0].bytes[0] = n; }],
+    ]) {
+        it(`keeps the ${name} baseline after downstream mutation of previousValue`, () => {
+            create(make(10), undefined, false); // First wire receives the original message.
+            update(make(20));
+            assert.equal(node.messages.length, 1);
+            assert.deepEqual(node.messages[0].previousValue, make(10));
+            mutate(node.messages[0].previousValue, 99);
+            assert.deepEqual(node.messages[0].payload, make(20));
+            update(make(20));
+            assert.equal(node.messages.length, 1, 'a mutated previousValue must not cause a false change');
+            update(make(30));
+            assert.equal(node.messages.length, 2);
+            assert.deepEqual(node.messages[1].previousValue, make(20));
+            assert.deepEqual(node.messages[1].payload, make(30));
+        });
+    }
+
 });
