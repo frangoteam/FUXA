@@ -273,7 +273,7 @@ function NotificatorManager(_runtime) {
                         alarmsStatus[alr.type]++;
                     }
                 });
-                Object.keys(alarmsStatus).forEach(async stkey => {
+                Promise.all(Object.keys(alarmsStatus).map(async stkey => {
                     var isActive = alarmsStatus[stkey];
                     var wasActive = subscriptionStatus[stkey];
                     var statusChanged = !wasActive && isActive || (wasActive && isActive && subscriptionStatus[stkey] < alarmsStatus[stkey]);
@@ -332,8 +332,7 @@ function NotificatorManager(_runtime) {
                         }
                     }
                     subscriptionStatus[stkey] = isActive;
-                });
-                resolve(true);
+                })).then(() => resolve(true), reject);
             } catch (err) {
                 reject(err);
             }
