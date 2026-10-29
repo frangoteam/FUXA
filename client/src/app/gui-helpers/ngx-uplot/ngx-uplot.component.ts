@@ -551,6 +551,8 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
             row.style.cssText = `height:${STATE_LANE_HEIGHT}px;margin-left:${left}px;width:${width}px;`;
             const title = document.createElement('div');
             title.style.cssText = 'height:20px;line-height:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;';
+            // SVG gauges can inherit a text color unrelated to the chart background.
+            title.style.color = this.options.axisLabelColor || 'black';
             title.textContent = timeline.label;
             title.title = timeline.label;
             row.appendChild(title);
@@ -1053,6 +1055,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
 
 export interface NgxOptions extends Options {
 
+    axisLabelColor?: string;
     decimalsPrecision?: number;
     tooltip?: Legend;
     dateFormat?: string;
@@ -1074,7 +1077,6 @@ export interface ChartOptions extends NgxOptions {
     axisLabelWidth?: number;
     labelsDivWidth?: number;
     axisLineColor?: string;
-    axisLabelColor?: string;
     gridLineColor?: string;
     axisLabelX?: string;
     axisLabelY1?: string;

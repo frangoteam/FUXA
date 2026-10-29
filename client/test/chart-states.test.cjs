@@ -111,6 +111,26 @@ test('state series reserve lanes and never participate in numeric scaling or pat
     assert.equal(component.uplot.size.height, 60);
 });
 
+test('lane labels use the chart axis color instead of inheriting the SVG text color', () => {
+    const element = () => ({ style: {}, children: [], appendChild(child) { this.children.push(child); } });
+    const { NgxUplotComponent: Component } = load('gui-helpers/ngx-uplot/ngx-uplot.component.ts', {}, {
+        uPlot: { fmtDate: () => () => '' },
+        document: { createElement: element, createDocumentFragment: element }
+    });
+    const component = new Component();
+    let fragment;
+    component.stateLanes = { nativeElement: { replaceChildren(value) { fragment = value; } } };
+    component.stateTimelines.set(1, { label: 'Machine', intervals: () => [] });
+    const u = { root: { querySelectorAll: () => [] }, scales: { x: { min: 0, max: 1 } },
+        over: { offsetLeft: 40, clientWidth: 300 }, data: [[], []] };
+    for (const [color, expected] of [['#222222', '#222222'], ['#ffffff', '#ffffff'], [undefined, 'black']]) {
+        component.options = { axisLabelColor: color };
+        component.drawStateTimelines(u);
+        assert.equal(fragment.children[0].children[0].style.color, expected);
+        assert.equal(fragment.children[0].children[0].textContent, 'Machine');
+    }
+});
+
 test('bulk history, live updates and rolling windows preserve categorical states', () => {
     const component = plot();
     const source = [[0, 10], [20, 30], ['Recipe A', undefined]];

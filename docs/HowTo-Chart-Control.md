@@ -33,3 +33,27 @@ the first state sample returned for the selected range: the chart does not guess
 a state before that sample. Live charts retain the last known state when older
 samples leave the visible time window. Existing projects remain numeric trends
 unless a series is explicitly changed to **Machine state**.
+
+### Runnable example
+
+Download [machine-states.fuxap](examples/machine-states.fuxap) and open it with the
+editor's **Open Project** command in a separate test instance. Opening a project
+replaces the currently loaded project; export your existing project first.
+
+1. Use a build containing the machine-state chart feature.
+2. Open the example, then switch to **Home**. No PLC or external device is needed.
+3. Wait at least 30 seconds. The server script updates the temperature every second,
+   cycles **Stopped**, **Running**, and **Setup** every 10 seconds, and alternates
+   **Recipe A** and **Recipe B** every 20 seconds.
+4. Check that the blue temperature trend appears above two labeled state lanes.
+   Hover over a machine-state interval to see its description. Scroll the mouse
+   wheel over a lane to zoom the shared time axis.
+5. Reload Home. DAQ recording is enabled for all three tags and **Load old values**
+   is enabled, so the recent history should reappear. The live window is two minutes.
+
+The mappings are stored in **Line charts** → **Temperature, machine state and
+recipe**. The first series is numeric; the other two use **Machine state**. The
+recipe series intentionally has no mappings, demonstrating string values displayed
+as their original text. In the editor, charts show preview data; use Home to check
+the actual simulated values. The `updateMachineStates` server script supplies the
+example values and can be disabled or removed after testing.
