@@ -1,4 +1,19 @@
 module.exports = function(RED) {
+    function snapshotValue(value) {
+        // Node-RED clones retain Buffer backing memory; detach it from live tag storage.
+        function detachBuffers(copy, seen = new WeakSet()) {
+            if (Buffer.isBuffer(copy)) return Buffer.from(copy);
+            if (copy && typeof copy === 'object' && !seen.has(copy)) {
+                seen.add(copy);
+                Object.keys(copy).forEach(key => {
+                    copy[key] = detachBuffers(copy[key], seen);
+                });
+            }
+            return copy;
+        }
+        return detachBuffers(RED.util.cloneMessage({ payload: value }).payload);
+    }
+
     function FuxaGetTagNode(config) {
         RED.nodes.createNode(this, config);
         const node = this;
@@ -37,7 +52,7 @@ module.exports = function(RED) {
 
                 const value = fuxa.getTag(tagId);
 
-                msg.payload = value;
+                msg.payload = snapshotValue(value);
                 if (tagRef) {
                     msg.topic = tagRef;
                 } else if (typeof config.tag === "string" && config.tag.trim()) {
