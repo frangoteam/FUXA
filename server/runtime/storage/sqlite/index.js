@@ -396,18 +396,19 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                 var db = new sqlite3.Database(dbfile, function (err) {
                     if (err) {
                         logger.error(`daqstorage.bind-daq-data error! '${id}' ${err}`);
-                        reject();
+                        return reject(err);
                     }
                     logger.info(`daqstorage.bind-daq-data '${dbfile}' database`, true);
-                });
-                db.serialize(function () {
-                    db.run("CREATE TABLE if not exists data (dt INTEGER, id INTEGER, value TEXT)", function (err) {
-                        if (err) {
-                            logger.error(`daqstorage.bind-daq-data-to-create-table error! '${id}' ${err}`);
-                            reject();
-                        } else {
-                            resolve(db);
-                        }
+                    db.serialize(function () {
+                        db.run("CREATE TABLE if not exists data (dt INTEGER, id INTEGER, value TEXT)", function (err) {
+                            if (err) {
+                                logger.error(`daqstorage.bind-daq-data-to-create-table error! '${id}' ${err}`);
+                                db.close();
+                                reject(err);
+                            } else {
+                                resolve(db);
+                            }
+                        });
                     });
                 });
             } catch (err) {
@@ -585,8 +586,9 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
     function _bindAndGetTagValues(dbfile, id, fromts, tots) {
         return new Promise(function (resolve, reject) {
             _bindDaqData(dbfile).then(result => {
-                _getTagValues(result, id, fromts, tots).then(rows => {
+                _getTagValues(result, id, fromts, tots).finally(() => {
                     result.close();
+                }).then(rows => {
                     resolve(rows);
                 }).catch(function (err) {
                     reject(err);
