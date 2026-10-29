@@ -96,12 +96,13 @@ export class HtmlButtonComponent extends GaugeBaseComponent {
         if (Utils.isNullOrUndefined(value) || Utils.isNullOrUndefined(target)) {
             return false;
         }
+
         const bitmask = ga.property?.bitmask;
         if (bitmask) {
             return ((parseInt(value, 0) || 0) & bitmask) === ((parseInt(target, 0) || 0) & bitmask);
         }
 
-        return String(value) === String(target);
+        return String(Utils.normalizeTagValue(value)) === String(Utils.normalizeTagValue(target));
     }
 
     /**
