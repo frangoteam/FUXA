@@ -197,7 +197,6 @@ function AlarmsManager(_runtime) {
                         }
                         if (alrPermission.enabled) {
                             if (alr.isToAck() > 0) {
-                                alr.setAck(userId);
                                 changed.push(alr);
                             }
                         } else {
@@ -210,6 +209,8 @@ function AlarmsManager(_runtime) {
                 reject({code: 401, error:"unauthorized_error", message: "Unauthorized!"});
             } else {
                 if (changed.length) {
+                    // Authorize the complete selection before changing acknowledgement state.
+                    changed.forEach(alr => alr.setAck(userId));
                     alarmstorage.setAlarms(changed).then(function (result) {
                         resolve(true);
                     }).catch(function (err) {
