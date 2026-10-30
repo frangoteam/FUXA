@@ -33,9 +33,12 @@ function AlarmsManager(_runtime) {
     this.start = function () {
         return new Promise(function (resolve, reject) {
             logger.info('alarms check start', true);
-            alarmsCheckStatus = setInterval(function () {
-                _checkStatus();
-            }, ALARMS_CHECK_STATUS_INTERVAL);
+            if (!alarmsCheckStatus) {
+                alarmsCheckStatus = setInterval(function () {
+                    _checkStatus();
+                }, ALARMS_CHECK_STATUS_INTERVAL);
+            }
+            resolve();
         });
     }
 

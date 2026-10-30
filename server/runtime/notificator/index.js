@@ -30,9 +30,12 @@ function NotificatorManager(_runtime) {
     this.start = function () {
         return new Promise(function (resolve, reject) {
             logger.info('notificator check start', true);
-            notifyCheckStatus = setInterval(function () {
-                _checkStatus();     // check in 20 seconds interval
-            }, 20000);
+            if (!notifyCheckStatus) {
+                notifyCheckStatus = setInterval(function () {
+                    _checkStatus();     // check in 20 seconds interval
+                }, 20000);
+            }
+            resolve();
         });
     }
 

@@ -27,9 +27,12 @@ function ScriptsManager(_runtime) {
     this.start = function () {
         return new Promise(function (resolve, reject) {
             logger.info('scripts.start-checkstatus', true);
-            scriptsCheckStatus = setInterval(function () {
-                _checkStatus();
-            }, SCRIPT_CHECK_STATUS_INTERVAL);
+            if (!scriptsCheckStatus) {
+                scriptsCheckStatus = setInterval(function () {
+                    _checkStatus();
+                }, SCRIPT_CHECK_STATUS_INTERVAL);
+            }
+            resolve();
         });
     }
 
