@@ -152,7 +152,9 @@ function ScriptsManager(_runtime) {
                 const script = schedulingMap[name];
                 if (script.isToRun(time)) {
                     try {
-                        scriptModule.runScriptWithoutParameter(script);
+                        Promise.resolve(scriptModule.runScriptWithoutParameter(script)).catch((err) => {
+                            logger.error(err && err.message ? err.message : err);
+                        });
                         script.lastRun = time;
                     } catch (err) {
                         if (err.message) {
@@ -213,7 +215,9 @@ function ScriptsManager(_runtime) {
                                     scriptSchedule.getScheduleRules().forEach((scheduleRule) => {
                                         logger.info(`Load script-schedule ${script.name} - ${JSON.stringify(scheduleRule)}`);
                                         nodeSchedule.scheduleJob(scheduleRule, function() {
-                                            scriptModule.runScriptWithoutParameter(script);
+                                            Promise.resolve(scriptModule.runScriptWithoutParameter(script)).catch((err) => {
+                                                logger.error(err && err.message ? err.message : err);
+                                            });
                                         });
                                     });
                                 } catch (er) {
