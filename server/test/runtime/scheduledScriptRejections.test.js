@@ -17,7 +17,7 @@ const [mode, outcome] = process.argv.slice(1);
         sandbox.stub(global, 'setInterval').callsFake(callback => { poll = callback; return {}; });
         sandbox.stub(global, 'clearInterval');
         sandbox.stub(schedule, 'gracefulShutdown').resolves();
-        sandbox.stub(schedule, 'scheduleJob').callsFake((rule, callback) => { callbacks.push(callback); return {}; });
+        sandbox.stub(schedule, 'scheduleJob').callsFake((rule, callback) => { callbacks.push(callback); return { cancel() {} }; });
         sandbox.useFakeTimers({ now: 10000, toFake: ['Date'] });
         const script = { id: 'scheduled', name: 'scheduled', mode: 'SERVER', parameters: [],
             sync: outcome === 'sync',
