@@ -475,7 +475,7 @@ function RedisClient(_data, _logger, _events, _runtime) {
             // 6) Calculate RAW with FUXA logic and normalise by tag type
             let raw = await deviceUtils.tagRawCalculator(mainValueInput, tag, runtime);
             if (tag?.type === 'boolean') {
-                raw = raw ? '1' : '0';
+                raw = deviceUtils.parseValue(raw, 'boolean') ? '1' : '0';
             } else if (tag?.type === 'number') {
                 const str = String(raw).replace(',', '.');
                 const num = Number(str);

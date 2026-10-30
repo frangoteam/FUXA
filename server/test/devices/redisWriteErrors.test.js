@@ -29,10 +29,10 @@ describe('Redis write error handling', function () {
             delete require.cache[require.resolve('../../runtime/devices/redis')];
         }
     });
-    async function connected(mode = 'simple', extra = {}) {
+    async function connected(mode = 'simple', extra = {}, type = 'number') {
         const data = { id: 'controlled', name: 'Redis write errors', property: {
             address: 'redis://127.0.0.1:1', connectionOption: mode, ...extra
-        }, tags: { target: { name: 'Target', type: 'number', address: 'test:key', options: 'Value' } } };
+        }, tags: { target: { name: 'Target', type, address: 'test:key', options: 'Value' } } };
         device = driver.create(data, logger, new EventEmitter());
         device.load(data);
         await device.connect();
@@ -91,6 +91,24 @@ describe('Redis write error handling', function () {
         sinon.assert.notCalled(client.sendCommand);
         sinon.assert.calledOnce(logger.warn);
     });
+    for (const mode of ['simple', 'hash', 'custom']) {
+        for (const [label, input, expected] of [
+            ['false string', 'false', '0'], ['nested false string', { value: 'false' }, '0'],
+            ['case and spaces', ' FALSE ', '0'], ['JSON payload', '{"value":"false"}', '0'],
+            ['native false', false, '0'], ['native true', true, '1']
+        ]) {
+            it(`writes ${label} as ${expected} in ${mode} mode`, async function () {
+                const extra = mode === 'custom' ? { options: { customCommand: { write: { name: 'CONTROLLED.HSET' } } } } : {};
+                await connected(mode === 'custom' ? 'hash' : mode, extra, 'boolean');
+                assert.equal(await device.setValue('target', input), true);
+                const command = mode === 'simple' ? ['SET', 'test:key', expected]
+                    : mode === 'hash' ? ['HSET', 'test:key', 'Value', expected]
+                    : ['CONTROLLED.HSET', 'test:key', '100', 'Value', expected];
+                sinon.assert.calledOnceWithExactly(client.sendCommand, command);
+                sinon.assert.notCalled(logger.error);
+            });
+        }
+    }
     it('returns false while disconnected without a command', async function () {
         await connected();
         await device.disconnect();
