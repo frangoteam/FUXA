@@ -19,6 +19,7 @@ function JobsManager(_runtime) {
     var jobsList = [];                  // Jobs list to process
     var status = JobsStatusEnum.INIT;   // Current status (StateMachine)
     var lastCheck = 0;                  // Timestamp to check intervall only in IDLE
+    var loadRevision = 0;             // Report edits invalidate pending project reads
     var forceCheck = true;              // Flag to manage the forcing of check jobs
 
     /**
@@ -50,6 +51,7 @@ function JobsManager(_runtime) {
     }
 
     this.reset = function () {
+        loadRevision++;
         status = JobsStatusEnum.LOAD;
     }
 
@@ -81,8 +83,10 @@ function JobsManager(_runtime) {
             }
         } else if (status === JobsStatusEnum.LOAD) {
             if (_checkWorking(true)) {
-                _loadJobs().then(function () {
-                    status = JobsStatusEnum.IDLE;
+                _loadJobs().then(function (revision) {
+                    if (revision === loadRevision) {
+                        status = JobsStatusEnum.IDLE;
+                    }
                     _checkWorking(false);
                 }).catch(function (err) {
                     _checkWorking(false);
@@ -128,6 +132,7 @@ function JobsManager(_runtime) {
      * Load current Jobs: Reports
      */
     var _loadJobs = function () {
+        const revision = loadRevision;
         return new Promise(function (resolve, reject) {
             jobsList = [];
             // cleaner
@@ -140,6 +145,10 @@ function JobsManager(_runtime) {
             }    
             // reports
             runtime.project.getReports().then(function (result) {
+                if (revision !== loadRevision) {
+                    resolve(revision);
+                    return;
+                }
                 if (result) {
                     result.forEach(rptProperty => {
                         if (rptProperty.scheduling !== Report.ReportSchedulingType.none) {
@@ -149,7 +158,7 @@ function JobsManager(_runtime) {
                         }
                     });
                 }
-                resolve();
+                resolve(revision);
             }).catch(function (err) {
                 reject(err);
             });
