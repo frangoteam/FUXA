@@ -428,13 +428,14 @@ function RedisClient(_data, _logger, _events, _runtime) {
         if (!client || !connected) {
             return false;
         }
+        let tag;
         try {
             // 1) Resolve mapping/tags
             const km = keyMap[tagId];
             if (!km || !km.key) {
                 throw new Error(`unknown-tag ${tagId}`);
             }
-            const tag = data?.tags?.[tagId];
+            tag = data?.tags?.[tagId];
 
             // 2) Device options
             const timeoutMs = data?.property?.redisTimeoutMs || 3000;
