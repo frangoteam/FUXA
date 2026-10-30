@@ -282,16 +282,17 @@ function BACNETclient(_data, _logger, _events, _runtime) {
         if (data.tags[tagId]) {
             var obj = _extractId(data.tags[tagId].address);
             value = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
-            _writeProperty(_getDeviceAddress(devices[data.tags[tagId].memaddress]), obj, value).then(result => {
+            return _writeProperty(_getDeviceAddress(devices[data.tags[tagId].memaddress]), obj, value).then(result => {
                 logger.info(`'${data.name}' setValue(${tagId}, ${result})`, true, true);
+                return true;
             }, reason => {
                 if (reason && reason.stack) {
                     logger.error(`'${data.name}' _writeProperty error! ${reason.stack}`);
                 } else {
                     logger.error(`'${data.name}' _writeProperty error! ${reason}`);
                 }
+                return false;
             });
-            return true;
         }
         return false;
     }
