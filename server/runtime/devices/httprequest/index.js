@@ -181,16 +181,17 @@ function HTTPclient(_data, _logger, _events, _runtime) {
             if (apiProperty.postTags) {
                 value = _parseValue(data.tags[tagId].type, value);
                 data.tags[tagId].value = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
-                axios.post(apiProperty.getTags, [{id: tagId, value: data.tags[tagId].value}]).then(res => {
+                try {
+                    await axios.post(apiProperty.postTags, [{id: tagId, value: data.tags[tagId].value}]);
                     lastTimestampRequest = new Date().getTime();
                     logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true, true);
-                }).catch(err => {
+                    return true;
+                } catch (err) {
                     logger.error(`setValue '${data.tags[tagId].name}' error! ${err}`);
-                });
+                }
             } else {
                 logger.error(`postTags undefined (setValue)`, true);
             }
-            return true;
         } else {
             logger.error(`setValue not supported!`, true);
         }
@@ -404,7 +405,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
         if (type === 'number') {
             return parseFloat(value);
         } else if (type === 'boolean') {
-            return Boolean(value);
+            return deviceUtils.parseValue(value, type);
         } else if (type === 'string') {
             return value;
         } else {
