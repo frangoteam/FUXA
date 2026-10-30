@@ -198,12 +198,12 @@ function ScriptsManager(_runtime) {
     var _loadProperty = function () {
         return new Promise(function (resolve, reject) {
             schedulingMap = {};
-            scheduledJobs = [];
             try {
-                nodeSchedule.gracefulShutdown();
+                scheduledJobs.forEach(job => job.cancel());
             } catch (e) {
                 logger.error(e);
             }
+            scheduledJobs = [];
             runtime.project.getScripts().then((scripts) => {
                 if (scripts) {
                     var lr = scriptModule.loadScripts(scripts);
