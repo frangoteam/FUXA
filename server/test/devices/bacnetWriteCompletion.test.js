@@ -38,7 +38,9 @@ describe('BACnet write completion', function () {
         device = driver.create({ name: 'BACnet completion', property: { address: '127.0.0.1' }, tags: {
             analog: { name: 'Analog', address: '2-7', memaddress: '123',
                 scale: { mode: 'linear', rawLow: 0, rawHigh: 100, scaledLow: 0, scaledHigh: 10 } },
-            binary: { name: 'Binary', address: '5-9', memaddress: '123' }
+            binary: { name: 'Binary', address: '5-9', memaddress: '123' },
+            binaryInput: { name: 'Binary input', address: '3-9', memaddress: '123' },
+            binaryOutput: { name: 'Binary output', address: '4-9', memaddress: '123' }
         } }, logger, new EventEmitter());
         await device.connect();
         logger.info.resetHistory();
@@ -94,6 +96,20 @@ describe('BACnet write completion', function () {
             ]);
             sinon.assert.notCalled(logger.error);
         });
+    }
+    for (const [tagId, objectType] of [['binaryInput', 3], ['binaryOutput', 4], ['binary', 5]]) {
+        for (const input of [false, true, 0, 1, '0', '1']) {
+            it(`encodes ${tagId} ${typeof input} ${input} as an enumerated binary value`, async function () {
+                client.writeProperty.callsFake((a, o, p, v, opt, cb) => cb(null));
+                assert.equal(await device.setValue(tagId, input), true);
+                sinon.assert.calledOnce(client.writeProperty);
+                assert.deepEqual(client.writeProperty.firstCall.args.slice(0, 5), [
+                    '127.0.0.2', { type: objectType, instance: 9 }, 85,
+                    [{ type: 9, value: Number(input) }], { priority: 16 }
+                ]);
+                sinon.assert.notCalled(logger.error);
+            });
+        }
     }
     it('rejects an unknown tag without a transport write', async function () {
         assert.equal(await device.setValue('missing', 1), false);

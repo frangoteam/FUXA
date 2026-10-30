@@ -566,7 +566,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                 bacobj.type === bacnet.enum.ObjectType.BINARY_OUTPUT ||
                 bacobj.type === bacnet.enum.ObjectType.BINARY_VALUE) {
                 tvalue.type = bacnet.enum.ApplicationTag.ENUMERATED;
-                tvalue.value = parseInt(value);
+                tvalue.value = typeof value === 'boolean' ? Number(value) : parseInt(value);
             }
 
             client.writeProperty(address, bacobj, bacnet.enum.PropertyIdentifier.PRESENT_VALUE, [tvalue], { priority: 16 }, (err, result) => {
