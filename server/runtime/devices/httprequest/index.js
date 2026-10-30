@@ -6,6 +6,13 @@ const axios = require('axios');
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 
+const DEFAULT_REQUEST_TIMEOUT = 30000; // ms, used when property.timeout is missing
+
+function _resolveTimeout(property) {
+    const configured = Number(property && property.timeout);
+    return configured > 0 ? configured : DEFAULT_REQUEST_TIMEOUT;
+}
+
 function HTTPclient(_data, _logger, _events, _runtime) {
     var runtime = _runtime;
     var data = _data;                   // Current webapi data
@@ -22,6 +29,24 @@ function HTTPclient(_data, _logger, _events, _runtime) {
     var newItemsCount;                  // Count of new items, between load and received
 
     var apiProperty = { getTags: null, postTags: null, format: 'JSON', ownFlag: true };
+    var inflight = null;                // AbortController of the pending read request
+
+    var _requestTimeout = function () {
+        return _resolveTimeout(data.property);
+    }
+
+    var _abortInflight = function () {
+        if (inflight) {
+            try {
+                inflight.abort();
+            } catch (err) { }
+            inflight = null;
+        }
+    }
+
+    var _isCanceled = function (reason) {
+        return !!reason && (reason.code === 'ERR_CANCELED' || reason.name === 'CanceledError');
+    }
 
     /**
      * Connect the client by make a request
@@ -65,6 +90,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
      */
     this.disconnect = function () {
         return new Promise(function (resolve, reject) {
+            _abortInflight();
             _checkWorking(false);
             logger.info(`'${data.name}' disconnected!`, true);
             connected = false;
@@ -83,8 +109,15 @@ function HTTPclient(_data, _logger, _events, _runtime) {
             // check connection status
             let dt = new Date().getTime();
             if ((lastTimestampRequest + (data.polling * 3)) < dt) {
+                // No successful read for three polling periods: abort the
+                // pending request and let the device state machine reconnect.
+                // Returning here is essential: releasing the guard and then
+                // awaiting a new request is what used to pile up hung requests.
                 _emitStatus('connect-error');
+                _abortInflight();
                 _checkWorking(false);
+                connected = false;
+                return;
             }
             try {
                 const result = await _readRequest();
@@ -101,7 +134,12 @@ function HTTPclient(_data, _logger, _events, _runtime) {
                 }
                 _checkWorking(false);
             } catch (reason){
-                logger.error(`'${data.name}' _readRequest error! ${reason}`);
+                if (_isCanceled(reason)) {
+                    // Expected when a stale request is aborted on purpose.
+                    logger.info(`'${data.name}' request canceled`, true);
+                } else {
+                    logger.error(`'${data.name}' _readRequest error! ${reason}`);
+                }
                 _checkWorking(false);
             };
         } else {
@@ -181,7 +219,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
             if (apiProperty.postTags) {
                 value = _parseValue(data.tags[tagId].type, value);
                 data.tags[tagId].value = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
-                axios.post(apiProperty.getTags, [{id: tagId, value: data.tags[tagId].value}]).then(res => {
+                axios.post(apiProperty.getTags, [{id: tagId, value: data.tags[tagId].value}], { timeout: _requestTimeout() }).then(res => {
                     lastTimestampRequest = new Date().getTime();
                     logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true, true);
                 }).catch(err => {
@@ -260,10 +298,22 @@ function HTTPclient(_data, _logger, _events, _runtime) {
     var _readRequest = function () {
         return new Promise(function (resolve, reject) {
             if (apiProperty.getTags) {
-                axios.get(apiProperty.getTags).then(res => {
+                _abortInflight();
+                const controller = new AbortController();
+                inflight = controller;
+                axios.get(apiProperty.getTags, {
+                    timeout: _requestTimeout(),
+                    signal: controller.signal
+                }).then(res => {
+                    if (inflight === controller) {
+                        inflight = null;
+                    }
                     lastTimestampRequest = new Date().getTime();
                     resolve(res.data);
                 }).catch(err => {
+                    if (inflight === controller) {
+                        inflight = null;
+                    }
                     reject(err);
                 });
             } else {
@@ -381,13 +431,16 @@ function HTTPclient(_data, _logger, _events, _runtime) {
         if (check && working) {
             overloading++;
             logger.warn(`'${data.name}' working (connection || polling) overload! ${overloading}`);
-            // !The driver don't give the break connection
             if (overloading >= 3) {
+                // Still busy after three polling periods: cancel the pending
+                // request, release the guard and report false. The caller must
+                // not continue and start another request on top of the old one.
                 connected = false;
-                // disconnect();
-            } else {
-                return false;
+                _abortInflight();
+                working = false;
+                overloading = 0;
             }
+            return false;
         }
         working = check;
         overloading = 0;
@@ -468,7 +521,7 @@ function getRequestResult(property) {
     return new Promise(function (resolve, reject) {
         try {
             if (property.method === 'GET') {
-                axios.get(property.address).then(res => {
+                axios.get(property.address, { timeout: _resolveTimeout(property) }).then(res => {
                     resolve(res.data);
                 }).catch(err => {
                     reject(err);
