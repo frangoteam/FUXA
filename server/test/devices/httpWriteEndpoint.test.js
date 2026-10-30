@@ -4,18 +4,21 @@ const {EventEmitter} = require('node:events');
 const driver = require('../../runtime/devices/httprequest');
 
 describe('WebAPI configured write endpoint', function () {
-    let server, origin, requests, client, completion, finish, errors;
+    let server, origin, requests, client, completion, finish, errors, respond;
     beforeEach(async function () {
         requests = [];
         errors = [];
         completion = new Promise(resolve => { finish = resolve; });
+        respond = (req, res) => {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(req.method === 'GET' ? JSON.stringify([{id: 'tag', value: 17}]) : '{}');
+        };
         server = http.createServer((req, res) => {
             let body = '';
             req.on('data', chunk => { body += chunk; });
             req.on('end', () => {
                 requests.push({method: req.method, url: req.url, body: body ? JSON.parse(body) : null});
-                res.setHeader('Content-Type', 'application/json');
-                res.end(req.method === 'GET' ? JSON.stringify([{id: 'tag', value: 17}]) : '{}');
+                respond(req, res);
             });
         });
         await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
@@ -75,9 +78,56 @@ describe('WebAPI configured write endpoint', function () {
         assert.equal(await client.setValue('tag', 9), false);
         assert.deepEqual(requests, []);
     });
+    it('waits for the POST response before reporting success', async function () {
+        let response, received;
+        const requestReceived = new Promise(resolve => { received = resolve; });
+        respond = (req, res) => { response = res; received(); };
+        await create({getTags: origin + '/read', postTags: origin + '/write'});
+        let settled = false;
+        const write = client.setValue('tag', 9).then(result => { settled = true; return result; });
+        try {
+            await requestReceived;
+            await new Promise(resolve => setImmediate(resolve));
+            assert.equal(settled, false);
+        } finally {
+            response.end('{}');
+            await write;
+            await completion;
+        }
+        assert.equal(await write, true);
+        assert.deepEqual(errors, []);
+    });
+    it('reports an HTTP failure as an unsuccessful write', async function () {
+        respond = (req, res) => { res.statusCode = 500; res.end('{}'); };
+        await create({getTags: origin + '/read', postTags: origin + '/write'});
+        const result = await client.setValue('tag', 9);
+        await completion;
+        assert.equal(result, false);
+        assert.equal(requests.length, 1);
+        assert.equal(errors.length, 1);
+        assert.match(errors[0], /setValue 'Tag' error!/);
+    });
+    it('reports a reset connection as an unsuccessful write', async function () {
+        respond = (req, res) => { res.destroy(); };
+        await create({getTags: origin + '/read', postTags: origin + '/write'});
+        const result = await client.setValue('tag', 9);
+        await completion;
+        assert.equal(result, false);
+        assert.equal(requests.length, 1);
+        assert.equal(errors.length, 1);
+        assert.match(errors[0], /setValue 'Tag' error!/);
+    });
+    it('accepts a successful response without a body', async function () {
+        respond = (req, res) => { res.statusCode = 204; res.end(); };
+        await create({getTags: origin + '/read', postTags: origin + '/write'});
+        assert.equal(await client.setValue('tag', 9), true);
+        await completion;
+        assert.equal(requests.length, 1);
+        assert.deepEqual(errors, []);
+    });
     it('keeps writes disabled when postTags is missing', async function () {
         await create({getTags: origin + '/read'});
-        assert.equal(await client.setValue('tag', 9), true);
+        assert.equal(await client.setValue('tag', 9), false);
         assert.deepEqual(requests, []);
         assert.equal(errors.length, 1);
         assert.match(errors[0], /postTags undefined/);
