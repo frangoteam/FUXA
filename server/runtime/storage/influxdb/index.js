@@ -54,7 +54,7 @@ function Influx(_settings, _log, _currentStorate) {
         } else if (influxdbVersion === VERSION_18_FLUX) {
             try {
                 const parsedUrl = new URL(settings.daqstore.url);
-                const [host] = parsedUrl.host.split(':');
+                const host = parsedUrl.hostname;
                 const [protocol] = parsedUrl.protocol.split(':');
                 clientOptions = {
                     host: host,
@@ -66,7 +66,7 @@ function Influx(_settings, _log, _currentStorate) {
                 }
             } catch (error) {
                 logger.error(`influxdb-init failed! ${error}`);
-                reject(error);
+                return;
             }
             client = new influx.InfluxDB(clientOptions);
             status = InfluxDBStatusEnum.OPEN;
