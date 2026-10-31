@@ -19,6 +19,7 @@
     "test:scripts": "node --test test/home-scheduled-scripts.test.cjs",
     "test:internal-tags": "node --test test/internal-tag-init.test.cjs",
     "test:input-confirm": "node --test test/input-confirm.test.cjs",
+    "test:tag-paste": "node --test test/pasted-tag-selection.test.cjs",
     "test:svg-colors": "node --test test/svg-widget-colors.test.cjs",
     "test:script-authorization": "node --test test/script-authorization.test.cjs",
     "e2e": "ng e2e"
