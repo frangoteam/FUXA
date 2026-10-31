@@ -252,6 +252,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
             apiProperty.getTags = data.property.address;
             apiProperty.ownFlag = false;
         } else {
+            apiProperty.ownFlag = true;
             apiProperty.getTags = data.property.getTags;
             apiProperty.postTags = data.property.postTags;
         }
