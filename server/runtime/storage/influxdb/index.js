@@ -133,14 +133,14 @@ function Influx(_settings, _log, _currentStorate) {
                     measurement: tag.id,
                     tags,
                     fields,
-                    timestamp: new Date(tag.timestamp || new Date().getTime())
+                    timestamp: new Date(tag.timestamp ?? new Date().getTime())
                 });
             } else {
                 const point = new Point(tag.id)
                     .tag('id', tag.id)
                     .tag('name', tag.name || tag.tagref?.name)
                     .tag('type', tag.type)
-                    .timestamp(new Date(tag.timestamp || new Date().getTime()));
+                    .timestamp(new Date(tag.timestamp ?? new Date().getTime()));
                 if (deviceName) {
                     point.tag('device', deviceName);
                 }
