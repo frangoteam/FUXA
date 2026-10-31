@@ -331,10 +331,13 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     public addLine(id: string, name: string, line: ChartLine, addYaxisToLabel: boolean) {
         if (!this.mapData[id]) {
             let linelabel = line.label || name;
-            if (addYaxisToLabel) {
+            if (addYaxisToLabel && line.type !== 'state') {
                 linelabel = `Y${line.yaxis} - ${linelabel}`;
             }
             let serie = <NgxSeries>{ label: linelabel, stroke: line.color, spanGaps: true };
+            serie.type = line.type;
+            serie.states = line.states;
+            serie.stateColor = line.color;
             if (line.yaxis > 1) {
                 serie.scale = line.yaxis.toString();
             } else {
@@ -413,7 +416,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
     public addValue(id: string, x, y) {
         const property = this.mapData[id];
         if (property) {
-            if (this.addValueInterval && Utils.getTimeDifferenceInSeconds(property.lastValueTime) < this.addValueInterval) {
+            // Sampling numeric trends must not discard brief state transitions.
+            if (property.attribute.type !== 'state' && this.addValueInterval && Utils.getTimeDifferenceInSeconds(property.lastValueTime) < this.addValueInterval) {
                 return;
             }
             if (this.range?.zoomStep) {
@@ -438,7 +442,7 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         const missingOrInvalidChunk = !chunk || !chunk.index || !chunk.of;
         if (missingOrInvalidChunk) {
             try {
-                const first = values?.[0]?.[0];
+                const first = values?.find(serie => serie?.length)?.[0];
                 // Case A: data unified -> [timestamps[], serie1[], serie2[], ...]
                 if (Array.isArray(values) && Array.isArray(values[0]) && typeof first === 'number') {
                     this.nguplot.setData(values);
@@ -447,8 +451,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
                     return;
                 }
                 // Case B: array of object -> [[{dt,value|v}, ...], ...] -> normalize e unified
-                if (first && typeof first === 'object') {
-                    const normalized = values.map(serie =>
+                if (first === undefined || (first && typeof first === 'object')) {
+                    const normalized = (values || []).map(serie =>
                         serie.map(p => ({
                             dt: (p.dt ?? p.time),                           // tollera 'time'
                             value: (p.value !== undefined ? p.value : p.v)  // tollera 'v'
@@ -506,7 +510,8 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         for (let chunk of chunks) {
             for (let i = 0; i < chunk.length; i++) {
                 for (const v of chunk[i]) {
-                    const t = Math.floor(v.dt / 1000);
+                    // Several state transitions can occur within the same second.
+                    const t = v.dt / 1000;
                     timestampsSet.add(t);
                     if (!xmap.has(t)) {
                         xmap.set(t, {});
@@ -517,13 +522,15 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         const sortedTimestamps = Array.from(timestampsSet).sort((a, b) => a - b);
         const result = [sortedTimestamps];
-        const seriesCount = chunks[0].length;
+        const seriesCount = Math.max(chunks[0]?.length || 0, Object.keys(this.mapData).length);
+        const stateIndices = new Set(Object.values(this.mapData).filter(entry => entry.attribute.type === 'state').map(entry => entry.index - 1));
 
         for (let i = 0; i < seriesCount; i++) {
             const line = [];
             for (const t of sortedTimestamps) {
                 const val = xmap.get(t)?.[i];
-                line.push(val !== undefined ? val : null);
+                // An alignment gap is different from an explicit null state sample.
+                line.push(val !== undefined ? val : (stateIndices.has(i) ? undefined : null));
             }
             result.push(line);
         }
@@ -538,16 +545,13 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
         this.range = range;
         this.nguplot.setXScala(this.range.from / 1e3, this.range.to / 1e3);
         this.zoomSize = this.range.to / 1e3 - this.range.from / 1e3;
-        // if zoom resetted then add values in saved in pause
+        // Replay all tags in time order before trimming the live window.
         if (!range.zoomStep) {
-            Object.keys(this.pauseMemoryValue).forEach((id) => {
-                const data = this.pauseMemoryValue[id];
-                if (data) {
-                    Object.values(data).forEach((value) => {
-                        this.addValue(id, value.x, value.y);
-                    });
-                }
-            });
+            const pending = Object.keys(this.pauseMemoryValue).flatMap(id =>
+                (this.pauseMemoryValue[id] || []).map(value => ({ id, ...value }))
+            );
+            pending.sort((a, b) => a.x - b.x);
+            pending.forEach(value => this.addValue(value.id, value.x, value.y));
             this.pauseMemoryValue = {};
         }
         this.updateLastDaqQueryRange(this.range);
@@ -698,13 +702,14 @@ export class ChartUplotComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         }
         result[0].sort(function(a, b) { return a - b; });
+        const stateIndices = new Set(Object.values(this.mapData).filter(entry => entry.attribute.type === 'state').map(entry => entry.index));
         for (var i = 0; i < result[0].length; i++) {
             let t = result[0][i];
             for (var x = 1; x < result.length; x++) {
                 if (xmap[t][x - 1] !== undefined) {
                     result[x].push(xmap[t][x - 1]);
                 } else {
-                    result[x].push(null);
+                    result[x].push(stateIndices.has(x) ? undefined : null);
                 }
             }
         }
