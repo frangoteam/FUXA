@@ -2,6 +2,10 @@
 
 Run the existing component tests with `node --test test/*.test.cjs`.
 
+`npm run test:widget-bindings` checks SVG widgets whose variables share a tag,
+including zero, boolean and string values. It runs the shipped widget compiler
+and signal handler with controlled Angular and transport/DOM boundaries.
+
 The SVG color tests use the real shipped SVG canvas and the application's
 `EditorComponent`, `GaugesManager`, `HtmlImageComponent`, `SvgUtils` and `Utils`
 methods in Chromium. Angular decorators and unrelated services/controls are
