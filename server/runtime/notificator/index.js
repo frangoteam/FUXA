@@ -273,7 +273,7 @@ function NotificatorManager(_runtime) {
                         alarmsStatus[alr.type]++;
                     }
                 });
-                Promise.all(Object.keys(alarmsStatus).map(async stkey => {
+                Promise.allSettled(Object.keys(alarmsStatus).map(async stkey => {
                     var isActive = alarmsStatus[stkey];
                     var wasActive = subscriptionStatus[stkey];
                     var statusChanged = !wasActive && isActive || (wasActive && isActive && subscriptionStatus[stkey] < alarmsStatus[stkey]);

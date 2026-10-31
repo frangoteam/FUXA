@@ -90,6 +90,30 @@ describe('Alarm notification check completion', () => {
         await flush();
         assert.equal(sent.length, 2);
     });
+    it('keeps the check busy after one category fails until the others finish', async () => {
+        alarms.push({ status: 'N', type: 'low' });
+        manager.reset();
+        manager.forceCheck();
+        await flush(); // LOAD
+        manager.forceCheck();
+        await flush(); // establish both delay starts
+        clock.tick(1);
+        manager.forceCheck();
+        await flush();
+        assert.equal(sent.length, 2);
+        runtime.logger.error = sinon.stub().throws(new Error('controlled unexpected failure'));
+        pending[0].reject(new Error('controlled delivery failure'));
+        await flush();
+        runtime.events.emit('alarms-status:changed');
+        await flush();
+        assert.equal(sent.length, 2);
+        assert.equal(runtime.logger.warn.callCount, 1);
+        pending[1].resolve();
+        await flush();
+        manager.forceCheck();
+        await flush();
+        assert.equal(runtime.logger.warn.callCount, 1);
+    });
     it('does not duplicate webhook delivery while it is pending', async () => {
         receiver = 'https://example.test/notify?content=${content}';
         manager.reset();
