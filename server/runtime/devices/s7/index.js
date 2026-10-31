@@ -259,16 +259,17 @@ function S7client(_data, _logger, _events, _runtime) {
         if (item) {
             value = await deviceUtils.tagRawCalculator(value, data.tags[sigid], runtime);
             item.value = value;
-            _writeVars([item], (item instanceof DbItem)).then(result => {
+            return _writeVars([item], (item instanceof DbItem)).then(result => {
                 logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
+                return true;
             }, reason => {
                 if (reason && reason.stack) {
                     logger.error(`'${data.name}' _writeVars error! ${reason.stack}`);
                 } else {
                     logger.error(`'${data.name}' _writeVars error! ${reason}`);
                 }
+                return false;
             });
-            return true;
         }
         return false;
     }

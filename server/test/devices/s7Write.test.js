@@ -61,6 +61,49 @@ describe('S7 write values', () => {
         return client.WriteMultiVars.firstCall.args[0][0];
     }
 
+    describe('write completion', () => {
+        const tag = { type: 'Int', address: 'DB4.DBW2' };
+        for (const failure of [false, true]) {
+            it(`waits for a delayed ${failure ? 'failed' : 'successful'} callback`, async () => {
+                client.WriteMultiVars.resetBehavior();
+                const device = createDevice(tag);
+                const pending = device.setValue('tag1', 42);
+                let settled = false;
+                pending.then(() => { settled = true; }, () => { settled = true; });
+                await new Promise(setImmediate);
+                sinon.assert.calledOnce(client.WriteMultiVars);
+                const callback = client.WriteMultiVars.firstCall.args[1];
+                try {
+                    assert.equal(settled, false, 'write must remain pending until its callback');
+                    sinon.assert.notCalled(logger.info);
+                    sinon.assert.notCalled(logger.error);
+                } finally {
+                    callback(failure ? 7 : null, [{ Result: 0 }]);
+                }
+                assert.equal(await pending, !failure);
+                if (failure) sinon.assert.calledWithMatch(logger.error, '_writeVars error!');
+                else sinon.assert.calledWithMatch(logger.info, 'setValue(tag1, 42)');
+            });
+        }
+        for (const kind of ['transport', 'item', 'throw']) {
+            it(`returns false for a ${kind} error and allows a later successful write`, async () => {
+                if (kind === 'throw') client.WriteMultiVars.throws(new Error('controlled write error'));
+                else client.WriteMultiVars.callsFake((items, cb) => cb(kind === 'transport' ? 7 : null,
+                    [{ Result: kind === 'item' ? 9 : 0 }]));
+                const device = createDevice(tag);
+                assert.equal(await device.setValue('tag1', 42), false);
+                sinon.assert.calledWithMatch(logger.error, '_writeVars error!');
+                sinon.assert.notCalled(logger.info);
+                client.WriteMultiVars.callsFake((items, cb) => cb(null, [{ Result: 0 }]));
+                assert.equal(await device.setValue('tag1', 43), true);
+            });
+        }
+        it('returns false for an unknown tag without writing', async () => {
+            assert.equal(await createDevice(tag).setValue('missing', 42), false);
+            sinon.assert.notCalled(client.WriteMultiVars);
+        });
+    });
+
     describe('Bool tags', () => {
         const bool = { type: 'Bool', address: 'DB3.DBX0.1' };
 
