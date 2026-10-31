@@ -21,6 +21,7 @@
     "test:input-confirm": "node --test test/input-confirm.test.cjs",
     "test:svg-colors": "node --test test/svg-widget-colors.test.cjs",
     "test:script-authorization": "node --test test/script-authorization.test.cjs",
+    "test:script-console": "node --test test/script-test-console.test.cjs",
     "e2e": "ng e2e"
   },
   "dependencies": {
