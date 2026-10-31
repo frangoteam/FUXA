@@ -561,12 +561,16 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
      * Sync loaded schedules with current device list to ensure variableIds are current
      * This handles cases where properties were changed but schedules weren't migrated
      */
-    syncSchedulesWithDeviceList() {
-        if (!this.deviceList || this.deviceList.length === 0) {
-            return;
-        }
-
-        let changesMade = false;
+    syncSchedulesWithDeviceList(storedDevices?: any[]) {
+        // The server enforces every stored device, even when it has no events.
+        // Republish removed/rebound devices so stale tags are no longer controlled.
+        let changesMade = Array.isArray(storedDevices) && (
+            storedDevices.length !== this.deviceList.length ||
+            storedDevices.some((device, index) =>
+                device.name !== this.deviceList[index].name ||
+                device.variableId !== this.deviceList[index].variableId
+            )
+        );
 
         // Create a map of device name -> current variableId
         const deviceMap = new Map<string, string>();
@@ -629,7 +633,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                     }
                 }
 
-                this.syncSchedulesWithDeviceList();
+                this.syncSchedulesWithDeviceList(data?.settings?.devices);
                 this.initializeActiveStates();
                 this.cdr.detectChanges();
 

@@ -20,3 +20,14 @@ original [issue #2472 attachment](https://github.com/frangoteam/FUXA/issues/2472
 download its `Test.json` and set `FUXA_ISSUE_FIXTURE` to that file's absolute path.
 One widget in the attachment already contains corrupted colors; the test checks
 that editing either widget does not further change its artwork.
+
+Run scheduler device synchronization coverage with:
+
+```sh
+node --test test/scheduler-device-sync.test.cjs
+```
+
+These tests execute the actual scheduler component load/save methods with RxJS.
+They cover removed and rebound devices, empty device lists, retained schedules
+and repeat loads. Angular rendering and the HMI transport are controlled; the
+tests do not exercise a browser, a live device or the complete application.
