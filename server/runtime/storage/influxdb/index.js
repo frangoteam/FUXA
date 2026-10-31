@@ -76,7 +76,9 @@ function Influx(_settings, _log, _currentStorate) {
     this.close = function () {
         try {
             status = InfluxDBStatusEnum.CLOSE;
-            client.close().then(() => {
+            // The v2 writer owns the buffers and retry timers; neither client
+            // exposes close(). The 1.x client has no writer to release.
+            return Promise.resolve(writeApi ? writeApi.close() : undefined).then(() => {
                 logger.info('influxdb-close FINISHED');
             })
             .catch((e) => {
