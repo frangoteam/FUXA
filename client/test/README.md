@@ -2,6 +2,13 @@
 
 Run the existing component tests with `node --test test/*.test.cjs`.
 
+Run `npm run test:tag-paste` to verify that pasting one uniquely matching tag
+name binds it in both tag autocomplete controls. The test also covers ambiguous
+and unknown names and retains normal autocomplete selection. It executes the
+shipped component methods with controlled Angular and device-service boundaries;
+full editor rendering, live devices and clipboard behavior on physical browsers
+remain outside this test.
+
 The SVG color tests use the real shipped SVG canvas and the application's
 `EditorComponent`, `GaugesManager`, `HtmlImageComponent`, `SvgUtils` and `Utils`
 methods in Chromium. Angular decorators and unrelated services/controls are
