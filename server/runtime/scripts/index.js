@@ -19,6 +19,7 @@ function ScriptsManager(_runtime) {
     var status = ScriptsStatusEnum.INIT;// Current status (StateMachine)
     var lastCheck = 0;                  // Timestamp to check intervall only in IDLE
     var schedulingMap = {};             // Mapped script mit scheduling
+    var scheduledScriptFailures = new Set(); // Failed scheduled scripts awaiting recovery
     var scriptModule = MyScriptModule.create(events, logger);
 
     /**
@@ -151,20 +152,31 @@ function ScriptsManager(_runtime) {
             Object.keys(schedulingMap).forEach((name) => {
                 const script = schedulingMap[name];
                 if (script.isToRun(time)) {
-                    try {
-                        Promise.resolve(scriptModule.runScriptWithoutParameter(script)).catch((err) => {
-                            logger.error(err && err.message ? err.message : err);
-                        });
-                        script.lastRun = time;
-                    } catch (err) {
-                        if (err.message) {
-                            logger.error(err.message);
-                        } else {
-                            logger.error(err);
-                        }
-                    }
+                    _runScheduledScript(script);
+                    script.lastRun = time;
                 }
             });
+        }
+    }
+
+    var _runScheduledScript = function (script) {
+        const scriptKey = script.id || script.name;
+        try {
+            Promise.resolve(scriptModule.runScriptWithoutParameter(script)).then(() => {
+                if (scheduledScriptFailures.delete(scriptKey)) {
+                    logger.info(`Scheduled script ${script.name || script.id} recovered`);
+                }
+            }).catch((err) => {
+                if (!scheduledScriptFailures.has(scriptKey)) {
+                    scheduledScriptFailures.add(scriptKey);
+                    logger.error(err && err.message ? err.message : err);
+                }
+            });
+        } catch (err) {
+            if (!scheduledScriptFailures.has(scriptKey)) {
+                scheduledScriptFailures.add(scriptKey);
+                logger.error(err && err.message ? err.message : err);
+            }
         }
     }
 
@@ -215,9 +227,7 @@ function ScriptsManager(_runtime) {
                                     scriptSchedule.getScheduleRules().forEach((scheduleRule) => {
                                         logger.info(`Load script-schedule ${script.name} - ${JSON.stringify(scheduleRule)}`);
                                         nodeSchedule.scheduleJob(scheduleRule, function() {
-                                            Promise.resolve(scriptModule.runScriptWithoutParameter(script)).catch((err) => {
-                                                logger.error(err && err.message ? err.message : err);
-                                            });
+                                            _runScheduledScript(script);
                                         });
                                     });
                                 } catch (er) {
