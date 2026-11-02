@@ -454,8 +454,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Not visible, but still used -->
-                                    <input id="text" type="text" size="35" />
                                 </div>
                                 <div id="image_panel">
                                     <div class="svg-property-split2">
@@ -662,6 +660,8 @@
                 <!-- END RIGHT BAR -->
                 <!-- Work Area -->
                 <div id="svg_editor" style="z-index:-1">
+                    <!-- Kept outside collapsible panels so SVG text editing retains focus. -->
+                    <input id="text" type="text" size="35" />
                     <!-- Rules bar -->
                     <div id="rulers">
                         <div id="ruler_corner"></div>
