@@ -14,6 +14,27 @@ export class TagPropertyEditModbusComponent implements OnInit, OnDestroy {
     @Output() result = new EventEmitter<any>();
     formGroup: UntypedFormGroup;
     tagType = ModbusTagType;
+    tagTypeHint: Record<string, string> = {
+        Bool:     'Bool',
+        Int16:    '16bit INT, Byte order 1,2',        UInt16:    '16bit UINT, Byte order 1,2',
+        Int16LE:  '16bit INT, Byte order 2,1',        UInt16LE:  '16bit UINT, Byte order 2,1',
+        Int32:    '32bit INT, Byte order 1,2,3,4',    UInt32:    '32bit UINT, Byte order 1,2,3,4',
+        Int32LE:  '32bit INT, Byte order 4,3,2,1',    UInt32LE:  '32bit UINT, Byte order 4,3,2,1',
+        Int32MLE: '32bit INT, Byte order 3,4,1,2',    UInt32MLE: '32bit UINT, Byte order 3,4,1,2',
+        Int32MBE: '32bit INT, Byte order 2,1,4,3',    UInt32MBE: '32bit UINT, Byte order 2,1,4,3',
+        Float32:    '32bit Float, Byte order 1,2,3,4',
+        Float32LE:  '32bit Float, Byte order 4,3,2,1',
+        Float32MLE: '32bit Float, Byte order 3,4,1,2',
+        Float32MBE: '32bit Float, Byte order 2,1,4,3',
+        Float64:    '64bit Double, Byte order 1,2,3,4,5,6,7,8',
+        Float64LE:  '64bit Double, Byte order 8,7,6,5,4,3,2,1',
+        Float64MBE: '64bit Double, Byte order 7,8,5,6,3,4,1,2',
+        Float64MLE: '64bit Double, Byte order 5,6,7,8,1,2,3,4',
+        Int64:    '64bit INT, Byte order 1,2,3,4,5,6,7,8',    UInt64:    '64bit UINT, Byte order 1,2,3,4,5,6,7,8',
+        Int64LE:  '64bit INT, Byte order 8,7,6,5,4,3,2,1',    UInt64LE:  '64bit UINT, Byte order 8,7,6,5,4,3,2,1',
+        Int64MBE: '64bit INT, Byte order 7,8,5,6,3,4,1,2',    UInt64MBE: '64bit UINT, Byte order 7,8,5,6,3,4,1,2',
+        Int64MLE: '64bit INT, Byte order 5,6,7,8,1,2,3,4',    UInt64MLE: '64bit UINT, Byte order 5,6,7,8,1,2,3,4',
+    };
     memAddress = {
         'Coil Status (Read/Write 000001-065536)': '000000',
         'Digital Inputs (Read 100001-165536)': '100000',
