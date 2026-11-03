@@ -26,6 +26,7 @@ import { ValueComponent } from '../gauges/controls/value/value.component';
 import { GaugeProgressComponent } from '../gauges/controls/gauge-progress/gauge-progress.component';
 import { GaugeSemaphoreComponent } from '../gauges/controls/gauge-semaphore/gauge-semaphore.component';
 import { HtmlSwitchPropertyComponent } from '../gauges/controls/html-switch/html-switch-property/html-switch-property.component';
+import { PanelPropertyComponent } from '../gauges/controls/panel/panel-property/panel-property.component';
 
 import { GridsterItem } from 'angular-gridster2';
 import { CardConfigComponent, CardConfigType } from './card-config/card-config.component';
@@ -1434,7 +1435,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     names: names
                 }
             });
-        } else if (dlgType === GaugeDialogType.Table || dlgType === GaugeDialogType.Panel) {
+        } else if (dlgType === GaugeDialogType.Table) {
             this.gaugeDialog.type = dlgType;
             this.gaugeDialog.data = {
                 settings: tempsettings, dlgType: dlgType, names: names
@@ -1444,6 +1445,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             this.reloadGaugeDialog = !this.reloadGaugeDialog;
             return;
+        } else if (dlgType === GaugeDialogType.Panel) {
+            dialogRef = this.dialog.open(PanelPropertyComponent, {
+                position: { top: '60px' },
+                disableClose: true,
+                data: {
+                    settings: tempsettings, dlgType: dlgType, names: names,
+                    devices: Object.values(this.projectService.getDevices()),
+                    views: hmi.views, view: this.currentView
+                }
+            });
         } else if (dlgType === GaugeDialogType.Video) {
             this.gaugeDialog.type = dlgType;
             this.gaugeDialog.data = {
