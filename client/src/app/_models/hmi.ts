@@ -495,6 +495,7 @@ export interface GaugePanelProperty {
     viewName: string;
     variableId: string;
     scaleMode: PropertyScaleModeType;
+    variablesMapping?: any[];
 }
 
 export enum PropertyScaleModeType {
