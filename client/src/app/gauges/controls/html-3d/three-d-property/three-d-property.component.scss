@@ -1,0 +1,106 @@
+:host {
+    .container {
+        width: 700px;
+        position: relative;
+    }
+
+    .section-item {
+        width: 100%;
+    }
+
+    .item-device-tag {
+        width: calc(100% - 5px);
+    }
+
+    .item-slider {
+        width: 100px;
+    }
+
+    .three-d-options-row {
+        display: flex;
+        gap: 16px;
+        margin-left: 20px;
+        margin-top: 5px;
+    }
+
+    .three-d-uploading {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: dimgrey;
+        font-size: 12px;
+        margin-left: 5px;
+
+        .spin {
+            animation: three-d-spin 1.2s linear infinite;
+        }
+    }
+
+    .three-d-bg-color {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        input[type="color"] {
+            width: 46px;
+            height: 26px;
+            padding: 0;
+            border: 1px solid rgba(0,0,0,0.25);
+            background: transparent;
+            cursor: pointer;
+        }
+
+        input[type="color"]:disabled {
+            opacity: 0.4;
+            cursor: default;
+        }
+    }
+
+    .toolbox {
+        float: right;
+        line-height: 44px;
+    }
+
+    .toolbox button {
+        margin-left: 10px;
+    }
+
+    .action-readonly-item {
+        display: block;
+        width: 100%;
+        border-top: 1px solid rgba(0,0,0,0.12);
+        padding-top: 5px;
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+
+    .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+
+        .spacer {
+            flex: 1 1 auto;
+        }
+    }
+
+    ::ng-deep .mat-dialog-container {
+        display: inline-table !important;
+    }
+
+    ::ng-deep .mat-tab-label {
+        height: 34px !important;
+    }
+
+    .mat-tab-container {
+        min-height: 300px;
+        height: 60vmin;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-top: 15px;
+    }
+}
+
+@keyframes three-d-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
