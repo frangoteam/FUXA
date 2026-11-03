@@ -244,6 +244,8 @@ export class GaugesManager {
             HtmlImageComponent.detectChange(ga, true);
         } else if (ga.type.startsWith(HtmlVideoComponent.TypeTag)) {
             HtmlVideoComponent.initElement(ga);
+        } else if (ga.type.startsWith(PanelComponent.TypeTag)) {
+            PanelComponent.detectChange(ga);
         } else if (elementWithLanguageText) {
             GaugeBaseComponent.setLanguageText(elementWithLanguageText, ga.property?.text);
         } else if (ga.type.startsWith(HtmlInputComponent.TypeTag)) {

@@ -1448,7 +1448,6 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         } else if (dlgType === GaugeDialogType.Panel) {
             dialogRef = this.dialog.open(PanelPropertyComponent, {
                 position: { top: '60px' },
-                disableClose: true,
                 data: {
                     settings: tempsettings, dlgType: dlgType, names: names,
                     devices: Object.values(this.projectService.getDevices()),
