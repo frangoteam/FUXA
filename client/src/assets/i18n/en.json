@@ -452,6 +452,7 @@
     "video.property-image-placeholder": "Select the initial image",
     "panel.property-data": "Data",
     "panel.property-view-name": "View name",
+    "panel.property-view-empty": "Empty",
     "panel.property-name": "Name",
     "panel.property-scalemode": "Scale mode",
     "panel.property-scalemode-none": "None",
