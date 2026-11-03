@@ -853,6 +853,38 @@ describe('Recipes API', () => {
             expect(csvBody).to.include('Temp');
         });
 
+        it('should reject guest exports in secure mode', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'guest', groups: ['guest'] };
+
+            const res = await postRequest(server, '/api/recipes/export', { id: 'r_test', format: 'json' });
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.recipeStorage.getRecipeData.called).to.be.false;
+        });
+
+        it('should reject non-admin exports in secure mode', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+
+            const res = await postRequest(server, '/api/recipes/export', { id: 'r_test', format: 'json' });
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.recipeStorage.getRecipeData.called).to.be.false;
+        });
+
+        it('should allow admin exports in secure mode', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'admin', groups: -1 };
+
+            const res = await postRequest(server, '/api/recipes/export', { id: 'r_test', format: 'json' });
+
+            expect(res.statusCode).to.equal(200);
+            expect(res.body.name).to.equal('TestRecipe');
+        });
+
         it('should return 404 for non-existent recipe', async () => {
             runtime.recipeStorage.getRecipeData.resolves(null);
 

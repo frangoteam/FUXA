@@ -363,6 +363,16 @@ module.exports = {
 
         // POST export recipe — export as JSON or CSV
         recipesApp.post("/api/recipes/export", secureFnc, function(req, res) {
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post recipes export: Tocken Expired");
+                return;
+            }
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && !auth.isAdmin) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post recipes export: Admin permission required");
+                return;
+            }
             try {
                 if (!req.body || !req.body.id) {
                     res.status(400).json({ error: 'Missing id in request body' });
@@ -374,7 +384,6 @@ module.exports = {
                         res.status(404).json({ error: 'Recipe not found' });
                         return;
                     }
-
                     var format = req.body.format || 'json';
                     if (format === 'json') {
                         res.setHeader('Content-Type', 'application/json');
