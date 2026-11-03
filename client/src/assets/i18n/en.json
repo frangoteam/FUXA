@@ -1419,6 +1419,7 @@
     "gauges.property-action-image-url": "Image URL",
     "gauges.property-events-mapping-from": "Context variable",
     "gauges.property-map-variable": "Add context variable to bind",
+    "gauges.property-map-variable-add-all": "Add all context variables from this view",
     "gauges.property-head-remove-mapvariable": "Remove the bind",
     "gauges.property-tooltip-add-event": "Add event",
     "gauges.property-tooltip-add-action": "Add action",
