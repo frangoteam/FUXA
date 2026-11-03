@@ -242,7 +242,7 @@ function Report(_property, _runtime) {
             yesterday.setDate(yesterday.getDate() - 1);
             return {
                 begin: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate()),
-                end: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59)
+                end: new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate(), 23, 59, 59, 999)
             };
         } else if (dateRange === ReportDateRangeType.week) {
             var lastWeek = new Date(currentTime || Date.now());
@@ -251,13 +251,13 @@ function Report(_property, _runtime) {
             lastWeek = new Date(lastWeek.setDate(diff));
             return {
                 begin: new Date(lastWeek.getFullYear(), lastWeek.getMonth(), lastWeek.getDate()),
-                end: new Date(lastWeek.getFullYear(), lastWeek.getMonth(), lastWeek.getDate() + 6, 23, 59, 59)
+                end: new Date(lastWeek.getFullYear(), lastWeek.getMonth(), lastWeek.getDate() + 6, 23, 59, 59, 999)
             };
         } else if (dateRange === ReportDateRangeType.month) {
             var lastMonth = new Date(currentTime || Date.now());
             return {
                 begin: new Date(lastMonth.getFullYear(), lastMonth.getMonth() - 1, 1, 0, 0, 0),
-                end: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 0, 23, 59, 59)
+                end: new Date(lastMonth.getFullYear(), lastMonth.getMonth(), 0, 23, 59, 59, 999)
             };
         } else {
             return {

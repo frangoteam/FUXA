@@ -28,42 +28,72 @@ var utils = module.exports = {
     SMALLEST_NEGATIVE_INTEGER: -9007199254740991,
 
     domStringSplitter: function (src, tagsplitter, first) {
-        var result = { before: '', tagcontent: '', after: '' };
-        var tagStart = '<' + tagsplitter.toLowerCase();
-        var tagEnd = '</' + tagsplitter.toLowerCase();
-        var text = src.toLowerCase();
-        var start = text.indexOf(tagStart, first);
-        if (start === -1) {
-            result.before = src;
-            return result;
+        const name = tagsplitter.toLowerCase();
+        const minimum = Math.max(0, Number(first) || 0);
+        const tokens = /<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<\/?[a-z][a-z0-9:-]*(?=[\s/>])(?:[^"'<>]|"[^"]*"|'[^']*')*>/gi;
+        let start = -1;
+        let depth = 0;
+        let rawTextTag = null;
+        // Match complete tags so quoted values and inert markup cannot truncate
+        // the fragment used by permission filtering. Balance nested fragments.
+        for (const token of src.matchAll(tokens)) {
+            const match = token[0].match(/^<(\/?)([a-z][a-z0-9:-]*)/i);
+            if (!match) continue;
+            const tag = match[2].toLowerCase();
+            if (rawTextTag) {
+                if (!match[1] || tag !== rawTextTag) continue;
+                rawTextTag = null;
+            }
+            if (!match[1] && !/\/\s*>$/.test(token[0]) && ['script', 'style', 'textarea', 'title'].includes(tag)) rawTextTag = tag;
+            if (tag !== name) continue;
+            if (!match[1]) {
+                if (start === -1) {
+                    if (token.index < minimum) continue;
+                    start = token.index;
+                }
+                if (/\/\s*>$/.test(token[0])) {
+                    if (depth === 0) {
+                        const end = token.index + token[0].length;
+                        return { before: src.slice(0, start), tagcontent: src.slice(start, end), after: src.slice(end) };
+                    }
+                } else {
+                    depth++;
+                }
+            } else if (start !== -1 && --depth === 0) {
+                return { before: src.slice(0, start), tagcontent: src.slice(start, token.index), after: src.slice(token.index) };
+            }
         }
-        var end = text.indexOf(tagEnd, start);
-        result.before = src.slice(0, start);
-        result.tagcontent = end === -1 ? src.slice(start) : src.slice(start, end);
-        result.after = end === -1 ? '' : src.slice(end);
-        return result;
+        if (start === -1) return { before: src, tagcontent: '', after: '' };
+        return { before: src.slice(0, start), tagcontent: src.slice(start), after: '' };
     },
 
     domStringSetAttribute: function (src, tags, attribute) {
-        var result = src;
-        for (var i = 0; i < tags.length; i++) {
-            var text = result.toLowerCase();
-            var tagStart = '<' + tags[i].toLowerCase();
-            var pos = 0;
-            var temp  = '';
-            while((pos = text.indexOf(tagStart, pos)) !== -1) {
-                pos += tagStart.length + 1;
-                if (text.indexOf('>') === tagStart.length) {
-                    temp += src.slice(0, pos - 1) + ' ' + attribute + ' >' + src.slice(pos);
-                } else {
-                    temp += src.slice(0, pos) + attribute + ' ' + src.slice(pos);
-                }
+        const selected = new Set(tags.map(tag => tag.toLowerCase()));
+        const attributeName = attribute.trim().match(/^[^\s=/>]+/)[0].toLowerCase();
+        let rawTextTag = null;
+        // Keep quoted attribute values, comments and CDATA intact. In particular,
+        // tag-like text inside an attribute must not become a second control.
+        const tokens = /<!--[\s\S]*?-->|<!\[CDATA\[[\s\S]*?\]\]>|<\/?[a-z][a-z0-9:-]*(?=[\s/>])(?:[^"'<>]|"[^"]*"|'[^']*')*>/gi;
+        return src.replace(tokens, token => {
+            const match = token.match(/^<(\/?)([a-z][a-z0-9:-]*)/i);
+            if (!match) return token;
+            const name = match[2].toLowerCase();
+            if (rawTextTag) {
+                if (match[1] && name === rawTextTag) rawTextTag = null;
+                return token;
             }
-            if (temp.length) {
-                result = temp;
+            if (match[1]) return token;
+            if (!/\/\s*>$/.test(token) && ['script', 'style', 'textarea', 'title'].includes(name)) rawTextTag = name;
+            if (!selected.has(name)) return token;
+
+            const tail = token.slice(match[0].length);
+            const attributes = /\s+([^\s=/>]+)(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?/g;
+            let existing;
+            while ((existing = attributes.exec(tail)) !== null) {
+                if (existing[1].toLowerCase() === attributeName) return token;
             }
-        }
-        return result;
+            return match[0] + ' ' + attribute + (/^\s/.test(tail) ? '' : ' ') + tail;
+        });
     },
 
     domStringSetOverlay: function (htmlString, tagNames) {

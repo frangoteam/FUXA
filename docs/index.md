@@ -22,7 +22,7 @@ The FUXA not require any runtime licenses. You can build your HMI projects in an
 The FUXA Platform includes connectors to achieve direct communications to Siemens PLCs and OPC UA data sources:
 - A client for OPC UA connectivity.
 - S7 Protocol to communicate over Ethernet with Siemens CPU 200, 300, 400, 1200, and 1500.
-- Modbus RTU/TCP, BACnet IP, MQTT, Ethernet/IP (Allen Bradley), WebAPI
+- Modbus RTU/TCP, BACnet IP, MQTT, Ethernet/IP (Allen Bradley), WebAPI, ODBC, ADS (Beckhoff), MELSEC (Mitsubishi), Redis, SNMP (v1/v2c/v3 with traps), GPIO (Raspberry), WebCam
 
 ### Cross-Platform Full-Stack
 This system is designed to operate in various operating systems, with easy installation. Backend is develop with NodeJs. The user-interface is a scalable HTML5 web frontend, develop with Web technologies (HTML5, CSS, Javascript, Angular, SVG) and compatible with all recent browsers.

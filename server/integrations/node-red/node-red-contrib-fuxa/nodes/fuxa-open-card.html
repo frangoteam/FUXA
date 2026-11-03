@@ -39,6 +39,6 @@
 <script type="text/x-red" data-help-name="open-card">
     <p>Open a specific card/view in FUXA.</p>
     <p>The result is set to <code>msg.payload</code>.</p>
-    <p>Use <code>msg.cardName</code> to override the configured card name.</p>
+    <p>A non-empty <code>msg.cardName</code> overrides the configured card name. Otherwise, the configured name is used.</p>
     <p><strong>Available cards:</strong> Dropdown populated from FUXA project views.</p>
 </script>

@@ -20,6 +20,7 @@ var GpioClient = require('./gpio');
 var WebCamClient = require('./webcam');
 var MELSECclient = require('./melsec');
 var REDISclient = require('./redis');
+var SNMPclient = require('./snmp');
 
 const path = require('path');
 const utils = require('../utils');
@@ -133,6 +134,11 @@ function Device(data, runtime) {
             return null;
         }
         comm = REDISclient.create(data, logger, events, manager, runtime);
+    } else if (data.type === DeviceEnum.SNMP) {
+        if (!SNMPclient) {
+            return null;
+        }
+        comm = SNMPclient.create(data, logger, events, manager, runtime);
     }
     // else if (data.type === DeviceEnum.Template) {
     //     if (!TEMPLATEclient) {
@@ -349,6 +355,12 @@ function Device(data, runtime) {
                 }).catch(function (err) {
                     reject(err);
                 });
+            } else if (data.type === DeviceEnum.SNMP) {
+                comm.browse(path).then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
             } else if (data.type === DeviceEnum.GenericEthernetIP) {
                 comm.browse(path, callback).then(resolve).catch(reject);
             } else {
@@ -422,7 +434,7 @@ function Device(data, runtime) {
      * Bind function to ask project stored property (security)
      */
     this.bindGetProperty = function (fnc) {
-        if (data.type === DeviceEnum.OPCUA || data.type === DeviceEnum.MQTTclient || data.type === DeviceEnum.ODBC) {
+        if (data.type === DeviceEnum.OPCUA || data.type === DeviceEnum.MQTTclient || data.type === DeviceEnum.ODBC || data.type === DeviceEnum.SNMP) {
             comm.bindGetProperty(fnc);
         }
     }
@@ -592,6 +604,8 @@ function loadPlugin(type, module) {
         MELSECclient = require(module);
     } else if (type === DeviceEnum.REDIS) {
         REDISclient = require(module);
+    } else if (type === DeviceEnum.SNMP) {
+        SNMPclient = require(module);
     }
 }
 
@@ -644,6 +658,7 @@ var DeviceEnum = {
     WebCam: 'WebCam',
     MELSEC: 'MELSEC',
     REDIS: 'REDIS',
+    SNMP: 'SNMP',
     // Template: 'template'
 }
 

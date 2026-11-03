@@ -33,7 +33,7 @@ function getMin(timeserie, fromts, tots, intervalType) {
     });
 
     let addToInterval = (intervals, intervalIndex, value) => {
-        if (!intervals[intervalIndex]) {
+        if (utils.isNullOrUndefined(intervals[intervalIndex])) {
             intervals[intervalIndex] = Number.MAX_VALUE;
         } else if (intervals[intervalIndex] > value) {
             intervals[intervalIndex] = value;
@@ -55,7 +55,7 @@ function getMax(timeserie, fromts, tots, intervalType) {
     });
 
     let addToInterval = (intervals, intervalIndex, value) => {
-        if (!intervals[intervalIndex]) {
+        if (utils.isNullOrUndefined(intervals[intervalIndex])) {
             intervals[intervalIndex] = utils.SMALLEST_NEGATIVE_INTEGER;
         } else if (intervals[intervalIndex] < value) {
             intervals[intervalIndex] = value;

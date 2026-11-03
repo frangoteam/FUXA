@@ -49,6 +49,10 @@ export class HtmlImageComponent extends GaugeBaseComponent {
         super();
     }
 
+    static getBackgroundElement(element: Element): Element {
+        return Array.from(element.children).find(child => child.tagName === 'rect');
+    }
+
     static initElement(gaugeSettings: GaugeSettings, isview: boolean): HTMLElement {
         let svgImageContainer = null;
         let ele = document.getElementById(gaugeSettings.id);

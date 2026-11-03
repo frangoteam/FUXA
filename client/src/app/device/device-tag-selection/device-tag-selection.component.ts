@@ -180,6 +180,10 @@ export class DeviceTagSelectionComponent implements OnInit, AfterViewInit, OnDes
             this.tagPropertyService.editTagPropertyRedis(device, newTag, true).subscribe(_ => {
                 this.loadDevicesTags(newTag, device.name);
             });
+        } else if (device.type === DeviceType.SNMP) {
+            this.tagPropertyService.editTagPropertySnmp(device, newTag, true).subscribe(_ => {
+                this.loadDevicesTags(newTag, device.name);
+            });
         }
     }
 

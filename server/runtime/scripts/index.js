@@ -18,7 +18,9 @@ function ScriptsManager(_runtime) {
     var working = false;                // Working flag to manage overloading of check notificator status
     var status = ScriptsStatusEnum.INIT;// Current status (StateMachine)
     var lastCheck = 0;                  // Timestamp to check intervall only in IDLE
+    var scheduledJobs = [];            // Calendar jobs owned by this manager
     var schedulingMap = {};             // Mapped script mit scheduling
+    var scheduledScriptFailures = new Set(); // Failed scheduled scripts awaiting recovery
     var scriptModule = MyScriptModule.create(events, logger);
 
     /**
@@ -27,9 +29,12 @@ function ScriptsManager(_runtime) {
     this.start = function () {
         return new Promise(function (resolve, reject) {
             logger.info('scripts.start-checkstatus', true);
-            scriptsCheckStatus = setInterval(function () {
-                _checkStatus();
-            }, SCRIPT_CHECK_STATUS_INTERVAL);
+            if (!scriptsCheckStatus) {
+                scriptsCheckStatus = setInterval(function () {
+                    _checkStatus();
+                }, SCRIPT_CHECK_STATUS_INTERVAL);
+            }
+            resolve();
         });
     }
 
@@ -39,6 +44,8 @@ function ScriptsManager(_runtime) {
     this.stop = function () {
         return new Promise(function (resolve, reject) {
             logger.info('scripts.stop-checkstatus!', true);
+            scheduledJobs.forEach(job => job.cancel());
+            scheduledJobs = [];
             if (scriptsCheckStatus) {
                 clearInterval(scriptsCheckStatus);
                 scriptsCheckStatus = null;
@@ -151,18 +158,31 @@ function ScriptsManager(_runtime) {
             Object.keys(schedulingMap).forEach((name) => {
                 const script = schedulingMap[name];
                 if (script.isToRun(time)) {
-                    try {
-                        scriptModule.runScriptWithoutParameter(script);
-                        script.lastRun = time;
-                    } catch (err) {
-                        if (err.message) {
-                            logger.error(err.message);
-                        } else {
-                            logger.error(err);
-                        }
-                    }
+                    _runScheduledScript(script);
+                    script.lastRun = time;
                 }
             });
+        }
+    }
+
+    var _runScheduledScript = function (script) {
+        const scriptKey = script.id || script.name;
+        try {
+            Promise.resolve(scriptModule.runScriptWithoutParameter(script)).then(() => {
+                if (scheduledScriptFailures.delete(scriptKey)) {
+                    logger.info(`Scheduled script ${script.name || script.id} recovered`);
+                }
+            }).catch((err) => {
+                if (!scheduledScriptFailures.has(scriptKey)) {
+                    scheduledScriptFailures.add(scriptKey);
+                    logger.error(err && err.message ? err.message : err);
+                }
+            });
+        } catch (err) {
+            if (!scheduledScriptFailures.has(scriptKey)) {
+                scheduledScriptFailures.add(scriptKey);
+                logger.error(err && err.message ? err.message : err);
+            }
         }
     }
 
@@ -196,10 +216,11 @@ function ScriptsManager(_runtime) {
         return new Promise(function (resolve, reject) {
             schedulingMap = {};
             try {
-                nodeSchedule.gracefulShutdown();
+                scheduledJobs.forEach(job => job.cancel());
             } catch (e) {
                 logger.error(e);
             }
+            scheduledJobs = [];
             runtime.project.getScripts().then((scripts) => {
                 if (scripts) {
                     var lr = scriptModule.loadScripts(scripts);
@@ -212,9 +233,10 @@ function ScriptsManager(_runtime) {
                                 try {
                                     scriptSchedule.getScheduleRules().forEach((scheduleRule) => {
                                         logger.info(`Load script-schedule ${script.name} - ${JSON.stringify(scheduleRule)}`);
-                                        nodeSchedule.scheduleJob(scheduleRule, function() {
-                                            scriptModule.runScriptWithoutParameter(script);
+                                        const job = nodeSchedule.scheduleJob(scheduleRule, function() {
+                                            _runScheduledScript(script);
                                         });
+                                        if (job) scheduledJobs.push(job);
                                     });
                                 } catch (er) {
                                     logger.error(er);

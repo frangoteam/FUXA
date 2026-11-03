@@ -139,7 +139,8 @@
 
 <script type="text/x-red" data-help-name="get-historical-tags">
     <p>Get historical data for multiple FUXA tags.</p>
-    <p>The data array is set to <code>msg.payload</code>.</p>
+    <p><code>msg.payload</code> is an object keyed by tag name, with each value an array of <code>{x, y}</code> samples.</p>
+    <p>Unresolved tags are warned about and omitted without changing the names of other series. <code>msg.topic</code> is the first successfully resolved tag name.</p>
     <h4>Configuration</h4>
     <p><strong>Tags:</strong> Select multiple tag names using the individual input fields. Click "+ Add Tag" to add more fields.</p>
     <p><strong>Timestamps:</strong> Can be set in config or overridden via message</p>

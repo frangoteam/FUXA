@@ -26,7 +26,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '22'
 
     - name: Install build dependencies
       if: startsWith(matrix.os, 'ubuntu')
@@ -90,17 +90,17 @@ jobs:
       run: |
         if [ "$RUNNER_OS" = "Linux" ]; then
           if [ "${{ matrix.arch }}" = "arm64" ]; then
-            TARGET="node20-linux-arm64"
+            TARGET="node22-linux-arm64"
           else
-            TARGET="node20-linux-x64"
+            TARGET="node22-linux-x64"
           fi
         elif [ "$RUNNER_OS" = "Windows" ]; then
-          TARGET="node20-win-x64"
+          TARGET="node22-win-x64"
         elif [ "$RUNNER_OS" = "macOS" ]; then
           if [ "${{ matrix.arch }}" = "arm64" ]; then
-            TARGET="node20-macos-arm64"
+            TARGET="node22-macos-arm64"
           else
-            TARGET="node20-macos-x64"
+            TARGET="node22-macos-x64"
           fi
         fi
         pkg fuxa-headless/package.json --targets $TARGET --out-path artifacts

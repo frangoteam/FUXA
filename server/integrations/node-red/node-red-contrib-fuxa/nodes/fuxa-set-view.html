@@ -39,6 +39,6 @@
 <script type="text/x-red" data-help-name="set-view">
     <p>Set the current view in FUXA.</p>
     <p>The result is set to <code>msg.payload</code>.</p>
-    <p>Use <code>msg.viewName</code> to override the configured view name.</p>
+    <p>A non-empty <code>msg.viewName</code> overrides the configured view name. Otherwise, the configured name is used.</p>
     <p><strong>Available views:</strong> Dropdown populated from FUXA project views.</p>
 </script>

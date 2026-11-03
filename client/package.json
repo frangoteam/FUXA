@@ -1,6 +1,6 @@
 {
   "name": "fuxa",
-  "version": "1.3.5-2968",
+  "version": "1.3.6-3007",
   "keywords": [],
   "author": "frangoteam <info@frangoteam.org>",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
@@ -19,6 +19,8 @@
     "test:scripts": "node --test test/home-scheduled-scripts.test.cjs",
     "test:internal-tags": "node --test test/internal-tag-init.test.cjs",
     "test:input-confirm": "node --test test/input-confirm.test.cjs",
+    "test:svg-colors": "node --test test/svg-widget-colors.test.cjs",
+    "test:script-authorization": "node --test test/script-authorization.test.cjs",
     "e2e": "ng e2e"
   },
   "dependencies": {
@@ -59,7 +61,7 @@
     "rxjs": "^7.8.0",
     "socket.io-client": "4.8.1",
     "tslib": "^2.5.0",
-    "uplot": "1.6.24",
+    "uplot": "1.6.32",
     "xgplayer": "3.0.13",
     "xgplayer-flv.js": "3.0.13",
     "xgplayer-hls.js": "3.0.13",
@@ -88,6 +90,7 @@
     "eslint-plugin-jsdoc": "39.5.0",
     "eslint-plugin-prefer-arrow": "1.2.3",
     "eslint-plugin-unused-imports": "^3.2.0",
+    "playwright": "1.56.1",
     "sass": "^1.36.0",
     "ts-node": "~10.9.1",
     "typescript": "~5.4.5"

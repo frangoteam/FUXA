@@ -1,0 +1,59 @@
+<div class="button-action">
+    <div class="my-form-field">
+        <span>{{'gauges.property-button-action' | translate}}</span>
+        <mat-select [(value)]="action.mode" style="width: 160px">
+            <mat-option [value]="modeType.none">{{'gauges.property-button-action-none' | translate}}</mat-option>
+            <mat-option [value]="modeType.toggle">{{'gauges.property-button-action-toggle' | translate}}</mat-option>
+            <mat-option [value]="modeType.press">{{'gauges.property-button-action-press' | translate}}</mat-option>
+            <mat-option [value]="modeType.set">{{'gauges.property-button-action-set' | translate}}</mat-option>
+        </mat-select>
+    </div>
+    <ng-container *ngIf="action.mode === modeType.toggle">
+        <div class="my-form-field ml10">
+            <span>{{'gauges.property-button-action-off-value' | translate}} *</span>
+            <input [(ngModel)]="action.offValue" [class.invalid]="isEmpty(action.offValue)" class="value-input" type="text" required>
+        </div>
+        <div class="my-form-field ml10">
+            <span>{{'gauges.property-button-action-on-value' | translate}} *</span>
+            <input [(ngModel)]="action.onValue" [class.invalid]="isEmpty(action.onValue)" class="value-input" type="text" required>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="action.mode === modeType.press">
+        <div class="my-form-field ml10">
+            <span>{{'gauges.property-button-action-press-value' | translate}} *</span>
+            <input [(ngModel)]="action.pressValue" [class.invalid]="isEmpty(action.pressValue)" class="value-input" type="text" required>
+        </div>
+        <div class="my-form-field ml10">
+            <span>{{'gauges.property-button-action-release-value' | translate}} *</span>
+            <input [(ngModel)]="action.releaseValue" [class.invalid]="isEmpty(action.releaseValue)" class="value-input" type="text" required>
+        </div>
+        <div class="my-form-field ml10">
+            <span>{{'gauges.property-button-action-min-hold' | translate}} *</span>
+            <input [(ngModel)]="action.minHoldTime" [class.invalid]="isHoldTimeInvalid()"
+                   class="value-input" type="number" min="0.1" [max]="maxHoldTime" step="0.1" required
+                   matTooltip="{{'gauges.property-button-action-min-hold-tooltip' | translate}}">
+        </div>
+    </ng-container>
+    <ng-container *ngIf="action.mode === modeType.set">
+        <div class="my-form-field ml10">
+            <span>{{'gauges.property-button-action-set-value' | translate}} *</span>
+            <input [(ngModel)]="action.setValue" [class.invalid]="isEmpty(action.setValue)" class="value-input" type="text" required>
+        </div>
+    </ng-container>
+    <div class="my-form-field ml10 pressed-field" *ngIf="action.mode !== modeType.none">
+        <span>{{'gauges.property-button-action-show-pressed' | translate}}</span>
+        <mat-checkbox color="primary" [(ngModel)]="action.showPressed"></mat-checkbox>
+    </div>
+    <div class="state-labels" *ngIf="action.mode !== modeType.none">
+        <div class="my-form-field">
+            <span>{{'gauges.property-button-action-active-label' | translate}}</span>
+            <input [(ngModel)]="action.activeLabel" class="label-input" type="text"
+                   placeholder="{{'gauges.property-button-action-label-placeholder' | translate}}">
+        </div>
+        <div class="my-form-field ml10">
+            <span>{{'gauges.property-button-action-inactive-label' | translate}}</span>
+            <input [(ngModel)]="action.inactiveLabel" class="label-input" type="text"
+                   placeholder="{{'gauges.property-button-action-label-placeholder' | translate}}">
+        </div>
+    </div>
+</div>

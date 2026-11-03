@@ -306,6 +306,7 @@ function createDefaultPlugins() {
     registry['mcprotocol'] = new Plugin('mcprotocol', './melsec', 'MELSEC', '0.1.2', PluginGroupType.connectionDevice, true);
     registry['node-red'] = new Plugin('node-red', './node-red', 'node-red', '4.1.0', PluginGroupType.service, true);
     registry['redis'] = new Plugin('redis', './redis', 'REDIS', '5.8.2', PluginGroupType.connectionDevice, true);
+    registry['net-snmp'] = new Plugin('net-snmp', './snmp', 'SNMP', '3.29.2', PluginGroupType.connectionDevice, true);
     return registry;
 }
 
