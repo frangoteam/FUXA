@@ -79,7 +79,7 @@ export class PanelComponent extends GaugeBaseComponent {
                 componentRef.instance.parent = parent;
                 if (!isview) {
                     let span = document.createElement('span');
-                    span.innerHTML = 'Panel';
+                    span.innerText = PanelComponent.getEditorLabel(gaugeSettings);
                     svgPanelContainer.appendChild(span);
                     return null;
                 }
@@ -94,5 +94,20 @@ export class PanelComponent extends GaugeBaseComponent {
                 return componentRef.instance;
             }
         }
+    }
+
+    static detectChange(gaugeSettings: GaugeSettings) {
+        let ele = document.getElementById(gaugeSettings.id);
+        if (ele) {
+            ele.setAttribute('data-name', gaugeSettings.name);
+            let span = Utils.searchTreeStartWith(ele, this.prefixD)?.querySelector(':scope > span');
+            if (span) {
+                span.innerText = PanelComponent.getEditorLabel(gaugeSettings);
+            }
+        }
+    }
+
+    private static getEditorLabel(gaugeSettings: GaugeSettings): string {
+        return gaugeSettings.name ? `Panel: ${gaugeSettings.name}` : 'Panel';
     }
 }
