@@ -37,4 +37,5 @@ export interface FuxaViewDialogData {
     view: View;
     variablesMapping: [];
     sourceDeviceId?: string;
+    viewIdPrefix?: string;
 }

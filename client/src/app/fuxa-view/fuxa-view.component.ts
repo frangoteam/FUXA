@@ -52,6 +52,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() gaugesManager: GaugesManager;        // gauges.component
     @Input() parentcards: CardModel[];
     @Input() sourceDeviceId: string;
+    @Input() viewIdPrefix: string;
     @Output() onclose = new EventEmitter();
     @Output() ongoto: EventEmitter<string> = new EventEmitter();
 
@@ -74,7 +75,6 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     gaugeInput = '';
     gaugeInputCurrent = '';
     parent: FuxaViewComponent;
-    viewIdPrefix: string;
     cardViewType = Utils.getEnumKey(ViewType, ViewType.cards);
 
     viewLoaded: boolean = false;
@@ -968,7 +968,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             variablesMapping: options.variablesMapping,
             disableDefaultClose: options.hideClose,
             gaugesManager: this.gaugesManager,
-            sourceDeviceId: options.sourceDeviceId
+            sourceDeviceId: options.sourceDeviceId,
+            viewIdPrefix: Utils.getShortGUID('dlg_', '') + '-'
         };
         let dialogRef = this.fuxaDialog.open(FuxaViewDialogComponent, {
             panelClass: 'fuxa-dialog-property',
