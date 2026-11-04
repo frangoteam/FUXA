@@ -100,15 +100,17 @@ export class TagPropertyEditIothttpComponent implements OnInit {
         if (this.readMethod && this.readMethod !== 'GET') {
             options.readMethod = this.readMethod;
         }
-        if (this.writeMethod && this.writeMethod !== 'none') {
-            options.write = {
-                method: this.writeMethod,
-                path: this.writePath || this.tagAddress,
-                key: this.writeKey || this.tagName,
-                mode: this.writeMode || 'json-key',
-                contentType: this.writeContentType || 'application/json',
-                template: this.writeTemplate || undefined,
-            };
+        if (this.writeMethod) {
+            // Persist 'none' too: it means the tag is read-only and the driver must
+            // not send a write request (the default in this dialog is 'none').
+            options.write = { method: this.writeMethod };
+            if (this.writeMethod !== 'none') {
+                options.write.path = this.writePath || this.tagAddress;
+                options.write.key = this.writeKey || this.tagName;
+                options.write.mode = this.writeMode || 'json-key';
+                options.write.contentType = this.writeContentType || 'application/json';
+                options.write.template = this.writeTemplate || undefined;
+            }
         }
         this.result.emit({
             tagName: this.tagName,

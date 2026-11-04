@@ -444,7 +444,13 @@ function HTTPclient(_data, _logger, _events, _runtime) {
         if (!tag) return false;
         const opt = parseJson(tag.options);
         const write = opt.write || {};
-        const method = String(write.method || opt.writeMethod || 'POST').toUpperCase();
+        // 'none' (the default in the tag dialog) makes the tag read-only: the write
+        // is rejected and no HTTP request is sent.
+        const method = String(write.method || opt.writeMethod || 'none').toUpperCase();
+        if (method === 'NONE') {
+            logger.debug(`'${data.name}' [iothttp] tag '${tag.name || tagId}' is read-only (write method: none)`);
+            return false;
+        }
         if (!['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)) {
             logger.error(`'${data.name}' [iothttp] invalid write method: ${method}`);
             return false;
