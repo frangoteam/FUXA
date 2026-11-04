@@ -77,6 +77,7 @@ export class PanelComponent extends GaugeBaseComponent {
 
                 componentRef.instance['myComRef'] = componentRef;
                 componentRef.instance.parent = parent;
+                componentRef.instance.viewIdPrefix = `${gaugeSettings.id}-`;
                 if (!isview) {
                     let span = document.createElement('span');
                     span.innerText = PanelComponent.getEditorLabel(gaugeSettings);
