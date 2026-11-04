@@ -2,7 +2,7 @@
     <div class="flex-join">
     </div>
     <div style="display: inline-block;">
-        <flex-variable style="display: block"
+        <flex-variable style="display: inline-block"
                        [(value)]="value.from"
                        [data]="data"
                        [placeholders]="placeholders"
@@ -11,6 +11,8 @@
                        [withStaticValue]="false"
                        [tagTitle]="'gauges.property-tag-internal-title'">
         </flex-variable>
+        <mat-icon class="my-form-field-info" style="height: 16px" *ngIf="isNotUsedInView()"
+                  matTooltip="{{'gauges.property-map-variable-not-used' | translate}}">error_outline</mat-icon>
         <flex-variable style="display: block"
                        [(value)]="value.to"
                        [data]="data"
