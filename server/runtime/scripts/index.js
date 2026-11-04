@@ -99,10 +99,10 @@ function ScriptsManager(_runtime) {
                 if (admin) {
                     return true;
                 }
-                if (!st.permissionRoles || !st.permissionRoles.enabled) {
+                if (!st.permissionRoles || !Array.isArray(st.permissionRoles.enabled)) {
                     return true;
                 }
-                if (permission && permission.info && permission.info.roles) {
+                if (permission && Array.isArray(permission.info?.roles)) {
                     return st.permissionRoles.enabled.length <= 0 || permission.info.roles.some(role => st.permissionRoles.enabled.includes(role));
                 }
             } else if (admin || (st && (!st.permission || st.permission & permission))) {
