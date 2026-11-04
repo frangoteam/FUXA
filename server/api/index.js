@@ -256,6 +256,8 @@ function getPublicSettings(settings) {
 function getSanitizedSettings(settings) {
     const tosend = JSON.parse(JSON.stringify(settings));
     delete tosend.secretCode;
+    // TLS options may contain private key and certificate material.
+    delete tosend.https;
     if (tosend.smtp) {
         delete tosend.smtp.password;
     }
