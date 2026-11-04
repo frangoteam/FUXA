@@ -1,34 +1,36 @@
 <div class="container">
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'editor.controls-panel-settings' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
-    <div mat-dialog-content class="panel-dialog-content">
-        <div class="my-form-field section-item section-item-block">
-            <span>{{'panel.property-name' | translate}}</span>
-            <input [(ngModel)]="data.settings.name" type="text">
-        </div>
-        <div class="my-form-field section-item section-item-block mt5">
-            <span>{{'panel.property-view-name' | translate}}</span>
-            <mat-select [(value)]="property.viewName">
-                <mat-option [value]="null">-- {{'panel.property-view-empty' | translate}} --</mat-option>
-                <mat-option *ngFor="let v of data.views" [value]="v.name">{{v.name}}</mat-option>
-            </mat-select>
-        </div>
-        <app-flex-device-tag class="block mt5 item-device-tag" (onchange)="onTagChanged($event)" [variableId]="property.variableId">
-        </app-flex-device-tag>
-        <div class="my-form-field section-item section-item-block mt5">
-            <span>{{'panel.property-scalemode' | translate}}</span>
-            <mat-select [(value)]="property.scaleMode">
-                <mat-option *ngFor="let mode of scaleMode | enumToArray" [value]="mode.key">
-                    {{'panel.property-scalemode-' + mode.value | translate }}
-                </mat-option>
-            </mat-select>
-        </div>
-        <div class="mapping-wrapper mt10" *ngIf="getView(property.viewName)">
-            <flex-variables-mapping
-                [(mapping)]="property.variablesMapping"
-                [view]="getView(property.viewName)"
-                [data]="data">
-            </flex-variables-mapping>
+    <div mat-dialog-content>
+        <div class="panel-dialog-content">
+            <div class="my-form-field section-item section-item-block">
+                <span>{{'panel.property-name' | translate}}</span>
+                <input [(ngModel)]="data.settings.name" type="text">
+            </div>
+            <div class="my-form-field section-item section-item-block mt5">
+                <span>{{'panel.property-view-name' | translate}}</span>
+                <mat-select [(value)]="property.viewName">
+                    <mat-option [value]="null">-- {{'panel.property-view-empty' | translate}} --</mat-option>
+                    <mat-option *ngFor="let v of data.views" [value]="v.name">{{v.name}}</mat-option>
+                </mat-select>
+            </div>
+            <app-flex-device-tag class="block mt5 item-device-tag" (onchange)="onTagChanged($event)" [variableId]="property.variableId">
+            </app-flex-device-tag>
+            <div class="my-form-field section-item section-item-block mt5">
+                <span>{{'panel.property-scalemode' | translate}}</span>
+                <mat-select [(value)]="property.scaleMode">
+                    <mat-option *ngFor="let mode of scaleMode | enumToArray" [value]="mode.key">
+                        {{'panel.property-scalemode-' + mode.value | translate }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="mapping-wrapper mt10" *ngIf="getView(property.viewName)">
+                <flex-variables-mapping
+                    [(mapping)]="property.variablesMapping"
+                    [view]="getView(property.viewName)"
+                    [data]="data">
+                </flex-variables-mapping>
+            </div>
         </div>
     </div>
     <div mat-dialog-actions class="dialog-action">
