@@ -52,7 +52,7 @@ function QuestDB(_settings, _log, _currentStorage) {
                 deviceId,
                 deviceName: deviceName || '',
                 unsPath: normalizeSymbolValue(tag.unsPath === undefined ? tag.tagref?.unsPath : tag.unsPath),
-                tagName: tag.name || tag.tagref?.name || null,
+                tagName: utils.getTagName(tag) || null,
                 value: tag.value,
                 timestamp: tag.timestamp || Date.now(),
             });
