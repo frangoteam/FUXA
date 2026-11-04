@@ -25,7 +25,8 @@
                    [parentcards]="cards"
                    [variablesMapping]="card.variablesMapping"
                    [view]="card.view"
-                   [sourceDeviceId]="card.sourceDeviceId">
+                   [sourceDeviceId]="card.sourceDeviceId"
+                   [viewIdPrefix]="card.id + '-'">
     </app-fuxa-view>
 </div>
 <div (rzResizing)="onIframeResizing(iframe, $event)" *ngFor="let iframe of iframes; let i = index" [handle]="iframeHandle" [style.height]="(iframe.height + 22) + 'px'"
