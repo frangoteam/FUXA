@@ -95,6 +95,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
     readonly moveStepOptions = [1, 2, 3, 5, 10];
     isAnySelected = false;
     selectedElement: SelElement = new SelElement();
+    multiSelectedText = false;
     panelsState: PanelsStateType = {
         enabled: false,
         panelView: true,
@@ -703,6 +704,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     private onSelectedElement(elems) {
         this.selectedElement = null;
+        this.multiSelectedText = this.isTextSelection(elems);
         try {
             // to remove some strange effects
             if (document.activeElement !== document.body) {(document.activeElement as HTMLElement).blur();}
@@ -719,6 +721,17 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.sidePanel.opened) {
             this.sidePanel.toggle();
         }
+    }
+
+    /**
+     * check if all multiple selected elements have font settings (text, value, button, input, select)
+     * @param elems selected elements
+     */
+    private isTextSelection(elems): boolean {
+        return elems?.length > 1 && elems.every(e => {
+            const el = e?.id && document.getElementById(e.id);
+            return el && (el.tagName === 'text' || (el.tagName === 'g' && ['VAL_', 'HXI_', 'HXB_', 'HXS_'].some(prefix => e.id.startsWith(prefix))));
+        });
     }
 
     /**
