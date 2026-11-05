@@ -360,7 +360,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                 tryExplicit = settings['broadcastAddress'].indexOf('255') === -1;
             }
 
-            if (utils.getNetworkInterfaces().indexOf(ipInterface) === -1) {
+            if (ipInterface !== '0.0.0.0' && utils.getNetworkInterfaces().indexOf(ipInterface) === -1) {
                 reject(`'${data.name}' selected interface don't exist!`);
                 return;
             }
