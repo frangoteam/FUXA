@@ -419,6 +419,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	isValid(device): boolean {
+		if (this.isToRemove) {
+			return true;
+		}
 		if (!device.name || !device.type) {
 			return false;
 		}
