@@ -114,4 +114,19 @@ describe('Modbus read results', () => {
             });
         });
     }
+
+    it('preserves fields from structured transport errors in the log', async () => {
+        const device = createDevice(reads[2]);
+        client.readInputRegisters.returns(Promise.reject({
+            code: 'ECONNREFUSED',
+            address: '127.0.0.1',
+            port: 65000
+        }));
+
+        await pollWithin(device);
+
+        sinon.assert.calledWithMatch(logger.error,
+            '_readMemory error! {"code":"ECONNREFUSED","address":"127.0.0.1","port":65000}');
+        assert.equal(logger.error.args.some(([message]) => String(message).includes('[object Object]')), false);
+    });
 });
