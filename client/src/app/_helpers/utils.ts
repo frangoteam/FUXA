@@ -55,6 +55,74 @@ export class Utils {
         return null;
     }
 
+
+    /**
+     * Convert an SVG transform attribute value to a CSS transform string.
+     * SVG rotate angles are degrees; rotate(a cx cy) becomes translate/rotate/translate.
+     */
+    static svgTransformAttrToCss(attr: string): string {
+        if (!attr) {
+            return '';
+        }
+        const parts: string[] = [];
+        const re = /([a-zA-Z]+)\s*\(([^)]*)\)/g;
+        let m: RegExpExecArray | null;
+        while ((m = re.exec(attr))) {
+            const fn = m[1].toLowerCase();
+            const args = m[2].split(/[\s,]+/).map(s => s.trim()).filter(Boolean);
+            if (fn === 'rotate') {
+                const angle = args[0] || '0';
+                if (args.length >= 3) {
+                    const cx = parseFloat(args[1]);
+                    const cy = parseFloat(args[2]);
+                    parts.push(`translate(${cx}px, ${cy}px) rotate(${angle}deg) translate(${-cx}px, ${-cy}px)`);
+                } else {
+                    parts.push(`rotate(${angle}deg)`);
+                }
+            } else if (fn === 'translate') {
+                const x = args[0] || '0';
+                const y = args[1] || '0';
+                parts.push(`translate(${x}px, ${y}px)`);
+            } else if (fn === 'scale') {
+                parts.push(args.length > 1 ? `scale(${args[0]}, ${args[1]})` : `scale(${args[0]})`);
+            } else if (fn === 'matrix') {
+                parts.push(`matrix(${args.join(',')})`);
+            }
+        }
+        return parts.join(' ');
+    }
+
+    /**
+     * Safari/iOS ignores SVG transform attributes on ancestors of foreignObject, so
+     * HTML gauges (switch, button, …) ignore the editor angle. Promote the attribute
+     * to a CSS transform on the same element (#2384).
+     */
+    static promoteSvgTransformForForeignObject(root: ParentNode): number {
+        if (!root || typeof (root as ParentNode).querySelectorAll !== 'function') {
+            return 0;
+        }
+        let count = 0;
+        const candidates = root.querySelectorAll('[transform]');
+        candidates.forEach((el: Element) => {
+            if (!el.querySelector('foreignObject')) {
+                return;
+            }
+            const svgTransform = el.getAttribute('transform');
+            if (!svgTransform || !/rotate\s*\(/i.test(svgTransform)) {
+                return;
+            }
+            const css = Utils.svgTransformAttrToCss(svgTransform);
+            if (!css) {
+                return;
+            }
+            const styleTarget = el as unknown as HTMLElement;
+            styleTarget.style.transform = css;
+            el.removeAttribute('transform');
+            count++;
+        });
+        return count;
+    }
+
     static childrenStartWith(element, matchingStart) {
         let result = [];
         for (let i = 0; i < element.children?.length; i++) {
