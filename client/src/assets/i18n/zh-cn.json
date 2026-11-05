@@ -865,6 +865,8 @@
     "shapes.event-onopentab": "打开标签页",
     "shapes.event-onsetvalue": "设置值",
     "shapes.event-ontogglevalue": "切换值",
+    "shapes.event-onsetbit": "置位",
+    "shapes.event-onresetbit": "复位",
     "shapes.event-onsetinput": "从输入设置",
     "shapes.event-onclose": "关闭",
     "shapes.event-onopen": "打开",

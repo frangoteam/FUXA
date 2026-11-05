@@ -865,6 +865,8 @@
     "shapes.event-onopentab": "Sekmeyi Aç",
     "shapes.event-onsetvalue": "Değeri Ayarla",
     "shapes.event-ontogglevalue": "Değeri Değiştir",
+    "shapes.event-onsetbit": "Biti Ayarla",
+    "shapes.event-onresetbit": "Biti Sıfırla",
     "shapes.event-onsetinput": "Girişten Ayarla",
     "shapes.event-onclose": "Kapat",
     "shapes.event-onopen": "Açık",

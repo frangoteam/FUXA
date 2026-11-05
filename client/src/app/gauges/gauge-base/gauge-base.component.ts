@@ -215,6 +215,14 @@ export class GaugeBaseComponent {
         return value ^ bitmask;
     }
 
+    static setBitmask(value: number, bitmask: number): number {
+        return value | bitmask;
+    }
+
+    static resetBitmask(value: number, bitmask: number): number {
+        return value & ~bitmask;
+    }
+
     /**
      * maskedShiftedValue(0b11010110, 0b00011100) // → 5
      * @param rawValue

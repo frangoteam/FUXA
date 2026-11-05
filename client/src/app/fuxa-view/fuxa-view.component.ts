@@ -617,6 +617,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 self.onSetValue(ga, events[i]);
             } else if (eventTypes.indexOf(GaugeEventActionType.onToggleValue) === actindex) {
                 self.onToggleValue(ga, events[i]);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onSetBit) === actindex) {
+                self.onSetBitValue(ga, events[i], true);
+            } else if (eventTypes.indexOf(GaugeEventActionType.onResetBit) === actindex) {
+                self.onSetBitValue(ga, events[i], false);
             } else if (eventTypes.indexOf(GaugeEventActionType.onSetInput) === actindex) {
                 self.onSetInput(ga, events[i]);
             } else if (eventTypes.indexOf(GaugeEventActionType.oniframe) === actindex) {
@@ -643,6 +647,15 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.gaugesManager.toggleSignalValue(actionOptions.variable.variableId, actionOptions.variable.bitmask);
         } else if (ga.property && ga.property.variableId) {
             this.gaugesManager.toggleSignalValue(ga.property.variableId);
+        }
+    }
+
+    onSetBitValue(ga: GaugeSettings, event: GaugeEvent, set: boolean) {
+        const actionOptions = event.actoptions as ActionOptionsVariable;
+        if (actionOptions?.variable?.variableId) {
+            this.gaugesManager.setSignalBits(actionOptions.variable.variableId, set, actionOptions.variable.bitmask);
+        } else if (ga.property && ga.property.variableId) {
+            this.gaugesManager.setSignalBits(ga.property.variableId, set);
         }
     }
 

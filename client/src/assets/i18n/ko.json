@@ -865,6 +865,8 @@
     "shapes.event-onopentab": "탭 열기",
     "shapes.event-onsetvalue": "값 설정",
     "shapes.event-ontogglevalue": "특정값으로 설정",
+    "shapes.event-onsetbit": "비트 설정",
+    "shapes.event-onresetbit": "비트 리셋",
     "shapes.event-onsetinput": "Set from Input",
     "shapes.event-onclose": "닫기",
     "shapes.event-onopen": "열기",

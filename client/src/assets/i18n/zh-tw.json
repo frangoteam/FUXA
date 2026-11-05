@@ -865,6 +865,8 @@
     "shapes.event-onopentab": "開啟分頁",
     "shapes.event-onsetvalue": "設定值",
     "shapes.event-ontogglevalue": "切換值",
+    "shapes.event-onsetbit": "設定位元",
+    "shapes.event-onresetbit": "重設位元",
     "shapes.event-onsetinput": "自輸入設定",
     "shapes.event-onclose": "關閉",
     "shapes.event-onopen": "開啟",

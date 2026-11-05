@@ -865,6 +865,8 @@
     "shapes.event-onopentab": "Abrir pestaña",
     "shapes.event-onsetvalue": "Valor ajustado",
     "shapes.event-ontogglevalue": "Alternar valor",
+    "shapes.event-onsetbit": "Activar bit",
+    "shapes.event-onresetbit": "Desactivar bit",
     "shapes.event-onsetinput": "Establecer desde entrada",
     "shapes.event-onclose": "Cerrar",
     "shapes.event-onopen": "Abierto",

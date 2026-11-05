@@ -865,6 +865,8 @@
     "shapes.event-onopentab": "Öppna Flik",
     "shapes.event-onsetvalue": "Sätt värde",
     "shapes.event-ontogglevalue": "Växla värde",
+    "shapes.event-onsetbit": "Sätt bit",
+    "shapes.event-onresetbit": "Återställ bit",
     "shapes.event-onsetinput": "Sätt från Inmatning",
     "shapes.event-onclose": "Stäng",
     "shapes.event-onopen": "Öppna",

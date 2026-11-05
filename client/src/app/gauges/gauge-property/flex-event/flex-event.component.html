@@ -116,7 +116,7 @@
         <flex-variable style="display: block" [data]="data" [(value)]="item.actoptions.variable" [withStaticValue]="false"></flex-variable>
     </div>
     <div style="display: block; padding-top: 5px;padding-left: 25px;"
-        *ngIf="withToggleValue(item.action)">
+        *ngIf="withBitValue(item.action)">
         <flex-variable style="display: block"
                        [data]="data"
                        [(value)]="item.actoptions.variable"

@@ -865,6 +865,8 @@
     "shapes.event-onopentab": "Відкрити вкладку",
     "shapes.event-onsetvalue": "Встановити значення",
     "shapes.event-ontogglevalue": "Переключити значення",
+    "shapes.event-onsetbit": "Встановити біт",
+    "shapes.event-onresetbit": "Скинути біт",
     "shapes.event-onsetinput": "Встановити з Input",
     "shapes.event-onclose": "Закрити",
     "shapes.event-onopen": "відкритий",

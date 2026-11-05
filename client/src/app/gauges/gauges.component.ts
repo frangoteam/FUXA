@@ -658,6 +658,19 @@ export class GaugesManager {
         }
     }
 
+    setSignalBits(sigid: string, set: boolean, bitmask?: number) {
+        if (Utils.isNullOrUndefined(bitmask) || !bitmask) {
+            this.putSignalValue(sigid, set ? '1' : '0');
+        } else if (this.hmiService.variables.hasOwnProperty(sigid)) {
+            let currentValue = this.hmiService.variables[sigid].value;
+            if (currentValue === null || currentValue === undefined) {
+                return;
+            }
+            const value = set ? GaugeBaseComponent.setBitmask(currentValue, bitmask) : GaugeBaseComponent.resetBitmask(currentValue, bitmask);
+            this.putSignalValue(sigid, value.toString());
+        }
+    }
+
     /**
      * called from fuxa-view to emit and send signal value from a gauge event ('key-enter' of input, 'change' of select)
      * @param event

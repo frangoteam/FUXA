@@ -874,6 +874,8 @@
     "shapes.event-onopentab": "Open Tab",
     "shapes.event-onsetvalue": "Set Value",
     "shapes.event-ontogglevalue": "Toggle Value",
+    "shapes.event-onsetbit": "Set Bit",
+    "shapes.event-onresetbit": "Reset Bit",
     "shapes.event-onsetinput": "Set from Input",
     "shapes.event-onclose": "Close",
     "shapes.event-onopen": "Open",

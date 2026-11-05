@@ -873,6 +873,8 @@
     "shapes.event-onopentab": "Abrir guia",
     "shapes.event-onsetvalue": "Definir valor",
     "shapes.event-ontogglevalue": "Alternar valor",
+    "shapes.event-onsetbit": "Ativar bit",
+    "shapes.event-onresetbit": "Desativar bit",
     "shapes.event-onsetinput": "Definir a partir da entrada",
     "shapes.event-onclose": "Fechar",
     "shapes.event-onopen": "Abrir",

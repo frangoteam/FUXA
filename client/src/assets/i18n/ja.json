@@ -865,6 +865,8 @@
     "shapes.event-onopentab": "タブを開く",
     "shapes.event-onsetvalue": "値を設定",
     "shapes.event-ontogglevalue": "値を切り替え",
+    "shapes.event-onsetbit": "ビットをセット",
+    "shapes.event-onresetbit": "ビットをリセット",
     "shapes.event-onsetinput": "入力から設定",
     "shapes.event-onclose": "閉じる",
     "shapes.event-onopen": "開く",

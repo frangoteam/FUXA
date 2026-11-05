@@ -436,6 +436,8 @@ export enum GaugeEventActionType {
     oncard = 'shapes.event-oncard',     // wrong name exchange with 'onwindow'
     onSetValue = 'shapes.event-onsetvalue',
     onToggleValue = 'shapes.event-ontogglevalue',
+    onSetBit = 'shapes.event-onsetbit',
+    onResetBit = 'shapes.event-onresetbit',
     onSetInput = 'shapes.event-onsetinput',
     onclose = 'shapes.event-onclose',
     onRunScript = 'shapes.event-onrunscript',

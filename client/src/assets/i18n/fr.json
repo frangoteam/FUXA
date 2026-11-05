@@ -865,6 +865,8 @@
     "shapes.event-onopentab": "Ouvrir l'onglet",
     "shapes.event-onsetvalue": "Définir la valeur",
     "shapes.event-ontogglevalue": "Valeur de basculement",
+    "shapes.event-onsetbit": "Mettre le bit à 1",
+    "shapes.event-onresetbit": "Mettre le bit à 0",
     "shapes.event-onsetinput": "Définir à partir de l'entrée",
     "shapes.event-onclose": "Fermer",
     "shapes.event-onopen": "Ouvrir",
