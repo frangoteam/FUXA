@@ -2,6 +2,10 @@
 
 Run the existing component tests with `node --test test/*.test.cjs`.
 
+`npm run test:widget-bindings` checks SVG widgets whose variables share a tag,
+including zero, boolean and string values. It runs the shipped widget compiler
+and signal handler with controlled Angular and transport/DOM boundaries.
+
 `npm run test:script-console` checks Run TEST output for client scripts, including
 asynchronous system-function results, concurrent runs and server compatibility.
 It executes the actual service and test-button handler with controlled tag
