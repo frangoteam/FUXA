@@ -2,6 +2,11 @@
 
 Run the existing component tests with `node --test test/*.test.cjs`.
 
+`npm run test:script-console` checks Run TEST output for client scripts, including
+asynchronous system-function results, concurrent runs and server compatibility.
+It executes the actual service and test-button handler with controlled tag
+transport and Angular decorators, without starting a browser or server.
+
 The SVG color tests use the real shipped SVG canvas and the application's
 `EditorComponent`, `GaugesManager`, `HtmlImageComponent`, `SvgUtils` and `Utils`
 methods in Chromium. Angular decorators and unrelated services/controls are
