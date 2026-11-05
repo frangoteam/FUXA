@@ -31,7 +31,7 @@
             [matAutocomplete]="autoDevices"
             [readonly]="readonly"
             (paste)="onTagPaste($event)"
-            (input)="onChanged()">
+            (input)="onTagInputChanged()">
         <mat-autocomplete #autoDevices="matAutocomplete" [displayWith]="displayFn"  (optionSelected)="onDeviceTagSelected($event.option.value)">
             <mat-optgroup *ngFor="let device of devicesTags$ | async" class="group-label" [label]="device.name">
                 <mat-option *ngFor="let tag of device.tags" [value]="tag" class="option-label">
