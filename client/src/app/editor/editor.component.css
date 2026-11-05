@@ -1,5 +1,7 @@
 .editor-sidenav {
     position: fixed;
+    pointer-events: auto;
+    z-index: 100;
     margin-top: 36px;
     height: calc(100% - 74px);
     padding: 7px;
@@ -8,6 +10,8 @@
 
 .sidepanel-selector {
     position: fixed;
+    pointer-events: auto;
+    z-index: 100;
     margin-top: 36px;
     height: calc(100% - 74px);
     padding: 7px;
@@ -188,6 +192,8 @@
     max-height: calc(100% - 75px);
     background-color: var(--toolboxBackground);
     box-shadow: 0px 1px 4px 0px #000;
+    /* Block hit-testing through to shapes under the panel (#1739) */
+    pointer-events: auto;
 }
 
 .svg-tool-button {

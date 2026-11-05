@@ -1715,6 +1715,15 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.endActivePointerInteraction();
     }
 
+    /**
+     * Keep property-panel pointer events from reaching the SVG canvas underneath
+     * (#1739). Also end any in-progress drag that continued under the overlay.
+     */
+    onFlyPointerDown(event: Event) {
+        event.stopPropagation();
+        this.endActivePointerInteraction();
+    }
+
     cloneElement() {
         this.winRef.nativeWindow.svgEditor.clickExtension('view_grid');
     }
