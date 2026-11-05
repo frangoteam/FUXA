@@ -15,9 +15,9 @@
 
             if (window.screen.width < 768) {
                 var scale = window.screen.width / targetWidth;
-                document.write('<meta name="viewport" content="width=' + targetWidth + ', initial-scale=' + scale + ', minimum-scale=' + scale + ', maximum-scale=' + scale + ', user-scalable=no, viewport-fit=cover">');
+                document.write('<meta name="viewport" content="width=' + targetWidth + ', initial-scale=' + scale + ', user-scalable=yes, viewport-fit=cover">');
             } else {
-                document.write('<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">');
+                document.write('<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">');
             }
 
             /* DEBUGGING ONLY
