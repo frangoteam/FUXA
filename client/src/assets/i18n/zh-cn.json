@@ -1298,6 +1298,7 @@
     "gauges.property-events": "事件",
     "gauges.property-title": "属性",
     "gauges.property-name": "名称",
+    "gauges.property-tooltip": "工具提示",
     "gauges.property-text": "文本",
     "gauges.property-permission": "授权",
     "gauges.property-mask": "Bitmask",

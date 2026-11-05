@@ -1298,6 +1298,7 @@
     "gauges.property-events": "イベント",
     "gauges.property-title": "プロパティ",
     "gauges.property-name": "名前",
+    "gauges.property-tooltip": "ツールチップ",
     "gauges.property-text": "テキスト",
     "gauges.property-permission": "認証",
     "gauges.property-mask": "ビットマスク",

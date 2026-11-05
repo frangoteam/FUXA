@@ -1298,6 +1298,7 @@
     "gauges.property-events": "事件",
     "gauges.property-title": "屬性",
     "gauges.property-name": "名稱",
+    "gauges.property-tooltip": "工具提示",
     "gauges.property-text": "文字",
     "gauges.property-permission": "授權",
     "gauges.property-mask": "位元遮罩",

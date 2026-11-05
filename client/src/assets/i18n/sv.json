@@ -1298,6 +1298,7 @@
     "gauges.property-events": "Händelser",
     "gauges.property-title": "Egenskaper",
     "gauges.property-name": "Namn",
+    "gauges.property-tooltip": "Verktygstips",
     "gauges.property-text": "Text",
     "gauges.property-permission": "Behörighet",
     "gauges.property-mask": "Bitmask",

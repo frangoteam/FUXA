@@ -233,6 +233,7 @@ export class GaugeProperty {
     icon?: string;              // Optional Material icon (used by button)
     image?: string;             // Optional image resource (used by button)
     buttonAction?: ButtonActionProperty;    // Optional toggle/press action (used by button)
+    tooltip?: string;           // Optional text shown on mouse hover
 }
 
 export enum ButtonActionMode {

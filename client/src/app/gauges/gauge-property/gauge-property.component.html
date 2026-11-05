@@ -22,6 +22,10 @@
 								</ng-template>
 							</div>
 						</div>
+						<div class="my-form-field ml10">
+							<span>{{'gauges.property-tooltip' | translate}}</span>
+							<input [(ngModel)]="property.tooltip" style="width: 220px" type="text" placeholder="{{'gauges.property-language-text' | translate}}">
+						</div>
 						<div class="my-form-field ml10" *ngIf="isTextToShow()">
 							<span>{{'gauges.property-text' | translate}}</span>
 							<input [(ngModel)]="property.text" style="width: 250px" type="text" placeholder="{{'gauges.property-language-text' | translate}}">

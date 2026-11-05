@@ -696,6 +696,23 @@ export class GaugesManager {
         }
     }
 
+    /**
+     * set or remove the hover tooltip (svg title) of the gauge element
+     * @param element
+     * @param tooltip
+     */
+    static setTooltip(element: Element, tooltip: string) {
+        if (!element) {
+            return;
+        }
+        Array.from(element.children).filter(child => child.tagName === 'title').forEach(child => child.remove());
+        if (tooltip) {
+            const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+            title.textContent = tooltip;
+            element.insertBefore(title, element.firstChild);
+        }
+    }
+
     static isBitmaskSupported(type: string): boolean {
         for (let i = 0; i < GaugesManager.Gauges.length; i++) {
             if (type.startsWith(GaugesManager.Gauges[i].TypeTag)) {

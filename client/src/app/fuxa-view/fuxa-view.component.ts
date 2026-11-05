@@ -336,6 +336,10 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                                 };
                             }
                         });
+                    const tooltip = items[key].property?.tooltip;
+                    if (tooltip) {
+                        GaugesManager.setTooltip(FuxaViewComponent.getSvgElement(items[key].id)?.node, this.languageService.getTranslation(tooltip) ?? tooltip);
+                    }
                     if (items[key].property) {
                         let gaugeSetting = items[key];
                         let gaugeStatus = this.getGaugeStatus(gaugeSetting);

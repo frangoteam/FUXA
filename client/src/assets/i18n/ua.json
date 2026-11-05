@@ -1298,6 +1298,7 @@
     "gauges.property-events": "Події",
     "gauges.property-title": "Властивості",
     "gauges.property-name": "Імя",
+    "gauges.property-tooltip": "Підказка",
     "gauges.property-text": "текст",
     "gauges.property-permission": "Авторизація",
     "gauges.property-mask": "Бітова маска",

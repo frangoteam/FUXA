@@ -1298,6 +1298,7 @@
     "gauges.property-events": "Olaylar",
     "gauges.property-title": "Özellik",
     "gauges.property-name": "Adı",
+    "gauges.property-tooltip": "Araç İpucu",
     "gauges.property-text": "Metin",
     "gauges.property-permission": "Yetkilendirme",
     "gauges.property-mask": "Bit maskesi",

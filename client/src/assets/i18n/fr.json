@@ -1298,6 +1298,7 @@
     "gauges.property-events": "Événements",
     "gauges.property-title": "Propriété",
     "gauges.property-name": "Nom",
+    "gauges.property-tooltip": "Info-bulle",
     "gauges.property-text": "Texte",
     "gauges.property-permission": "Autorisation",
     "gauges.property-mask": "Masque",

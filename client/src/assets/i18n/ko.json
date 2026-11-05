@@ -1298,6 +1298,7 @@
     "gauges.property-events": "이벤트",
     "gauges.property-title": "속성",
     "gauges.property-name": "이름",
+    "gauges.property-tooltip": "툴팁",
     "gauges.property-text": "텍스트",
     "gauges.property-permission": "권환",
     "gauges.property-mask": "비트마스크",

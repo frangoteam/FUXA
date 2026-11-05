@@ -1306,6 +1306,7 @@
     "gauges.property-events": "Eventos",
     "gauges.property-title": "Propriedade",
     "gauges.property-name": "Nome",
+    "gauges.property-tooltip": "Dica de ferramenta",
     "gauges.property-text": "Texto",
     "gauges.property-permission": "Autorização",
     "gauges.property-mask": "Máscara de bits",

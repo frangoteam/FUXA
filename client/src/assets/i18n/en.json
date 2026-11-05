@@ -1308,6 +1308,7 @@
     "gauges.property-events": "Events",
     "gauges.property-title": "Property",
     "gauges.property-name": "Name",
+    "gauges.property-tooltip": "Tooltip",
     "gauges.property-text": "Text",
     "gauges.property-permission": "Authorization",
     "gauges.property-mask": "Bitmask",

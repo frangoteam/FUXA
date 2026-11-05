@@ -1299,6 +1299,7 @@
     "gauges.property-events": "События",
     "gauges.property-title": "Настройка",
     "gauges.property-name": "Название",
+    "gauges.property-tooltip": "Подсказка",
     "gauges.property-text": "Текст",
     "gauges.property-permission": "Доступ",
     "gauges.property-mask": "Битовая маска",
