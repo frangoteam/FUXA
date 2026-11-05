@@ -76,7 +76,9 @@ function Influx(_settings, _log, _currentStorate) {
     this.close = function () {
         try {
             status = InfluxDBStatusEnum.CLOSE;
-            client.close().then(() => {
+            // The v2 writer owns the buffers and retry timers; neither client
+            // exposes close(). The 1.x client has no writer to release.
+            return Promise.resolve(writeApi ? writeApi.close() : undefined).then(() => {
                 logger.info('influxdb-close FINISHED');
             })
             .catch((e) => {
@@ -131,14 +133,14 @@ function Influx(_settings, _log, _currentStorate) {
                     measurement: tag.id,
                     tags,
                     fields,
-                    timestamp: new Date(tag.timestamp || new Date().getTime())
+                    timestamp: new Date(tag.timestamp ?? new Date().getTime())
                 });
             } else {
                 const point = new Point(tag.id)
                     .tag('id', tag.id)
                     .tag('name', tag.name || tag.tagref?.name)
                     .tag('type', tag.type)
-                    .timestamp(new Date(tag.timestamp || new Date().getTime()));
+                    .timestamp(new Date(tag.timestamp ?? new Date().getTime()));
                 if (deviceName) {
                     point.tag('device', deviceName);
                 }

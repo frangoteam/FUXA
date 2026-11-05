@@ -762,6 +762,27 @@ function getProjectView(viewId, userPermission) {
 function setProject(prjcontent) {
     return new Promise(function (resolve, reject) {
         try {
+            // Lazy responses contain view summaries, not replacement content.
+            const views = prjcontent?.hmi?.views;
+            if (Array.isArray(views) && views.some(view => view?.lazy === true)) {
+                const savedViews = new Map((data.hmi?.views || []).map(view => [view.id, view]));
+                const fullViews = [];
+                for (const view of views) {
+                    if (view?.lazy !== true) {
+                        fullViews.push(view);
+                        continue;
+                    }
+                    const savedView = savedViews.get(view.id);
+                    if (!savedView || savedView.lazy === true) {
+                        reject({code: 'lazy_view_not_found', message: `Unable to resolve lazy view '${view.id}'.`});
+                        return;
+                    }
+                    const fullView = Object.assign({}, savedView, view);
+                    delete fullView.lazy;
+                    fullViews.push(fullView);
+                }
+                prjcontent = Object.assign({}, prjcontent, {hmi: Object.assign({}, prjcontent.hmi, {views: fullViews})});
+            }
             prjstorage.clearAll().then(result => {
                 var scs = [];
                 Object.keys(prjcontent).forEach((key) => {
