@@ -8,6 +8,9 @@ const deviceUtils = require('../device-utils');
 const path = require('path');
 const fs = require('fs');
 
+// Reject oversized payloads before converting or copying them into tag state.
+const MAX_MQTT_PAYLOAD_SIZE = 2 * 1024 * 1024;
+
 function MQTTclient(_data, _logger, _events, _runtime) {
     var runtime = _runtime;
     var data = _data;                   // Current data
@@ -192,6 +195,9 @@ function MQTTclient(_data, _logger, _events, _runtime) {
                         resolve('ok');
                     });
                     browser.on('message', function (topic, msg, pkt) {
+                        if (msg.length > MAX_MQTT_PAYLOAD_SIZE) {
+                            return;
+                        }
                         if (callback) {
                             callback({ topic: topic, msg: msg.toString() });
                         }
@@ -375,6 +381,9 @@ function MQTTclient(_data, _logger, _events, _runtime) {
                         reject(err);
                     } else {
                         client.on('message', function (topicAddr, msg, pkt) {
+                            if (msg.length > MAX_MQTT_PAYLOAD_SIZE) {
+                                return;
+                            }
                             if (topicsMap[topicAddr]) {
                                 for (var i = 0; i < topicsMap[topicAddr].length; i++) {
                                     var id = topicsMap[topicAddr][i].id;
