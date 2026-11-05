@@ -112,18 +112,22 @@ function S7client(_data, _logger, _events, _runtime) {
      */
     this.polling = async function () {
         if (_checkWorking(true)) {
-            var readVarsfnc = [];
-            for (var dbnum in db) {
-                readVarsfnc.push(_readDB(parseInt(dbnum), Object.values(db[dbnum].Items)));
-            }
-            if (Object.keys(mixItemsMap).length) {
-                utils.chunkArray(Object.values(mixItemsMap), MAX_MIX_ITEM).forEach((chunk) => {
-                    readVarsfnc.push(_readVars(chunk));
-                })
-            }
             try {
-                // Native reads may still be running after another read rejects.
-                // Settle the whole batch before disconnecting or starting a new poll.
+                let readQueue = Promise.resolve();
+                const enqueueRead = read => {
+                    // Snap7 permits one active job per client. Continue the queue
+                    // after a failed read so all scheduled results can be settled.
+                    readQueue = readQueue.then(read, read);
+                    return readQueue;
+                };
+                const readVarsfnc = [];
+                for (const dbnum in db) {
+                    readVarsfnc.push(enqueueRead(() => _readDB(parseInt(dbnum), Object.values(db[dbnum].Items))));
+                }
+                for (const chunk of _readVarBatches(Object.values(mixItemsMap))) {
+                    readVarsfnc.push(enqueueRead(() => _readVars(chunk)));
+                }
+                // Keep polling locked until every queued read has settled.
                 const settled = await Promise.allSettled(readVarsfnc);
                 const failures = settled.filter(read => read.status === 'rejected');
                 if (failures.length) {
@@ -157,9 +161,9 @@ function S7client(_data, _logger, _events, _runtime) {
                     } catch (err) {
                         logger.error(`'${data.name}' disconnect after read error failed! ${err}`);
                     }
-                    _emitStatus('connect-error');
                     _clearVarsValue();
                 }
+                _emitStatus('connect-error');
                 _checkWorking(false);
             };
         } else {
@@ -479,7 +483,7 @@ function S7client(_data, _logger, _events, _runtime) {
                 if (err) {
                     const reason = _getReadErr(err);
                     logger.error(`'${data.name}' ${err}: ${reason}`, false);
-                    if (reason.connectionLost) return reject(reason);
+                    return reject(reason);
                 } else {
                     vars.map(v => {
                         let value = null;
@@ -497,6 +501,37 @@ function S7client(_data, _logger, _events, _runtime) {
                 resolve(vars);
             });
         });
+    }
+
+    /**
+     * Split multi-variable reads by negotiated PDU size and Snap7's item limit.
+     */
+    var _readVarBatches = function (vars) {
+        let pdu = typeof s7client.PDULength === 'function' ? s7client.PDULength() : 0;
+        if (!Number.isInteger(pdu) || pdu < 24) pdu = 240;
+        const batches = [];
+        let batch = [];
+        let requestBytes = 12;
+        let responseBytes = 14;
+        for (const item of vars) {
+            const bytes = datatypes[item.type].bytes * (item.Amount || 1);
+            const responseItemBytes = 4 + bytes + (bytes % 2);
+            if (batch.length && (batch.length >= MAX_MIX_ITEM ||
+                requestBytes + 12 > pdu || responseBytes + responseItemBytes > pdu)) {
+                batches.push(batch);
+                batch = [];
+                requestBytes = 12;
+                responseBytes = 14;
+            }
+            if (requestBytes + 12 > pdu || responseBytes + responseItemBytes > pdu) {
+                throw new Error('S7 item exceeds negotiated PDU: ' + (item.name || item.id));
+            }
+            batch.push(item);
+            requestBytes += 12;
+            responseBytes += responseItemBytes;
+        }
+        if (batch.length) batches.push(batch);
+        return batches;
     }
 
     /**
