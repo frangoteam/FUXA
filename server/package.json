@@ -38,7 +38,7 @@
     "net-snmp": "3.29.2",
     "node-red": "^4.1.10",
     "node-schedule": "2.1.1",
-    "nodemailer": "^8.0.8",
+    "nodemailer": "^10.1.4",
     "nopt": "5.0.0",
     "pdfmake": "0.2.5",
     "pg": "^8.18.0",
