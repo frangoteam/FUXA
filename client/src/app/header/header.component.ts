@@ -107,6 +107,13 @@ export class HeaderComponent implements AfterViewInit, OnDestroy {
 
     onSetup() {
         this.projectService.saveProject(SaveMode.Current);
+        // Clear editor selection so Backspace/Delete in Setup cannot remove shapes (#2544)
+        try {
+            const svgEditor = (window as any).svgEditor;
+            if (svgEditor?.clearSelection) {
+                svgEditor.clearSelection();
+            }
+        } catch { /* editor may not be loaded */ }
         let dialogRef = this.dialog.open(SetupComponent, {
             position: { top: '60px' },
         });
