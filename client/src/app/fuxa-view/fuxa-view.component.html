@@ -19,6 +19,7 @@
     </div>
 
     <app-fuxa-view (onclose)="onCloseCard(card)"
+                   (onpage)="onPageRequest($event)"
                    [child]='true'
                    [gaugesManager]="gaugesManager"
                    [hmi]="hmi"
