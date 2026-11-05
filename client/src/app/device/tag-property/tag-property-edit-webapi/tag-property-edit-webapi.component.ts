@@ -127,7 +127,7 @@ export class TagPropertyEditWebapiComponent implements OnInit, OnDestroy {
                     let objNode = new Node(childId.id, childId.property);  // node array element (id: id:id, text: current id value)
                     objNode.class = NodeType.Reference;                     // to check
                     objNode.property = childValue.id;                        // value:id
-                    objNode.todefine = { selid: childId.text, selval: childValue.text };
+                    objNode.todefine = { selid: childId.text, selval: childValue.text, selkey: childId.property };
                     objNode.type = Utils.getType(childValue.property);
                     objNode.checked = true;
                     objNode.enabled = n.enabled;
