@@ -9,7 +9,7 @@ const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 const net = require("net");
 const TOKEN_LIMIT = 100;
-const Mutex = require("async-mutex").Mutex;
+const { Mutex, tryAcquire, E_ALREADY_LOCKED } = require("async-mutex");
 
 function MODBUSclient(_data, _logger, _events, _runtime) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
@@ -26,6 +26,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     var lastTimestampValue;             // Last Timestamp of asked values
     var type;
     var runtime = _runtime;             // Access runtime config such as scripts
+    var requestMutex = new Mutex();      // Serialize reads and writes on this Modbus client
 
     /**
      * initialize the modubus type
@@ -115,8 +116,19 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
+        let requestRelease;
         let socketRelease;
         try {
+            try {
+                requestRelease = await tryAcquire(requestMutex).acquire();
+            } catch (err) {
+                if (err === E_ALREADY_LOCKED) {
+                    _emitStatus('connect-busy');
+                    return;
+                }
+                throw err;
+            }
+
             // Connexion/Resource reutilization logic (Socket/Serial) for TCP e RTU
             if (data.property.socketReuse) {
                 let resourceKey;
@@ -139,6 +151,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
         } finally {
             if (!utils.isNullOrUndefined(socketRelease)) {
                 socketRelease()
+            }
+            if (!utils.isNullOrUndefined(requestRelease)) {
+                requestRelease()
             }
         }
     }
@@ -372,8 +387,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             //     }
             // }
 
+            let requestRelease;
             let socketRelease;
             try {
+                requestRelease = await requestMutex.acquire();
+
                 // Connexion/Resource reutilization logic (Socket/Serial) for TCP and RTU
                 if (data.property.socketReuse) {
                     let resourceKey;
@@ -398,6 +416,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 _checkWorking(false);
                 if (!utils.isNullOrUndefined(socketRelease)) {
                     socketRelease();
+                }
+                if (!utils.isNullOrUndefined(requestRelease)) {
+                    requestRelease();
                 }
             }
             return true;
