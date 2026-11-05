@@ -111,6 +111,18 @@
                     </div>
                 </div>
             </mat-tab>
+            <mat-tab label="{{'gauges.property-actions' | translate}}" *ngIf="actionsSupported">
+                <div class="mat-tab-container">
+                    <div class="toolbox">
+                        <button mat-icon-button (click)="onAddAction()">
+                            <mat-icon>add_circle_outline</mat-icon>
+                        </button>
+                    </div>
+                    <div mat-dialog-content style="overflow: visible; width:100%;">
+                        <flex-action [data]="data" [property]="property" [withBitmask]="withBitmask" #flexaction class="mb5"></flex-action>
+                    </div>
+                </div>
+            </mat-tab>
         </mat-tab-group>
     </div>
     <div mat-dialog-actions class="dialog-action">
