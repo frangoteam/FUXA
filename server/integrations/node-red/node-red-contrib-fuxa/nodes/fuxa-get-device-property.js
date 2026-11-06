@@ -11,8 +11,8 @@ module.exports = function(RED) {
                     return;
                 }
 
-                var deviceName = config.deviceName || msg.deviceName;
-                var property = config.property || msg.property;
+                var deviceName = msg.deviceName || config.deviceName;
+                var property = msg.property || config.property;
 
                 if (deviceName && property) {
                     var result = await fuxa.getDeviceProperty(deviceName, property);

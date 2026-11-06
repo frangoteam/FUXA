@@ -6,7 +6,7 @@ module.exports = function(RED) {
 
         this.on('input', async function(msg) {
             try {
-                var viewName = config.viewName || msg.viewName;
+                var viewName = msg.viewName || config.viewName;
                 if (viewName) {
                     var result = await fuxa.setView(viewName);
                     msg.payload = result;

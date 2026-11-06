@@ -582,6 +582,57 @@ describe('Security - JWT lifecycle', () => {
         }
     });
 
+    it('heartbeat keeps role-based users with NULL legacy groups logged in', async () => {
+        const runtime = {
+            project: {},
+            settings: {
+                secureEnabled: true,
+                userRole: true,
+                secretCode: SECRET,
+                tokenExpiresIn: '1h',
+                logApiLevel: 'none'
+            },
+            users: {
+                getUserCache() {
+                    return { groups: null, info: { roles: ['operator'] } };
+                },
+                getUsers() {
+                    return Promise.resolve([
+                        { username: 'alice', groups: null, info: '{"roles":["operator"]}' }
+                    ]);
+                }
+            },
+            logger: {
+                error() {},
+                info() {},
+                warn() {}
+            }
+        };
+
+        await apiIndex.init(null, runtime);
+        const server = await listen(apiIndex.apiApp);
+
+        try {
+            const token = jwt.sign({ id: 'alice', groups: null }, SECRET, { expiresIn: '1h' });
+            const response = await request(server, {
+                method: 'POST',
+                path: '/api/heartbeat',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-access-token': token
+                },
+                body: JSON.stringify({ params: true })
+            });
+
+            expect(response.statusCode).to.equal(200);
+            expect(response.json.message).to.equal('tokenRefresh');
+            expect(response.json.data.groups).to.equal(0);
+            expect(jwt.verify(response.json.token, SECRET).groups).to.equal(0);
+        } finally {
+            await new Promise((resolve) => server.close(resolve));
+        }
+    });
+
     it('heartbeat refuses to reissue tokens for deleted users', async () => {
         const runtime = {
             project: {},

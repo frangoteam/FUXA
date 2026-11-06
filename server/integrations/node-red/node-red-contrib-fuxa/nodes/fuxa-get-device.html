@@ -45,5 +45,6 @@
 <script type="text/x-red" data-help-name="get-device">
     <p>Get information about a FUXA device.</p>
     <p>The device object is set to <code>msg.payload</code>.</p>
-    <p>Use <code>msg.deviceName</code> and <code>msg.includeTags</code> to override the configured values.</p>
+    <p>A nonempty <code>msg.deviceName</code> overrides the configured device. An empty or missing message device name uses the configured value.</p>
+    <p>A defined <code>msg.includeTags</code> overrides the configured checkbox, including <code>false</code> to omit tags. If neither source supplies a value, tags are included.</p>
 </script>

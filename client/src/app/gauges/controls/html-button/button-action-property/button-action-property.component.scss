@@ -1,0 +1,27 @@
+.button-action {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.value-input {
+    width: 100px;
+    text-align: center;
+}
+
+.value-input.invalid {
+    outline: 1px solid #f44336;
+}
+
+.pressed-field {
+    vertical-align: bottom;
+}
+
+.state-labels {
+    display: block;
+    margin-top: 10px;
+}
+
+.label-input {
+    width: 200px;
+}

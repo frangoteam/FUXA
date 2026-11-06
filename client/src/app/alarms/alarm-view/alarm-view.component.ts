@@ -29,8 +29,8 @@ export class AlarmViewComponent implements OnInit, AfterViewInit, OnDestroy {
     showheader = false;
     currentShowMode = 'collapse';
     alarmsPolling: any;
-    statusText = AlarmStatusType;
-    priorityText = AlarmPriorityType;
+    statusText = { ...AlarmStatusType };
+    priorityText = { ...AlarmPriorityType };
     alarmShowType = AlarmShowType;
     showType = AlarmShowType.alarms;
     history = [];

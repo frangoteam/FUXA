@@ -46,4 +46,5 @@
     <p>Enable or disable a FUXA device.</p>
     <p>The result is set to <code>msg.payload</code>.</p>
     <p>Use <code>msg.deviceName</code> and <code>msg.enabled</code> to override the configured values.</p>
+    <p>A non-empty <code>msg.deviceName</code> takes precedence over the configured device. A supplied <code>msg.enabled</code>, including <code>false</code>, takes precedence over the checkbox. Without these overrides, the configured values are used.</p>
 </script>

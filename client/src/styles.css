@@ -1268,3 +1268,9 @@ mat-toolbar-row {
     justify-content: center;
     align-items: center;
   }
+
+/* html button rendered as pressed (button action with 'show pressed' enabled) */
+.md-btn.md-btn-pressed {
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+    filter: brightness(0.93);
+}

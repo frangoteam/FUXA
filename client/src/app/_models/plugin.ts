@@ -20,7 +20,8 @@ export enum PluginType {
     GenericEthernetIP = 'GenericEthernetIP',
     OmronEthernetIP = 'OmronEthernetIP',
     MELSEC = 'MELSEC',
-    REDIS = 'REDIS'
+    REDIS = 'REDIS',
+    SNMP = 'SNMP'
 }
 
 export enum PluginGroupType {

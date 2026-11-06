@@ -11,8 +11,8 @@ module.exports = function(RED) {
                     return;
                 }
 
-                var deviceName = config.deviceName || msg.deviceName;
-                var property = config.property || msg.property;
+                var deviceName = msg.deviceName || config.deviceName;
+                var property = msg.property || config.property;
                 var value = config.value;
                 if (msg.value !== undefined) value = msg.value;
 

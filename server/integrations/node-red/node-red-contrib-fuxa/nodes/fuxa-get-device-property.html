@@ -44,5 +44,5 @@
 <script type="text/x-red" data-help-name="get-device-property">
     <p>Get a property value from a FUXA device.</p>
     <p>The property value is set to <code>msg.payload</code>.</p>
-    <p>Use <code>msg.deviceName</code> and <code>msg.property</code> to override the configured values.</p>
+    <p>Non-empty <code>msg.deviceName</code> and <code>msg.property</code> override the configured values independently. Omitted or empty selectors use the configured values. The selected property must still be readable by FUXA.</p>
 </script>

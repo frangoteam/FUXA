@@ -308,7 +308,7 @@ export class GaugesManager {
             }
         }
         let mouseEvents: GaugeEvent[] = this.getBindMouseEvent(ga, null);
-        if (mouseEvents && mouseEvents.length > 0) {
+        if (mouseEvents?.length > 0 || HtmlButtonComponent.hasButtonAction(ga)) {
             this.eventGauge[ga.id] = ga;
             if (!this.mapGaugeView[ga.id]) {
                 this.mapGaugeView[ga.id] = {};
@@ -743,6 +743,10 @@ export class GaugesManager {
             } else if (ele.type.startsWith(HtmlSelectComponent.TypeTag)) {
                 colors.fill = HtmlSelectComponent.getFillColor(eles[0]);
                 colors.stroke = HtmlSelectComponent.getStrokeColor(eles[0]);
+                return true;
+            } else if (ele.type.startsWith(HtmlImageComponent.TypeTag)) {
+                colors.fill = HtmlImageComponent.getBackgroundElement(eles[0])?.getAttribute('fill') || eles[0].getAttribute('fill');
+                colors.stroke = eles[0].getAttribute('stroke');
                 return true;
             }
         }
