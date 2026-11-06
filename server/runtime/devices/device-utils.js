@@ -48,7 +48,7 @@ module.exports = {
                             value = evaluateExpression(tag.scale.readExpression, value);
                         }
                     }
-                    if (tag.format) {
+                    if (!utils.isNullOrUndefined(tag.format)) {
                         value = +value.toFixed(tag.format);
                     }
                 }
