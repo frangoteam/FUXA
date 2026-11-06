@@ -51,7 +51,8 @@ function QuestDB(_settings, _log, _currentStorage) {
                 tagid,
                 deviceId,
                 deviceName: deviceName || '',
-                unsPath: normalizeUnsPath(tag.unsPath === undefined ? tag.tagref?.unsPath : tag.unsPath),
+                unsPath: normalizeSymbolValue(tag.unsPath === undefined ? tag.tagref?.unsPath : tag.unsPath),
+                tagName: utils.getTagName(tag) || null,
                 value: tag.value,
                 timestamp: tag.timestamp || Date.now(),
             });
@@ -72,6 +73,9 @@ function QuestDB(_settings, _log, _currentStorage) {
                         .symbol('device_id', row.deviceId);
                     if (!utils.isNullOrUndefined(row.unsPath)) {
                         line = line.symbol('uns_path', row.unsPath);
+                    }
+                    if (!utils.isNullOrUndefined(row.tagName)) {
+                        line = line.symbol('tag_name', row.tagName);
                     }
                     line = line.stringColumn('device_name', row.deviceName);
 
@@ -162,8 +166,18 @@ function QuestDB(_settings, _log, _currentStorage) {
             string_value STRING,
             device_id SYMBOL,
             device_name STRING,
-            uns_path SYMBOL
+            uns_path SYMBOL,
+            tag_name SYMBOL
         ) TIMESTAMP(timestamp) PARTITION BY DAY`);
+        // Tables created by older versions lack the tag_name column
+        try {
+            const columns = await pool.query(`SELECT "column" FROM table_columns('${tableName}')`);
+            if (!columns.rows.some(row => row.column === 'tag_name')) {
+                await pool.query(`ALTER TABLE ${tableName} ADD COLUMN tag_name SYMBOL`);
+            }
+        } catch (error) {
+            logger.warn(`questdb-ensureSchema add tag_name column failed! ${error}`);
+        }
     }
 
     function getIngestConfigString() {
@@ -207,7 +221,7 @@ function QuestDB(_settings, _log, _currentStorage) {
         return { numberValue: null, stringValue: String(value) };
     }
 
-    function normalizeUnsPath(value) {
+    function normalizeSymbolValue(value) {
         if (utils.isNullOrUndefined(value)) {
             return null;
         }
