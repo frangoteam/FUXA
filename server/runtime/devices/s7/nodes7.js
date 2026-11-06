@@ -348,11 +348,22 @@ function Nodes7S7(data, logger, events, runtime) {
             return false;
         }
         const normalized = await deviceUtils.tagRawCalculator(value, data.tags[sigid], runtime);
-        client.writeItems([sigid], [normalized], (err) => {
-            if (err) logger.error(`'${data.name}' [nodes7] setValue error: ${errorText(err)}`);
-            else logger.info(`'${data.name}' [nodes7] setValue(${sigid}, ${normalized})`, true, true);
+        return new Promise((resolve) => {
+            try {
+                client.writeItems([sigid], [normalized], (err) => {
+                    if (err) {
+                        logger.error(`'${data.name}' [nodes7] setValue error: ${errorText(err)}`);
+                        resolve(false);
+                    } else {
+                        logger.info(`'${data.name}' [nodes7] setValue(${sigid}, ${normalized})`, true, true);
+                        resolve(true);
+                    }
+                });
+            } catch (err) {
+                logger.error(`'${data.name}' [nodes7] setValue error: ${errorText(err)}`);
+                resolve(false);
+            }
         });
-        return true;
     };
 
     // ---- value access --------------------------------------------------------

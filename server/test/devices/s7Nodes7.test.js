@@ -56,6 +56,14 @@ class FakeNodeS7 {
         this.addRemoveArray = [];
         if (cb) cb(this.anyBad, this.nextValues);
     }
+    writeItems(items, values, cb) {
+        this.lastWrite = { items, values };
+        if (this.writeError) {
+            if (cb) cb(this.writeError);
+            return;
+        }
+        if (cb) cb(null);
+    }
 }
 FakeNodeS7.lastInstance = null;
 
@@ -252,5 +260,21 @@ describe('S7 nodes7 driver', () => {
         assert.equal(instance.working, false);
         assert.equal(instance.isConnected(), false);
         assert.ok(logger.lines.some((l) => l.msg.includes('no response from the PLC')));
+    });
+
+    it('reports a failed write instead of acknowledging it', async () => {
+        const { instance, data, logger } = makeDriver({ A: { address: 'DB1.DBW0', type: 'Int' } });
+        instance.load(data);
+        const fake = FakeNodeS7.lastInstance;
+        fake.isoConnectionState = 4;
+
+        assert.equal(await instance.setValue('A', 10), true);
+        assert.deepEqual(fake.lastWrite.values, [10]);
+
+        // Same contract as the native driver after #2702: setValue only resolves
+        // true once the write actually completed.
+        fake.writeError = new Error('write failed');
+        assert.equal(await instance.setValue('A', 11), false);
+        assert.ok(logger.lines.some((l) => l.level === 'error' && l.msg.includes('setValue error')));
     });
 });
