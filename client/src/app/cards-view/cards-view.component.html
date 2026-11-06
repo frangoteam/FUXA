@@ -9,7 +9,7 @@
                                 <app-maps-view [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager" (onGoTo)="onGoToPage($event)"></app-maps-view>
                             </ng-container>
                             <ng-container *ngSwitchDefault>
-                                <app-fuxa-view class="lab-body" id="fuxaView{{i}}" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager"></app-fuxa-view>
+                                <app-fuxa-view class="lab-body" id="fuxaView{{i}}" [view]="item.content" [hmi]="hmi" [gaugesManager]="gaugesManager" (ongoto)="onGoToPage($event)"></app-fuxa-view>
                             </ng-container>
                         </ng-container>
                     </div>
