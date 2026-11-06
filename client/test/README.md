@@ -9,6 +9,15 @@ shipped component methods with controlled Angular and device-service boundaries;
 full editor rendering, live devices and clipboard behavior on physical browsers
 remain outside this test.
 
+`npm run test:widget-bindings` checks SVG widgets whose variables share a tag,
+including zero, boolean and string values. It runs the shipped widget compiler
+and signal handler with controlled Angular and transport/DOM boundaries.
+
+`npm run test:script-console` checks Run TEST output for client scripts, including
+asynchronous system-function results, concurrent runs and server compatibility.
+It executes the actual service and test-button handler with controlled tag
+transport and Angular decorators, without starting a browser or server.
+
 The SVG color tests use the real shipped SVG canvas and the application's
 `EditorComponent`, `GaugesManager`, `HtmlImageComponent`, `SvgUtils` and `Utils`
 methods in Chromium. Angular decorators and unrelated services/controls are
@@ -27,3 +36,14 @@ original [issue #2472 attachment](https://github.com/frangoteam/FUXA/issues/2472
 download its `Test.json` and set `FUXA_ISSUE_FIXTURE` to that file's absolute path.
 One widget in the attachment already contains corrupted colors; the test checks
 that editing either widget does not further change its artwork.
+
+Run scheduler device synchronization coverage with:
+
+```sh
+node --test test/scheduler-device-sync.test.cjs
+```
+
+These tests execute the actual scheduler component load/save methods with RxJS.
+They cover removed and rebound devices, empty device lists, retained schedules
+and repeat loads. Angular rendering and the HMI transport are controlled; the
+tests do not exercise a browser, a live device or the complete application.

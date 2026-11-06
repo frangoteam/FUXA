@@ -40,10 +40,10 @@ function ODBCclient(_data, _logger, _events) {
                 try {
                     if (_checkWorking(true)) {
                         logger.info(`'${data.name}' try to connect ${data.property.address}`, true);
-                        var security
+                        var security = {};
                         await getProperty({query: 'security', name: data.id}).then((result, error) => {
                             if (result) {
-                                security = utils.JsonTryToParse(result.value);
+                                security = utils.JsonTryToParse(result.value) || {};
                             }
                         });
                         var connectionsString = data.property.address;
@@ -267,10 +267,10 @@ function getTables(endpoint, fncGetProperty, packagerManager) {
         if (loadOdbcLib(packagerManager)) {
             var connection;
             try {
-                var security
+                var security = {};
                 await fncGetProperty({ query: 'security', name: endpoint.id }).then((result, error) => {
                     if (result) {
-                        security = utils.JsonTryToParse(result.value);
+                        security = utils.JsonTryToParse(result.value) || {};
                     }
                 });
                 var connectionsString = endpoint.address;

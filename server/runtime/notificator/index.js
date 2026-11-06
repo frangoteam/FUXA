@@ -30,9 +30,12 @@ function NotificatorManager(_runtime) {
     this.start = function () {
         return new Promise(function (resolve, reject) {
             logger.info('notificator check start', true);
-            notifyCheckStatus = setInterval(function () {
-                _checkStatus();     // check in 20 seconds interval
-            }, 20000);
+            if (!notifyCheckStatus) {
+                notifyCheckStatus = setInterval(function () {
+                    _checkStatus();     // check in 20 seconds interval
+                }, 20000);
+            }
+            resolve();
         });
     }
 
@@ -273,7 +276,7 @@ function NotificatorManager(_runtime) {
                         alarmsStatus[alr.type]++;
                     }
                 });
-                Object.keys(alarmsStatus).forEach(async stkey => {
+                Promise.allSettled(Object.keys(alarmsStatus).map(async stkey => {
                     var isActive = alarmsStatus[stkey];
                     var wasActive = subscriptionStatus[stkey];
                     var statusChanged = !wasActive && isActive || (wasActive && isActive && subscriptionStatus[stkey] < alarmsStatus[stkey]);
@@ -332,8 +335,7 @@ function NotificatorManager(_runtime) {
                         }
                     }
                     subscriptionStatus[stkey] = isActive;
-                });
-                resolve(true);
+                })).then(() => resolve(true), reject);
             } catch (err) {
                 reject(err);
             }
