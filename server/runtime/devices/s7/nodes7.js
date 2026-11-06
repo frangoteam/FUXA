@@ -49,6 +49,7 @@ function Nodes7S7(data, logger, events, runtime) {
     this.events = events;
     this.runtime = runtime;
     this.connected = false;
+    this.closing = false;          // true while dropConnection() is still closing the socket
     this.working = false;          // avoids overlapping polls
     this.lastReadTs = 0;
     this.varsValue = {};           // id -> { id, value, rawValue, type, changed, daq, timestamp }
@@ -61,6 +62,7 @@ function Nodes7S7(data, logger, events, runtime) {
     // ---- connection ---------------------------------------------------------
     this.connect = function () {
         return new Promise((resolve) => {
+            self.closing = false;
             const prop = data.property || {};
             const params = {
                 host: prop.address || '127.0.0.1',
@@ -134,17 +136,32 @@ function Nodes7S7(data, logger, events, runtime) {
 
     this.disconnect = function () {
         return new Promise((resolve) => {
+            self.closing = true;
             self.connected = false;
-            try { client.dropConnection(() => { }); } catch (_) { }
             self.lastStatus = 'connect-off';
             _emitStatus('connect-off');
-            // Values are intentionally kept: the connection status event is what tells
-            // the UI the device is unavailable, and old values must not become null.
-            resolve(true);
+            // dropConnection() is asynchronous: wait for the library to finish closing the
+            // TCP/ISO socket so a reconnect issued right after this promise resolves does not
+            // race against the old socket (keeping it open fails with
+            // "TCP connected, ISO didn't").
+            const done = () => {
+                self.closing = false;
+                // Values are intentionally kept: the connection status event is what tells
+                // the UI the device is unavailable, and old values must not become null.
+                resolve(true);
+            };
+            try {
+                client.dropConnection(done);
+            } catch (_) {
+                done();
+            }
         });
     };
 
-    this.isConnected = function () { return client.isoConnectionState === 4 || self.connected; };
+    // The link is only reported as up when both sides agree: `self.connected` is cleared the
+    // moment disconnect() is called, while isoConnectionState is only updated by the library
+    // once the socket is really closed.
+    this.isConnected = function () { return self.connected === true && client.isoConnectionState === 4; };
 
     // ---- load (register tags as nodes7 items) --------------------------------
     this.load = function (_data) {
@@ -210,7 +227,10 @@ function Nodes7S7(data, logger, events, runtime) {
                             _markCommError();
                             // lastReadTs is intentionally NOT updated: the device layer uses it
                             // to detect a stalled PLC and force a reconnect with backoff.
-                        } else {
+                        } else if (!self.closing) {
+                            // A poll callback that lands while dropConnection() is still
+                            // closing the socket must not flip the link back to "connected".
+                            self.connected = true;
                             self.lastStatus = 'connect-ok';
                             _emitStatus('connect-ok');
                             self.lastReadTs = Date.now();

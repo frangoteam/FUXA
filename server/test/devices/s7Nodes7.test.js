@@ -24,6 +24,18 @@ class FakeNodeS7 {
     addItems(arg) { this.addRemoveArray.push({ arg, action: 'add' }); }
     removeItemsNow() { this.polledReadBlockList = []; }
     isWaiting() { return false; }
+    initiateConnection(params, cb) {
+        this.isoConnectionState = 4;
+        if (cb) cb();
+    }
+    dropConnection(cb) {
+        // The real library closes the socket asynchronously: isoConnectionState stays 4
+        // until the close callback runs.
+        setTimeout(() => {
+            this.isoConnectionState = 0;
+            if (cb) cb();
+        }, 10);
+    }
     readAllItems(cb) {
         for (const element of this.addRemoveArray) {
             if (element.action !== 'add') continue;
@@ -197,5 +209,25 @@ describe('S7 nodes7 driver', () => {
         fake.isoConnectionState = 4;
         await instance.polling();
         assert.ok(instance.lastReadTimestamp() > 0);
+    });
+
+    it('reports the link as down as soon as disconnect() is called', async () => {
+        const { instance, data } = makeDriver({ A: { address: 'DB1.DBW0', type: 'Int' } });
+        instance.load(data);
+        const fake = FakeNodeS7.lastInstance;
+
+        await instance.connect();
+        assert.equal(fake.isoConnectionState, 4);
+        assert.equal(instance.isConnected(), true);
+
+        const closing = instance.disconnect();
+        // nodes7 has not closed the socket yet, so it still reports state 4 here: the driver
+        // must not keep telling the device layer that the link is alive.
+        assert.equal(fake.isoConnectionState, 4);
+        assert.equal(instance.isConnected(), false);
+
+        await closing;
+        assert.equal(fake.isoConnectionState, 0);
+        assert.equal(instance.isConnected(), false);
     });
 });
