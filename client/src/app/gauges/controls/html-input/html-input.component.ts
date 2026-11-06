@@ -249,11 +249,17 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                         setButton.appendChild(icon);
                         input.parentElement.insertBefore(setButton, input);
 
+                        let valueOnButtonPress: string = null;
                         setButton.addEventListener('mousedown', startButtonPress);
                         setButton.addEventListener('touchstart', startButtonPress);
                         setButton.addEventListener('mouseup', resetButtonPress);
                         setButton.addEventListener('touchend', resetButtonPress);
                         function startButtonPress() {
+                            // The input loses focus before the button click. Preserve the user's
+                            // edit so a live tag refresh during that transition cannot replace it.
+                            if (valueOnButtonPress === null) {
+                                valueOnButtonPress = input.value;
+                            }
                             setButton.style.backgroundColor = 'rgba(0,0,0,0.2)';
                         }
                         function resetButtonPress() {
@@ -261,6 +267,10 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                         }
 
                         setButton.addEventListener('click', function() {
+                            if (valueOnButtonPress !== null) {
+                                input.value = valueOnButtonPress;
+                                valueOnButtonPress = null;
+                            }
                             const enterKeyEvent = new KeyboardEvent('keydown', { key: 'Enter' });
                             input.dispatchEvent(enterKeyEvent);
                         });
