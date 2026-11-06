@@ -18,6 +18,7 @@ class FakeNodeS7 {
         this.translationCB = () => undefined;
         this.nextValues = {};
         this.anyBad = false;
+        this.muteReads = false;
         FakeNodeS7.lastInstance = this;
     }
     setTranslationCB(cb) { this.translationCB = cb; }
@@ -37,6 +38,11 @@ class FakeNodeS7 {
         }, 10);
     }
     readAllItems(cb) {
+        // Simulates a PLC that accepts the connection but never answers the PDU:
+        // the callback is never invoked.
+        if (this.muteReads) {
+            return;
+        }
         for (const element of this.addRemoveArray) {
             if (element.action !== 'add') continue;
             const names = Array.isArray(element.arg) ? element.arg : [element.arg];
@@ -229,5 +235,22 @@ describe('S7 nodes7 driver', () => {
         await closing;
         assert.equal(fake.isoConnectionState, 0);
         assert.equal(instance.isConnected(), false);
+    });
+
+    it('releases the polling when the PLC never answers a read', async () => {
+        const { instance, data, logger } = makeDriver({ A: { address: 'DB1.DBW0', type: 'Int' } });
+        data.property.readTimeout = 50;
+        instance.load(data);
+        const fake = FakeNodeS7.lastInstance;
+        fake.isoConnectionState = 4;
+        fake.muteReads = true;
+
+        // Without the read watchdog this promise would never settle: `working` would stay
+        // true forever and no new poll (and no reconnect) could ever start.
+        await instance.polling();
+
+        assert.equal(instance.working, false);
+        assert.equal(instance.isConnected(), false);
+        assert.ok(logger.lines.some((l) => l.msg.includes('no response from the PLC')));
     });
 });

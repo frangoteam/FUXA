@@ -205,9 +205,45 @@ function Nodes7S7(data, logger, events, runtime) {
             return;
         }
         self.working = true;
+        // Read watchdog: if the PLC accepts the connection but never answers the PDU
+        // (e.g. a LOGO! with all ISO connection slots taken), the readAllItems callback
+        // is never invoked and `working` would stay true forever.
+        const pollMs = Number(data.polling) > 0 ? Number(data.polling) : 1000;
+        // Optional `readTimeout` device property; default is 2x the polling interval (min 5 s).
+        const prop = data.property || {};
+        const readTimeout = Number(prop.readTimeout) > 0
+            ? Number(prop.readTimeout)
+            : Math.max(pollMs * 2, 5000);
         try {
             await new Promise((resolve) => {
+                let settled = false;
+                let watchdog = null;
+                const finish = () => {
+                    if (settled) {
+                        return;
+                    }
+                    settled = true;
+                    if (watchdog) {
+                        clearTimeout(watchdog);
+                        watchdog = null;
+                    }
+                    self.working = false;
+                    resolve();
+                };
+                watchdog = setTimeout(() => {
+                    if (settled) {
+                        return;
+                    }
+                    logger.warn(`'${data.name}' [nodes7] no response from the PLC within ${readTimeout}ms, releasing the polling`);
+                    self.connected = false;
+                    _markCommError();
+                    finish();
+                }, readTimeout);
                 client.readAllItems(async (anyBad, values) => {
+                    if (settled) {
+                        // Late response of a poll that was already abandoned.
+                        return;
+                    }
                     try {
                         const vals = values || {};
                         // nodes7 does NOT return '_COMMERR' in `values` (readDoneCallback only
@@ -241,8 +277,7 @@ function Nodes7S7(data, logger, events, runtime) {
                     } catch (e) {
                         logger.warn(`'${data.name}' [nodes7] processing: ${e.message}`);
                     } finally {
-                        self.working = false;
-                        resolve();
+                        finish();
                     }
                 });
             });
