@@ -457,29 +457,32 @@ function HTTPclient(_data, _logger, _events, _runtime) {
         }
         const path = write.path || opt.writePath || tag.address;
         const mode = write.mode || opt.bodyMode || 'json-key';
-        const contentType = write.contentType || 'application/json';
+        const headers = buildHeaders(tag);
+        const contentType = write.contentType || headers['Content-Type'] || headers['content-type'] || 'application/json';
+        headers['Content-Type'] = contentType;
         const key = write.key || opt.writeKey || tag.name || tagId;
+        const rawValue = await deviceUtils.tagRawCalculator(value, tag, runtime);
 
         let body;
         if (mode === 'raw') {
-            body = value;
+            body = rawValue;
         } else if (mode === 'form') {
             const form = new URLSearchParams();
-            form.append(key, value);
+            form.append(key, rawValue);
             body = form.toString();
         } else if (mode === 'json-template') {
             const tpl = write.template || '{"value": {value}}';
-            body = applyPlaceholders(tpl).replace(/\{value\}/g, typeof value === 'string' ? `"${value}"` : JSON.stringify(value));
+            body = applyPlaceholders(tpl).replace(/\{value\}/g, typeof rawValue === 'string' ? `"${rawValue}"` : JSON.stringify(rawValue));
         } else {
             body = {};
-            body[key] = value;
+            body[key] = rawValue;
         }
 
         try {
             await requestWithAuth(() => ({
                 method,
                 url: resolveUrl(path),
-                headers: Object.assign({}, buildHeaders(tag), { 'Content-Type': contentType }),
+                headers,
                 params: buildParams(tag),
                 data: body,
             }));
@@ -565,7 +568,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
                 timestamp,
             };
             if (self.addDaq && deviceUtils.tagDaqToSave(varsValue[tag.id], timestamp)) {
-                changed[tag.id] = varsValue[tag.id];
+                changed[tag.id] = Object.assign({}, varsValue[tag.id], { unsPath: tag.unsPath });
             }
         }
         if (self.addDaq && !utils.isEmptyObject(changed)) {

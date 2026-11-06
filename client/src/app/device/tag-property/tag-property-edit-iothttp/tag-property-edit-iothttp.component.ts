@@ -25,7 +25,7 @@ export class TagPropertyEditIothttpComponent implements OnInit {
     writeContentType = 'application/json';
     writeTemplate = '';
 
-    readMethods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+    readMethods = ['GET', 'POST'];
     writeMethods = ['none', 'POST', 'PUT', 'PATCH', 'DELETE'];
     bodyModes = ['json-key', 'json-template', 'raw', 'form'];
 
@@ -77,14 +77,21 @@ export class TagPropertyEditIothttpComponent implements OnInit {
         const opt = this.parseOptions(tag.options);
         if (opt.readMethod) {
             this.readMethod = String(opt.readMethod).toUpperCase();
+            // Keep legacy per-tag methods visible when editing existing projects,
+            // but don't offer them when creating a new tag.
+            if (!this.readMethods.includes(this.readMethod)) {
+                this.readMethods = [this.readMethod, ...this.readMethods];
+            }
         }
+        const deviceHeaders = this.parseOptions(this.data.device?.property?.headers);
+        this.writeContentType = deviceHeaders['Content-Type'] || deviceHeaders['content-type'] || 'application/json';
         const write = opt.write || {};
         if (write.method) {
             this.writeMethod = String(write.method).toUpperCase();
             this.writePath = write.path || '';
             this.writeKey = write.key || '';
             this.writeMode = write.mode || 'json-key';
-            this.writeContentType = write.contentType || 'application/json';
+            this.writeContentType = write.contentType || this.writeContentType;
             this.writeTemplate = write.template || '';
         }
     }
