@@ -239,6 +239,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     return;
                 } else {
                     this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
+                    // iOS/Safari: SVG transform attrs do not rotate foreignObject HTML (#2384)
+                    Utils.promoteSvgTransformForForeignObject(this.dataContainer.nativeElement);
                 }
                 if (view.profile?.bkcolor && (this.child || legacyProfile)) {
                     this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
