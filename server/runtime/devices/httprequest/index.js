@@ -334,20 +334,22 @@ function HTTPclient(_data, _logger, _events, _runtime) {
             var someval = false;
             var result = {};
             var items = dataToFlat(reqdata, apiProperty);
-            for (var key in items) {
-                if (requestItemsMap[key]) {
-                    for (var index in requestItemsMap[key]) {
-                        var tag = requestItemsMap[key][index];
-                        if (tag) {
-                            someval = true;
-                            result[tag.id] = {
-                                id: tag.id,
-                                value: (tag.memaddress) ? items[tag.memaddress] : items[key],
-                                type: items[key]?.type,
-                                daq: tag.daq,
-                                tagref: tag
-                            };
+            for (var key in requestItemsMap) {
+                for (var index in requestItemsMap[key]) {
+                    var tag = requestItemsMap[key][index];
+                    if (tag) {
+                        const mapped = _getMappedItem(items, tag, key);
+                        if (!mapped.found) {
+                            continue;
                         }
+                        someval = true;
+                        result[tag.id] = {
+                            id: tag.id,
+                            value: mapped.value,
+                            type: mapped.type,
+                            daq: tag.daq,
+                            tagref: tag
+                        };
                     }
                 }
             }
@@ -368,6 +370,53 @@ function HTTPclient(_data, _logger, _events, _runtime) {
             }
         }
         return null;
+    }
+
+    /**
+     * Resolve a configured tag in a flattened external WebAPI response.
+     * Array references use the identifier selected in the tag editor instead
+     * of retaining the numeric position from the response used for setup.
+     */
+    var _getMappedItem = function (items, tag, address) {
+        if (tag.memaddress && tag.options && tag.options.selid && tag.options.selval) {
+            const parts = address.split(/\[\d+\]/);
+            if (parts.length > 1) {
+                const pattern = new RegExp('^' + parts.map(_escapeRegExp).join('\\[(\\d+)\\]') + '$');
+                const hasSelectedKey = Object.prototype.hasOwnProperty.call(tag.options, 'selkey');
+                const selectedKey = hasSelectedKey ? tag.options.selkey : tag.name;
+                for (const itemAddress of Object.keys(items)) {
+                    const match = pattern.exec(itemAddress);
+                    if (!match) {
+                        continue;
+                    }
+                    const identityMatches = hasSelectedKey
+                        ? items[itemAddress] === selectedKey
+                        : String(items[itemAddress]) === String(selectedKey);
+                    if (!identityMatches) {
+                        continue;
+                    }
+                    let arrayIndex = 0;
+                    const valueAddress = tag.memaddress.replace(/\[\d+\]/g, () => `[${match[++arrayIndex]}]`);
+                    if (Object.prototype.hasOwnProperty.call(items, valueAddress)) {
+                        return { found: true, value: items[valueAddress], type: items[itemAddress]?.type };
+                    }
+                }
+                return { found: false };
+            }
+        }
+        if (!Object.prototype.hasOwnProperty.call(items, address)) {
+            return { found: false };
+        }
+        const valueAddress = tag.memaddress || address;
+        return {
+            found: Object.prototype.hasOwnProperty.call(items, valueAddress),
+            value: items[valueAddress],
+            type: items[address]?.type
+        };
+    }
+
+    var _escapeRegExp = function (value) {
+        return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
     /**
