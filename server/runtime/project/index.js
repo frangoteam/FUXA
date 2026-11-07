@@ -64,6 +64,9 @@ function load() {
             for (var ig = 0; ig < grows.length; ig++) {
                 if (grows[ig].name === ProjectDataCmdType.HmiLayout) {
                     data.hmi[grows[ig].name] = JSON.parse(grows[ig].value);
+                } else if (grows[ig].name === ProjectDataCmdType.ClientAccess) {
+                    // Persist under camelCase so client and getClientAccess stay in sync
+                    data.clientAccess = JSON.parse(grows[ig].value);
                 } else {
                     data[grows[ig].name] = JSON.parse(grows[ig].value);
                 }
@@ -431,6 +434,13 @@ function setLanguages(languages) {
  */
 function setClientAccess(clientAccess) {
     data.clientAccess = clientAccess;
+}
+
+/**
+ * Frontend Script Access allow-list (system functions callable from client scripts)
+ */
+function getClientAccess() {
+    return data.clientAccess || data['client-access'] || { scriptSystemFunctions: [] };
 }
 
 /**
@@ -1351,6 +1361,7 @@ module.exports = {
     getNotifications: getNotifications,
     getScripts: getScripts,
     getReports: getReports,
+    getClientAccess: getClientAccess,
     getArMarkers: getArMarkers,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,
