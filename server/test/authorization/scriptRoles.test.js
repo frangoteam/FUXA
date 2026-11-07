@@ -212,6 +212,27 @@ describe('HMI script Roles and Groups authorization', () => {
         assert.equal(adminOk.status, 200);
     });
 
+    it('ignores surrounding whitespace in runSysFunction names but keeps the allow-list (#2039)', async () => {
+        const operator = await login('operator');
+        const call = functionName => request('/api/runSysFunction', {
+            params: { functionName, parameters: null }
+        }, operator.token);
+
+        clientAccess.scriptSystemFunctions = [' $getAlarms '];
+        assert.equal((await call('$getAlarms')).status, 200);
+
+        clientAccess.scriptSystemFunctions = ['$getAlarms'];
+        const padded = await call('  $getAlarms\t');
+        assert.equal(padded.status, 200);
+        assert.deepEqual(padded.body, [{ name: 'A1', status: 'on' }]);
+
+        for (const name of [' $setTag ', '   ', '', null, ['$getAlarms'], { name: '$getAlarms' }]) {
+            const denied = await call(name);
+            assert.equal(denied.status, 400);
+            assert.equal(denied.body.error, 'unauthorized_error');
+        }
+    });
+
     it('applies role changes from storage and cache on subsequent sign-in', async () => {
         const previous = await login('operator');
         assert.equal((await run(previous.token)).status, 200);

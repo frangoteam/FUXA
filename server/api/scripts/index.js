@@ -22,14 +22,13 @@ function isSysFunctionAuthorised(functionName, permission) {
     if (permission === null || permission === undefined) {
         return false;
     }
-    if (!functionName || !runtime.project || typeof runtime.project.getClientAccess !== 'function') {
+    if (typeof functionName !== 'string' || !functionName || !runtime.project || typeof runtime.project.getClientAccess !== 'function') {
         return false;
     }
     const access = runtime.project.getClientAccess() || {};
     const allowed = Array.isArray(access.scriptSystemFunctions) ? access.scriptSystemFunctions : [];
-    // Normalise so minor whitespace or casing differences do not cause false denials.
-    const normalised = String(functionName).trim();
-    return allowed.some(name => String(name).trim() === normalised);
+    // Ignore surrounding whitespace in configured names
+    return allowed.some(name => typeof name === 'string' && name.trim() === functionName);
 }
 
 module.exports = {
@@ -89,7 +88,8 @@ module.exports = {
          */
         scriptsApp.post("/api/runSysFunction", secureFnc, async function (req, res, next) {
             var groups = checkGroupsFnc(req);
-            const functionName = req.body?.params?.functionName;
+            const rawName = req.body?.params?.functionName;
+            const functionName = typeof rawName === 'string' ? rawName.trim() : rawName;
             if (res.statusCode === 403) {
                 runtime.logger.error("api post runSysFunction: Tocken Expired");
             } else if (!isSysFunctionAuthorised(functionName, groups)) {
