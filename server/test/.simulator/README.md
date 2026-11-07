@@ -42,3 +42,24 @@ It listens on `127.0.0.1:16161`, uses SNMP v2c with community `fuxa-community`, 
 In FUXA, create an SNMP device with address `127.0.0.1`, port `16161`, version `v2c`, and the matching community/password `fuxa-community`; then open its tag list and choose **Add → Scan**. Change the port or community with `--port` and `--community` if needed. The simulator binds to localhost by default; use `--host 0.0.0.0` only if FUXA runs in another machine/container and the UDP port is appropriately firewalled.
 
 This simulator supports v1/v2c community access only; it does not simulate SNMPv3 or traps.
+
+## WebAPI tree simulator
+
+`webapi-tree-simulator.cjs` serves a nested JSON response for testing the WebAPI tag browser. It includes prefix-related siblings (`cepn1`/`cepn116` and `lent10`/`lent104`), child values, a deeply nested object, and an array of objects.
+
+From this directory, start it with:
+
+```sh
+node webapi-tree-simulator.cjs
+```
+
+It listens on port `1888` by default and serves the JSON at `http://localhost:1888/api/tags`. Set `PORT` to use another port, for example in PowerShell:
+
+```powershell
+$env:PORT = '1889'
+node .\webapi-tree-simulator.cjs
+```
+
+Configure a FUXA WebAPI device to use this URL as its GET tags endpoint, then open its tag browser. Expand `Objects` and verify that each prefix-related node shows its own `value` and `status` children. The `nested` branch checks deeper expansion. In `items`, select `name` as the array ID field and `value` as its value field to exercise array mapping. The endpoint can also be checked directly in a browser or with `curl`.
+
+This is a local test fixture, not a production API. The server binds to `0.0.0.0`; if FUXA runs on another machine or in a container, use the simulator host's reachable address and restrict access to the test network. The WebAPI browser preserves response insertion order, so this simulator checks tree display and selection but does not by itself exercise the sorted OPC UA ordering path.
