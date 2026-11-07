@@ -21,6 +21,7 @@
     "test:input-confirm": "node --test test/input-confirm.test.cjs",
     "test:tag-paste": "node --test test/pasted-tag-selection.test.cjs",
     "test:svg-colors": "node --test test/svg-widget-colors.test.cjs",
+    "test:shape-actions": "node --test test/shape-concurrent-actions.test.cjs",
     "test:script-authorization": "node --test test/script-authorization.test.cjs",
     "test:widget-bindings": "node --test test/widget-shared-tag-bindings.test.cjs",
     "test:script-console": "node --test test/script-test-console.test.cjs",
