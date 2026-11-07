@@ -1154,11 +1154,12 @@ export class ProjectService {
         }
     }
 
-    private notifyError(msgCode: string) {
+    private notifyError(msgCode: string, details?: string) {
         this.translateService.get(msgCode).subscribe((msg: string) => {
             if (msg) {
-                console.error(`FUXA Error: ${msg}`);
-                this.toastr.error(msg, '', {
+                const error = details ? `${msg} (${details})` : msg;
+                console.error(`FUXA Error: ${error}`);
+                this.toastr.error(error, '', {
                     timeOut: 3000,
                     closeButton: true,
                     disableTimeOut: true
@@ -1220,18 +1221,15 @@ export class ProjectService {
     }
 
     verifyProject(prj: ProjectData): boolean {
-        let result = true;
-        if (Utils.isNullOrUndefined(prj.version)) {
-            result = false;
-        } else if (Utils.isNullOrUndefined(prj.hmi)) {
-            result = false;
-        } else if (Utils.isNullOrUndefined(prj.devices)) {
-            result = false;
+        const requiredFields = ['version', 'hmi', 'devices'] as const;
+        const missingFields = (!prj || typeof prj !== 'object')
+            ? requiredFields
+            : requiredFields.filter(field => Utils.isNullOrUndefined(prj[field]));
+        if (missingFields.length) {
+            this.notifyError('msg.project-format-error', missingFields.join(', '));
+            return false;
         }
-        if (!result) {
-            this.notifyError('msg.project-format-error');
-        }
-        return result;
+        return true;
     }
 
     verifyView(view: View): boolean {
