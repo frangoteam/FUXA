@@ -45,6 +45,14 @@
                                         [withBitmask]="withBitmask">
                             </flex-variable>
                         </div>
+                        <div class="mt10" *ngIf="property.options.type === inputOptionType.number">
+                            <flex-input #flexinput
+                                        [data]="data"
+                                        [property]="property"
+                                        [ranges]="property.ranges"
+                                        [propertyType]="unitPropertyType">
+                            </flex-input>
+                        </div>
                         <div class="mt15">
                             <div class="my-form-field" style="width: 140px;">
                                 <span>{{'gauges.property-input-type' | translate}}</span>
