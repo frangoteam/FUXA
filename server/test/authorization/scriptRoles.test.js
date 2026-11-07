@@ -19,6 +19,7 @@ describe('HMI script Roles and Groups authorization', () => {
     let server;
     let workDir;
     let tags;
+    let clientAccess;
     let systemGlobals;
 
     function request(url, body, token, headers = {}) {
@@ -83,11 +84,16 @@ describe('HMI script Roles and Groups authorization', () => {
             parameters: [],
             code: '$setTag("unrestricted", 8); return 8;'
         }];
+        clientAccess = { scriptSystemFunctions: [] };
         runtime = {
             settings: { secureEnabled: true, userRole: true, secretCode: 'isolated-script-test-secret', logApiLevel: 'none' },
             logger, users, events: new EventEmitter(),
-            project: { getScripts: async () => savedScripts },
-            devices: { setTagValue: (id, value) => { tags[id] = value; return true; } }
+            project: {
+                getScripts: async () => savedScripts,
+                getClientAccess: () => clientAccess
+            },
+            devices: { setTagValue: (id, value) => { tags[id] = value; return true; } },
+            alarmsMgr: { getAlarmsValues: async () => [{ name: 'A1', status: 'on' }] }
         };
         runtime.scriptsMgr = scripts.create(runtime);
         const clock = sinon.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
@@ -176,6 +182,34 @@ describe('HMI script Roles and Groups authorization', () => {
         assert.equal((await request('/api/runSysFunction', { params: { functionName: '$setTag', parameters: ['forged', 1] } }, operator.token)).status, 400);
         assert.equal((await request('/api/setTagValue', { tags: [{ id: 'forged', value: 1 }] }, operator.token)).status, 401);
         assert.deepEqual(tags, {});
+    });
+
+    it('allows non-admin runSysFunction only when enabled in Frontend Script Access (#2039)', async () => {
+        const operator = await login('operator');
+        const denied = await request('/api/runSysFunction', {
+            params: { functionName: '$getAlarms', parameters: null }
+        }, operator.token);
+        assert.equal(denied.status, 400);
+        assert.equal(denied.body.error, 'unauthorized_error');
+
+        clientAccess.scriptSystemFunctions = ['$getAlarms'];
+        const allowed = await request('/api/runSysFunction', {
+            params: { functionName: '$getAlarms', parameters: null }
+        }, operator.token);
+        assert.equal(allowed.status, 200);
+        assert.deepEqual(allowed.body, [{ name: 'A1', status: 'on' }]);
+
+        // Non-allowlisted functions stay blocked even when another function is enabled
+        const stillDenied = await request('/api/runSysFunction', {
+            params: { functionName: '$setTag', parameters: ['forged', 1] }
+        }, operator.token);
+        assert.equal(stillDenied.status, 400);
+
+        const admin = await login('admin');
+        const adminOk = await request('/api/runSysFunction', {
+            params: { functionName: '$getAlarms', parameters: null }
+        }, admin.token);
+        assert.equal(adminOk.status, 200);
     });
 
     it('applies role changes from storage and cache on subsequent sign-in', async () => {
