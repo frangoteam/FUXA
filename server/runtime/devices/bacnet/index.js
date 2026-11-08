@@ -90,7 +90,6 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                 reject();
             }
             connected = false;
-            monitored = false;
             _checkWorking(false);
             _emitStatus('connect-off');
             _clearVarsValue();
