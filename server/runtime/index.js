@@ -176,7 +176,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device property
         socket.on(Events.IoEventTypes.DEVICE_PROPERTY, (message) => {
             try {
-                if (!isSocketWriteAuthorized(socket)) {
+                if (!isSocketAdminAuthorized(socket)) {
                     logger.warn(`${Events.IoEventTypes.DEVICE_PROPERTY}: unauthorized request from ${socket.userId || 'guest'}`);
                     return;
                 }
