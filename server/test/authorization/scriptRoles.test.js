@@ -74,6 +74,14 @@ describe('HMI script Roles and Groups authorization', () => {
             id: 'restricted-id', name: 'restricted_script', mode: 'SERVER', sync: true,
             parameters: [], permission: 4, permissionRoles: { enabled: ['role-engineer'] },
             code: '$setTag("restricted", 99); return 99;'
+        }, {
+            id: 'legacy-id', name: 'legacy_script', mode: 'SERVER', sync: true,
+            parameters: [], permission: 2,
+            code: '$setTag("legacy", 7); return 7;'
+        }, {
+            id: 'unrestricted-id', name: 'unrestricted_script', mode: 'SERVER', sync: true,
+            parameters: [],
+            code: '$setTag("unrestricted", 8); return 8;'
         }];
         runtime = {
             settings: { secureEnabled: true, userRole: true, secretCode: 'isolated-script-test-secret', logApiLevel: 'none' },
@@ -126,6 +134,20 @@ describe('HMI script Roles and Groups authorization', () => {
             assert.equal(result.body.error, 'unauthorized_error');
         }
         assert.deepEqual(tags, {});
+    });
+
+    it('uses only role policies in role mode and keeps scripts without one unrestricted', async () => {
+        const operator = await login('operator');
+        const legacyOnly = await run(operator.token, { id: 'legacy-id' });
+        assert.equal(legacyOnly.status, 200);
+        assert.equal(legacyOnly.body, 7);
+        const unrestricted = await run(operator.token, { id: 'unrestricted-id' });
+        assert.equal(unrestricted.status, 200);
+        assert.equal(unrestricted.body, 8);
+
+        const admin = await login('admin');
+        assert.equal((await run(admin.token, { id: 'unrestricted-id' })).status, 200);
+        assert.deepEqual(tags, { legacy: 7, unrestricted: 8 });
     });
 
     it('does not trust supplied roles, permission fields, name or code', async () => {

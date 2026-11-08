@@ -1,16 +1,6 @@
 name: Docker multi-architecture build check
 
 on:
-  pull_request:
-    branches:
-      - master
-    paths:
-      - 'Dockerfile'
-      - 'client/**'
-      - 'server/**'
-      - 'node-red/**'
-      - 'odbc/**'
-      - '.github/workflows/docker_multiarch_check.yml'
   workflow_dispatch:
 
 jobs:
