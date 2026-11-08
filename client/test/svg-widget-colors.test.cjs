@@ -43,7 +43,7 @@ after(async () => {
     await new Promise(resolve => server?.close(resolve));
 });
 
-async function fixture(t) {
+async function fixture(t, content = fs.readFileSync(path.join(__dirname, 'fixtures/multicolor-widget.svg'), 'utf8')) {
     const page = await browser.newPage({ viewport: { width: 1000, height: 700 } });
     page.on('console', message => { if (message.type() === 'error') console.error(message.text()); });
     t.after(() => page.close());
@@ -132,9 +132,53 @@ async function fixture(t) {
         window.changeFill = value => { editor.colorFill = value; editor.onChangeFillColor(value); };
         window.snapshot = () => document.querySelector('[id^="D-OXC_"] svg').outerHTML;
     }, { sources });
-    await page.evaluate(svg => { window.settings = importWidget(svg); }, fs.readFileSync(path.join(__dirname, 'fixtures/multicolor-widget.svg'), 'utf8'));
+    await page.evaluate(svg => { window.settings = importWidget(svg); }, content);
     return page;
 }
+
+test('widget ID isolation preserves internal SVG references', async t => {
+    const page = await fixture(t, `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200">
+        <defs>
+            <linearGradient id="paint"><stop offset="0" stop-color="#ff0000"/><stop offset="1" stop-color="#0000ff"/></linearGradient>
+            <clipPath id="clip"><rect width="20" height="20"/></clipPath>
+            <g id="ff0000"/>
+            <rect id="shape" width="20" height="20" fill="url(#paint)"/>
+        </defs>
+        <use id="modern" href="#shape" x="30" y="95" clip-path="url(#clip)"/>
+        <use id="legacy" xlink:href="#shape" x="60" y="95"/>
+    </svg>`);
+    const result = await page.evaluate(() => {
+        const svg = document.querySelector('[id^="D-OXC_"] svg');
+        const modern = svg.querySelector('[id^="modern_"]');
+        const legacy = svg.querySelector('[id^="legacy_"]');
+        const shape = svg.querySelector('[id^="shape_"]');
+        const paint = svg.querySelector('[id^="paint_"]');
+        const clip = svg.querySelector('[id^="clip_"]');
+        return {
+            modernHref: modern.getAttribute('href'),
+            legacyHref: legacy.getAttribute('xlink:href'),
+            clipPath: modern.getAttribute('clip-path'),
+            shapeFill: shape.getAttribute('fill'),
+            stopColor: paint.querySelector('stop').getAttribute('stop-color'),
+            expected: {
+                shape: `#${shape.id}`,
+                paint: `url(#${paint.id})`,
+                clip: `url(#${clip.id})`
+            },
+            modernBox: { width: modern.getBBox().width, height: modern.getBBox().height },
+            legacyBox: { width: legacy.getBBox().width, height: legacy.getBBox().height }
+        };
+    });
+    assert.equal(result.modernHref, result.expected.shape);
+    assert.equal(result.legacyHref, result.expected.shape);
+    assert.equal(result.clipPath, result.expected.clip);
+    assert.equal(result.shapeFill, result.expected.paint);
+    assert.equal(result.stopColor, '#ff0000');
+    assert.equal(result.modernBox.width, 20);
+    assert.equal(result.modernBox.height, 20);
+    assert.equal(result.legacyBox.width, 20);
+    assert.equal(result.legacyBox.height, 20);
+});
 
 for (const color of ['none', 'rgba(0,0,0,0)', '#88bbdd']) {
     test(`widget background ${color} preserves fills, strokes, inline style, groups and geometry`, async t => {
