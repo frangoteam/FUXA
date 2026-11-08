@@ -55,7 +55,7 @@ export class ScriptService {
         (window as any).fuxaScriptAPI = api;
     }
 
-    runScript(script: Script, toLogEvent: boolean = true): Observable<any> {
+    runScript(script: Script, toLogEvent: boolean = true, consoleOutput?: (args: any[]) => void): Observable<any> {
         return new Observable((observer) => {
             const permission = this.authService.checkPermission(script, true);
             if (permission?.enabled === false) {
@@ -97,7 +97,20 @@ export class ScriptService {
                     const code = `${parameterToAdd}${script.code}`;
                     const asyncText = script.sync ? 'function' : 'async function';
                     const callText = `${asyncText} ${script.name}() {\n${this.addSysFunctions(code, script.name)} \n }\n${script.name}.call(this);\n`;
-                    const result = eval(callText);
+                    let scriptConsole = console;
+                    if (consoleOutput) {
+                        scriptConsole = Object.create(console);
+                        for (const level of ['log', 'info', 'warn', 'error'] as const) {
+                            scriptConsole[level] = (...args: any[]) => {
+                                console[level](...args);
+                                consoleOutput(args);
+                            };
+                        }
+                    }
+                    // Give this execution its own console without changing the
+                    // browser console or capturing another running script's logs.
+                    const execute = (console: Console) => eval(callText);
+                    const result = execute(scriptConsole);
 
                     if (result && typeof result.then === 'function') {
                         result

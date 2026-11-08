@@ -4,6 +4,10 @@
 
 var express = require("express");
 const authJwt = require('../jwt-helper');
+const utils = require('../../runtime/utils');
+
+const TIME_CHUNK_SIZE = 6 * 60 * 60 * 1000;
+const MAX_TIME_CHUNKS = 744; // Maximum history range: 186 days
 
 var runtime;
 var secureFnc;
@@ -40,25 +44,46 @@ module.exports = {
                             message: `sids must be an array containing at most ${maxSids} items`
                         });
                     }
+                    const isCurrentValues = query.to === query.from;
+                    if (!Number.isFinite(query.from) || !Number.isFinite(query.to) ||
+                        (!isCurrentValues && (query.from >= query.to ||
+                            query.to - query.from > TIME_CHUNK_SIZE * MAX_TIME_CHUNKS))) {
+                        return res.status(400).json({
+                            error: "invalid_query",
+                            message: "invalid DAQ time range (maximum history range is 186 days)"
+                        });
+                    }
+
                     var dbfncs = [];
-                    for (let i = 0; i < query.sids.length; i++) {
-                        if (query.to === query.from) {  // current values
+                    if (isCurrentValues) {
+                        for (let i = 0; i < query.sids.length; i++) {
                             dbfncs.push([runtime.devices.getTagValue(query.sids[i], true)]);
-                        } else {                        // from history
-                            dbfncs.push(runtime.daqStorage.getNodeValues(query.sids[i], query.from, query.to));
                         }
                     }
                     if (query.to === query.from) {  // current values
                         res.json(dbfncs);
                     } else {
-                        Promise.all(dbfncs).then(values => {
-                            if (values) {
-                                res.json(values);
-                            } else {
-                                res.status(404).end();
-                                runtime.logger.error("api get daq: Not Found!");
+                        const timeChunks = utils.chunkTimeRange(query.from, query.to, TIME_CHUNK_SIZE);
+                        (async () => {
+                            const values = [];
+                            // Process one tag and time chunk at a time to avoid concurrent
+                            // unbounded SQLite result materialization across tags.
+                            for (const sid of query.sids) {
+                                const tagValues = [];
+                                for (let chunkIndex = 0; chunkIndex < timeChunks.length; chunkIndex++) {
+                                    const chunk = timeChunks[chunkIndex];
+                                    // Storage ranges are inclusive; advance later chunks by 1 ms
+                                    // so samples on a boundary are not returned twice.
+                                    const chunkStart = chunkIndex === 0 ? chunk.start : chunk.start + 1;
+                                    const chunkValues = await runtime.daqStorage.getNodeValues(sid, chunkStart, chunk.end);
+                                    for (const value of chunkValues) {
+                                        tagValues.push(value);
+                                    }
+                                }
+                                values.push(tagValues);
                             }
-                        }, reason => {
+                            res.json(values);
+                        })().catch(reason => {
                             if (reason && reason.stack) {
                                 runtime.logger.error(`api get daq: Not Found!: ${reason.stack}`);
                                 res.status(400).json({error:"unexpected_error", message: reason.stack});

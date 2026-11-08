@@ -5,7 +5,10 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 
 const authJwt = require('../../api/jwt-helper');
-const { createNodeRedAuthMiddleware } = require('../../integrations/node-red');
+const {
+    createNodeRedAuthMiddleware,
+    isAuthorizedNodeRedWebSocket
+} = require('../../integrations/node-red');
 
 const SECRET = 'node-red-security-test-secret';
 
@@ -229,6 +232,45 @@ describe('Node-RED secure mode authorization', () => {
         const result = await authorize({}, {}, makeMiddleware({ secureEnabled: false }));
 
         expect(result.allowed).to.equal(true);
+    });
+
+    it('requires an administrator for Node-RED WebSocket connections in secure mode', () => {
+        const guestRequest = {
+            url: '/nodered/comms',
+            headers: { cookie: `nodered_auth=${authJwt.getGuestToken()}` }
+        };
+        const adminToken = jwt.sign({ id: 'admin', groups: -1 }, SECRET, { expiresIn: '1h' });
+        const adminRequest = {
+            url: '/nodered/comms',
+            headers: { cookie: `nodered_auth=${adminToken}` }
+        };
+
+        expect(isAuthorizedNodeRedWebSocket(guestRequest, {
+            settings: { secureEnabled: true, nodeRedAuthMode: 'secure' }, authJwt
+        })).to.equal(false);
+        expect(isAuthorizedNodeRedWebSocket({ url: '/nodered/comms', headers: {} }, {
+            settings: { secureEnabled: true, nodeRedAuthMode: 'secure' }, authJwt
+        })).to.equal(false);
+        expect(isAuthorizedNodeRedWebSocket(adminRequest, {
+            settings: { secureEnabled: true, nodeRedAuthMode: 'secure' }, authJwt
+        })).to.equal(true);
+    });
+
+    it('preserves public dashboard WebSockets and guest data channels', () => {
+        const guestRequest = {
+            url: '/dashboard/comms',
+            headers: { cookie: `nodered_auth=${authJwt.getGuestToken()}` }
+        };
+
+        expect(isAuthorizedNodeRedWebSocket(guestRequest, {
+            settings: { secureEnabled: true, nodeRedAuthMode: 'secure' }, authJwt
+        })).to.equal(true);
+    });
+
+    it('preserves Node-RED WebSocket access in legacy-open mode', () => {
+        expect(isAuthorizedNodeRedWebSocket({ url: '/nodered/comms', headers: {} }, {
+            settings: { secureEnabled: true, nodeRedAuthMode: 'legacy-open' }, authJwt
+        })).to.equal(true);
     });
 
     it('enforces the same policy when mounted by Express', async () => {

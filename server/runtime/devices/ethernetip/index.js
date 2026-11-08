@@ -206,14 +206,19 @@ function EthernetIPclient(_data, _logger, _events, _runtime) {
     this.setValue = async function (tagId, value) {
         if (data.tags[tagId]) {
             let valueToSend = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
-            conn.writeItems([data.tags[tagId].address], [parseFloat(valueToSend)], (error) => {
-                if (error) {
-                    logger.error(`'${data.tags[tagId].name}' setValue error! ${error}`);
-                } else {
-                    logger.info(`'${data.tags[tagId].name}' setValue(${tagId}, ${valueToSend})`, true, true);
-                }
-            });
-            return true;
+            try {
+                await new Promise((resolve, reject) => {
+                    conn.writeItems([data.tags[tagId].address], [parseFloat(valueToSend)], (error) => {
+                        if (error) reject(error);
+                        else resolve();
+                    });
+                });
+                logger.info(`'${data.tags[tagId].name}' setValue(${tagId}, ${valueToSend})`, true, true);
+                return true;
+            } catch (error) {
+                logger.error(`'${data.tags[tagId].name}' setValue error! ${error}`);
+                return false;
+            }
         }
         return false;
     }

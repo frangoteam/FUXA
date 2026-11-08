@@ -284,8 +284,17 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client query DAQ values
         socket.on(Events.IoEventTypes.DAQ_QUERY, (msg) => {
             try {
-                if (msg && msg.from && msg.to && msg.sids && msg.sids.length) {
-                    const TIME_CHUNK_SIZE = 60 * 60 * 1000 * 6; // Dimensione del chunk in millisecondi (ad esempio, 1 ora)
+                if (msg && Array.isArray(msg.sids) && msg.sids.length) {
+                    const TIME_CHUNK_SIZE = 6 * 60 * 60 * 1000;
+                    const MAX_TIME_CHUNKS = 744; // Maximum query range: 186 days
+                    if (!Number.isFinite(msg.from) || !Number.isFinite(msg.to) || msg.from >= msg.to ||
+                        msg.to - msg.from > TIME_CHUNK_SIZE * MAX_TIME_CHUNKS) {
+                        socket.emit(Events.IoEventTypes.DAQ_ERROR, {
+                            gid: msg.gid,
+                            error: 'Invalid DAQ time range (maximum range is 186 days)'
+                        });
+                        return;
+                    }
                     const timeChunks = utils.chunkTimeRange(msg.from, msg.to, msg.chunked ? TIME_CHUNK_SIZE : 0);
                     const processChunks = async () => {
                         var counter = 1;
