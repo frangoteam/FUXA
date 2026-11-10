@@ -24,6 +24,7 @@
     "test:svg-colors": "node --test test/svg-widget-colors.test.cjs",
     "test:treetable-ordering": "node --test test/treetable-ordering.test.cjs",
     "test:script-authorization": "node --test test/script-authorization.test.cjs",
+    "test:device-import": "node --test test/device-import-duplicates.test.cjs",
     "test:graph-change-detection": "node --test test/graph-change-detection.test.cjs",
     "test:widget-bindings": "node --test test/widget-shared-tag-bindings.test.cjs",
     "test:script-console": "node --test test/script-test-console.test.cjs",
