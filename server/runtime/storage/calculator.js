@@ -165,7 +165,8 @@ function getIntegral(timeserie, fromts, tots, intervalType) {
 function getInterval(fromts, tots, type, defvalue) {
     let result = {};
     let dt = getStepDate(fromts, type, 0);
-    while (dt.getTime() < tots) {
+    // Storage queries include both bounds (BETWEEN), including a new bucket at tots.
+    while (dt.getTime() <= tots) {
         result[dt.getTime()] = defvalue;
         dt = getStepDate(dt, type, 1);
     }
