@@ -2,7 +2,7 @@
     <mat-progress-bar mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
     </mat-progress-bar>
 </div>
-<mat-drawer #svgSelectorPanel class="sidepanel-selector" mode="side" position="end">
+<mat-drawer #svgSelectorPanel class="sidepanel-selector" mode="side" position="end" (mousedown)="onFlyPointerDown($event)" (pointerdown)="onFlyPointerDown($event)">
     <button mat-icon-button (click)="svgSelectorPanel.toggle()" style="position: absolute; top: 3px; right: 3px;">
         <mat-icon>close</mat-icon>
     </button>
@@ -11,7 +11,7 @@
     </button>
     <app-svg-selector (onSelect)="onSvgElementSelected($event)" (onPreview)="onSvgElementPreview($event)" (onEdit)="onGaugeEdit($event)" [elements]="svgElements" [selected]="svgElementSelected"></app-svg-selector>
 </mat-drawer>
-<mat-drawer #sidePanel class="editor-sidenav" mode="side" position="end">
+<mat-drawer #sidePanel class="editor-sidenav" mode="side" position="end" (mousedown)="onFlyPointerDown($event)" (pointerdown)="onFlyPointerDown($event)">
     <button mat-icon-button (click)="sidePanel.toggle()" style="position: absolute; top: 3px; right: 3px;">
         <mat-icon>close</mat-icon>
     </button>
@@ -269,7 +269,7 @@
             <!-- SVG-EDITOR -->
             <div [style.display]="(editorMode === editorModeType.SVG)?'block':'none' ">
                 <!-- RIGHT BAR -->
-                <div class="svg-tools-fly" [style.display]="(isAnySelected)?'block':'none' " (mouseenter)="onFlyEnter()" (touchstart)="onFlyEnter()">
+                <div class="svg-tools-fly" [style.display]="(isAnySelected)?'block':'none' " (mouseenter)="onFlyEnter()" (touchstart)="onFlyPointerDown($event)" (mousedown)="onFlyPointerDown($event)" (pointerdown)="onFlyPointerDown($event)">
                     <mat-expansion-panel class="svg-workarea-fly-p" (opened)="panelPropertyIdOpenState = true" (closed)="panelPropertyIdOpenState = false" hideToggle="true"
                         expanded="true" style="display:none">
                         <mat-expansion-panel-header class="svg-workarea-flybar-h">
