@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 
 import { View } from '../../../_models/hmi';
+import { PlaceholderDevice } from '../../../_models/device';
 import { VariableMapItemType } from '../flex-variable-map/flex-variable-map.component';
 
 @Component({
@@ -76,6 +77,25 @@ export class FlexVariablesMappingComponent implements OnInit, OnChanges {
             from: {},
             to: {},
         });
+    }
+
+    addAllTemplateVariables($event) {
+        $event.preventDefault();
+        if (!this.mapping) {
+            this.mapping = [];
+        }
+        const existing = new Set(this.mapping.map((m: any) => m?.from?.variableId).filter(Boolean));
+        this.viewPlaceholders.forEach((p: any) => {
+            const id = p?.variableId;
+            if (id?.startsWith(PlaceholderDevice.id) && !existing.has(id)) {
+                this.mapping.push(<VariableMapItemType>{
+                    from: { variableId: id },
+                    to: {},
+                });
+                existing.add(id);
+            }
+        });
+        this.onChange();
     }
 
     removeVariableMapping($event, i) {

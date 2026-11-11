@@ -52,6 +52,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() gaugesManager: GaugesManager;        // gauges.component
     @Input() parentcards: CardModel[];
     @Input() sourceDeviceId: string;
+    @Input() viewIdPrefix: string;
     @Output() onclose = new EventEmitter();
     @Output() ongoto: EventEmitter<string> = new EventEmitter();
 
@@ -211,6 +212,9 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (!view) {
             this.viewLoaded = true;
             return;
+        }
+        if (this.viewIdPrefix) {
+            view = FuxaViewComponent.scopeView(view, this.viewIdPrefix);
         }
         try {
             if (!this.hmi) {
@@ -866,6 +870,52 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         return view;
     }
 
+    /**
+     * return a copy of the view with gauge ids prefixed, to keep multiple instances of the same view (panels) unique
+     * @param view
+     * @param prefix
+     */
+    private static scopeView(view: View, prefix: string): View {
+        const scoped: View = JSON.parse(JSON.stringify(view));
+        const originalIds = new Set<string>(Object.keys(view.items ?? {}));
+
+        const newItems: any = {};
+        for (const key in scoped.items) {
+            if (!Object.prototype.hasOwnProperty.call(scoped.items, key)) {
+                continue;
+            }
+            const newKey = prefix + key;
+            const item: any = scoped.items[key];
+            if (!item) {
+                continue;
+            }
+            item.id = newKey;
+            item.property?.events?.forEach((evt: any) => {
+                if (evt?.actparam && originalIds.has(evt.actparam)) {
+                    evt.actparam = prefix + evt.actparam;
+                }
+                if (evt?.actoptions?.panelId && originalIds.has(evt.actoptions.panelId)) {
+                    evt.actoptions.panelId = prefix + evt.actoptions.panelId;
+                }
+            });
+            newItems[newKey] = item;
+        }
+        scoped.items = newItems;
+
+        if (scoped.svgcontent) {
+            // unique view id so instances of the same view don't share gauge bindings
+            scoped.id = prefix + view.id;
+            scoped.svgcontent = scoped.svgcontent
+                .replace(/(\s)id="([^"]+)"/g, (_m, sep, id) => originalIds.has(id) ? `${sep}id="${prefix}${id}"` : _m)
+                .replace(/(xlink:)?href="#([^"]+)"/g, (_m, xlink, id) =>
+                    originalIds.has(id) ? `${xlink ?? ''}href="#${prefix}${id}"` : _m)
+                .replace(/url\(#([^)]+)\)/g, (_m, id) =>
+                    originalIds.has(id) ? `url(#${prefix}${id})` : _m);
+        }
+
+        return scoped;
+    }
+
     private static getSvgElements(svgid: string) {
         let ele = document.getElementsByTagName('svg');
         let result = [];
@@ -918,7 +968,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             variablesMapping: options.variablesMapping,
             disableDefaultClose: options.hideClose,
             gaugesManager: this.gaugesManager,
-            sourceDeviceId: options.sourceDeviceId
+            sourceDeviceId: options.sourceDeviceId,
+            viewIdPrefix: Utils.getShortGUID('dlg_', '') + '-'
         };
         let dialogRef = this.fuxaDialog.open(FuxaViewDialogComponent, {
             panelClass: 'fuxa-dialog-property',

@@ -155,6 +155,13 @@ export class FlexVariableComponent implements OnInit {
         this.onChanged();
     }
 
+    onTagInputChanged() {
+        if (!this.tagFilter.value) {
+            this.variableId = null;
+        }
+        this.onChanged();
+    }
+
     getDeviceName() {
         let device = DevicesUtils.getDeviceFromTagId(this.data.devices || {}, this.variableId);
         if (device) {
