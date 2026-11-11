@@ -109,6 +109,8 @@ function QuestDB(_settings, _log, _currentStorage) {
                 // QuestDB stores timestamps in UTC but sends TIMESTAMP columns as
                 // `timestamp without time zone`, which pg parses as local time. Read
                 // epoch microseconds instead so no timezone is involved.
+                // Assumes the microsecond TIMESTAMP column FUXA creates: a table made
+                // elsewhere with TIMESTAMP_NS returns nanoseconds (dt 1000x too large).
                 const query = `SELECT cast(timestamp AS long) AS ts, number_value, string_value
                                FROM ${tableName}
                                WHERE tag_id = $1
