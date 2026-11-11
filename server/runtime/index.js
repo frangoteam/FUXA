@@ -287,6 +287,14 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 if (msg && Array.isArray(msg.sids) && msg.sids.length) {
                     const TIME_CHUNK_SIZE = 6 * 60 * 60 * 1000;
                     const MAX_TIME_CHUNKS = 744; // Maximum query range: 186 days
+                    const MAX_SIDS = 100;
+                    if (msg.sids.length > MAX_SIDS) {
+                        socket.emit(Events.IoEventTypes.DAQ_ERROR, {
+                            gid: msg.gid,
+                            error: `Invalid DAQ query (maximum ${MAX_SIDS} tags)`
+                        });
+                        return;
+                    }
                     if (!Number.isFinite(msg.from) || !Number.isFinite(msg.to) || msg.from >= msg.to ||
                         msg.to - msg.from > TIME_CHUNK_SIZE * MAX_TIME_CHUNKS) {
                         socket.emit(Events.IoEventTypes.DAQ_ERROR, {
@@ -324,6 +332,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${err}`);
+                socket.emit(Events.IoEventTypes.DAQ_ERROR, {
+                    gid: msg && msg.gid,
+                    error: err && err.message ? err.message : String(err)
+                });
             }
         });
         // client ask alarms status
