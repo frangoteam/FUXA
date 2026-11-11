@@ -22,6 +22,7 @@
     "test:connection-overlay": "node --test test/connection-overlay.test.cjs",
     "test:tag-paste": "node --test test/pasted-tag-selection.test.cjs",
     "test:svg-colors": "node --test test/svg-widget-colors.test.cjs",
+    "test:shape-actions": "node --test test/shape-concurrent-actions.test.cjs",
     "test:treetable-ordering": "node --test test/treetable-ordering.test.cjs",
     "test:script-authorization": "node --test test/script-authorization.test.cjs",
     "test:device-import": "node --test test/device-import-duplicates.test.cjs",
