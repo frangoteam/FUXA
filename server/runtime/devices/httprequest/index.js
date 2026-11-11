@@ -2,9 +2,21 @@
  * 'http': webapi wrapper to manage REST API request
  */
 'use strict';
+const http = require('http');
+const https = require('https');
 const axios = require('axios');
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
+
+// Node.js 20 and later give each address of a host 250 ms to connect (500 ms
+// from Node.js 26) and then drop the attempt and try the next address. A host
+// that is slower to reach over IPv4 while its IPv6 address is unreachable then
+// fails with AggregateError (#2664), so allow each attempt longer.
+const CONNECT_ATTEMPT_TIMEOUT = 2000;
+const requestOptions = {
+    httpAgent: new http.Agent({ ...http.globalAgent.options, autoSelectFamilyAttemptTimeout: CONNECT_ATTEMPT_TIMEOUT }),
+    httpsAgent: new https.Agent({ ...https.globalAgent.options, autoSelectFamilyAttemptTimeout: CONNECT_ATTEMPT_TIMEOUT })
+};
 
 function HTTPclient(_data, _logger, _events, _runtime) {
     var runtime = _runtime;
@@ -182,7 +194,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
                 value = _parseValue(data.tags[tagId].type, value);
                 data.tags[tagId].value = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
                 try {
-                    await axios.post(apiProperty.postTags, [{id: tagId, value: data.tags[tagId].value}]);
+                    await axios.post(apiProperty.postTags, [{id: tagId, value: data.tags[tagId].value}], requestOptions);
                     lastTimestampRequest = new Date().getTime();
                     logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true, true);
                     return true;
@@ -262,7 +274,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
     var _readRequest = function () {
         return new Promise(function (resolve, reject) {
             if (apiProperty.getTags) {
-                axios.get(apiProperty.getTags).then(res => {
+                axios.get(apiProperty.getTags, requestOptions).then(res => {
                     lastTimestampRequest = new Date().getTime();
                     resolve(res.data);
                 }).catch(err => {
@@ -470,7 +482,7 @@ function getRequestResult(property) {
     return new Promise(function (resolve, reject) {
         try {
             if (property.method === 'GET') {
-                axios.get(property.address).then(res => {
+                axios.get(property.address, requestOptions).then(res => {
                     resolve(res.data);
                 }).catch(err => {
                     reject(err);

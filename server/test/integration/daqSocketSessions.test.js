@@ -128,6 +128,21 @@ describe('DAQ history over real Socket.IO sessions', () => {
         return { gid: 'shared-chart', sids: ['tag-a'], from: 1000, to: 2000, ...overrides };
     }
 
+    it('rejects invalid or over-limit DAQ ranges before querying storage', async () => {
+        await start(() => []);
+
+        const invalidRange = waitForEvent(a, 'daq-error');
+        a.emit('daq-query', query({ from: 2000, to: 1000 }));
+        assert.match((await invalidRange).error, /Invalid DAQ time range/);
+
+        const overLimitRange = waitForEvent(a, 'daq-error');
+        a.emit('daq-query', query({ from: 1000, to: 1000 + SIX_HOURS * 744 + 1, chunked: true }));
+        assert.match((await overLimitRange).error, /maximum range is 186 days/);
+
+        await barrier(a);
+        assert.equal(calls.length, 0);
+    });
+
     beforeEach(() => { clients = []; });
     afterEach(async () => {
         clients.forEach(client => client.close());

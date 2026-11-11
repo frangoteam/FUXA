@@ -209,15 +209,29 @@ export class ProjectService {
     }
 
     importDevices(devices: Device[]) {
-        if (!devices) {
+        if (!Array.isArray(devices)) {
             this.notifyError('msg.import-devices-error');
-        } else {
-            devices.forEach(device => {
-                if (device.id && device.name) {
-                    this.setDevice(device, null, null);
-                }
-            });
+            return;
         }
+
+        const validDevices = devices.filter(device => device?.id && device?.name);
+        const nameOwners = new Map<string, string>();
+        Object.values(this.getDevices() || {}).forEach((device: Device) => {
+            if (device?.id && device?.name) {
+                nameOwners.set(device.name, device.id);
+            }
+        });
+
+        for (const device of validDevices) {
+            const owner = nameOwners.get(device.name);
+            if (owner && owner !== device.id) {
+                this.notifyError('msg.import-devices-error');
+                return;
+            }
+            nameOwners.set(device.name, device.id);
+        }
+
+        validDevices.forEach(device => this.setDevice(device, null, null));
     }
 
     exportAlarms() {

@@ -177,15 +177,18 @@ export class ShapesComponent extends GaugeBaseComponent {
             }
             let angleRange = act.options.maxAngle - act.options.minAngle;
 
-            // Calculate rotation based on defined ranges and actual value
-            let rotation = valRange > 0 ? act.options.minAngle + (actValue * angleRange / valRange) : 0;
+            // Calculate rotation based on defined ranges and actual value.
+            // Use the offset from range.min so non-zero minima interpolate correctly.
+            let relValue = actValue - act.range.min;
+            let rotation = valRange > 0 ? act.options.minAngle + (relValue * angleRange / valRange) : 0;
 
-            // Don't allow rotation angle to exceed configured range
-            if(rotation > act.options.maxAngle) {
-                rotation = act.options.maxAngle;
-            }
-            else if(rotation < act.options.minAngle){
-                rotation = act.options.minAngle;
+            // Don't allow rotation angle to exceed configured range (minAngle may be greater than maxAngle for CCW)
+            let lowAngle = Math.min(act.options.minAngle, act.options.maxAngle);
+            let highAngle = Math.max(act.options.minAngle, act.options.maxAngle);
+            if (rotation > highAngle) {
+                rotation = highAngle;
+            } else if (rotation < lowAngle) {
+                rotation = lowAngle;
             }
             element.animate(200).ease('-').transform({
                 rotate: rotation,

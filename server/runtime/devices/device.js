@@ -316,8 +316,12 @@ function Device(data, runtime) {
      * Call Device to set Tag value
      */
     this.setValue = async function (id, value, fnc) {
-        var fncvalue = this.getValueInFunction(this.getValue(id), value, fnc);
-        return await comm.setValue(id, value);
+        const currentTag = this.getValue(id);
+        const currentValue = currentTag && typeof currentTag === 'object'
+            ? currentTag.value
+            : currentTag;
+        const fncvalue = this.getValueInFunction(currentValue, value, fnc);
+        return await comm.setValue(id, fncvalue);
     }
 
     /**

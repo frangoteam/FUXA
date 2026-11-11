@@ -259,16 +259,17 @@ function S7client(_data, _logger, _events, _runtime) {
         if (item) {
             value = await deviceUtils.tagRawCalculator(value, data.tags[sigid], runtime);
             item.value = value;
-            _writeVars([item], (item instanceof DbItem)).then(result => {
+            return _writeVars([item], (item instanceof DbItem)).then(result => {
                 logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
+                return true;
             }, reason => {
                 if (reason && reason.stack) {
                     logger.error(`'${data.name}' _writeVars error! ${reason.stack}`);
                 } else {
                     logger.error(`'${data.name}' _writeVars error! ${reason}`);
                 }
+                return false;
             });
-            return true;
         }
         return false;
     }
@@ -714,6 +715,12 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
+        // Optional pure-JS driver, selected per device (default stays 'snap7'):
+        //   property: { ..., driver: "nodes7", tsapLocal, tsapRemote, timeout }
+        if (String((data && data.property && data.property.driver) || '').toLowerCase() === 'nodes7') {
+            const nodes7Driver = require('./nodes7');
+            return nodes7Driver.create(data, logger, events, manager, runtime);
+        }
         if (!loadSnap7Lib(manager)) return null;
         return new S7client(data, logger, events, runtime);
     }
