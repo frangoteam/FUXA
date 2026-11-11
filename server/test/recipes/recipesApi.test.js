@@ -394,6 +394,20 @@ describe('Recipes API', () => {
             expect(res.body.error).to.include('invalid tagType');
         });
 
+        it('should accept unsigned and Modbus numeric tagTypes', async () => {
+            const res = await postRequest(server, '/api/recipes/types', {
+                name: 'Test',
+                entries: [
+                    { tagId: 't1', tagName: 'T1', tagType: 'UInt16', value: '65535' },
+                    { tagId: 't2', tagName: 'T2', tagType: 'UInt32', value: '4294967295' },
+                    { tagId: 't3', tagName: 'T3', tagType: 'Float32LE', value: '2.5' }
+                ]
+            });
+
+            expect(res.statusCode).to.equal(200);
+            expect(runtime.project.setProjectData.calledOnce).to.be.true;
+        });
+
         it('should return 400 for entry with uncoercible value', async () => {
             const res = await postRequest(server, '/api/recipes/types', {
                 name: 'Test',
