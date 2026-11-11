@@ -189,7 +189,7 @@ describe('QuestDB schema', () => {
 });
 
 describe('QuestDB history timestamps', () => {
-    const realTypes = require('pg').types;
+    const isHistoryQuery = sql => /\bnumber_value\b/.test(sql) && /^\s*SELECT\b/i.test(sql);
     let originalTz;
     let ctx;
 
@@ -207,38 +207,47 @@ describe('QuestDB history timestamps', () => {
         }
     });
 
-    afterEach(() => ctx.storage.close());
+    afterEach(() => {
+        ctx?.storage.close();
+        ctx = undefined;
+    });
 
     it('reads QuestDB UTC timestamps without a local-time shift', async () => {
         assert.equal(new Date(Date.UTC(2026, 10, 11)).getTimezoneOffset(), -120);
         const stored = Date.UTC(2026, 10, 11, 10, 0, 0, 123);
+        let historySql;
         let selectParams;
         ctx = createQuestDbStorage({
             poolQuery(sql, params) {
                 // Only answer the history query; schema queries get no rows.
-                if (!sql.includes('WHERE tag_id = $1')) {
+                if (!isHistoryQuery(sql)) {
                     return { rows: [] };
                 }
+                historySql = sql;
                 selectParams = params;
-                // Answer like pg would: a LONG cast arrives as an int8 string, while a
-                // bare TIMESTAMP column (OID 1114, no zone) is parsed as local time.
-                const selectsEpoch = /cast\(timestamp AS long\) AS ts/i.test(sql);
-                const parseLocal = realTypes.getTypeParser(1114, 'text');
-                const row = (micros, timestamp, number_value, string_value) => (selectsEpoch
-                    ? { ts: micros, number_value, string_value }
-                    : { timestamp: parseLocal(timestamp), number_value, string_value });
+                // Epoch microseconds arrive from pg as an int8 string.
                 return { rows: [
-                    row('1794391200123456', '2026-11-11 10:00:00.123456', 42, null),
-                    row('1794391201000000', '2026-11-11 10:00:01', null, 'on'),
+                    { ts: '1794391200123456', number_value: 42, string_value: null },
+                    { ts: '1794391201000000', number_value: null, string_value: 'on' },
                 ] };
             }
         });
         const rows = await ctx.storage.getDaqValue('power', stored - 3600e3, stored + 3600e3);
+        assert.match(historySql, /\bts\b/);
         assert.deepEqual(rows, [
             { dt: stored, value: 42 },
             { dt: Date.UTC(2026, 10, 11, 10, 0, 1), value: 'on' },
         ]);
         assert.deepEqual(selectParams, ['power', '2026-11-11T09:00:00.123Z', '2026-11-11T11:00:00.123Z']);
         assert.deepEqual(ctx.errors, []);
+    });
+
+    it('rejects an invalid time range without querying QuestDB', async () => {
+        ctx = createQuestDbStorage();
+        await assert.rejects(ctx.storage.getDaqValue('power', 'a\nforged', 1),
+            { message: 'invalid time range "a\\nforged" - "1"' });
+        assert.equal(ctx.errors.length, 1);
+        assert.ok(!ctx.errors[0].includes('\n'));
+        assert.ok(!ctx.queries.some(isHistoryQuery));
     });
 });

@@ -121,7 +121,8 @@ function QuestDB(_settings, _log, _currentStorage) {
                 const from = new Date(fromts);
                 const to = new Date(tots);
                 if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
-                    const error = new Error(`invalid time range ${fromts} - ${tots}`);
+                    // JSON-escape caller input so it can't forge log lines.
+                    const error = new Error(`invalid time range ${JSON.stringify(String(fromts))} - ${JSON.stringify(String(tots))}`);
                     logger.error(`questdb-getDaqValue failed! ${error}`);
                     reject(error);
                     return;
