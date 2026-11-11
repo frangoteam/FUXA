@@ -25,9 +25,9 @@ function createQuestDbStorage({ poolQuery } = {}) {
         if (request === 'pg') {
             return {
                 Pool: class {
-                    async query(sql) {
+                    async query(sql, params) {
                         queries.push(sql);
-                        return poolQuery ? poolQuery(sql) : { rows: [] };
+                        return poolQuery ? poolQuery(sql, params) : { rows: [] };
                     }
                     async end() {}
                 }
@@ -185,5 +185,60 @@ describe('QuestDB schema', () => {
         assert.match(ctx.warnings[0], /tag_name.*unsupported/);
         assert.equal(ctx.rows.length, 1);
         assert.equal(ctx.rows[0].tag_name, 'Power');
+    });
+});
+
+describe('QuestDB history timestamps', () => {
+    const realTypes = require('pg').types;
+    let originalTz;
+    let ctx;
+
+    before(() => {
+        originalTz = process.env.TZ;
+        // A non-UTC server zone exposes local-time parsing of QuestDB timestamps.
+        process.env.TZ = 'Europe/Helsinki';
+    });
+
+    after(() => {
+        if (originalTz === undefined) {
+            delete process.env.TZ;
+        } else {
+            process.env.TZ = originalTz;
+        }
+    });
+
+    afterEach(() => ctx.storage.close());
+
+    it('reads QuestDB UTC timestamps without a local-time shift', async () => {
+        assert.equal(new Date(Date.UTC(2026, 10, 11)).getTimezoneOffset(), -120);
+        const stored = Date.UTC(2026, 10, 11, 10, 0, 0, 123);
+        let selectParams;
+        ctx = createQuestDbStorage({
+            poolQuery(sql, params) {
+                // Only answer the history query; schema queries get no rows.
+                if (!sql.includes('WHERE tag_id = $1')) {
+                    return { rows: [] };
+                }
+                selectParams = params;
+                // Answer like pg would: a LONG cast arrives as an int8 string, while a
+                // bare TIMESTAMP column (OID 1114, no zone) is parsed as local time.
+                const selectsEpoch = /cast\(timestamp AS long\) AS ts/i.test(sql);
+                const parseLocal = realTypes.getTypeParser(1114, 'text');
+                const row = (micros, timestamp, number_value, string_value) => (selectsEpoch
+                    ? { ts: micros, number_value, string_value }
+                    : { timestamp: parseLocal(timestamp), number_value, string_value });
+                return { rows: [
+                    row('1794391200123456', '2026-11-11 10:00:00.123456', 42, null),
+                    row('1794391201000000', '2026-11-11 10:00:01', null, 'on'),
+                ] };
+            }
+        });
+        const rows = await ctx.storage.getDaqValue('power', stored - 3600e3, stored + 3600e3);
+        assert.deepEqual(rows, [
+            { dt: stored, value: 42 },
+            { dt: Date.UTC(2026, 10, 11, 10, 0, 1), value: 'on' },
+        ]);
+        assert.deepEqual(selectParams, ['power', '2026-11-11T09:00:00.123Z', '2026-11-11T11:00:00.123Z']);
+        assert.deepEqual(ctx.errors, []);
     });
 });
