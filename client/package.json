@@ -25,6 +25,7 @@
     "test:shape-actions": "node --test test/shape-concurrent-actions.test.cjs",
     "test:treetable-ordering": "node --test test/treetable-ordering.test.cjs",
     "test:script-authorization": "node --test test/script-authorization.test.cjs",
+    "test:dialog-page-navigation": "node --test test/dialog-page-navigation.test.cjs",
     "test:device-import": "node --test test/device-import-duplicates.test.cjs",
     "test:graph-change-detection": "node --test test/graph-change-detection.test.cjs",
     "test:widget-bindings": "node --test test/widget-shared-tag-bindings.test.cjs",

@@ -3,6 +3,7 @@ import { Hmi, View } from '../../_models/hmi';
 import { GaugesManager } from '../../gauges/gauges.component';
 import { MAT_DIALOG_DATA as MAT_DIALOG_DATA, MatDialogRef as MatDialogRef } from '@angular/material/dialog';
 import { ProjectService } from '../../_services/project.service';
+import type { PageNavigationRequest } from '../fuxa-view.component';
 
 @Component({
     selector: 'app-fuxa-view-dialog',
@@ -28,6 +29,11 @@ export class FuxaViewDialogComponent implements OnInit {
     onCloseDialog() {
         this.dialogRef.close();
     }
+
+    onPage(request: PageNavigationRequest) {
+        this.dialogRef.close();
+        this.data.onPage(request);
+    }
 }
 
 export interface FuxaViewDialogData {
@@ -37,4 +43,5 @@ export interface FuxaViewDialogData {
     view: View;
     variablesMapping: [];
     sourceDeviceId?: string;
+    onPage: (request: PageNavigationRequest) => void;
 }
