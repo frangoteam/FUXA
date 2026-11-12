@@ -6,10 +6,9 @@
     } */
 
     .toolbox-column {
-        z-index: 1000;
-        position: absolute;
-        right: 10px;
-        top: 40px;
+        display: flex;
+        height: 40px;
+        justify-content: flex-end;
     }
 
     .toolbox-column button {

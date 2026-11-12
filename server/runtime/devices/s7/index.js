@@ -122,7 +122,15 @@ function S7client(_data, _logger, _events, _runtime) {
                 })
             }
             try {
-                const result = await Promise.all(readVarsfnc);
+                // Native reads may still be running after another read rejects.
+                // Settle the whole batch before disconnecting or starting a new poll.
+                const settled = await Promise.allSettled(readVarsfnc);
+                const failures = settled.filter(read => read.status === 'rejected');
+                if (failures.length) {
+                    const transportFailure = failures.find(read => read.reason && read.reason.connectionLost);
+                    throw (transportFailure || failures[0]).reason;
+                }
+                const result = settled.map(read => read.value);
                 _checkWorking(false);
                 if (result.length) {
                     let varsValueChanged = await _updateVarsValue(result);
@@ -142,6 +150,15 @@ function S7client(_data, _logger, _events, _runtime) {
                     logger.error(`'${data.name}' _readVars error! ${reason.stack}`);
                 } else {
                     logger.error(`'${data.name}' _readVars error! ${reason}`);
+                }
+                if (reason && reason.connectionLost) {
+                    try {
+                        s7client.Disconnect();
+                    } catch (err) {
+                        logger.error(`'${data.name}' disconnect after read error failed! ${err}`);
+                    }
+                    _emitStatus('connect-error');
+                    _clearVarsValue();
                 }
                 _checkWorking(false);
             };
@@ -242,16 +259,17 @@ function S7client(_data, _logger, _events, _runtime) {
         if (item) {
             value = await deviceUtils.tagRawCalculator(value, data.tags[sigid], runtime);
             item.value = value;
-            _writeVars([item], (item instanceof DbItem)).then(result => {
+            return _writeVars([item], (item instanceof DbItem)).then(result => {
                 logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
+                return true;
             }, reason => {
                 if (reason && reason.stack) {
                     logger.error(`'${data.name}' _writeVars error! ${reason.stack}`);
                 } else {
                     logger.error(`'${data.name}' _writeVars error! ${reason}`);
                 }
+                return false;
             });
-            return true;
         }
         return false;
     }
@@ -460,7 +478,9 @@ function S7client(_data, _logger, _events, _runtime) {
             });
             s7client.DBRead(DBNr, offset, end - offset, (err, res) => {
                 if (err) {
-                    logger.error(`'${data.name}' ${err}: ${_getErr(err)}`, false);
+                    const reason = _getReadErr(err);
+                    logger.error(`'${data.name}' ${err}: ${reason}`, false);
+                    if (reason.connectionLost) return reject(reason);
                 } else {
                     vars.map(v => {
                         let value = null;
@@ -487,7 +507,7 @@ function S7client(_data, _logger, _events, _runtime) {
     var _readVars = function (vars) {
         return new Promise((resolve, reject) => {
             s7client.ReadMultiVars(vars, (err, res) => {
-                if (err) return reject(_getErr(err));
+                if (err) return reject(_getReadErr(err));
                 let errs = [];
                 res = vars.map((v, i) => {
                     let value = null;
@@ -680,6 +700,14 @@ function S7client(_data, _logger, _events, _runtime) {
         if (Array.isArray(s7err)) return new Error('Errors: ' + s7err.join('; '));
         return new Error(s7client.ErrorText(s7err));
     }
+
+    var _getReadErr = function (s7err) {
+        const reason = _getErr(s7err);
+        // Snap7: TCP uses bits 0-15, ISO bits 16-19; client/S7 errors
+        // occupy the upper bits and do not by themselves invalidate a socket.
+        reason.connectionLost = Number.isInteger(s7err) && (s7err & 0x000FFFFF) !== 0;
+        return reason;
+    }
 }
 
 module.exports = {
@@ -687,6 +715,12 @@ module.exports = {
         // deviceCloseTimeout = settings.deviceCloseTimeout || 15000;
     },
     create: function (data, logger, events, manager, runtime) {
+        // Optional pure-JS driver, selected per device (default stays 'snap7'):
+        //   property: { ..., driver: "nodes7", tsapLocal, tsapRemote, timeout }
+        if (String((data && data.property && data.property.driver) || '').toLowerCase() === 'nodes7') {
+            const nodes7Driver = require('./nodes7');
+            return nodes7Driver.create(data, logger, events, manager, runtime);
+        }
         if (!loadSnap7Lib(manager)) return null;
         return new S7client(data, logger, events, runtime);
     }

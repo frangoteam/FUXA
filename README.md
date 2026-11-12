@@ -2,7 +2,7 @@
 # FUXA
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-brightgreen)](https://frangoteam.github.io/FUXA/)
-[![Node](https://img.shields.io/badge/node-18%20LTS-green)](https://nodejs.org/)
+[![Node](https://img.shields.io/badge/node-22%20LTS-green)](https://nodejs.org/)
 [![GitHub stars](https://img.shields.io/github/stars/frangoteam/FUXA?style=flat)](https://github.com/frangoteam/FUXA/stargazers)
 [![Docker Pulls](https://img.shields.io/docker/pulls/frangoteam/fuxa)](https://hub.docker.com/r/frangoteam/fuxa)
 [![npm downloads](https://img.shields.io/npm/dt/%40frangoteam/fuxa?label=npm%20downloads)](https://www.npmjs.com/package/@frangoteam/fuxa)
@@ -87,11 +87,11 @@ Open up a browser (better Chrome) and navigate to http://localhost:1881
 [Download the latest release](https://github.com/frangoteam/FUXA/releases) and unpack it
 
 You need to have installed [Node.js](https://nodejs.org/en/about/previous-releases)
-- Recommended: Node.js 18 LTS
+- Recommended: Node.js 22 LTS
 
 **Note** Starting from FUXA 1.2.7, Node.js 14 and older versions are not supported due to upstream dependency updates.
 
-**WARNING** On Linux systems (especially Raspberry Pi), installing native dependencies with Node.js 18 may require additional build tools.
+**WARNING** On Linux systems (especially Raspberry Pi), installing native dependencies may require additional build tools.
 If you do not intend to use specific features, you can safely remove them from ```server/package.json```:
 - Remove ```node-snap7``` if you do not need Siemens S7 communication
 - Remove ```odbc``` if you do not need external database connectivity
@@ -107,9 +107,9 @@ Open up a browser (better Chrome) and navigate to http://localhost:1881
 ### 3° Option - Install from [NPM](https://www.npmjs.com/package/@frangoteam/fuxa)
 
 You need to have installed [Node.js](https://nodejs.org/en/about/previous-releases)
-- Recommended: Node.js 18 LTS
+- Recommended: Node.js 22 LTS
 
-**WARNING** In linux with nodejs Version 18 the installation could be a challenge.
+**WARNING** In Linux, installing native dependencies may be challenging.
 If you don't intend communicate with Siemens PLCs via S7 (node-snap7 library) you can install from [NPM @frangoteam/fuxa-min](https://www.npmjs.com/package/@frangoteam/fuxa-min)
 
 ```

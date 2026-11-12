@@ -110,7 +110,10 @@ function MyScriptsModule(_events, _logger) {
                             params += `${script.parameters[i].name}`;
                         }
                         const asyncText = script.sync ? '' : 'async';
-                        functions += `${asyncText} function ${script.name} (${params}) { try { ${script.code} \n} catch (fuxaError) { console.log(fuxaError); return JSON.stringify(fuxaError); } }`;
+                        const functionSource = `${asyncText} function ${script.name} (${params}) { try { ${script.code} \n} catch (fuxaError) { console.log(fuxaError); return JSON.stringify(fuxaError); } }`;
+                        const validationFilename = path.resolve(__dirname, 'msm-script-validation.js');
+                        _requireFromString(`${requireInclude} ${functionSource} module.exports = ${script.name};`, validationFilename);
+                        functions += functionSource;
                         toexport += `${script.name}: ${script.name}, `;
                         result.scriptsMap[script.name] = script;
                     } else {
@@ -131,7 +134,7 @@ function MyScriptsModule(_events, _logger) {
             result.module = _requireFromString(code, filename);
         } catch(ex) {
             logger.error(`load.script error: ${(ex.stack) ? ex.stack : ex}`);
-            return ex;
+            result.messages.push('load.script error!');
         }
         return result;
     }

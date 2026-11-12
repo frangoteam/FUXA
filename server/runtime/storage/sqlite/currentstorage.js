@@ -11,6 +11,9 @@ function CurrentTagReadings(_settings, _log) {
     const logger = _log;            // Application logger
     var db_current = null;          // Database of project
     const dataQueue = new Map();    // Tags map
+    let writing = false;
+    let writeTimer = null;
+    let closed = false;
 
     /**
      * Bind the database resource by create the table if not exist
@@ -43,21 +46,27 @@ function CurrentTagReadings(_settings, _log) {
      * Write dataQueue in database
      */
     var _writeValues = async function() {
-        if (dataQueue.size > 0) {
-            const stmt = db_current.prepare("INSERT OR REPLACE INTO currentValues (tagId, deviceId, value) VALUES (?, ?, ?)");
-            for (const [tagid, tag] of dataQueue) {
+        if (writing || dataQueue.size === 0) return;
+        writing = true;
+        let stmt;
+        try {
+            const batch = Array.from(dataQueue);
+            stmt = db_current.prepare("INSERT OR REPLACE INTO currentValues (tagId, deviceId, value) VALUES (?, ?, ?)");
+            for (const [tagid, tag] of batch) {
+                if (dataQueue.get(tagid) !== tag) continue;
                 await new Promise((resolve, reject) => {
                     stmt.run(tagid, tag.deviceId, tag.value, function(err) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve();
-                        }
+                        if (err) reject(err);
+                        else resolve();
                     });
                 });
+                // A replacement received while SQLite was writing belongs to
+                // the next flush, even when the caller reused its tag object.
+                if (dataQueue.get(tagid) === tag) dataQueue.delete(tagid);
             }
-            stmt.finalize();
-            dataQueue.clear();
+        } finally {
+            if (stmt) stmt.finalize();
+            writing = false;
         }
     }
 
@@ -67,7 +76,7 @@ function CurrentTagReadings(_settings, _log) {
      */
     this.setValues = function (tags) {
         for (const tag of tags) {
-            dataQueue.set(tag.id, tag);
+            dataQueue.set(tag.id, { ...tag });
         }
     }
 
@@ -94,6 +103,10 @@ function CurrentTagReadings(_settings, _log) {
      * Close the database
      */
     this.close = function () {
+        if (closed) return;
+        closed = true;
+        clearInterval(writeTimer);
+        writeTimer = null;
         if (db_current) {
             db_current.close();
         }
@@ -123,7 +136,8 @@ function CurrentTagReadings(_settings, _log) {
 
     _bind().then(result => {
         logger.info('currentstorage init successful!', true);
-        setInterval(async () => {
+        if (closed) return;
+        writeTimer = setInterval(async () => {
             try {
                 if (db_current) {
                     await _writeValues();

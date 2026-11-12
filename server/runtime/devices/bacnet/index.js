@@ -282,16 +282,17 @@ function BACNETclient(_data, _logger, _events, _runtime) {
         if (data.tags[tagId]) {
             var obj = _extractId(data.tags[tagId].address);
             value = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
-            _writeProperty(_getDeviceAddress(devices[data.tags[tagId].memaddress]), obj, value).then(result => {
+            return _writeProperty(_getDeviceAddress(devices[data.tags[tagId].memaddress]), obj, value).then(result => {
                 logger.info(`'${data.name}' setValue(${tagId}, ${result})`, true, true);
+                return true;
             }, reason => {
                 if (reason && reason.stack) {
                     logger.error(`'${data.name}' _writeProperty error! ${reason.stack}`);
                 } else {
                     logger.error(`'${data.name}' _writeProperty error! ${reason}`);
                 }
+                return false;
             });
-            return true;
         }
         return false;
     }
@@ -360,7 +361,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                 tryExplicit = settings['broadcastAddress'].indexOf('255') === -1;
             }
 
-            if (utils.getNetworkInterfaces().indexOf(ipInterface) === -1) {
+            if (ipInterface !== '0.0.0.0' && utils.getNetworkInterfaces().indexOf(ipInterface) === -1) {
                 reject(`'${data.name}' selected interface don't exist!`);
                 return;
             }
@@ -458,12 +459,18 @@ function BACNETclient(_data, _logger, _events, _runtime) {
      * @param {*} instance
      */
     var _readObjectList = function(instance) {
-        return new Promise(function (resolve, reject) {
-            client.readProperty(_getDeviceAddress(devices[instance]), {type: bacnet.enum.ObjectType.DEVICE, instance: instance}, bacnet.enum.PropertyIdentifier.OBJECT_LIST, async (err, value) => {
-                if (err) {
-                    logger.error(`'${data.name}' _readObjectList error! ${err}`);
-                    resolve([]);
-                } else if (value && value.values && value.values.length) {
+        return new Promise(async function (resolve, reject) {
+            const address = _getDeviceAddress(devices[instance]);
+            const deviceObject = {type: bacnet.enum.ObjectType.DEVICE, instance: instance};
+            try {
+                let value;
+                try {
+                    value = await _readPropertyResponse(address, deviceObject, bacnet.enum.PropertyIdentifier.OBJECT_LIST);
+                } catch (err) {
+                    logger.warn(`'${data.name}' complete object-list read failed; retrying by array index: ${err}`);
+                    value = { values: await _readObjectListByIndex(address, deviceObject) };
+                }
+                if (value && value.values && value.values.length) {
                     var objects = [];
                     var results = [];
 
@@ -527,7 +534,58 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                 } else {
                     resolve([]);
                 }
-            });
+            } catch (err) {
+                logger.error(`'${data.name}' _readObjectList error! ${err}`);
+                resolve([]);
+            }
+        });
+    }
+
+    /**
+     * Read an object-list one array element at a time. BACnet devices that do
+     * not support segmented responses can abort a complete object-list read
+     * when the list is larger than one APDU.
+     */
+    var _readObjectListByIndex = async function(address, deviceObject) {
+        const lengthValue = await _readPropertyResponse(address, deviceObject,
+            bacnet.enum.PropertyIdentifier.OBJECT_LIST, { arrayIndex: 0 });
+        const length = lengthValue && lengthValue.values && lengthValue.values[0]
+            ? Number(lengthValue.values[0].value) : NaN;
+        if (!Number.isSafeInteger(length) || length < 0) {
+            throw new Error('invalid object-list array length');
+        }
+
+        const values = [];
+        const BATCH_SIZE = 10;
+        const DELAY_MS = 100;
+        for (let start = 1; start <= length; start += BATCH_SIZE) {
+            const end = Math.min(start + BATCH_SIZE - 1, length);
+            const batch = [];
+            for (let arrayIndex = start; arrayIndex <= end; arrayIndex++) {
+                batch.push(_readPropertyResponse(address, deviceObject,
+                    bacnet.enum.PropertyIdentifier.OBJECT_LIST, { arrayIndex: arrayIndex }));
+            }
+            const batchValues = await Promise.all(batch);
+            for (const value of batchValues) {
+                if (value && value.values) {
+                    values.push(...value.values);
+                }
+            }
+            if (end < length) {
+                await new Promise(r => setTimeout(r, DELAY_MS));
+            }
+        }
+        return values;
+    }
+
+    var _readPropertyResponse = function(address, bacobj, property, options) {
+        return new Promise(function (resolve, reject) {
+            const callback = (err, value) => err ? reject(err) : resolve(value);
+            if (options) {
+                client.readProperty(address, bacobj, property, options, callback);
+            } else {
+                client.readProperty(address, bacobj, property, callback);
+            }
         });
     }
 
@@ -565,7 +623,7 @@ function BACNETclient(_data, _logger, _events, _runtime) {
                 bacobj.type === bacnet.enum.ObjectType.BINARY_OUTPUT ||
                 bacobj.type === bacnet.enum.ObjectType.BINARY_VALUE) {
                 tvalue.type = bacnet.enum.ApplicationTag.ENUMERATED;
-                tvalue.value = parseInt(value);
+                tvalue.value = typeof value === 'boolean' ? Number(value) : parseInt(value);
             }
 
             client.writeProperty(address, bacobj, bacnet.enum.PropertyIdentifier.PRESENT_VALUE, [tvalue], { priority: 16 }, (err, result) => {

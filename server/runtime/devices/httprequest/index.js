@@ -2,9 +2,21 @@
  * 'http': webapi wrapper to manage REST API request
  */
 'use strict';
+const http = require('http');
+const https = require('https');
 const axios = require('axios');
 const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
+
+// Node.js 20 and later give each address of a host 250 ms to connect (500 ms
+// from Node.js 26) and then drop the attempt and try the next address. A host
+// that is slower to reach over IPv4 while its IPv6 address is unreachable then
+// fails with AggregateError (#2664), so allow each attempt longer.
+const CONNECT_ATTEMPT_TIMEOUT = 2000;
+const requestOptions = {
+    httpAgent: new http.Agent({ ...http.globalAgent.options, autoSelectFamilyAttemptTimeout: CONNECT_ATTEMPT_TIMEOUT }),
+    httpsAgent: new https.Agent({ ...https.globalAgent.options, autoSelectFamilyAttemptTimeout: CONNECT_ATTEMPT_TIMEOUT })
+};
 
 function HTTPclient(_data, _logger, _events, _runtime) {
     var runtime = _runtime;
@@ -15,7 +27,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
     var events = _events;               // Events to commit change to runtime
     var lastStatus = '';                // Last webapi status
     var varsValue = [];                 // Signale to send to frontend { id, type, value }
-    var requestItemsMap = {};           // Map of request (JSON, CSV, XML, ...) {key: item path, value: tag}
+    var requestItemsMap = Object.create(null);           // Map of request (JSON, CSV, XML, ...) {key: item path, value: tag}
     var overloading = 0;                // Overloading counter to mange the break connection
     var lastTimestampRequest;           // Last Timestamp request
     var lastTimestampValue;             // Last Timestamp of asked values
@@ -140,7 +152,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
         varsValue = [];
         data = JSON.parse(JSON.stringify(_data));
         try {
-            requestItemsMap = {};
+            requestItemsMap = Object.create(null);
             var count = Object.keys(data.tags).length;
             for (var id in data.tags) {
                 const address = data.tags[id].address || data.tags[id].id;
@@ -181,16 +193,17 @@ function HTTPclient(_data, _logger, _events, _runtime) {
             if (apiProperty.postTags) {
                 value = _parseValue(data.tags[tagId].type, value);
                 data.tags[tagId].value = await deviceUtils.tagRawCalculator(value, data.tags[tagId], runtime);
-                axios.post(apiProperty.getTags, [{id: tagId, value: data.tags[tagId].value}]).then(res => {
+                try {
+                    await axios.post(apiProperty.postTags, [{id: tagId, value: data.tags[tagId].value}], requestOptions);
                     lastTimestampRequest = new Date().getTime();
                     logger.info(`setValue '${data.tags[tagId].name}' to ${value})`, true, true);
-                }).catch(err => {
+                    return true;
+                } catch (err) {
                     logger.error(`setValue '${data.tags[tagId].name}' error! ${err}`);
-                });
+                }
             } else {
                 logger.error(`postTags undefined (setValue)`, true);
             }
-            return true;
         } else {
             logger.error(`setValue not supported!`, true);
         }
@@ -251,6 +264,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
             apiProperty.getTags = data.property.address;
             apiProperty.ownFlag = false;
         } else {
+            apiProperty.ownFlag = true;
             apiProperty.getTags = data.property.getTags;
             apiProperty.postTags = data.property.postTags;
         }
@@ -260,7 +274,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
     var _readRequest = function () {
         return new Promise(function (resolve, reject) {
             if (apiProperty.getTags) {
-                axios.get(apiProperty.getTags).then(res => {
+                axios.get(apiProperty.getTags, requestOptions).then(res => {
                     lastTimestampRequest = new Date().getTime();
                     resolve(res.data);
                 }).catch(err => {
@@ -404,7 +418,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
         if (type === 'number') {
             return parseFloat(value);
         } else if (type === 'boolean') {
-            return Boolean(value);
+            return deviceUtils.parseValue(value, type);
         } else if (type === 'string') {
             return value;
         } else {
@@ -427,7 +441,7 @@ function HTTPclient(_data, _logger, _events, _runtime) {
 function dataToFlat(data, property) {
 
     var parseTree = function(nodes, id, parent) {
-        let result = {};
+        let result = Object.create(null);
         let nodeId = id;
         if (parent) {
             nodeId = parent + ':' + nodeId;
@@ -468,7 +482,7 @@ function getRequestResult(property) {
     return new Promise(function (resolve, reject) {
         try {
             if (property.method === 'GET') {
-                axios.get(property.address).then(res => {
+                axios.get(property.address, requestOptions).then(res => {
                     resolve(res.data);
                 }).catch(err => {
                     reject(err);

@@ -1,6 +1,6 @@
 {
   "name": "fuxa",
-  "version": "1.3.6-2985",
+  "version": "1.3.6-3083",
   "keywords": [],
   "author": "frangoteam <info@frangoteam.org>",
   "description": "Web-based Process Visualization (SCADA/HMI/Dashboard) software",
@@ -20,8 +20,17 @@
     "test:internal-tags": "node --test test/internal-tag-init.test.cjs",
     "test:input-confirm": "node --test test/input-confirm.test.cjs",
     "test:chart-states": "node --test test/chart-states.test.cjs",
+    "test:connection-overlay": "node --test test/connection-overlay.test.cjs",
+    "test:tag-paste": "node --test test/pasted-tag-selection.test.cjs",
     "test:svg-colors": "node --test test/svg-widget-colors.test.cjs",
+    "test:shape-actions": "node --test test/shape-concurrent-actions.test.cjs",
+    "test:treetable-ordering": "node --test test/treetable-ordering.test.cjs",
     "test:script-authorization": "node --test test/script-authorization.test.cjs",
+    "test:dialog-page-navigation": "node --test test/dialog-page-navigation.test.cjs",
+    "test:device-import": "node --test test/device-import-duplicates.test.cjs",
+    "test:graph-change-detection": "node --test test/graph-change-detection.test.cjs",
+    "test:widget-bindings": "node --test test/widget-shared-tag-bindings.test.cjs",
+    "test:script-console": "node --test test/script-test-console.test.cjs",
     "e2e": "ng e2e"
   },
   "dependencies": {

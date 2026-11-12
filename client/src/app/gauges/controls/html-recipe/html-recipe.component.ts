@@ -98,6 +98,11 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.permission = this._checkPermission();
+        if (!this._canLoadRecipes()) {
+            this.error = this.translateService.instant('msg.operation-unauthorized');
+            this.loading = false;
+            return;
+        }
         if (this.typeId) {
             this.loadTypeDefinition();
             this.loadInstances();
@@ -113,7 +118,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
     /** Load the recipe type template (for creating new instances) */
     loadTypeDefinition() {
-        if (!this.typeId) return;
+        if (!this.typeId || !this._canLoadRecipes()) return;
         this.recipeService.getRecipeType(this.typeId).subscribe({
             next: (type) => {
                 this.typeDefinition = type;
@@ -126,7 +131,7 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
 
     /** Load all instances of the bound recipe type */
     loadInstances() {
-        if (!this.typeId) {
+        if (!this.typeId || !this._canLoadRecipes()) {
             this.loading = false;
             return;
         }
@@ -326,6 +331,17 @@ export class HtmlRecipeViewComponent implements OnInit, OnDestroy {
             return { show: true, enabled: true };
         }
         return this.authService.checkPermission(this.property) || { show: true, enabled: true };
+    }
+
+    /** Recipe APIs reject guest and anonymous users while secure mode is enabled. */
+    private _canLoadRecipes(): boolean {
+        if (!this.settingsService.getSettings()?.secureEnabled) {
+            return true;
+        }
+
+        const user = this.authService.getUser();
+        return !!user && user.username !== 'guest' &&
+            !(Array.isArray(user.groups) && user.groups.includes('guest'));
     }
 
     /**

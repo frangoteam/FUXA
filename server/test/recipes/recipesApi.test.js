@@ -186,6 +186,28 @@ describe('Recipes API', () => {
             expect(res.body.recipes[0].id).to.equal('r_001');
         });
 
+        it('should reject guest reads in secure mode', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'guest', groups: ['guest'] };
+
+            const typeRes = await request(server, '/api/recipes/types');
+            const instanceRes = await request(server, '/api/recipes/instances');
+
+            expect(typeRes.statusCode).to.equal(401);
+            expect(instanceRes.statusCode).to.equal(401);
+        });
+
+        it('should allow authenticated operator reads in secure mode', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+
+            const typeRes = await request(server, '/api/recipes/types');
+            const instanceRes = await request(server, '/api/recipes/instances');
+
+            expect(typeRes.statusCode).to.equal(200);
+            expect(instanceRes.statusCode).to.equal(200);
+        });
+
         it('should return single recipe instance by id', async () => {
             const recipeData = { name: 'Test', entries: [{ id: 'e_001', tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }] };
             runtime.recipeStorage.getRecipeData.withArgs('r_test').resolves(recipeData);
@@ -502,6 +524,34 @@ describe('Recipes API', () => {
             expect(res.body.error).to.equal('unauthorized_error');
             expect(runtime.recipeStorage.setRecipeData.called).to.be.false;
         });
+
+        it('should reject overwriting an instance when the caller lacks permission for its stored type', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+            runtime.recipeStorage.getRecipeData.withArgs('r_existing').resolves({
+                id: 'r_existing',
+                typeId: 'r_type_a',
+                name: 'Existing instance',
+                entries: [{ tagId: 'tag-a', tagType: 'real', value: 1 }]
+            });
+            runtime.project.getRecipe.withArgs('r_type_a').returns({ id: 'r_type_a', name: 'Type A' });
+            runtime.project.getRecipe.withArgs('r_type_b').returns({ id: 'r_type_b', name: 'Type B' });
+            runtime.checkPermission.callsFake((permission, recipeType) => ({
+                show: true,
+                enabled: recipeType.id === 'r_type_b'
+            }));
+
+            const res = await postRequest(server, '/api/recipes/instances', {
+                id: 'r_existing',
+                typeId: 'r_type_b',
+                name: 'Replacement instance',
+                entries: [{ tagId: 'tag-b', tagName: 'Tag B', tagType: 'real', value: 2 }]
+            });
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.recipeStorage.setRecipeData.called).to.be.false;
+        });
     });
 
     describe('DELETE /api/recipes/instances', () => {
@@ -801,6 +851,38 @@ describe('Recipes API', () => {
             expect(csvBody).to.include('tagId,tagName,tagType,value');
             expect(csvBody).to.include('t1');
             expect(csvBody).to.include('Temp');
+        });
+
+        it('should reject guest exports in secure mode', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'guest', groups: ['guest'] };
+
+            const res = await postRequest(server, '/api/recipes/export', { id: 'r_test', format: 'json' });
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.recipeStorage.getRecipeData.called).to.be.false;
+        });
+
+        it('should reject non-admin exports in secure mode', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+
+            const res = await postRequest(server, '/api/recipes/export', { id: 'r_test', format: 'json' });
+
+            expect(res.statusCode).to.equal(401);
+            expect(res.body.error).to.equal('unauthorized_error');
+            expect(runtime.recipeStorage.getRecipeData.called).to.be.false;
+        });
+
+        it('should allow admin exports in secure mode', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'admin', groups: -1 };
+
+            const res = await postRequest(server, '/api/recipes/export', { id: 'r_test', format: 'json' });
+
+            expect(res.statusCode).to.equal(200);
+            expect(res.body.name).to.equal('TestRecipe');
         });
 
         it('should return 404 for non-existent recipe', async () => {
