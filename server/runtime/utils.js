@@ -176,6 +176,13 @@ var utils = module.exports = {
         return (ele === null || ele === undefined) ? true : false;
     },
 
+    /**
+     * Resolve a DAQ tag's display name: the direct name, else the device tag reference's name
+     */
+    getTagName: function (tag) {
+        return tag.name || tag.tagref?.name;
+    },
+
     JsonTryToParse(value) {
         try {
             if (value) {

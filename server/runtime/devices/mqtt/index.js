@@ -29,6 +29,7 @@ function MQTTclient(_data, _logger, _events, _runtime) {
     var topicsMap = {};                 // Map the topic subscribed, to check by on.message
     var memoryTagToPublish = new Map(); // Map tag to publish, content in topics as 'tag'
     var refTagToTopics = {};            // Map of Tag to Topic (with ref to other device tag)
+    var refPublishReceiver = null;      // Bound 'tag-value:changed' listener (registered once)
 
     const certificatesDir = _data.certificatesDir;
 
@@ -129,6 +130,10 @@ function MQTTclient(_data, _logger, _events, _runtime) {
      */
     this.disconnect = function () {
         return new Promise(function (resolve, reject) {
+            if (refPublishReceiver) {
+                events.removeListener('tag-value:changed', refPublishReceiver);
+                refPublishReceiver = null;
+            }
             if (client) {
                 client.end(true, function (err) {
                     if (err) {
@@ -419,7 +424,10 @@ function MQTTclient(_data, _logger, _events, _runtime) {
      * Create the receiver of change tag value for the dependency in payload
      */
     var _createRefPublishReceiver = function () {
-        events.on('tag-value:changed', function (event) {
+        if (refPublishReceiver) {
+            return; // already bound for this device instance
+        }
+        refPublishReceiver = function (event) {
             try {
                 if (memoryTagToPublish.has(event.id)) {
                     // for topic with raw data (not depending from other tag)
@@ -438,7 +446,8 @@ function MQTTclient(_data, _logger, _events, _runtime) {
             } catch (err) {
                 console.error(err);
             }
-        });
+        };
+        events.on('tag-value:changed', refPublishReceiver);
     }
     /**
      * Map the topics to address (path)
