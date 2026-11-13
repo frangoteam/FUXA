@@ -341,8 +341,20 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     return;
                 }
                 const userInfo = new UserInfo(this.authService.getUser()?.info);
-                if (userInfo.start) {
-                    this.onGoToPage(userInfo.start);
+                const userStart = this.hmi.views?.find(x => x.id === userInfo.start);
+                if (userStart) {
+                    this.onGoToPage(userStart.id, true);
+                } else {
+                    // Without a user-specific start page, explicitly navigate
+                    // to the project default after authentication. The project
+                    // reload emits its HMI event before its lazy view finishes
+                    // loading, so this keeps the post-login render in sync.
+                    const queryView = this.hmi.views?.find(x => x.name === this.route.snapshot.queryParamMap.get('viewName')?.trim());
+                    const projectStart = this.hmi.views?.find(x => x.id === this.hmi.layout?.start) || this.hmi.views?.[0];
+                    const startView = queryView || projectStart;
+                    if (startView) {
+                        this.onGoToPage(startView.id, true);
+                    }
                 }
             });
         }
