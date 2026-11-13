@@ -40,6 +40,10 @@ module.exports = {
                 // res.header("Access-Control-Allow-Origin", "*");
                 // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 if (result) {
+                    if (runtime.settings?.secureEnabled && req.userId !== 'admin' && !authJwt.haveAdminPermission(permission)) {
+                        result.devices = _sanitizeDevicesForViewer(result.devices);
+                        delete result.server;
+                    }
                     res.json(result);
                 } else {
                     res.status(404).end();
@@ -296,4 +300,27 @@ module.exports = {
 
         return prjApp;
     }
+}
+
+function _sanitizeDevicesForViewer(devices) {
+    const sanitized = {};
+    if (!devices || typeof devices !== 'object' || Array.isArray(devices)) {
+        return sanitized;
+    }
+
+    for (const [key, device] of Object.entries(devices)) {
+        if (!device || typeof device !== 'object') {
+            continue;
+        }
+        const tags = {};
+        if (device.tags && typeof device.tags === 'object' && !Array.isArray(device.tags)) {
+            for (const [tagKey, tag] of Object.entries(device.tags)) {
+                if (tag && typeof tag === 'object') {
+                    tags[tagKey] = { id: tag.id, name: tag.name };
+                }
+            }
+        }
+        sanitized[key] = { id: device.id, name: device.name, tags };
+    }
+    return sanitized;
 }

@@ -45,10 +45,20 @@ describe('Project API - lazy view loading', () => {
     beforeEach(async () => {
         runtime = {
             settings: {
-                lazyViewLoading: false
+                lazyViewLoading: false,
+                secureEnabled: false
             },
             project: {
-                getProject: sinon.stub().resolves({ hmi: { views: [{ id: 'v1', svgcontent: '<svg></svg>' }] } }),
+                getProject: sinon.stub().resolves({
+                    devices: {
+                        plc1: {
+                            id: 'plc1', name: 'PLC', type: 'S7', property: { host: '10.0.0.1', password: 'secret' },
+                            tags: { tag1: { id: 'tag1', name: 'Temperature', address: 'DB1' } }
+                        }
+                    },
+                    server: { secret: 'server-secret' },
+                    hmi: { views: [{ id: 'v1', svgcontent: '<svg></svg>' }] }
+                }),
                 getProjectView: sinon.stub().resolves({ id: 'v1', svgcontent: '<svg></svg>' })
             },
             logger: {
@@ -115,5 +125,32 @@ describe('Project API - lazy view loading', () => {
         expect(response.statusCode).to.equal(200);
         expect(response.body).to.deep.equal({ id: 'v1', svgcontent: '<svg></svg>' });
         expect(runtime.project.getProjectView.calledOnceWithExactly('v1', ['admin'])).to.equal(true);
+    });
+
+    it('returns only device and tag identifiers/names to non-admin users when security is enabled', async () => {
+        runtime.settings.secureEnabled = true;
+
+        const response = await request(server, '/api/project');
+
+        expect(response.statusCode).to.equal(200);
+        expect(response.body.devices).to.deep.equal({
+            plc1: { id: 'plc1', name: 'PLC', tags: { tag1: { id: 'tag1', name: 'Temperature' } } }
+        });
+        expect(response.body.server).to.equal(undefined);
+    });
+
+    it('returns complete device configuration to admins when security is enabled', async () => {
+        runtime.settings.secureEnabled = true;
+        projectsApi.init(runtime, (req, res, next) => {
+            req.userId = 'admin';
+            next();
+        }, () => 255);
+
+        const response = await request(server, '/api/project');
+
+        expect(response.statusCode).to.equal(200);
+        expect(response.body.devices.plc1.property.password).to.equal('secret');
+        expect(response.body.devices.plc1.tags.tag1.address).to.equal('DB1');
+        expect(response.body.server.secret).to.equal('server-secret');
     });
 });

@@ -98,6 +98,12 @@ module.exports = {
                     runtime.logger.error("api get daq: Not Found!");
                 }
             } catch (err) {
+                if (err instanceof RangeError && err.message === 'DAQ time range cannot be safely chunked') {
+                    return res.status(400).json({
+                        error: 'invalid_query',
+                        message: err.message
+                    });
+                }
                 if (err && err.code) {
                     res.status(400).json({error:err.code, message: err.message});
                 } else {
