@@ -1,0 +1,185 @@
+{
+    "version": "1.02",
+    "name": "Machine states demo",
+    "server": {
+        "id": "0",
+        "name": "FUXA Server",
+        "type": "FuxaServer",
+        "enabled": true,
+        "polling": 500,
+        "property": {},
+        "tags": {
+            "demo-temperature": {
+                "id": "demo-temperature",
+                "name": "Temperature",
+                "type": "number",
+                "init": "25",
+                "daq": {
+                    "enabled": true,
+                    "changed": true,
+                    "interval": 1,
+                    "restored": false
+                }
+            },
+            "demo-state": {
+                "id": "demo-state",
+                "name": "Machine state",
+                "type": "number",
+                "init": "0",
+                "daq": {
+                    "enabled": true,
+                    "changed": true,
+                    "interval": 1,
+                    "restored": false
+                }
+            },
+            "demo-recipe": {
+                "id": "demo-recipe",
+                "name": "Recipe",
+                "type": "string",
+                "init": "Recipe A",
+                "daq": {
+                    "enabled": true,
+                    "changed": true,
+                    "interval": 1,
+                    "restored": false
+                }
+            }
+        }
+    },
+    "devices": {},
+    "hmi": {
+        "layout": {
+            "start": "v_machine_states",
+            "showdev": true,
+            "autoresize": false,
+            "navigation": {
+                "mode": "over",
+                "type": "block",
+                "items": []
+            },
+            "header": {}
+        },
+        "views": [
+            {
+                "id": "v_machine_states",
+                "name": "Machine states",
+                "type": "svg",
+                "profile": {
+                    "width": 1000,
+                    "height": 600,
+                    "bkcolor": "#ffffff",
+                    "margin": 10,
+                    "align": "topCenter"
+                },
+                "property": {
+                    "events": []
+                },
+                "variables": {},
+                "items": {
+                    "HXC_demo": {
+                        "id": "HXC_demo",
+                        "name": "Machine states",
+                        "type": "svg-ext-html_chart",
+                        "label": "HtmlChart",
+                        "property": {
+                            "id": "chart_machine_states",
+                            "type": "realtime1",
+                            "options": {
+                                "realtime": 2,
+                                "loadOldValues": true,
+                                "mouseWheelZoom": true,
+                                "legendMode": "always",
+                                "axisLabelY1": "Temperature",
+                                "titleHeight": 18,
+                                "axisLabelFontSize": 12,
+                                "legendFontSize": 12,
+                                "colorBackground": "#ffffff",
+                                "axisLabelColor": "#222222",
+                                "dateFormat": "YYYY_MM_DD",
+                                "timeFormat": "HH_mm_ss",
+                                "decimalsPrecision": 1
+                            },
+                            "events": []
+                        }
+                    }
+                },
+                "svgcontent": "<svg width=\"1000\" height=\"600\" xmlns=\"http://www.w3.org/2000/svg\"><g><title>Layer 1</title><g id=\"HXC_demo\" type=\"svg-ext-html_chart\"><rect x=\"20\" y=\"20\" width=\"960\" height=\"550\" fill=\"none\" stroke=\"none\"/><foreignObject x=\"20\" y=\"20\" width=\"960\" height=\"550\"><div xmlns=\"http://www.w3.org/1999/xhtml\" id=\"D-HXC_demo\" style=\"width:100%;height:100%\"></div></foreignObject></g></g></svg>"
+            }
+        ]
+    },
+    "charts": [
+        {
+            "id": "chart_machine_states",
+            "name": "Temperature, machine state and recipe",
+            "lines": [
+                {
+                    "device": "0",
+                    "id": "demo-temperature",
+                    "name": "Temperature",
+                    "label": "Temperature",
+                    "color": "#4484ef",
+                    "yaxis": 1
+                },
+                {
+                    "device": "0",
+                    "id": "demo-state",
+                    "name": "Machine state",
+                    "label": "Machine state",
+                    "color": "#808080",
+                    "yaxis": 1,
+                    "type": "state",
+                    "states": [
+                        {
+                            "value": "0",
+                            "label": "Stopped",
+                            "color": "#c62828",
+                            "description": "Machine is stopped"
+                        },
+                        {
+                            "value": "1",
+                            "label": "Running",
+                            "color": "#2e7d32",
+                            "description": "Machine is producing"
+                        },
+                        {
+                            "value": "2",
+                            "label": "Setup",
+                            "color": "#ef6c00",
+                            "description": "Machine setup"
+                        }
+                    ]
+                },
+                {
+                    "device": "0",
+                    "id": "demo-recipe",
+                    "name": "Recipe",
+                    "label": "Recipe",
+                    "color": "#6a1b9a",
+                    "yaxis": 1,
+                    "type": "state",
+                    "states": []
+                }
+            ]
+        }
+    ],
+    "scripts": [
+        {
+            "id": "s_machine_states",
+            "name": "updateMachineStates",
+            "mode": "SERVER",
+            "parameters": [],
+            "scheduling": {
+                "mode": "interval",
+                "interval": 1
+            },
+            "code": "// Generate demo values without an external device.\nconst seconds = Math.floor(Date.now() / 1000);\nawait $setTag(\"demo-temperature\", 25 + 5 * Math.sin(seconds / 5));\nawait $setTag(\"demo-state\", Math.floor(seconds / 10) % 3);\nawait $setTag(\"demo-recipe\", Math.floor(seconds / 20) % 2 ? \"Recipe B\" : \"Recipe A\");"
+        }
+    ],
+    "alarms": [],
+    "recipes": [],
+    "graphs": [],
+    "notifications": [],
+    "texts": [],
+    "reports": []
+}
