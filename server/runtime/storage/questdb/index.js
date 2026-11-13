@@ -106,20 +106,38 @@ function QuestDB(_settings, _log, _currentStorage) {
                     return;
                 }
 
-                const query = `SELECT timestamp, number_value, string_value
+                // QuestDB stores timestamps in UTC but sends TIMESTAMP columns as
+                // `timestamp without time zone`, which pg parses as local time. Read
+                // epoch microseconds instead so no timezone is involved.
+                // Assumes the microsecond TIMESTAMP column FUXA creates: a table made
+                // elsewhere with TIMESTAMP_NS returns nanoseconds (dt 1000x too large).
+                const query = `SELECT cast(timestamp AS long) AS ts, number_value, string_value
                                FROM ${tableName}
                                WHERE tag_id = $1
                                  AND timestamp >= $2
                                  AND timestamp < $3
                                ORDER BY timestamp`;
-                const params = [tagid, new Date(fromts), new Date(tots)];
+                // Send UTC ISO strings. pg would serialize Date objects as local time
+                // with an offset (e.g. +02:00); a plain UTC 'Z' value avoids relying
+                // on QuestDB honouring that offset.
+                const from = new Date(fromts);
+                const to = new Date(tots);
+                if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
+                    // JSON-escape caller input so it can't forge log lines.
+                    const error = new Error(`invalid time range ${JSON.stringify(String(fromts))} - ${JSON.stringify(String(tots))}`);
+                    logger.error(`questdb-getDaqValue failed! ${error}`);
+                    reject(error);
+                    return;
+                }
+                const params = [tagid, from.toISOString(), to.toISOString()];
 
                 pool.query(query, params)
                     .then((result) => {
                         let data = [];
                         result.rows.forEach((row) => {
                             const value = !utils.isNullOrUndefined(row.number_value) ? Number(row.number_value) : row.string_value;
-                            data.push({ dt: new Date(row.timestamp).getTime(), value });
+                            // pg returns LONG (int8) as a string; micros fit safely in a Number.
+                            data.push({ dt: Math.floor(Number(row.ts) / 1000), value });
                         });
                         resolve(data)
                     })
