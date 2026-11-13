@@ -25,6 +25,7 @@ describe('S7 read connection recovery', function () {
                     S7AreaDB: 0x84, S7AreaMK: 0x83,
                     connected: false, connects: 0, disconnects: 0, reads: 0, value: 17,
                     Connected() { return this.connected; },
+                    PDULength() { return 480; },
                     ConnectTo(_host, _rack, _slot, callback) { this.connects++; this.connected = true; callback(0); },
                     Disconnect() { this.disconnects++; this.connected = false; },
                     ErrorText(code) { return `controlled Snap7 error ${code}`; },

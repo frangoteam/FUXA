@@ -15,6 +15,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     var working = false;                // Working flag to manage overloading polling and connection
     var connected = false;              // Connected flag
     var monitored = false;              // Monitored flag
+    var disconnecting = false;
     var lastStatus = '';                // Last Device status
     var events = _events;               // Events to commit change to runtime
     var the_session;
@@ -37,6 +38,9 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
             if (!_checkWorking(true)) {
                 reject();
             } else {
+                if (lastStatus !== 'connect-error') {
+                    _emitStatus('connect-busy');
+                }
                 var property = null;
                 async.series([
                     // step 1 check property
@@ -72,6 +76,11 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                     // step 2 connect
                     function (callback) {
                         const endpoint = data.property.address;
+                        // Reconnecting the same client must not accumulate listeners.
+                        client.removeListener('connection_lost', connectionLost);
+                        client.removeListener('backoff', connectionBackoff);
+                        client.on('connection_lost', connectionLost);
+                        client.on('backoff', connectionBackoff);
                         client.connect(endpoint, function (err) {
                             if (err) {
                                 _clearVarsValue();
@@ -80,13 +89,6 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                                 logger.info(`'${data.name}' connection`, true);
                             }
                             callback(err);
-                        });
-                        client.on("connection_lost", () => {
-                            logger.error(`'${data.name}' connection lost!`);
-                            self.disconnect().then(function () { });
-                        });
-                        client.on("backoff", (retry, delay) => {
-                            logger.error(`'${data.name}' retry to connect! ${retry}`);
                         });
                     },
                     // step 3 create session
@@ -104,30 +106,35 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                                 the_session = session;
                                 the_session.on('session_closed', () => {
                                     logger.warn(`'${data.name}' Warning => Session closed`);
+                                    if (!disconnecting && the_session === session) {
+                                        self.disconnect('connect-error');
+                                    }
                                 });
                                 the_session.on('keepalive', () => {
                                     logger.info(`'${data.name}' session keepalive`, true);
                                 });
                                 the_session.on('keepalive_failure', () => {
                                     logger.error(`'${data.name}' session keepalive failure!`);
-                                    self.disconnect().then(function () { });
+                                    if (!disconnecting && the_session === session) {
+                                        self.disconnect('connect-error');
+                                    }
                                 });
                                 the_session.on("terminated", function() {
                                     console.log("terminated");
                                 });
-                                _createSubscription();
                             }
                             callback(err);
                         });
+                    },
+                    // A session alone cannot deliver data: wait for the subscription.
+                    function (callback) {
+                        _createSubscription(callback);
                     }],
                     function (err) {
                         if (err) {
                             logger.error(`'${data.name}' try to connect error! ${err}`);
-                            _emitStatus('connect-error');
-                            _clearVarsValue();
-                            connected = false;
-                            reject();
-                            client.disconnect(function () { });
+                            self.disconnect('connect-error').then(() => reject(err));
+                            return;
                         } else {
                             logger.info(`'${data.name}' connected!`, true);
                             _emitStatus('connect-ok');
@@ -144,17 +151,32 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
      * Disconnect the OPC UA server
      * Emit connection status, Clear the memory Tags value
      */
-    this.disconnect = function () {
+    function connectionLost() {
+        logger.error(`'${data.name}' connection lost!`);
+        if (!disconnecting) {
+            thisDevice.disconnect('connect-error');
+        }
+    }
+
+    function connectionBackoff(retry) {
+        logger.error(`'${data.name}' retry to connect! ${retry}`);
+    }
+
+    const thisDevice = this;
+    this.disconnect = function (status = 'connect-off') {
+        connected = false;
+        monitored = false;
+        lastTimestampValue = undefined;
+        _emitStatus(status);
+        _clearVarsValue();
         return new Promise(function (resolve, reject) {
+            disconnecting = true;
             _disconnect(function (err) {
                 if (err) {
                     logger.error(`'${data.name}' disconnect failure! ${err}`);
                 }
-                connected = false;
-                monitored = false;
+                disconnecting = false;
                 _checkWorking(false);
-                _emitStatus('connect-off');
-                _clearVarsValue();
                 resolve(true);
             });
         });
@@ -461,12 +483,15 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
      * @param {*} callback
      */
     var _disconnect = function (callback) {
-        if (!the_session) {
+        const session = the_session;
+        the_session = null;
+        the_subscription = null;
+        if (!session) {
             client.disconnect(function (err) {
                 callback(err);
             });
         } else {
-            the_session.close(function () {
+            session.close(function () {
                 client.disconnect(function (err) {
                     callback(err);
                 });
@@ -477,35 +502,50 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     /**
      * Create a session subscription to refresh Tags value.
      *
-     * The subscription's `requestedPublishingInterval` follows the device's
-     * polling rate (`data.polling`) so the device-level "update rate" UI
-     * setting actually propagates to the OPC-UA subscription. Falls back to
-     * 100 ms — the OPC-UA protocol minimum in most servers — when the user
-     * hasn't configured a polling rate.
-     *
-     * Previously this was hard-coded to 500 ms regardless of UI input,
-     * capping subscription updates at 2 Hz no matter what the user picked.
+     * Keep publishing and keepalive intervals within the negotiated session
+     * timeout. Use the device polling rate when it fits, or 500 ms by default.
      */
-    var _createSubscription = function () {
+    var _createSubscription = function (callback) {
         if (the_session) {
+            const configuredInterval = Number(data.polling);
+            const configuredTimeout = Number(the_session.timeout);
+            const sessionTimeout = Number.isFinite(configuredTimeout) && configuredTimeout > 0 ? configuredTimeout : 30000;
+            // node-opcua enforces a minimum of three keepalive cycles. Keep
+            // those cycles within half the timeout actually accepted by the server.
+            const publishingInterval = Math.min(
+                Number.isFinite(configuredInterval) && configuredInterval > 0 ? configuredInterval : 500,
+                sessionTimeout / 6
+            );
+            const keepAliveCount = Math.max(3, Math.min(10, Math.floor(sessionTimeout / (2 * publishingInterval))));
             const parameters = {
-                requestedPublishingInterval: data.polling || 500,
+                requestedPublishingInterval: publishingInterval,
                 requestedLifetimeCount: 600,
-                requestedMaxKeepAliveCount: 10,
+                requestedMaxKeepAliveCount: keepAliveCount,
                 maxNotificationsPerPublish: 0,
                 publishingEnabled: true,
                 priority: 0
             };
-            the_session.createSubscription2(
-                parameters,
-                (err, subscription) => {
-                    if (err) {
-                        logger.error(`'${data.name}' can't create subscription! ${err.message}`);
-                        return;
-                    }
-                    the_subscription = subscription;
-                    logger.info(`'${data.name}' subscription created!`, true);
-                });
+            try {
+                the_session.createSubscription2(
+                    parameters,
+                    (err, subscription) => {
+                        if (err) {
+                            logger.error(`'${data.name}' can't create subscription! ${err.message}`);
+                            callback(err);
+                            return;
+                        }
+                        the_subscription = subscription;
+                        logger.info(`'${data.name}' subscription created!`, true);
+                        callback();
+                    });
+            } catch (err) {
+                // Subscription validation can throw before its callback is called.
+                // Forward it so connection cleanup runs and the next retry is allowed.
+                logger.error(`'${data.name}' can't create subscription! ${err.message}`);
+                callback(err);
+            }
+        } else {
+            callback(new Error('OPC UA session is not available'));
         }
     }
 
