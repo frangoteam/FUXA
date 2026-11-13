@@ -257,9 +257,9 @@ export class HtmlInputComponent extends GaugeBaseComponent {
                         function startButtonPress() {
                             // The input loses focus before the button click. Preserve the user's
                             // edit so a live tag refresh during that transition cannot replace it.
-                            if (valueOnButtonPress === null) {
-                                valueOnButtonPress = input.value;
-                            }
+                            // Always refresh the snapshot: a prior press may have been canceled
+                            // without producing a click to clear its value.
+                            valueOnButtonPress = input.value;
                             setButton.style.backgroundColor = 'rgba(0,0,0,0.2)';
                         }
                         function resetButtonPress() {

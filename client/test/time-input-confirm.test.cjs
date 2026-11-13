@@ -137,6 +137,22 @@ test('mouse confirmation preserves an edit across the same live-refresh race', (
     assert.deepEqual(input.dispatchedValues, [{ type: 'keydown', key: 'Enter', value: '16:45' }]);
 });
 
+test('a new press replaces the snapshot left by an interrupted press', () => {
+    const { HtmlInputComponent, input, button, document, gauge } = prepareTimeControl();
+
+    input.value = '07:15';
+    button.fire('mousedown');
+    // The first press is interrupted (released outside the button), so no click clears it.
+    input.value = '09:00';
+    button.fire('mousedown');
+
+    document.activeElement = button;
+    HtmlInputComponent.processValue(gauge, { node: { children: [{}] } }, { id: 'clock', value: '08:00' }, {});
+    button.fire('click');
+
+    assert.deepEqual(input.dispatchedValues, [{ type: 'keydown', key: 'Enter', value: '09:00' }]);
+});
+
 test('keyboard activation submits the current input value', () => {
     const { input, button } = prepareTimeControl();
     input.value = '18:20';
