@@ -10,6 +10,7 @@ describe('BACnet multi-state objects', () => {
     const ObjectType = {
         ANALOG_OUTPUT: 1,
         BINARY_OUTPUT: 4,
+        BINARY_VALUE: 5,
         DEVICE: 8,
         MULTI_STATE_INPUT: 13,
         MULTI_STATE_OUTPUT: 14,
@@ -128,5 +129,26 @@ describe('BACnet multi-state objects', () => {
             assert.equal(writes[0].property, PropertyIdentifier.PRESENT_VALUE);
             assert.deepEqual(writes[0].values, [{ type: expectedTag, value: 2 }]);
         });
+    }
+
+    // Binary writes must preserve the upstream boolean-to-enumerated conversion.
+    for (const [name, type] of [
+        ['binary output', ObjectType.BINARY_OUTPUT],
+        ['binary value', ObjectType.BINARY_VALUE]
+    ]) {
+        for (const [value, expected] of [[true, 1], [false, 0]]) {
+            it(`encodes ${name} boolean ${value} as enumerated ${expected}`, async () => {
+                const device = createDevice({
+                    tag: { id: 'tag', memaddress: '7', address: `${type}-1`, type: 'boolean' }
+                });
+                await device.connect();
+
+                assert.equal(await device.setValue('tag', value), true);
+                await new Promise(resolve => setImmediate(resolve));
+
+                assert.equal(writes.length, 1);
+                assert.deepEqual(writes[0].values, [{ type: ApplicationTag.ENUMERATED, value: expected }]);
+            });
+        }
     }
 });
