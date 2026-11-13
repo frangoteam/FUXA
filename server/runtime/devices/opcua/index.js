@@ -554,10 +554,11 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                 let id = tagsIdMap[nodeId];
                 if (data.tags[id]) {
                     let rawVal = dataValue.value.value;
-                    // Scalar Int64/UInt64 values use word pairs. Actual OPC UA
-                    // arrays and matrices must retain every element.
-                    if (dataValue.value.arrayType === opcua.VariantArrayType.Scalar && Array.isArray(rawVal) && rawVal.length > 0) {
-                        rawVal = rawVal[rawVal.length - 1];
+                    // Scalar Int64/UInt64 values use [high, low] word pairs.
+                    // Actual OPC UA arrays and structured scalar values must
+                    // retain every element.
+                    if (dataValue.value.arrayType === opcua.VariantArrayType.Scalar) {
+                        rawVal = _decodeScalarInt64(rawVal, dataValue.value.dataType);
                     }
                     data.tags[id].rawValue = rawVal;
                     data.tags[id].dataType = dataValue.value.dataType;
@@ -759,6 +760,31 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
             default:
                 return value;
         }
+    }
+
+    /**
+     * Convert an OPC UA scalar Int64/UInt64 word pair when JavaScript can
+     * represent the result exactly. Keep the pair for out-of-range values so
+     * callers do not receive a silently truncated low word.
+     */
+    var _decodeScalarInt64 = function (value, type) {
+        if ((type !== opcua.DataType.Int64 && type !== opcua.DataType.UInt64) ||
+            !Array.isArray(value) || value.length !== 2 ||
+            !value.every(Number.isInteger)) {
+            return value;
+        }
+
+        const high = BigInt(value[0] >>> 0);
+        const low = BigInt(value[1] >>> 0);
+        let result = (high << 32n) | low;
+        if (type === opcua.DataType.Int64) {
+            result = BigInt.asIntN(64, result);
+        }
+
+        if (result < BigInt(Number.MIN_SAFE_INTEGER) || result > BigInt(Number.MAX_SAFE_INTEGER)) {
+            return value;
+        }
+        return Number(result);
     }
 }
 
