@@ -67,6 +67,15 @@ describe('recipe-service', () => {
                 expect(recipeService.coerceValue('42', 'number')).to.equal(42);
             });
 
+            it('should handle unsigned and 64-bit integer types', () => {
+                expect(recipeService.coerceValue('65535', 'UInt16')).to.equal(65535);
+                expect(recipeService.coerceValue('4294967295', 'UInt32')).to.equal(4294967295);
+                expect(recipeService.coerceValue('70000', 'UDINT')).to.equal(70000);
+                expect(recipeService.coerceValue('-5', 'Int64LE')).to.equal(-5);
+                expect(recipeService.coerceValue('1200', 'Gauge32')).to.equal(1200);
+                expect(recipeService.coerceValue('abc', 'UInt16')).to.equal('abc');
+            });
+
             it('should return original value if not a valid integer', () => {
                 const result = recipeService.coerceValue('abc', 'int');
                 expect(result).to.equal('abc');
@@ -88,6 +97,11 @@ describe('recipe-service', () => {
 
             it('should coerce "3.14" to 3.14 for number type', () => {
                 expect(recipeService.coerceValue('3.14', 'number')).to.equal(3.14);
+            });
+
+            it('should handle Modbus float types', () => {
+                expect(recipeService.coerceValue('2.5', 'Float32')).to.equal(2.5);
+                expect(recipeService.coerceValue('1.25', 'Float64MLE')).to.equal(1.25);
             });
 
             it('should return original value if not a valid float', () => {

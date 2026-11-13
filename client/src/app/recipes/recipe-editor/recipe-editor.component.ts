@@ -117,7 +117,11 @@ export class RecipeEditorComponent implements OnInit {
     }
 
     private _isNumericType(tagType: string): boolean {
-        return ['int', 'dint', 'int16', 'int32', 'real', 'float', 'double', 'byte', 'number'].indexOf(tagType) !== -1;
+        return ['int', 'dint', 'int16', 'int32', 'sbyte', 'uint', 'udint', 'dword', 'uint16', 'uint32', 'int64', 'uint64',
+            'int16le', 'uint16le', 'int32le', 'uint32le', 'int32mle', 'uint32mle', 'int64le',
+            'integer', 'counter32', 'gauge32', 'unsigned32', 'timeticks', 'counter64',
+            'real', 'float', 'double', 'float32', 'float64', 'float32le', 'float64le', 'float32mle', 'float64mle',
+            'byte', 'number'].indexOf(tagType) !== -1;
     }
 
     onSave() {
