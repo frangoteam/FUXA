@@ -5,7 +5,7 @@ import { FlexActionComponent } from '../../../gauge-property/flex-action/flex-ac
 import { GaugeProperty, InputActionEscType, InputConvertionType, InputOptionsProperty, InputOptionType, InputTimeFormatType, IPropertyVariable, View } from '../../../../_models/hmi';
 import { GaugePropertyData } from '../../../gauge-property/gauge-property.component';
 import { HtmlInputComponent } from '../html-input.component';
-import { PropertyType } from '../../../gauge-property/flex-input/flex-input.component';
+import { FlexInputComponent, PropertyType } from '../../../gauge-property/flex-input/flex-input.component';
 import { PermissionData, PermissionDialogComponent } from '../../../gauge-property/permission-dialog/permission-dialog.component';
 import { SettingsService } from '../../../../_services/settings.service';
 import { ProjectService } from '../../../../_services/project.service';
@@ -22,6 +22,7 @@ export class InputPropertyComponent implements AfterViewInit {
     @ViewChild('flexhead', { static: false }) flexHead: FlexHeadComponent;
     @ViewChild('flexevent', { static: false }) flexEvent: FlexEventComponent;
     @ViewChild('flexaction', { static: false }) flexAction: FlexActionComponent;
+    @ViewChild('flexinput', { static: false }) flexInput: FlexInputComponent;
 
     slideView = true;
     slideActionView = true;
@@ -31,6 +32,7 @@ export class InputPropertyComponent implements AfterViewInit {
     eventsSupported: boolean;
     actionsSupported: any;
     withProperty = PropertyType.input;
+    unitPropertyType = PropertyType.output;
     views: View[];
     scripts: Script[];
     inputOptionType = InputOptionType;
@@ -76,6 +78,7 @@ export class InputPropertyComponent implements AfterViewInit {
     }
 
     onOkClick(): void {
+        this.property.ranges = this.flexInput?.getRanges() ?? this.property.ranges;
         this.data.settings.property = this.property;
         if (this.flexEvent) {
             this.data.settings.property.events = this.flexEvent.getEvents();
