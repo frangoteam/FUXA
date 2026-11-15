@@ -30,6 +30,12 @@ var DEVICE_CHECK_STATUS_INTERVAL = 5000;
 var SERVER_POLLING_INTERVAL = 1000;             // with DAQ enabled, will be saved only changed values in this interval
 var DEVICE_POLLING_INTERVAL = 3000;             // with DAQ enabled, will be saved only changed values in this interval
 var DISABLE_POLLING_INTERVAL = -1;              // disable polling
+var RECONNECT_BACKOFF_BASE = 5000;              // 5s - first reconnect delay after a failure
+var RECONNECT_BACKOFF_MAX = 60000;              // 60s - upper bound of the exponential backoff
+var STUCK_READ_CONSECUTIVE_LIMIT = 3;           // consecutive OFF checks before forcing a reconnect
+var CIRCUIT_FAILURE_THRESHOLD = 3;              // failure episodes before the circuit opens (quarantine)
+var CIRCUIT_QUARANTINE_BASE = 60000;            // 60s - first quarantine of the circuit breaker
+var CIRCUIT_QUARANTINE_MAX = 300000;            // 5min - upper bound of the quarantine
 
 var fncGetDeviceProperty;
 
@@ -48,6 +54,12 @@ function Device(data, runtime) {
     var pollingInterval = DEVICE_POLLING_INTERVAL;
     var sharedDevices = data.sharedDevices;
     var tryToConnect = 0;
+    var reconnectBackoff = 0;                               // Current backoff (ms) after a connection failure
+    var nextReconnectTime = 0;                              // Earliest time the next connection attempt is allowed
+    var consecutiveOffChecks = 0;                           // Consecutive checks with stale reads
+    var failureEpisodes = 0;                                // Circuit breaker: failure episodes
+    var quarantineUntil = 0;                                // Circuit breaker: no connection attempts until
+    var quarantineBackoff = 0;                              // Circuit breaker: current quarantine (ms)
     var comm;                                               // Interface to OPCUA/S7/.. Device
                                                             // required: connect, disconnect, isConnected, polling, init, load, getValue,
                                                             // getValues, getStatus, setValue, bindAddDaq, getTagProperty,
@@ -181,6 +193,13 @@ function Device(data, runtime) {
                 deviceCheckStatus = null;
             }
             connectionStatus = ConnectionStatusEnum.OFF;
+            deviceConnecting = false;
+            reconnectBackoff = 0;
+            nextReconnectTime = 0;
+            consecutiveOffChecks = 0;
+            failureEpisodes = 0;
+            quarantineUntil = 0;
+            quarantineBackoff = 0;
             comm.disconnect().then(function () {
                 status = DeviceStatusEnum.INIT;
                 resolve();
@@ -191,31 +210,64 @@ function Device(data, runtime) {
     }
 
     /**
+     * Circuit breaker: after N failure episodes the device is "opened" (quarantine,
+     * growing from 60s up to 5min) and no connection attempt is made while it lasts.
+     * This isolates an unstable PLC without hammering the driver on every check.
+     */
+    var circuitRecordFailure = function () {
+        failureEpisodes++;
+        if (failureEpisodes >= CIRCUIT_FAILURE_THRESHOLD) {
+            quarantineBackoff = quarantineBackoff === 0 ? CIRCUIT_QUARANTINE_BASE : Math.min(quarantineBackoff * 2, CIRCUIT_QUARANTINE_MAX);
+            quarantineUntil = Date.now() + quarantineBackoff;
+            logger.warn(`'${property.name}' circuit open (quarantine ${Math.round(quarantineBackoff / 1000)}s) after ${failureEpisodes} failures.`);
+        }
+    };
+    var circuitRecordSuccess = function () {
+        failureEpisodes = 0;
+        quarantineBackoff = 0;
+        quarantineUntil = 0;
+    };
+
+    /**
      * Check the Device connection, Reconnect
      */
     this.checkStatus = function () {
-        if (status === DeviceStatusEnum.INIT && currentCmd === DeviceCmdEnum.START && !deviceConnecting) {
-            const self = this;
-            deviceConnecting = true;
-            this.connect().then(() => {
-                if (currentCmd !== DeviceCmdEnum.START) {
-                    return;
-                }
-                tryToConnect = 0;
-                status = DeviceStatusEnum.IDLE;
-                self.restoreValues();
-            }).catch(function (err) {
-                if (currentCmd !== DeviceCmdEnum.START) {
-                    return;
-                }
-                logger.error(`'${property.name}' connect error! ${err} (${tryToConnect})`);
-                if (tryToConnect++ > 3) {
+        const self = this;
+        if (status === DeviceStatusEnum.INIT && currentCmd === DeviceCmdEnum.START) {
+            const nowMs = Date.now();
+            // Exponential backoff + circuit breaker: only attempt a connection after the
+            // scheduled delay, never overlapping a connection in progress, and never
+            // while the circuit is open (quarantine).
+            if (!deviceConnecting && nowMs >= nextReconnectTime && nowMs >= quarantineUntil) {
+                deviceConnecting = true;
+                this.connect().then(() => {
+                    if (currentCmd !== DeviceCmdEnum.START) {
+                        return;
+                    }
                     tryToConnect = 0;
-                    self.disconnect().then(() => {});
-                }
-            }).finally(() => {
-                deviceConnecting = false;
-            });
+                    reconnectBackoff = 0;
+                    nextReconnectTime = 0;
+                    consecutiveOffChecks = 0;
+                    circuitRecordSuccess();
+                    status = DeviceStatusEnum.IDLE;
+                    self.restoreValues();
+                }).catch(function (err) {
+                    if (currentCmd !== DeviceCmdEnum.START) {
+                        return;
+                    }
+                    logger.error(`'${property.name}' connect error! ${err} (${tryToConnect})`);
+                    circuitRecordFailure();
+                    if (tryToConnect++ > 3) {
+                        tryToConnect = 0;
+                        self.disconnect().then(() => {});
+                    }
+                    // Exponential backoff: 5s -> 10s -> 20s -> 40s -> 60s (cap)
+                    reconnectBackoff = reconnectBackoff === 0 ? RECONNECT_BACKOFF_BASE : Math.min(reconnectBackoff * 2, RECONNECT_BACKOFF_MAX);
+                    nextReconnectTime = Date.now() + reconnectBackoff;
+                }).finally(() => {
+                    deviceConnecting = false;
+                });
+            }
         } else if (status === DeviceStatusEnum.IDLE && !comm.isConnected()) {
             status = DeviceStatusEnum.INIT;
             if (devicePolling) {
@@ -233,6 +285,33 @@ function Device(data, runtime) {
         } else {
             connectionStatus = ConnectionStatusEnum.ON;
         }
+        // Stale read guard: a device reported as connected that stops answering
+        // (continuous read timeouts) is forced to reconnect with backoff instead of
+        // keeping a timeout loop that stresses native drivers (e.g. node-snap7).
+        // Not applied to the internal server nor to devices that never produced a read.
+        if (data.type !== DeviceEnum.FuxaServer && lastRead > 0) {
+            if (connectionStatus === ConnectionStatusEnum.OFF) {
+                consecutiveOffChecks++;
+                if (status === DeviceStatusEnum.IDLE && consecutiveOffChecks >= STUCK_READ_CONSECUTIVE_LIMIT) {
+                    consecutiveOffChecks = 0;
+                    logger.warn(`'${property.name}' reads are stale; forcing a reconnect with backoff.`);
+                    circuitRecordFailure();
+                    if (devicePolling) {
+                        clearInterval(devicePolling);
+                        devicePolling = null;
+                    }
+                    status = DeviceStatusEnum.INIT;
+                    self.disconnect().then(() => {});
+                    reconnectBackoff = reconnectBackoff === 0 ? RECONNECT_BACKOFF_BASE : Math.min(reconnectBackoff * 2, RECONNECT_BACKOFF_MAX);
+                    nextReconnectTime = Date.now() + reconnectBackoff;
+                }
+            } else {
+                consecutiveOffChecks = 0;
+            }
+        } else {
+            consecutiveOffChecks = 0;
+        }
+
         if (this.updateConnectionStatus) {
             this.updateConnectionStatus(property.id, connectionStatus);
         }
