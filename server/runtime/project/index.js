@@ -1179,6 +1179,15 @@ function _filterProjectPermission(userPermission, options = {}) {
         result.hmi.views = result.hmi.views.filter(view => view.id === options.viewId || view.name === options.viewId);
     }
     const projectPermission = runtime.checkPermission(userPermission, false);
+    if (Array.isArray(result.recipes)) {
+        result.recipes = result.recipes.filter(recipe => {
+            if (!recipe || !runtime.checkPermission) {
+                return !!recipe;
+            }
+            const recipePermission = runtime.checkPermission(userPermission, recipe, false, true);
+            return recipePermission?.show !== false;
+        });
+    }
     if (!projectPermission.show || !projectPermission.enabled) {   // is admin or secure disabled
         // from device remove the not used (no permission)
         // delete result.devices;

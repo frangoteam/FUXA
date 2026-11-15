@@ -71,6 +71,29 @@ describe('DAQ REST API history limits', () => {
         assert.deepEqual(calls, []);
     });
 
+    it('rejects history ranges whose large timestamps cannot advance by one chunk', async () => {
+        const from = 2 ** 78;
+        const response = await request(server, {
+            sids: ['tag-a'], from, to: from + 2 ** 26
+        });
+
+        assert.equal(response.statusCode, 400);
+        assert.equal(response.body.error, 'invalid_query');
+        assert.match(response.body.message, /cannot be safely chunked/);
+        assert.deepEqual(calls, []);
+    });
+
+    it('rejects history queries with more than 100 tag IDs', async () => {
+        const response = await request(server, {
+            sids: Array.from({ length: 101 }, (_, index) => `tag-${index}`),
+            from: 1000, to: 2000
+        });
+
+        assert.equal(response.statusCode, 400);
+        assert.equal(response.body.error, 'invalid_query');
+        assert.deepEqual(calls, []);
+    });
+
     it('reads bounded chunks sequentially and combines them in the response', async () => {
         const query = { sids: ['tag-a'], from: 1000, to: 1000 + SIX_HOURS + 100 };
         const response = await request(server, query);

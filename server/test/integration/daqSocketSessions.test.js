@@ -66,7 +66,10 @@ function registerRuntime(io, getNodeValues) {
         }
     };
     vm.runInNewContext(fs.readFileSync(filename, 'utf8'), context, { filename });
-    context.module.exports.init(io, { authJwt: { secretCode: SECRET } },
+    context.module.exports.init(io, { authJwt: {
+        secretCode: SECRET,
+        getGuestToken: () => jwt.sign({ id: 'guest', groups: 0 }, SECRET, { expiresIn: '1m' })
+    } },
         { secureEnabled: true }, { info() {}, warn() {}, error() {} }, new EventEmitter());
 }
 
@@ -95,11 +98,13 @@ describe('DAQ history over real Socket.IO sessions', () => {
             server.listen(0, '127.0.0.1', resolve);
         });
         const connect = loadBrowserClient();
-        async function session(id) {
+        async function session(id, authenticated = true) {
             const client = connect(`http://127.0.0.1:${server.address().port}`, {
                 transports: ['websocket'], reconnection: false, forceNew: true,
                 autoConnect: false, timeout: 3000,
-                query: { token: jwt.sign({ id, groups: 1 }, SECRET, { expiresIn: '1m' }) }
+                ...(authenticated ? {
+                    query: { token: jwt.sign({ id, groups: 1 }, SECRET, { expiresIn: '1m' }) }
+                } : {})
             });
             clients.push(client);
             client.messages = [];
@@ -118,6 +123,7 @@ describe('DAQ history over real Socket.IO sessions', () => {
         }
         a = await session('operator-a');
         b = await session('operator-b');
+        return session;
     }
 
     function barrier(client) {
@@ -139,6 +145,28 @@ describe('DAQ history over real Socket.IO sessions', () => {
         a.emit('daq-query', query({ from: 1000, to: 1000 + SIX_HOURS * 744 + 1, chunked: true }));
         assert.match((await overLimitRange).error, /maximum range is 186 days/);
 
+        await barrier(a);
+        assert.equal(calls.length, 0);
+    });
+
+    it('rejects a guest query whose large timestamps cannot advance by one chunk', async () => {
+        const createSession = await start(() => []);
+        const guest = await createSession('guest', false);
+        const response = waitForEvent(guest, 'daq-error');
+        const from = 2 ** 78;
+        guest.emit('daq-query', query({ from, to: from + 2 ** 26, chunked: true }));
+
+        assert.match((await response).error, /cannot be safely chunked/);
+        await barrier(guest);
+        assert.equal(calls.length, 0);
+    });
+
+    it('rejects Socket.IO DAQ queries with more than 100 tag IDs', async () => {
+        await start(() => []);
+        const response = waitForEvent(a, 'daq-error');
+        a.emit('daq-query', query({ sids: Array.from({ length: 101 }, (_, index) => `tag-${index}`) }));
+
+        assert.match((await response).error, /maximum 100 tags/);
         await barrier(a);
         assert.equal(calls.length, 0);
     });
