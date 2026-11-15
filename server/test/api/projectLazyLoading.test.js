@@ -127,16 +127,17 @@ describe('Project API - lazy view loading', () => {
         expect(runtime.project.getProjectView.calledOnceWithExactly('v1', ['admin'])).to.equal(true);
     });
 
-    it('returns only device and tag identifiers/names to non-admin users when security is enabled', async () => {
+    it('preserves non-sensitive device configuration for non-admin users when security is enabled', async () => {
         runtime.settings.secureEnabled = true;
 
         const response = await request(server, '/api/project');
 
         expect(response.statusCode).to.equal(200);
-        expect(response.body.devices).to.deep.equal({
-            plc1: { id: 'plc1', name: 'PLC', tags: { tag1: { id: 'tag1', name: 'Temperature' } } }
+        expect(response.body.devices.plc1).to.deep.equal({
+            id: 'plc1', name: 'PLC', type: 'S7', property: { host: '10.0.0.1' },
+            tags: { tag1: { id: 'tag1', name: 'Temperature', address: 'DB1' } }
         });
-        expect(response.body.server).to.equal(undefined);
+        expect(response.body.server.secret).to.equal(undefined);
     });
 
     it('returns complete device configuration to admins when security is enabled', async () => {
