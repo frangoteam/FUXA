@@ -176,7 +176,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client ask device property
         socket.on(Events.IoEventTypes.DEVICE_PROPERTY, (message) => {
             try {
-                if (!isSocketWriteAuthorized(socket)) {
+                if (!isSocketAdminAuthorized(socket)) {
                     logger.warn(`${Events.IoEventTypes.DEVICE_PROPERTY}: unauthorized request from ${socket.userId || 'guest'}`);
                     return;
                 }
@@ -284,8 +284,25 @@ function init(_io, _api, _settings, _log, eventsMain) {
         // client query DAQ values
         socket.on(Events.IoEventTypes.DAQ_QUERY, (msg) => {
             try {
-                if (msg && msg.from && msg.to && msg.sids && msg.sids.length) {
-                    const TIME_CHUNK_SIZE = 60 * 60 * 1000 * 6; // Dimensione del chunk in millisecondi (ad esempio, 1 ora)
+                if (msg && Array.isArray(msg.sids) && msg.sids.length) {
+                    const TIME_CHUNK_SIZE = 6 * 60 * 60 * 1000;
+                    const MAX_TIME_CHUNKS = 744; // Maximum query range: 186 days
+                    const MAX_SIDS = 100;
+                    if (msg.sids.length > MAX_SIDS) {
+                        socket.emit(Events.IoEventTypes.DAQ_ERROR, {
+                            gid: msg.gid,
+                            error: `Invalid DAQ query (maximum ${MAX_SIDS} tags)`
+                        });
+                        return;
+                    }
+                    if (!Number.isFinite(msg.from) || !Number.isFinite(msg.to) || msg.from >= msg.to ||
+                        msg.to - msg.from > TIME_CHUNK_SIZE * MAX_TIME_CHUNKS) {
+                        socket.emit(Events.IoEventTypes.DAQ_ERROR, {
+                            gid: msg.gid,
+                            error: 'Invalid DAQ time range (maximum range is 186 days)'
+                        });
+                        return;
+                    }
                     const timeChunks = utils.chunkTimeRange(msg.from, msg.to, msg.chunked ? TIME_CHUNK_SIZE : 0);
                     const processChunks = async () => {
                         var counter = 1;
@@ -315,6 +332,10 @@ function init(_io, _api, _settings, _log, eventsMain) {
                 }
             } catch (err) {
                 logger.error(`${Events.IoEventTypes.DAQ_QUERY}: ${err}`);
+                socket.emit(Events.IoEventTypes.DAQ_ERROR, {
+                    gid: msg && msg.gid,
+                    error: err && err.message ? err.message : String(err)
+                });
             }
         });
         // client ask alarms status
@@ -402,8 +423,14 @@ function init(_io, _api, _settings, _log, eventsMain) {
         });
         socket.on(Events.IoEventTypes.DEVICE_TAGS_SUBSCRIBE, (message) => {
             try {
-                socket.tagsClientSubscriptions = message.tagsId
-                if (message.sendLastValue) {
+                // Never trust the client payload: a non-array value would make
+                // the broadcast loop below throw on .includes() and abort the
+                // delivery for every other socket (see updateDeviceValues).
+                const tagsId = message && message.tagsId;
+                socket.tagsClientSubscriptions = Array.isArray(tagsId)
+                    ? tagsId.filter(id => typeof id === 'string')
+                    : [];
+                if (message && message.sendLastValue) {
                     var adevs = devices.getDevicesValues();
                     for (var id in adevs) {
                         updateDeviceValues({ id: id, values: adevs[id] || {}});
@@ -601,13 +628,22 @@ function updateDeviceValues(event) {
         //!TOFIX
         if (settings.broadcastAll === false) {
             Array.from(io.sockets.sockets.values()).forEach((socket) => {
-                const tags = Object.values(event.values).filter((tag) => {
-                    return socket.tagsClientSubscriptions.includes(tag.id);
-                });
-                socket.emit(Events.IoEventTypes.DEVICE_VALUES, {
-                    id: event.id,
-                    values: tagsToSend(tags)
-                });
+                // One malformed subscription must not stop the broadcast for
+                // all the other connected clients.
+                try {
+                    const subscriptions = Array.isArray(socket.tagsClientSubscriptions)
+                        ? socket.tagsClientSubscriptions
+                        : [];
+                    const tags = Object.values(event.values).filter((tag) => {
+                        return subscriptions.includes(tag.id);
+                    });
+                    socket.emit(Events.IoEventTypes.DEVICE_VALUES, {
+                        id: event.id,
+                        values: tagsToSend(tags)
+                    });
+                } catch (err) {
+                    logger.error(`${Events.IoEventTypes.DEVICE_VALUES}: ${err.message}`);
+                }
             });
         } else {
             io.emit(Events.IoEventTypes.DEVICE_VALUES, {

@@ -69,10 +69,13 @@ function getUsers(user) {
 function setUsers(query) {
     return new Promise(function (resolve, reject) {
         if (query.username) {
-            usrstorage.setUser(query.username, query.fullname, query.password, query.groups, query.info).then(() => {
+            const groups = settings.userRole && (query.groups === null || query.groups === undefined)
+                ? 0
+                : query.groups;
+            usrstorage.setUser(query.username, query.fullname, query.password, groups, query.info).then(() => {
                 resolve();
                 const info = JSON.parse(query.info);
-                usersMap.set(query.username, { info: info, groups: query.groups });
+                usersMap.set(query.username, { info: info, groups: groups });
             }).catch(function (err) {
                 logger.error(`users.usrstorage-set-users failed! ${err}`);
                 reject(err);

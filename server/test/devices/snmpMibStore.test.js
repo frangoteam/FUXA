@@ -100,6 +100,46 @@ describe('SNMP MIB store', () => {
         assert.equal(logs.info.filter(m => /loaded FUXA-TEST-MIB.mib/.test(m)).length, 1);
     });
 
+    it('names the objects of a module whose imports are in a file loaded later', () => {
+        // AAA-PRODUCTS-MIB imports from ZZZ-SMI, loaded after it in name order
+        fs.writeFileSync(path.join(mibsDir, 'AAA-PRODUCTS-MIB.mib'), `AAA-PRODUCTS-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    OBJECT-TYPE, Integer32 FROM SNMPv2-SMI
+    zzzProducts FROM ZZZ-SMI;
+aaaDevice OBJECT IDENTIFIER ::= { zzzProducts 1 }
+aaaTemperature OBJECT-TYPE
+    SYNTAX Integer32
+    MAX-ACCESS read-only
+    STATUS current
+    DESCRIPTION "Temperature"
+    ::= { aaaDevice 1 }
+END
+`);
+        fs.writeFileSync(path.join(mibsDir, 'ZZZ-SMI.mib'), `ZZZ-SMI DEFINITIONS ::= BEGIN
+IMPORTS
+    enterprises FROM SNMPv2-SMI;
+zzz OBJECT IDENTIFIER ::= { enterprises 8072 9998 }
+zzzProducts OBJECT IDENTIFIER ::= { zzz 1 }
+END
+`);
+        mibStore.refresh();
+        assert.equal(mibStore.toOid('AAA-PRODUCTS-MIB::aaaTemperature.0'), '1.3.6.1.4.1.8072.9998.1.1.1.0');
+        assert.equal(mibStore.toName('1.3.6.1.4.1.8072.9998.1.1.1.0'), 'AAA-PRODUCTS-MIB::aaaTemperature.0');
+    });
+
+    it('retries a broken file only when it is modified', () => {
+        const file = path.join(mibsDir, 'BROKEN-MIB.mib');
+        fs.writeFileSync(file, 'not a mib');
+        mibStore.refresh();
+        const warnings = logger.warn.callCount;
+        mibStore.refresh();
+        assert.equal(logger.warn.callCount, warnings, 'not parsed again');
+        fs.writeFileSync(file, CUSTOM_MIB);
+        fs.utimesSync(file, new Date(), new Date(Date.now() + 2000));
+        mibStore.refresh();
+        assert.equal(mibStore.toOid('FUXA-TEST-MIB::testInt.0'), '1.3.6.1.4.1.8072.9999.1.0');
+    });
+
     it('ignores a missing mibs directory', () => {
         fs.rmSync(mibsDir, { recursive: true, force: true });
         mibStore.refresh();

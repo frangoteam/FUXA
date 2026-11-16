@@ -125,9 +125,7 @@ function getNodesValues(tagsid, fromts, tots, options) {
                     }
                     resolve(result);
                 }
-            }, reason => {
-                reject(reason);
-            });
+            }).catch(reject);
         } catch (err) {
             reject(['ERR', ...tagsid.map(col => 'ERR')]);
         }

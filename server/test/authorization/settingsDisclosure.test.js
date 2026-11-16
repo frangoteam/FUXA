@@ -9,6 +9,10 @@ function makeSettings() {
         language: 'en',
         secureEnabled: true,
         secretCode: 'jwt-secret',
+        https: {
+            key: Buffer.from('tls-private-key'),
+            cert: Buffer.from('tls-certificate')
+        },
         smtp: {
             host: 'smtp.internal',
             port: 587,
@@ -44,6 +48,7 @@ describe('Security - settings disclosure', () => {
             apiIndex._getPublicSettings(settings)
         ]) {
             expect(result).to.not.have.property('secretCode');
+            expect(result).to.not.have.property('https');
             expect(result.smtp).to.not.have.property('password');
             expect(result.daqstore).to.not.have.property('credentials');
         }

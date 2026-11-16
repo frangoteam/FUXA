@@ -13,7 +13,7 @@ export class ButtonActionPropertyComponent implements OnInit {
     @Input() property: GaugeProperty;
 
     modeType = ButtonActionMode;
-    maxHoldTime = HtmlButtonComponent.MaxHoldTime;
+    maxHoldTime = HtmlButtonComponent.MaxHoldTimeSeconds;
 
     ngOnInit() {
         this.property.buttonAction = <ButtonActionProperty>{

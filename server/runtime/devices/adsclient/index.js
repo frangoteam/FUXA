@@ -213,7 +213,7 @@ function ADSclient(_data, _logger, _events, _runtime) {
                     _emitValues(varsValue);
 
                     if (this.addDaq) {
-                        this.addDaq(varsValueChanged, data.name);
+                        this.addDaq(varsValueChanged, data.name, data.id);
                     }
                 } catch (err) {
                     logger.error(`'${data.name}' polling error: ${err}`);

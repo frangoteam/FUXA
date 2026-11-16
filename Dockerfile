@@ -1,5 +1,5 @@
 # --- STAGE 1: Angular Client Builder ---
-FROM node:18-bookworm AS client-builder
+FROM node:22-bookworm AS client-builder
 WORKDIR /usr/src/app/client
 COPY client/package*.json ./
 RUN npm install --no-audit --no-fund
@@ -7,7 +7,7 @@ COPY client/ ./
 RUN npm run build -- --configuration production
 
 # --- STAGE 2: Server & Native Dependencies Builder ---
-FROM node:18-bookworm AS server-builder
+FROM node:22-bookworm AS server-builder
 # Define build arguments with defaults
 ARG NODE_SNAP=false
 ARG INSTALL_ODBC=true
@@ -47,7 +47,7 @@ RUN rm -rf test
 RUN npm run build
 
 # --- STAGE 3: Runner ---
-FROM node:18-bookworm-slim
+FROM node:22-bookworm-slim
 ARG INSTALL_ODBC=true
 WORKDIR /usr/src/app/FUXA
 

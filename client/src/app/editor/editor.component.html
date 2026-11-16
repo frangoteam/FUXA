@@ -269,6 +269,9 @@
             <!-- SVG-EDITOR -->
             <div [style.display]="(editorMode === editorModeType.SVG)?'block':'none' ">
                 <!-- RIGHT BAR -->
+                <!-- SVG-Edit focuses this off-screen bridge while editing text. Keep it
+                     outside collapsible panels so their display state cannot hide it. -->
+                <input id="text" type="text" size="35" />
                 <div class="svg-tools-fly" [style.display]="(isAnySelected)?'block':'none' " (mouseenter)="onFlyEnter()" (touchstart)="onFlyEnter()">
                     <mat-expansion-panel class="svg-workarea-fly-p" (opened)="panelPropertyIdOpenState = true" (closed)="panelPropertyIdOpenState = false" hideToggle="true"
                         expanded="true" style="display:none">
@@ -453,9 +456,6 @@
                                             </select>
                                         </div>
                                     </div>
-
-                                    <!-- Not visible, but still used -->
-                                    <input id="text" type="text" size="35" />
                                 </div>
                                 <div id="image_panel">
                                     <div class="svg-property-split2">

@@ -396,18 +396,19 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                 var db = new sqlite3.Database(dbfile, function (err) {
                     if (err) {
                         logger.error(`daqstorage.bind-daq-data error! '${id}' ${err}`);
-                        reject();
+                        return reject(err);
                     }
                     logger.info(`daqstorage.bind-daq-data '${dbfile}' database`, true);
-                });
-                db.serialize(function () {
-                    db.run("CREATE TABLE if not exists data (dt INTEGER, id INTEGER, value TEXT)", function (err) {
-                        if (err) {
-                            logger.error(`daqstorage.bind-daq-data-to-create-table error! '${id}' ${err}`);
-                            reject();
-                        } else {
-                            resolve(db);
-                        }
+                    db.serialize(function () {
+                        db.run("CREATE TABLE if not exists data (dt INTEGER, id INTEGER, value TEXT)", function (err) {
+                            if (err) {
+                                logger.error(`daqstorage.bind-daq-data-to-create-table error! '${id}' ${err}`);
+                                db.close();
+                                reject(err);
+                            } else {
+                                resolve(db);
+                            }
+                        });
                     });
                 });
             } catch (err) {
@@ -464,7 +465,8 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
         if (fs.existsSync(archive)) {
             fs.readdirSync(archive).forEach(file => {
                 const fromTo = _suffixToTimestamp(file);
-                if (file.indexOf(`_${id}_`) > 0 && fromTo && fromTo.from <= tots && fromTo.to >= fromts) {
+                const devicePrefix = file.split('_').slice(0, -2).join('_');
+                if (devicePrefix === db_daqdata_prefix + id && fromTo && fromTo.from <= tots && fromTo.to >= fromts) {
                     result.push(path.join(archive, file));
                 }
             });
@@ -585,8 +587,9 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
     function _bindAndGetTagValues(dbfile, id, fromts, tots) {
         return new Promise(function (resolve, reject) {
             _bindDaqData(dbfile).then(result => {
-                _getTagValues(result, id, fromts, tots).then(rows => {
+                _getTagValues(result, id, fromts, tots).finally(() => {
                     result.close();
+                }).then(rows => {
                     resolve(rows);
                 }).catch(function (err) {
                     reject(err);
@@ -607,7 +610,7 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                     reject(err);
                 } else {
                     for (var i = 0; i < rows.length; i++) {
-                        rows[i].value =  booleanMapping[rows[i].value] !== undefined ? booleanMapping[rows[i].value] : rows[i].value;
+                        rows[i].value =  Object.prototype.hasOwnProperty.call(booleanMapping, rows[i].value) ? booleanMapping[rows[i].value] : rows[i].value;
                     }
                     resolve(rows);
                 }

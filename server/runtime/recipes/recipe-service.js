@@ -130,8 +130,13 @@ function coerceValue(value, tagType) {
  * Emit a progress event via Socket.IO for a single entry.
  * @param {string} eventType - The IoEventType constant
  * @param {Object} payload - Event payload
+ * @param {number} [gen] - Execution generation that still owns this progress
  */
-function _emitProgress(eventType, payload) {
+function _emitProgress(eventType, payload, gen) {
+    // A canceled operation can finish after a successor has taken over the dialog.
+    if (gen !== undefined && runningRecipes.get(payload.recipeId) !== gen) {
+        return;
+    }
     if (runtime && runtime.io) {
         runtime.io.emit(eventType, payload);
     }
@@ -186,7 +191,7 @@ async function downloadRecipe(recipeId) {
                 index: i,
                 total: total,
                 status: 'writing'
-            });
+            }, gen);
 
             try {
                 var coerced = coerceValue(entry.value, entry.tagType);
@@ -204,7 +209,7 @@ async function downloadRecipe(recipeId) {
                     total: total,
                     status: 'success',
                     value: coerced
-                });
+                }, gen);
 
                 successCount++;
             } catch (err) {
@@ -217,7 +222,7 @@ async function downloadRecipe(recipeId) {
                     total: total,
                     status: 'error',
                     error: err.message
-                });
+                }, gen);
 
                 errors.push({
                     entryId: entry.id,
@@ -247,13 +252,13 @@ async function downloadRecipe(recipeId) {
                 successCount: successCount,
                 errorCount: errorCount,
                 errors: errors
-            });
+            }, gen);
         }
     } catch (err) {
         _emitProgress(Events.IoEventTypes.RECIPE_DOWNLOAD_ERROR, {
             recipeId: recipeId,
             error: err.message
-        });
+        }, gen);
         throw err;
     } finally {
         if (runningRecipes.get(recipeId) === gen) {
@@ -312,7 +317,7 @@ async function uploadRecipe(recipeId) {
                 index: i,
                 total: total,
                 status: 'reading'
-            });
+            }, gen);
 
             try {
                 var value = await runtime.devices.getTagValue(entry.tagId);
@@ -330,7 +335,7 @@ async function uploadRecipe(recipeId) {
                     total: total,
                     status: 'success',
                     value: value
-                });
+                }, gen);
 
                 successCount++;
             } catch (err) {
@@ -343,7 +348,7 @@ async function uploadRecipe(recipeId) {
                     total: total,
                     status: 'error',
                     error: err.message
-                });
+                }, gen);
 
                 errors.push({
                     entryId: entry.id,
@@ -381,13 +386,13 @@ async function uploadRecipe(recipeId) {
                 successCount: successCount,
                 errorCount: errorCount,
                 errors: errors
-            });
+            }, gen);
         }
     } catch (err) {
         _emitProgress(Events.IoEventTypes.RECIPE_UPLOAD_ERROR, {
             recipeId: recipeId,
             error: err.message
-        });
+        }, gen);
         throw err;
     } finally {
         if (runningRecipes.get(recipeId) === gen) {

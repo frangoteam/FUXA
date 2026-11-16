@@ -35,9 +35,15 @@ module.exports = {
 
         // GET recipe types (project data)
         recipesApp.get("/api/recipes/types/:id?", secureFnc, function(req, res) {
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && auth.isGuest) {
+                res.status(401).json({error:"unauthorized_error", message: "Authentication required!"});
+                runtime.logger.error("api get recipe types: Unauthorized guest");
+                return;
+            }
             if (req.params.id) {
                 const type = runtime.project.getRecipe ? runtime.project.getRecipe(req.params.id) : null;
-                if (type) {
+                if (type && _isRecipeTypeVisible(type, auth)) {
                     res.json(type);
                 } else {
                     res.status(404).end();
@@ -45,7 +51,8 @@ module.exports = {
                 return;
             }
             _handlePromise(Promise.resolve(recipeUtils.getRecipeTypes(runtime)), res, function(result) {
-                res.json({ recipes: result || [] });
+                const visibleTypes = (result || []).filter(row => _isRecipeTypeVisible(row.data, auth));
+                res.json({ recipes: visibleTypes });
             }, 'getTypes');
         });
 
@@ -113,9 +120,20 @@ module.exports = {
 
         // GET recipe instances (runtime data)
         recipesApp.get("/api/recipes/instances/:id?", secureFnc, function(req, res) {
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && auth.isGuest) {
+                res.status(401).json({error:"unauthorized_error", message: "Authentication required!"});
+                runtime.logger.error("api get recipe instances: Unauthorized guest");
+                return;
+            }
             if (req.params.id) {
                 _handlePromise(_getRecipeInstance(req.params.id), res, function(result) {
                     if (result) {
+                        const recipeType = result.typeId && runtime.project.getRecipe ? runtime.project.getRecipe(result.typeId) : null;
+                        if (recipeType && !_isRecipeTypeVisible(recipeType, auth)) {
+                            res.status(404).end();
+                            return;
+                        }
                         res.json(result);
                     } else {
                         res.status(404).end();
@@ -128,7 +146,10 @@ module.exports = {
                 ? runtime.recipeStorage.getAllRecipesByType(req.query.typeId)
                 : runtime.recipeStorage.getAllRecipeInstances();
             _handlePromise(promise, res, function(result) {
-                const recipes = (result || []).map(row => ({
+                const recipes = (result || []).filter(row => {
+                    const type = row.data?.typeId && runtime.project.getRecipe ? runtime.project.getRecipe(row.data.typeId) : null;
+                    return !type || _isRecipeTypeVisible(type, auth);
+                }).map(row => ({
                     id: row.id,
                     data: recipeUtils.mergeInstanceWithTemplate(runtime, row.data)
                 }));
@@ -152,6 +173,19 @@ module.exports = {
 
             try {
                 if (auth.secureEnabled && !_authorizeRecipeTypeForData(req.body, auth, res, 'save instance')) {
+                    return;
+                }
+                // Updating an existing instance must also be authorized against
+                // the type currently stored for that ID. Otherwise a caller
+                // permitted to write type B could submit type B with the ID of
+                // an instance belonging to type A and replace it.
+                if (auth.secureEnabled && req.body && req.body.id) {
+                    _handlePromise(runtime.recipeStorage.getRecipeData(req.body.id), res, function(existing) {
+                        if (existing && !_authorizeRecipeTypeForData(existing, auth, res, 'update instance')) {
+                            return;
+                        }
+                        _saveRecipeInstance(req.body, res);
+                    }, 'getInstanceForUpdate');
                     return;
                 }
                 _saveRecipeInstance(req.body, res);
@@ -338,6 +372,16 @@ module.exports = {
 
         // POST export recipe — export as JSON or CSV
         recipesApp.post("/api/recipes/export", secureFnc, function(req, res) {
+            if (res.statusCode === 403) {
+                runtime.logger.error("api post recipes export: Tocken Expired");
+                return;
+            }
+            const auth = _getAuthContext(req);
+            if (auth.secureEnabled && !auth.isAdmin) {
+                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
+                runtime.logger.error("api post recipes export: Admin permission required");
+                return;
+            }
             try {
                 if (!req.body || !req.body.id) {
                     res.status(400).json({ error: 'Missing id in request body' });
@@ -349,7 +393,6 @@ module.exports = {
                         res.status(404).json({ error: 'Recipe not found' });
                         return;
                     }
-
                     var format = req.body.format || 'json';
                     if (format === 'json') {
                         res.setHeader('Content-Type', 'application/json');
@@ -728,6 +771,14 @@ function _isRecipeTypeOperationAllowed(recipeType, permission) {
 
     const result = runtime.checkPermission(permission, recipeType, false, true);
     return !!(result && result.enabled);
+}
+
+function _isRecipeTypeVisible(recipeType, auth) {
+    if (!recipeType || !auth.secureEnabled || auth.isAdmin || !runtime.checkPermission) {
+        return true;
+    }
+    const result = runtime.checkPermission(auth.permission, recipeType, false, true);
+    return !!(result && result.show);
 }
 
 function _getAuthContext(req) {

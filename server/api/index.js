@@ -256,6 +256,8 @@ function getPublicSettings(settings) {
 function getSanitizedSettings(settings) {
     const tosend = JSON.parse(JSON.stringify(settings));
     delete tosend.secretCode;
+    // TLS options may contain private key and certificate material.
+    delete tosend.https;
     if (tosend.smtp) {
         delete tosend.smtp.password;
     }
@@ -344,11 +346,11 @@ async function getCurrentTokenUser(req) {
 
     try {
         const users = await runtime.users.getUsers({ username: req.userId });
-        if (users && users.length && !utils.isNullOrUndefined(users[0].groups)) {
+        if (users && users.length && (!utils.isNullOrUndefined(users[0].groups) || runtime.settings.userRole)) {
             return {
                 username: users[0].username,
                 fullname: users[0].fullname,
-                groups: users[0].groups,
+                groups: utils.isNullOrUndefined(users[0].groups) ? 0 : users[0].groups,
                 info: users[0].info
             };
         }

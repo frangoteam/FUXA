@@ -73,6 +73,8 @@ export class TagPropertySnmpScanComponent implements OnInit, OnDestroy {
                     type: x.type || 'Integer',
                     value: (x.value === null || x.value === undefined) ? '' : String(x.value)
                 }));
+                // the server marks the OIDs that are already tags of the device, also when the tag address is a MIB name
+                (res?.result?.items || []).filter((x: any) => x.existing).forEach((x: any) => this.existingOids.add(x.address));
                 this.dataSource.data = items;
 
                 // PRE-SELECT existing ones (checkbox true, but not toggleable)

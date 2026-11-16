@@ -76,6 +76,7 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	databitsType = [7, 8];
 	stopbitsType = [1, 1.5, 2];
 	parityType = ['None', 'Odd', 'Even'];
+	melsecFrameType = ['1E', '3E'];
 	methodType = ['GET'];//, 'POST'];
 	parserType = ['JSON'];//, 'CSV'];
 	hostInterfaces = [];
@@ -203,6 +204,10 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 			});
 		}
 
+		if (this.data.device.type === DeviceType.SiemensS7) {
+			this.data.device.property = this.data.device.property || {};
+			this.data.device.property.driver = this.data.device.property.driver || 'snap7';
+		}
 		if (this.data.device.property) {
 			if (!this.data.device.property.baudrate) {
 				this.data.device.property.baudrate = 9600;
@@ -418,6 +423,9 @@ export class DevicePropertyComponent implements OnInit, OnDestroy {
 	}
 
 	isValid(device): boolean {
+		if (this.isToRemove) {
+			return true;
+		}
 		if (!device.name || !device.type) {
 			return false;
 		}

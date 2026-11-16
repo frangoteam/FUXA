@@ -138,6 +138,23 @@ export class FlexVariableComponent implements OnInit {
         this.onChanged();
     }
 
+    onTagPaste(event: ClipboardEvent) {
+        const pastedValue = event.clipboardData?.getData('text')?.trim().toLowerCase();
+        if (!pastedValue) {
+            return;
+        }
+        const matches = this.devices
+            .flatMap(device => device.tags)
+            .filter(tag => tag.name?.toLowerCase() === pastedValue);
+        if (matches.length !== 1) {
+            return;
+        }
+        event.preventDefault();
+        this.variableId = matches[0].id;
+        this.tagFilter.setValue(matches[0]);
+        this.onChanged();
+    }
+
     getDeviceName() {
         let device = DevicesUtils.getDeviceFromTagId(this.data.devices || {}, this.variableId);
         if (device) {

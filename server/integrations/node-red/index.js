@@ -3,6 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 
 const BASE_PATH = (process.env.BASE_PATH || '').replace(/\/+$/, '');
 
@@ -235,6 +236,48 @@ const NODE_RED_AUTH_COOKIE_OPTIONS = {
     sameSite: 'lax',
 };
 
+function isAuthorizedNodeRedWebSocket(request, { settings, authJwt }) {
+    if (!settings.secureEnabled || settings.nodeRedAuthMode === 'legacy-open') {
+        return true;
+    }
+
+    const requestUrl = new URL(request.url || '/', 'http://localhost');
+    const requestPath = getPathWithoutBasePath(requestUrl.pathname);
+    if (!requestPath.startsWith('/nodered/')) {
+        return true;
+    }
+
+    const cookies = (request.headers.cookie || '').split(';');
+    const cookieToken = cookies.reduce((value, cookie) => {
+        const [name, ...parts] = cookie.trim().split('=');
+        return name === 'nodered_auth' ? parts.join('=') : value;
+    }, null);
+    const token = request.headers['x-access-token'] || requestUrl.searchParams.get('token') || cookieToken;
+    if (!token) return false;
+
+    try {
+        const decoded = jwt.verify(token, authJwt.secretCode);
+        return !!decoded?.id && decoded.type !== 'refresh' &&
+            !authJwt.isGuestUser(decoded.id, decoded.groups) &&
+            authJwt.haveAdminPermission(decoded.groups);
+    } catch {
+        return false;
+    }
+}
+
+function installNodeRedWebSocketAuth(server, { settings, authJwt }) {
+    // Express middleware does not run for HTTP upgrade requests. Run this before
+    // Node-RED's upgrade listeners so unauthorized sockets cannot reach /comms.
+    server.prependListener('upgrade', (request, socket) => {
+        const requestPath = getPathWithoutBasePath(new URL(request.url || '/', 'http://localhost').pathname);
+        if (!requestPath.startsWith('/nodered/')) return;
+        if (isAuthorizedNodeRedWebSocket(request, { settings, authJwt })) return;
+
+        socket.write('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\nContent-Length: 0\r\n\r\n');
+        socket.destroy();
+    });
+}
+
 const verifyApiKey = (runtime, apiKey) => {
     return runtime.apiKeys.getApiKeys().then(stored => {
         const now = Date.now();
@@ -422,6 +465,7 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
     };
 
     // Initialize Node-RED on the existing HTTP server (must be done before server.listen)
+    installNodeRedWebSocketAuth(server, { settings, authJwt });
     RED.init(server, redSettings);
 
     const allowDashboard = createNodeRedAuthMiddleware({ settings, runtime, logger, authJwt });
@@ -498,6 +542,8 @@ async function mountNodeRedIfInstalled({ app, server, settings, runtime, logger,
 module.exports = {
     mountNodeRedIfInstalled,
     createNodeRedAuthMiddleware,
+    isAuthorizedNodeRedWebSocket,
+    installNodeRedWebSocketAuth,
     createDevicePropertyHelpers,
     createNodeRedRuntimeHelpers,
     normalizeScriptParameters,

@@ -1,8 +1,18 @@
 :host {
     .container {
-        min-width: 840px;
-        min-height: 600px;
+        display: flex;
+        flex-direction: column;
+        width: min(1000px, calc(100vw - 80px));
+        max-height: calc(100vh - 120px);
         position: relative;
+    }
+
+    [mat-dialog-content] {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: hidden;
     }
 
     .toolbox {
@@ -13,28 +23,77 @@
         flex-wrap: wrap;
     }
 
+    // base OID, max results and the search button stay together on one line
+    .scan-group {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        flex: 1 1 360px;
+        min-width: 0;
+    }
+
     .my-form-field {
-        width: 240px;
+        width: auto;
+        min-width: 0;
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
+    .oid-field {
+        flex: 1 1 160px;
+        max-width: 320px;
     }
 
     .max-field {
-        width: 90px;
+        flex: 0 0 80px;
+    }
+
+    .filter-field {
+        flex: 1 1 160px;
+        max-width: 260px;
     }
 
     .field-action {
         flex: 0 0 auto;
     }
 
+    .select-all {
+        flex: 0 0 auto;
+        margin-left: auto;
+    }
+
     .loading {
         display: flex;
         align-items: center;
-        gap:12px;
-        margin-bottom:8px;
+        gap: 12px;
+        margin-bottom: 8px;
     }
 
     .error {
         color: red;
         margin-bottom: 8px;
+    }
+
+    .found {
+        opacity: .8;
+        margin-bottom: 6px;
+    }
+
+    .table-scroll {
+        flex: 1 1 auto;
+        min-height: 160px;
+        overflow: auto;
+    }
+
+    .scan-table {
+        width: 100%;
+    }
+
+    .oid-cell {
+        white-space: nowrap;
     }
 
     .value-cell {
@@ -44,13 +103,11 @@
         white-space: nowrap;
     }
 
-    .mat-header-row {
-        top: 0;
-        position: sticky;
-        z-index: 1;
+    .mat-mdc-header-cell {
+        font-size: 15px;
     }
 
-    .mat-header-cell {
-        font-size: 15px;
+    mat-paginator {
+        flex: 0 0 auto;
     }
 }

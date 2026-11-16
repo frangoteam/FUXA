@@ -64,6 +64,9 @@ function load() {
             for (var ig = 0; ig < grows.length; ig++) {
                 if (grows[ig].name === ProjectDataCmdType.HmiLayout) {
                     data.hmi[grows[ig].name] = JSON.parse(grows[ig].value);
+                } else if (grows[ig].name === ProjectDataCmdType.ClientAccess) {
+                    // Persist under camelCase so client and getClientAccess stay in sync
+                    data.clientAccess = JSON.parse(grows[ig].value);
                 } else {
                     data[grows[ig].name] = JSON.parse(grows[ig].value);
                 }
@@ -434,6 +437,13 @@ function setClientAccess(clientAccess) {
 }
 
 /**
+ * Frontend Script Access allow-list (system functions callable from client scripts)
+ */
+function getClientAccess() {
+    return data.clientAccess || data['client-access'] || { scriptSystemFunctions: [] };
+}
+
+/**
  * Set or add if not exist (check with taxt.name) the Text in Project
  * @param {*} text
  */
@@ -762,6 +772,27 @@ function getProjectView(viewId, userPermission) {
 function setProject(prjcontent) {
     return new Promise(function (resolve, reject) {
         try {
+            // Lazy responses contain view summaries, not replacement content.
+            const views = prjcontent?.hmi?.views;
+            if (Array.isArray(views) && views.some(view => view?.lazy === true)) {
+                const savedViews = new Map((data.hmi?.views || []).map(view => [view.id, view]));
+                const fullViews = [];
+                for (const view of views) {
+                    if (view?.lazy !== true) {
+                        fullViews.push(view);
+                        continue;
+                    }
+                    const savedView = savedViews.get(view.id);
+                    if (!savedView || savedView.lazy === true) {
+                        reject({code: 'lazy_view_not_found', message: `Unable to resolve lazy view '${view.id}'.`});
+                        return;
+                    }
+                    const fullView = Object.assign({}, savedView, view);
+                    delete fullView.lazy;
+                    fullViews.push(fullView);
+                }
+                prjcontent = Object.assign({}, prjcontent, {hmi: Object.assign({}, prjcontent.hmi, {views: fullViews})});
+            }
             prjstorage.clearAll().then(result => {
                 var scs = [];
                 Object.keys(prjcontent).forEach((key) => {
@@ -1148,6 +1179,15 @@ function _filterProjectPermission(userPermission, options = {}) {
         result.hmi.views = result.hmi.views.filter(view => view.id === options.viewId || view.name === options.viewId);
     }
     const projectPermission = runtime.checkPermission(userPermission, false);
+    if (Array.isArray(result.recipes)) {
+        result.recipes = result.recipes.filter(recipe => {
+            if (!recipe || !runtime.checkPermission) {
+                return !!recipe;
+            }
+            const recipePermission = runtime.checkPermission(userPermission, recipe, false, true);
+            return recipePermission?.show !== false;
+        });
+    }
     if (!projectPermission.show || !projectPermission.enabled) {   // is admin or secure disabled
         // from device remove the not used (no permission)
         // delete result.devices;
@@ -1330,6 +1370,7 @@ module.exports = {
     getNotifications: getNotifications,
     getScripts: getScripts,
     getReports: getReports,
+    getClientAccess: getClientAccess,
     getArMarkers: getArMarkers,
     getDeviceProperty: getDeviceProperty,
     setDeviceProperty: setDeviceProperty,

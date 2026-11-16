@@ -86,6 +86,9 @@ export class UserEditComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.seloptions) {
             if (this.isRolePermission()) {
                 roles = this.seloptions.selected?.map(role => role.id);
+                // Roles are authoritative in role mode; keep the legacy group
+                // field populated with a non-privileged value for JWT lifecycle.
+                this.data.user.groups = this.data.user.groups ?? 0;
             } else {
                 this.data.user.groups = UserGroups.GroupsToValue(this.seloptions.selected);
             }
