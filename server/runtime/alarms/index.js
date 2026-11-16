@@ -59,7 +59,11 @@ function AlarmsManager(_runtime) {
     }
 
     this.reset = function () {
-        this.clear();
+        // Reload alarm definitions only. Clearing here discarded every active
+        // alarm together with its ontime on any project edit (set-device,
+        // del-device, set-alarm, del-alarm), losing the real fault start.
+        // Explicit clearing is still available via clear(), restart(true) and
+        // POST /api/alarmsClear.
         status = AlarmsStatusEnum.LOAD;
     }
 
@@ -310,7 +314,11 @@ function AlarmsManager(_runtime) {
             Object.keys(alarms).forEach(alrkey => {
                 var groupalarms = alarms[alrkey];
                 var tag = devices.getDeviceValue(alarms[alrkey]['variableSource'], alrkey);
-                if (tag !== null) {
+                // A missing value means "unknown" (device reloading, tag not
+                // polled yet), not "fault cleared". Evaluating it would take
+                // Number(null) === 0 and mark active alarms as recovered,
+                // which deletes them and restarts their ontime afterwards.
+                if (tag !== null && tag.value !== null && tag.value !== undefined) {
                     groupalarms.forEach(alr => {
                         var value = _checkBitmask(alr, tag.value);
                         if (alr.check(time, tag.ts, value, tag.value)) {
