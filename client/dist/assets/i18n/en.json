@@ -1909,6 +1909,7 @@
     "dlg.app-settings-node-red-auth": "Node-RED access mode",
     "dlg.app-settings-node-red-auth-secure": "Secure (Authentication required)",
     "dlg.app-settings-node-red-auth-legacy": "Legacy (open)",
+    "dlg.app-settings-node-red-auth-warning": "Security warning: Node-RED endpoints may be accessible without authentication.",
     "dlg.app-settings-swagger": "Swagger",
     "dlg.app-settings-swagger-info": "Changes will be applied after server restart.",
     "dlg.app-settings-alarms": "Alarms",
