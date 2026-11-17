@@ -25,4 +25,14 @@
         max-height: 220px;
         overflow-y: auto;
     }
+
+    .state-mappings {
+        max-height: 280px;
+        overflow-y: auto;
+    }
+
+    .state-mapping {
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+    }
 }
