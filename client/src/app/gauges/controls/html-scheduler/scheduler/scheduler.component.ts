@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../../../_services/auth.service';
 import { Utils } from '../../../../_helpers/utils';
 import { TranslateService } from '@ngx-translate/core';
+import { ToastNotifierService } from '../../../../_services/toast-notifier.service';
 
 @Component({
     selector: 'app-scheduler',
@@ -45,6 +46,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     selectedDevice: string = 'OVERVIEW';
     selectedDeviceIndex: number = -1;
     deviceList: any[] = [];
+    visibleDeviceList: any[] = [];
     hoveredDevice: string = null;
 
     activeStates: Map<string, boolean> = new Map();
@@ -184,7 +186,8 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         private dialog: MatDialog,
         private authService: AuthService,
         private translateService: TranslateService,
-        private ngZone: NgZone
+        private ngZone: NgZone,
+        private toastNotifier: ToastNotifierService
     ) { }
 
     ngOnInit() {
@@ -278,8 +281,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.property) {
+            let schedulesMigrated = false;
             if (changes.property.previousValue && changes.property.currentValue) {
-                this.migrateSchedulesOnPropertyChange(
+                schedulesMigrated = this.migrateSchedulesOnPropertyChange(
                     changes.property.previousValue.devices || [],
                     changes.property.currentValue.devices || []
                 );
@@ -288,10 +292,10 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             this.initializeDevices();
             this.applyCustomColors();
 
-            // we need to save to server so the actions are persisted and executed server-side
-            if (!this.isEditor) {
+            if (!this.isEditor && schedulesMigrated && this.canAutoSynchronize()) {
                 this.saveSchedulesToServer(true);
             }
+
         }
     }
 
@@ -360,6 +364,8 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             this.deviceList = [];
         }
 
+        this.visibleDeviceList = this.deviceList.filter(device => this.canSeeDevice(device.name));
+
         // Set initial view
         if (this.deviceList.length > 1) {
             this.selectedDevice = 'OVERVIEW';
@@ -385,7 +391,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             return { show: true, enabled: true };
         }
 
-        const permission = this.authService.checkPermission(this.property);
+        const permission = this.authService?.checkPermission?.(this.property);
         return permission || { show: true, enabled: true };
     }
 
@@ -408,7 +414,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             return this.checkMasterPermission();
         }
 
-        const permission = this.authService.checkPermission(device);
+        const permission = this.authService?.checkPermission?.(device);
         return permission || { show: true, enabled: true };
     }
 
@@ -417,6 +423,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
      * @returns boolean
      */
     canModifyScheduler(): boolean {
+        if (this.authService?.isGuestOrAnonymousUser?.()) {
+            return false;
+        }
         const permission = this.checkMasterPermission();
         return permission.enabled;
     }
@@ -431,12 +440,24 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         return permission.show;
     }
 
+    getVisibleDevices(): any[] {
+        return this.visibleDeviceList;
+    }
+
+    private canAutoSynchronize(): boolean {
+        return this.canModifyScheduler() &&
+            this.deviceList.every(device => this.canModifyDevice(device.name));
+    }
+
     /**
      * Check if user can modify a specific device's events
      * @param deviceName - The name of the device
      * @returns boolean
      */
     canModifyDevice(deviceName: string): boolean {
+        if (!this.canModifyScheduler()) {
+            return false;
+        }
         const device = this.deviceList.find(d => d.name === deviceName);
         if (!device) {
             return false;
@@ -466,9 +487,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
      * CRITICAL: Migrate schedules when device names or variableIds change in properties
      * This ensures data consistency when users update device configurations
      */
-    migrateSchedulesOnPropertyChange(oldDevices: any[], newDevices: any[]) {
+    migrateSchedulesOnPropertyChange(oldDevices: any[], newDevices: any[]): boolean {
         if (!oldDevices || !newDevices || oldDevices.length === 0) {
-            return;
+            return false;
         }
 
         let changesMade = false;
@@ -552,9 +573,8 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         // Apply migrated schedules
         if (changesMade) {
             this.schedules = newSchedules;
-            // Save to server to persist changes in database - force update to ensure changes are saved
-            this.saveSchedulesToServer(true);
         }
+        return changesMade;
     }
 
     /**
@@ -562,16 +582,6 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
      * This handles cases where properties were changed but schedules weren't migrated
      */
     syncSchedulesWithDeviceList(storedDevices?: any[]) {
-        // The server enforces every stored device, even when it has no events.
-        // Republish removed/rebound devices so stale tags are no longer controlled.
-        let changesMade = Array.isArray(storedDevices) && (
-            storedDevices.length !== this.deviceList.length ||
-            storedDevices.some((device, index) =>
-                device.name !== this.deviceList[index].name ||
-                device.variableId !== this.deviceList[index].variableId
-            )
-        );
-
         // Create a map of device name -> current variableId
         const deviceMap = new Map<string, string>();
         this.deviceList.forEach(device => {
@@ -579,6 +589,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         });
 
         // Update variableIds in all schedules to match current device configuration
+        let schedulesChanged = false;
         Object.keys(this.schedules).forEach(deviceName => {
             const currentVariableId = deviceMap.get(deviceName);
 
@@ -587,7 +598,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 this.schedules[deviceName].forEach(schedule => {
                     if (schedule.variableId !== currentVariableId) {
                         schedule.variableId = currentVariableId;
-                        changesMade = true;
+                        schedulesChanged = true;
                     }
                 });
             } else {
@@ -595,8 +606,16 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             }
         });
 
-        // Save if any changes were made
-        if (changesMade) {
+        // Persist only when the stored device bindings differ from the current
+        // configuration. Permission-only property changes do not trigger writes.
+        const devicesChanged = Array.isArray(storedDevices) && (
+            storedDevices.length !== this.deviceList.length ||
+            storedDevices.some((device, index) =>
+                device.name !== this.deviceList[index].name ||
+                device.variableId !== this.deviceList[index].variableId
+            )
+        );
+        if ((devicesChanged || schedulesChanged) && this.canAutoSynchronize()) {
             this.saveSchedulesToServer(true);
         }
     }
@@ -637,11 +656,9 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 this.initializeActiveStates();
                 this.cdr.detectChanges();
 
-                // This ensures server has deviceActions even without client intervention
-                if (this.property?.deviceActions && !data?.settings?.deviceActions) {
+                // Migrate server-side actions once when missing from stored data.
+                if (this.property?.deviceActions && !data?.settings?.deviceActions && this.canAutoSynchronize()) {
                     this.saveSchedulesToServer(true);
-                } else if (!this.property?.deviceActions && data?.settings?.deviceActions) {
-
                 }
 
                 if (!this.isEditor) {
@@ -682,7 +699,10 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
                 });
             }
         });
-        this.saveSchedulesToServer(true);
+        // Persist the one-time legacy schedule format migration.
+        if (this.canAutoSynchronize()) {
+            this.saveSchedulesToServer(true);
+        }
     }
 
     getDeviceNameByIndex(index: number): string {
@@ -743,6 +763,7 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
         const deviceGroups = [];
 
         Object.keys(this.schedules).forEach(deviceName => {
+            if (!this.canSeeDevice(deviceName)) return;
             const schedules = this.schedules[deviceName] || [];
             if (schedules.length === 0) return;
 
@@ -874,6 +895,10 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
             },
             error: (error) => {
                 console.error('Error saving schedules:', error);
+                const messageKey = error?.status === 401
+                    ? 'msg.operation-unauthorized'
+                    : 'msg.project-save-error';
+                this.toastNotifier?.notifyError(messageKey);
             }
         });
     }
@@ -1194,7 +1219,6 @@ export class SchedulerComponent implements OnInit, OnDestroy, OnChanges, AfterVi
     private transitionWatcher: number = 0;
     private recentTagWrites: Set<string> = new Set();
     private tagWriteTimeout: { [key: string]: any } = {};
-
     initializeEventDrivenScheduler() {
 
         this.loadDeviceStatesForDisplay();

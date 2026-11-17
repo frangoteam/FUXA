@@ -37,12 +37,11 @@ function init(settings, _logger, _runtime) {
         setAllInitialStates();
     });
 
-    // Load existing schedulers and create jobs
-    loadSchedulers();
-
     return Promise.resolve({
         updateScheduler,
-        stopScheduler
+        stopScheduler,
+        loadSchedulers,
+        reconcileProjectSchedulers
     });
 }
 
@@ -51,15 +50,15 @@ function init(settings, _logger, _runtime) {
  */
 async function loadSchedulers() {
     try {
-        const schedulers = await runtime.schedulerStorage.getAllSchedulers();
-
-        // Get project data to access deviceActions from property
-        let projectData = null;
-        try {
-            projectData = await runtime.project.getProject(null, null);
-        } catch (err) {
-            logger.error('Failed to load project data:', err.message);
+        stopAllSchedulers();
+        // Runtime initialization can start scheduler storage before project data
+        // is loaded. Reconcile only after project.load() has populated the HMI.
+        const projectData = await runtime.project.getProject(null, null);
+        if (!projectData) {
+            throw new Error('Project data is not available; scheduler jobs were not loaded');
         }
+        await reconcileProjectSchedulers(projectData, false);
+        const schedulers = await runtime.schedulerStorage.getAllSchedulers();
 
         for (const scheduler of schedulers) {
             if (scheduler.id && scheduler.data) {
@@ -98,6 +97,79 @@ async function loadSchedulers() {
 
     } catch (error) {
         logger.error(`Error loading schedulers: ${error.message}`);
+    }
+}
+
+/**
+ * Reconcile persisted scheduler definitions against the actual scheduler gauges
+ * in the project. This removes orphaned controls/devices before jobs are started
+ * and applies project edits immediately when a view is saved.
+ */
+async function reconcileProjectSchedulers(projectData, rebuildJobs = true) {
+    if (!projectData) {
+        projectData = await runtime.project.getProject(null, null);
+    }
+    if (!projectData || !projectData.hmi || !Array.isArray(projectData.hmi.views)) {
+        throw new Error('Cannot reconcile scheduler data without a loaded project view list');
+    }
+
+    const schedulerControls = new Map();
+    for (const view of projectData.hmi.views) {
+        for (const item of Object.values(view.items || {})) {
+            if (item?.id && item.type?.startsWith('svg-ext-own_ctrl-scheduler')) {
+                schedulerControls.set(item.id, item);
+            }
+        }
+    }
+
+    const persistedSchedulers = await runtime.schedulerStorage.getAllSchedulers();
+    for (const scheduler of persistedSchedulers) {
+        const control = schedulerControls.get(scheduler.id);
+        if (!control) {
+            await removeScheduler(scheduler.id);
+            await runtime.schedulerStorage.deleteSchedulerData(scheduler.id);
+            logger.info(`Removed orphaned scheduler ${scheduler.id}`);
+            continue;
+        }
+
+        const oldData = scheduler.data || {};
+        const oldSettings = oldData.settings || {};
+        const property = control.property || {};
+        const hasProjectDevices = Array.isArray(property.devices);
+        const controlDevices = hasProjectDevices ? property.devices : (oldSettings.devices || []);
+        // Keep scheduler device/tag references even if the project device or tag
+        // was deleted. The scheduler remains configured and may work again if
+        // that tag is restored; failed writes are handled by writeTagFromEvent.
+        const devices = controlDevices.map(device => ({
+            ...device,
+            name: device.name || device.label,
+            variableId: device.variableId
+        }));
+        const deviceNames = new Set(devices.map(device => device.name).filter(Boolean));
+        const schedules = {};
+        for (const [deviceName, deviceSchedules] of Object.entries(oldData.schedules || {})) {
+            if (!deviceNames.has(deviceName) || !Array.isArray(deviceSchedules)) continue;
+            const device = devices.find(candidate => candidate.name === deviceName);
+            schedules[deviceName] = device?.variableId
+                ? deviceSchedules.map(event => ({ ...event, variableId: device.variableId }))
+                : deviceSchedules;
+        }
+
+        const settings = {
+            ...oldSettings,
+            devices,
+            deviceActions: Array.isArray(property.deviceActions)
+                ? property.deviceActions.filter(action => deviceNames.has(action.deviceName))
+                : (oldSettings.deviceActions || []).filter(action => deviceNames.has(action.deviceName))
+        };
+        const newData = { ...oldData, schedules, settings };
+        if (JSON.stringify(newData) === JSON.stringify(oldData)) continue;
+
+        await runtime.schedulerStorage.setSchedulerData(scheduler.id, newData);
+        if (rebuildJobs) {
+            await updateScheduler(scheduler.id, newData, oldData);
+        }
+        logger.info(`Reconciled scheduler ${scheduler.id} with project devices`);
     }
 }
 
@@ -1342,12 +1414,25 @@ function stopScheduler(schedulerId) {
     let cancelled = 0;
 
     for (const [jobId, job] of activeJobs) {
-        if (jobId.startsWith(schedulerId)) {
+        if (jobId.startsWith(`${schedulerId}_`)) {
             job.cancel();
             activeJobs.delete(jobId);
             cancelled++;
         }
     }
+}
+
+function stopAllSchedulers() {
+    for (const job of activeJobs.values()) {
+        job.cancel();
+    }
+    activeJobs.clear();
+    for (const [eventKey, activeData] of activeEventModeSchedules) {
+        if (activeData.interval) clearInterval(activeData.interval);
+        if (activeData.endTimeout) clearTimeout(activeData.endTimeout);
+        activeEventModeSchedules.delete(eventKey);
+    }
+    return Promise.resolve();
 }
 
 /**
@@ -1358,13 +1443,20 @@ async function removeScheduler(schedulerId) {
         const schedulers = await runtime.schedulerStorage.getAllSchedulers();
         const scheduler = schedulers.find(s => s.id === schedulerId);
 
+        stopScheduler(schedulerId);
+
+        for (const [eventKey, activeData] of activeEventModeSchedules) {
+            if (activeData.schedulerId !== schedulerId) continue;
+            if (activeData.interval) clearInterval(activeData.interval);
+            if (activeData.endTimeout) clearTimeout(activeData.endTimeout);
+            activeEventModeSchedules.delete(eventKey);
+        }
+
         if (scheduler?.data?.settings?.devices) {
             for (const device of scheduler.data.settings.devices) {
                 await writeTagFromEvent(device.variableId, 0, 'Scheduler deleted');
             }
         }
-
-        stopScheduler(schedulerId);
 
     } catch (error) {
         logger.error(`Error in removeScheduler: ${error.message}`);
@@ -1602,7 +1694,10 @@ async function handleRunScript(action) {
 
 module.exports = {
     init,
+    loadSchedulers,
+    reconcileProjectSchedulers,
     updateScheduler,
     stopScheduler,
+    stopAllSchedulers,
     removeScheduler
 };
