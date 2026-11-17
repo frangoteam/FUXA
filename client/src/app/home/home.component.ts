@@ -331,13 +331,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 // resync the display in case the rejected write's optimistic value is still showing (e.g. user cancelled sign-in)
                 this.hmiService.askDeviceValues();
                 if (!result) {
-                    this.translateService.get('msg.signin-unauthorized').subscribe((txt: string) => {
-                        this.toastr.error(txt, '', {
-                            timeOut: 3000,
-                            closeButton: true,
-                            disableTimeOut: true
-                        });
-                    });
                     return;
                 }
                 const userInfo = new UserInfo(this.authService.getUser()?.info);
