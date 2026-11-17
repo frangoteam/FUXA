@@ -33,6 +33,7 @@ var alarmsMgr;
 var notificatorMgr;
 var scriptsMgr;
 var jobsMgr;
+var schedulerInitPromise = Promise.resolve();
 var tagsSubscription = new Map();
 var socketPool = new Map();
 var socketMutex = new Map();
@@ -74,7 +75,7 @@ function init(_io, _api, _settings, _log, eventsMain) {
     daqstorage.init(settings, logger, runtime);
 
     // Initialize scheduler services
-    schedulerStorage.init(settings, logger, runtime).then(() => {
+    schedulerInitPromise = schedulerStorage.init(settings, logger, runtime).then(() => {
         return schedulerService.init(settings, logger, runtime);
     }).then(() => {
         logger.info('runtime init scheduler services successful!', true);
@@ -482,6 +483,8 @@ function start() {
     return new Promise(function (resolve, reject) {
         // load project
         project.load().then(result => {
+            return schedulerInitPromise.then(() => schedulerService.loadSchedulers());
+        }).then(() => {
             // start to comunicate with devices
             devices.start().then(function () {
                 resolve(true);
@@ -539,6 +542,9 @@ function stop() {
             scriptsMgr.stop().catch(function (err) {
                 logger.error('runtime.failed-to-stop-scriptsMgr: ' + err);
             }),
+            schedulerService.stopAllSchedulers().catch(function (err) {
+                logger.error('runtime.failed-to-stop-schedulers: ' + err);
+            }),
             jobsMgr.stop().catch(function (err) {
                 logger.error('runtime.failed-to-stop-jobsMgr: ' + err);
             })
@@ -568,6 +574,14 @@ function update(cmd, data) {
                 scriptsMgr.updateScript(data);
             } else if (cmd === project.ProjectDataCmdType.DelScript) {
                 scriptsMgr.removeScript(data);
+            } else if (cmd === project.ProjectDataCmdType.SetView || cmd === project.ProjectDataCmdType.DelView) {
+                schedulerInitPromise.then(() => schedulerService.reconcileProjectSchedulers()).then(() => {
+                    resolve(true);
+                }).catch(err => {
+                    logger.error('runtime.failed-to-reconcile-schedulers: ' + err);
+                    reject(err);
+                });
+                return;
             } else if (cmd === project.ProjectDataCmdType.SetReport || cmd === project.ProjectDataCmdType.DelReport) {
                 jobsMgr.reset();
             }

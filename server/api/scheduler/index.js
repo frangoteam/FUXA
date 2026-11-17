@@ -30,7 +30,28 @@ module.exports = {
             try {
                 if (req.query && req.query.id) {
                     var schedulerId = req.query.id;
-                    runtime.schedulerStorage.getSchedulerData(schedulerId).then(result => {
+                    const permission = checkGroupsFnc(req);
+                    Promise.all([
+                        runtime.schedulerStorage.getSchedulerData(schedulerId),
+                        getSchedulerControl(schedulerId, permission)
+                    ]).then(([result, control]) => {
+                        const access = getResourcePermission(permission, control?.property);
+                        if (!access.show) {
+                            return res.status(403).json({error:"unauthorized_error", message: "Forbidden!"});
+                        }
+                        if (result && control?.property?.devices && runtime.checkPermission) {
+                            const visibleDevices = new Set(control.property.devices
+                                .filter(device => getResourcePermission(permission, device).show)
+                                .map(device => device.name || device.label));
+                            result = Object.assign({}, result, {
+                                settings: Object.assign({}, result.settings, {
+                                    devices: (result.settings?.devices || []).filter(device => visibleDevices.has(device.name)),
+                                    deviceActions: (result.settings?.deviceActions || []).filter(action => visibleDevices.has(action.deviceName))
+                                }),
+                                schedules: Object.fromEntries(Object.entries(result.schedules || {})
+                                    .filter(([deviceName]) => visibleDevices.has(deviceName)))
+                            });
+                        }
                         if (result) {
                             res.json(result);
                         } else {
@@ -60,7 +81,7 @@ module.exports = {
             const isAdmin = authJwt.haveAdminPermission(permission);
             if (runtime.settings?.secureEnabled && isGuest) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
-                runtime.logger.error("api post scheduler: Unauthorized guest");
+                runtime.logger.error("api post scheduler: authentication required");
                 return;
             }
             try {
@@ -73,16 +94,41 @@ module.exports = {
                     runtime.logger.info('[API POST SCHEDULER] Settings: ' + JSON.stringify(schedulerData.settings, null, 2));
                     runtime.logger.info('[API POST SCHEDULER] Device Actions: ' + JSON.stringify(schedulerData.settings?.deviceActions, null, 2));
 
-                    runtime.schedulerStorage.getSchedulerData(schedulerId).then(oldData => {
+                    Promise.all([
+                        runtime.schedulerStorage.getSchedulerData(schedulerId),
+                        getSchedulerControl(schedulerId, permission)
+                    ]).then(([oldData, control]) => {
+                        const controlPermission = getResourcePermission(permission, control?.property);
+                        if (runtime.settings?.secureEnabled && !isAdmin &&
+                            (!controlPermission.show || !controlPermission.enabled)) {
+                            runtime.logger.error("api post scheduler: scheduler permission required");
+                            res.status(403).json({error:"unauthorized_error", message: "Forbidden!"});
+                            return null;
+                        }
                         if (runtime.settings?.secureEnabled && !isAdmin) {
-                            if (!oldData || !oldData.settings) {
-                                runtime.logger.error("api post scheduler: Unauthorized scheduler settings change");
-                                res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
-                                return null;
-                            }
-                            schedulerData = Object.assign({}, oldData, {
-                                schedules: schedulerData.schedules || {}
+                            const trustedSettings = oldData?.settings || {
+                                eventMode: !!schedulerData.settings?.eventMode,
+                                devices: control?.property?.devices || [],
+                                deviceActions: control?.property?.deviceActions || []
+                            };
+                            schedulerData = Object.assign({}, oldData || {}, {
+                                schedules: schedulerData.schedules || {},
+                                settings: trustedSettings
                             });
+                            const devicePermissions = new Map((control?.property?.devices || oldData?.settings?.devices || [])
+                                .map(device => [device.name || device.label, getResourcePermission(permission, device)]));
+                            const changedDeviceNames = new Set([
+                                ...Object.keys(oldData?.schedules || {}),
+                                ...Object.keys(schedulerData.schedules || {})
+                            ].filter(deviceName => JSON.stringify(oldData?.schedules?.[deviceName] || []) !==
+                                JSON.stringify(schedulerData.schedules?.[deviceName] || [])));
+                            for (const deviceName of changedDeviceNames) {
+                                const devicePermission = devicePermissions.get(deviceName);
+                                if (!controlPermission.enabled || !devicePermission?.show || !devicePermission?.enabled) {
+                                    res.status(403).json({error:"unauthorized_error", message: "Forbidden!"});
+                                    return null;
+                                }
+                            }
                         }
 
                         const validation = validateSchedulerData(schedulerData);
@@ -120,32 +166,44 @@ module.exports = {
             }
             const permission = checkGroupsFnc(req);
             const isGuest = authJwt.isGuestUser(req.userId, req.userGroups);
-            if (runtime.settings?.secureEnabled && (isGuest || !authJwt.haveAdminPermission(permission))) {
+            const isAdmin = authJwt.haveAdminPermission(permission);
+            if (runtime.settings?.secureEnabled && isGuest) {
                 res.status(401).json({error:"unauthorized_error", message: "Unauthorized!"});
-                runtime.logger.error("api delete scheduler: admin permission required");
+                runtime.logger.error("api delete scheduler: authentication required");
                 return;
             }
             try {
                 if (req.query && req.query.id) {
                     var schedulerId = req.query.id;
-                    
-                    if (runtime.schedulerService && runtime.schedulerService.removeScheduler) {
-                        runtime.schedulerService.removeScheduler(schedulerId).then(() => {
-                            return runtime.schedulerStorage.deleteSchedulerData(schedulerId);
-                        }).then(result => {
-                            res.json({ result: 'ok', deleted: result.changes });
-                        }).catch(err => {
-                            runtime.logger.error("delete scheduler error! " + err);
-                            res.status(400).json({ error: err.toString() });
-                        });
-                    } else {
-                        runtime.schedulerStorage.deleteSchedulerData(schedulerId).then(result => {
-                            res.json({ result: 'ok', deleted: result.changes });
-                        }).catch(err => {
-                            runtime.logger.error("delete scheduler data error! " + err);
-                            res.status(400).json({ error: err.toString() });
-                        });
-                    }
+                    Promise.all([
+                        getSchedulerControl(schedulerId, permission),
+                        runtime.schedulerStorage.getSchedulerData(schedulerId)
+                    ]).then(async ([control, schedulerData]) => {
+                        if (runtime.settings?.secureEnabled && !isAdmin) {
+                            const access = getResourcePermission(permission, control?.property);
+                            const devices = [
+                                ...(control?.property?.devices || []),
+                                ...(schedulerData?.settings?.devices || [])
+                            ];
+                            const canDelete = access.show && access.enabled && devices.every(device => {
+                                const deviceAccess = getResourcePermission(permission, device);
+                                return deviceAccess.show && deviceAccess.enabled;
+                            });
+                            if (!canDelete) {
+                                runtime.logger.error("api delete scheduler: scheduler permission required");
+                                return res.status(403).json({error:"unauthorized_error", message: "Forbidden!"});
+                            }
+                        }
+
+                        if (runtime.schedulerService && runtime.schedulerService.removeScheduler) {
+                            await runtime.schedulerService.removeScheduler(schedulerId);
+                        }
+                        const result = await runtime.schedulerStorage.deleteSchedulerData(schedulerId);
+                        res.json({ result: 'ok', deleted: result.changes });
+                    }).catch(err => {
+                        runtime.logger.error("delete scheduler error! " + err);
+                        res.status(400).json({ error: err.toString() });
+                    });
                 } else {
                     res.status(400).json({ error: 'Missing scheduler id parameter' });
                 }
@@ -158,6 +216,36 @@ module.exports = {
         return schedulerApp;
     }
 };
+
+async function getSchedulerControl(schedulerId, permission) {
+    if (!runtime.project || typeof runtime.project.getProject !== 'function') {
+        return null;
+    }
+    const project = await runtime.project.getProject(null, permission);
+    for (const view of project?.hmi?.views || []) {
+        for (const item of Object.values(view.items || {})) {
+            if (item?.id === schedulerId) {
+                return item;
+            }
+        }
+    }
+    return null;
+}
+
+function getResourcePermission(permission, resource) {
+    if (!resource || typeof resource !== 'object') {
+        return { show: false, enabled: false };
+    }
+    if (runtime.checkPermission) {
+        return runtime.checkPermission(permission, resource, false, true);
+    }
+    if (runtime.settings?.secureEnabled) {
+        return { show: false, enabled: false };
+    }
+    // Keep compatibility with runtimes/test fixtures that do not expose project
+    // permissions when security is disabled.
+    return { show: true, enabled: true };
+}
 
 // Validate scheduler data structure
 function validateSchedulerData(data) {

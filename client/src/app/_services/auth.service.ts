@@ -183,7 +183,7 @@ export class AuthService {
 		return result;
 	}
 
-	private isGuestUser(user: UserProfile): boolean {
+	private isGuestUser(user: UserProfile = this.currentUser): boolean {
 		if (!user) {
 			return false;
 		}
@@ -194,6 +194,11 @@ export class AuthService {
 			return true;
 		}
 		return false;
+	}
+
+	isGuestOrAnonymousUser(): boolean {
+		return !!this.settings.getSettings()?.secureEnabled &&
+			(!this.currentUser || this.isGuestUser(this.currentUser));
 	}
 
 	private finalizeSignOut() {
