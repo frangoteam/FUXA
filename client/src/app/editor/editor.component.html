@@ -206,6 +206,10 @@
                                 (click)="setMode('own_ctrl-video')">
                                 <span class="material-icon-tool material-icons" style="font-size: 23px;">ondemand_video</span>
                             </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-3d' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-3d')}"
+                                (click)="setMode('own_ctrl-3d')">
+                                <span class="material-icon-tool material-icons" style="font-size: 23px;">view_in_ar</span>
+                            </div>
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-scheduler' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-scheduler')}"
                                 (click)="setMode('own_ctrl-scheduler')">
                                 <span class="material-icon-tool material-icons" style="font-size: 23px;">schedule</span>
