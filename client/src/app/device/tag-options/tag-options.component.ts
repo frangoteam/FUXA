@@ -177,7 +177,7 @@ export class TagOptionsComponent implements OnInit, OnDestroy {
             if (interval.valid && !Utils.isNullOrUndefined(interval.value)) {
                 values = {...values, interval: interval.value};
             }
-            if (format.valid && format.value) {
+            if (format.valid && !Utils.isNullOrUndefined(format.value)) {
                 values = {...values, format: format.value};
             }
             if (deadband.valid && deadband.value) {
