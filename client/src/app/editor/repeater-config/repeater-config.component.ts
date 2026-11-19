@@ -1,5 +1,5 @@
 /* eslint-disable @angular-eslint/component-class-suffix */
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -15,7 +15,7 @@ import { EditNameComponent } from '../../gui-helpers/edit-name/edit-name.compone
   templateUrl: './repeater-config.component.html',
   styleUrls: ['./repeater-config.component.scss']
 })
-export class RepeaterConfigComponent implements OnInit {
+export class RepeaterConfigComponent {
 
     selectedRepeaterData = <RepeaterData>{ id: null, name: null, lines: [] };
     data = <IDataRepeaterDataConfig>{ repeaters: [] };
@@ -27,9 +27,6 @@ export class RepeaterConfigComponent implements OnInit {
         private projectService: ProjectService
         ) {
             this.loadData();
-    }
-
-    ngOnInit() {
     }
 
     loadData() {
