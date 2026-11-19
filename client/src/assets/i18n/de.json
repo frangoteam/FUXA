@@ -604,6 +604,8 @@
     "editor.controls-scheduler-settings": "Einstellungen für den Zeitplaner",
     "editor.controls-recipe": "Rezept",
     "editor.controls-recipe-settings": "Rezepteinstellungen",
+    "editor.controls-repeater": "Repeater",
+    "editor.controls-repeater-settings": "Repeater-Einstellungen",
     "scheduler.property-settings-title": "Scheduler-Einstellungen",
     "scheduler.devices": "Geräte",
     "scheduler.device-name": "Gerätename",

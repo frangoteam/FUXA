@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { HttpClient, HttpXhrBackend, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class EndPointApi {
@@ -54,4 +56,13 @@ export class EndPointApi {
         try { return new URL(input, window.location.origin).toString(); }
         catch { return input.startsWith('/') ? input : '/' + input; }
     };
+    static getJSONFromURL(jsonURL: string): Observable<any> {
+        // Accept (not Content-Type) keeps this a "simple" CORS request: a Content-Type header on a GET
+        // forces a preflight OPTIONS request that many public servers (e.g. raw.githubusercontent.com) reject
+        let header = new HttpHeaders({ 'Accept': 'application/json' });
+        let _http = new HttpClient(new HttpXhrBackend({ 
+            build: () => new XMLHttpRequest() 
+        }));
+        return _http.get(jsonURL, { headers : header});
+    }
 }

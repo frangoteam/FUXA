@@ -31,6 +31,7 @@ import { AppSettingsComponent } from './editor/app-settings/app-settings.compone
 import { SetupComponent } from './editor/setup/setup.component';
 import { ChartConfigComponent } from './editor/chart-config/chart-config.component';
 import { GraphConfigComponent } from './editor/graph-config/graph-config.component';
+import { RepeaterConfigComponent, DialogRepeaterDataLine } from './editor/repeater-config/repeater-config.component';
 import { CardConfigComponent } from './editor/card-config/card-config.component';
 import { AlarmViewComponent } from './alarms/alarm-view/alarm-view.component';
 import { AlarmListComponent } from './alarms/alarm-list/alarm-list.component';
@@ -148,6 +149,8 @@ import { GraphPropertyComponent } from './gauges/controls/html-graph/graph-prope
 import { GraphBaseComponent } from './gauges/controls/html-graph/graph-base/graph-base.component';
 import { NgChartsModule } from 'ng2-charts';
 import { IframePropertyComponent } from './gauges/controls/html-iframe/iframe-property/iframe-property.component';
+import { RepeaterComponent } from './gauges/controls/repeater/repeater.component';
+import { RepeaterPropertyComponent } from './gauges/controls/repeater/repeater-property/repeater-property.component';
 import { TablePropertyComponent } from './gauges/controls/html-table/table-property/table-property.component';
 import { TableCustomizerComponent } from './gauges/controls/html-table/table-customizer/table-customizer.component';
 import { DataTableComponent } from './gauges/controls/html-table/data-table/data-table.component';
@@ -363,6 +366,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         NgxSwitchComponent,
         ChartConfigComponent,
         GraphConfigComponent,
+        RepeaterConfigComponent,
+        DialogRepeaterDataLine,
         CardConfigComponent,
         AlarmListComponent,
         AlarmImportDialogComponent,
@@ -416,6 +421,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         ReportItemChartComponent,
         PanelComponent,
         PanelPropertyComponent,
+        RepeaterComponent,
+        RepeaterPropertyComponent,
         WebcamPlayerComponent,
         WebcamPlayerDialogComponent,
         ResizeDirective,

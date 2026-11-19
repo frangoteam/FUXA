@@ -19,6 +19,7 @@ import { ProcEngComponent } from './shapes/proc-eng/proc-eng.component';
 import { ApeShapesComponent } from './shapes/ape-shapes/ape-shapes.component';
 import { PipeComponent } from './controls/pipe/pipe.component';
 import { SliderComponent } from './controls/slider/slider.component';
+import { RepeaterComponent } from './controls/repeater/repeater.component';
 
 import { WindowRef } from '../_helpers/windowref';
 import { Utils } from '../_helpers/utils';
@@ -81,7 +82,7 @@ export class GaugesManager {
     static Gauges = [ValueComponent, HtmlInputComponent, HtmlButtonComponent, HtmlBagComponent,
         HtmlSelectComponent, HtmlChartComponent, GaugeProgressComponent, GaugeSemaphoreComponent, ShapesComponent, ProcEngComponent, ApeShapesComponent,
         PipeComponent, SliderComponent, HtmlSwitchComponent, HtmlGraphComponent, HtmlIframeComponent, HtmlTableComponent,
-        HtmlImageComponent, PanelComponent, HtmlVideoComponent, HtmlSchedulerComponent, HtmlRecipeComponent];
+        HtmlImageComponent, PanelComponent, HtmlVideoComponent, HtmlSchedulerComponent, HtmlRecipeComponent, RepeaterComponent];
 
     constructor(private hmiService: HmiService,
         private authService: AuthService,
@@ -227,6 +228,8 @@ export class GaugesManager {
             return this.mapGauges[ga.id] = HtmlSwitchComponent.detectChange(ga, res, ref);
         } else if (ga.type.startsWith(HtmlIframeComponent.TypeTag)) {
             HtmlIframeComponent.detectChange(ga);
+        } else if (ga.type.startsWith(RepeaterComponent.TypeTag)) {
+            return RepeaterComponent.detectChange(ga, this, this.hmiService, res, ref);
         } else if (ga.type.startsWith(HtmlTableComponent.TypeTag)) {
             delete this.mapGauges[ga.id];
             let gauge = HtmlTableComponent.detectChange(ga, res, ref);
@@ -529,6 +532,8 @@ export class GaugesManager {
             return HtmlInputComponent.getHtmlEvents(ga);
         } else if (ga.type.startsWith(HtmlSelectComponent.TypeTag)) {
             return HtmlSelectComponent.getHtmlEvents(ga);
+        } else if (ga.type.startsWith(RepeaterComponent.TypeTag)) {
+            return RepeaterComponent.getHtmlEvents(ga);
         }
         return null;
     }
@@ -827,6 +832,8 @@ export class GaugesManager {
             return 'table_';
         } else if (type.startsWith(HtmlSchedulerComponent.TypeTag)) {
             return 'scheduler_';
+        } else if (type.startsWith(RepeaterComponent.TypeTag)) {
+            return 'repeater_';
         }
         return 'shape_';
     }
@@ -940,6 +947,10 @@ export class GaugesManager {
             return gauge || true;
         } else if (ga.type.startsWith(HtmlImageComponent.TypeTag)) {
             let gauge = HtmlImageComponent.initElement(ga, isview);
+            this.mapGauges[ga.id] = gauge;
+            return gauge;
+        } else if (ga.type.startsWith(RepeaterComponent.TypeTag)) {
+            let gauge = RepeaterComponent.initElement(ga, this, this.hmiService, res, ref, isview, parent);
             this.mapGauges[ga.id] = gauge;
             return gauge;
         } else if (ga.type.startsWith(PanelComponent.TypeTag)) {

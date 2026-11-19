@@ -1,0 +1,38 @@
+<div class="element-property">
+    <div class="element-property-title">
+        {{'editor.controls-repeater-settings' | translate}}
+    </div>
+    <div class="repeater-selection">
+        <div class="element-property-header">
+            <span>{{'repeater.property-data' | translate}}</span>
+        </div>
+        <div>
+            <div class="my-form-field section-item section-item-block">
+                <span>{{'repeater.property-name' | translate}}</span>
+                <input [(ngModel)]="data.settings.name" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
+            </div>
+            <div class="my-form-field section-item section-item-block mt5">
+                <span>{{'repeater.property-repeaterdata' | translate}}</span>
+                <mat-select [formControl]="repeaterDataCtrl" (selectionChange)="onRepeaterDataChanged()">
+                    <mat-select-search [formControl]="repeaterDataFilterCtrl"></mat-select-search>
+                    <mat-option (click)="onEditNewRepeaterData();">{{'repeater.property-newrepeater' | translate}}</mat-option>
+                    <mat-option *ngFor="let repeaterData of filteredRepeaterData | async" [value]="repeaterData">
+                        {{ repeaterData.name }}
+                    </mat-option>
+                </mat-select>
+            </div>
+            <div class="my-form-field section-item section-item-block mt5">
+                <span>{{'repeater.property-repeaterDataPropertyToShow' | translate}}</span>
+                <input [(ngModel)]="property.repeaterDataPropertyToShow" (change)="onPropertyChanged()" (keyup.enter)="onPropertyChanged()" type="text">
+            </div>
+            <div class="my-form-field section-item section-item-block mt5">
+                <span>{{'card.config-content-view' | translate}}</span>
+                <mat-select [(value)]="property.view" (selectionChange)="onPropertyChanged()">
+                    <mat-option *ngFor="let view of data.views" [value]="view.id">
+                        {{ view.name }}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+    </div>
+</div>

@@ -214,7 +214,8 @@ export enum GaugeDialogType {
     Panel,
     Video,
     Scheduler,
-    Recipe
+    Recipe,
+    Repeater
 }
 
 export interface GaugePropertyData {

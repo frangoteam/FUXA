@@ -43,5 +43,6 @@ export interface FuxaViewDialogData {
     view: View;
     variablesMapping: [];
     sourceDeviceId?: string;
+    placeholderValues?: { [placeholder: string]: any };
     onPage: (request: PageNavigationRequest) => void;
 }

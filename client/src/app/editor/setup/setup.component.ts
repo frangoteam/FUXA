@@ -7,6 +7,7 @@ import { AppService } from '../../_services/app.service';
 
 import { ChartConfigComponent } from '../../editor/chart-config/chart-config.component';
 import { GraphConfigComponent } from '../../editor/graph-config/graph-config.component';
+import { RepeaterConfigComponent } from '../../editor/repeater-config/repeater-config.component';
 import { ILayoutPropertyData, LayoutPropertyComponent } from '../../editor/layout-property/layout-property.component';
 import { AppSettingsComponent } from '../../editor/app-settings/app-settings.component';
 import { ClientScriptAccessComponent } from '../client-script-access/client-script-access.component';
@@ -105,6 +106,14 @@ export class SetupComponent {
         });
     }
 
+    onRepeaterDataConfig() {
+        this.onNoClick();
+        let dialogRef = this.dialog.open(RepeaterConfigComponent, {
+            position: { top: '60px' },
+            minWidth: '1090px', width: '1090px'
+        });
+        dialogRef.afterClosed().subscribe();
+    }
     /**
      * edit application settings
      */

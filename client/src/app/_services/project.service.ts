@@ -8,6 +8,7 @@ import { View, LayoutSettings, DaqQuery, ViewType } from '../_models/hmi';
 import { Chart } from '../_models/chart';
 import { Graph } from '../_models/graph';
 import { Alarm, AlarmBaseType, AlarmQuery, AlarmsFilter } from '../_models/alarm';
+import { RepeaterData } from '../_models/repeater';
 import { Notification } from '../_models/notification';
 import { Script } from '../_models/script';
 import { Languages, LanguageText } from '../_models/language';
@@ -586,6 +587,32 @@ export class ProjectService {
     setCharts(charts: Chart[]) {
         this.projectData.charts = charts;
         this.storage.setServerProjectData(ProjectDataCmdType.Charts, charts, this.projectData).subscribe(result => {
+        }, err => {
+            console.error(err);
+            this.notifySaveError(err);
+        });
+    }
+    //#endregion
+
+    //#region Repeaters resource
+    /**
+     * get the Repeater data sources
+     */
+    getRepeaters() {
+        return (this.projectData) ? (this.projectData.repeaters) ? this.projectData.repeaters : [] : null;
+    }
+
+    getRepeater(id: string) {
+        return this.projectData?.repeaters?.find(repeater => repeater.id === id);
+    }
+
+    /**
+     * save the repeaters to project
+     * @param repeaters
+     */
+    setRepeaters(repeaters: RepeaterData[]) {
+        this.projectData.repeaters = repeaters;
+        this.storage.setServerProjectData(ProjectDataCmdType.Repeaters, repeaters, this.projectData).subscribe(result => {
         }, err => {
             console.error(err);
             this.notifySaveError(err);
