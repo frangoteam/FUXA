@@ -150,6 +150,9 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                 if (err) {
                     logger.error(`'${data.name}' disconnect failure! ${err}`);
                 }
+                // the old session and subscription are dead: keeping them made _startMonitor fail for every tag on every retry
+                the_session = null;
+                the_subscription = null;
                 connected = false;
                 monitored = false;
                 _checkWorking(false);
@@ -518,7 +521,7 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
         return new Promise(async function (resolve, reject) {
             if (the_session && the_subscription) {
                 tagsIdMap = {};
-                var count = 0;
+                var count = 0, failed = 0, firstErr;
                 for (var id in data.tags) {
                     count++;
                     try {
@@ -531,14 +534,39 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
                         );
                         monitoredItem.on('changed', _monitorcallback(nodeId));
                     } catch (err) {
-                        logger.error(`'${nodeId}' _startMonitor ${err}`);
+                        failed++;
+                        firstErr = firstErr || err;
+                        // a closed session fails every remaining tag the same way: stop instead of logging each one
+                        if (the_session.hasBeenClosed && the_session.hasBeenClosed()) {
+                            failed += Object.keys(data.tags).length - count;
+                            break;
+                        }
                     }
                 }
-                resolve(true);
+                if (failed) {
+                    // one line per attempt (and at most one per minute while it keeps failing), not one per tag
+                    _logRateLimited('startMonitor', `'${data.name}' _startMonitor: ${failed} of ${Object.keys(data.tags).length} tags not monitored, first error: ${firstErr}`);
+                }
+                resolve(failed === 0);
             } else {
                 reject();
             }
         });
+    }
+
+    var _lastLogged = {};
+    /**
+     * logger.error at most once per minute per key, with the number of suppressed repeats
+     */
+    var _logRateLimited = function (key, msg) {
+        var now = Date.now(), last = _lastLogged[key] || { t: 0, n: 0 };
+        if (now - last.t < 60000) {
+            last.n++;
+            _lastLogged[key] = last;
+            return;
+        }
+        logger.error(last.n ? `${msg} (+${last.n} similar suppressed)` : msg);
+        _lastLogged[key] = { t: now, n: 0 };
     }
 
     /**
