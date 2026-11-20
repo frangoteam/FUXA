@@ -203,7 +203,7 @@ try {
             settings.swaggerEnabled = mysettings.swaggerEnabled;
         }
         if (mysettings.nodeRedEnabled === true && utils.isNullOrUndefined(mysettings.nodeRedAuthMode)) {
-            settings.nodeRedAuthMode = 'legacy-open';
+            settings.nodeRedAuthMode = 'secure';
         }
     }
 } catch (err) {
