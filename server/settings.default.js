@@ -71,6 +71,16 @@ module.exports = {
     // example, the following would only allow connections from the local machine.
     //uiHost: "127.0.0.1",
 
+    // Reverse proxies to external HTTP services, to use them from the views without CORS.
+    // A request to http://localhost:1881<path>/rest?query is forwarded to <target>/rest?query.
+    // FUXA credentials (cookie, authorization, x-access-token) are not forwarded.
+    // Optional: headers (added to each request), timeout (ms, default 30000),
+    // rejectUnauthorized (false to accept self-signed https certificates).
+    //proxies: [
+    //    { path: '/gis', target: 'https://gis.example.com/gis' },
+    //    { path: '/weather', target: 'http://10.0.0.5:8080', headers: { 'x-api-key': 'KEY' }, timeout: 10000 }
+    //],
+
     // Used to identify a directory of static content
     // that should be served at http://localhost:1881/.
     // Default: '/client/dist'

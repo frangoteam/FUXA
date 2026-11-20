@@ -41,6 +41,7 @@ nav:
       - Use Same View: HowTo-use-same-view.md
       - Configure Script: HowTo-configure-Script.md
       - Recipes: HowTo-Recipes.md
+      - Repeater: HowTo-Repeater.md
       - ODBC: HowTo-ODBC.md
       - SNMP: HowTo-SNMP.md
       - Widgets: HowTo-Widgets.md

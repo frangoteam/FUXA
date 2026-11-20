@@ -152,6 +152,137 @@ function checkRetention() {
     });
 }
 
+/** id of the FUXA application databases in the SQL nodes (Repeater DB data) */
+const APP_DB_ID = '@app';
+
+/**
+ * Return the DAQ storages that can run SQL queries (SQLite one per device) and the FUXA App DB
+ */
+function getSqlNodes() {
+    const devices = runtime?.project?.getDevices() || {};
+    const nodes = Object.keys(daqDB).filter(id => typeof daqDB[id].query === 'function').map(id => ({
+        id: id,
+        name: devices[id]?.name || id,
+        type: _getDbType()
+    }));
+    nodes.push({ id: APP_DB_ID, name: 'FUXA App DB', type: 'SQLite' });
+    return nodes;
+}
+
+/**
+ * Read-only query on the FUXA application databases:
+ * alarms.fuxap.db (tables alarms, chronicle) as main, with the existing ones of
+ * notifications.fuxap.db, recipes.db and scheduler.db attached as 'notifications', 'recipes', 'scheduler'.
+ * plus the temporary table 'devices' with the devices of the running project (without credentials):
+ * id, name, type, enabled, polling, address, port, slaveid, tags (count), status, tagList (JSON object of the tags by name).
+ * users, apikeys and project are not exposed (passwords, credentials), other ATTACH are blocked
+ */
+function _queryAppDb(sql) {
+    const sqlite3 = require('sqlite3').verbose();
+    const alarmsFile = path.join(settings.workDir, 'alarms.fuxap.db');
+    const attach = [['notifications', 'notifications.fuxap.db'], ['recipes', 'recipes.db'], ['scheduler', 'scheduler.db']]
+        .map(([name, file]) => [name, path.join(settings.workDir, file)])
+        .filter(([, file]) => fs.existsSync(file));
+    return new Promise((resolve, reject) => {
+        if (!fs.existsSync(alarmsFile)) {
+            return reject(new Error('FUXA App DB (alarms.fuxap.db) not found'));
+        }
+        const db = new sqlite3.Database(alarmsFile, sqlite3.OPEN_READONLY, (err) => {
+            if (err) {
+                return reject(err);
+            }
+            const run = () => db.all(sql, (err, rows) => {
+                db.close();
+                err ? reject(err) : resolve(_parseJsonValues(rows));
+            });
+            const fail = (err) => {
+                db.close();
+                reject(err);
+            };
+            const next = (i) => {
+                if (i >= attach.length) {
+                    // no further ATTACH from the query (e.g. users.fuxap.db)
+                    db.configure('limit', sqlite3.LIMIT_ATTACHED, attach.length);
+                    return _fillAppDevices(db).then(run).catch(fail);
+                }
+                db.run(`ATTACH DATABASE ? AS ${attach[i][0]}`, [attach[i][1]], (err) => {
+                    if (err) {
+                        return fail(err);
+                    }
+                    next(i + 1);
+                });
+            };
+            next(0);
+        });
+    });
+}
+
+/**
+ * Run a read-only SQL query on the DAQ storage with the given id
+ */
+function _fillAppDevices(db) {
+    const devices = runtime?.project?.getDevices() || {};
+    let status = {};
+    try {
+        status = runtime?.devices?.getDevicesStatus() || {};
+    } catch (err) { }
+    let values = {};
+    try {
+        values = runtime?.devices?.getDevicesValues() || {};
+    } catch (err) { }
+    const rows = Object.values(devices).map(dev => [
+        dev.id, dev.name, dev.type, dev.enabled ? 1 : 0, dev.polling ?? null,
+        dev.property?.address ?? null, dev.property?.port ?? null, dev.property?.slaveid ?? null,
+        Object.keys(dev.tags || {}).length,
+        (typeof status[dev.id] === 'string' ? status[dev.id] : status[dev.id]?.status) ?? null,
+        JSON.stringify(_deviceTagList(dev, values[dev.id] || {}))
+    ]);
+    const exec = (sql, params = []) => new Promise((resolve, reject) => db.run(sql, params, err => err ? reject(err) : resolve()));
+    return exec('CREATE TEMP TABLE devices (id TEXT, name TEXT, type TEXT, enabled INTEGER, polling INTEGER, address TEXT, port TEXT, slaveid TEXT, tags INTEGER, status TEXT, tagList TEXT)')
+        .then(() => rows.reduce((p, row) => p.then(() => exec('INSERT INTO temp.devices VALUES (?,?,?,?,?,?,?,?,?,?,?)', row)), Promise.resolve()));
+}
+
+/**
+ * Tags of a device as object keyed by tag name: { <name>: { id, name, label, type, address, value, timestamp } }
+ */
+function _deviceTagList(dev, values) {
+    const list = {};
+    Object.values(dev.tags || {}).forEach(tag => {
+        const current = values[tag.id];
+        list[tag.name || tag.id] = {
+            id: tag.id, name: tag.name, label: tag.label ?? null, type: tag.type ?? null,
+            address: tag.address ?? null, value: current?.value ?? null, timestamp: current?.timestamp ?? null
+        };
+    });
+    return list;
+}
+
+/**
+ * JSON text values of the App DB rows (e.g. devices.tagList, json_object(...)) returned as objects
+ */
+function _parseJsonValues(rows) {
+    (rows || []).forEach(row => Object.keys(row).forEach(key => {
+        const value = row[key];
+        if (typeof value === 'string' && /^\s*[\[{]/.test(value)) {
+            try {
+                row[key] = JSON.parse(value);
+            } catch (err) { }
+        }
+    }));
+    return rows;
+}
+
+function querySql(id, sql) {
+    if (id === APP_DB_ID) {
+        return _queryAppDb(sql);
+    }
+    const node = daqDB[id];
+    if (!node || typeof node.query !== 'function') {
+        return Promise.reject(new Error(`DAQ storage '${id}' not found or without SQL support`));
+    }
+    return node.query(sql);
+}
+
 function getCurrentStorageFnc() {
     return currentStorateDB.getValuesByDeviceId;
 }
@@ -193,7 +324,7 @@ var DaqStoreTypeEnum = {
     influxDB: 'influxDB',
     influxDB18: 'influxDB18',
     TDengine: 'TDengine',
-    questDB: 'questDB',
+    questDB: 'questDB'
 }
 
 function _getValue(value) {
@@ -211,4 +342,6 @@ module.exports = {
     getNodesValues: getNodesValues,
     checkRetention: checkRetention,
     getCurrentStorageFnc: getCurrentStorageFnc,
+    getSqlNodes: getSqlNodes,
+    querySql: querySql,
 };

@@ -43,6 +43,9 @@
         <div *ngSwitchCase="gaugeDialogType.Recipe">
             <app-recipe-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-recipe-property>
         </div>
+        <div *ngSwitchCase="gaugeDialogType.Repeater">
+            <app-repeater-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-repeater-property>
+        </div>
     </div>
 </mat-drawer>
 <div id="svg_editor_container">
@@ -213,6 +216,10 @@
                             <div class="svg-tool-button" matTooltip="{{'editor.controls-recipe' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-recipe')}"
                                 (click)="setMode('own_ctrl-recipe')">
                                 <span class="material-icon-tool material-icons" style="font-size: 23px;">receipt</span>
+                            </div>
+                            <div class="svg-tool-button" matTooltip="{{'editor.controls-repeater' | translate}}" [ngClass]="{'svg-tool-active': isModeActive('own_ctrl-repeat')}"
+                                (click)="setMode('own_ctrl-repeat')">
+                                <span class="material-icon-tool material-icons" style="font-size: 25px;">repeat_on</span>
                             </div>
                         </div>
                     </mat-expansion-panel>

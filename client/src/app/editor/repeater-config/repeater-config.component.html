@@ -1,0 +1,67 @@
+<div>
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'repeater.config-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div class="toolbox-toadd">
+        <button mat-icon-button (click)="onEditRepeaterData(null)">
+            <mat-icon>add_circle_outline</mat-icon>
+        </button>
+    </div>
+    <div mat-dialog-content class="content">
+        <div class="panelTop">
+            <div *ngFor="let repeaterData of data.repeaters; index as i" class="mychips" (click)="onSelectRepeaterData(repeaterData)" [ngClass]="isRepeaterDataSelected(repeaterData)">
+                <mat-icon (click)="onSelectRepeaterData(repeaterData);onRemoveRepeaterData(i)">cancel</mat-icon>
+                <span>
+                    {{repeaterData.name}}
+                </span>
+                <mat-icon (click)="onSelectRepeaterData(repeaterData)" [matMenuTriggerFor]="optionsgMenu">more_vert</mat-icon>
+                <mat-menu #optionsgMenu [overlapTrigger]="false">
+                    <button mat-menu-item (click)="onAddRepeaterDataLine(repeaterData)" [disabled]="hasRepeaterDataLines(repeaterData)" style="font-size: 14px;">
+                        <mat-icon style="margin-right: unset">link</mat-icon>
+                        {{'repeater.config-addline' | translate}}
+                    </button>
+                    <button mat-menu-item (click)="onEditRepeaterData(repeaterData)" style="font-size: 14px;">{{'repeater.config-rename' | translate}}</button>
+                </mat-menu>
+            </div>
+        </div>
+        <div class="panelBottom">
+            <mat-list class="list">
+                <mat-list-item class="list-item list-header">
+                    <span class="list-item-remove"></span>
+                    <span class="list-item-name">{{'repeater.config-line-name' | translate}}</span>
+                    <span class="list-item-url" [class.list-item-sql]="isDbSelected()">{{(isDbSelected() ? 'repeater.config-line-sql' : 'repeater.config-line-url') | translate}}</span>
+                    <span class="list-item-url-data-type">{{(isDbSelected() ? 'repeater.config-line-type' : 'repeater.config-line-url-data-type') | translate}}</span>
+                    <ng-container *ngIf="!isDbSelected()">
+                        <span class="list-item-url-data-path">{{'repeater.config-line-data-path' | translate}}</span>
+                        <span class="list-item-url-data-properties">{{'repeater.config-line-url-data-properties' | translate}}</span>
+                    </ng-container>
+                </mat-list-item>
+                <div class="list-panel">
+                    <mat-list-item *ngFor="let line of selectedRepeaterData.lines" class="list-item list-item-hover" (click)="editRepeaterDataLine(line)">
+                        <mat-icon (click)="$event.stopPropagation();removeRepeaterDataLine(line)" class="list-item-remove" style="color:gray;font-size: 20px">delete</mat-icon>
+                        <div class="list-item-text list-item-name">
+                            <span>{{line.name}}</span>
+                        </div>
+                        <div class="list-item-text list-item-url" [class.list-item-sql]="isDbSelected()">
+                            <span>{{isDb(line) ? line.sql : line.url}}</span>
+                        </div>
+                        <div class="list-item-text list-item-url-data-type">
+                            <span>{{isDb(line) ? 'DB' : (isCsv(line) ? 'CSV' : 'JSON')}}</span>
+                        </div>
+                        <ng-container *ngIf="!isDbSelected()">
+                            <div class="list-item-text list-item-url-data-path">
+                                <span>{{isCsv(line) || isDb(line) ? '' : line.url_data_path}}</span>
+                            </div>
+                            <div class="list-item-text list-item-url-data-properties">
+                                <span>{{isDb(line) ? '' : line.url_data_properties}}</span>
+                            </div>
+                        </ng-container>
+                    </mat-list-item>
+                </div>
+            </mat-list>
+        </div>
+    </div>
+    <div mat-dialog-actions class="dialog-action">
+        <button mat-raised-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-raised-button color="primary" (click)="onOkClick()" >{{'dlg.ok' | translate}}</button>
+    </div>
+</div>

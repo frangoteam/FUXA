@@ -34,6 +34,7 @@ import { WebcamPlayerDialogComponent, WebcamPlayerDialogData } from '../gui-help
 import { DevicesUtils, PlaceholderDevice, Tag } from '../_models/device';
 import { LanguageService } from '../_services/language.service';
 import { EventUtils } from '../_helpers/event-utils';
+import { RepeaterUtils } from '../_models/repeater';
 
 declare var SVG: any;
 
@@ -52,6 +53,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() gaugesManager: GaugesManager;        // gauges.component
     @Input() parentcards: CardModel[];
     @Input() sourceDeviceId: string;
+    /** values of placeholders (e.g. { '@country': 'Italy' }) shown by the controls bound to them, set by a Repeater item click */
+    @Input() placeholderValues: { [placeholder: string]: any } = null;
     @Output() onclose = new EventEmitter();
     @Output() ongoto: EventEmitter<string> = new EventEmitter();
     @Output() onpage: EventEmitter<PageNavigationRequest> = new EventEmitter();
@@ -239,7 +242,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                     console.warn(`View '${view.name || view.id}' has no SVG content. Render skipped.`);
                     return;
                 } else {
-                    this.dataContainer.nativeElement.innerHTML = view.svgcontent.replace('<title>Layer 1</title>', '');
+                    this.dataContainer.nativeElement.innerHTML = Utils.fixSelfClosingHtml(view.svgcontent.replace('<title>Layer 1</title>', ''));
                 }
                 if (view.profile?.bkcolor && (this.child || legacyProfile)) {
                     this.dataContainer.nativeElement.style.backgroundColor = view.profile.bkcolor;
@@ -357,6 +360,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                                     this.gaugesManager.processValue(gaugeSetting, svgeles[y], variable, gaugeStatus);
                                 });
                             }
+                        }
+                        // show the value passed for the placeholder bound to the control (e.g. by a Repeater item)
+                        const placeholderId = gaugeSetting.property.variableId;
+                        if (placeholderId && this.placeholderValues?.hasOwnProperty(placeholderId)) {
+                            const variable = <Variable>{ id: placeholderId, value: this.placeholderValues[placeholderId] };
+                            FuxaViewComponent.getSvgElements(gaugeSetting.id).forEach(svgele => {
+                                this.gaugesManager.processValue(gaugeSetting, svgele, variable, gaugeStatus);
+                            });
                         }
                         // run load events
                         if (gaugeSetting.property.events) {
@@ -504,6 +515,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 target.variableValue = tag.value;
                 return;
             }
+        }
+        // a path into a JSON placeholder value with tag entries (e.g. '@tags.Temperature' passed by a Repeater item)
+        // is bound to that tag: live value with the control settings (format, ranges, actions)
+        const placeholderTagId = RepeaterUtils.getPlaceholderTagId(this.placeholderValues, target.variableId);
+        if (placeholderTagId) {
+            target.variableId = placeholderTagId;
         }
     }
 
@@ -908,6 +925,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             if (options?.variablesMapping) {
                 this.loadVariableMapping(options.variablesMapping);
             }
+            this.placeholderValues = options?.placeholderValues ?? null;
             this.sourceDeviceId = options.sourceDeviceId;
             this.loadHmi(view, true);
             if (param?.scaleMode) {
@@ -928,6 +946,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             disableDefaultClose: options.hideClose,
             gaugesManager: this.gaugesManager,
             sourceDeviceId: options.sourceDeviceId,
+            placeholderValues: options.placeholderValues ?? this.placeholderValues,
             onPage: request => this.onPageRequest(request)
         };
         let dialogRef = this.fuxaDialog.open(FuxaViewDialogComponent, {
@@ -992,6 +1011,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         card.variablesMapping = options?.variablesMapping;
         card.disableDefaultClose = options?.hideClose;
         card.sourceDeviceId = options?.sourceDeviceId;
+        card.placeholderValues = options?.placeholderValues ?? this.placeholderValues;
         card.zIndex = this.nextZIndex();
         console.log('index', card.zIndex);
         if (this.parentcards) {
@@ -1097,7 +1117,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             torun.parameters = Utils.clone(<ScriptParam[]>event.actoptions[SCRIPT_PARAMS_MAP]);
             const placeholders = torun.parameters.filter(param => param.value?.startsWith(PlaceholderDevice.id)).map(param => param.value);
             if (placeholders?.length) {
-                const placeholdersMap = this.getViewPlaceholderValue(placeholders);
+                const placeholdersMap = { ...this.placeholderValues, ...event.actoptions?.placeholderValues, ...this.getViewPlaceholderValue(placeholders) };
                 torun.parameters.forEach(param => {
                     if (!Utils.isNullOrUndefined(placeholdersMap[param.value])) {
                         param.value = placeholdersMap[param.value];
@@ -1300,6 +1320,7 @@ export class CardModel {
     public variablesMapping: any = [];
     public view: View;
     public sourceDeviceId: string;
+    public placeholderValues: { [placeholder: string]: any } = null;
     disableDefaultClose: boolean;
     zIndex: number;
 

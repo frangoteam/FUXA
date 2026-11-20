@@ -544,6 +544,15 @@ export interface SchedulerDevice {
     };
 }
 
+export interface RepeaterProperty {
+    /** id of the Repeater data source */
+    repeaterData: string;
+    /** item field shown by '@' texts without a value */
+    repeaterDataPropertyToShow: string;
+    /** id of the repeated (template) view */
+    view: string;
+}
+
 export enum TableType {
     data = 'data',
     history = 'history',

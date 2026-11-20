@@ -12,6 +12,7 @@ import { Report } from './report';
 import { MapsLocation } from './maps';
 import { ClientAccess } from './client-access';
 import { ArSettings } from './ar';
+import { RepeaterData } from './repeater';
 
 export class ProjectData {
     version = '1.01';
@@ -25,6 +26,8 @@ export class ProjectData {
     devices = {};
     /** Charts, Tags, colors, etc. */
     charts: Chart[] = [];
+    /** Repeaters etc. */
+    repeaters: RepeaterData[] = [];
     /** Graphs, Bar, Pie */
     graphs: Graph[] = [];
     /** Alarms, Tags, logic, level, colors, etc.  */
@@ -58,6 +61,7 @@ export enum ProjectDataCmdType {
     DelView = 'del-view',
     HmiLayout = 'layout',
     Charts = 'charts',
+    Repeaters = 'repeaters',
     Graphs = 'graphs',
     Languages = 'languages',
     ClientAccess = 'client-access',

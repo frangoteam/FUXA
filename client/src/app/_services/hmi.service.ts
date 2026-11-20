@@ -61,6 +61,8 @@ export class HmiService {
     private removeFunctionType = Utils.getEnumKey(GaugeEventSetValueType, GaugeEventSetValueType.remove);
     private homeTagsSubscription = [];
     private viewsTagsSubscription = [];
+    /** tags subscribed by controls besides the view gauges (e.g. Repeater items), by owner key */
+    private extraTagsSubscription: { [key: string]: string[] } = {};
 
     getGaugeMapped: (gaugeName: string) => void; // function binded in GaugeManager
 
@@ -478,7 +480,8 @@ export class HmiService {
 
     private tagsSubscribe(sendLastValue: boolean = false) {
         if (this.socket) {
-            const mergedArray = this.viewsTagsSubscription.concat(this.homeTagsSubscription);
+            const extra = [].concat(...Object.values(this.extraTagsSubscription));
+            const mergedArray = this.viewsTagsSubscription.concat(this.homeTagsSubscription, extra);
             const mergedArrayResolvedAdapter = this.deviceAdapaterService.resolveAdapterTagsId(mergedArray);
             let msg = { tagsId: [...new Set(mergedArrayResolvedAdapter)], sendLastValue: sendLastValue };
             this.socket.emit(IoEventTypes.DEVICE_TAGS_SUBSCRIBE, msg);
@@ -491,6 +494,23 @@ export class HmiService {
     public viewsTagsSubscribe(tagsId: string[], sendLastValue: boolean = false) {
         this.viewsTagsSubscription = tagsId;
         this.tagsSubscribe(sendLastValue);
+    }
+
+    /**
+     * Subscribe tags of a control besides the view gauges (e.g. the tags shown live by Repeater items),
+     * an empty list removes them. The last values are sent for the new tags
+     */
+    public setExtraTagsSubscription(key: string, tagsId: string[]) {
+        const previous = this.extraTagsSubscription[key] || [];
+        if (tagsId?.length) {
+            this.extraTagsSubscription[key] = tagsId;
+        } else if (previous.length) {
+            delete this.extraTagsSubscription[key];
+        } else {
+            return;
+        }
+        const added = (tagsId || []).some(id => !previous.includes(id));
+        this.tagsSubscribe(added);
     }
 
     /**
@@ -676,6 +696,14 @@ export class HmiService {
         }
     }
     //#endregion
+
+    getRepeaters() {
+        return this.projectService.getRepeaters();
+    }
+    
+    getRepeater(id: string) {
+        return this.projectService.getRepeater(id);
+    }
 
     //#region Current Alarms functions
     getAlarmsValues(alarmFilter?: AlarmsFilter) {

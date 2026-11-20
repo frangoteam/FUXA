@@ -112,6 +112,35 @@ module.exports = {
                 runtime.logger.error("api get daq: " + err.message);
             }
         });
+        /**
+         * GET the DAQ storages that can run SQL queries (used by the Repeater data)
+         */
+        daqApp.get("/api/daq/sql/nodes", secureFnc, function (req, res) {
+            try {
+                res.json(runtime.daqStorage.getSqlNodes());
+            } catch (err) {
+                runtime.logger.error("api get daq sql nodes: " + err.message);
+                res.status(400).json({ error: "unexpected_error", message: err.toString() });
+            }
+        });
+
+        /**
+         * GET the rows of a Repeater data line of type DB, the SQL is taken from the saved project
+         * (not from the request) and runs read-only
+         */
+        daqApp.get("/api/daq/sql/repeater", secureFnc, function (req, res) {
+            const repeater = (runtime.project.getRepeaters() || []).find(r => r.id === req.query.repeater);
+            const line = repeater?.lines?.find(l => l.id === req.query.line) || (!req.query.line ? repeater?.lines?.[0] : null);
+            if (!line || line.type !== 'db' || !line.daq || !line.sql) {
+                return res.status(404).json({ error: "not_found", message: "Repeater DB data line not found" });
+            }
+            runtime.daqStorage.querySql(line.daq, line.sql).then(rows => {
+                res.json(rows);
+            }).catch(err => {
+                runtime.logger.error(`api get daq sql repeater: ${err.message || err}`);
+                res.status(400).json({ error: "query_error", message: (err.message || err).toString() });
+            });
+        });
         return daqApp;
     }
 }

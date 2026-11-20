@@ -12,6 +12,7 @@ import { WindowRef } from '../_helpers/windowref';
 import { GaugePropertyComponent, GaugeDialogType, GaugePropertyData } from '../gauges/gauge-property/gauge-property.component';
 
 import { GaugesManager } from '../gauges/gauges.component';
+import { RepeaterComponent } from '../gauges/controls/repeater/repeater.component';
 import { GaugeBaseComponent } from '../gauges/gauge-base/gauge-base.component';
 import { Utils } from '../_helpers/utils';
 import { Define } from '../_helpers/define';
@@ -404,7 +405,7 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
         } else if (this.currentView.type === ViewType.maps) {
             return this.currentView.svgcontent;
         }
-        return this.winRef.nativeWindow.svgEditor.getSvgString();
+        return RepeaterComponent.stripRenderedContent(this.winRef.nativeWindow.svgEditor.getSvgString());
     }
 
     private destroyRemovedGauges() {
@@ -1434,6 +1435,16 @@ export class EditorComponent implements OnInit, AfterViewInit, OnDestroy {
                     names: names
                 }
             });
+        } else if (dlgType === GaugeDialogType.Repeater) {
+            this.gaugeDialog.type = dlgType;
+            this.gaugeDialog.data = {
+                settings: tempsettings, views: hmi.views, repeaters: this.projectService.getRepeaters(), dlgType: dlgType, names: names
+            };
+            if (!this.sidePanel.opened) {
+                this.sidePanel.toggle();
+            }
+            this.reloadGaugeDialog = !this.reloadGaugeDialog;
+            return;
         } else if (dlgType === GaugeDialogType.Table || dlgType === GaugeDialogType.Panel) {
             this.gaugeDialog.type = dlgType;
             this.gaugeDialog.data = {

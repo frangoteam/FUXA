@@ -200,6 +200,16 @@ export class Utils {
         return prefix + uuid;
     };
 
+    /**
+     * The XML serialization of the editor writes empty HTML elements (e.g. the DIV container of a Repeater
+     * or other controls in a foreignObject) as '<DIV .../>'. The HTML parser (innerHTML of the view) ignores the
+     * self-closing slash of HTML elements, so the DIV stays open and swallows the following elements
+     * (e.g. a second Repeater). Write them with an explicit end tag.
+     */
+    static fixSelfClosingHtml(svgContent: string): string {
+        return svgContent?.replace(/<(div|span|p|button|label|textarea)(\s[^<>]*?)?\s*\/>/gi, (m, tag, attrs) => `<${tag}${attrs || ''}></${tag}>`) ?? svgContent;
+    }
+
     static getShortGUID(prefix: string = '', splitter: string = '-'): string {
         var uuid = '', i, random;
         for (i = 0; i < 12; i++) {

@@ -22,7 +22,7 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
     var settings = _settings;               // Application settings
     var logger = _log;                      // Application logger
     var id = _id;                           // Device id
-    const currentStorage = _currentStorate  // Database to set the last value (current)
+    const currentStorage = _currentStorate; // Database to set the last value (current)
     var initready = false;                  // Initilized flag 
     var mapworking = false;                 // Data mapping working flag
     var dataworking = false;                // Save data working flag
@@ -282,6 +282,36 @@ function DaqNode(_settings, _log, _id, _currentStorate) {
                 });
             }
         }
+    }
+
+    /**
+     * Run a read-only SQL query on the current data database, the tags map is attached as 'map'
+     * (e.g. SELECT m.name, d.value, d.dt FROM data d JOIN map.data m ON m.mapid = d.id)
+     */
+    this.query = function (sql) {
+        return new Promise(function (resolve, reject) {
+            var db = new sqlite3.Database(db_daqdata_file, sqlite3.OPEN_READONLY, function (err) {
+                if (err) {
+                    return reject(err);
+                }
+                db.run('ATTACH DATABASE ? AS map', [db_daqmap_file], function (err) {
+                    if (err) {
+                        db.close();
+                        return reject(err);
+                    }
+                    // no further ATTACH from the query (e.g. users.fuxap.db)
+                    db.configure('limit', sqlite3.LIMIT_ATTACHED, 1);
+                    db.all(sql, function (err, rows) {
+                        db.close();
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(rows);
+                        }
+                    });
+                });
+            });
+        });
     }
 
     /**

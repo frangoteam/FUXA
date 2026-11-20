@@ -12,6 +12,7 @@ const jwt = require('jsonwebtoken');
 const paths = require('./paths');
 const logger = require('./runtime/logger');
 const utils = require('./runtime/utils');
+const proxies = require('./api/proxies');
 var events = require("./runtime/events").create();
 const FUXA = require('./fuxa.js');
 const runtime = require('./runtime');
@@ -439,6 +440,9 @@ function snapshotAuth(req, res, next) {
         return res.status(401).end();
     }
 }
+
+// Generic reverse proxies (settings.proxies), mounted before any body parser
+proxies.mount(app, settings.proxies, BASE_PATH, logger);
 
 // All the calls that are directly parsed as static http are mapped here
 const SHELL_ROUTES = [
