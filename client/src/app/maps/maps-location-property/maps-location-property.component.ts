@@ -21,6 +21,8 @@ export class MapsLocationPropertyComponent implements OnInit {
     formGroup: UntypedFormGroup;
     views: View[] = [];
     actions: GaugeAction[] = [];
+    variablesMapping: any[] = [];
+    mappingData: any;
     defaultColor = Utils.defaultColor;
     @ViewChild('flexActionsStandalone', { static: false }) flexActionsStandalone: FlexActionsStandaloneComponent;
 
@@ -37,6 +39,8 @@ export class MapsLocationPropertyComponent implements OnInit {
     ngOnInit() {
         this.views = this.projectService.getViews()?.filter(view => view.type !== ViewType.maps);
         this.actions = Utils.clone(this.location.actions || []);
+        this.variablesMapping = Utils.clone(this.location.variablesMapping || []);
+        this.mappingData = { devices: this.projectService.getDevices() };
         this.formGroup = this.fb.group({
             name: [this.location.name, Validators.required],
             latitude: [this.location.latitude],
@@ -63,7 +67,8 @@ export class MapsLocationPropertyComponent implements OnInit {
 
     onOkClick(): void {
         const actions = this.flexActionsStandalone?.getActions() || [];
-        this.location = {...this.location, ...this.formGroup.getRawValue(), actions };
+        const variablesMapping = this.formGroup.get('viewId')?.value ? this.variablesMapping : [];
+        this.location = {...this.location, ...this.formGroup.getRawValue(), actions, variablesMapping };
         this.dialogRef.close(this.location);
     }
 
@@ -111,6 +116,10 @@ export class MapsLocationPropertyComponent implements OnInit {
 
     onTagChanged(tag: FlexDeviceTagValueType) {
         this.formGroup.get('markerTagValueId')?.setValue(tag.variableId);
+    }
+
+    getView(viewId: string): View {
+        return this.views.find(view => view.id === viewId);
     }
 
     onAddAction() {
