@@ -13,6 +13,15 @@ var runtime;
 const runningRecipes = new Map();
 let nextGen = 0;
 
+// Integer and float tag types (lowercase) as defined by the device drivers,
+// including the Modbus byte-order variants (LE/MLE) and the SNMP numeric types.
+// 64-bit values are written as JS numbers, same as the drivers do.
+const INT_TAG_TYPES = ['int', 'dint', 'int16', 'int32', 'sbyte', 'uint', 'udint', 'dword', 'uint16', 'uint32', 'int64', 'uint64',
+    'int16le', 'uint16le', 'int32le', 'uint32le', 'int32mle', 'uint32mle', 'int64le',
+    'integer', 'counter32', 'gauge32', 'unsigned32', 'timeticks', 'counter64'];
+const FLOAT_TAG_TYPES = ['real', 'float', 'double', 'number', 'float32', 'float64',
+    'float32le', 'float64le', 'float32mle', 'float64mle'];
+
 /**
  * Initialize the recipe service with runtime dependencies.
  * @param {Object} _settings - Runtime settings
@@ -73,7 +82,7 @@ function coerceValue(value, tagType) {
     }
 
     // Integer family
-    if (type === 'int' || type === 'dint' || type === 'int16' || type === 'int32') {
+    if (INT_TAG_TYPES.indexOf(type) !== -1) {
         if (value === '') {
             return 0;
         }
@@ -88,7 +97,7 @@ function coerceValue(value, tagType) {
     }
 
     // Float/Real family
-    if (type === 'real' || type === 'float' || type === 'double' || type === 'number') {
+    if (FLOAT_TAG_TYPES.indexOf(type) !== -1) {
         if (value === '') {
             return 0;
         }
@@ -421,6 +430,8 @@ function isRecipeRunning(recipeId) {
 module.exports = {
     init: init,
     coerceValue: coerceValue,
+    INT_TAG_TYPES: INT_TAG_TYPES,
+    FLOAT_TAG_TYPES: FLOAT_TAG_TYPES,
     downloadRecipe: downloadRecipe,
     uploadRecipe: uploadRecipe,
     cancelRecipe: cancelRecipe,
