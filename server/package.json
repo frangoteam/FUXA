@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@influxdata/influxdb-client": "1.25.0",
+    "@iotdb/client": "2.0.11",
     "@questdb/nodejs-client": "^3.0.0",
     "@tdengine/rest": "3.0.2",
     "app-root-path": "2.2.1",

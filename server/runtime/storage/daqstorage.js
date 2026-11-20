@@ -9,6 +9,7 @@ const path = require('path');
 const SqliteDB = require("./sqlite");
 const InfluxDB = require("./influxdb");
 const TDengine  =require("./tdengine");
+const IoTDB = require("./iotdb");
 const CurrentStorage = require("./sqlite/currentstorage");
 // var DaqNode = require('./daqnode');
 var calculator = require('./calculator');
@@ -43,7 +44,7 @@ function reset() {
 function addDaqNode(_id, fncgetprop) {
     var id = _id;
     const dbType = _getDbType();
-    if (dbType === DaqStoreTypeEnum.influxDB || dbType === DaqStoreTypeEnum.influxDB18 || dbType === DaqStoreTypeEnum.TDengine || dbType === DaqStoreTypeEnum.questDB) {
+    if (dbType === DaqStoreTypeEnum.influxDB || dbType === DaqStoreTypeEnum.influxDB18 || dbType === DaqStoreTypeEnum.TDengine || dbType === DaqStoreTypeEnum.IoTDB || dbType === DaqStoreTypeEnum.questDB) {
         id = dbType;
     }
     if (!daqDB[id]) {
@@ -51,6 +52,8 @@ function addDaqNode(_id, fncgetprop) {
             daqDB[id] = InfluxDB.create(settings, logger, currentStorateDB);
         } else if(id === DaqStoreTypeEnum.TDengine){
             daqDB[id] = TDengine.create(settings, logger, currentStorateDB);
+        } else if(id === DaqStoreTypeEnum.IoTDB){
+            daqDB[id] = IoTDB.create(settings, logger, currentStorateDB);
         } else if(id === DaqStoreTypeEnum.questDB){
             const QuestDB = _getQuestDbModule();
             if (QuestDB) {
@@ -193,6 +196,7 @@ var DaqStoreTypeEnum = {
     influxDB: 'influxDB',
     influxDB18: 'influxDB18',
     TDengine: 'TDengine',
+    IoTDB: 'IoTDB',
     questDB: 'questDB',
 }
 

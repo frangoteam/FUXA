@@ -85,6 +85,8 @@ export class DaqStore {
     varsion?: string;
     url?: string;
     host = '127.0.0.1';
+    iotdbPort = 6667;
+    iotdbDatabase = 'root.fuxa';
     tableName = 'meters';
     configurationString = 'http::addr=localhost:9000;';
     organization?: string;
@@ -98,6 +100,8 @@ export class DaqStore {
             this.type = daqstore.type;
             this.url = daqstore.url;
             this.host = daqstore.host;
+            this.iotdbPort = daqstore.iotdbPort || 6667;
+            this.iotdbDatabase = daqstore.iotdbDatabase || 'root.fuxa';
             this.tableName = daqstore.tableName || 'meters';
             this.configurationString = daqstore.configurationString;
             this.organization = daqstore.organization;
@@ -110,7 +114,8 @@ export class DaqStore {
 
     isEquals(store: DaqStore) {
         if (this.type === store.type && this.bucket === store.bucket && this.url === store.url &&
-            this.host === store.host && this.tableName === store.tableName && this.configurationString === store.configurationString &&
+            this.host === store.host && this.iotdbPort === store.iotdbPort && this.iotdbDatabase === store.iotdbDatabase &&
+            this.tableName === store.tableName && this.configurationString === store.configurationString &&
             this.organization === store.organization && this.database === store.database &&
             (this.credentials && StoreCredentials.isEquals(this.credentials, store.credentials)) && this.retention === store.retention) {
             return true;
@@ -142,6 +147,7 @@ export enum DaqStoreType {
     influxDB = 'influxDB',
     influxDB18 = 'influxDB 1.8',
     TDengine = 'TDengine' ,
+    IoTDB = 'IoTDB',
     questDB = 'questDB',
 }
 
