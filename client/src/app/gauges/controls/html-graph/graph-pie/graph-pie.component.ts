@@ -22,7 +22,7 @@ export class GraphPieComponent extends GraphBaseComponent implements OnInit, Aft
     };
 
     pieChartType: ChartType = 'pie';
-    barChartPlugins = [
+    pieChartPlugins = [
         DataLabelsPlugin
     ];
 
