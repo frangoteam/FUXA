@@ -17,6 +17,7 @@
     "build": "ng build",
     "lint": "ng lint",
     "test:scripts": "node --test test/home-scheduled-scripts.test.cjs",
+    "test:switch-host-size": "node --test test/switch-host-size.test.cjs",
     "test:internal-tags": "node --test test/internal-tag-init.test.cjs",
     "test:input-confirm": "node --test test/input-confirm.test.cjs",
     "test:connection-overlay": "node --test test/connection-overlay.test.cjs",
