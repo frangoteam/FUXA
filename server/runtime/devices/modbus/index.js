@@ -347,7 +347,11 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         }
                         val = Buffer.from(bufVal);
                     } else {
-                        val = bufVal;
+                        val = _formatScriptValue(data.tags[sigid], bufVal);
+                        if (val === undefined) {
+                            logger.error(`'${data.tags[sigid].name}' setValue script error, returned value invalid (${_describeValue(bufVal)}), must be a number or a byte array`);
+                            return false;
+                        }
                     }
                 } catch (error) {
                     logger.error(`'${data.tags[sigid].name}' setValue script error! ${error.toString()}`);
@@ -617,6 +621,53 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     }
 
     /**
+     * Normalize the value returned by a scale write script
+     * Buffer is written as is, number (or numeric string) of a multi-register type is formatted
+     * with the Tag type (byte/word order), Coil, Bool and String are passed as before
+     * return undefined if the value can't be written
+     * @param {*} tag
+     * @param {*} value
+     */
+    var _formatScriptValue = function (tag, value) {
+        if (Buffer.isBuffer(value)) {
+            return value;
+        }
+        if (utils.isNullOrUndefined(value)) {
+            return undefined;
+        }
+        const datatype = datatypes[tag.type];
+        if (parseInt(tag.memaddress) === ModbusMemoryAddress.CoilStatus || !datatype || tag.type === 'Bool' || tag.type === 'String') {
+            return value;
+        }
+        let num = value;
+        if (typeof value === 'boolean') {
+            num = Number(value);
+        } else if (typeof value === 'string' && value.trim() !== '') {
+            num = Number(value);
+        }
+        if (typeof num !== 'number' || !Number.isFinite(num)) {
+            return undefined;
+        }
+        if (datatype.WordLen > 1) {
+            return datatype.formatter(num);
+        }
+        return num;
+    }
+
+    var _describeValue = function (value) {
+        if (value === null) {
+            return 'null';
+        }
+        if (typeof value === 'number') {
+            return `number ${value}`;
+        }
+        if (typeof value === 'string') {
+            return `string ${JSON.stringify(value)}`;
+        }
+        return typeof value;
+    }
+
+    /**
      * Write value to modbus
      * @param {*} memoryAddress
      * @param {*} start
@@ -636,6 +687,10 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             } else if (memoryAddress === ModbusMemoryAddress.InputRegisters) {          // Input Registers (Read  300001-365536)
                 reject();
             } else if (memoryAddress === ModbusMemoryAddress.HoldingRegisters) {
+                if (utils.isNullOrUndefined(value)) {
+                    reject(new Error('invalid value to write'));
+                    return;
+                }
                 // Utiliser forceFC16 depuis la config du device
                 if (value.length > 2 || data.property.forceFC16) {
                     client.writeRegisters(start, value).then(res => {
