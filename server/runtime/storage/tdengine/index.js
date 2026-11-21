@@ -18,6 +18,9 @@ function TDengine(_settings, _log, _currentStorage) {
     const database = settings.daqstore.database || 'fuxa';
     const databaseRef = quoteTdIdentifier(database);
     let conn;
+    // tag id -> { deviceId, deviceName }, used to prune the supertable scan in
+    // getDaqValue(). Filled on write and preloaded once in init().
+    const tagToDevice = Object.create(null);
 
     this.setCall = function (_fncGetProp) {
         fncGetTagProp = _fncGetProp;
@@ -40,7 +43,43 @@ function TDengine(_settings, _log, _currentStorage) {
         } catch (error) {
             console.error(error);
         }
+        // Preload the mapping so history queries are fast right after a restart,
+        // before the first value has been written.
+        _loadTagDeviceMap().catch((err) => {
+            logger.warn(`daq tag->device map preload failed, falling back to unpruned queries: ${err}`);
+        });
+    }
 
+    /**
+     * Load tag -> device mapping for tags that produced data recently.
+     * A short window keeps this cheap on large installations
+     * (30 days took ~59 s on a 285 M row table, 2 days ~4 s).
+     */
+    function _loadTagDeviceMap() {
+        return new Promise(function (resolve, reject) {
+            const cursor = conn.cursor();
+            cursor.query(`SELECT tag_id, device_id, device_name, last(dt) AS ts
+                          FROM ${databaseRef}.meters
+                            WHERE dt >= now - 2d
+                            GROUP BY tag_id, device_id, device_name`).then((result) => {
+                let count = 0;
+                try {
+                    const rows = result.getData();
+                    // newest row last, so a renamed owner supersedes the old name
+                    rows.sort((a, b) => new Date(a[3]) - new Date(b[3]));
+                    rows.forEach((row) => {
+                        if (row[0]) {
+                            tagToDevice[row[0]] = { deviceId: row[1], deviceName: row[2] };
+                            count++;
+                        }
+                    });
+                } catch (err) {
+                    return reject(err);
+                }
+                logger.info(`daq tag->device map loaded (${count})`);
+                resolve(count);
+            }).catch((err) => reject(err && err.message ? err.message : err));
+        });
     }
 
     this.addDaqValues = function (tagsValues, deviceName, deviceId) {
@@ -48,6 +87,7 @@ function TDengine(_settings, _log, _currentStorage) {
         const cursor = conn.cursor();
         for (const tagid in tagsValues) {
             let tag = tagsValues[tagid];
+            tagToDevice[tagid] = { deviceId: deviceId, deviceName: deviceName };
             if (!tag.daq || utils.isNullOrUndefined(tag.value) || Number.isNaN(tag.value)) {
                 if (tag.daq.restored) {
                     dataToRestore.push({ id: tag.id, deviceId: deviceId, value: tag.value });
@@ -84,11 +124,18 @@ function TDengine(_settings, _log, _currentStorage) {
         return new Promise(function (resolve, reject) {
             const cursor = conn.cursor()
             let data = []
-            //add by J, the tagid is missed in the sql, should be one of the filter condition
             const safeTagId = escapeTdString(tagid);
+            // tag_id is a plain column: filtering by it alone forces a scan of
+            // every child table in the supertable. Adding the device_name TAG
+            // lets TDengine prune to the owning child table (~13x faster).
+            // Falls back to the unpruned form when the owner is unknown.
+            const device = tagToDevice[tagid];
+            const where = (device && device.deviceName)
+                ? `tag_id = '${safeTagId}' and device_name = '${escapeTdString(device.deviceName)}'`
+                : `tag_id = '${safeTagId}'`;
             cursor.query(`SELECT CAST(dt as BIGINT) as dt, tag_value
                           FROM ${databaseRef}.meters
-                            WHERE tag_id = '${safeTagId}'
+                            WHERE ${where}
                             and dt >= ${Number(fromts)}
                             and dt < ${Number(tots)} `).then((result) => {
                 // logger.debug(result)
