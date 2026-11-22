@@ -1,0 +1,123 @@
+<div class="container">
+    <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'three-d.property-title' | translate}}</h1>
+    <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
+    <div mat-dialog-content class="dialog-content">
+        <mat-tab-group style="width: 100%;">
+            <mat-tab label="{{'editor.settings-general' | translate}}">
+                <div class="mat-tab-container">
+                    <div class="my-form-field">
+                        <span>{{'gauges.property-name' | translate}}</span>
+                        <input [(ngModel)]="name" style="width: 220px" type="text">
+                    </div>
+                    <div class="block">
+                        <flex-auth [name]="name" [permission]="property.permission" (onChanged)="onFlexAuthChanged($event)" [permissionMode]="'onlyShow'" #flexauth>
+                        </flex-auth>
+                    </div>
+                    <div class="my-form-field section-item section-item-block">
+                        <span>{{'three-d.property-model' | translate}}</span>
+                        <ng-container *ngIf="property.options.address; else modelVoid">
+                            <input [(ngModel)]="property.options.address" (change)="onAddressChanged()" (keyup.enter)="onAddressChanged()" type="text"
+                                placeholder="/resources/robot.glb" style="width: 240px;">
+                            <button mat-icon-button (click)="onClearModel()" matTooltip="{{'three-d.property-model-clear' | translate}}">
+                                <mat-icon>clear</mat-icon>
+                            </button>
+                        </ng-container>
+                        <ng-template #modelVoid>
+                            <mat-select placeholder="{{'three-d.property-model-upload' | translate}}" (click)="modelfile.click();">
+                            </mat-select>
+                            <input #modelfile type="file" style="display: none;" (change)="onSetModel($event)" accept=".glb,.gltf" />
+                        </ng-template>
+                    </div>
+                    <div *ngIf="uploading" class="three-d-uploading">
+                        <mat-icon class="spin">sync</mat-icon>
+                        <span>{{'three-d.property-model-uploading' | translate}}</span>
+                    </div>
+                    <div class="three-d-options-row">
+                        <div class="my-form-field block tac item-slider">
+                            <span>{{'three-d.property-auto-rotate' | translate}}</span>
+                            <mat-slide-toggle color="primary" [(ngModel)]="property.options.autoRotate"></mat-slide-toggle>
+                        </div>
+                        <div class="my-form-field block tac item-slider">
+                            <span>{{'three-d.property-fov' | translate}}</span>
+                            <input type="number" [(ngModel)]="property.options.fov" min="10" max="120">
+                        </div>
+                    </div>
+                    <div class="three-d-options-row">
+                        <div class="my-form-field block tac item-slider">
+                            <span>{{'three-d.property-bg-color' | translate}}</span>
+                            <div class="three-d-bg-color">
+                                <input type="color" [ngModel]="property.options.bgColor || '#ffffff'" (ngModelChange)="onColorChange($event)"
+                                    [style.background]="property.options.bgColor ? 'transparent' : 'repeating-conic-gradient(#ccc 0 25%, #fff 0 50%)'">
+                                <button mat-icon-button (click)="onClearColor()" matTooltip="{{'three-d.property-bg-transparent' | translate}}"
+                                    [disabled]="!property.options.bgColor">
+                                    <mat-icon>texture</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <app-flex-device-tag class="block item-device-tag" (onchange)="onTagChanged($event)" [variableId]="property.variableId">
+                    </app-flex-device-tag>
+                </div>
+            </mat-tab>
+            <mat-tab label="{{'editor.settings-actions' | translate}}">
+                <div class="mat-tab-container">
+                    <div class="toolbox">
+                        <button mat-icon-button (click)="onAddAction()" matTooltip="{{'three-d.property-action-add' | translate}}">
+                            <mat-icon>add_circle_outline</mat-icon>
+                        </button>
+                    </div>
+                    <div class="mt30">
+                        <div *ngFor="let action of property?.actions; index as i" class="action-readonly-item">
+                            <div class="flex value">
+                                <div class="my-form-field type inbk">
+                                    <span>{{'three-d.property-action-type' | translate}}</span>
+                                    <mat-select [(value)]="action.type">
+                                        <mat-option value="rotate-speed">{{'three-d.action-rotate-speed' | translate}}</mat-option>
+                                        <mat-option value="part-visibility">{{'three-d.action-part-visibility' | translate}}</mat-option>
+                                        <mat-option value="part-color">{{'three-d.action-part-color' | translate}}</mat-option>
+                                    </mat-select>
+                                </div>
+                                <div class="my-form-field inbk ml5" *ngIf="action.type !== 'rotate-speed'">
+                                    <span>{{'three-d.property-action-part' | translate}}</span>
+                                    <input [(ngModel)]="action.options.part" type="text">
+                                </div>
+                            </div>
+                            <div class="my-form-field tag mt5">
+                                <span>{{'three-d.property-action-variable' | translate}}</span>
+                                <app-flex-device-tag (onchange)="onActionTagChanged(action, $event)" [variableId]="action.variableId"></app-flex-device-tag>
+                            </div>
+                            <div class="flex value mt5">
+                                <div class="my-form-field number inbk">
+                                    <span>{{'gui.range-number-min' | translate}}</span>
+                                    <input [(ngModel)]="action.range.min" type="number">
+                                </div>
+                                <div class="my-form-field number inbk ml5">
+                                    <span>{{'gui.range-number-max' | translate}}</span>
+                                    <input [(ngModel)]="action.range.max" type="number">
+                                </div>
+                                <div class="my-form-field inbk ml5" *ngIf="action.type === 'part-color'">
+                                    <span>{{'three-d.property-action-color' | translate}}</span>
+                                    <input type="color" [(ngModel)]="action.range.color">
+                                </div>
+                                <div class="my-form-field inbk ml5" *ngIf="action.type === 'part-visibility'">
+                                    <span>{{'gui.range-number-max' | translate}}</span>
+                                    <input [(ngModel)]="action.options.visible" type="number">
+                                </div>
+                            </div>
+                            <div class="toolbox">
+                                <button mat-icon-button (click)="onRemoveAction(i)" matTooltip="{{'three-d.property-action-remove' | translate}}">
+                                    <mat-icon>remove_circle_outline</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+    <div mat-dialog-actions class="dialog-actions">
+        <button mat-button (click)="onNoClick()">{{'dlg.cancel' | translate}}</button>
+        <button mat-button color="primary" (click)="onOkClick()">{{'dlg.ok' | translate}}</button>
+        <div class="spacer"></div>
+    </div>
+</div>
