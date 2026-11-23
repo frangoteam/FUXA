@@ -97,6 +97,30 @@
         flex: 0 0 120px;
     }
 
+    .mat-column-scale {
+        flex: 0 0 280px;
+        padding-right: 10px;
+    }
+
+    .mat-column-scale .scale-content {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+    }
+
+    .mat-column-scale .scale-mode {
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .mat-column-scale .scale-info {
+        flex: none;
+        padding-left: 6px;
+        cursor: default;
+    }
+
     .mat-column-value {
         flex: 1 1 180px;
         white-space: nowrap;

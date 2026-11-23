@@ -10,7 +10,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { TranslateService } from '@ngx-translate/core';
 
 import { TagOptionType, TagOptionsComponent } from './../tag-options/tag-options.component';
-import { Tag, Device, DeviceType, TAG_PREFIX } from '../../_models/device';
+import { Tag, Device, DeviceType, TAG_PREFIX, TagScaleModeType } from '../../_models/device';
 import { ProjectService } from '../../_services/project.service';
 import { HmiService } from '../../_services/hmi.service';
 import { ConfirmDialogComponent } from '../../gui-helpers/confirm-dialog/confirm-dialog.component';
@@ -25,10 +25,10 @@ import { TagPropertyService } from '../tag-property/tag-property.service';
 })
 export class DeviceListComponent implements OnInit, AfterViewInit {
 
-    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'description', 'warning', 'uns', 'logger', 'options', 'remove'];
-    readonly defAllExtColumns = ['select', 'name', 'address', 'device', 'type', 'value', 'timestamp', 'quality', 'description', 'warning', 'uns', 'logger', 'options', 'remove'];
+    readonly defAllColumns = ['select', 'name', 'address', 'device', 'type', 'scale', 'value', 'timestamp', 'description', 'warning', 'uns', 'logger', 'options', 'remove'];
+    readonly defAllExtColumns = ['select', 'name', 'address', 'device', 'type', 'scale', 'value', 'timestamp', 'quality', 'description', 'warning', 'uns', 'logger', 'options', 'remove'];
     readonly defInternalColumns = ['select', 'name', 'device', 'type', 'value', 'timestamp', 'description', 'options', 'remove'];
-    readonly defGpipColumns = ['select', 'name', 'device', 'address', 'direction', 'value', 'timestamp', 'description', 'uns', 'logger', 'options', 'remove'];
+    readonly defGpipColumns = ['select', 'name', 'device', 'address', 'direction', 'scale', 'value', 'timestamp', 'description', 'uns', 'logger', 'options', 'remove'];
     readonly defWebcamColumns = ['select', 'name', 'device', 'address', 'value', 'timestamp', 'description', 'uns', 'logger', 'options', 'remove'];
     readonly defAllRowWidth = 1400;
     readonly defClientRowWidth = 1400;
@@ -73,6 +73,9 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
+        const defaultSortingDataAccessor = this.dataSource.sortingDataAccessor;
+        this.dataSource.sortingDataAccessor = (tag: Tag, column: string) =>
+            column === 'scale' ? this.getScaleMode(tag) : defaultSortingDataAccessor(tag, column);
     }
 
     mapTags() {
@@ -258,6 +261,79 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
         } else {
             return tag.name;
         }
+    }
+
+    /**
+     * Return the translated label of the tag scale mode (as in Tag options),
+     * the script label if only scale scripts are set, empty if no scaling
+     */
+    getScaleMode(tag: Tag): string {
+        const label = this.getScaleModeKey(tag);
+        if (label) {
+            return this.translateService.instant(label);
+        }
+        if (tag.scaleReadFunction || tag.scaleWriteFunction) {
+            return this.translateService.instant('device.tag-scale-mode-script');
+        }
+        return '';
+    }
+
+    /**
+     * Return the scale settings of the tag (values, expressions, scripts; one per line)
+     * to show as tooltip, null if there is nothing to show
+     */
+    getScaleTooltip(tag: Tag): string {
+        const lines: string[] = [];
+        const label = (key: string) => this.translateService.instant(key).replace(/\s*\([^)]*\)\s*$/, '');
+        const modeKey = this.getScaleModeKey(tag);
+        if (modeKey) {
+            const scale = tag.scale;
+            switch (scale.mode as string) {
+                case 'linear':
+                    lines.push(`${label('device.tag-raw-low')}: ${scale.rawLow}, ${label('device.tag-raw-high')}: ${scale.rawHigh}`);
+                    lines.push(`${label('device.tag-scaled-low')}: ${scale.scaledLow}, ${label('device.tag-scaled-high')}: ${scale.scaledHigh}`);
+                    break;
+                case 'expression':
+                    lines.push(`${label('device.tag-scale-read-expression')}: ${scale.readExpression || ''}`);
+                    lines.push(`${label('device.tag-scale-write-expression')}: ${scale.writeExpression || ''}`);
+                    break;
+                case 'convertDateTime':
+                    lines.push(`${label('device.tag-convert-datetime-format')}: ${scale.dateTimeFormat || ''}`);
+                    break;
+                case 'convertTickTime':
+                    lines.push(`${label('device.tag-convert-ticktime-format')}: ${scale.dateTimeFormat || ''}`);
+                    break;
+            }
+        }
+        if (tag.scaleReadFunction) {
+            lines.push(`${label('device.tag-scale-read-script')}: ${this.getScriptLabel(tag.scaleReadFunction, tag.scaleReadParams)}`);
+        }
+        if (tag.scaleWriteFunction) {
+            lines.push(`${label('device.tag-scale-write-script')}: ${this.getScriptLabel(tag.scaleWriteFunction, tag.scaleWriteParams)}`);
+        }
+        return lines.length ? lines.join('\n') : null;
+    }
+
+    private getScaleModeKey(tag: Tag): string {
+        // the stored mode is the TagScaleModeType key (e.g. 'linear'), see tag-options
+        const mode = tag.scale?.mode as string;
+        if (!mode || mode === 'undefined') {
+            return null;
+        }
+        return TagScaleModeType[mode as keyof typeof TagScaleModeType] || null;
+    }
+
+    private getScriptLabel(scriptId: string, params: string): string {
+        const script = this.projectService.getScripts()?.find(s => s.id === scriptId);
+        let result = script?.name || scriptId;
+        try {
+            const values = params ? JSON.parse(params) : [];
+            if (values.length) {
+                result += ` (${values.map(p => `${p.name}=${p.value}`).join(', ')})`;
+            }
+        } catch {
+        }
+        return result;
     }
 
     getAddress(tag: Tag) {
