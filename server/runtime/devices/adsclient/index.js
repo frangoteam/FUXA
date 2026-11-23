@@ -280,14 +280,19 @@ function ADSclient(_data, _logger, _events, _runtime) {
     this.setValue = async (tagId, value) => {
         if (client && client.connection.connected && data.tags[tagId]) {
             try {
-                var valueToSend = await deviceUtils.tagRawCalculator(_toValue(data.tags[tagId].type, value), data.tags[tagId]);
+                var valueToSend = await deviceUtils.tagRawCalculator(_toValue(data.tags[tagId].type, value), data.tags[tagId], runtime);
+                if (valueToSend === null || valueToSend === undefined) {
+                    logger.error(`'${data.name}' setValue(${tagId}, ${value}) failed: scaling returned no value`);
+                    return false;
+                }
                 logger.info(`Writing ${valueToSend} to: '${data.tags[tagId].address}'`)
-                const res = await client.writeValue(data.tags[tagId].address, valueToSend)
-
+                await client.writeValue(data.tags[tagId].address, valueToSend);
+                return true;
             } catch (err) {
                 logger.error(`'${data.name}' setValue error! ${err}`);
             }
         }
+        return false;
     }
 
     /**
@@ -450,10 +455,7 @@ function ADSclient(_data, _logger, _events, _runtime) {
     var _toValue = function (type, value) {
         switch (type) {
             case Datatypes.boolean:
-                if (value && value.toLowerCase() !== 'false') {
-                    return 1;
-                }
-                return 0;
+                return deviceUtils.parseValue(value, 'boolean') ? 1 : 0;
             case Datatypes.number:
                 return parseFloat(value);
             default:
