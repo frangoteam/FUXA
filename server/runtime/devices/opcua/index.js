@@ -373,8 +373,23 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
             if (data.tags[tagId].dataType) {
                 opcType = data.tags[tagId].dataType; // use the actual dataType from read
             }
-            let valueToSend = _toValue(opcType, value);
+            // Boolean values are converted before scaling so write scripts receive true/false
+            let valueToSend = opcType === opcua.DataType.Boolean ? _toValue(opcType, value) : value;
             valueToSend = await deviceUtils.tagRawCalculator(valueToSend, data.tags[tagId], runtime);
+            if (valueToSend === null || valueToSend === undefined) {
+                logger.error(`'${data.name}' setValue(${tagId}, ${value}) failed: scaling returned no value`);
+                return false;
+            }
+            const scale = data.tags[tagId].scale;
+            const scaled = scale?.mode === 'linear' || (scale?.mode === 'expression' && scale.writeExpression) || data.tags[tagId].scaleWriteFunction;
+            if (scaled && typeof valueToSend === 'number' && _isIntegerType(opcType)) {
+                valueToSend = Math.round(valueToSend); // avoid floating-point error truncating scaled values
+            }
+            valueToSend = _toValue(opcType, valueToSend);
+            if (typeof valueToSend === 'number' && !Number.isFinite(valueToSend)) {
+                logger.error(`'${data.name}' setValue(${tagId}, ${value}) failed: invalid value for data type`);
+                return false;
+            }
             if (opcType === opcua.DataType.String || opcType === opcua.DataType.ByteString) {
                 valueToSend = valueToSend?.toString();
             }
@@ -727,6 +742,15 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
     }
 
     /**
+     * Return true if the OPC UA data type is an integer type
+     * @param {*} type
+     */
+    var _isIntegerType = function (type) {
+        return [opcua.DataType.SByte, opcua.DataType.Byte, opcua.DataType.Int16, opcua.DataType.UInt16,
+            opcua.DataType.Int32, opcua.DataType.UInt32, opcua.DataType.Int64, opcua.DataType.UInt64].includes(type);
+    }
+
+    /**
      * Convert value from string depending of type
      * @param {*} type
      * @param {*} value
@@ -753,7 +777,8 @@ function OpcUAclient(_data, _logger, _events, _runtime) {
             case opcua.DataType.UInt32:
             case opcua.DataType.Int64:
             case opcua.DataType.UInt64:
-                return parseInt(value);
+                // parseInt(1e21) and parseInt(1e-7) read the exponent string and give 1
+                return typeof value === 'number' ? Math.trunc(value) : parseInt(value);
             case opcua.DataType.Float:
             case opcua.DataType.Double:
                 return parseFloat(value);
