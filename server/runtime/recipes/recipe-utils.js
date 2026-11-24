@@ -46,7 +46,31 @@ function sortByName(a, b) {
     return 0;
 }
 
+// Device tag types that behave like one of the recipe type families
+var TAG_TYPE_FAMILIES = {
+    sint: 'int', usint: 'int', uint: 'int', udint: 'int', lint: 'int', ulint: 'int', sbyte: 'int',
+    uint16: 'int', uint32: 'int', int64: 'int', uint64: 'int',
+    float32: 'real', float64: 'real'
+};
+
+/**
+ * Normalize a device tag type (Modbus UInt16, Float32MLE, OPC UA UInt32, ...)
+ * to the lower-case recipe type used for validation and value coercion.
+ * @param {string} tagType
+ * @returns {string}
+ */
+function normalizeTagType(tagType) {
+    var type = (tagType || '').toLowerCase();
+    // Modbus byte/word order variants (Int16LE, UInt32MLE, Float64MLE, ...)
+    var ordered = /^(u?int\d+|float\d+)m?le$/.exec(type);
+    if (ordered) {
+        type = ordered[1];
+    }
+    return TAG_TYPE_FAMILIES[type] || type;
+}
+
 module.exports = {
+    normalizeTagType: normalizeTagType,
     mergeInstanceWithTemplate: mergeInstanceWithTemplate,
     getRecipeTypes: getRecipeTypes,
     sortByName: sortByName

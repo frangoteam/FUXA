@@ -423,6 +423,32 @@ describe('Recipes API', () => {
             expect(res.body.error).to.include('invalid tagType');
         });
 
+        it('should accept device tag types such as UInt16, UInt32 and Float32MLE', async () => {
+            const res = await postRequest(server, '/api/recipes/types', {
+                name: 'Modbus',
+                entries: [
+                    { tagId: 't1', tagName: 'T1', tagType: 'UInt16', value: '65535' },
+                    { tagId: 't2', tagName: 'T2', tagType: 'UInt32', value: '' },
+                    { tagId: 't3', tagName: 'T3', tagType: 'Float32MLE', value: '1.5' },
+                    { tagId: 't4', tagName: 'T4', tagType: 'Int16LE', value: '-3' }
+                ]
+            });
+
+            expect(res.statusCode).to.equal(200);
+            const entries = runtime.project.setProjectData.getCall(0).args[1].entries;
+            expect(entries[1].value).to.equal(0);
+        });
+
+        it('should return 400 for an uncoercible value on an unsigned tag', async () => {
+            const res = await postRequest(server, '/api/recipes/types', {
+                name: 'Modbus',
+                entries: [{ tagId: 't1', tagName: 'T1', tagType: 'UInt16', value: 'abc' }]
+            });
+
+            expect(res.statusCode).to.equal(400);
+            expect(res.body.error).to.include("cannot be coerced to type 'UInt16'");
+        });
+
         it('should return 400 for entry with uncoercible value', async () => {
             const res = await postRequest(server, '/api/recipes/types', {
                 name: 'Test',
