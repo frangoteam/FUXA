@@ -532,7 +532,7 @@ function _validateRecipeData(data) {
             return { valid: false, error: 'Invalid recipe data: entry ' + i + ' missing tagType' };
         }
 
-        var tagTypeLower = entry.tagType.toLowerCase();
+        var tagTypeLower = recipeUtils.normalizeTagType(entry.tagType);
         if (VALID_TAG_TYPES.indexOf(tagTypeLower) === -1) {
             return { valid: false, error: 'Invalid recipe data: entry ' + i + ' has invalid tagType "' + entry.tagType + '"' };
         }

@@ -73,6 +73,25 @@ describe('recipe-service', () => {
             });
         });
 
+        describe('Device tag types', () => {
+            it('should coerce unsigned and 64-bit integer types', () => {
+                for (const type of ['UInt16', 'UInt32', 'Int64', 'UInt64', 'UInt', 'UDInt', 'SByte']) {
+                    expect(recipeService.coerceValue('42', type)).to.equal(42);
+                }
+            });
+
+            it('should coerce Float32/Float64 types', () => {
+                expect(recipeService.coerceValue('1.5', 'Float32')).to.equal(1.5);
+                expect(recipeService.coerceValue('1.5', 'Float64')).to.equal(1.5);
+            });
+
+            it('should coerce Modbus byte/word order variants', () => {
+                expect(recipeService.coerceValue('-3', 'Int16LE')).to.equal(-3);
+                expect(recipeService.coerceValue('7', 'UInt32MLE')).to.equal(7);
+                expect(recipeService.coerceValue('2.5', 'Float64MLE')).to.equal(2.5);
+            });
+        });
+
         describe('Float/Real types', () => {
             it('should coerce "3.14" to 3.14 for Real type', () => {
                 expect(recipeService.coerceValue('3.14', 'real')).to.equal(3.14);

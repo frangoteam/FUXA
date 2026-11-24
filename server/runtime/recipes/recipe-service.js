@@ -48,7 +48,7 @@ function coerceValue(value, tagType) {
         return value;
     }
 
-    var type = (tagType || '').toLowerCase();
+    var type = recipeUtils.normalizeTagType(tagType);
 
     // Boolean family
     if (type === 'bool' || type === 'boolean') {
