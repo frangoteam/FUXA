@@ -5,20 +5,24 @@ const EventEmitter = require('events');
 const Module = require('module');
 const sinon = require('sinon');
 
-describe('Modbus read error diagnostics', () => {
-    let client;
+const datatypes = require('../../runtime/devices/modbus/datatypes');
+
+describe('Modbus read results', () => {
     let driver;
+    let client;
     let logger;
     let sandbox;
 
     beforeEach(() => {
         sandbox = sinon.createSandbox();
         client = {
-            readHoldingRegisters: sandbox.stub()
+            readCoils: sandbox.stub().resolves({ data: true, buffer: Buffer.alloc(2) }),
+            readDiscreteInputs: sandbox.stub().resolves({ data: true, buffer: Buffer.alloc(2) }),
+            readInputRegisters: sandbox.stub().resolves({ data: true, buffer: Buffer.alloc(2) }),
+            readHoldingRegisters: sandbox.stub().resolves({ data: true, buffer: Buffer.alloc(2) })
         };
         logger = { info: sandbox.spy(), warn: sandbox.spy(), error: sandbox.spy() };
         sandbox.stub(console, 'error');
-
         delete require.cache[require.resolve('../../runtime/devices/modbus')];
         driver = require('../../runtime/devices/modbus');
 
@@ -36,55 +40,116 @@ describe('Modbus read error diagnostics', () => {
         delete require.cache[require.resolve('../../runtime/devices/modbus')];
     });
 
-    function createDevice() {
-        const data = {
-            id: 'modbus-1',
-            name: 'Modbus test',
-            property: {},
+    function createDevice(read) {
+        const config = {
+            id: `modbus-${read.name}`,
+            name: `Modbus ${read.name}`,
+            property: { delay: 1 },
             tags: {
                 tag1: {
-                    id: 'tag1', name: 'Tag 1', type: 'UInt16',
-                    memaddress: '400000', address: '1', divisor: 1
+                    name: 'Tag 1',
+                    type: read.type,
+                    memaddress: read.memory,
+                    address: '1',
+                    divisor: 1
                 }
             }
         };
-        const device = driver.create(data, logger, new EventEmitter(), null, {});
+        const device = driver.create(config, logger, new EventEmitter(), null, {});
         device.init(driver.ModbusTypes.TCP);
-        device.load(data);
+        device.load(config);
         return device;
     }
 
-    async function pollWith(error) {
-        client.readHoldingRegisters.rejects(error);
-        await createDevice().polling();
-        sinon.assert.calledOnce(logger.error);
-        return logger.error.firstCall.args[0];
+    function pollWithin(device, timeout = 250) {
+        let timer;
+        return Promise.race([
+            device._polling(),
+            new Promise((resolve, reject) => {
+                timer = setTimeout(() => reject(new Error('poll did not settle')), timeout);
+            })
+        ]).finally(() => clearTimeout(timer));
     }
 
-    it('includes connection metadata from structured transport errors', async () => {
-        const message = await pollWith({
-            code: 'ECONNREFUSED', syscall: 'connect', address: '127.0.0.1', port: 1502
-        });
+    const reads = [
+        { name: 'coils', method: 'readCoils', memory: '000000', type: 'Bool' },
+        { name: 'discrete inputs', method: 'readDiscreteInputs', memory: '100000', type: 'Bool' },
+        { name: 'input registers', method: 'readInputRegisters', memory: '300000', type: 'UInt16' },
+        { name: 'holding registers', method: 'readHoldingRegisters', memory: '400000', type: 'UInt16' }
+    ];
 
-        assert.match(message, /ECONNREFUSED/);
-        assert.match(message, /connect/);
-        assert.match(message, /127\.0\.0\.1/);
-        assert.match(message, /1502/);
-        assert.doesNotMatch(message, /\[object Object\]/);
+    for (const read of reads) {
+        describe(read.name, () => {
+            it('completes a successful read', async () => {
+                const device = createDevice(read);
+
+                await pollWithin(device);
+
+                sinon.assert.calledOnce(client[read.method]);
+                assert.equal(typeof device.lastReadTimestamp(), 'number');
+                sinon.assert.notCalled(logger.error);
+            });
+
+            it('releases polling after a transport rejection', async () => {
+                const device = createDevice(read);
+                client[read.method].onFirstCall().rejects(new Error('transport failed'));
+
+                await pollWithin(device);
+                await pollWithin(device);
+
+                sinon.assert.calledTwice(client[read.method]);
+                sinon.assert.calledWithMatch(logger.error, '_readMemory error! Error: transport failed');
+            });
+
+            it('releases polling after a parser exception', async () => {
+                const device = createDevice(read);
+                const parser = sandbox.stub(datatypes[read.type], 'parser').throws(new Error('parse failed'));
+
+                await pollWithin(device);
+                parser.restore();
+                await pollWithin(device);
+
+                sinon.assert.calledTwice(client[read.method]);
+                sinon.assert.calledWithMatch(logger.error, '_readMemory error! Error: parse failed');
+            });
+        });
+    }
+
+    it('preserves fields from structured transport errors in the log', async () => {
+        const device = createDevice(reads[2]);
+        client.readInputRegisters.returns(Promise.reject({
+            code: 'ECONNREFUSED',
+            syscall: 'connect',
+            address: '127.0.0.1',
+            port: 1502
+        }));
+
+        await pollWithin(device);
+
+        sinon.assert.calledWithMatch(logger.error,
+            /_readMemory error! .*ECONNREFUSED.*connect.*127\.0\.0\.1.*1502/);
+        assert.equal(logger.error.args.some(([message]) => String(message).includes('[object Object]')), false);
     });
 
-    it('uses the message carried by a structured Modbus error', async () => {
-        const message = await pollWith({ modbusCode: 2, message: 'Illegal data address' });
+    it('includes Modbus metadata and message from structured errors', async () => {
+        const device = createDevice(reads[3]);
+        client.readHoldingRegisters.returns(Promise.reject({
+            modbusCode: 2,
+            message: 'Illegal data address'
+        }));
 
-        assert.match(message, /Illegal data address/);
-        assert.match(message, /modbusCode/);
-        assert.match(message, /2/);
-        assert.doesNotMatch(message, /\[object Object\]/);
+        await pollWithin(device);
+
+        sinon.assert.calledWithMatch(logger.error,
+            /_readMemory error! .*Illegal data address.*modbusCode=2/);
     });
 
     it('preserves ordinary Error diagnostics', async () => {
-        const message = await pollWith(new Error('socket closed'));
+        const device = createDevice(reads[3]);
+        client.readHoldingRegisters.rejects(new Error('socket closed'));
 
-        assert.match(message, /socket closed/);
+        await pollWithin(device);
+
+        sinon.assert.calledWithMatch(logger.error, /_readMemory error! .*socket closed/);
     });
 });
