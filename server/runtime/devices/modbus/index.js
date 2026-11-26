@@ -11,26 +11,6 @@ const net = require("net");
 const TOKEN_LIMIT = 100;
 const Mutex = require("async-mutex").Mutex;
 
-function formatModbusError(error) {
-    if (error instanceof Error) {
-        return error.stack || error.message;
-    }
-    if (typeof error === 'string') {
-        return error;
-    }
-    if (error && typeof error.message === 'string') {
-        return error.message;
-    }
-    try {
-        const serialized = JSON.stringify(error);
-        if (serialized && serialized !== '{}') {
-            return serialized;
-        }
-    } catch { }
-    const converted = String(error);
-    return converted === '[object Object]' ? 'Unknown Modbus error' : converted;
-}
-
 function MODBUSclient(_data, _logger, _events, _runtime) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
     var data = JSON.parse(JSON.stringify(_data));                   // Current Device data { id, name, tags, enabled, ... }
@@ -172,7 +152,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         readVarsfnc.push(await _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
                         readVarsfnc.push(await delay(data.property.delay || 10));
                     } catch (err) {
-                        logger.error(`'${data.name}' _readMemory error! ${formatModbusError(err)}`);
+                        logger.error(`'${data.name}' _readMemory error! ${formatError(err)}`);
                     }
                 }
             } else {
@@ -181,7 +161,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         readVarsfnc.push(await _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items)));
                         readVarsfnc.push(await delay(data.property.delay || 10));
                     } catch (err) {
-                        logger.error(`'${data.name}' _readMemory error! ${formatModbusError(err)}`);
+                        logger.error(`'${data.name}' _readMemory error! ${formatError(err)}`);
                     }
                 }
             }
@@ -894,4 +874,28 @@ function MemoryItems() {
     this.Start = 65536;
     this.MaxSize = 0;
     this.Items = {};
+}
+
+function formatError(error) {
+    if (error instanceof Error) {
+        return error.stack || error.message;
+    }
+    if (typeof error === 'string') {
+        return error;
+    }
+    if (error && typeof error === 'object') {
+        const details = [];
+        if (error.message) {
+            details.push(String(error.message));
+        }
+        for (const [key, value] of Object.entries(error)) {
+            if (key !== 'message' && value !== null && ['string', 'number', 'boolean'].includes(typeof value)) {
+                details.push(`${key}=${value}`);
+            }
+        }
+        if (details.length) {
+            return details.join(' ');
+        }
+    }
+    return String(error);
 }

@@ -119,14 +119,37 @@ describe('Modbus read results', () => {
         const device = createDevice(reads[2]);
         client.readInputRegisters.returns(Promise.reject({
             code: 'ECONNREFUSED',
+            syscall: 'connect',
             address: '127.0.0.1',
-            port: 65000
+            port: 1502
         }));
 
         await pollWithin(device);
 
         sinon.assert.calledWithMatch(logger.error,
-            '_readMemory error! {"code":"ECONNREFUSED","address":"127.0.0.1","port":65000}');
+            /_readMemory error! .*ECONNREFUSED.*connect.*127\.0\.0\.1.*1502/);
         assert.equal(logger.error.args.some(([message]) => String(message).includes('[object Object]')), false);
+    });
+
+    it('includes Modbus metadata and message from structured errors', async () => {
+        const device = createDevice(reads[3]);
+        client.readHoldingRegisters.returns(Promise.reject({
+            modbusCode: 2,
+            message: 'Illegal data address'
+        }));
+
+        await pollWithin(device);
+
+        sinon.assert.calledWithMatch(logger.error,
+            /_readMemory error! .*Illegal data address.*modbusCode=2/);
+    });
+
+    it('preserves ordinary Error diagnostics', async () => {
+        const device = createDevice(reads[3]);
+        client.readHoldingRegisters.rejects(new Error('socket closed'));
+
+        await pollWithin(device);
+
+        sinon.assert.calledWithMatch(logger.error, /_readMemory error! .*socket closed/);
     });
 });
