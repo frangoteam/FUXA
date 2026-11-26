@@ -345,11 +345,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                             logger.error(`'${data.tags[sigid].name}' setValue script error, returned buffer invalid must be mod 2`);
                             return false;
                         }
-                        val = [];
-                        for (let i = 0; i < bufVal.length;) {
-                            val.push(bufVal.readUInt16BE(i));
-                            i = i + 2;
-                        }
+                        val = Buffer.from(bufVal);
                     } else {
                         val = bufVal;
                     }

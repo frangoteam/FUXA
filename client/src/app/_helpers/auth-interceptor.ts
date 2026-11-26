@@ -47,7 +47,9 @@ export class AuthInterceptor implements HttpInterceptor {
             tap((event: HttpEvent<any>) => {
             }, (err: any) => {
                 if (err instanceof HttpErrorResponse) {
-                    if (!skipError && (err.status === 401 || err.status === 403)) {
+                    // 401 means the request is unauthenticated. A 403 means the
+                    // user is authenticated but lacks permission; do not sign them out.
+                    if (!skipError && err.status === 401) {
                         authService.signOut();
                         const projectService = this.injector.get(ProjectService);
                         projectService.reload();

@@ -226,10 +226,9 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                     if (ga.property.type === HtmlImageComponent.propertyWidgetType && ga.property.scriptContent && ga.property.varsToBind?.length) {
                         const scriptContent = ga.property.scriptContent;
                         if (window[scriptContent.moduleId]['putValue']) {
-                            const widgetVar = <WidgetPropertyVariable>ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.variableId === sig.id);
-                            if (widgetVar) {
+                            ga.property.varsToBind.filter((varToBind: WidgetPropertyVariable) => varToBind.variableId === sig.id).forEach(widgetVar => {
                                 window[scriptContent.moduleId]['putValue'](widgetVar.name, sig.value);
-                            }
+                            });
                         }
                     }
                 }

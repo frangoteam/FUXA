@@ -40,6 +40,9 @@ module.exports = {
                 // res.header("Access-Control-Allow-Origin", "*");
                 // res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                 if (result) {
+                    if (!_isAdminRequest(req, permission)) {
+                        result = _sanitizeProjectForViewer(result, permission);
+                    }
                     res.json(result);
                 } else {
                     res.status(404).end();
@@ -66,7 +69,7 @@ module.exports = {
             const permission = checkGroupsFnc(req);
             runtime.project.getProjectView(req.params.id, permission).then(result => {
                 if (result) {
-                    res.json(result);
+                    res.json(_isAdminRequest(req, permission) ? result : _sanitizeProjectForViewer({ hmi: { views: [result] } }).hmi.views[0]);
                 } else {
                     res.status(404).end();
                     runtime.logger.error("api get project view: Not Found!");
@@ -296,4 +299,95 @@ module.exports = {
 
         return prjApp;
     }
+}
+
+function _isAdminRequest(req, permission) {
+    if (!runtime.settings?.secureEnabled) {
+        return true;
+    }
+    if (authJwt.isGuestUser(req.userId, req.userGroups)) {
+        return false;
+    }
+    return req.userId === 'admin' || authJwt.haveAdminPermission(permission);
+}
+
+function _sanitizeProjectForViewer(project, permission) {
+    const sanitized = JSON.parse(JSON.stringify(project));
+    const sensitiveProperty = /(?:user.?name|pass(?:word|phrase)?|secret|token|credential|private.?key|certificate|\bcert\b|auth(?:entication|orization)?(?:header|token|key|password)?|api.?key|community|priv.?key)/i;
+
+    if (Array.isArray(sanitized.recipes)) {
+        const referencedRecipeIds = _getReferencedRecipeIds(sanitized.hmi, permission);
+        sanitized.recipes = sanitized.recipes.filter(recipe => recipe && referencedRecipeIds.has(recipe.id));
+    }
+    if (Array.isArray(sanitized.recipes) && typeof runtime.checkPermission === 'function') {
+        sanitized.recipes = sanitized.recipes.filter(recipe => {
+            if (!recipe) return false;
+            const recipePermission = runtime.checkPermission(permission, recipe, false, true);
+            return recipePermission?.show !== false;
+        });
+    }
+    if (Array.isArray(sanitized.scripts) && runtime.scriptsMgr?.isAuthorised) {
+        sanitized.scripts = sanitized.scripts.filter(script => runtime.scriptsMgr.isAuthorised(script, permission));
+    }
+
+    function removeSensitiveProperties(value) {
+        if (!value || typeof value !== 'object') {
+            return;
+        }
+        for (const key of Object.keys(value)) {
+            if (sensitiveProperty.test(key)) {
+                delete value[key];
+            } else if (typeof value[key] === 'string') {
+                // Secrets may be embedded in query strings (for example, a device URL).
+                value[key] = value[key].replace(/([?&](?:access[_-]?token|auth[_-]?token|token|api[_-]?key|apikey|secret|password|authorization)=)[^&#]*/gi, '$1[REDACTED]');
+            } else {
+                removeSensitiveProperties(value[key]);
+            }
+        }
+    }
+
+    removeSensitiveProperties(sanitized);
+    // Receiver addresses are only needed for project configuration, not HMI runtime.
+    for (const notification of Array.isArray(sanitized.notifications) ? sanitized.notifications : []) {
+        if (notification && typeof notification === 'object') delete notification.receiver;
+    }
+    for (const report of Array.isArray(sanitized.reports) ? sanitized.reports : []) {
+        if (report && typeof report === 'object') delete report.receiver;
+    }
+    if (Array.isArray(sanitized.scripts)) {
+        for (const script of sanitized.scripts) {
+            if (script && script.mode !== 'CLIENT') {
+                delete script.code;
+            }
+            if (script && script.mode !== 'CLIENT' && Array.isArray(script.parameters)) {
+                // Preserve ordinary runtime parameter values; redact values explicitly
+                // identified as credentials while retaining binding name/type metadata.
+                for (const parameter of script.parameters) {
+                    if (parameter && typeof parameter === 'object' && sensitiveProperty.test(parameter.name || '')) {
+                        delete parameter.value;
+                    }
+                }
+            }
+        }
+    }
+    return sanitized;
+}
+
+function _getReferencedRecipeIds(hmi, permission) {
+    const recipeIds = new Set();
+    for (const view of Array.isArray(hmi?.views) ? hmi.views : []) {
+        for (const item of Object.values(view?.items || {})) {
+            if (!item?.property?.recipeId) {
+                continue;
+            }
+            if (typeof runtime.checkPermission === 'function') {
+                const itemPermission = runtime.checkPermission(permission, item.property, false, true);
+                if (itemPermission?.show === false) {
+                    continue;
+                }
+            }
+            recipeIds.add(item.property.recipeId);
+        }
+    }
+    return recipeIds;
 }

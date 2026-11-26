@@ -142,7 +142,7 @@ export class GraphPropertyComponent implements OnInit, OnDestroy {
             this.options.plugins.datalabels.color = '#fff';
             this.options.plugins.title.color = '#fff';
             this.options.gridLinesColor = '#808080';
-            this.options.backgroundColor = '242424';
+            this.options.backgroundColor = '#242424';
         } else if (this.options.theme === this.themeType.customise) {
             this.options.backgroundColor = null;
         }

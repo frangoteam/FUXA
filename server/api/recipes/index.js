@@ -43,7 +43,7 @@ module.exports = {
             }
             if (req.params.id) {
                 const type = runtime.project.getRecipe ? runtime.project.getRecipe(req.params.id) : null;
-                if (type) {
+                if (type && _isRecipeTypeVisible(type, auth)) {
                     res.json(type);
                 } else {
                     res.status(404).end();
@@ -51,7 +51,8 @@ module.exports = {
                 return;
             }
             _handlePromise(Promise.resolve(recipeUtils.getRecipeTypes(runtime)), res, function(result) {
-                res.json({ recipes: result || [] });
+                const visibleTypes = (result || []).filter(row => _isRecipeTypeVisible(row.data, auth));
+                res.json({ recipes: visibleTypes });
             }, 'getTypes');
         });
 
@@ -128,6 +129,11 @@ module.exports = {
             if (req.params.id) {
                 _handlePromise(_getRecipeInstance(req.params.id), res, function(result) {
                     if (result) {
+                        const recipeType = result.typeId && runtime.project.getRecipe ? runtime.project.getRecipe(result.typeId) : null;
+                        if (recipeType && !_isRecipeTypeVisible(recipeType, auth)) {
+                            res.status(404).end();
+                            return;
+                        }
                         res.json(result);
                     } else {
                         res.status(404).end();
@@ -140,7 +146,10 @@ module.exports = {
                 ? runtime.recipeStorage.getAllRecipesByType(req.query.typeId)
                 : runtime.recipeStorage.getAllRecipeInstances();
             _handlePromise(promise, res, function(result) {
-                const recipes = (result || []).map(row => ({
+                const recipes = (result || []).filter(row => {
+                    const type = row.data?.typeId && runtime.project.getRecipe ? runtime.project.getRecipe(row.data.typeId) : null;
+                    return !type || _isRecipeTypeVisible(type, auth);
+                }).map(row => ({
                     id: row.id,
                     data: recipeUtils.mergeInstanceWithTemplate(runtime, row.data)
                 }));
@@ -762,6 +771,14 @@ function _isRecipeTypeOperationAllowed(recipeType, permission) {
 
     const result = runtime.checkPermission(permission, recipeType, false, true);
     return !!(result && result.enabled);
+}
+
+function _isRecipeTypeVisible(recipeType, auth) {
+    if (!recipeType || !auth.secureEnabled || auth.isAdmin || !runtime.checkPermission) {
+        return true;
+    }
+    const result = runtime.checkPermission(auth.permission, recipeType, false, true);
+    return !!(result && result.show);
 }
 
 function _getAuthContext(req) {

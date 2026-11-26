@@ -2,6 +2,11 @@
     <h1 mat-dialog-title class="dialog-title" mat-dialog-draggable>{{'table.customize-title' | translate}}</h1>
     <mat-icon (click)="onNoClick()" class="dialog-close-btn">clear</mat-icon>
     <div mat-dialog-content>
+        <div class="toolbox-column">
+            <button mat-icon-button (click)="onAddColumn()" matTooltip="{{'table.customize-column-add' | translate}}">
+                <mat-icon>add_circle_outline</mat-icon>
+            </button>
+        </div>
         <mat-table #table [dataSource]="dataSource" matSort class="customer-table" style="min-width: 900px; height: 500px; display: block; overflow: auto;">
             <ng-container *ngFor="let column of displayedColumns; index as i" [matColumnDef]="column">
                 <mat-header-cell *matHeaderCellDef>
@@ -64,11 +69,6 @@
             <mat-row *matRowDef="let row; columns: displayedColumns;">
             </mat-row>
         </mat-table>
-        <div class="toolbox-column">
-            <button mat-icon-button (click)="onAddColumn()" matTooltip="{{'table.customize-column-add' | translate}}">
-                <mat-icon>add_circle_outline</mat-icon>
-            </button>
-        </div>
         <div *ngIf="data.type === tableType.data" class="toolbox-row">
             <button mat-icon-button (click)="onAddRow()" matTooltip="{{'table.customize-row-add' | translate}}">
                 <mat-icon>add_circle_outline</mat-icon>

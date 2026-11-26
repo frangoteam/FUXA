@@ -105,6 +105,32 @@ describe('OPC UA subscription arrays', () => {
     it('preserves existing scalar UInt64 word-pair handling', async () => {
         assert.equal(await receive([0, 42], dataType.UInt64, arrayType.Scalar), 42);
     });
+
+    it('reconstructs a safe scalar UInt64 value that uses both words', async () => {
+        assert.equal(await receive([1, 0], dataType.UInt64, arrayType.Scalar), 4294967296);
+    });
+
+    it('reconstructs the largest safe scalar UInt64 value', async () => {
+        assert.equal(await receive([0x1fffff, 0xffffffff], dataType.UInt64, arrayType.Scalar), Number.MAX_SAFE_INTEGER);
+    });
+
+    it('reconstructs a negative scalar Int64 value', async () => {
+        assert.equal(await receive([0xffffffff, 0xffffffff], dataType.Int64, arrayType.Scalar), -1);
+    });
+
+    it('reconstructs a signed scalar Int64 value that uses both words', async () => {
+        assert.equal(await receive([0xfffffffe, 0], dataType.Int64, arrayType.Scalar), -8589934592);
+    });
+
+    it('preserves unsafe scalar 64-bit word pairs without truncating them', async () => {
+        const value = [0x200000, 0];
+        assert.deepEqual(await receive(value, dataType.UInt64, arrayType.Scalar), value);
+    });
+
+    it('preserves scalar structured arrays that are not 64-bit integers', async () => {
+        const value = [{ id: 1 }, { id: 2 }];
+        assert.deepEqual(await receive(value, dataType.ExtensionObject, arrayType.Scalar), value);
+    });
 });
 
 describe('Collection value composition', () => {

@@ -283,15 +283,26 @@ export class DeviceNetProperty {
     socketReuse?: string;
     /** Force FC16 for Modbus RTU/TCP write operations */
     forceFC16?: boolean;
+    /** S7 driver backend: 'snap7' (native, default) or 'nodes7' (pure JS) */
+    driver?: string;
+    /** S7 nodes7: local TSAP (hex, e.g. 0x0100) */
+    tsapLocal?: string;
+    /** S7 nodes7: remote TSAP (hex, e.g. 0x0201) */
+    tsapRemote?: string;
     /** MELSEC */
     ascii?: boolean;
     octalIO?: boolean;
     /** MELSEC MC protocol frame: '1E' (default) or '3E' (Q/L/iQ built-in Ethernet) */
     frame?: string;
+    /** Connection timeout (ms), used by MELSEC and by the S7 nodes7 driver */
     timeout?: number;
 
     static descriptor = {
         address: 'Device address (IP)',
+        driver: 'S7 driver backend',
+        tsapLocal: 'S7 nodes7 local TSAP',
+        tsapRemote: 'S7 nodes7 remote TSAP',
+        timeout: 'Connection timeout (ms)',
         // port: 'Address port',
         // slot: 'Slot number used for Siemens S7 connection',
         // rack: 'Rack number used for Siemens S7 connection',

@@ -24,11 +24,11 @@ function Report(_property, _runtime) {
                 if (!_isToExecute(time) && !force) {
                     resolve(true);
                 } else {
-                    await _createPdfBinary().then(filepath => {
+                    await _createPdfBinary().then(async filepath => {
                         if (property.receiver) {
                             let subject = `Report ${property.name}`;
                             let attachments = { path: filepath };
-                            runtime.notificatorMgr.sendMailMessage(null, property.receiver, subject, '', null, attachments).then(function () {
+                            await runtime.notificatorMgr.sendMailMessage(null, property.receiver, subject, '', null, attachments).then(function () {
                                 logger.info(`report.sended.successful: ${new Date()} ${property.receiver} ${property.name}`);
                             }).catch(function (senderr) {
                                 logger.error(`report.send.failed: ${senderr}`);

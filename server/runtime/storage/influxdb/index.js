@@ -116,7 +116,7 @@ function Influx(_settings, _log, _currentStorate) {
                 const tags = {
                     id: tag.id
                 };
-                const tagName = tag.name || tag.tagref?.name;
+                const tagName = utils.getTagName(tag);
                 if (tagName) {
                     tags.name = tagName;
                 }
@@ -138,7 +138,7 @@ function Influx(_settings, _log, _currentStorate) {
             } else {
                 const point = new Point(tag.id)
                     .tag('id', tag.id)
-                    .tag('name', tag.name || tag.tagref?.name)
+                    .tag('name', utils.getTagName(tag))
                     .tag('type', tag.type)
                     .timestamp(new Date(tag.timestamp ?? new Date().getTime()));
                 if (deviceName) {

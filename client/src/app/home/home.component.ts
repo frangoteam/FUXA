@@ -331,18 +331,24 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 // resync the display in case the rejected write's optimistic value is still showing (e.g. user cancelled sign-in)
                 this.hmiService.askDeviceValues();
                 if (!result) {
-                    this.translateService.get('msg.signin-unauthorized').subscribe((txt: string) => {
-                        this.toastr.error(txt, '', {
-                            timeOut: 3000,
-                            closeButton: true,
-                            disableTimeOut: true
-                        });
-                    });
                     return;
                 }
                 const userInfo = new UserInfo(this.authService.getUser()?.info);
-                if (userInfo.start) {
-                    this.onGoToPage(userInfo.start);
+                const userStart = this.hmi.views?.find(x => x.id === userInfo.start);
+                if (userStart) {
+                    this.onGoToPage(userStart.id, true);
+                } else {
+                    // Without a user-specific start page, explicitly navigate
+                    // to the project default after authentication. The project
+                    // reload emits its HMI event before its lazy view finishes
+                    // loading, so this keeps the post-login render in sync.
+                    const viewName = this.route.snapshot.queryParamMap.get('viewName')?.trim();
+                    const queryView = viewName ? this.hmi.views?.find(x => x.name === viewName) : null;
+                    const projectStart = this.hmi.views?.find(x => x.id === this.hmi.layout?.start) || this.hmi.views?.[0];
+                    const startView = queryView || projectStart;
+                    if (startView) {
+                        this.onGoToPage(startView.id, true);
+                    }
                 }
             });
         }
@@ -424,7 +430,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                     viewToShow = userStartView;
                 }
             }
-            let startView = this.hmi.views.find(x => x.name === this.route.snapshot.queryParamMap.get('viewName')?.trim());
+            const viewName = this.route.snapshot.queryParamMap.get('viewName')?.trim();
+            let startView = viewName ? this.hmi.views.find(x => x.name === viewName) : null;
             if (startView) {
                 viewToShow = startView;
             }

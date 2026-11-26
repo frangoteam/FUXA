@@ -1,10 +1,13 @@
 <div id="main-container" class="container">
-    <div *ngIf="serverErrorBanner$ | async" class="banner">
-        <div>
-            <span>{{'msg.server-connection-failed' | translate}}</span>
-            <mat-icon>block</mat-icon>
+    <ng-container *ngIf="serverErrorBanner$ | async">
+        <div class="banner">
+            <div>
+                <span>{{'msg.server-connection-failed' | translate}}</span>
+                <mat-icon>block</mat-icon>
+            </div>
         </div>
-    </div>
+        <div class="connection-overlay" aria-hidden="true"></div>
+    </ng-container>
     <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn" style="position: absolute; top: 0px; left: 0px; right: 0px; z-index: 99999;">
     </mat-progress-bar>
     <app-header class="header" [hidden]="isHidden()"></app-header>

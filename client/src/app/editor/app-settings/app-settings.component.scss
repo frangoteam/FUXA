@@ -57,6 +57,13 @@
         box-sizing: border-box;
     }
 
+    .node-red-info.node-red-security-warning {
+        border-left-color: #ffb74d;
+        background-color: rgba(255, 183, 77, 0.12);
+        color: #ffe0b2;
+        opacity: 1;
+    }
+
     .auth-secret-row {
         display: flex;
         align-items: flex-start;
