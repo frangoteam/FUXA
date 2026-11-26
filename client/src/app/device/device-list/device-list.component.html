@@ -74,6 +74,16 @@
                     <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.list-type' | translate}} </mat-header-cell>
                     <mat-cell *matCellDef="let element"> {{element.type}} </mat-cell>
                 </ng-container>
+                <!-- Scale Column -->
+                <ng-container matColumnDef="scale">
+                    <mat-header-cell *matHeaderCellDef mat-sort-header> {{'device.tag-scale' | translate}} </mat-header-cell>
+                    <mat-cell *matCellDef="let element">
+                        <span class="scale-content" [matTooltip]="getScaleTooltip(element)" matTooltipClass="tooltip-multiline">
+                            <span class="scale-mode">{{getScaleMode(element)}}</span>
+                            <mat-icon *ngIf="getScaleTooltip(element)" class="my-form-field-info scale-info">error_outline</mat-icon>
+                        </span>
+                    </mat-cell>
+                </ng-container>
 
                 <!-- Min Column -->
                 <ng-container matColumnDef="min">

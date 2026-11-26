@@ -688,6 +688,12 @@ mat-toolbar-row {
     white-space: pre-line;
 }
 
+.tooltip-multiline .mdc-tooltip__surface {
+    white-space: pre-line;
+    max-width: 400px;
+    text-align: left;
+}
+
 .mat-button-sm {
     height: 30px !important;
     width: 30px !important;
