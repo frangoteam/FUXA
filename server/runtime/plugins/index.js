@@ -304,7 +304,7 @@ function createDefaultPlugins() {
     registry['onoff'] = new Plugin('onoff', './gpio', 'GPIO', '6.0.3', PluginGroupType.connectionDevice, true);
     registry['node-webcam'] = new Plugin('node-webcam', './webcam', 'WebCam', '0.8.2', PluginGroupType.connectionDevice, true);
     registry['mcprotocol'] = new Plugin('mcprotocol', './melsec', 'MELSEC', '0.1.2', PluginGroupType.connectionDevice, true);
-    registry['node-red'] = new Plugin('node-red', './node-red', 'node-red', '4.1.0', PluginGroupType.service, true);
+    registry['node-red'] = new Plugin('node-red', './node-red', 'node-red', '4.1.18', PluginGroupType.service, true);
     registry['redis'] = new Plugin('redis', './redis', 'REDIS', '5.8.2', PluginGroupType.connectionDevice, true);
     registry['net-snmp'] = new Plugin('net-snmp', './snmp', 'SNMP', '3.29.2', PluginGroupType.connectionDevice, true);
     return registry;
