@@ -146,6 +146,20 @@ test('bulk history, live updates and rolling windows preserve categorical states
     assert.equal(timeline.intervals(component.data[0], component.data[2], 0, 25).length, 0);
 });
 
+test('numeric trends receive numbers even when DAQ history or drivers deliver strings', () => {
+    // uPlot 1.6.32 ranges y-scales with plain comparisons: "5" > "150" would clip the axis.
+    const component = plot();
+    component.setData([[0, 1, 2, 3, 4, 5, 6], ['5', '150', 'true', '', '  ', '0', ' 12 '], ['Running', '1', '0', null, null, null, null]]);
+    assert.deepEqual(plain(component.data[1]), [5, 150, null, null, null, 0, 12]);
+    assert.equal(typeof component.data[2][0], 'number');
+    component.setData([[0, 1], [true, false], [null, null]]);
+    assert.deepEqual(plain(component.data[1]), [1, 0]);
+    component.addValue(1, 2, '480.5', 10);
+    assert.equal(component.data[1][2], 480.5);
+    component.addData([[3], ['12'], [null]]);
+    assert.equal(component.data[1][3], 12);
+});
+
 test('replaying paused tags in arrival order keeps all series chronologically aligned', () => {
     const component = plot();
     component.setData([[0], [20], ['Running']]);
