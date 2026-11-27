@@ -481,7 +481,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
                 timeline.reset();
                 return values.map(value => timeline.encode(value));
             }
-            return values.slice();
+            return index ? NgxUplotComponent.toNumericSeries(values) : values.slice();
         });
         this.uplot.setData(this.data);
     }
@@ -489,9 +489,43 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
     addData(data: any[][] = [[]]) {
         for (var index = 0; index < data.length; index++) {
             const timeline = this.stateTimelines.get(index);
-            this.data[index] = this.data[index].concat(timeline ? data[index].map(value => timeline.encode(value)) : data[index]);
+            const values = timeline ? data[index].map(value => timeline.encode(value))
+                : (index ? NgxUplotComponent.toNumericSeries(data[index]) : data[index]);
+            this.data[index] = this.data[index].concat(values);
         }
         this.uplot.setData(this.data);
+    }
+
+    /**
+     * DAQ storage (e.g. SQLite TEXT column) and some drivers deliver values as strings or booleans.
+     * uPlot 1.6.32 (unlike 1.6.24) computes the y-range with plain `<`/`>` comparisons (no Math.min/max coercion),
+     * so strings would be compared lexicographically ("5" > "150") and break the axis range.
+     */
+    static toNumericValue(value: unknown): number {
+        if (typeof value === 'number' || value === null || value === undefined) {
+            return value as number;
+        }
+        if (typeof value === 'boolean') {
+            return value ? 1 : 0;
+        }
+        if (typeof value === 'string') {
+            const num = +value;
+            // +'' and +'  ' are 0: only zeros need the (rare) blank check
+            if (isFinite(num) && (num !== 0 || value.trim() !== '')) {
+                return num;
+            }
+        }
+        return null;
+    }
+
+    /** Hot path for whole history series: plain loop, numbers copied without a call per element. */
+    static toNumericSeries(values: unknown[]): number[] {
+        const result = new Array<number>(values.length);
+        for (let i = 0; i < values.length; i++) {
+            const value = values[i];
+            result[i] = typeof value === 'number' ? value : NgxUplotComponent.toNumericValue(value);
+        }
+        return result;
     }
 
     setXScala(min: number, max: number) {
@@ -499,10 +533,7 @@ export class NgxUplotComponent implements OnInit, OnDestroy {
     }
 
     addValue(index: number, x: number, y: unknown, size: number) {
-        let value = y as number;
-        if (this.stateTimelines.has(index)) {
-            value = this.stateTimelines.get(index).encode(y);
-        }
+        const value = this.stateTimelines.has(index) ? this.stateTimelines.get(index).encode(y) : NgxUplotComponent.toNumericValue(y);
         const times = this.data[0];
         // Paused samples are replayed per tag, so arrival order need not be chronological.
         let low = 0;
