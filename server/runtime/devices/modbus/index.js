@@ -171,7 +171,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         readVarsfnc.push(await _trackRequest(() => _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items))));
                         readVarsfnc.push(await delay(data.property.delay || 10));
                     } catch (err) {
-                        logger.error(`'${data.name}' _readMemory error! ${err}`);
+                        logger.error(`'${data.name}' _readMemory error! ${formatError(err)}`);
                     }
                 }
             } else {
@@ -180,7 +180,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         readVarsfnc.push(await _trackRequest(() => _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items))));
                         readVarsfnc.push(await delay(data.property.delay || 10));
                     } catch (err) {
-                        logger.error(`'${data.name}' _readMemory error! ${err}`);
+                        logger.error(`'${data.name}' _readMemory error! ${formatError(err)}`);
                     }
                 }
             }
@@ -364,11 +364,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                             logger.error(`'${data.tags[sigid].name}' setValue script error, returned buffer invalid must be mod 2`);
                             return false;
                         }
-                        val = [];
-                        for (let i = 0; i < bufVal.length;) {
-                            val.push(bufVal.readUInt16BE(i));
-                            i = i + 2;
-                        }
+                        val = Buffer.from(bufVal);
                     } else {
                         val = bufVal;
                     }
@@ -596,7 +592,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         });
                     }
                     resolve(vars);
-                }, reason => {
+                }).catch(reason => {
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.DigitalInputs) {          // Digital Inputs (Read 100001-165536)
@@ -611,26 +607,22 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         });
                     }
                     resolve(vars);
-                }, reason => {
+                }).catch(reason => {
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.InputRegisters) {          // Input Registers (Read  300001-365536)
                 client.readInputRegisters(start, size).then(res => {
                     if (res.data) {
                         vars.map(v => {
-                            try {
-                                let byteoffset = (v.offset - start) * 2;
-                                let buffer = Buffer.from(res.buffer.slice(byteoffset, byteoffset + datatypes[v.type].bytes))
-                                let value = datatypes[v.type].parser(buffer);
-                                v.changed = value !== v.rawValue;
-                                v.rawValue = value;
-                            } catch (err) {
-                                console.error(err);
-                            }
+                            let byteoffset = (v.offset - start) * 2;
+                            let buffer = Buffer.from(res.buffer.slice(byteoffset, byteoffset + datatypes[v.type].bytes))
+                            let value = datatypes[v.type].parser(buffer);
+                            v.changed = value !== v.rawValue;
+                            v.rawValue = value;
                         });
                     }
                     resolve(vars);
-                }, reason => {
+                }).catch(reason => {
                     reject(reason);
                 });
             } else if (memoryAddress === ModbusMemoryAddress.HoldingRegisters) {          // Holding Registers (Read/Write  400001-465535)
@@ -645,7 +637,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                         });
                     }
                     resolve(vars);
-                }, reason => {
+                }).catch(reason => {
                     console.error(reason);
                     reject(reason);
                 });
@@ -969,4 +961,28 @@ function MemoryItems() {
     this.Start = 65536;
     this.MaxSize = 0;
     this.Items = {};
+}
+
+function formatError(error) {
+    if (error instanceof Error) {
+        return error.stack || error.message;
+    }
+    if (typeof error === 'string') {
+        return error;
+    }
+    if (error && typeof error === 'object') {
+        const details = [];
+        if (error.message) {
+            details.push(String(error.message));
+        }
+        for (const [key, value] of Object.entries(error)) {
+            if (key !== 'message' && value !== null && ['string', 'number', 'boolean'].includes(typeof value)) {
+                details.push(`${key}=${value}`);
+            }
+        }
+        if (details.length) {
+            return details.join(' ');
+        }
+    }
+    return String(error);
 }

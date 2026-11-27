@@ -73,6 +73,7 @@ export class HtmlGraphComponent extends GaugeBaseComponent {
                     opt = { ...GraphPieComponent.DefaultOptions(), ...opt };
                 }
                 componentRef.instance.setOptions(opt);
+                componentRef.changeDetectorRef.detectChanges();
                 componentRef.instance['myComRef'] = componentRef;
                 componentRef.instance['name'] = gab.name;
                 return componentRef.instance;

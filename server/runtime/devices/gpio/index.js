@@ -100,7 +100,7 @@ function GpioClient(_data, _logger, _events, _runtime) {
         varsValue = [];
         // console.log(data)
         for(var tagId in data.tags){
-            var tag = data.tags[tagId]
+            const tag = data.tags[tagId]
             try{
             gpioMap[tag.id] = new Gpio(tag.address, tag.direction, tag.edge);
             }catch(err){

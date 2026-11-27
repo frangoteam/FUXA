@@ -209,15 +209,29 @@ export class ProjectService {
     }
 
     importDevices(devices: Device[]) {
-        if (!devices) {
+        if (!Array.isArray(devices)) {
             this.notifyError('msg.import-devices-error');
-        } else {
-            devices.forEach(device => {
-                if (device.id && device.name) {
-                    this.setDevice(device, null, null);
-                }
-            });
+            return;
         }
+
+        const validDevices = devices.filter(device => device?.id && device?.name);
+        const nameOwners = new Map<string, string>();
+        Object.values(this.getDevices() || {}).forEach((device: Device) => {
+            if (device?.id && device?.name) {
+                nameOwners.set(device.name, device.id);
+            }
+        });
+
+        for (const device of validDevices) {
+            const owner = nameOwners.get(device.name);
+            if (owner && owner !== device.id) {
+                this.notifyError('msg.import-devices-error');
+                return;
+            }
+            nameOwners.set(device.name, device.id);
+        }
+
+        validDevices.forEach(device => this.setDevice(device, null, null));
     }
 
     exportAlarms() {
@@ -1154,11 +1168,12 @@ export class ProjectService {
         }
     }
 
-    private notifyError(msgCode: string) {
+    private notifyError(msgCode: string, details?: string) {
         this.translateService.get(msgCode).subscribe((msg: string) => {
             if (msg) {
-                console.error(`FUXA Error: ${msg}`);
-                this.toastr.error(msg, '', {
+                const error = details ? `${msg} (${details})` : msg;
+                console.error(`FUXA Error: ${error}`);
+                this.toastr.error(error, '', {
                     timeOut: 3000,
                     closeButton: true,
                     disableTimeOut: true
@@ -1220,18 +1235,15 @@ export class ProjectService {
     }
 
     verifyProject(prj: ProjectData): boolean {
-        let result = true;
-        if (Utils.isNullOrUndefined(prj.version)) {
-            result = false;
-        } else if (Utils.isNullOrUndefined(prj.hmi)) {
-            result = false;
-        } else if (Utils.isNullOrUndefined(prj.devices)) {
-            result = false;
+        const requiredFields = ['version', 'hmi', 'devices'] as const;
+        const missingFields = (!prj || typeof prj !== 'object')
+            ? requiredFields
+            : requiredFields.filter(field => Utils.isNullOrUndefined(prj[field]));
+        if (missingFields.length) {
+            this.notifyError('msg.project-format-error', missingFields.join(', '));
+            return false;
         }
-        if (!result) {
-            this.notifyError('msg.project-format-error');
-        }
-        return result;
+        return true;
     }
 
     verifyView(view: View): boolean {

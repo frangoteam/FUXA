@@ -176,6 +176,13 @@ var utils = module.exports = {
         return (ele === null || ele === undefined) ? true : false;
     },
 
+    /**
+     * Resolve a DAQ tag's display name: the direct name, else the device tag reference's name
+     */
+    getTagName: function (tag) {
+        return tag.name || tag.tagref?.name;
+    },
+
     JsonTryToParse(value) {
         try {
             if (value) {
@@ -308,6 +315,9 @@ var utils = module.exports = {
         }
         while (currentStart < end) {
             const currentEnd = Math.min(currentStart + chunkSize, end);
+            if (!Number.isFinite(currentEnd) || currentEnd <= currentStart) {
+                throw new RangeError('DAQ time range cannot be safely chunked');
+            }
             chunks.push({ start: currentStart, end: currentEnd });
             currentStart = currentEnd;
         }

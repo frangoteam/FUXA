@@ -500,6 +500,9 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                         device.property.port = parseInt(tempdevice.property.port);
                         device.property.slot = parseInt(tempdevice.property.slot);
                         device.property.rack = parseInt(tempdevice.property.rack);
+                        device.property.driver = tempdevice.property.driver;
+                        device.property.tsapLocal = tempdevice.property.tsapLocal;
+                        device.property.tsapRemote = tempdevice.property.tsapRemote;
                         device.property.slaveid = tempdevice.property.slaveid;
                         device.property.baudrate = tempdevice.property.baudrate;
                         device.property.databits = tempdevice.property.databits;

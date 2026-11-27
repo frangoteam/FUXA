@@ -118,7 +118,9 @@ export class SvgUtils {
 
     static renameIdsInSvg(svgElement: SVGSVGElement, uniqueId: string): { [oldId: string]: string } {
         const idMap: { [oldId: string]: string } = {};
+        const elements: Element[] = [];
         function traverseElement(element: HTMLElement | SVGSVGElement) {
+            elements.push(element);
             if (element.id) {
                 const oldId = element.id;
                 const newId = `${oldId}_${uniqueId}`;
@@ -128,6 +130,21 @@ export class SvgUtils {
             Array.from(element.children).forEach(child => traverseElement(child as HTMLElement));
         }
         traverseElement(svgElement);
+
+        elements.forEach(element => {
+            Array.from(element.attributes).forEach(attribute => {
+                let value = attribute.value;
+                const directReference = /^#(.+)$/.exec(value);
+                if (attribute.localName === 'href' && directReference && idMap[directReference[1]]) {
+                    value = `#${idMap[directReference[1]]}`;
+                }
+                value = value.replace(/url\(\s*(['"]?)#([^\s)'"]+)\1\s*\)/g,
+                    (reference, quote, id) => idMap[id] ? `url(${quote}#${idMap[id]}${quote})` : reference);
+                if (value !== attribute.value) {
+                    attribute.value = value;
+                }
+            });
+        });
 
         return idMap;
     }

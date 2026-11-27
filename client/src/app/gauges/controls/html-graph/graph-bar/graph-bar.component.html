@@ -1,4 +1,5 @@
-<div style="display: block;" [style.height]="height + 'px'" [style.width]="width + 'px'">
+<div style="display: block;" [style.height]="height + 'px'" [style.width]="width + 'px'"
+    [style.backgroundColor]="barChartOptions.backgroundColor">
     <canvas baseChart #ngchart 
             [datasets]="barChartData" 
             [labels]="barChartLabels" 

@@ -10,6 +10,7 @@ import { NgxSwitchComponent, SwitchOptions } from '../../../../gui-helpers/ngx-s
 import { Define } from '../../../../_helpers/define';
 import { Utils } from '../../../../_helpers/utils';
 import { FlexEventComponent } from '../../../gauge-property/flex-event/flex-event.component';
+import { FlexActionComponent } from '../../../gauge-property/flex-action/flex-action.component';
 
 @Component({
     selector: 'app-html-switch-property',
@@ -22,6 +23,7 @@ export class HtmlSwitchPropertyComponent implements OnInit, AfterViewInit {
 	@ViewChild('flexhead', {static: false}) flexhead: FlexHeadComponent;
     @ViewChild('flexauth', {static: false}) flexauth: FlexAuthComponent;
     @ViewChild('flexevent', {static: false}) flexEvent: FlexEventComponent;
+    @ViewChild('flexaction', {static: false}) flexAction: FlexActionComponent;
 
     property: GaugeProperty;
     options: SwitchOptions;
@@ -32,6 +34,7 @@ export class HtmlSwitchPropertyComponent implements OnInit, AfterViewInit {
     defaultColor = Utils.defaultColor;
     withBitmask = false;
 	eventsSupported: boolean;
+    actionsSupported: any;
 
     constructor(public dialogRef: MatDialogRef<HtmlSwitchPropertyComponent>,
                 @Inject(MAT_DIALOG_DATA) public data: any) {
@@ -49,6 +52,7 @@ export class HtmlSwitchPropertyComponent implements OnInit, AfterViewInit {
         this.switchWidth = switchsize.width;
         this.options.height = this.switchHeight;
         this.eventsSupported = this.data.withEvents;
+        this.actionsSupported = this.data.withActions;
     }
 
     ngOnInit(): void {
@@ -74,10 +78,17 @@ export class HtmlSwitchPropertyComponent implements OnInit, AfterViewInit {
         if (this.flexEvent) {
             this.data.settings.property.events = this.flexEvent.getEvents();
         }
+        if (this.flexAction) {
+            this.data.settings.property.actions = this.flexAction.getActions();
+        }
     }
 
     onAddEvent() {
         this.flexEvent.onAddEvent();
+    }
+
+    onAddAction() {
+        this.flexAction.onAddAction();
     }
 
     updateOptions() {

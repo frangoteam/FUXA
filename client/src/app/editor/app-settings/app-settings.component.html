@@ -90,6 +90,9 @@
                                         {{ mode.text }}
                                     </mat-option>
                                 </mat-select>
+                                <div *ngIf="settings.nodeRedAuthMode === 'legacy-open'" class="node-red-info node-red-security-warning">
+                                    {{ 'dlg.app-settings-node-red-auth-warning' | translate }}
+                                </div>
                             </div>
                             <div class="my-form-field block mt15 system-input">
                                 <span>{{'dlg.app-settings-swagger' | translate}}</span>

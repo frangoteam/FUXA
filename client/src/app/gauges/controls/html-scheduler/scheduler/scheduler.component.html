@@ -1,8 +1,11 @@
-<div #schedulerContainer class="scheduler-container">
+<div #schedulerContainer class="scheduler-container"
+     *ngIf="checkMasterPermission().show"
+     [class.read-only]="!canModifyScheduler()"
+     [attr.aria-readonly]="!canModifyScheduler()">
     <!-- Header -->
     <div class="scheduler-header">
         <!-- Custom Device Selection -->
-        <div class="device-selector" *ngIf="deviceList?.length > 1">
+        <div class="device-selector" *ngIf="getVisibleDevices().length > 1">
             <div class="custom-select"
                  [class.open]="isDropdownOpen"
                  [class.disabled]="isEditMode">
@@ -13,7 +16,7 @@
                     <span class="material-icons arrow">{{isDropdownOpen ? 'arrow_drop_up' : 'arrow_drop_down'}}</span>
                 </div>
                 <div class="custom-select-dropdown" *ngIf="isDropdownOpen">
-                    <ng-container *ngFor="let device of deviceList">
+                    <ng-container *ngFor="let device of getVisibleDevices()">
                         <div class="custom-option"
                              [class.selected]="device.name === selectedDevice"
                              [class.hovered]="device.name === hoveredDevice"
@@ -35,8 +38,8 @@
             </div>
         </div>
 
-        <div class="device-name" *ngIf="deviceList?.length === 1">
-            {{deviceList[0]?.name || deviceList[0]?.label}}
+        <div class="device-name" *ngIf="getVisibleDevices().length === 1">
+            {{getVisibleDevices()[0]?.name || getVisibleDevices()[0]?.label}}
         </div>
 
         <!-- Header Actions -->
@@ -55,12 +58,12 @@
             <div *ngIf="isEditMode" class="edit-mode-actions" style="display: flex; align-items: center; gap: 8px;">
                 <button class="action-btn"
                         (click)="toggleAddView()"
-                        [disabled]="isEditor">
+                        [disabled]="isEditor || !canModifyScheduler()">
                     <span class="material-icons">close</span>
                 </button>
                 <button class="action-btn save-btn"
                         (click)="addOrUpdateSchedule()"
-                        [disabled]="isEditor">
+                        [disabled]="isEditor || !canModifyScheduler()">
                     <span class="material-icons">check</span>
                 </button>
             </div>
@@ -113,7 +116,7 @@
 
                     <!-- Add Schedule Button -->
                     <button class="action-btn"
-                            *ngIf="deviceList.length > 0 && canModifyScheduler()"
+                            *ngIf="getVisibleDevices().length > 0 && canModifyScheduler()"
                             (click)="startAddFromOverview()"
                             [disabled]="isEditor">
                         <span class="material-icons">add</span>
@@ -273,7 +276,7 @@
 
         <!-- Overview Mode -->
         <div class="overview-mode" *ngIf="selectedDevice === 'OVERVIEW'">
-            <div class="overview-message" *ngIf="deviceList.length === 0">
+            <div class="overview-message" *ngIf="getVisibleDevices().length === 0">
                 <p>{{ 'scheduler.no-devices' | translate }}</p>
             </div>
 
@@ -444,7 +447,7 @@
                         <span class="material-icons arrow">{{isFormDropdownOpen ? 'arrow_drop_up' : 'arrow_drop_down'}}</span>
                     </div>
                     <div class="form-custom-select-dropdown" *ngIf="isFormDropdownOpen">
-                        <ng-container *ngFor="let device of deviceList">
+                        <ng-container *ngFor="let device of getVisibleDevices()">
                             <div class="form-custom-option"
                                  *ngIf="canModifyDevice(device.name)"
                                  [class.selected]="device.name === formTimer.deviceName"

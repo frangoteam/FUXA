@@ -96,17 +96,30 @@ export class TreetableComponent implements OnInit {
 
     nodeToItems(sort = true): Array<Node> {
         if (this.nodes && Object.values(this.nodes).length) {
-            let result = [];
-            Object.values(this.nodes).forEach((value: Node) => {
-                if (value.visible) {
-                    result.push(value);
-                }
-            });
-            if (sort) {
-                return result.sort((a, b) => (a.path > b.path) ? 1 : -1);
-            } else {
-                return result;
+            const visibleNodes = Object.values(this.nodes).filter((value: Node) => value.visible) as Node[];
+            if (!sort) {
+                return visibleNodes;
             }
+
+            const comparePath = (a: Node, b: Node) =>
+                (a.path > b.path) ? 1 : (a.path < b.path) ? -1 : 0;
+            const visible = new Set(visibleNodes);
+            const visited = new Set<Node>();
+            const result: Node[] = [];
+            const appendNode = (node: Node) => {
+                if (visited.has(node) || !visible.has(node)) {
+                    return;
+                }
+                visited.add(node);
+                result.push(node);
+                node.childs.filter(child => visible.has(child)).sort(comparePath).forEach(appendNode);
+            };
+
+            visibleNodes.filter(node => !node.parent || !visible.has(node.parent))
+                .sort(comparePath).forEach(appendNode);
+            // Retain visible nodes even if malformed input contains an orphan or cycle.
+            visibleNodes.sort(comparePath).forEach(appendNode);
+            return result;
         } else {
             return [];
         }

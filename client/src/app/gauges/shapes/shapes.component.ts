@@ -129,7 +129,7 @@ export class ShapesComponent extends GaugeBaseComponent {
     }
 
     static runMyAction(element, type, gaugeStatus: GaugeStatus) {
-        if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
+        if (gaugeStatus.actionRef?.animr && gaugeStatus.actionRef.animationType === type) {
             return;
         }
         if (element.timeline) {
@@ -139,22 +139,32 @@ export class ShapesComponent extends GaugeBaseComponent {
             gaugeStatus.actionRef?.animr.unschedule();
         }
         if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.clockwise) {
-            gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, 360);
+            ShapesComponent.setRotateAnimation(gaugeStatus, ShapesComponent.startRotateAnimationShape(element, type, 360));
         } else if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.anticlockwise) {
-            gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, -360);
+            ShapesComponent.setRotateAnimation(gaugeStatus, ShapesComponent.startRotateAnimationShape(element, type, -360));
         } else if (ShapesComponent.actionsType[type] === ShapesComponent.actionsType.stop) {
             ShapesComponent.stopAnimationShape(gaugeStatus, type);
         }
     }
 
+    static setRotateAnimation(gaugeStatus: GaugeStatus, animation: GaugeActionStatus) {
+        const actionRef = gaugeStatus.actionRef || new GaugeActionStatus(animation.type);
+        actionRef.type = animation.type;
+        actionRef.animationType = animation.type;
+        actionRef.animr = animation.animr;
+        gaugeStatus.actionRef = actionRef;
+    }
+
     static startRotateAnimationShape(element: any, type: string, angle: number): GaugeActionStatus {
-        return <GaugeActionStatus>{ type: type, animr: element.animate(3000).ease('-').rotate(angle).loop() };
+        return <GaugeActionStatus>{ type: type, animationType: type, animr: element.animate(3000).ease('-').rotate(angle).loop() };
     }
 
     static stopAnimationShape(gaugeStatus: GaugeStatus, type: string) {
         if (gaugeStatus.actionRef) {
             ShapesComponent.clearAnimationTimer(gaugeStatus.actionRef);
             gaugeStatus.actionRef.type = type;
+            gaugeStatus.actionRef.animationType = type;
+            gaugeStatus.actionRef.animr = null;
         }
     }
 
@@ -167,15 +177,18 @@ export class ShapesComponent extends GaugeBaseComponent {
             }
             let angleRange = act.options.maxAngle - act.options.minAngle;
 
-            // Calculate rotation based on defined ranges and actual value
-            let rotation = valRange > 0 ? act.options.minAngle + (actValue * angleRange / valRange) : 0;
+            // Calculate rotation based on defined ranges and actual value.
+            // Use the offset from range.min so non-zero minima interpolate correctly.
+            let relValue = actValue - act.range.min;
+            let rotation = valRange > 0 ? act.options.minAngle + (relValue * angleRange / valRange) : 0;
 
-            // Don't allow rotation angle to exceed configured range
-            if(rotation > act.options.maxAngle) {
-                rotation = act.options.maxAngle;
-            }
-            else if(rotation < act.options.minAngle){
-                rotation = act.options.minAngle;
+            // Don't allow rotation angle to exceed configured range (minAngle may be greater than maxAngle for CCW)
+            let lowAngle = Math.min(act.options.minAngle, act.options.maxAngle);
+            let highAngle = Math.max(act.options.minAngle, act.options.maxAngle);
+            if (rotation > highAngle) {
+                rotation = highAngle;
+            } else if (rotation < lowAngle) {
+                rotation = lowAngle;
             }
             element.animate(200).ease('-').transform({
                 rotate: rotation,

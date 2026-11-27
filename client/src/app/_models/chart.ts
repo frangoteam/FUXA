@@ -17,6 +17,16 @@ export class ChartLine {
     lineWidth?: number;
     spanGaps = true;
     zones?: ChartLineZone[];
+    /** Omitted in existing projects, which continue to use numeric trends. */
+    type?: 'trend' | 'state';
+    states?: ChartState[];
+}
+
+export interface ChartState {
+    value: string;
+    label: string;
+    color: string;
+    description?: string;
 }
 
 export interface ChartLineZone {

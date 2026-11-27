@@ -128,7 +128,7 @@ export class ProcEngComponent extends GaugeBaseComponent {
     }
 
     static runMyAction(element, type, gaugeStatus: GaugeStatus) {
-        if (gaugeStatus.actionRef && gaugeStatus.actionRef.type === type) {
+        if (gaugeStatus.actionRef?.animr && gaugeStatus.actionRef.animationType === type) {
             return;
         }
         if (element.timeline) {
@@ -138,9 +138,9 @@ export class ProcEngComponent extends GaugeBaseComponent {
             gaugeStatus.actionRef?.animr.unschedule();
         }
         if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.clockwise) {
-            gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, 360);
+            ShapesComponent.setRotateAnimation(gaugeStatus, ShapesComponent.startRotateAnimationShape(element, type, 360));
         } else if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.anticlockwise) {
-            gaugeStatus.actionRef = ShapesComponent.startRotateAnimationShape(element, type, -360);
+            ShapesComponent.setRotateAnimation(gaugeStatus, ShapesComponent.startRotateAnimationShape(element, type, -360));
         } else if (ProcEngComponent.actionsType[type] === ProcEngComponent.actionsType.stop) {
             ShapesComponent.stopAnimationShape(gaugeStatus, type);
         }

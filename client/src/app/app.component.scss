@@ -64,4 +64,15 @@
             margin-left: 10px;
         }
     }
+
+    .connection-overlay {
+        position: fixed;
+        top: 48px;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 999998;
+        background-color: rgba(0, 0, 0, 0.45);
+        pointer-events: auto;
+    }
 }

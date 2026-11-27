@@ -208,6 +208,35 @@ describe('Recipes API', () => {
             expect(instanceRes.statusCode).to.equal(200);
         });
 
+        it('should hide recipe types not visible to the authenticated operator', async () => {
+            runtime.settings.secureEnabled = true;
+            currentUser = { userId: 'operator', groups: 2 };
+            runtime.project.getRecipesSync.returns([
+                { id: 'r_visible', name: 'Visible', entries: [] },
+                { id: 'r_hidden', name: 'Hidden', entries: [] }
+            ]);
+            runtime.project.getRecipe.withArgs('r_hidden').returns({ id: 'r_hidden', name: 'Hidden', entries: [] });
+            runtime.checkPermission.callsFake((permission, recipe) => ({ show: recipe.id !== 'r_hidden', enabled: true }));
+            runtime.recipeStorage.getAllRecipeInstances.resolves([
+                { id: 'ri_visible', data: { id: 'ri_visible', typeId: 'r_visible', name: 'Visible instance', entries: [] } },
+                { id: 'ri_hidden', data: { id: 'ri_hidden', typeId: 'r_hidden', name: 'Hidden instance', entries: [] } }
+            ]);
+            runtime.recipeStorage.getRecipeData.withArgs('ri_hidden').resolves({
+                id: 'ri_hidden', typeId: 'r_hidden', name: 'Hidden instance', entries: []
+            });
+
+            const listRes = await request(server, '/api/recipes/types');
+            const hiddenRes = await request(server, '/api/recipes/types/r_hidden');
+            const instancesRes = await request(server, '/api/recipes/instances');
+            const hiddenInstanceRes = await request(server, '/api/recipes/instances/ri_hidden');
+
+            expect(listRes.statusCode).to.equal(200);
+            expect(listRes.body.recipes.map(row => row.id)).to.deep.equal(['r_visible']);
+            expect(hiddenRes.statusCode).to.equal(404);
+            expect(instancesRes.body.recipes.map(row => row.id)).to.deep.equal(['ri_visible']);
+            expect(hiddenInstanceRes.statusCode).to.equal(404);
+        });
+
         it('should return single recipe instance by id', async () => {
             const recipeData = { name: 'Test', entries: [{ id: 'e_001', tagId: 't1', tagName: 'T1', tagType: 'int', value: '42' }] };
             runtime.recipeStorage.getRecipeData.withArgs('r_test').resolves(recipeData);

@@ -54,6 +54,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() sourceDeviceId: string;
     @Output() onclose = new EventEmitter();
     @Output() ongoto: EventEmitter<string> = new EventEmitter();
+    @Output() onpage: EventEmitter<PageNavigationRequest> = new EventEmitter();
 
     @ViewChild('dataContainer', {static: false}) dataContainer: ElementRef;
     @ViewChild('inputDialogRef', {static: false}) inputDialogRef: ElementRef;
@@ -608,7 +609,7 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             let actindex = Object.keys(GaugeEventActionType).indexOf(events[i].action);
             let eventTypes = Object.values(GaugeEventActionType);
             if (eventTypes.indexOf(GaugeEventActionType.onpage) === actindex) {
-                self.loadPage(ev, events[i].actparam, events[i].actoptions);
+                self.onPageRequest({ event: ev, viewref: events[i].actparam, options: events[i].actoptions });
             } else if (eventTypes.indexOf(GaugeEventActionType.onwindow) === actindex) {
                 self.onOpenCard(ga.id, ev, events[i].actparam, events[i].actoptions);
             } else if (eventTypes.indexOf(GaugeEventActionType.ondialog) === actindex) {
@@ -892,6 +893,14 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.cards = [];
     }
 
+    onPageRequest(request: PageNavigationRequest) {
+        if (this.child) {
+            this.onpage.emit(request);
+            return;
+        }
+        return this.loadPage(request.event, request.viewref, request.options);
+    }
+
     async loadPage(param: any, viewref: string, options: any) {
         let view: View = await this.getView(viewref);
         this.closeAllCards();
@@ -918,7 +927,8 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             variablesMapping: options.variablesMapping,
             disableDefaultClose: options.hideClose,
             gaugesManager: this.gaugesManager,
-            sourceDeviceId: options.sourceDeviceId
+            sourceDeviceId: options.sourceDeviceId,
+            onPage: request => this.onPageRequest(request)
         };
         let dialogRef = this.fuxaDialog.open(FuxaViewDialogComponent, {
             panelClass: 'fuxa-dialog-property',
@@ -1250,6 +1260,12 @@ export class FuxaViewComponent implements OnInit, AfterViewInit, OnDestroy {
             nativeElement.style.transform = 'translate(-50%, -50%)';
         }
     }
+}
+
+export interface PageNavigationRequest {
+    event: any;
+    viewref: string;
+    options: any;
 }
 
 interface VariableMappingType {
