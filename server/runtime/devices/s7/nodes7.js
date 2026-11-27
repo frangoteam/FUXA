@@ -39,6 +39,25 @@ function errorText(err) {
     return String(err);
 }
 
+/** nodes7 writes a bit only when the value is strictly boolean (\`writeValue === true\`).
+ * HMI writes arrive as '0'/'1' (or numbers after tagRawCalculator), so Bool tags must be
+ * normalized here exactly like the snap7 driver does (s7/index.js toBoolean). */
+function toBoolean(value) {
+    if (typeof value === 'string') {
+        const text = value.trim().toLowerCase();
+        if (text === 'true' || text === 'on') {
+            return true;
+        }
+        if (text === 'false' || text === 'off') {
+            return false;
+        }
+        const number = parseFloat(text);
+        return !Number.isNaN(number) && number !== 0;
+    }
+    const number = Number(value);
+    return !Number.isNaN(number) && number !== 0;
+}
+
 function Nodes7S7(data, logger, events, runtime) {
     const NodeS7 = require('nodes7');
     const client = new NodeS7({ silent: true });
@@ -347,7 +366,10 @@ function Nodes7S7(data, logger, events, runtime) {
             logger.warn(`'${data.name}' [nodes7] write ignored on Byte tag (${meta.address}) — it is read as WORD`);
             return false;
         }
-        const normalized = await deviceUtils.tagRawCalculator(value, data.tags[sigid], runtime);
+        let normalized = await deviceUtils.tagRawCalculator(value, data.tags[sigid], runtime);
+        if (meta.type === 'Bool') {
+            normalized = toBoolean(normalized);
+        }
         return new Promise((resolve) => {
             try {
                 client.writeItems([sigid], [normalized], (err) => {
