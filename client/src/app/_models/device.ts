@@ -283,6 +283,8 @@ export class DeviceNetProperty {
     socketReuse?: string;
     /** Force FC16 for Modbus RTU/TCP write operations */
     forceFC16?: boolean;
+    /** Modbus: wait for the active polling request before writing (one request at a time on the line) */
+    serializeRequests?: boolean;
     /** MELSEC */
     ascii?: boolean;
     octalIO?: boolean;
@@ -676,6 +678,7 @@ export class DevicesUtils {
             || key.endsWith('.changed')
             || key.endsWith('.restored')
             || key.endsWith('.forceFC16')
+            || key.endsWith('.serializeRequests')
             || key.endsWith('.ascii')
             || key.endsWith('.octalIO');
     }

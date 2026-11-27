@@ -1076,6 +1076,7 @@
     "device.property-stopbits": "Stop Bits",
     "device.property-parity": "Parity",
     "device.property-force-fc16": "Use Only Write Multiple Registers",
+    "device.property-serialize-requests": "Serialize Read/Write Requests",
     "device.property-delay": "Frame delay (msec.)",
     "device.property-method": "Method",
     "device.property-format": "Format",
