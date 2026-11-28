@@ -218,6 +218,28 @@
                                     <input [(ngModel)]="settings.daqstore.credentials.password" placeholder="taosdata" class="input-row" type="text">
                                 </div>
                             </div>
+                            <div *ngSwitchCase="daqstoreType.IoTDB">
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-iotdb-host' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.host" placeholder="127.0.0.1" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-iotdb-port' | translate}}</span>
+                                    <input numberOnly [(ngModel)]="settings.daqstore.iotdbPort" placeholder="6667" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-iotdb-database' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.iotdbDatabase" placeholder="root.fuxa" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-username' | translate}}</span>
+                                    <input [(ngModel)]="settings.daqstore.credentials.username" placeholder="root" class="input-row" type="text">
+                                </div>
+                                <div class="my-form-field block mt15 w100">
+                                    <span>{{'dlg.app-settings-daqstore-password' | translate}}</span>
+                                    <input autocomplete="off" (keydown)="keyDownStopPropagation($event)" [(ngModel)]="settings.daqstore.credentials.password" placeholder="root" class="input-row" type="password">
+                                </div>
+                            </div>
                             <div *ngSwitchCase="daqstoreType.questDB">
                                 <div class="block mt20 w100">
                                     <span>{{'dlg.app-settings-daqstore-queryconn' | translate}}</span>
