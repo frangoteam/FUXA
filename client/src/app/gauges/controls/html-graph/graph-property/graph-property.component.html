@@ -228,28 +228,26 @@
                 <mat-slide-toggle color="primary" [(ngModel)]="options.plugins.tooltip.enabled" (change)="onGraphChanged()"></mat-slide-toggle>
             </div>
         </div>
-        <ng-container *ngIf="graphType === graphBarType">
-            <div class="element-property-header">
-                <span>{{'graph.property-datalabels' | translate}}</span>
+        <div class="element-property-header">
+            <span>{{'graph.property-datalabels' | translate}}</span>
+        </div>
+        <div>
+            <div class="my-form-field section-item" style="display: inline-block; width: 80px">
+                <span>{{'graph.property-datalabels-align' | translate}}</span>
+                <mat-select [(value)]="options.plugins.datalabels.anchor" (selectionChange)="onGraphChanged()">
+                    <mat-option value="center">{{'graph.property-legend-center' | translate}}</mat-option>
+                    <mat-option value="start">{{'graph.property-legend-start' | translate}}</mat-option>
+                    <mat-option value="end">{{'graph.property-legend-end' | translate}}</mat-option>
+                </mat-select>
             </div>
-            <div>
-                <div class="my-form-field section-item" style="display: inline-block; width: 80px">
-                    <span>{{'graph.property-datalabels-align' | translate}}</span>
-                    <mat-select [(value)]="options.plugins.datalabels.anchor" (selectionChange)="onGraphChanged()">
-                        <mat-option value="center">{{'graph.property-legend-center' | translate}}</mat-option>
-                        <mat-option value="start">{{'graph.property-legend-start' | translate}}</mat-option>
-                        <mat-option value="end">{{'graph.property-legend-end' | translate}}</mat-option>
-                    </mat-select>
-                </div>
-                <div class="my-form-field section-inline-number section-toogle ml15">
-                    <span>{{'graph.property-datalabels-fontsize' | translate}}</span>
-                    <input numberOnly [(ngModel)]="options.plugins.datalabels.font['size']" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="6">
-                </div>
-                <div class="my-form-field section-inline-toggle slider-field ml10">
-                    <span>{{'graph.property-datalabels-show' | translate}}</span>
-                    <mat-slide-toggle color="primary" [(ngModel)]="options.plugins.datalabels.display" (change)="onGraphChanged()"></mat-slide-toggle>
-                </div>
+            <div class="my-form-field section-inline-number section-toogle ml15">
+                <span>{{'graph.property-datalabels-fontsize' | translate}}</span>
+                <input numberOnly [(ngModel)]="options.plugins.datalabels.font['size']" (change)="onGraphChanged()" (keyup.enter)="onGraphChanged()" type="number" min="6">
             </div>
-        </ng-container>
+            <div class="my-form-field section-inline-toggle slider-field ml10">
+                <span>{{'graph.property-datalabels-show' | translate}}</span>
+                <mat-slide-toggle color="primary" [(ngModel)]="options.plugins.datalabels.display" (change)="onGraphChanged()"></mat-slide-toggle>
+            </div>
+        </div>
     </div>
 </div>
