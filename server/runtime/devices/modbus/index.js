@@ -340,12 +340,20 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 };
                 try {
                     const bufVal = await runtime.scriptsMgr.runScript(script, false);
+                    const tagType = datatypes[data.tags[sigid].type];
+                    if (utils.isNullOrUndefined(bufVal)) {
+                        logger.error(`'${data.tags[sigid].name}' setValue script error, returned no value`);
+                        return false;
+                    }
                     if (Array.isArray(bufVal)) {
                         if ((bufVal.length % 2) !== 0) {
                             logger.error(`'${data.tags[sigid].name}' setValue script error, returned buffer invalid must be mod 2`);
                             return false;
                         }
                         val = Buffer.from(bufVal);
+                    } else if (typeof bufVal === 'number' && tagType && tagType.bytes > 2) {
+                        // a plain number for a multi-register type is encoded like a write without script
+                        val = tagType.formatter(bufVal);
                     } else {
                         val = bufVal;
                     }

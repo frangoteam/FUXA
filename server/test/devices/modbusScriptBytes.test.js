@@ -26,9 +26,9 @@ describe('Modbus write-script byte arrays', function () {
         sandbox.restore();
         delete require.cache[require.resolve('../../runtime/devices/modbus')];
     });
-    function device() {
+    function device(type = 'UInt16') {
         const result = driver.create({ name: 'Script bytes', property: {}, tags: {
-            target: { name: 'Target', type: 'UInt16', memaddress: '400000', address: '8', divisor: 1,
+            target: { name: 'Target', type, memaddress: '400000', address: '8', divisor: 1,
                 scaleWriteFunction: 'synthetic-script', scaleWriteParams: JSON.stringify([{ name: 'offset', type: 'value', value: 0 }]) }
         } }, logger, new EventEmitter(), null, { scriptsMgr: { runScript } });
         result.init(driver.ModbusTypes.TCP);
@@ -55,6 +55,28 @@ describe('Modbus write-script byte arrays', function () {
             ] }, false);
             assert.deepEqual(output, before);
             sinon.assert.notCalled(logger.error);
+        });
+    }
+    for (const [type, expected] of [
+        ['UInt32', Buffer.from([0x00, 0x01, 0xe2, 0x40])],
+        ['UInt32MLE', Buffer.from([0xe2, 0x40, 0x00, 0x01])],
+        ['Float32', Buffer.from([0x47, 0xf1, 0x20, 0x00])]
+    ]) {
+        it(`formats a scalar script result for a ${type} tag across both registers`, async function () {
+            runScript.resolves(123456);
+            assert.equal(await device(type).setValue('target', 42), true);
+            sinon.assert.calledOnceWithExactly(client.writeRegisters, 7, expected);
+            sinon.assert.notCalled(client.writeRegister);
+            sinon.assert.notCalled(logger.error);
+        });
+    }
+    for (const output of [undefined, null]) {
+        it(`rejects a script that returns ${output} before transport`, async function () {
+            runScript.resolves(output);
+            assert.equal(await device('UInt32MLE').setValue('target', 42), false);
+            sinon.assert.notCalled(client.writeRegister);
+            sinon.assert.notCalled(client.writeRegisters);
+            sinon.assert.calledWithMatch(logger.error, 'setValue script error, returned no value');
         });
     }
     it('rejects an odd byte-array length before transport', async function () {
