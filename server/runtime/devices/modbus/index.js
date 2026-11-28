@@ -9,7 +9,8 @@ const utils = require('../../utils');
 const deviceUtils = require('../device-utils');
 const net = require("net");
 const TOKEN_LIMIT = 100;
-const Mutex = require("async-mutex").Mutex;
+const { Mutex, tryAcquire, withTimeout, E_ALREADY_LOCKED, E_TIMEOUT } = require("async-mutex");
+const STALLED_REQUEST_FACTOR = 2;       // A request in flight longer than FACTOR x timeout is considered stalled
 
 function MODBUSclient(_data, _logger, _events, _runtime) {
     var memory = {};                        // Loaded Signal grouped by memory { memory index, start, size, ... }
@@ -26,6 +27,8 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
     var lastTimestampValue;             // Last Timestamp of asked values
     var type;
     var runtime = _runtime;             // Access runtime config such as scripts
+    var requestMutex = new Mutex();      // Serialize reads and writes when enabled (see _needsRequestSerialization)
+    var inflightRequest = null;         // { since } of the Modbus request currently on the wire, null when idle
 
     /**
      * initialize the modubus type
@@ -115,8 +118,21 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
      * Update the tags values list, save in DAQ if value changed or in interval and emit values to clients
      */
     this.polling = async function () {
+        let requestRelease;
         let socketRelease;
         try {
+            if (_needsRequestSerialization()) {
+                try {
+                    requestRelease = await tryAcquire(requestMutex).acquire();
+                } catch (err) {
+                    if (err === E_ALREADY_LOCKED) {
+                        _onPollSkipped();
+                        return;
+                    }
+                    throw err;
+                }
+            }
+
             // Connexion/Resource reutilization logic (Socket/Serial) for TCP e RTU
             if (data.property.socketReuse) {
                 let resourceKey;
@@ -140,6 +156,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             if (!utils.isNullOrUndefined(socketRelease)) {
                 socketRelease()
             }
+            if (!utils.isNullOrUndefined(requestRelease)) {
+                requestRelease()
+            }
         }
     }
     this._polling = async function () {
@@ -149,7 +168,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 for (var memaddr in memory) {
                     var tokenizedAddress = parseAddress(memaddr);
                     try {
-                        readVarsfnc.push(await _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items)));
+                        readVarsfnc.push(await _trackRequest(() => _readMemory(parseInt(tokenizedAddress.address), memory[memaddr].Start, memory[memaddr].MaxSize, Object.values(memory[memaddr].Items))));
                         readVarsfnc.push(await delay(data.property.delay || 10));
                     } catch (err) {
                         logger.error(`'${data.name}' _readMemory error! ${formatError(err)}`);
@@ -158,7 +177,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             } else {
                 for (var memaddr in mixItemsMap) {
                     try {
-                        readVarsfnc.push(await _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items)));
+                        readVarsfnc.push(await _trackRequest(() => _readMemory(getMemoryAddress(parseInt(memaddr), false), mixItemsMap[memaddr].Start, mixItemsMap[memaddr].MaxSize, Object.values(mixItemsMap[memaddr].Items))));
                         readVarsfnc.push(await delay(data.property.delay || 10));
                     } catch (err) {
                         logger.error(`'${data.name}' _readMemory error! ${formatError(err)}`);
@@ -368,8 +387,21 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
             //     }
             // }
 
+            let requestRelease;
             let socketRelease;
             try {
+                if (_needsRequestSerialization()) {
+                    try {
+                        requestRelease = await withTimeout(requestMutex, _getRequestLockTimeout()).acquire();
+                    } catch (err) {
+                        if (err === E_TIMEOUT) {
+                            logger.error(`'${data.name}' setValue(${sigid}) timeout waiting for the client to be free`);
+                            return false;
+                        }
+                        throw err;
+                    }
+                }
+
                 // Connexion/Resource reutilization logic (Socket/Serial) for TCP and RTU
                 if (data.property.socketReuse) {
                     let resourceKey;
@@ -385,7 +417,7 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
 
                 _checkWorking(true);
 
-                await _writeMemory(parseInt(memaddr), offset, val);
+                await _trackRequest(() => _writeMemory(parseInt(memaddr), offset, val));
                 logger.info(`'${data.name}' setValue(${sigid}, ${value})`, true, true);
             } catch (err) {
                 logger.error(`'${data.name}' setValue error! ${err}`);
@@ -394,6 +426,9 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
                 _checkWorking(false);
                 if (!utils.isNullOrUndefined(socketRelease)) {
                     socketRelease();
+                }
+                if (!utils.isNullOrUndefined(requestRelease)) {
+                    requestRelease();
                 }
             }
             return true;
@@ -763,6 +798,62 @@ function MODBUSclient(_data, _logger, _events, _runtime) {
         working = check;
         overloading = 0;
         return true;
+    }
+
+    /**
+     * Opt-in (device property 'serializeRequests'): one request at a time on this client,
+     * writes wait for the active poll. Needed on transports without a transaction id
+     * (serial RTU, RTU over TCP, Telnet gateways) or devices that accept a single request.
+     * When disabled, polling and writes behave as before (no request lock).
+     */
+    var _needsRequestSerialization = function () {
+        return data.property.serializeRequests === true;
+    }
+
+    /**
+     * Track the Modbus request on the wire, so a stalled one can be told apart from a scan
+     * that is slow but still progressing (many blocks, slow line, short polling interval).
+     * Time spent between requests (block delay, waiting for a shared socket) is not counted.
+     */
+    var _trackRequest = function (request) {
+        const tracker = { since: Date.now() };
+        inflightRequest = tracker;
+        return request().finally(() => {
+            if (inflightRequest === tracker) {
+                inflightRequest = null;
+            }
+        });
+    }
+
+    /**
+     * Called when a timer poll is skipped because a previous request still holds the client.
+     * The driver timeout should settle every request: if one is still on the wire well past it,
+     * the client is closed and the request lock is replaced, so polling and writes recover even
+     * if the stalled promise never settles (its late release only affects the old lock).
+     */
+    var _onPollSkipped = function () {
+        const stalledAfter = (data.property.timeout || 2000) * STALLED_REQUEST_FACTOR;
+        if (inflightRequest && Date.now() - inflightRequest.since > stalledAfter) {
+            logger.warn(`'${data.name}' request stalled for more than ${stalledAfter} ms, closing connection`);
+            // the stalled request is abandoned: release its lock and its working flag
+            inflightRequest = null;
+            requestMutex = new Mutex();
+            working = false;
+            overloading = 0;
+            client.close();
+        }
+        _emitStatus('connect-busy');
+    }
+
+    /**
+     * Max time a write waits for the client: worst case of a full polling cycle
+     * (every memory block timing out, plus the delay between blocks) plus the write itself.
+     */
+    var _getRequestLockTimeout = function () {
+        const blocks = Object.keys(data.property.options ? mixItemsMap : memory).length;
+        const requestTimeout = data.property.timeout || 2000;
+        const requestDelay = data.property.delay || 10;
+        return (blocks + 1) * (requestTimeout + requestDelay);
     }
 
     const formatAddress = function (address, token) { return token + '-' + address; }

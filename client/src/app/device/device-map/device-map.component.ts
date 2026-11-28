@@ -526,6 +526,7 @@ export class DeviceMapComponent implements OnInit, OnDestroy, AfterViewInit {
                         }
                         device.property.socketReuse = tempdevice.property.socketReuse;
                         device.property.forceFC16 = tempdevice.property.forceFC16;
+                        device.property.serializeRequests = tempdevice.property.serializeRequests;
                         if (tempdevice.property.timeout) {
                             device.property.timeout = parseInt(tempdevice.property.timeout);
                         } else {

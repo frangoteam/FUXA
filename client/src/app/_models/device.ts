@@ -283,6 +283,8 @@ export class DeviceNetProperty {
     socketReuse?: string;
     /** Force FC16 for Modbus RTU/TCP write operations */
     forceFC16?: boolean;
+    /** Modbus: wait for the active polling request before writing (one request at a time on the line) */
+    serializeRequests?: boolean;
     /** S7 driver backend: 'snap7' (native, default) or 'nodes7' (pure JS) */
     driver?: string;
     /** S7 nodes7: local TSAP (hex, e.g. 0x0100) */
@@ -687,6 +689,7 @@ export class DevicesUtils {
             || key.endsWith('.changed')
             || key.endsWith('.restored')
             || key.endsWith('.forceFC16')
+            || key.endsWith('.serializeRequests')
             || key.endsWith('.ascii')
             || key.endsWith('.octalIO');
     }
