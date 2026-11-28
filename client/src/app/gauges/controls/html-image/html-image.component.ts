@@ -225,10 +225,11 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                     // check widget
                     if (ga.property.type === HtmlImageComponent.propertyWidgetType && ga.property.scriptContent && ga.property.varsToBind?.length) {
                         const scriptContent = ga.property.scriptContent;
-                        if (window[scriptContent.moduleId]['putValue']) {
-                            ga.property.varsToBind.filter((varToBind: WidgetPropertyVariable) => varToBind.variableId === sig.id).forEach(widgetVar => {
+                        if (window[scriptContent.moduleId]?.['putValue']) {
+                            const widgetVar = <WidgetPropertyVariable>ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.variableId === sig.id);
+                            if (widgetVar) {
                                 window[scriptContent.moduleId]['putValue'](widgetVar.name, sig.value);
-                            });
+                            }
                         }
                     }
                 }
@@ -241,8 +242,12 @@ export class HtmlImageComponent extends GaugeBaseComponent {
     static bindEvents(ga: GaugeSettings, callback?: any): Event {
         if (ga.property.type === HtmlImageComponent.propertyWidgetType && ga.property.scriptContent && ga.property.varsToBind?.length) {
             const scriptContent = ga.property.scriptContent;
-            if (window[scriptContent.moduleId]?.['postValue']) {
-                window[scriptContent.moduleId]['postValue'] = (varName, value) => {
+            const widgetModule = window[scriptContent.moduleId];
+            if (!widgetModule) {
+                console.error(`Module (${scriptContent.moduleId}) not found!`);
+            } else if (widgetModule['postValue']) {
+                // postValue is optional: display-only widgets define just putValue
+                widgetModule['postValue'] = (varName, value) => {
                     const widgetVar = <WidgetPropertyVariable>ga.property.varsToBind?.find((varToBind: WidgetPropertyVariable) => varToBind.name === varName);
                     if (widgetVar) {
                         let event = new Event();
@@ -255,8 +260,6 @@ export class HtmlImageComponent extends GaugeBaseComponent {
                         console.error(`Variable name (${varName}) not found!`);
                     }
                 };
-            } else {
-                console.error(`Module (${scriptContent.moduleId}) or postValue function not found!`);
             }
         }
         return null;
