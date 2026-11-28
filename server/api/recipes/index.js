@@ -6,12 +6,13 @@ var express = require("express");
 const authJwt = require('../jwt-helper');
 const crypto = require('crypto');
 const recipeUtils = require('../../runtime/recipes/recipe-utils');
+const recipeService = require('../../runtime/recipes/recipe-service');
 
 var runtime;
 var secureFnc;
 var checkGroupsFnc;
 
-const VALID_TAG_TYPES = ['number', 'string', 'boolean', 'bool', 'int', 'dint', 'int16', 'int32', 'real', 'float', 'double', 'byte', 'word'];
+const VALID_TAG_TYPES = ['string', 'boolean', 'bool', 'byte', 'word'].concat(recipeService.INT_TAG_TYPES, recipeService.FLOAT_TAG_TYPES);
 
 module.exports = {
     init: function (_runtime, _secureFnc, _checkGroupsFnc) {
