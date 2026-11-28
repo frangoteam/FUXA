@@ -31,6 +31,11 @@ export class FlexVariableMapComponent implements OnInit {
     compareVariables(v1, v2) {
         return v1 && v2 && v1.variableId == v2.variableId;
     }
+
+    isNotUsedInView(): boolean {
+        const variableId = this.value?.from?.variableId;
+        return !!this.view && !!variableId && !this.placeholders?.some(placeholder => placeholder?.variableId === variableId);
+    }
 }
 
 export interface VariableMapItemType {

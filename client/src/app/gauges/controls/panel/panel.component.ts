@@ -40,6 +40,7 @@ export class PanelComponent extends GaugeBaseComponent {
         try {
             const view = PanelComponent.hmi.views.find(x => x.name === sig.value);
             if (view) {
+                gauge?.loadVariableMapping(ga?.property?.variablesMapping ?? []);
                 gauge?.loadHmi(view, true);
                 if (ga?.property?.scaleMode) {
                     Utils.resizeViewExt('.view-container', ga?.id, ga?.property?.scaleMode);
@@ -76,9 +77,10 @@ export class PanelComponent extends GaugeBaseComponent {
 
                 componentRef.instance['myComRef'] = componentRef;
                 componentRef.instance.parent = parent;
+                componentRef.instance.viewIdPrefix = `${gaugeSettings.id}-`;
                 if (!isview) {
                     let span = document.createElement('span');
-                    span.innerHTML = 'Panel';
+                    span.innerText = PanelComponent.getEditorLabel(gaugeSettings);
                     svgPanelContainer.appendChild(span);
                     return null;
                 }
@@ -93,5 +95,20 @@ export class PanelComponent extends GaugeBaseComponent {
                 return componentRef.instance;
             }
         }
+    }
+
+    static detectChange(gaugeSettings: GaugeSettings) {
+        let ele = document.getElementById(gaugeSettings.id);
+        if (ele) {
+            ele.setAttribute('data-name', gaugeSettings.name);
+            let span = Utils.searchTreeStartWith(ele, this.prefixD)?.querySelector(':scope > span');
+            if (span) {
+                span.innerText = PanelComponent.getEditorLabel(gaugeSettings);
+            }
+        }
+    }
+
+    private static getEditorLabel(gaugeSettings: GaugeSettings): string {
+        return gaugeSettings.name ? `Panel: ${gaugeSettings.name}` : 'Panel';
     }
 }

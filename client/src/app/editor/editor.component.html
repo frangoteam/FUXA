@@ -28,9 +28,6 @@
         <div *ngSwitchCase="gaugeDialogType.Table">
             <app-table-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-table-property>
         </div>
-        <div *ngSwitchCase="gaugeDialogType.Panel">
-            <app-panel-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-panel-property>
-        </div>
         <div *ngSwitchCase="gaugeDialogType.Pipe">
             <app-pipe-property [data]="gaugeDialog.data" [reload]="reloadGaugeDialog" (onPropChanged)="onGaugeDialogChanged($event)"></app-pipe-property>
         </div>

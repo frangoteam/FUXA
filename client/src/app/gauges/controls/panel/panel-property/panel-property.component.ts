@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { GaugePanelProperty, PropertyScaleModeType } from '../../../../_models/hmi';
+import { Component, Inject, OnInit } from '@angular/core';
+import { MatDialogRef as MatDialogRef, MAT_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { GaugePanelProperty, PropertyScaleModeType, View } from '../../../../_models/hmi';
 import { FlexDeviceTagValueType } from '../../../gauge-property/flex-device-tag/flex-device-tag.component';
 
 @Component({
@@ -9,33 +10,38 @@ import { FlexDeviceTagValueType } from '../../../gauge-property/flex-device-tag/
 })
 export class PanelPropertyComponent implements OnInit {
 
-    @Input() data: any;
-    @Output() onPropChanged: EventEmitter<any> = new EventEmitter();
-    @Input('reload') set reload(b: any) {
-        this._reload();
-    }
     property: GaugePanelProperty;
     scaleMode = PropertyScaleModeType;
 
-    constructor() { }
-
-    ngOnInit() {
-        this._reload();
+    constructor(public dialogRef: MatDialogRef<PanelPropertyComponent>,
+                @Inject(MAT_DIALOG_DATA) public data: any) {
+        if (!this.data.settings.property) {
+            this.data.settings.property = <GaugePanelProperty>{ viewName: null, variableId: null, scaleMode: null, variablesMapping: [] };
+        }
+        this.property = <GaugePanelProperty>JSON.parse(JSON.stringify(this.data.settings.property));
+        if (!this.property.variablesMapping) {
+            this.property.variablesMapping = [];
+        }
     }
 
-    onPropertyChanged() {
-        this.onPropChanged.emit(this.data.settings);
-    }
+    ngOnInit() { }
 
     onTagChanged(daveiceTag: FlexDeviceTagValueType) {
-        this.data.settings.property.variableId = daveiceTag.variableId;
-        this.onPropertyChanged();
+        this.property.variableId = daveiceTag.variableId;
     }
 
-    private _reload() {
-        if (!this.data.settings.property) {
-            this.data.settings.property = <GaugePanelProperty>{ viewName: null, variableId: null, scaleMode: null };
+    getView(viewName: string): View {
+        if (!viewName || !this.data?.views) {
+            return null;
         }
-        this.property = this.data.settings.property;
+        return this.data.views.find((v: View) => v.name === viewName);
+    }
+
+    onNoClick(): void {
+        this.dialogRef.close();
+    }
+
+    onOkClick(): void {
+        this.data.settings.property = this.property;
     }
 }
